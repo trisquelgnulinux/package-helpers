@@ -1,0 +1,114 @@
+#!/bin/sh
+#
+#    Copyright (C) 2011  Rubén Rodríguez <ruben@trisquel.info>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=5
+
+. ./config
+
+#remove references to Opera and Mozilla
+sed 's/"opera", //' -i liferea.schemas
+sed '/opera/d' -i ./src/ui/ui_prefs.c 
+sed 's/"mozilla", //' -i liferea.schemas
+sed '/mozilla/d' -i ./src/ui/ui_prefs.c 
+
+replace mozilla abrowser .
+
+rm debian/patches/01_ubuntu_feedlists debian/patches/debian-example-feeds
+sed '/01_ubuntu_feedlists/d; /debian-example-feeds/d;' debian/patches/series -i
+
+rm opml/feedlist_*
+sed '/feedlist_/d; s/\(.*feedlist.opml.*\)/\1\n\tfeedlist_es.opml/;' opml/Makefile.* -i
+
+
+cat << EOF > opml/feedlist.opml
+<?xml version="1.0"?>
+<opml version="1.0">
+<head>  
+    <title>Liferea Default Feed List</title>        <!-- translate this for localized feed list -->
+</head>
+<body>  
+    <outline text="Trisquel GNU/Linux">          <!-- translate this for localized feed list -->
+      <outline text="News" htmlUrl="http://trisquel.info/" xmlUrl="http://trisquel.info/en/node/feed" />
+      <outline text="Planet" htmlUrl="http://trisquel.info/en/planet" xmlUrl="http://trisquel.info/en/planet/rss" />
+      <outline text="Forum" htmlUrl="http://trisquel.info/en/forum" xmlUrl="http://trisquel.info/en/taxonomy/term/50/0/feed" />
+      <outline text="Identi.ca group" htmlUrl="http://identi.ca/group/trisquel" xmlUrl="http://identi.ca/api/statusnet/groups/timeline/3275.rss" />
+    </outline>
+    <outline text="Free Software">          <!-- translate this for localized feed list -->
+      <outline text="What's New at GNU" htmlUrl="http://www.gnu.org/" xmlUrl="http://www.gnu.org/rss/whatsnew.rss" />
+      <outline text="FSF News" htmlUrl="http://www.fsf.org/" xmlUrl="http://static.fsf.org/fsforg/rss/news.xml" />
+      <outline text="FSF Events" htmlUrl="http://www.fsf.org/" xmlUrl="http://static.fsf.org/fsforg/rss/events.xml" />
+      <outline text="FSF Blogs" htmlUrl="http://www.fsf.org/" xmlUrl="http://static.fsf.org/fsforg/rss/blogs.xml" />
+      <outline text="fsdaily.com - Free Software News" htmlUrl="http://www.fsdaily.com/" xmlUrl="http://www.fsdaily.com/feed/published/All" />
+      <outline text="GNU at Reddit" htmlUrl="http://www.reddit.com/r/gnu" xmlUrl="http://www.reddit.com/r/gnu/.rss" />
+    </outline>
+
+        <!-- the following search folders should also be in sync for all feed lists -->
+        <!-- Do only translate the @text attributes in all of the following <outline> tags! -->
+        <outline text="Unread" title="Unread" description="Unread" type="vfolder" htmlUrl="" xmlUrl="vfolder">
+                <outline type="rule" text="Read status" rule="unread" value="" additive="true"/>
+        </outline>
+        <outline text="Important" title="Important" description="Important" type="vfolder" htmlUrl="" xmlUrl="vfolder">
+                <outline type="rule" text="Flag status" rule="flagged" value="" additive="true"/>
+        </outline>
+        <!-- end of search folder block -->
+</body>
+</opml>
+EOF
+
+
+cat << EOF > opml/feedlist_es.opml
+<?xml version="1.0"?>
+<opml version="1.0">
+<head>  
+    <title>Liferea Default Feed List</title>        <!-- translate this for localized feed list -->
+</head>
+<body>  
+    <outline text="Trisquel GNU/Linux">          <!-- translate this for localized feed list -->
+      <outline text="Noticias" htmlUrl="http://trisquel.info/" xmlUrl="http://trisquel.info/es/node/feed" />
+      <outline text="Planet" htmlUrl="http://trisquel.info/es/planet" xmlUrl="http://trisquel.info/es/planet/rss" />
+      <outline text="Foro" htmlUrl="http://trisquel.info/es/forum" xmlUrl="http://trisquel.info/es/taxonomy/term/29/0/feed" />
+      <outline text="Grupo en Identi.ca" htmlUrl="http://identi.ca/group/trisquel" xmlUrl="http://identi.ca/api/statusnet/groups/timeline/3275.rss" />
+    </outline>
+    <outline text="Free Software">          <!-- translate this for localized feed list -->
+      <outline text="What's New at GNU" htmlUrl="http://www.gnu.org/" xmlUrl="http://www.gnu.org/rss/whatsnew.rss" />
+      <outline text="FSF News" htmlUrl="http://www.fsf.org/" xmlUrl="http://static.fsf.org/fsforg/rss/news.xml" />
+      <outline text="FSF Events" htmlUrl="http://www.fsf.org/" xmlUrl="http://static.fsf.org/fsforg/rss/events.xml" />
+      <outline text="FSF Blogs" htmlUrl="http://www.fsf.org/" xmlUrl="http://static.fsf.org/fsforg/rss/blogs.xml" />
+      <outline text="fsdaily.com - Free Software News" htmlUrl="http://www.fsdaily.com/" xmlUrl="http://www.fsdaily.com/feed/published/All" />
+      <outline text="GNU at Reddit" htmlUrl="http://www.reddit.com/r/gnu" xmlUrl="http://www.reddit.com/r/gnu/.rss" />
+    </outline>
+
+        <!-- the following search folders should also be in sync for all feed lists -->
+        <!-- Do only translate the @text attributes in all of the following <outline> tags! -->
+        <outline text="Unread" title="Unread" description="Unread" type="vfolder" htmlUrl="" xmlUrl="vfolder">
+                <outline type="rule" text="Read status" rule="unread" value="" additive="true"/>
+        </outline>
+        <outline text="Important" title="Important" description="Important" type="vfolder" htmlUrl="" xmlUrl="vfolder">
+                <outline type="rule" text="Flag status" rule="flagged" value="" additive="true"/>
+        </outline>
+        <!-- end of search folder block -->
+</body>
+</opml>
+EOF
+
+
+changelog "Compiled for Trisquel"
+
+compile
+

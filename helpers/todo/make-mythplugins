@@ -1,0 +1,70 @@
+#!/bin/sh
+#
+#    Copyright (C) 2011  Rubén Rodríguez <ruben@trisquel.info>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=1
+EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu $UPSTREAM multiverse'
+
+. ./config
+
+apt-get install -y --force-yes libxxf86vm-dev libqt4-webkit-dev libxvmc-dev
+sed /faac/d -i debian/control
+
+#http://code.mythtv.org/trac/attachment/ticket/8572/mythplugins-compile_fixes_for_qt_4_7.patch
+cat << EOF | patch -p1
+---
+ mythnetvision/mythnetvision/netsearch.cpp |    6 	3 +	3 -	0 !
+ mythvideo/mythvideo/videodlg.h            |    2 	1 +	1 -	0 !
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+Index: mythplugins/mythvideo/mythvideo/videodlg.h
+===================================================================
+--- mythplugins.orig/mythvideo/mythvideo/videodlg.h	2010-06-05 19:38:22.000000000 -0400
++++ mythplugins/mythvideo/mythvideo/videodlg.h	2010-07-01 22:26:25.000000000 -0400
+@@ -153,7 +153,7 @@
+     QString RemoteImageCheck(QString host, QString filename);
+     QString GetCoverImage(MythGenericTree *node);
+     QString GetFirstImage(MythGenericTree *node, QString type,
+-                          QString gpnode = NULL, int levels = 0);
++                          QString gpnode = QString(), int levels = 0);
+     QString GetImageFromFolder(Metadata *metadata);
+     QString GetScreenshot(MythGenericTree *node);
+     QString GetBanner(MythGenericTree *node);
+Index: mythplugins/mythnetvision/mythnetvision/netsearch.cpp
+===================================================================
+--- mythplugins.orig/mythnetvision/mythnetvision/netsearch.cpp	2010-06-05 19:38:22.000000000 -0400
++++ mythplugins/mythnetvision/mythnetvision/netsearch.cpp	2010-07-01 22:29:30.000000000 -0400
+@@ -44,9 +44,9 @@
+       m_thumbImage(NULL),            m_downloadable(NULL),
+       m_progress(NULL),              m_busyPopup(NULL),
+       m_okPopup(NULL),               m_popupStack(),
+-      m_netSearch(),                 m_currentSearch(NULL),
+-      m_currentGrabber(0),           m_currentCmd(NULL),
+-      m_currentDownload(NULL),       m_pagenum(0),
++      m_netSearch(),                 m_currentSearch(QString()),
++      m_currentGrabber(0),           m_currentCmd(QString()),
++      m_currentDownload(QString()),       m_pagenum(0),
+       m_lock(QMutex::Recursive)
+ {
+     m_playing = false;
+EOF
+
+changelog "Imported into Trisquel"
+
+PARALLEL=false compile
+

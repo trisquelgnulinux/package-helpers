@@ -1,0 +1,116 @@
+#!/bin/sh
+#
+#    Copyright (C) 2008-2010  Rubén Rodríguez <ruben@trisquel.info>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=3
+QUILT=skip
+. ./config
+
+export QUILT_PATCHES=debian/patches
+quilt push -a
+
+sed 's/a corporate-looking/an illustration/' debian/control -i
+sed 's/pie chart for boot.*/made by Dongyun Lee for the Sugar project/' debian/control -i
+
+cat << EOF >> debian/copyright
+
+== Additions made by Trisquel ==
+
+themes/script/taranis.png Copyright (C) 2010 Rubén Rodríguez, GPL-3 license
+themes/glow/sugar.png Copyright (C) 2008 Dongyun Lee CC Attribution 3.0 Unported license
+themes/script/trisquel-logo16.png Copyright (C) 2004-2011 Rubén Rodríguez, GPL-3 license
+themes/glow/trisquel-logo16.png Copyright (C) 2004-2011 Rubén Rodríguez, GPL-3 license
+themes/glow/trisquel-logo-sugar.png Copyright (C) 2004-2011 Rubén Rodríguez, GPL-3 license
+
+EOF
+
+find -type d |xargs rename s/kubuntu/trisquel-mini/g
+find -type f |xargs rename s/kubuntu/trisquel-mini/g
+find -type d |xargs rename s/ubuntu/trisquel/g
+find -type f |xargs rename s/ubuntu/trisquel/g
+
+replace kubuntu-text trisquel-mini-text .
+replace kubuntu_text trisquel_mini_text .
+replace kubuntu-logo trisquel-mini-logo .
+replace kubuntu_logo trisquel_mini_logo .
+replace ubuntu-logo trisquel-logo .
+replace ubuntu_logo trisquel_logo .
+replace ubuntu-text trisquel-text .
+replace ubuntu_text trisquel_text .
+replace ubuntu_details trisquel_details .
+replace "Name=Kubuntu" "Name=Trisquel-mini" .
+replace "Name=Ubuntu" "Name=Trisquel" .
+replace "Ubuntu 11.04" "Trisquel $REVISION" .
+replace "Ubuntu 10.04" "Trisquel $REVISION" .
+replace "Ubuntu 10.10" "Trisquel $REVISION" .
+replace "Kubuntu 10.10" "Trisquel mini $REVISION" .
+replace 2c001e 000000 .
+replace ff4012 7ed300 .
+
+
+cp $DATA/trisquel-logo*.png debian
+cp $DATA/script.script themes/script/script.script
+
+cat << EOF > debian/source/include-binaries
+themes/script/dagda.png
+themes/glow/sugar.png
+themes/script/trisquel-logo16.png
+themes/glow/trisquel-logo16.png
+themes/glow/trisquel-logo-sugar.png
+EOF
+
+rm themes/trisquel-logo themes/glow -rf
+cp themes/script -a themes/trisquel-logo
+cp $DATA/dagda.png $DATA/trisquel-logo16.png themes/trisquel-logo/
+sed -i 's/progress_bar.png/progress_bar.png\\\n\t\tdagda.png\\\n\t\ttrisquel-logo16.png/' themes/trisquel-logo/Makefile*
+sed s:/script:/trisquel-logo:g -i themes/trisquel-logo/script.plymouth.in
+sed 's:=Script:=Trisquel-logo:g' -i themes/trisquel-logo/script.plymouth.in
+sed 's/script\.script/trisquel-logo\.rtoken/g' -i themes/trisquel-logo/Make*
+sed 's/script/trisquel-logo/g' -i themes/trisquel-logo/Make*
+sed 's/rtoken/script/g' -i themes/trisquel-logo/Make*
+rename s/script.script/trisquel-logo.script/g themes/trisquel-logo/*
+rename s/script.plymouth.in/trisquel-logo.plymouth.in/g themes/trisquel-logo/*
+
+cp themes/script -a themes/glow
+sed s:/script:/glow:g -i themes/glow/script.plymouth.in
+sed 's:=Script:=Glow:g' -i themes/glow/script.plymouth.in
+sed 's/script\.script/glow\.rtoken/g' -i themes/glow/Make*
+sed 's/script/glow/g' -i themes/glow/Make*
+sed 's/rtoken/script/g' -i themes/glow/Make*
+cp $DATA/sugar.png $DATA/trisquel-logo16.png $DATA/trisquel-logo-sugar.png themes/glow/
+sed -i s/dagda/sugar/g themes/glow/*
+sed -i 's_special://logo_trisquel-logo-sugar.png_g; s/0.3/0.8/' themes/glow/*.script
+rename s/script.script/glow.script/g themes/glow/*
+rename s/script.plymouth.in/glow.plymouth.in/g themes/glow/*
+sed -i 's/progress_bar.png/progress_bar.png\\\n\t\tsugar.png\\\n\t\ttrisquel-logo16.png\\\n\t\ttrisquel-logo-sugar.png/' themes/glow/Makefile*
+
+find -type d |xargs rename s/glow/sugar/g
+find -type f |xargs rename s/glow/sugar/g
+
+replace glow sugar .
+replace Glow Sugar .
+
+sed -i /two-step/d debian/plymouth-theme-sugar.install
+sed s/Ubuntu/Trisquel/ -i debian/plymouth-theme-trisquel-text.postinst
+#sed '/trisquel-logo/d; /trisquel-text/d; /trisquel-mini-text/d' -i debian/patches/series
+#rm themes/trisquel*/Makefile.in
+
+changelog "Plymouth themes modified for Trisquel"
+
+compile
+

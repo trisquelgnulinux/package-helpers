@@ -1,0 +1,53 @@
+#!/bin/sh
+#
+#    Copyright (C) 2011  Rubén Rodríguez <ruben@trisquel.info>
+#    Copyright (C) 2011  Carlos Pais <freemind@lavabit.com>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=1
+
+. ./config
+
+cat << EOF | patch -p1
+--- software-properties-0.76.7/softwareproperties/SoftwareProperties.py	2010-09-20 13:52:10.000000000 +0100
++++ software-properties-0.76.7-2/softwareproperties/SoftwareProperties.py	2011-04-17 02:49:49.000000000 +0100
+@@ -644,7 +644,12 @@
+     Add a source with the given apt line and auto-add
+     signing key if we have it in the whitelist
+     """
+-    (deb_line, file) = expand_ppa_line(line.strip(), self.distro.codename)
++    codenames = {}
++    codenames["dagda"] = "natty"
++    codenames["slaine"] = "maverick"
++    codenames["taranis"] = "lucid"
++    codenames["awen"] = "karmic" 
++    (deb_line, file) = expand_ppa_line(line.strip(), codenames[self.distro.codename])
+     deb_line = self.expand_http_line(deb_line)
+     debsrc_line = 'deb-src' + deb_line[3:]
+     new_deb_entry = SourceEntry(deb_line, file)
+EOF
+
+replace Kubuntu Triskel .
+replace Ubuntu Trisquel .
+replace ftpmaster@ubuntu.com trisquel-devel@listas.trisquel.info .
+replace cdimage@ubuntu.com trisquel-devel@listas.trisquel.info .
+replace TrisquelDistribution UbuntuDistribution .
+
+changelog "Adapted for Trisquel codenames"
+
+compile
+

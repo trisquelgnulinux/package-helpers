@@ -1,0 +1,68 @@
+#!/bin/sh
+#
+#    Copyright (C) 2008-2010  Rubén Rodríguez <ruben@trisquel.info>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=1
+
+. ./config
+
+cat << EOF > data/templates/Trisquel.mirrors
+#LOC:ES
+http://es.archive.trisquel.info/trisquel/
+ftp://es.archive.trisquel.info/trisquel/
+http://ftp.rediris.es/mirror/Trisquel/packages/
+ftp://ftp.rediris.es/mirror/Trisquel/packages/
+#LOC:US
+http://mirror.fsf.org/trisquel/
+EOF
+
+cat << EOF > data/templates/Trisquel.info.in
+_ChangelogURI: http://packages.trisquel.info/changelogs/pool/%s/%s/%s/%s_%s/changelog
+
+Suite: $CODENAME
+RepositoryType: deb
+BaseURI: http://archive.trisquel.info/trisquel/
+MatchURI: archive.trisquel.info/trisquel
+MirrorsFile: Trisquel.mirrors
+_Description: Trisquel $REVISION '$CODENAME'
+Component: main
+_CompDescription: Officially supported
+_CompDescriptionLong: Officially supported
+
+Suite: $CODENAME-security
+ParentSuite: $CODENAME
+RepositoryType: deb
+BaseURI: http://archive.trisquel.info/trisquel/
+MatchURI: archive.trisquel.info/trisquel
+_Description: Important security updates
+
+Suite: $CODENAME-updates
+ParentSuite: $CODENAME
+RepositoryType: deb
+_Description: Recommended updates
+
+Suite: $CODENAME-backports
+ParentSuite: $CODENAME
+RepositoryType: deb
+_Description: Unsupported updates
+EOF
+
+changelog "Compiled for Trisquel"
+
+compile
+
