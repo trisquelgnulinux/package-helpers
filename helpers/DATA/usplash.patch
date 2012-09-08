@@ -1,0 +1,10 @@
+--- usplash.c.orig	2009-06-21 21:55:28.067817031 +0000
++++ usplash.c	2009-06-21 21:46:55.039633269 +0000
+@@ -132,6 +132,7 @@
+ 	clear_progressbar();
+ 	/* verbose must be set true to clear the text area */
+ 	handle_verbose(1);
++	if (verbose)
+ 	clear_text();
+ 	handle_verbose(2);
+ 

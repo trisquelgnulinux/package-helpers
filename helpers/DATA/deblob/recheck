@@ -1,0 +1,13 @@
+#zgrep "+++ linux" linux_2.6.28-11.41.diff.gz |sort|grep -v Kconfig|grep -v Makefile|grep -v BOM |grep -v README|grep -v TODO |grep -v config.mk|grep -v txt$|grep -v mk$|grep -v Kbuild|grep -v linux-2.6.28/debian |grep -v S$ > list
+
+
+cont=0
+
+for i in $(cat lista2)
+do
+
+cont=$(expr $cont \+ 1)
+echo $cont-$i
+./deblob-check ../..$i
+done
+

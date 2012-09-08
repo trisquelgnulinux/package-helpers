@@ -1,0 +1,38 @@
+#!/bin/bash
+#
+#    Copyright (C) 2008  Peter Stevenson
+#    Copyright (C) 2008  Rubén Rodríguez <ruben@trisquel.info>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=2
+
+. ./config
+
+cp $WD/DATA/usb-creator.png desktop
+sed -i 's/Ubuntu/Trisquel/g;'  po/* $(find | grep py$) $(find | grep glade$)
+sed -i 's/Icon=usb-creator/Icon=notification-device-usb/' desktop/usb-creator.desktop.in
+cat << EOF >> desktop/usb-creator.desktop.in
+Name[es]=Creador de discos de arranque USB
+Comment[es]=Crear un disco de arranque USB usando un CD o una imagen de disco
+Name[gl]=Creador de discos de arrinque USB
+Comment[gl]=Crear un disco de arrinque USB empregando un CD ou unha imaxe de disco
+EOF
+
+echo | dch -D $RELEASE -v $(sed  -n '1s#^.*(\(.*\)).*#\1'${DISTRONAME_L}${VERSION}'#p' debian/changelog)  "Compiled for Trisquel"
+
+compile
+

@@ -1,0 +1,38 @@
+diff -Nur -x '*.orig' -x '*~' gnome-panel-2.21.91/gnome-panel/panel-menu-items.c gnome-panel-2.21.91.new/gnome-panel/panel-menu-items.c
+--- gnome-panel-2.21.91/gnome-panel/panel-menu-items.c	2008-02-11 22:15:47.000000000 +0100
++++ gnome-panel-2.21.91.new/gnome-panel/panel-menu-items.c	2008-02-12 23:02:52.000000000 +0100
+@@ -956,6 +956,7 @@
+ 	GtkWidget *item;
+ 	char      *gconf_name;
+ 	char      *name;
++	char      *path;
+ 	char      *uri;
+ 	GFile     *file;
+ 
+@@ -1124,9 +1125,25 @@
+ 	if (add_separator)
+ 		add_menu_separator (menu);
+ 
+-	panel_menu_items_append_from_desktop (menu, "yelp.desktop", NULL);
++	panel_menu_items_append_from_desktop (menu, "yelp.desktop", _("Help and Support"));
++
++	if (g_file_test (DATADIR"/applications/apport-gtk.desktop",
++			 G_FILE_TEST_IS_REGULAR)) {
++	  panel_menu_items_append_from_desktop (menu, "apport-gtk.desktop", NULL);
++
++	  add_menu_separator (menu);
++	}
++
+ 	panel_menu_items_append_from_desktop (menu, "gnome-about.desktop", NULL);
+ 
++	if (g_file_test (DATADIR"/omf/about-ubuntu/about-ubuntu-C.omf",
++			 G_FILE_TEST_IS_REGULAR))
++	  panel_menu_items_append_from_desktop (menu, "ubuntu-about.desktop", NULL);
++
++	if (g_file_test (DATADIR"/omf/about-edubuntu/about-edubuntu-C.omf",
++			 G_FILE_TEST_IS_REGULAR))
++	  panel_menu_items_append_from_desktop (menu, "edubuntu-about.desktop", NULL);
++ 	panel_menu_items_append_from_desktop (menu, "trisquel-about.desktop", NULL);
+ 	if (parent->priv->append_lock_logout)
+ 		panel_menu_items_append_lock_logout (menu);
+ }

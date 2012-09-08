@@ -1,0 +1,67 @@
+#!/bin/sh
+#
+#    Copyright (C) 2006  Brian Brazil
+#    Copyright (C) 2009  Rubén Rodríguez <ruben@trisquel.uvigo.es>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=1
+
+. ./config
+RELEASE="3.0"
+
+echo '
+   ___        ___               ___        ___       ___        ___        ___
+  /\  \      /\  \      ___    /\  \      /\  \     /\__\      /\  \      /\__\
+  \ \  \    /  \  \    /\  \  /  \  \    /  \  \   / /  /     /  \  \    / /  /
+   \ \  \  / /\ \  \   \ \  \/ /\ \  \  / /\ \  \ / /  /     / /\ \  \  / /  /
+   /  \  \/  \ \ \  \  /  \__\ \ \ \  \/ /  \ \  \ /  /  ___/  \ \ \  \/ /  /
+  / /\ \__\/\ \ \ \__\/ /\/__/\ \ \ \__\/__/ \ \__\__/  /\__\/\ \ \ \__\/__/
+ / /  \/__/_|  \/ /  / /  /\ \ \ \ \/__/\  \ / /  /  \ / /  /\ \ \ \/__/\  \
+/ /  /      | |  /  / /__/  \ \ \ \__\ \ \/\/ /  / \  / /  /\ \ \ \__\ \ \  \
+\/__/       | |\/__/\ \__\   \ \/ /  /  \    /  / \ \/ /  /  \ \ \/__/  \ \  \
+            | |  |   \/__/    \  /  /    \  /  /   \  /  /    \ \__\     \ \__\
+             \|__|             \/__/      \/__/     \/__/      \/__/      \/__/
+
+    The programs included with the Trisquel system are free software;
+    the exact distribution terms for each program are described in the
+    individual files in /usr/share/doc/*/copyright.
+
+    Trisquel comes with ABSOLUTELY NO WARRANTY, to the extent permitted by
+    applicable law.
+
+' > etc/motd
+
+cat > etc/issue <<EOF
+$DISTRONAME GNU/Linux $RELEASE \n \l
+
+EOF
+
+cat > etc/issue.net <<EOF
+$DISTRONAME GNU/Linux $RELEASE
+EOF
+
+cat > etc/lsb-release <<EOF
+DISTRIB_ID=$DISTRONAME
+DISTRIB_RELEASE=$RELEASE
+DISTRIB_CODENAME=$CODENAME
+DISTRIB_DESCRIPTION="$DISTRONAME $RELEASE"
+EOF
+
+echo | dch -D $CODENAME -v 1000.${RELEASE}trisquel${VERSION} "Changed to reflect release $RELEASE"
+
+compile
+

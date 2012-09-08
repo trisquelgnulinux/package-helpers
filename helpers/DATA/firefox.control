@@ -1,0 +1,82 @@
+Source: firefox-3.0
+Section: web
+Priority: optional
+Maintainer: Rubén Rodríguez <ruben@trisquel.info>
+Build-Depends: cdbs, debhelper (>= 5), sharutils, m4,
+	autotools-dev, autoconf2.13,
+	quilt, patchutils (>= 0.2.25),
+	bzip2, zlib1g-dev, zip,
+	libx11-dev, libxt-dev,
+	libgtk2.0-dev (>= 2.10),
+	liborbit2-dev, libidl-dev (>= 0.8.0),
+	libxft-dev, libfreetype6-dev,
+	libpng12-dev, libjpeg62-dev,
+	libxrender-dev, libxinerama-dev,
+	libcairo2-dev, libpixman-1-dev,
+	libgnome2-dev, libgconf2-dev, libgnomevfs2-dev, libgnomeui-dev,
+	binutils (>= 2.17-1) [mips mipsel],
+	libhunspell-dev,
+	libdbus-glib-1-dev (>= 0.60),
+	xulrunner-1.9-dev (>= 1.9.0.1),
+	libnspr4-dev, libnss3-dev,
+	mozilla-devscripts (>= 0.10~),
+	lsb-release
+Standards-Version: 3.7.3
+
+Package: firefox-3.0
+Architecture: any
+Depends: fontconfig,
+	psmisc,
+	debianutils (>= 1.16),
+	xulrunner-1.9 (>= 1.9.0.1),
+	${shlibs:Depends},
+	abrowser-3.0-branding (>= 3.0.3+nobinonly-0ubuntu1~)
+Suggests: firefox-3.0-gnome-support (= ${binary:Version}), latex-xft-fonts, libthai0
+Provides: www-browser, firefox-libthai
+Conflicts: firefox-trunk (<< 3.0~a8~cvs20070914t1713-0), firefox-granparadiso (<< 3.0~alpha8-0), firefox (<< 3), firefox-libthai
+Replaces: firefox-trunk, firefox-granparadiso, firefox (<< 3), firefox-libthai
+Description: safe and easy web browser from Mozilla
+ This browser delivers safe, easy web browsing. A familiar user interface,
+ enhanced security features including protection from online identity theft,
+ and integrated search let you get the most out of the web.
+ .
+ Install this firefox package too, if you want to be automatically upgraded to
+ new major firefox versions in the future.
+
+Package: firefox-3.0-gnome-support
+Architecture: any
+Section: gnome
+Depends: ${shlibs:Depends}, firefox-3.0 (= ${binary:Version}), xulrunner-1.9-gnome-support (>= 1.9~b4~)
+Provides: gnome-www-browser
+Conflicts: firefox-gnome-support (<< 3), firefox-trunk-gnome-support (<< 3.0~a8~cvs20070914t1713-0), firefox-granparadiso-gnome-support (<< 3.0~alpha8-0)
+Replaces: firefox-gnome-support (<< 3), firefox-trunk-gnome-support, firefox-granparadiso-gnome-support
+Description: Support for Gnome in the browser
+ This is an extension to the browser that allows it to use protocol
+ handlers from Gnome-VFS, such as smb or sftp, and other Gnome
+ integration features.
+
+Package: abrowser-3.0-branding
+Architecture: any
+Depends: firefox-3.0 (= ${binary:Version}), firefox-3.0-gnome-support
+Replaces: firefox-3.0
+Conflicts: firefox-3.0-branding
+Description: package that ships the abrowser branding
+ The ABrowser refers to the unbranded build of the browser from Mozilla.
+ .
+ This is a meta package that will point to the latest abrowser package
+ in your distribution. Don't remove this if you want to receive automatic major
+ version upgrades for this package in future.
+
+
+Package: abrowser
+Architecture: all
+Depends: firefox-3.0, abrowser-3.0-branding
+Provides: firefox
+Description: meta package for the unbranded abrowser
+ ABrowser 3 is an unbranded version of the popular webbrowser from Mozilla; it is
+ written in the XUL language and designed to be lightweight and cross-platform.
+ .
+ This is a meta package that will point to the latest abrowser package in your
+ distribution.
+ Don't remove this if you want to receive automatic major version upgrades for
+ this package in future.

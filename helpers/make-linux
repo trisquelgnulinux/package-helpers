@@ -1,0 +1,81 @@
+#!/bin/sh
+#
+#    Copyright (C) 2006  Brian Brazil
+#    Copyright (C) 2008  Rubén Rodríguez <ruben@trisquel.uvigo.es>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=1
+
+. ./config
+
+DEBLOB=$WD/DATA/deblob/deblob-2.6.28
+
+# Remove non-free bits
+sh $DEBLOB
+
+rm -rf debian/firmware/*
+
+# Ignore ABI changes for deblobbed modules
+cat << EOF > debian.master/abi/perm-blacklist
+bcm3510_attach
+tda10046_attach
+tda10045_attach
+sp887x_attach
+or51211_attach
+sp8870_attach
+EOF
+
+# Removing some extra Ubuntu modules
+rm -rf ubuntu/ndiswrapper
+sed /ndiswrapper/d -i ubuntu/Makefile
+sed /ndiswrapper/d -i ubuntu/Kconfig
+
+rm -rf ubuntu/lirc/lirc_pvr150
+sed /pvr150/d -i ubuntu/lirc/Makefile
+sed /pvr150/d -i ubuntu/lirc/Kconfig
+
+rm -rf ubuntu/misc/wireless/acx
+sed /acx/d -i ubuntu/misc/wireless/Makefile
+sed /acx/d -i ubuntu/misc/wireless/Kconfig
+
+sed /rt2860/d -i drivers/staging/Makefile
+sed /rt2860/d -i ubuntu/Makefile
+sed /rt2870/d -i drivers/staging/Makefile
+sed /rt2870/d -i ubuntu/Makefile
+sed /radeon/d -i drivers/gpu/drm/Makefile
+
+# Changes so it'll compile without some modules
+for i in debian.master/d-i/modules/*; do
+	sed -i 's/^\([[^ ?][^ ?]*\)$/\1 ?/' $i
+done
+
+# Changes so it'll compile without firmware
+#Need to go to previous revision for ABI stuff - long way of saying second last word
+sed -i 's/^prev_revision :=.*$/prev_revision := $(word $(words $(wordlist 2,$(words $(prev_revisions)),$(prev_revisions))),$(prev_revisions))/' debian.master/rules.d/0-common-vars.mk
+echo 'skipmodule = true' >> debian.master/rules.d/0-common-vars.mk # Having less modules is okay for us
+sed -i '/\^-\[\^-\]/,/^fi/d' debian.master/scripts/abi-check  # Having less symbols is okay for us
+
+# Xen hunk mismatches cause patches to *.orig not to apply
+#sed -i 's/\(patch -p1\)/\1 --no-backup-if-mismatch/' debian/rules.d/6-binary-custom.mk
+
+# Branding
+echo | dch -D $RELEASE -v $(sed -n '1s#^.*(\(.*\)).*#\1'${DISTRONAME_L}${VERSION}'#p' debian/changelog)  'Removed non-free bits'
+cp debian/changelog debian.master/changelog
+sed -i 's:\Ubuntu:Trisquel:' debian.master/rules.d/2-binary-arch.mk
+
+compile
+

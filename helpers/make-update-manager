@@ -1,0 +1,82 @@
+#!/bin/bash
+#
+#    Copyright (C) 2008  Peter Stevenson
+#    Copyright (C) 2008  Rubén Rodríguez <ruben@trisquel.info>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=2
+
+. ./config
+
+cat > ./DistUpgrade/Trisquel.info << EOF
+ChangelogURI: http://archive.trisquel.info/trisquel/changelogs/pool/%s/%s/%s/%s_%s/changelog
+
+Suite: $CODENAME
+RepositoryType: deb
+BaseURI: http://archive.$DOMAIN/$DISTRONAME_L/
+Description: $DISTRONAME $CODENAME
+Component: main
+Enabled: 1
+CompDescription: Core Packages
+Component: extras
+Enabled: 1
+CompDescription: Additional Packages
+
+Suite: $CODENAME-security
+RepositoryType: deb
+BaseURI: http://archive.$DOMAIN/$DISTRONAME_L/
+Description: $DISTRONAME $CODENAME Security Updates
+Component: main
+Enabled: 1
+CompDescription: Core Packages Security
+Component: extras
+Enabled: 1
+CompDescription: Additional Packages Security
+
+Suite: $CODENAME-updates
+RepositoryType: deb
+BaseURI: http://archive.$DOMAIN/$DISTRONAME_L/
+Description: $DISTRONAME $CODENAME Updates
+Component: main
+Enabled: 1
+CompDescription: Core Packages Updated
+Component: extras
+Enabled: 1
+CompDescription: Additional Packages Updates
+
+Suite: $CODENAME-backports
+RepositoryType: deb
+BaseURI: http://archive.$DOMAIN/$DISTRONAME_L/
+Description: $DISTRONAME $CODENAME Backports
+Component: main
+Enabled: 1
+CompDescription: Core Packages Backports
+Component: extras
+Enabled: 1
+CompDescription: Additional Packages Backports
+EOF
+
+cp ./DistUpgrade/Trisquel.info ./DistUpgrade/Ubuntu.info
+
+sed -i 's:changelogs.ubuntu.com:archive.trisquel.info/trisquel:g' UpdateManager/*.py DistUpgrade/*.py ./po/*.po UpdateManager/Core/*.py data/meta-release
+
+sed -i 's/行ubuntu/行trisquel/g; s/被ubuntu/被trisquel/g; s#http://launchpad.net/ubuntu/+source/%s/%s/+changelog#http://trisquel.info/project/issues#g; s/<.*@ubuntu.com/<info@trisquel.info/g; s/\ ubuntu\ /\ trisquel\ /g; s/ubuntu\ /trisquel\ /g; s/\ ubuntu/\ trisquel/g; s/Ubuntu/Trisquel/g; s/xubuntu/trisquel-mini/g; s/kubuntu/trisquel-pro/g; s/edubuntu/trisquel-edu/g; s/ubuntu-desktop/trisquel-/g; s/www.ubuntu.com/trisquel.info/g; s/www.ubuntulinux.org/trisquel.info/g '  po/*.po $(find | grep py$) $(find | grep '\.glade$')
+
+echo | dch -D $RELEASE -v $(sed  -n '1s#^.*(\(.*\)).*#\1'${DISTRONAME_L}${VERSION}'#p' debian/changelog)  "Compiled for Trisquel"
+
+compile
+
