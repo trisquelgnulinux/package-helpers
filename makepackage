@@ -1,0 +1,268 @@
+#!/bin/sh
+#
+#    Copyright (C) 2011  Ruben Rodriguez <ruben@trisquel.info>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+set -e
+
+export DEBIAN_FRONTEND=noninteractive
+MEM=$(cat /proc/meminfo |grep MemTotal| awk '{print $2}')
+GPGKEY=8D8AEBF1
+
+for VAR in LANG LANGUAGE LC_ALL LC_TIME LC_MONETARY LC_ADDRESS LC_TELEPHONE LC_MESSAGES LC_NAME LC_MEASUREMENT LC_IDENTIFICATION LC_IDENTIFICATION LC_NUMERIC LC_PAPER LANG
+do
+    unset $VAR
+done
+export HOME=/root
+
+cd $(dirname $0)
+
+if [ $# -lt 1 ]
+then
+    echo "Usage: $0 package"
+    echo example: $0 linux lucid
+    exit 1
+fi
+
+PACKAGE=$1
+CODENAME=$(grep 'export CODENAME=' helpers/config |sed 's/.*=//')
+UPSTREAM=$(grep 'export UPSTREAM=' helpers/config |sed 's/.*=//')
+WORKDIR=tmp/makepackage
+REPOSITORY=$PWD/repos/$CODENAME
+HELPERS=$PWD/helpers
+if ! [ -d repos/ ]
+then
+mkdir -p repos/$CODENAME/conf repos/$CODENAME/incoming
+cat << EOF > repos/$CODENAME/conf/distributions
+Origin: Trisquel
+Label: Trisquel
+Suite: $CODENAME
+Version: 42
+Codename: $CODENAME
+Architectures: i386 amd64 source
+Components: main
+UDebComponents: main
+DebIndices: Packages Release . .gz .bz2
+UDebIndices: Packages . .gz .bz2
+DscIndices: Sources Release .gz .bz2
+Log: $CODENAME.log
+Description: Trisquel GNU/Linux packages for the $UPSTREAM based release
+EOF
+
+if gpg -K | grep -q $GPGKEY
+then
+    echo "SignWith: $GPGKEY" >> repos/$CODENAME/conf/distributions
+fi
+
+cd repos/$CODENAME
+reprepro -v export
+cd ../..
+fi
+
+disablescripts(){
+    # Disable service starter scripts
+    for i in /usr/sbin/invoke-rc.d /sbin/start /sbin/start-stop-daemon
+    do
+        mv $CHROOT/$i $CHROOT/$i.real
+        cp $CHROOT/bin/true $CHROOT/$i
+    done
+}
+
+createjail () {
+    [ -d jails ] || mkdir jails
+    CHROOT=jails/$UPSTREAM-$ARCH
+    C="chroot $CHROOT"
+    MIRROR=http://mir1.ovh.net/mirrors/ftp.ubuntu.com/ubuntu
+
+    mkdir $CHROOT-tmp
+    mount -t tmpfs -o size=500M none $CHROOT-tmp
+    debootstrap --arch=$ARCH $UPSTREAM $CHROOT-tmp $MIRROR
+    cp -a $CHROOT-tmp $CHROOT
+    umount $CHROOT-tmp
+    rm $CHROOT-tmp -rf
+    echo "127.0.0.1 localhost" > $CHROOT/etc/hosts
+    mount none $CHROOT/proc -t proc
+    mount none $CHROOT/dev/pts -t devpts
+
+    disablescripts
+
+    if gpg -K | grep $GPGKEY -q
+    then
+        cp /root/.gnupg $CHROOT/root -a
+    else
+        echo GPG private key for $GPGKEY not found, the packages and repositories will not be signed.
+    fi
+
+    echo $UPSTREAM-$ARCH  > $CHROOT/etc/debian_chroot
+cat << EOF > $CHROOT/etc/apt/sources.list
+deb $MIRROR $UPSTREAM main universe
+deb $MIRROR $UPSTREAM-updates main universe
+deb $MIRROR $UPSTREAM-security main universe
+deb $MIRROR $UPSTREAM-backports main universe
+deb-src $MIRROR $UPSTREAM main universe
+deb-src $MIRROR $UPSTREAM-updates main universe
+deb-src $MIRROR $UPSTREAM-security main universe
+deb-src $MIRROR $UPSTREAM-backports main universe
+EOF
+
+cat << EOF > $CHROOT/etc/apt/apt.conf.d/90recommends
+APT::Install-Recommends "0";
+APT::Install-Suggests "0";
+EOF
+
+    export DEBIAN_FRONTEND=noninteractive
+
+    [ $UPSTREAM != hardy -a $UPSTREAM != lucid -a $UPSTREAM != maverick ] &&  echo "force-unsafe-io" > $CHROOT/etc/dpkg/dpkg.cfg.d/02apt-speedup
+    $C apt-get update
+    [ $UPSTREAM != hardy ] && $C apt-get --force-yes -y install eatmydata
+    $C apt-get --force-yes -y dist-upgrade
+    $C apt-get --force-yes -y install devscripts build-essential liburi-perl python-setuptools pkgbinarymangler wget rpl aptitude quilt fakeroot ccache
+    $C apt-get clean
+
+    wget -o /dev/null -O $CHROOT/tmp/key.gpg http://archive.trisquel.info/trisquel/trisquel-archive-signkey.gpg 
+    $C apt-key add /tmp/key.gpg
+
+    # Hack for i386
+    if [ $ARCH = "i386" ]
+    then
+        for BIN in /bin/uname /usr/bin/arch
+        do
+        mv $CHROOT/$BIN $CHROOT/$BIN.orig
+cat << EOF > $CHROOT/$BIN
+#!/bin/sh
+
+if [ \$# -eq 0 ]
+then   
+        $BIN.orig | sed s/x86_64/i686/g
+else   
+        $BIN.orig "\$*" | sed s/x86_64/i686/g
+fi
+EOF
+        chmod 755 $CHROOT/$BIN
+done
+    fi
+umount $CHROOT/proc $CHROOT/dev/pts
+}
+
+prepare(){
+[ -d jails/$UPSTREAM-$ARCH ] || createjail
+cat << EOF > jails/$UPSTREAM-$ARCH/tmp/update
+mount -t proc none /proc
+export DEBIAN_FRONTEND=noninteractive
+export LANG=C
+apt-get update
+apt-get --force-yes -y dist-upgrade
+umount /proc
+EOF
+chroot jails/$UPSTREAM-$ARCH sh /tmp/update
+if [ -f jails/$UPSTREAM-$ARCH/CurrentlyBuilding ]
+then
+    echo The $UPSTREAM-$ARCH jail appears to be running $(cat jails/$UPSTREAM-$ARCH/CurrentlyBuilding |grep Package: |sed 's/Package:\ //'), aborting.
+    exit 1
+fi
+    CHROOT=jails/$UPSTREAM-$ARCH disablescripts
+}
+
+tmpumount(){
+  [ $MEM -lt 16000000 ] && return
+  echo $PACKAGE | grep -q "linux" && return
+  umount jails/$UPSTREAM-$ARCH/tmp && return
+  fuser -k -m jails/$UPSTREAM-$ARCH/tmp
+  umount jails/$UPSTREAM-$ARCH/tmp && return
+  echo ERROR: could not umount tmpfs at jails/$UPSTREAM-$ARCH/tmp
+  exit 1
+}
+tmpmount(){
+  [ $MEM -lt 16000000 ] && return
+  echo $PACKAGE | grep -q "linux" && return
+  grep jails/$UPSTREAM-$ARCH/tmp /proc/mounts -q && tmpumount
+  mount -t tmpfs -o size=15G none jails/$UPSTREAM-$ARCH/tmp
+}
+
+compile(){
+    [ -d jails/$UPSTREAM-$ARCH/$WORKDIR ] && rm -rf jails/$UPSTREAM-$ARCH/$WORKDIR/
+tmpmount
+    cp -a helpers/ jails/$UPSTREAM-$ARCH/$WORKDIR/
+
+cat << EOF > jails/$UPSTREAM-$ARCH/usr/local/sbin/makepackage-handler
+#!/bin/sh
+WORKDIR=$WORKDIR
+PACKAGE=$PACKAGE
+cd $WORKDIR
+[ -d LOGS ] || mkdir LOGS
+[ -d PACKAGES ] || mkdir PACKAGES
+export LD_PRELOAD="${LD_PRELOAD:+$LD_PRELOAD:}/usr/lib/libeatmydata/libeatmydata.so"
+export PATH="/usr/lib/ccache:${PATH}"
+sh -e make-$PACKAGE 2>&1 || exit 1
+EOF
+
+cat << EOF > jails/$UPSTREAM-$ARCH/etc/pkgbinarymangler/striptranslations.conf
+enable: true
+components: main
+invalid_currentlybuilding: ignore
+posuffix: translations
+oem_blacklist: partner
+EOF
+
+cat << EOF > jails/$UPSTREAM-$ARCH/etc/pkgbinarymangler/sanitychecks.conf
+enable: true
+EOF
+
+cat << EOF > jails/$UPSTREAM-$ARCH/etc/pkgbinarymangler/maintainermangler.conf
+enable: true
+invalid_currentlybuilding: ignore
+EOF
+
+cat << EOF > jails/$UPSTREAM-$ARCH/etc/pkgbinarymangler/maintainermangler.overrides
+default: Trisquel GNU/Linux developers <trisquel-devel@listas.trisquel.info>
+ignore_domains: trisquel.info sognus.com listas.trisquel.info gnu.org fsf.org
+ignore_emails: ruben@trisquel.info
+EOF
+
+    chmod 755 jails/$UPSTREAM-$ARCH/usr/local/sbin/makepackage-handler
+
+    if ! chroot jails/$UPSTREAM-$ARCH makepackage-handler /$WORKDIR/make-$PACKAGE
+    then
+        rm jails/$UPSTREAM-$ARCH/CurrentlyBuilding
+        exit 1
+    fi
+    find jails/$UPSTREAM-$ARCH/$WORKDIR/PACKAGES/$PACKAGE/ -maxdepth 1 -type f -exec cp {} $REPOSITORY/incoming/ \;
+tmpumount
+}
+
+ ARCH=i386 prepare
+ ARCH=amd64 prepare
+ ARCH=i386 compile
+ ARCH=amd64 compile
+
+cd $REPOSITORY
+
+for dsc in incoming/*.dsc
+do
+    if gpg -K | grep $GPGKEY -q
+    then
+        debsign -k$GPGKEY $dsc
+    else
+        echo GPG private key for $GPGKEY not found, the packages and repositories will not be signed.
+    fi
+    reprepro -v -C main includedsc $CODENAME $dsc || reprepro -S admin -P optional -v -b . -C main includedsc $CODENAME $dsc
+done
+
+find incoming -name *.deb -exec reprepro -v -C main includedeb $CODENAME {} \;
+find incoming -name *.udeb -exec reprepro -v -C main includeudeb $CODENAME {} \;
+
+rm incoming/*
