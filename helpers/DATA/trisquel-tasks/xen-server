@@ -1,0 +1,13 @@
+Task: xen-server
+Section: user
+Description: Xen domU server
+ This task provides a virtualized Xen domU server on a Trisquel console environment.
+Key:
+ trisquel-server-xen
+ # trisquel-common recommended packages
+ bash-completion
+ debfoster
+ nmap
+ unp
+ vim
+Packages: list

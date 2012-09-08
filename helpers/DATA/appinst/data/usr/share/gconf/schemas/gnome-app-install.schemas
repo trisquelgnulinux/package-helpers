@@ -1,0 +1,1070 @@
+<?xml version="1.0" ?>
+<gconfschemafile>
+  <schemalist>
+    <schema>
+      <key>/schemas/apps/gnome-app-install/filter_applications</key>
+      <applyto>/apps/gnome-app-install/filter_applications</applyto>
+      <owner>gnome-app-install</owner>
+      <type>int</type>
+      <default>1</default>
+		
+      <locale name="C">
+        <short>Show only a subset of applications</short>
+        <long>
+	  Possible values:
+	  0 : show all available applications
+	  1 : show only free applications
+	  2 : -
+	  3 : show only supported applications 
+	  4 : show only 3rd party applications
+	  5 : -
+	  6 : show only installed applications
+        </long>
+      </locale>
+
+		
+      <locale name="ca">
+        <short>Mostra només un subconjunt de les aplicacions</short>
+        <long>Valors possibles: 0: mostra totes les aplicacions disponibles, 1: mostra només les aplicacions lliures, 2: -, 3: mostra només les aplicacions suportades, 4: mostra només les aplicacions de tercers, 5: -, 6: mostra només les aplicacions instaŀlades</long>
+      </locale>
+
+		
+      <locale name="cs">
+        <short>Zobrazit pouze podmnožinu aplikací</short>
+        
+      </locale>
+
+		
+      <locale name="de">
+        <short>Nur eine begrenzte Auswahl an Anwendungen anzeigen</short>
+        <long>Mögliche Werte: 0 : Alle verfügbaren Anwendungen anzeigen 1 : Nur freie Anwendungen anzeigen 2 : - 3 : Nur unterstützte Anwendungen anzeigen 4 : Nur Dritthersteller-Anwendungen anzeigen : 5 : - 6 : Nur installierte Awendungen anzeigen</long>
+      </locale>
+
+		
+      <locale name="en_GB">
+        <short>Show only a subset of applications</short>
+        <long>Possible values: 0 : show all available applications 1 : show only free applications 2 : - 3 : show only supported applications 4 : show only 3rd party applications 5 : - 6 : show only installed applications</long>
+      </locale>
+
+		
+      <locale name="es">
+        <short>Muestra solo una parte de las aplicaciones</short>
+        <long>Valores posibles: 0 : muestra todas las aplicaciones disponibles 1 : muestra solo las aplicaciones libres 2 : - 3  : muestra solo las aplicaciones soportadas 4 : muestra solo las aplicaciones de terceros 5 : - 6 : muestra solo las aplicaciones instaladas</long>
+      </locale>
+
+		
+      <locale name="eu">
+        <short>Aplikazio talde bat bakarrik erakutsi</short>
+        <long>Balio posibleak: 0 : aplikazio eskuragarri guztiak erakutsi 1 : aplikazio askeak bakarrik erakutsi 2 : - 3 : sostengudun aplikazioak bakarrik erakutsi 4 : third-party apliakzioak bakarrik erakutsi 5 : - 6 : instalatutako aplikazioak bakarrik erakutsi</long>
+      </locale>
+
+		
+      <locale name="fi">
+        <short>Näytä vain osa sovelluksista</short>
+        <long>Mahdolliset arvot: 0 : näytä kaikki saatavilla olevat sovellukset 1 : näytä vain vapaat sovellukset 2: - 3: näytä vain tuetut sovellukset 4: näytä vain kolmannen osapuolen sovellukset 5: - 6: näytä vain asennetut sovellukset</long>
+      </locale>
+
+		
+      <locale name="fr">
+        <short>Affiche uniquement un sous-ensemble d&apos;applications</short>
+        <long>Valeurs possibles : 0 : affiche toutes les logiciels disponibles 1 : affiche uniquement les logiciels libres 2 :  - 3 : affiche uniquement les logiciels pris en charge 4 : affiche uniquement les applications tierces 5 : - 6 : affiche uniquement les applications installées</long>
+      </locale>
+
+		
+      <locale name="he">
+        <short>הצגת תת-קבוצה של יישומים</short>
+        
+      </locale>
+
+		
+      <locale name="hu">
+        <short>Csak néhány alkalmazás mutatása</short>
+        <long>Lehetséges értékek: 0 : az összes alkalmazás mutatása 1 : csak a nyílt alkalmazások mutatása 2: - 3 : csak a támogatott alkalmazások mutatása 4 : Csak a harmadik féltől származó alkalmazások mutatása 5 : - 6 : csak a telepített alkalmazások mutatása</long>
+      </locale>
+
+		
+      <locale name="id">
+        <short>Tampilkan sebuah subset aplikasi saja</short>
+        <long>Nilai-nilai yang mungkin: 0 : tampilkan semua aplikasi yang tersedia 1 : tampilkan hanya aplikasi yang bebas saja 2 : - 3 : tampilkan aplikasi yang didukung saja 4 : tampilkan aplikasi pihak ketiga saja 5 : - 6 : tampilkan aplikasi yang terpasang saja</long>
+      </locale>
+
+		
+      <locale name="it">
+        <short>Mostra solo un sottoinsieme delle applicazioni</short>
+        <long>Valori possibili: 0 : mostra tutte le applicazioni disponibili 1 : mostra solo le applicazioni libere 2 : - 3 : mostra solo le applicazioni supportate 4 : mostra solo le applicazioni di terze parti 5 : - 6 : mostra solo le applicazioni installate</long>
+      </locale>
+
+		
+      <locale name="ja">
+        <short>アプリケーションサブセットのみを表示</short>
+        <long>可能な値は次の通りです。0: 全てのアプリケーションを表示 / 1: 自由なアプリケーションのみ / 2: - / 3: サポートされたアプリケーションを表示 / 4: サードパーティアプリケーションのみ / 5: - / 6: インストール済みのアプリケーションのみ</long>
+      </locale>
+
+		
+      <locale name="ko">
+        <short>프로그램 중 일부만을 보기</short>
+        <long>가능한 값: 0 : 모든 이용가능한 프로그램 표시 1 : 자유 소프트웨어만 표시 2 : - 3 : 지원되는 프로그램만 표시 4 : 써드파티 프로그램만 표시 5 : - 6 : 설치된 프로그램만 표시</long>
+      </locale>
+
+		
+      <locale name="lv">
+        <short>Rādīt tikai lietotņu apakškopu</short>
+        <long>Iespējamās vērtības: 0 : rādīt visas pieejamās lietotnes 1 : rādīt tikai brīvās lietotnes 2 : - 3 : rādīt tikai atbalstītās lietotnes 4 : rādīt tikai trešo pušu lietotnes 5 : - 6 : rādīt tikai instalētās lietotnes</long>
+      </locale>
+
+		
+      <locale name="mk">
+        <short>Инсталирај или отстрани програми</short>
+        <long>Можни вредности: 0 : прикажи ги сите достапни апликации 1 : прикажи ги само слободните апликации 2 : - 3 : прикажи ги само поддржаните апликации 4 : прикажи ги само додатните апликации 5 ; - 6 : прикажи ги само инсталираните апликации</long>
+      </locale>
+
+		
+      <locale name="nl">
+        <short>Slechts een deel van de programma&apos;s tonen</short>
+        <long>Mogelijke waardes: 0: alle beschikbare programma&apos;s  1: alleen vrije software  2: -  3: alleen ondersteunde softwareprogramma&apos;s  4: alleen software van derden  5: -  6: alleen geïnstalleerde programma&apos;s</long>
+      </locale>
+
+		
+      <locale name="pl">
+        <short>Wyświetlanie jedynie części aplikacji</short>
+        <long>Możliwe wartości: 0 : wyświetlanie wszystkich dostępnych aplikacji 1 : wyświetlanie tylko wolnych aplikacji 2 : -3 : wyświetlanie tylko wspieranych aplikacji 4 : wyświetlanie tylko aplikacji osób trzecich 5: - 6 : wyświetlanie tylko zainstalowanych aplikacji</long>
+      </locale>
+
+		
+      <locale name="pt">
+        <short>Mostar apenas um sub conjunto de aplicações</short>
+        <long>Valores Possíveis: 0 : mostra todas as aplicações possíveis 1: mostrar apenas as plicações gratuitas 2: -3 : mostrar somente as aplicações suportadas 4: mostrar apenas aplicações com terceiras fontes 5: - 6: Mostrar apenas as aplicações instaladas</long>
+      </locale>
+
+		
+      <locale name="pt_BR">
+        <short>Mostrar apenas subconjunto de aplicações</short>
+        <long>Valores possíveis: 0 : mostra todos os programas disponíveis 1 : mostra apenas os programas livres 2 : - 3 : mostra apenas os programas suportados 4 : mostra apenas os programas de terceiros 5 : - 6 : mostra apenas os programas instalados</long>
+      </locale>
+
+		
+      <locale name="ro">
+        <short>Afişeasă doar un subset al aplicaţiilor</short>
+        <long>Valori posibile 0 : afişează toate aplicaţiile 1 : afişează doar aplicaţiile libere 2 : - 3 : afişează doar aplicaţiile suportate 4 : afişează doar aplicaţiile de la terţe surse 5 : - 6 : afişează doar aplicaţiile instalate</long>
+      </locale>
+
+		
+      <locale name="ru">
+        <short>Показывать выбранное подмножество приложений</short>
+        <long>Возможные варианты: 0 : показывать все доступные приложения 1 : показывать только свободные приложения 2 : - 3 : показывать только поддерживаемые приложения 4 : показывать только приложения третьих сторон 5 : - 6 : показывать только установленные приложения</long>
+      </locale>
+
+		
+      <locale name="sv">
+        <short>Visa endast ett mindre antal program</short>
+        <long>Möjliga värden: 0 : visa alla tillgängliga program 1 : visa endast fria program 2 : - 3 : visa endast program som stöds 4 : visa endast tredjepartsprogram 5 : - 6 : visa endast installerade program</long>
+      </locale>
+
+		
+      <locale name="zh_HK">
+        
+        <long>值可以是： 0 : 顯示所有可安裝應用程式 1 : 顯示所有開放源碼應用程式 2 : - 3 : 顯示受支援的應用程式 4 : 顯示第三方應用程式 5 : - 6 : 顯示已安裝的的應用程式</long>
+      </locale>
+
+		
+      <locale name="zh_TW">
+        <short>只顯示哪一部份應用程式</short>
+        <long>值可以是： 0 : 顯示所有可安裝應用程式 1 : 顯示所有開放源碼應用程式 2 : - 3 : 顯示受支援的應用程式 4 : 顯示第三方應用程式 5 : - 6 : 顯示已安裝的的應用程式</long>
+      </locale>
+    </schema>
+
+    <schema>
+      <key>/schemas/apps/gnome-app-install/components_seen</key>
+      <applyto>/apps/gnome-app-install/components_seen</applyto>
+      <owner>gnome-app-install</owner>
+      <type>list</type>
+      <list_type>string</list_type>
+      <default>[]</default>
+      <locale name="C">
+	<short>
+          Components that have been confirmed to install applications from
+	</short>
+      </locale>
+
+      <locale name="ca">
+	<short>Components que han estat habilitats per a instaŀlar aplicacions</short>
+      </locale>
+
+      <locale name="cs">
+	<short>Zdroje, u kterých byla potvrzena možnost instalovat aplikace</short>
+      </locale>
+
+      <locale name="en_GB">
+	<short>Components that have been confirmed to install applications from</short>
+      </locale>
+
+      <locale name="es">
+	<short>Componentes que han sido confirmados para instalar aplicaciones desde ellos</short>
+      </locale>
+
+      <locale name="eu">
+	<short>Bertatik aplikazioak instalatzeko onartu diren osagaiak</short>
+      </locale>
+
+      <locale name="fi">
+	<short>Komponentit jotka on vahvistettu sovellusten asennuslähteiksi</short>
+      </locale>
+
+      <locale name="fr">
+	<short>Dépôts validés, à partir desquels les applications peuvent être installées</short>
+      </locale>
+
+      <locale name="hu">
+	<short>Alkalmazástelepítés forrásaként jóváhagyott komponensek</short>
+      </locale>
+
+      <locale name="id">
+	<short>Komponen yang telah dikonfirmasikan untuk memasang aplikasi darinya</short>
+      </locale>
+
+      <locale name="it">
+	<short>Componenti confermati da cui installare applicazioni</short>
+      </locale>
+
+      <locale name="ko">
+	<short>프로그램을 설치하도록 허용된 요소</short>
+      </locale>
+
+      <locale name="lv">
+	<short>Komponenti, no kurām ir atļauta lietotņu instalēšana</short>
+      </locale>
+
+      <locale name="nl">
+	<short>Componenten die geactiveerd zijn om programma&apos;s vanaf te instaleren</short>
+      </locale>
+
+      <locale name="pl">
+	<short>Komponenty z których potwierdzono chęć instalowania aplikacji</short>
+      </locale>
+
+      <locale name="pt">
+	<short>Componentes cujas capacidade de instalar aplicações estão confirmadas</short>
+      </locale>
+
+      <locale name="pt_BR">
+	<short>Componentes que tem sido confirmado para instalar aplicações de</short>
+      </locale>
+
+      <locale name="ru">
+	<short>Компоненты, из которых разрешена установка приложений</short>
+      </locale>
+
+      <locale name="sv">
+	<short>Komponenter som har bekräftats att installera program från</short>
+      </locale>
+
+      <locale name="zh_HK">
+	<short>已確認要安裝應用程式的來源元件</short>
+      </locale>
+    </schema>
+
+    <schema>
+      <key>/schemas/apps/gnome-app-install/cache_dialog_time</key>
+      <applyto>/apps/gnome-app-install/cache_dialog_time</applyto>
+      <owner>gnome-app-install</owner>
+      <type>int</type>
+      <default>0</default>
+		
+      <locale name="C">
+        <short>Timestamp of the last cache refresh run</short>
+      </locale>
+
+		
+      <locale name="ca">
+        <short>Marca horària de l&apos;últim refresc de la memòria cau</short>
+      </locale>
+
+		
+      <locale name="de">
+        <short>Zeitpunkt der letzten Aktualisierung des Zwischenspeichers</short>
+      </locale>
+
+		
+      <locale name="en_GB">
+        <short>Timestamp of the last cache refresh run</short>
+      </locale>
+
+		
+      <locale name="es">
+        <short>Marca de tiempo de la ultima ejecución de refresco de la cache</short>
+      </locale>
+
+		
+      <locale name="eu">
+        <short>Cache-a freskatu zen azkeneko aldiko denbora-marka</short>
+      </locale>
+
+		
+      <locale name="fi">
+        <short>Viimeisimmän välimuistivirkistyksen aikaleima</short>
+      </locale>
+
+		
+      <locale name="fr">
+        <short>Horodatage du dernier rafraîchissement du cache</short>
+      </locale>
+
+		
+      <locale name="hu">
+        <short>A gyorsítótár utolsó frissítéséhez tartozó időbélyegző</short>
+      </locale>
+
+		
+      <locale name="id">
+        <short>Tandawaktu dari penyegar ransum terakhir berjalan</short>
+      </locale>
+
+		
+      <locale name="it">
+        <short>Marca temporale dell&apos;ultimo aggiornamento della cache</short>
+      </locale>
+
+		
+      <locale name="ja">
+        <short>最後にキャッシュが更新されたタイムスタンプ</short>
+      </locale>
+
+		
+      <locale name="ko">
+        <short>마지막 캐시 갱신이 실행된 시각</short>
+      </locale>
+
+		
+      <locale name="mk">
+        <short>Печат со времето од извршувањето на последното освежување на кешот</short>
+      </locale>
+
+		
+      <locale name="nl">
+        <short>Datum-tijdstip wanneer de cache voor het laatst is bijgewerkt</short>
+      </locale>
+
+		
+      <locale name="pl">
+        <short>Czas ostatniego odświeżenia bufora</short>
+      </locale>
+
+		
+      <locale name="pt">
+        <short>Timestamp da última actualização da cache</short>
+      </locale>
+
+		
+      <locale name="pt_BR">
+        <short>Marca de hora da última atualização de cache</short>
+      </locale>
+
+		
+      <locale name="ro">
+        <short>Data ultimei reîmprospătări a informaţiilor stocate</short>
+      </locale>
+
+		
+      <locale name="ru">
+        <short>Время запуска последнего обновления кэша</short>
+      </locale>
+
+		
+      <locale name="sv">
+        <short>Tidsstämpel för senaste cacheuppdateringen</short>
+      </locale>
+
+		
+      <locale name="zh_HK">
+        <short>上次重新載入快取的時間</short>
+      </locale>
+
+		
+      <locale name="zh_TW">
+        <short>上次重新載入快取的時間</short>
+      </locale>
+    </schema>
+
+    <schema>
+      <key>/schemas/apps/gnome-app-install/mime-whitelist-components</key>
+      <applyto>/apps/gnome-app-install/mime-whitelist-components</applyto>
+      <owner>gnome-app-install</owner>
+      <type>list</type>
+      <list_type>string</list_type>
+      <default>[main]</default>
+		
+      <locale name="C">
+        <short>Suggest application for MIME-type: approved components</short>
+        <long>
+          When the user asks to open a file but no supported
+	  application is present, the system will offer to install
+	  applications in the components listed here, as well as
+          the individually whitelisted applications.
+        </long>
+      </locale>
+
+		
+      <locale name="ca">
+        <short>Suggereix una aplicació per al tipus MIME: components aprovats</short>
+        <long>Quan l&apos;usuari intenta obrir un tipus d&apos;arxiu per al qual no hi ha cap aplicació adient instaŀlada, se li oferirà la instaŀlació d&apos;aplicacions tant dels components llistats aquí com d&apos;una selecció d&apos;altres aplicacions aprovades.</long>
+      </locale>
+
+		
+      <locale name="de">
+        
+        <long>Falls der Benutzer eine Datei öffnet, für von keiner installierten Anwendung unterstützt wird, wird die Möglichkeit angeboten entsprechende Anwendungen aus den unten aufgeführten Komponenten zu installieren</long>
+      </locale>
+
+		
+      <locale name="en_GB">
+        <short>Suggest application for MIME-type: approved components</short>
+        <long>When the user asks to open a file but no supported application is present, the system will offer to install applications in the components listed here, as well as the individually whitelisted applications.</long>
+      </locale>
+
+		
+      <locale name="es">
+        <short>Proponer la aplicación para tipo-MIME: componentes aprobados</short>
+        <long>Cuando el usuario intenta abrir un archivo pero no se encuentra una aplicación asociada, el sistema ofrecerá instalar las aplicaciones en los componentes aquí listados, como también las aplicaciones preferidas individualmente.</long>
+      </locale>
+
+		
+      <locale name="eu">
+        <short>Aplikazioa proposatu MIME motarako: osagai onartuak</short>
+        <long>Erabiltzailea fitxategi bat irekitzen saiatzen bada, eta ez badago halako fitxategirik irekitzeko aplikazio egokirik instalatuta, zerrenda honetako aplikazioak edo banan-baban onartutako aplikazioak instalatzea eskainiko dio sistemak erabiltzaileari.</long>
+      </locale>
+
+		
+      <locale name="fi">
+        <short>suosittele sovelluste MIME-tyypille: hyväksytyt komponentit</short>
+        <long>Kun käyttäjä pyytää tiedoston avaamista, mutta tuettua sovellusta ei ole asennettuna, järjestelmä tarjoaa asennettavaa sovellusta näistä komponenteista sekä erityisestä hyväksyttyjen sovellusten (whitelist) luettelosta.</long>
+      </locale>
+
+		
+      <locale name="fr">
+        <short>Suggérer une application pour le type MIME : dépôts approuvés</short>
+        <long>Lorsque l&apos;utilisateur demande l&apos;ouverture d&apos;un fichier pour lequel aucune application le prenant en charge n&apos;est présente, le système proposera d&apos;installer les applications se trouvant dans cette liste de dépôts, ainsi que celles ayant été placées individuellement en liste blanche.</long>
+      </locale>
+
+		
+      <locale name="hu">
+        <short>Alkalmazásjavaslat a MIME típushoz: jóváhagyott komponensek</short>
+        <long>Ha a felhasználó meg szeretne nyitni egy fájlt, de nincs telepítve támogatott alkalmazás, a rendszer az itt felsorolt komponensekben szereplő vagy a fehérlistára egyedileg felvett alkalmazások telepítését ajánlja fel.</long>
+      </locale>
+
+		
+      <locale name="id">
+        <short>Aplikasi yang disarankan untuk tipe-MIME: komponen yang disetujui</short>
+        <long>Ketika pengguna meminta untuk membuka sebuah berkas namun tidak ada aplikasi pendukung, sistem akan menawarkan untuk menginstal aplikasi-aplikasi dalam komponen-koponen yang telah terdaftar di sini, sebagaimana aplikasi-aplikasi terdaftar secara individu.</long>
+      </locale>
+
+		
+      <locale name="it">
+        <short>Suggerisce le applicazioni per i tipi MIME: componenti approvati</short>
+        <long>Quando l&apos;utente cerca di aprire un file per il quale non è disponibile alcuna applicazione che lo supporti, il sistema chiederà di installare delle applicazioni dai componenti elencati e tra le applicazioni approvate.</long>
+      </locale>
+
+		
+      <locale name="ja">
+        <short>MIMEタイプに適合するアプリケーション候補: 承認されたコンポーネント</short>
+        <long>ユーザーがサポートされたアプリケーションでのみ開けるファイルを開こうとした場合、システムはここにリストされたアプリケーションに限ってインストール提案を行います。これはアプリケーションの個別のホワイトリストでもあります。</long>
+      </locale>
+
+		
+      <locale name="ko">
+        <short>MIME 형식에 대해 제안하는 프로그램: 허용된 요소</short>
+        <long>사용자가 파일을 열려고 할 때 그 파일을 지원하는 프로그램이 없는 경우, 시스템은 이 목록에 포함된 요소 및 개별적으로 작성한 목록 내의 프로그램들을 설치하도록 제안할 것입니다.</long>
+      </locale>
+
+		
+      <locale name="lv">
+        <short>Piedāvāt lietotni priekš MIME-tipa: apstiprinātie komponenti</short>
+        
+      </locale>
+
+		
+      <locale name="mk">
+        <short>Препорачај апликација за MIME типот: одобрени компоненти</short>
+        <long>Кога корисникот прашува да отвори датотека но кога нема поддржана апликација, системот ќе понуди да инсталира апликации во компонентите кои се излистани овде, како и поединечно одобрените апликации.</long>
+      </locale>
+
+		
+      <locale name="nl">
+        <short>Programma&apos;s aanraden voor MIME-type: goedgekeurde componenten</short>
+        <long>Wanneer de gebruiker een bestand wil openen maar er is geen geschikt programma voor, zal het systeem aanbieden om programma&apos;s te installeren uit de hier opgesomde componenten alsmede de afzonderlijke programma&apos;s die op een witte lijst staan.</long>
+      </locale>
+
+		
+      <locale name="pl">
+        <short>Zasugeruj aplikację dla typu MIME: zatwierdzone komponenty</short>
+        <long>Kiedy użytkownik poprosi o otworzenie pliku, którego nie obsługuje żadna zainstalowana aplikacja, system zaoferuje instalację aplikacji w wymienionych komponentach, a także aplikacji znajdujących się na białej liście.</long>
+      </locale>
+
+		
+      <locale name="pt">
+        <short>Aplicação suferida para tipos MIME: componentes aprovados</short>
+        <long>Quando o utilizador deseja abrir um ficheiro cujo programa correspondente não se encontra instalado, o sistema fornece a hipotese de instalar aplicações em componentes aqui listados, assim como aplicações individuais</long>
+      </locale>
+
+		
+      <locale name="pt_BR">
+        <short>Aplicativo sugerido para MIME-type: componentes aprovados</short>
+        <long>Quando um usuário requisitar a abertura de um arquivo mas o programa suportado não está instalado, o sistema irá oferecer para instalar programas nos itens listados aqui, bem como os programas autorizados individualmente na lista.</long>
+      </locale>
+
+		
+      <locale name="ro">
+        <short>Sugeraţi apliacţia pentru tipul MIME: compenente aprobate</short>
+        <long>În momentul în care utilizatorul încearcă să deschidă un fişier pentru care nu există instalată o aplicaţie corespunzătoare, sistemul va întreba utilizatorul dacă doreşte să instaleze aplicaţii din componentele de aici, precum şi dintre aplicaţiile activate individual.</long>
+      </locale>
+
+		
+      <locale name="ru">
+        <short>Предлагать приложение для типа MIME: одобренные компоненты</short>
+        <long>При попытке открытия файла, для которого нет подходящего приложения, система предложит установить компоненты из этого списка (добавив также приложения из индивидуального белого списка)</long>
+      </locale>
+
+		
+      <locale name="sv">
+        <short>Föreslå program för MIME-typ: godkända komponenter</short>
+        <long>När användaren öppnar en fil men inget program finns tillgängligt kommer systemet att erbjuda att installera programvaror i komponenterna som listas här, såväl som individuellt vitlistade program.</long>
+      </locale>
+
+		
+      <locale name="zh_HK">
+        <short>無應用程式支援的 MIME 類型時建議應用程式來自的元件</short>
+        <long>當使用者開啟一個檔案但沒有支援檔案類型的應用程式，系統會列出在此元件中支援檔案類型的應用程式和個別特選的應用程式供使用者安裝。</long>
+      </locale>
+
+		
+      <locale name="zh_TW">
+        <short>無應用程式支援的 MIME 類型時建議應用程式來自的元件</short>
+        <long>當使用者開啟一個檔案但沒有支援檔案類型的應用程式，系統會列出在此元件中支援檔案類型的應用程式和個別特選的應用程式供使用者安裝。</long>
+      </locale>
+    </schema>
+
+    <schema>
+      <key>/schemas/apps/gnome-app-install/search-timeout</key>
+      <applyto>/apps/gnome-app-install/search-timeout</applyto>
+      <owner>gnome-app-install</owner>
+      <type>int</type>
+      <default>1000</default>
+		
+      <locale name="C">
+        <short>Timeout for interactive search</short>
+        <long>
+	 Timeout from typing in the search entry until a search is 
+	 triggered (in milliseconds).
+        </long>
+      </locale>
+
+		
+      <locale name="ca">
+        <short>Temps d&apos;espera per a la cerca interactiva</short>
+        <long>Temps d&apos;espera des de l&apos;últim tecleig al camp de cerca fins que comença la cerca (en miŀlisegons).</long>
+      </locale>
+
+		
+      <locale name="en_GB">
+        <short>Timeout for interactive search</short>
+        <long>Timeout from typing in the search entry until a search is triggered (in milliseconds).</long>
+      </locale>
+
+		
+      <locale name="es">
+        <short>Tiempo máximo para una búsqueda interactiva</short>
+        <long>Tiempo máximo para escribir en el campo de búsqueda hasta que una búsqueda es procesada (en milisegundos).</long>
+      </locale>
+
+		
+      <locale name="eu">
+        <short>Bilaketa interaktiborako atzera-kontua</short>
+        <long>Bilaketarako sarrera idazten denetik bilaketa abiarazi arteko atzera-kontua (milisegundotan).</long>
+      </locale>
+
+		
+      <locale name="fi">
+        <short>Aikakatkaisu interaktiivisessa haussa</short>
+        <long>Hakukenttään kirjoitettaessa aika, jonka jälkeen hakua aletaan suorittaa (millisekunneissa)</long>
+      </locale>
+
+		
+      <locale name="fr">
+        <short>Délai d&apos;expiration pour la recherche interactive</short>
+        <long>Délai d&apos;expiration entre la saisie dans le champ de recherche et le lancement effectif de la recherche (en millisecondes).</long>
+      </locale>
+
+		
+      <locale name="hu">
+        <short>időtúllépés az interaktív keresésnél</short>
+        <long>Időkorlát a keresőmezőbe gépelés után, amely leteltével beindul a keresés (ezredmásodperc).</long>
+      </locale>
+
+		
+      <locale name="id">
+        <short>Tenggang waktu pencarian interaktif</short>
+        <long>Tenggang waktu dari penulisan dalam masukan pencarian hingga pencarian dimulai (milidetik).</long>
+      </locale>
+
+		
+      <locale name="it">
+        <short>Timeout per la ricerca interattiva</short>
+        <long>Timeout per la digitazione nella casella di ricerca prima di eseguire la ricerca (in millisecondi).</long>
+      </locale>
+
+		
+      <locale name="ja">
+        <short>インタラクティブサーチのタイムアウト</short>
+        <long>キー入力をしてから、検索が開始されるまでのタイムアウト時間(ミリ秒)</long>
+      </locale>
+
+		
+      <locale name="ko">
+        <short>인터랙티브 검색에 대한 시간제한</short>
+        <long>검색 항목을 입력할 때부터 검색이 시작되기까지의 시간 (밀리초 단위)</long>
+      </locale>
+
+		
+      <locale name="lv">
+        <short>Interaktīvās meklēšanas noildze</short>
+        <long>Noildze starp meklējamā pieprasījuma ievadi un meklēšanas uzsākšanu (milisekundēs)</long>
+      </locale>
+
+		
+      <locale name="mk">
+        <short>Преостанато време за интерактивно пребарување</short>
+        <long>Одбројување од куцањето во влезот за пребарување додека не е активирано пребарувањето (во милисекунди).</long>
+      </locale>
+
+		
+      <locale name="nl">
+        <short>Tijdslimiet voor interactieve zoekopdrachten</short>
+        <long>Tijdslimiet voordat het typen in het zoekveld een zoekopdracht activeert (in milliseconden).</long>
+      </locale>
+
+		
+      <locale name="pl">
+        <short>Czas do uruchomienia interaktywnego wyszukiwania</short>
+        <long>Czas który upływa od wprowadzenia znaków w polu wyszukiwania do uruchomienia wyszukiwania (w milisekundach)</long>
+      </locale>
+
+		
+      <locale name="pt">
+        <short>Excedido tempo limite para a pesquisa interactiva.</short>
+        <long>Excedido tempo limite desde a inserção no utilitário de pesquisa até a pesquisa ser iniciada (em milisegundos).</long>
+      </locale>
+
+		
+      <locale name="pt_BR">
+        <short>Tempo esgotado para apesquisa interativa</short>
+        <long>Tempo esgotado para digitar na caixa de busca até uma busca ser requisitada (em milisegundos)</long>
+      </locale>
+
+		
+      <locale name="ro">
+        <short>Întarzierea pentru căutarea interactivă</short>
+        
+      </locale>
+
+		
+      <locale name="ru">
+        <short>Время задержки интерактивного поиска</short>
+        <long>Время с момента набора поискового запроса до активации поиска (в миллисекундах)</long>
+      </locale>
+
+		
+      <locale name="sv">
+        <short>Tidsgräns för interaktiv sökning</short>
+        <long>Tidsgräns från inmatning i sökfältet tills att sökningen startar (i millisekunder)</long>
+      </locale>
+
+		
+      <locale name="zh_HK">
+        <short>互動搜尋的超時時間</short>
+        <long>當在搜尋欄開始輸入時，多少微秒後才開始搜尋。</long>
+      </locale>
+
+		
+      <locale name="zh_TW">
+        <short>互動搜尋的超時時間</short>
+        <long>當在搜尋欄開始輸入時，多少微秒後才開始搜尋。</long>
+      </locale>
+    </schema>
+
+    <schema>
+      <key>/schemas/apps/gnome-app-install/state/window_maximized</key>
+      <applyto>/apps/gnome-app-install/state/window_maximized</applyto>
+      <owner>gnome-app-install</owner>
+      <type>bool</type>
+      <default>False</default>
+      <locale name="C">
+	<short>
+          Main window maximization state
+        </short>
+	<long>
+	  If true, the main window is maximized.
+	</long>
+      </locale>
+
+      <locale name="ca">
+	<short>Estat de maximització de la finestra principal</short>
+	<long>Si és cert, la finestra principal està maximitzada.</long>
+      </locale>
+
+      <locale name="de">
+	<short>Maximierung des Hauptfensters</short>
+	<long>Falls true, wird das Hauptfenster maximiert.</long>
+      </locale>
+
+      <locale name="en_GB">
+	<short>Main window maximization state</short>
+	<long>If true, the main window is maximised.</long>
+      </locale>
+
+      <locale name="es">
+	<short>Estado de maximización de la ventana principal</short>
+	<long>Si es cierto, la ventana principal se maximiza</long>
+      </locale>
+
+      <locale name="eu">
+	<short>Leiho nagusiaren maximizazio-egoera.</short>
+	<long>Egia bada, leiho nagusia maximizatuko da.</long>
+      </locale>
+
+      <locale name="fi">
+	<short>Pääikkunan kokoruututila</short>
+	<long>Jos tosi, pääikkuna on suurennettu koko ruudun kokoiseksi</long>
+      </locale>
+
+      <locale name="fr">
+	<short>État (maximisé/réduit) de la fenêtre principale</short>
+	<long>Dans ce cas la fenêtre est maximisée.</long>
+      </locale>
+
+      <locale name="hu">
+	<short>Főablak teljes méretű állapota</short>
+	<long>Ha ez igazra van állítva, akkor a főablak ablakmérete maximális.</long>
+      </locale>
+
+      <locale name="id">
+	<short>Keadaan maksimal jendela utama</short>
+	<long>Jika benar, jendela utama dimaksimalkan.</long>
+      </locale>
+
+      <locale name="it">
+	<short>Stato di massimizzazione della finestra principale</short>
+	<long>Se impostato a vero, la finestra principale è massimizzata.</long>
+      </locale>
+
+      <locale name="ja">
+	<short>メインウインドウの最大化状態</short>
+	<long>もし真なら、メインウインドウは最大化されます。</long>
+      </locale>
+
+      <locale name="ka">
+	<short>მტავარი ფანჯრის მაქსიმიზაციის მდგომარეობა</short>
+	
+      </locale>
+
+      <locale name="ko">
+	<short>메인 창 최대화 상태</short>
+	<long>참이면, 메인 창이 최대화됩니다.</long>
+      </locale>
+
+      <locale name="lv">
+	<short>Galvenā loga maksimizēšanas stāvoklis</short>
+	<long>Ja patiess, galvenais logs tiks maksimizēts</long>
+      </locale>
+
+      <locale name="mk">
+	<short>Состојба на максимизирањето на главниот прозорец</short>
+	<long>Ако точно, главниот прозорец е максимизиран.</long>
+      </locale>
+
+      <locale name="nl">
+	<short>Maximalisatiestatus van het hoofdvenster</short>
+	<long>Indien aangevinkt wordt het hoofvenster gemaximaliseerd.</long>
+      </locale>
+
+      <locale name="pl">
+	<short>Stan maksymalizacji głównego okna</short>
+	<long>Jeśli ustawione na &quot;true&quot;, główne okno jest zmaksymalizowane.</long>
+      </locale>
+
+      <locale name="pt">
+	<short>Estado de maximização da janela principal</short>
+	<long>Se for verdade, a janela principal é maximizada</long>
+      </locale>
+
+      <locale name="pt_BR">
+	<short>Estado de maximização da janela principal</short>
+	<long>Se verdadeiro, a janela principal está maximizada.</long>
+      </locale>
+
+      <locale name="ro">
+	<short>Stare de maximizarea a ferestrei principale</short>
+	<long>Dacă fereastră prinicpală este maximizată</long>
+      </locale>
+
+      <locale name="ru">
+	<short>Состояние развёрнутости главного окна</short>
+	<long>Если этот ключ установлен, главное окно будет развёрнуто.</long>
+      </locale>
+
+      <locale name="sv">
+	<short>Maximeringstillstånd för huvudfönster</short>
+	<long>Om sant är huvudfönstret maximerat.</long>
+      </locale>
+
+      <locale name="zh_CN">
+	<short>主窗口最大化状态</short>
+	<long>如果为真，主窗口将会最大化。</long>
+      </locale>
+
+      <locale name="zh_HK">
+	<short>主視窗最大化狀態</short>
+	<long>如果值是 true，主視窗會被最大化。</long>
+      </locale>
+
+      <locale name="zh_TW">
+	<short>主視窗最大化狀態</short>
+	<long>如果值是 true，主視窗會被最大化。</long>
+      </locale>
+    </schema>
+
+    <schema>
+      <key>/schemas/apps/gnome-app-install/state/window_height</key>
+      <applyto>/apps/gnome-app-install/state/window_height</applyto>
+      <owner>gnome-app-install</owner>
+      <type>int</type>
+      <default>0</default>
+      <locale name="C">
+	<short>
+          Main window height
+        </short>
+      </locale>
+
+      <locale name="ca">
+	<short>Alçada de la finestra principal</short>
+      </locale>
+
+      <locale name="de">
+	<short>Höhe des Hauptfensters</short>
+      </locale>
+
+      <locale name="en_GB">
+	<short>Main window height</short>
+      </locale>
+
+      <locale name="es">
+	<short>Alto de la ventana principal</short>
+      </locale>
+
+      <locale name="eu">
+	<short>Leiho nagusiaren altuera</short>
+      </locale>
+
+      <locale name="fi">
+	<short>Pääikkunan korkeus</short>
+      </locale>
+
+      <locale name="fr">
+	<short>Hauteur de la fenêtre principale</short>
+      </locale>
+
+      <locale name="he">
+	<short>גובה החלון הראשי</short>
+      </locale>
+
+      <locale name="hu">
+	<short>Főablak magassága</short>
+      </locale>
+
+      <locale name="id">
+	<short>Tinggi jendela utama</short>
+      </locale>
+
+      <locale name="it">
+	<short>Altezza finestra principale</short>
+      </locale>
+
+      <locale name="ja">
+	<short>メインウインドウの高さ</short>
+      </locale>
+
+      <locale name="ka">
+	<short>მთავარი ფანჯრის სიმაღლე</short>
+      </locale>
+
+      <locale name="ko">
+	<short>메인 창 높이</short>
+      </locale>
+
+      <locale name="lv">
+	<short>Galvenā loga augstums</short>
+      </locale>
+
+      <locale name="mk">
+	<short>Висина на главниот прозорец</short>
+      </locale>
+
+      <locale name="nl">
+	<short>Hoogte van het hoofdvenster</short>
+      </locale>
+
+      <locale name="pl">
+	<short>Wysokość głównego okna</short>
+      </locale>
+
+      <locale name="pt">
+	<short>Altura da janela principal</short>
+      </locale>
+
+      <locale name="pt_BR">
+	<short>Altura da janela principal</short>
+      </locale>
+
+      <locale name="ro">
+	<short>Înalţimea ferestrei principale</short>
+      </locale>
+
+      <locale name="ru">
+	<short>Высота главного окна</short>
+      </locale>
+
+      <locale name="sv">
+	<short>Höjd på huvudfönster</short>
+      </locale>
+
+      <locale name="zh_CN">
+	<short>主窗口高度</short>
+      </locale>
+
+      <locale name="zh_HK">
+	<short>主視窗高度</short>
+      </locale>
+
+      <locale name="zh_TW">
+	<short>主視窗高度</short>
+      </locale>
+    </schema>
+
+    <schema>
+      <key>/schemas/apps/gnome-app-install/state/window_width</key>
+      <applyto>/apps/gnome-app-install/state/window_width</applyto>
+      <owner>gnome-app-install</owner>
+      <type>int</type>
+      <default>0</default>
+      <locale name="C">
+	<short>
+          Main window width
+        </short>
+      </locale>
+
+      <locale name="ca">
+	<short>Amplada de la finestra principal</short>
+      </locale>
+
+      <locale name="de">
+	<short>Breite des Hauptfensters</short>
+      </locale>
+
+      <locale name="en_GB">
+	<short>Main window width</short>
+      </locale>
+
+      <locale name="es">
+	<short>Ancho de la ventana principal</short>
+      </locale>
+
+      <locale name="eu">
+	<short>Leiho nagusiaren zabalera</short>
+      </locale>
+
+      <locale name="fi">
+	<short>Pääikkunan leveys</short>
+      </locale>
+
+      <locale name="fr">
+	<short>Largeur de la fenêtre principale</short>
+      </locale>
+
+      <locale name="he">
+	<short>רוחב חלון ראשי</short>
+      </locale>
+
+      <locale name="hu">
+	<short>Főablak szélessége</short>
+      </locale>
+
+      <locale name="id">
+	<short>Lebar jendela utama</short>
+      </locale>
+
+      <locale name="it">
+	<short>Larghezza finestra principale</short>
+      </locale>
+
+      <locale name="ja">
+	<short>メインウインドウの横幅</short>
+      </locale>
+
+      <locale name="ka">
+	<short>მთავარი ფანჯრის სიგანე</short>
+      </locale>
+
+      <locale name="ko">
+	<short>메인 창 너비</short>
+      </locale>
+
+      <locale name="lv">
+	<short>Galvenā loga platums</short>
+      </locale>
+
+      <locale name="mk">
+	<short>Ширина на главниот прозорец</short>
+      </locale>
+
+      <locale name="nl">
+	<short>Breedte van het hoofdvenster</short>
+      </locale>
+
+      <locale name="pl">
+	<short>Szerokość głównego okna</short>
+      </locale>
+
+      <locale name="pt">
+	<short>Largura da janela principal</short>
+      </locale>
+
+      <locale name="pt_BR">
+	<short>Largura da janela principal</short>
+      </locale>
+
+      <locale name="ro">
+	<short>Lăţimea ferestrei principale</short>
+      </locale>
+
+      <locale name="ru">
+	<short>Ширина главного окна</short>
+      </locale>
+
+      <locale name="sv">
+	<short>Bredd på huvudfönster</short>
+      </locale>
+
+      <locale name="zh_CN">
+	<short>主窗口高度</short>
+      </locale>
+
+      <locale name="zh_HK">
+	<short>主視窗寬度</short>
+      </locale>
+
+      <locale name="zh_TW">
+	<short>主視窗寬度</short>
+      </locale>
+    </schema>
+
+  </schemalist>
+</gconfschemafile>
+

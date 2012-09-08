@@ -1,0 +1,228 @@
+Source: linux-meta
+Section: devel
+Priority: optional
+Maintainer: Rubén Rodríguez <ruben@trisquel.info>
+Standards-Version: 3.6.1
+Build-Depends: dpkg (>= 1.13.19), debhelper (>= 3), gawk
+
+Package: linux
+Architecture: i386 amd64 sparc ia64 lpia
+Section: metapackages
+Priority: optional
+Depends: linux-image (= ${binary:Version})
+Description: Generic complete Linux-libre kernel.
+ This package will always depend on the latest generic complete Linux-libre kernel
+ available.
+
+Package: linux-image
+Architecture: i386 amd64 sparc ia64 lpia
+Section: metapackages
+Priority: optional
+Depends: linux-image-${generic-depends} (= ${binary:Version})
+Description: Generic Linux-libre kernel image.
+ This package will always depend on the latest generic Linux-libre kernel image
+ available.
+
+Package: linux-source
+Architecture: all
+Section: devel
+Priority: optional
+Depends: linux-source-${kernel-version}
+Description: Linux-libre kernel source with Ubuntu patches
+ This package will always depend on the latest Linux-libre kernel source code
+ available. The Ubuntu patches have been applied.
+
+Package: linux-doc
+Architecture: all
+Section: doc
+Priority: optional
+Depends: linux-doc-${kernel-version}
+Description: Linux-libre kernel documentation
+ This package will always depend on the latest Linux-libre kernel documentation
+ available.
+
+Package: linux-headers-generic
+Architecture: i386 amd64
+Section: devel
+Priority: optional
+Depends: linux-headers-${kernel-abi-version}-generic
+Description: Generic Linux-libre kernel headers
+ This package will always depend on the latest generic kernel headers
+ available.
+
+Package: linux-image-generic
+Architecture: i386 amd64
+Section: metapackages
+Priority: optional
+Depends: linux-image-${kernel-abi-version}-generic, linux-ubuntu-modules-${kernel-abi-version}-generic
+Description: Generic Linux-libre kernel image
+ This package will always depend on the latest generic kernel image
+ available.
+
+Package: linux-generic
+Architecture: i386 amd64
+Section: metapackages
+Priority: optional
+Depends: linux-image-generic (= ${binary:Version})
+Description: Complete Generic Linux-libre kernel
+ This package will always depend on the latest complete generic Linux-libre kernel
+ available.
+
+Package: linux-image-debug-generic
+Architecture: amd64 i386
+Section: devel
+Depends: linux-image-debug-${kernel-abi-version}-generic
+Description: Linux-libre kernel debug image for generic kernel image
+ This package will always depend on the latest generic kernel debug image.
+
+Package: linux-headers-386
+Architecture: i386
+Section: devel
+Priority: optional
+Depends: linux-headers-${kernel-abi-version}-386
+Description: Linux-libre kernel headers on 386
+ This package will always depend on the latest kernel headers available
+ for 386.
+
+Package: linux-image-386
+Architecture: i386
+Section: metapackages
+Priority: optional
+Depends: linux-image-${kernel-abi-version}-386, linux-ubuntu-modules-${kernel-abi-version}-386
+Description: Linux-libre kernel image on 386.
+ This package will always depend on the latest kernel image available
+ for 386.
+
+Package: linux-386
+Architecture: i386
+Section: metapackages
+Priority: optional
+Depends: linux-image-386 (= ${binary:Version})
+Description: Complete Linux-libre kernel on 386.
+ This package will always depend on the latest complete Linux-libre kernel available
+ for 386.
+
+Package: linux-image-debug-386
+Architecture: i386
+Section: devel
+Depends: linux-image-debug-${kernel-abi-version}-386
+Description: Linux-libre kernel debug image for 386 kernel image
+ This package will always depend on the latest 386 kernel debug image.
+
+Package: linux-headers-rt
+Architecture: i386 amd64
+Section: devel
+Priority: optional
+Depends: linux-headers-${kernel-abi-version}-rt
+Description: rt Linux-libre kernel headers
+ This package will always depend on the latest rt kernel headers
+ available.
+
+Package: linux-image-rt
+Architecture: i386 amd64
+Section: metapackages
+Priority: optional
+Depends: linux-image-${kernel-abi-version}-rt, linux-ubuntu-modules-${kernel-abi-version}-rt
+Description: Real time Linux-libre kernel image
+ This package will always depend on the latest rt kernel image
+ available.
+
+Package: linux-rt
+Architecture: i386 amd64
+Section: metapackages
+Priority: optional
+Depends: linux-image-rt (= ${binary:Version})
+Description: Complete rt Linux-libre kernel
+ This package will always depend on the latest complete rt Linux-libre kernel
+ available.
+
+Package: linux-headers-server
+Architecture: i386 amd64
+Section: devel
+Priority: optional
+Depends: linux-headers-${kernel-abi-version}-server
+Description: Linux-libre kernel headers on Server Equipment.
+ This package will always depend on the latest kernel headers available
+ for Server Equipment.
+
+Package: linux-image-server
+Architecture: i386 amd64
+Section: metapackages
+Priority: optional
+Depends: linux-image-${kernel-abi-version}-server, linux-ubuntu-modules-${kernel-abi-version}-server
+Description: Linux-libre kernel image on Server Equipment.
+ This package will always depend on the latest kernel image available
+ for Server Equipment.
+
+Package: linux-server
+Architecture: i386 amd64
+Section: metapackages
+Priority: optional
+Depends: linux-image-server (= ${binary:Version})
+Description: Complete Linux-libre kernel on Server Equipment.
+ This package will always depend on the latest complete Linux-libre kernel available
+ for Server Equipment.
+
+Package: linux-image-debug-server
+Architecture: amd64 i386
+Section: devel
+Depends: linux-image-debug-${kernel-abi-version}-server
+Description: Linux-libre kernel debug image for server kernel image
+ This package will always depend on the latest server kernel debug image.
+
+Package: linux-headers-virtual
+Architecture: i386
+Section: devel
+Priority: optional
+Depends: linux-headers-${kernel-abi-version}-virtual
+Description: Linux-libre kernel headers for the virtual flavour
+ This package will always depend on the latest kernel headers available
+ for the virtual flavour.
+
+Package: linux-image-virtual
+Architecture: i386
+Section: metapackages
+Priority: optional
+Depends: linux-image-${kernel-abi-version}-virtual, linux-ubuntu-modules-${kernel-abi-version}-virtual
+Description: Description: Linux-libre kernel image geared towards virtualised hardware
+ This package will always depend on the latest kernel image available
+ for virtualised hardware. (You can also use the generic kernel image on
+ such systems.)
+
+Package: linux-virtual
+Architecture: i386
+Section: metapackages
+Priority: optional
+Depends: linux-image-virtual (= ${binary:Version})
+Description: Complete Linux-libre kernel geared towards virtualised hardware
+ This package will always depend on the latest complete Linux-libre kernel
+ available for virtualised hardware. (You can also use the generic kernel on
+ such systems.)
+
+Package: linux-headers-xen
+Architecture: i386 amd64
+Section: devel
+Priority: optional
+Depends: linux-headers-${kernel-abi-version}-xen
+Description: xen Linux-libre kernel headers
+ This package will always depend on the latest xen kernel headers
+ available.
+
+Package: linux-image-xen
+Architecture: i386 amd64
+Section: metapackages
+Priority: optional
+Depends: linux-image-${kernel-abi-version}-xen, linux-ubuntu-modules-${kernel-abi-version}-xen
+Description: Real time Linux-libre kernel image
+ This package will always depend on the latest xen kernel image
+ available.
+
+Package: linux-xen
+Architecture: i386 amd64
+Section: metapackages
+Priority: optional
+Depends: linux-image-xen (= ${binary:Version})
+Description: Complete xen Linux-libre kernel
+ This package will always depend on the latest complete xen Linux-libre kernel
+ available.
+

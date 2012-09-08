@@ -1,0 +1,32 @@
+_ChangelogURI: http://archive.trisquel.info/trisquel/changelogs/pool/%s/%s/%s/%s_%s/changelog
+
+Suite: robur
+RepositoryType: deb
+BaseURI: http://archive.trisquel.info/trisquel/
+MatchURI: archive.trisquel.info/trisquel
+MirrorsFile-amd64: /usr/share/python-apt/templates/Trisquel.mirrors
+MirrorsFile-i386: /usr/share/python-apt/templates/Trisquel.mirrors
+_Description: Trisquel 2.0 'Robur'
+Component: main
+_CompDescription: Officially supported
+_CompDescriptionLong: Officially supported
+Component: extras
+_CompDescription: Extra packages
+_CompDescriptionLong: Extra packages
+
+Suite: robur-security
+ParentSuite: robur
+RepositoryType: deb
+BaseURI: http://archive.trisquel.info/trisquel/
+MatchURI: archive.trisquel.info/trisquel
+_Description: Important security updates
+
+Suite: robur-updates
+ParentSuite: robur
+RepositoryType: deb
+_Description: Recommended updates
+
+Suite: robur-backports
+ParentSuite: robur
+RepositoryType: deb
+_Description: Unsupported updates

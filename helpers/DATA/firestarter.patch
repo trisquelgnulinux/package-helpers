@@ -1,0 +1,15 @@
+--- src/scriptwriter.c.old	2008-04-30 22:42:08.000000000 +0200
++++ src/scriptwriter.c	2008-04-30 22:44:23.000000000 +0200
+@@ -88,9 +88,9 @@
+ 	fprintf (f, "\n# --(Extract Network Information)--\n\n");
+ 
+ 	fprintf (f, "# External network interface data\n"
+-		    "IP=`/sbin/ifconfig $IF | grep inet | cut -d : -f 2 | cut -d \\  -f 1`\n"
+-		    "MASK=`/sbin/ifconfig $IF | grep Mas | cut -d : -f 4`\n"
+-		    "BCAST=`/sbin/ifconfig $IF |grep Bcast: | cut -d : -f 3 | cut -d \\  -f 1`\n"
++		    "IP=`LANG=C /sbin/ifconfig $IF | grep inet | cut -d : -f 2 | cut -d \\  -f 1`\n"
++		    "MASK=`LANG=C /sbin/ifconfig $IF | grep Mas | cut -d : -f 4`\n"
++		    "BCAST=`LANG=C /sbin/ifconfig $IF |grep Bcast: | cut -d : -f 3 | cut -d \\  -f 1`\n"
+ 		    "NET=$IP/$MASK\n\n");
+ 
+ 	fprintf (f, "if [ \"$NAT\" = \"on\" ]; then\n"

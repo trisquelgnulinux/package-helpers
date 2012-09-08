@@ -1,0 +1,65 @@
+#!/bin/bash
+#
+#    Copyright (C) 2006  Brian Brazil
+#    Copyright (C) 2008  Rubén Rodríguez <ruben@trisquel.info>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=1
+
+clean_kconfig (){
+  #$1 = filename $2 = things to remove
+  perl -i -ne 'BEGIN{$p=1} if(/^config ('$2')$/){$p=0}elsif(/^(config|endmenu|source|endif)/){$p=1}; print if $p' $1
+ }
+
+. ./config
+
+apt-get --force-yes -y install unifdef
+
+# Restore BNX2 driver (with a empty firmware placeholder)
+#cp $WD/DATA/bnx2_fw* drivers/net/
+# Remove non-free bits
+#rm -rf debian/firmware/*
+
+bash $WD/DATA/deblob/deblob-2.6.24
+bash $WD/DATA/deblob/deblob-2.6.30 --force
+
+# deblob leaves tg3 broken - remove it
+#rm ./drivers/net/tg3.c
+#clean_kconfig ./drivers/net/Kconfig 'TIGON3'
+#sed -i '/tg3\.o/d' ./drivers/net/Makefile
+# Also broken by VIDEOBUF_DVB removal
+#sed -i '/CONFIG_VIDEO_CX23885/d' ./drivers/media/video/Makefile
+
+#Changes so it'll compile without some modules
+for i in debian/d-i/modules/*; do
+	sed -i 's/^\([[^ ?][^ ?]*\)$/\1 ?/' $i
+done
+
+#Changes so it'll compile without firmware
+#Need to go to previous revision for ABI stuff - long way of saying second last word
+sed -i 's/^prev_revision :=.*$/prev_revision := $(word $(words $(wordlist 2,$(words $(prev_revisions)),$(prev_revisions))),$(prev_revisions))/' debian/rules.d/0-common-vars.mk
+echo 'skipmodule = true' >> debian/rules.d/0-common-vars.mk # Having less modules is okay for us
+sed -i '/\^-\[\^-\]/,/^fi/d' debian/scripts/abi-check  # Having less symbols is okay for us
+
+# Xen hunk mismatches cause patches to *.orig not to apply
+sed -i 's/\(patch -p1\)/\1 --no-backup-if-mismatch/' debian/rules.d/6-binary-custom.mk
+
+echo | dch -D $RELEASE -v $(sed -n '1s#^.*(\(.*\)).*#\1'${DISTRONAME_L}${VERSION}'#p' debian/changelog)  'Applied linux-libre deblobber'
+
+sed -i 's:\Ubuntu:LinuxLibre:' debian/rules.d/2-binary-arch.mk
+
+PARALLEL=false compile

@@ -1,0 +1,106 @@
+#!/bin/bash
+#
+#    Copyright (C) 2008  Rubén Rodríguez <ruben@trisquel.info>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+set -e
+
+PACKAGE=$(echo $0 |sed s/make-//g)
+export DATA=$PWD/DATA/$PACKAGE
+COMPONENT=${COMPONENT:-universe}
+
+if [ -f /CurrentlyBuilding ]
+then
+    echo "Already running $(cat /CurrentlyBuilding)"
+    echo "If $(cat /CurrentlyBuilding) broke and nothing is actually running"
+    echo "remove /CurrentlyBuilding and run this script again"
+    exit 1
+else
+    echo "Package: $PACKAGE
+Component: $COMPONENT" > /CurrentlyBuilding
+fi
+
+[ -d /proc/sys ] || mount proc /proc -t proc
+hostname devel.trisquel.info
+export WD=$PWD
+
+export DEBEMAIL=ruben@trisquel.info
+export DEBFULLNAME="Rubén Rodríguez Pérez"
+
+export DISTRONAME=Trisquel
+export DISTRONAME_L=trisquel
+export CODENAME=robur
+export UPSTREAM=hardy
+export RELEASE=trisquel
+export DOMAIN=trisquel.info
+export REVISION=2.2
+
+export PARALLEL=true
+
+cat << EOF > /etc/lsb-release 
+DISTRIB_ID=Trisquel
+DISTRIB_RELEASE=$REVISION
+DISTRIB_CODENAME=$CODENAME
+DISTRIB_DESCRIPTION="Trisquel $REVISION"
+EOF
+
+changelog(){
+echo | dch -D $CODENAME -v $(sed -n '1s/^.*(\(.*\)).*/\1'trisquel${VERSION}'/p' debian/changelog)  "$1"
+}
+
+cd PACKAGES
+
+rm -rf $PACKAGE || true
+mkdir $PACKAGE
+cd $PACKAGE
+
+cat << EOF > /etc/apt/sources.list
+deb http://archive.ubuntu.com/ubuntu hardy main universe
+deb http://archive.ubuntu.com/ubuntu hardy-updates main universe
+deb http://archive.ubuntu.com/ubuntu hardy-security main universe
+deb-src http://archive.ubuntu.com/ubuntu hardy main universe
+deb-src http://archive.ubuntu.com/ubuntu hardy-updates main universe
+deb-src http://archive.ubuntu.com/ubuntu hardy-security main universe
+EOF
+
+apt-get update
+
+if [ $PACKAGE = linux ]
+then
+    apt-get source linux-libc-dev
+    apt-get --force-yes -y build-dep linux-libc-dev
+else
+    apt-get source $PACKAGE
+    apt-get --force-yes -y build-dep $PACKAGE
+fi
+
+rm * || true
+cd $PACKAGE*
+
+[ -f debian/control.stub.in ] && sed 's/^Maintainer.*/Maintainer: Rubén Rodríguez <ruben@trisquel.info>/g' -i debian/control.stub.in
+sed 's/^Maintainer.*/Maintainer: Rubén Rodríguez <ruben@trisquel.info>/g' -i debian/control
+
+compile(){
+if $PARALLEL
+then
+    dpkg-buildpackage -us -uc -j4
+else
+    dpkg-buildpackage -us -uc -j1 
+fi
+rm /CurrentlyBuilding
+umount /proc
+}

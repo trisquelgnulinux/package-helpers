@@ -1,0 +1,9 @@
+Task: print-server
+Section: server
+Description: Cups print server
+ This task sets up your system to be a print server.
+Key:
+ cupsys
+ cupsys-bsd
+ cupsys-client
+Packages: task-fields

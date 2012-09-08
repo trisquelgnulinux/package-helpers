@@ -1,0 +1,38 @@
+<!DOCTYPE Menu PUBLIC "-//freedesktop//DTD Menu 1.0//EN"
+ "http://www.freedesktop.org/standards/menu-spec/1.0/menu.dtd">
+
+<Menu>
+
+  <Name>Applications</Name>
+  <Directory>Applications.directory</Directory>
+
+
+  <!-- we disable those here, otherwise we see e.g. wine menus -->
+  <!-- Read standard .directory and .desktop file locations -->
+  <!-- <DefaultAppDirs/> -->
+  <!-- Read in overrides and child menus from applications-merged/ -->
+  <!-- <DefaultMergeDirs/> -->
+
+  <DefaultDirectoryDirs/>
+
+  <DirectoryDir>.</DirectoryDir>
+
+  <Menu>
+    <Name>Trisquel Edu</Name>
+    <Directory>trisquel-edu.directory</Directory>
+    <Include>
+       <Filename>trisquel-edu-audio.desktop</Filename>
+       <Filename>trisquel-edu-science.desktop</Filename>
+       <Filename>trisquel-edu-devel.desktop </Filename>
+       <Filename>trisquel-edu-graphics.desktop </Filename>
+       <Filename>trisquel-edu-network.desktop </Filename>
+       <Filename>trisquel-edu-text.desktop </Filename>
+       <Filename>trisquel-edu-kids.desktop </Filename>
+       <Filename>trisquel-ltsp-server.desktop </Filename>
+    </Include>
+  </Menu>
+
+  <AppDir>.</AppDir>
+
+</Menu> <!-- End Applications -->
+

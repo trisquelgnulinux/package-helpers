@@ -1,0 +1,49 @@
+Task: trisquel-mini
+Section: user
+Description: Trisquel mini environment
+ This task provides a small Trisquel desktop environment
+Packages: list
+Key:
+ trisquel-mini
+ trisquel-mini-recommended
+ # trisquel-desktop-common recommended packages
+ unace
+ arj
+ p7zip
+ gthumb
+ dcraw
+ gstreamer0.10-plugins-bad
+ gstreamer0.10-plugins-ugly
+ brasero
+ gucharmap
+ tsclient
+ xvnc4viewer
+ rdesktop
+ linux-libertine
+ ttf-gentium
+ ttf-beteckna
+ ttf-bitstream-vera
+ ttf-dustin
+ ttf-freefont
+ ttf-junicode
+ ttf-marvosym
+ ttf-mgopen
+ ttf-radisnoir
+ ttf-sil-andika
+ ttf-summersby
+ ttf-tuffy
+ xnest
+ gstreamer0.10-ffmpeg
+ myspell-en-gb
+ myspell-en-us
+ swfdec-mozilla
+ audacious
+ audacious-plugins-extra
+ yelp
+ usb-creator
+ # trisquel-common recommended packages
+ bash-completion
+ debfoster
+ nmap
+ unp
+ vim

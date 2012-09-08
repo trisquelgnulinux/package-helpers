@@ -1,0 +1,13 @@
+Package: trisquel-app-install
+Version: 0.5.2.8-0trisquel2.1
+Architecture: all
+Maintainer: Rubén Rodríguez <ruben@trisquel.uvigo.es>
+Depends: app-install-data (>= 0.4.0), gconf2 (>= 2.10.1-2), gksu, gnome-icon-theme, python (>= 2.5), python (<< 2.6), python-apt (>= 0.7.4ubuntu4), python-central (>= 0.6.5), python-dbus, python-gconf, python-gdbm, python-glade2 (>= 2.4.0), python-gst0.10, python-gtk2 (>= 2.10.1), python-gtkhtml2, python-launchpad-integration, python-sexy, python-xdg (>= 0.8), synaptic (>= 0.57.8)
+Section: gnome
+Priority: optional
+Conflicts: gnome-app-install
+Description: GNOME Application Installer, Trisquel Version
+ A pretty application installer for GNOME. It can also search for mime
+ types or gstreamer codecs. This Trisquel version only shows free apps.
+Original-Maintainer: Julian Andres Klode <jak@jak-linux.org>
+Python-Version: 2.5

@@ -1,0 +1,120 @@
+#!/bin/bash
+#
+#    Copyright (C) 2008  Brian Brazil
+#    Copyright (C) 2008  Rubén Rodríguez <ruben@trisquel.info>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=1
+
+ clean_kconfig (){
+  #$1 = filename $2 = things to remove
+  perl -i -ne 'BEGIN{$p=1} if(/^config ('$2')$/){$p=0}elsif(/^(config|endmenu|source|endif)/){$p=1}; print if $p' $1
+ }
+
+. ./config
+
+#DEBLOB=$PWD/DATA/deblob/2.6.24.4.1
+
+apt-get --force-yes -y install unifdef
+
+#sh $WD/DATA/deblob/deblob-2.6.31 --force
+sh $WD/DATA/deblob/deblob-2.6.30 --force
+
+#the deblobber breaks some patches
+cat > ubuntu/sound/alsa-driver/isa/wavefront/wavefront_fx.patch << EOF
+--- ../../alsa-kernel/isa/wavefront/wavefront_fx.c      2007-12-20 10:23:25.000000000 +0100
++++ wavefront_fx.c      2007-12-20 11:22:16.000000000 +0100
+@@ -1,3 +1,5 @@
++#define __NO_VERSION__
++#include "adriver.h"
+ /*
+  *  Copyright (c) 1998-2002 by Paul Davis <pbd@op.net>
+  *
+EOF
+
+cat << EOF > ubuntu/sound/alsa-driver/isa/wavefront/wavefront_synth.patch
+--- ../../alsa-kernel/isa/wavefront/wavefront_synth.c   2007-12-20 10:23:30.000000000 +0100
++++ wavefront_synth.c   2007-12-20 11:22:40.000000000 +0100
+@@ -1,3 +1,5 @@
++#define __NO_VERSION__
++#include "adriver.h"
+ /* Copyright (C) by Paul Barton-Davis 1998-1999
+  *
+  * Some portions of this file are taken from work that is
+EOF
+
+cat > ubuntu/sound/alsa-driver/pci/riptide/riptide.patch << EOF
+--- ../../alsa-kernel/pci/riptide/riptide.c     2007-12-20 11:47:37.000000000 +0100
++++ riptide.c   2007-12-20 12:16:59.000000000 +0100
+@@ -1,3 +1,4 @@
++#include "adriver.h"
+ /*
+  *   Driver for the Conexant Riptide Soundchip
+  *
+@@ -2228,3 +2234,5 @@
+
+ module_init(alsa_card_riptide_init);
+ module_exit(alsa_card_riptide_exit);
++
++EXPORT_NO_SYMBOLS;
+EOF
+
+# Remove non-free bits
+rm -f ubuntu/media/drm-poulsbo/mga_ucode.h
+rm -f ubuntu/media/drm-poulsbo/nv04_graph.c
+rm -f ubuntu/media/drm-poulsbo/nv10_graph.c
+rm -f ubuntu/media/drm-poulsbo/nv20_graph.c
+rm -f ubuntu/media/drm-poulsbo/nv30_graph.c
+rm -f ubuntu/media/drm-poulsbo/nv40_graph.c
+rm -f ubuntu/media/drm-poulsbo/r128_cce.c
+rm -f ubuntu/media/drm-poulsbo/radeon_cp.c
+
+sed -i '/ndiswrapper/d' ubuntu/Makefile
+rm -fr ubuntu/misc/ndiswrapper
+
+sed -i 's#asihpi/##' ubuntu/sound/alsa-driver/pci/Makefile
+rm -f ubuntu/sound/alsa-driver/pci/asihpi/hpi4000.c
+
+sed -i 's#pdplus/##' ubuntu/sound/alsa-driver/pci/Makefile
+rm -f ubuntu/sound/alsa-driver/pci/pdplus/pdplus-pga-a.c
+rm -f ubuntu/sound/alsa-driver/pci/pdplus/pdplus-pga-d.c
+
+sed -i '/snd-sb16-csp.o/d' ubuntu/sound/alsa-kernel/isa/sb/Makefile
+rm -f ubuntu/sound/alsa-kernel/isa/sb/sb16_csp_codecs.h
+
+sed -i '/cs46xx\//d' ubuntu/sound/alsa-kernel/pci/Makefile
+rm -f ubuntu/sound/alsa-kernel/pci/cs46xx/cs46xx_image.h
+rm -rf ubuntu/sound/alsa-kernel/pci/cs46xx/imgs
+
+sed -i '/korg1212\//d' ubuntu/sound/alsa-kernel/pci/Makefile
+rm -f ubuntu/sound/alsa-kernel/pci/korg1212/korg1212-firmware.h
+
+clean_kconfig ubuntu/sound/alsa-kernel/pci/Kconfig 'SND_MAESTRO3.*'
+sed -i '/CONFIG_SND_MAESTRO3/d;' ubuntu/sound/alsa-kernel/pci/Makefile
+sed -i 's/maestro3\.c//;' ubuntu/sound/alsa-driver/pci/Makefile
+rm -f ubuntu/sound/alsa-kernel/pci/maestro3.c
+
+sed -i '/ymfpci\//d' ubuntu/sound/alsa-kernel/pci/Makefile
+rm -f ubuntu/sound/alsa-kernel/pci/ymfpci/ymfpci_image.h
+
+sed -i '/firmdir/d' debian/rules.d/2-binary-arch.mk
+sed -i 's/kernel-wedge check/true/' debian/rules.d/3-udebs.mk
+rm -rf ubuntu-firmware
+
+echo | dch -D $RELEASE -v $(sed  -n '1s#^.*(\(.*\)).*#\1'${DISTRONAME_L}${VERSION}'#p' debian/changelog) "Applied linux-libre deblobber"
+
+PARALLEL=false compile

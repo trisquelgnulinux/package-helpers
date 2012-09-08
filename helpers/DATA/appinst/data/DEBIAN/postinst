@@ -1,0 +1,34 @@
+#!/bin/sh
+
+set -e
+
+# Automatically added by dh_pycentral
+if which pycentral >/dev/null 2>&1; then
+	pycentral pkginstall trisquel-app-install
+	if grep -qs '^trisquel-app-install$' /var/lib/pycentral/delayed-pkgs; then
+		sed -i '/^trisquel-app-install$/d' /var/lib/pycentral/delayed-pkgs
+	fi
+fi
+# End automatically added section
+# Automatically added by dh_scrollkeeper
+if [ "$1" = "configure" ] && which scrollkeeper-update >/dev/null 2>&1; then
+	scrollkeeper-update -q >/dev/null 2>&1
+fi
+# End automatically added section
+# Automatically added by dh_gconf
+if [ "$1" = "configure" ]; then
+	gconf-schemas --register gnome-app-install.schemas 
+fi
+# End automatically added section
+# Automatically added by dh_icons
+if which update-icon-caches >/dev/null 2>&1 ; then
+	update-icon-caches /usr/share/icons/hicolor
+fi
+# End automatically added section
+
+
+if [ "$1" = "configure" ]; then
+    # cache the application data
+    /usr/sbin/update-app-install || true
+fi
+

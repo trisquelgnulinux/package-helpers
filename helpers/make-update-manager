@@ -1,0 +1,80 @@
+#!/bin/bash
+#
+#    Copyright (C) 2006  Brian Brazil
+#    Copyright (C) 2009  Rubén Rodríguez <ruben@trisquel.info>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=1
+
+. ./config
+
+cat > ./DistUpgrade/Trisquel.info << EOF
+ChangelogURI: http://archive.trisquel.info/trisquel/changelogs/pool/%s/%s/%s/%s_%s/changelog
+
+Suite: $RELEASE
+RepositoryType: deb
+BaseURI: http://archive.$DOMAIN/$DISTRONAME_L/
+Description: $DISTRONAME $RELEASE
+Component: main
+Enabled: 1
+CompDescription: Core Packages
+Component: extras
+Enabled: 1
+CompDescription: Additional Packages
+
+Suite: $RELEASE-security
+RepositoryType: deb
+BaseURI: http://archive.$DOMAIN/$DISTRONAME_L/
+Description: $DISTRONAME $RELEASE Security Updates
+Component: main
+Enabled: 1
+CompDescription: Core Packages Security
+Component: extras
+Enabled: 1
+CompDescription: Additional Packages Security
+
+Suite: $RELEASE-updates
+RepositoryType: deb
+BaseURI: http://archive.$DOMAIN/$DISTRONAME_L/
+Description: $DISTRONAME $RELEASE Updates
+Component: main
+Enabled: 1
+CompDescription: Core Packages Updated
+Component: extras
+Enabled: 1
+CompDescription: Additional Packages Updates
+
+Suite: $RELEASE-backports
+RepositoryType: deb
+BaseURI: http://archive.$DOMAIN/$DISTRONAME_L/
+Description: $DISTRONAME $RELEASE Backports
+Component: main
+Enabled: 1
+CompDescription: Core Packages Backports
+Component: extras
+Enabled: 1
+CompDescription: Additional Packages Backports
+EOF
+
+cp ./DistUpgrade/Trisquel.info ./DistUpgrade/Ubuntu.info
+
+sed -i 's:changelogs.ubuntu.com:archive.trisquel.info/trisquel:g' UpdateManager/*.py DistUpgrade/*.py ./po/*.po UpdateManager/Core/*.py 
+
+echo | dch -D $RELEASE -v $(sed  -n '1s#^.*(\(.*\)).*#\1'${DISTRONAME_L}${VERSION}'#p' debian/changelog)  "Added in values for $RELEASE"
+
+PARALLEL=false compile
+
