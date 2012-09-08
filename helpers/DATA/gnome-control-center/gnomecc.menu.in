@@ -1,0 +1,129 @@
+<!DOCTYPE Menu PUBLIC "-//freedesktop//DTD Menu 1.0//EN"
+ "http://www.freedesktop.org/standards/menu-spec/1.0/menu.dtd">
+
+<Menu>
+  <Name>Control Center</Name>
+  <Directory>gnomecc.directory</Directory>
+
+  <!-- Read standard .directory and .desktop file locations -->
+  <AppDir>/usr/share/applications/</AppDir>
+  <DefaultDirectoryDirs/>
+
+  <!-- Read in overrides and child menus from gnomecc-merged/ -->
+  <DefaultMergeDirs/>
+
+   <!-- Sort the control center categories -->
+   <Layout>
+     <Menuname>Personal</Menuname>
+     <Menuname>System</Menuname>
+     <Menuname>Other</Menuname>
+     <Merge type="all" />
+   </Layout>
+
+  <!-- Stuff in the toplevel (Other category) -->
+  <Include>
+    <And>
+      <Category>Settings</Category>
+      <Not>
+        <Or>
+          <Category>X-GNOME-PersonalSettings</Category>
+          <Category>DesktopSettings</Category>
+          <Category>HardwareSettings</Category>
+          <Category>X-GNOME-SystemSettings</Category>
+          <Category>System</Category>
+        </Or>
+      </Not>
+    </And>
+  </Include>
+
+  <!-- Avoid the shell having a launcher for itself -->
+  <Exclude>
+    <Filename>gnome-control-center.desktop</Filename>
+  </Exclude>
+
+  <!-- Personal category -->
+  <Menu>
+    <Name>Personal</Name>
+    <Directory>Personal.directory</Directory>
+    <Include>
+      <And>
+        <Category>Settings</Category>
+        <Not>
+        <Or>
+         <Category>System</Category>
+         <Category>X-GNOME-SystemSettings</Category>
+        </Or>
+      </Not>
+      </And>
+<Or>
+<Filename>gnome-universal-access-panel.desktop</Filename>
+</Or>
+    </Include>
+<Exclude>
+<Filename>gnome-printers-panel.desktop</Filename>
+<Filename>gnome-network-panel.desktop</Filename>
+<Filename>evolution-settings.desktop</Filename>
+<Filename>language-selector.desktop</Filename>
+<Filename>nm-connection-editor.desktop</Filename>
+<Filename>palimpsest.desktop</Filename>
+<Filename>gnome-online-accounts-panel.desktop</Filename>
+</Exclude>
+  </Menu> <!-- End Personal -->
+
+  <!-- disabled
+  <Menu>
+    <Name>Hardware</Name>
+    <Directory>Hardware.directory</Directory>
+    <Include>
+      <And>
+        <Category>Settings</Category>
+        <Category>HardwareSettings</Category>
+      </And>
+    </Include>
+  </Menu>  -->
+
+  <!-- System category -->
+  <Menu>
+    <Name>System</Name>
+    <Directory>System.directory</Directory>
+    <Include>
+      <And>
+         <Category>System</Category>
+        <Category>Settings</Category>
+      </And>
+<Or>
+         <Category>X-GNOME-SystemSettings</Category>
+<Filename>language-selector.desktop</Filename>
+<Filename>nm-connection-editor.desktop</Filename>
+<Filename>palimpsest.desktop</Filename>
+<Filename>gnome-ppp.desktop</Filename>
+</Or>
+    </Include>
+<Exclude>
+<Filename>gnome-universal-access-panel.desktop</Filename>
+<Filename>gnome-user-accounts-panel.desktop</Filename>
+<Filename>gnome-app-install.desktop</Filename>
+</Exclude>
+  </Menu> <!-- End System -->
+
+  <!-- Other category -->
+  <Menu>
+    <Name>Other</Name>
+    <Directory>X-GNOME-Other.directory</Directory>
+    <Include>
+      <And>
+        <Category>Settings</Category>
+        <Category>X-GNOME-Settings-Panel</Category>
+        <Not>
+          <Or>
+            <Category>X-GNOME-PersonalSettings</Category>
+            <Category>X-GNOME-SystemSettings</Category>
+            <Category>HardwareSettings</Category>
+            <Filename>gnome-control-center.desktop</Filename>
+          </Or>
+        </Not>
+      </And>
+    </Include>
+  </Menu> <!-- End Other -->
+
+</Menu>     <!-- End CC -->

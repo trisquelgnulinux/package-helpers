@@ -1,0 +1,92 @@
+#!/bin/sh
+#
+#    Copyright (C) 2008-2012  Rubén Rodríguez <ruben@trisquel.info>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=9
+
+. ./config
+
+sed "105s/'none'/'color'/; s/rgba(255,255,255,.2)/rgba(000,000,000,.75)/" -i data/org.gnome.gnome-panel.toplevel.gschema.xml.in.in
+#sed "105s/'none'/'image'/; 115s_''_'file:///usr/share/themes/Trisquel/gtk-3.0/panel-bg.png'_; s/rgba(255,255,255,.2)/rgba(000,000,000,.5)/" -i data/org.gnome.gnome-panel.toplevel.gschema.xml.in.in
+sed 's/"tooltip", tooltip,/"tooltip", "Trisquel",/; s/"has-arrow", TRUE,/"has-arrow", FALSE,/' -i gnome-panel/panel-menu-button.c
+
+sed '/gnome-session /d' debian/control*
+
+cat << EOF > data/panel-default-layout.layout
+[Toplevel panel]
+expand=true
+orientation=bottom
+size=44
+y-bottom=0
+
+[Object menu-bar]
+object-iid=PanelInternalFactory::MenuButton
+toplevel-id=panel
+pack-type=start
+pack-index=0
+
+[Object home]
+object-iid=PanelInternalFactory::Launcher
+@instance-config/location="file:///usr/share/applications/home.desktop"
+pack-index=10
+pack-type=start
+toplevel-id=panel
+
+[Object abrowser]
+object-iid=PanelInternalFactory::Launcher
+@instance-config/location="file:///usr/share/applications/browser.desktop"
+pack-index=20
+pack-type=start  
+toplevel-id=panel
+
+[Object window-list]
+object-iid=WnckletFactory::WindowListApplet
+pack-index=30
+pack-type=start
+toplevel-id=panel
+
+[Object notification-area]
+object-iid=NotificationAreaAppletFactory::NotificationArea
+pack-index=20
+pack-type=end
+toplevel-id=panel
+
+[Object clock]
+object-iid=ClockAppletFactory::ClockApplet
+pack-index=10
+pack-type=end
+toplevel-id=panel
+
+[Object show-desktop]
+object-iid=WnckletFactory::ShowDesktopApplet
+pack-index=0
+pack-type=end
+toplevel-id=panel
+
+EOF
+
+# This patch allows @instance-config/location in the default layout
+patch -p1 < $DATA/gnome-panel-improved-default-layout-handling.patch
+
+# We don't want to show the gnome-online-accounts stuff yet
+patch -p1 < $DATA/hide-online-accounts-menu.patch
+
+changelog "Changed default layout"
+
+compile
+

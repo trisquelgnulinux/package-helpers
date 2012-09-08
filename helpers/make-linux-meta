@@ -1,0 +1,35 @@
+#!/bin/sh
+#
+#    Copyright (C) 2008-2010  Rubén Rodríguez <ruben@trisquel.info>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=1
+
+. ./config
+
+for i in omap powerpc powerpc-smp powerpc64-smp
+do
+    rm debian/control.d/$i
+done
+sed 's/\(, \)*linux-firmware//; s/Linux /Linux-libre /g; /linux-backports/,/up-to-date when upgrading/d' debian/control.d/* debian/control.common -i
+rm debian/control
+debian/rules debian/control
+
+changelog "Removed non-free bits"
+
+compile
+

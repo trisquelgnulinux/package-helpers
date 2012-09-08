@@ -1,0 +1,149 @@
+#!/bin/sh
+#
+#    Copyright (C) 2008-2010  Rubén Rodríguez <ruben@trisquel.info>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+set -e
+
+PACKAGE=$(echo $0 |sed s/make-//g)
+export DATA=$PWD/DATA/$PACKAGE
+if ! [ 1$COMPONENT = "1main" ]
+then
+    COMPONENT=${COMPONENT:-universe}
+    sed 's/^enable.*/enable: false/g' -i /etc/pkgbinarymangler/*.conf
+fi
+
+if [ -f /CurrentlyBuilding ]
+then
+    echo "Already running $(cat /CurrentlyBuilding)"
+    echo "If $(cat /CurrentlyBuilding) broke and nothing is actually running"
+    echo "remove /CurrentlyBuilding and run this script again"
+    exit 1
+else
+    echo "Package: $PACKAGE
+Component: $COMPONENT" > /CurrentlyBuilding
+fi
+
+[ -d PACKAGES ] || mkdir PACKAGES
+[ -d /proc/sys ] || mount proc /proc -t proc
+hostname devel.trisquel.info
+
+export DEBIAN_FRONTEND=noninteractive
+export DEBEMAIL=trisquel-devel@listas.trisquel.info
+export DEBFULLNAME="Trisquel GNU/Linux developers"
+export CODENAME=brigantia
+export REVISION=5.5
+export RELEASE=trisquel
+export DOMAIN=trisquel.info
+export UPSTREAM=oneiric
+export UPSTREAMRELEASE=11.10
+MIRROR=http://archive.ubuntu.com/ubuntu
+DEVELMIRROR=http://devel.trisquel.info/trisquel/$UPSTREAM
+LOCALMIRROR=http://archive.trisquel.info/trisquel
+
+cat << EOF > /etc/lsb-release 
+DISTRIB_ID=Trisquel
+DISTRIB_RELEASE=$REVISION
+DISTRIB_CODENAME=$CODENAME
+DISTRIB_DESCRIPTION="Trisquel $REVISION"
+EOF
+
+replace(){
+#find $3 -type f |grep -v changelog |grep -v copyright | xargs sed -i s^"$1"^"$2"^g
+find $3 -type f -not -iregex '.*changelog.*' -not -iregex '.*copyright.*' -execdir sed --follow-symlinks -i s^"$1"^"$2"^g {} \;
+}
+
+changelog(){
+echo | dch -D $CODENAME -v $(sed -n '1s/^.*(\(.*\)).*/\1'+${REVISION}trisquel${VERSION}'/p' debian/changelog)  "$1"
+}
+
+rm -rf PACKAGES/$PACKAGE
+mkdir PACKAGES/$PACKAGE
+cd PACKAGES/$PACKAGE
+
+cat << EOF > /etc/apt/sources.list
+deb $MIRROR $UPSTREAM main universe
+deb $MIRROR $UPSTREAM-updates main universe
+deb $MIRROR $UPSTREAM-security main universe
+deb-src $MIRROR $UPSTREAM main universe
+deb-src $MIRROR $UPSTREAM-updates main universe
+deb-src $MIRROR $UPSTREAM-security main universe
+deb-src http://download.sugarlabs.org/packages/SweetsDistribution:/0.94/Ubuntu-11.10/ ./
+deb-src http://download.sugarlabs.org/packages/SweetsDistribution/Ubuntu-11.10/ ./
+deb $DEVELMIRROR $UPSTREAM main
+EOF
+
+wget http://download.sugarlabs.org/packages/SweetsDistribution:/0.94/Ubuntu-11.04/Release.key -O - -o /dev/null|apt-key add -
+
+[ "1$EXTERNAL" != "1" ] && eval echo "$EXTERNAL" >> /etc/apt/sources.list
+
+apt-get update
+apt-get install --force-yes -y devscripts
+
+if [ $PACKAGE = linux ]
+then
+    apt-get --force-yes -y build-dep linux-libc-dev
+    apt-get source linux-libc-dev --download-only
+    dpkg-source -x --skip-patches *.dsc source
+else
+    [ 1$LOCALDEPENDS = 1true ] || apt-get --force-yes -y build-dep $PACKAGE
+    apt-get source $PACKAGE --download-only
+    dpkg-source -x --skip-patches *.dsc source
+fi
+
+find -maxdepth 1 -type f | xargs rm
+cd source
+
+#disable 3.0 deb source format
+[ -f debian/source/format ] && rm debian/source/format
+[ -f debian/source/options ] && rm debian/source/options
+
+for i in debian.master/control.stub.in debian.master/control.stub debian.master/control debian/control.stub.in debian/control.stub debian/control
+do
+    [ -f $i ] && sed "s_^Maintainer.*_Maintainer: $DEBFULLNAME <$DEBEMAIL>_g" -i $i
+done
+
+compile(){
+if [ 1$LOCALDEPENDS = 1true ]
+then
+    DEPENDS=$(sed -n '/Build-Dep/,/^[a-zA-W0-9]/ p' debian/control | head -n -1 | sed 's/.*://; s/(.*)//; s/,//g' |xargs echo -n)
+    echo Installing Build-Depends: $DEPENDS
+    apt-get --force-yes -y install $DEPENDS
+fi
+
+PROCESSORS=1
+if [ 1$PARALLEL = "1true" ]
+then
+    PROCESSORS=$(grep processor /proc/cpuinfo | wc -l)
+fi
+
+if [ 1$QUILT != 1skip ]; then
+export QUILT_PATCHES=debian/patches
+[ -s debian/patches/series ] && quilt push -a
+fi
+
+if [ $FAKEROOT ]
+then
+chown nobody ../ -R
+su nobody -c 'dpkg-buildpackage -us -uc -j$PROCESSORS -rfakeroot'
+else
+dpkg-buildpackage -us -uc -j$PROCESSORS
+fi
+
+rm /CurrentlyBuilding
+umount /proc
+}

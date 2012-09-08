@@ -1,0 +1,17 @@
+diff -ru gnome-panel-3.2.0.orig//gnome-panel/menu.c gnome-panel-3.2.0/gnome-panel/menu.c
+--- gnome-panel-3.2.0.orig//gnome-panel/menu.c	2011-08-01 17:39:56.000000000 +0000
++++ gnome-panel-3.2.0/gnome-panel/menu.c	2012-03-15 15:56:00.000000000 +0000
+@@ -1388,10 +1388,10 @@
+ 	gtk_menu_shell_append (GTK_MENU_SHELL (main_menu), item);
+ 	gtk_widget_show (item);
+ 
+-	item = panel_desktop_menu_item_new (TRUE, FALSE);
++	/* item = panel_desktop_menu_item_new (TRUE, FALSE);
+ 	panel_desktop_menu_item_set_panel (item, panel);
+ 	gtk_menu_shell_append (GTK_MENU_SHELL (main_menu), item);
+-	gtk_widget_show (item);
++	gtk_widget_show (item);*/
+ 
+ 	panel_menu_items_append_lock_logout (main_menu);
+ }
+Only in gnome-panel-3.2.0.orig/: po

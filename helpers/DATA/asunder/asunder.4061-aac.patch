@@ -1,0 +1,620 @@
+diff -ruN ../asunder-2.0-orig/src/callbacks.c src/callbacks.c
+--- ../asunder-2.0-orig/src/callbacks.c	2010-01-23 16:21:15.000000000 +0000
++++ src/callbacks.c	2011-11-08 18:10:15.000000000 +0000
+@@ -510,31 +510,6 @@
+ }
+ 
+ void
+-on_rip_aac_toggled                  (GtkToggleButton *togglebutton,
+-                                     gpointer         user_data)
+-{
+-    if (gtk_toggle_button_get_active(togglebutton) && !program_exists("neroAacEnc"))
+-    {
+-        GtkWidget * dialog;
+-        dialog = gtk_message_dialog_new(GTK_WINDOW(win_main), 
+-                                        GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, 
+-                                        _("%s was not found in your path. Asunder requires it to create %s files. "
+-                                        "All %s functionality is disabled."),
+-                                        "'neroAacEnc'", "MP4", "AAC");
+-        gtk_dialog_run(GTK_DIALOG(dialog));
+-        gtk_widget_destroy(dialog);
+-
+-        global_prefs->rip_aac = 0;
+-        gtk_toggle_button_set_active(togglebutton, global_prefs->rip_aac);
+-    }
+-    
+-    if (!gtk_toggle_button_get_active(togglebutton))
+-        disable_aac_widgets();
+-    else
+-        enable_aac_widgets();
+-}
+-
+-void
+ on_rip_musepack_toggled                  (GtkToggleButton *togglebutton,
+                                           gpointer         user_data)
+ {
+diff -ruN ../asunder-2.0-orig/src/callbacks.h src/callbacks.h
+--- ../asunder-2.0-orig/src/callbacks.h	2010-01-23 16:21:15.000000000 +0000
++++ src/callbacks.h	2011-11-08 18:20:03.000000000 +0000
+@@ -164,9 +164,6 @@
+ on_rip_monkey_toggled                  (GtkToggleButton *togglebutton,
+                                         gpointer         user_data);
+ void
+-on_rip_aac_toggled                  (GtkToggleButton *togglebutton,
+-                                     gpointer         user_data);
+-void
+ on_rip_musepack_toggled                  (GtkToggleButton *togglebutton,
+                                           gpointer         user_data);
+ void
+diff -ruN ../asunder-2.0-orig/src/interface.c src/interface.c
+--- ../asunder-2.0-orig/src/interface.c	2010-07-17 11:44:06.000000000 +0000
++++ src/interface.c	2011-11-08 18:09:31.000000000 +0000
+@@ -863,61 +863,6 @@
+     GLADE_HOOKUP_OBJECT (prefs, rip_monkey, "rip_monkey");
+     /* END MONKEY */
+     
+-    expander = gtk_expander_new(_("Proprietary encoders"));
+-    gtk_widget_show (expander);
+-    gtk_box_pack_start (GTK_BOX (vbox), expander, FALSE, FALSE, 0);
+-    GLADE_HOOKUP_OBJECT (prefs, expander, "proprietary_formats_expander");
+-    
+-    hiddenbox = gtk_vbox_new (FALSE, 0);
+-    gtk_widget_show (hiddenbox);
+-    gtk_container_add (GTK_CONTAINER (expander), hiddenbox);
+-    
+-    /* AAC */
+-    GtkWidget* rip_aac;
+-    GtkWidget* aacQuality;
+-    GtkWidget* aacVbox;
+-    
+-    frame8 = gtk_frame_new (NULL);
+-    gtk_widget_show (frame8);
+-    gtk_box_pack_start (GTK_BOX (hiddenbox), frame8, FALSE, FALSE, 0);
+-    
+-    alignment11 = gtk_alignment_new (0.5, 0.5, 1, 1);
+-    gtk_widget_show (alignment11);
+-    gtk_container_add (GTK_CONTAINER (frame8), alignment11);
+-    gtk_alignment_set_padding (GTK_ALIGNMENT (alignment11), 2, 2, 12, 2);
+-    
+-    aacVbox = gtk_vbox_new (FALSE, 0);
+-    gtk_widget_show (aacVbox);
+-    gtk_container_add (GTK_CONTAINER (alignment11), aacVbox);
+-    
+-    hbox13 = gtk_hbox_new (FALSE, 0);
+-    gtk_widget_show (hbox13);
+-    gtk_box_pack_start (GTK_BOX (aacVbox), hbox13, FALSE, FALSE, 0);
+-    
+-    label = gtk_label_new (_("Quality"));
+-    gtk_widget_show (label);
+-    gtk_box_pack_start (GTK_BOX (hbox13), label, FALSE, FALSE, 0);
+-    GLADE_HOOKUP_OBJECT (prefs, label, "aac_quality_lbl");
+-    
+-    aacQuality = gtk_hscale_new (GTK_ADJUSTMENT (gtk_adjustment_new (0, 1, 100, 1, 1, 1)));
+-    gtk_widget_show (aacQuality);
+-    gtk_box_pack_start (GTK_BOX (hbox13), aacQuality, TRUE, TRUE, 5);
+-    gtk_scale_set_value_pos (GTK_SCALE (aacQuality), GTK_POS_RIGHT);
+-    gtk_scale_set_digits (GTK_SCALE (aacQuality), 0);
+-    GLADE_HOOKUP_OBJECT (prefs, aacQuality, "aac_quality_slider");
+-    
+-    tooltips = gtk_tooltips_new ();
+-    gtk_tooltips_set_tip (tooltips, aacQuality, _("Higher quality means bigger file. Default is 60."), NULL);
+-    
+-    rip_aac = gtk_check_button_new_with_mnemonic (_("AAC (lossy compression, Nero encoder)"));
+-    gtk_widget_show (rip_aac);
+-    gtk_frame_set_label_widget (GTK_FRAME (frame8), rip_aac);
+-    g_signal_connect ((gpointer) rip_aac, "toggled",
+-                                        G_CALLBACK (on_rip_aac_toggled),
+-                                        NULL);
+-    GLADE_HOOKUP_OBJECT (prefs, rip_aac, "rip_aac");
+-    /* END AAC */
+-    
+     label = gtk_label_new (_("Encode"));
+     gtk_widget_show (label);
+     gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook1), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook1), 2), label);
+@@ -1297,18 +1242,6 @@
+     gtk_widget_set_sensitive(lookup_widget(win_prefs, "monkey_compression_slider"), TRUE);
+ }
+ 
+-void disable_aac_widgets(void)
+-{
+-    gtk_widget_set_sensitive(lookup_widget(win_prefs, "aac_quality_lbl"), FALSE);
+-    gtk_widget_set_sensitive(lookup_widget(win_prefs, "aac_quality_slider"), FALSE);
+-}
+-
+-void enable_aac_widgets(void)
+-{
+-    gtk_widget_set_sensitive(lookup_widget(win_prefs, "aac_quality_lbl"), TRUE);
+-    gtk_widget_set_sensitive(lookup_widget(win_prefs, "aac_quality_slider"), TRUE);
+-}
+-
+ void disable_musepack_widgets(void)
+ {
+     gtk_widget_set_sensitive(lookup_widget(win_prefs, "musepack_bitrate_lbl"), FALSE);
+@@ -1545,8 +1478,7 @@
+ static const char* 
+ GBLcomments = 
+ N_("An application to save tracks from an Audio CD \n"
+-"as WAV, MP3, OGG, FLAC, Wavpack, Musepack, Monkey's Audio, and/or "
+-"AAC files.");
++"as WAV, MP3, OGG, FLAC, Wavpack, Musepack, Monkey's Audio files ");
+ 
+ static const char* 
+ GBLcopyright = 
+diff -ruN ../asunder-2.0-orig/src/interface.h src/interface.h
+--- ../asunder-2.0-orig/src/interface.h	2009-08-25 01:32:28.000000000 +0000
++++ src/interface.h	2011-11-08 18:08:28.000000000 +0000
+@@ -15,8 +15,6 @@
+ void enable_wavpack_widgets(void);
+ void disable_monkey_widgets(void);
+ void enable_monkey_widgets(void);
+-void disable_aac_widgets(void);
+-void enable_aac_widgets(void);
+ void disable_musepack_widgets(void);
+ void enable_musepack_widgets(void);
+ #if GTK_MINOR_VERSION >= 6
+diff -ruN ../asunder-2.0-orig/src/prefs.c src/prefs.c
+--- ../asunder-2.0-orig/src/prefs.c	2009-08-25 01:32:28.000000000 +0000
++++ src/prefs.c	2011-11-08 18:14:40.000000000 +0000
+@@ -122,8 +122,6 @@
+     p->wavpack_bitrate = 3;
+     p->rip_monkey = 0;
+     p->monkey_compression = 2;
+-    p->rip_aac = 0;
+-    p->aac_quality = 60;
+     p->rip_musepack = 0;
+     p->musepack_bitrate = 2;
+     
+@@ -184,8 +182,6 @@
+     gtk_range_set_value(GTK_RANGE(lookup_widget(win_prefs, "wavpack_bitrate_slider")), p->wavpack_bitrate);
+     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(lookup_widget(win_prefs, "rip_monkey")), p->rip_monkey);
+     gtk_range_set_value(GTK_RANGE(lookup_widget(win_prefs, "monkey_compression_slider")), p->monkey_compression);
+-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(lookup_widget(win_prefs, "rip_aac")), p->rip_aac);
+-    gtk_range_set_value(GTK_RANGE(lookup_widget(win_prefs, "aac_quality_slider")), p->aac_quality);
+     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(lookup_widget(win_prefs, "rip_musepack")), p->rip_musepack);
+     gtk_range_set_value(GTK_RANGE(lookup_widget(win_prefs, "musepack_bitrate_slider")), p->musepack_bitrate);
+     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(lookup_widget(win_prefs, "eject_on_done")), p->eject_on_done);
+@@ -216,8 +212,6 @@
+         enable_wavpack_widgets(); /* need this to potentially disable hybrid widgets */
+     if( !(p->rip_monkey) )
+         disable_monkey_widgets();
+-    if( !(p->rip_aac) )
+-        disable_aac_widgets();
+     if( !(p->rip_musepack) )
+         disable_musepack_widgets();
+ }
+@@ -275,8 +269,6 @@
+     p->wavpack_bitrate = (int)gtk_range_get_value(GTK_RANGE(lookup_widget(win_prefs, "wavpack_bitrate_slider")));
+     p->rip_monkey = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(lookup_widget(win_prefs, "rip_monkey")));
+     p->monkey_compression = (int)gtk_range_get_value(GTK_RANGE(lookup_widget(win_prefs, "monkey_compression_slider")));
+-    p->rip_aac = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(lookup_widget(win_prefs, "rip_aac")));
+-    p->aac_quality = (int)gtk_range_get_value(GTK_RANGE(lookup_widget(win_prefs, "aac_quality_slider")));
+     p->rip_musepack = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(lookup_widget(win_prefs, "rip_musepack")));
+     p->musepack_bitrate = (int)gtk_range_get_value(GTK_RANGE(lookup_widget(win_prefs, "musepack_bitrate_slider")));
+     
+@@ -358,8 +350,6 @@
+         fprintf(config, "%d\n", p->cddb_port_number);
+         fprintf(config, "%d\n", p->rip_monkey);
+         fprintf(config, "%d\n", p->monkey_compression);
+-        fprintf(config, "%d\n", p->rip_aac);
+-        fprintf(config, "%d\n", p->aac_quality);
+         fprintf(config, "%d\n", p->rip_musepack);
+         fprintf(config, "%d\n", p->musepack_bitrate);
+         fprintf(config, "%d\n", p->more_formats_expanded);
+@@ -537,12 +527,6 @@
+         p->monkey_compression = read_line_num(fd);
+         
+         // this one can be 0
+-        p->rip_aac = read_line_num(fd);
+-        
+-        // this one can be 0
+-        p->aac_quality = read_line_num(fd);
+-        
+-        // this one can be 0
+         p->rip_musepack = read_line_num(fd);
+         
+         // this one can be 0
+diff -ruN ../asunder-2.0-orig/src/prefs.h src/prefs.h
+--- ../asunder-2.0-orig/src/prefs.h	2009-09-01 03:22:41.000000000 +0000
++++ src/prefs.h	2011-11-08 18:20:15.000000000 +0000
+@@ -34,8 +34,6 @@
+     int cddb_port_number;
+     int rip_monkey;
+     int monkey_compression;
+-    int rip_aac;
+-    int aac_quality;
+     int rip_musepack;
+     int musepack_bitrate;
+     int more_formats_expanded;
+diff -ruN ../asunder-2.0-orig/src/threads.c src/threads.c
+--- ../asunder-2.0-orig/src/threads.c	2010-05-01 22:27:47.000000000 +0000
++++ src/threads.c	2011-11-08 18:21:22.000000000 +0000
+@@ -39,7 +39,6 @@
+ static FILE * playlist_wavpack = NULL;
+ static FILE * playlist_monkey = NULL;
+ static FILE * playlist_musepack = NULL;
+-static FILE * playlist_aac = NULL;
+ 
+ /* ripping or encoding, so that can know not to clear the tracklist on eject */
+ bool working;
+@@ -60,7 +59,6 @@
+ static double wavpack_percent;
+ static double monkey_percent;
+ static double musepack_percent;
+-static double aac_percent;
+ static int rip_tracks_completed;
+ static int encode_tracks_completed;
+ 
+@@ -86,13 +84,11 @@
+         kill(monkey_pid, SIGKILL);
+     if (musepack_pid != 0) 
+         kill(musepack_pid, SIGKILL);
+-    if (aac_pid != 0) 
+-        kill(aac_pid, SIGKILL);
+     
+     /* wait until all the worker threads are done */
+     while (cdparanoia_pid != 0 || lame_pid != 0 || oggenc_pid != 0 || 
+            flac_pid != 0 || wavpack_pid != 0 || monkey_pid != 0 || 
+-           musepack_pid != 0 || aac_pid != 0)
++           musepack_pid != 0)
+     {
+         debugLog("w1");
+         usleep(100000);
+@@ -114,8 +110,8 @@
+     gdk_flush();
+     working = false;
+     
+-    show_completed_dialog(numCdparanoiaOk + numLameOk + numOggOk + numFlacOk + numWavpackOk + numMonkeyOk + numMusepackOk + numAacOk,
+-                          numCdparanoiaFailed + numLameFailed + numOggFailed + numFlacFailed + numWavpackFailed + numMonkeyFailed + numMusepackFailed + numAacFailed);
++    show_completed_dialog(numCdparanoiaOk + numLameOk + numOggOk + numFlacOk + numWavpackOk + numMonkeyOk + numMusepackOk ,
++                          numCdparanoiaFailed + numLameFailed + numOggFailed + numFlacFailed + numWavpackFailed + numMonkeyFailed + numMusepackFailed );
+ }
+ 
+ // spawn needed threads and begin ripping
+@@ -134,7 +130,6 @@
+     wavpack_percent = 0.0;
+     monkey_percent = 0.0;
+     musepack_percent = 0.0;
+-    aac_percent = 0.0;
+     rip_tracks_completed = 0;
+     encode_tracks_completed = 0;
+ 
+@@ -161,7 +156,7 @@
+     // make sure there's at least one format to rip to
+     if (!global_prefs->rip_wav && !global_prefs->rip_mp3 && !global_prefs->rip_ogg && 
+         !global_prefs->rip_flac && !global_prefs->rip_wavpack && !global_prefs->rip_monkey &&
+-        !global_prefs->rip_musepack && !global_prefs->rip_aac)
++        !global_prefs->rip_musepack )
+     {
+         GtkWidget * dialog;
+         dialog = gtk_message_dialog_new(GTK_WINDOW(win_main), 
+@@ -291,14 +286,6 @@
+             
+             free(filename);
+         }
+-        if (global_prefs->rip_aac)
+-        {
+-            char * filename = make_filename(prefs_get_music_dir(global_prefs), albumdir, playlist, "m4a.m3u");
+-            
+-            make_playlist(filename, &playlist_monkey);
+-            
+-            free(filename);
+-        }
+     }
+     
+     free(albumdir);
+@@ -313,7 +300,6 @@
+     numWavpackFailed = 0;
+     numMonkeyFailed = 0;
+     numMusepackFailed = 0;
+-    numAacFailed = 0;
+     
+     numCdparanoiaOk = 0;
+     numLameOk = 0;
+@@ -322,7 +308,6 @@
+     numWavpackOk = 0;
+     numMonkeyOk = 0;
+     numMusepackOk = 0;
+-    numAacOk = 0;
+     
+     ripper = g_thread_create(rip, NULL, TRUE, NULL);
+     encoder = g_thread_create(encode, NULL, TRUE, NULL);
+@@ -461,7 +446,6 @@
+     char* wavpackfilename2 = NULL;
+     char* monkeyfilename = NULL;
+     char* musepackfilename = NULL;
+-    char* aacfilename = NULL;
+     struct stat statStruct;
+     bool doEncode;
+     
+@@ -541,7 +525,6 @@
+             wavpackfilename2 = make_filename(prefs_get_music_dir(global_prefs), albumdir, musicfilename, "wvc");
+             monkeyfilename = make_filename(prefs_get_music_dir(global_prefs), albumdir, musicfilename, "ape");
+             musepackfilename = make_filename(prefs_get_music_dir(global_prefs), albumdir, musicfilename, "mpc");
+-            aacfilename = make_filename(prefs_get_music_dir(global_prefs), albumdir, musicfilename, "m4a");
+             
+             if (global_prefs->rip_mp3)
+             {
+@@ -745,41 +728,6 @@
+                     fflush(playlist_musepack);
+                 }
+             }
+-            if (global_prefs->rip_aac)
+-            {
+-                debugLog("Encoding track %d to \"%s\"\n", tracknum, aacfilename);
+-                
+-                if (aborted) g_thread_exit(NULL);
+-                
+-                rc = stat(aacfilename, &statStruct);
+-                if(rc == 0)
+-                {
+-                    gdk_threads_enter();
+-                        if(confirmOverwrite(aacfilename))
+-                            doEncode = true;
+-                        else
+-                            doEncode = false;
+-                    gdk_threads_leave();
+-                }
+-                else
+-                    doEncode = true;
+-                
+-                if(doEncode)
+-                {
+-                    aac(wavfilename, aacfilename,
+-                        global_prefs->aac_quality, 
+-                        &aac_percent);
+-                }
+-                
+-                if (aborted) g_thread_exit(NULL);
+-                
+-                if (playlist_aac)
+-                {
+-                    fprintf(playlist_aac, "#EXTINF:%d,%s - %s\n", (min*60)+sec, trackartist, tracktitle);
+-                    fprintf(playlist_aac, "%s\n", basename(aacfilename));
+-                    fflush(playlist_aac);
+-                }
+-            }
+             if (!global_prefs->rip_wav)
+             {
+                 debugLog("Removing track %d WAV file\n", tracknum);
+@@ -806,7 +754,6 @@
+             free(wavpackfilename);
+             free(monkeyfilename);
+             free(musepackfilename);
+-            free(aacfilename);
+             
+             mp3_percent = 0.0;
+             ogg_percent = 0.0;
+@@ -814,7 +761,6 @@
+             wavpack_percent = 0.0;
+             monkey_percent = 0.0;
+             musepack_percent = 0.0;
+-            aac_percent = 0.0;
+             encode_tracks_completed++;
+         }
+         
+@@ -843,8 +789,6 @@
+     playlist_monkey = NULL;
+     if (playlist_musepack) fclose(playlist_musepack);
+     playlist_musepack = NULL;
+-    if (playlist_aac) fclose(playlist_aac);
+-    playlist_aac = NULL;
+     
+     g_mutex_free(barrier);
+     barrier = NULL;
+@@ -854,7 +798,7 @@
+     /* wait until all the worker threads are done */
+     while (cdparanoia_pid != 0 || lame_pid != 0 || oggenc_pid != 0 || 
+            flac_pid != 0 || wavpack_pid != 0 || monkey_pid != 0 ||
+-           musepack_pid != 0 || aac_pid != 0)
++           musepack_pid != 0 )
+     {
+         debugLog("w2");
+         usleep(100000);
+@@ -867,8 +811,8 @@
+         gtk_widget_hide(win_ripping);
+         gdk_flush();
+         
+-        show_completed_dialog(numCdparanoiaOk + numLameOk + numOggOk + numFlacOk + numWavpackOk + numMonkeyOk + numMusepackOk + numAacOk,
+-                              numCdparanoiaFailed + numLameFailed + numOggFailed + numFlacFailed + numWavpackFailed + numMonkeyFailed + numMusepackFailed + numAacFailed);
++        show_completed_dialog(numCdparanoiaOk + numLameOk + numOggOk + numFlacOk + numWavpackOk + numMonkeyOk + numMusepackOk , 
++                              numCdparanoiaFailed + numLameFailed + numOggFailed + numFlacFailed + numWavpackFailed + numMonkeyFailed + numMusepackFailed );
+     gdk_threads_leave();
+     
+     return NULL;
+@@ -890,8 +834,6 @@
+         parts++;
+     if(global_prefs->rip_musepack) 
+         parts++;
+-    if(global_prefs->rip_aac) 
+-        parts++;
+     
+     gdk_threads_enter();
+         GtkProgressBar * progress_total = GTK_PROGRESS_BAR(lookup_widget(win_ripping, "progress_total"));
+@@ -926,10 +868,10 @@
+         
+         debugLog("completed tracks %d, rip %.2lf%%; encoded tracks %d, "
+                  "mp3 %.2lf%% ogg %.2lf%% flac %.2lf%% wavpack %.2lf%% "
+-                 "monkey %.2lf%% musepack %.2lf%% aac %.2lf%%\n\n", 
++                 "monkey %.2lf%% musepack %.2lf%% \n\n", 
+                  rip_tracks_completed, rip_percent*100, encode_tracks_completed, 
+                  mp3_percent*100, ogg_percent*100, flac_percent*100, wavpack_percent*100, 
+-                 monkey_percent*100,musepack_percent*100,aac_percent*100);
++                 monkey_percent*100,musepack_percent*100);
+         
+         prip = (rip_tracks_completed+rip_percent) / tracks_to_rip;
+         snprintf(srip, 13, "%d%% (%d/%d)", (int)(prip*100),
+@@ -941,7 +883,7 @@
+         {
+             pencode = ((double)encode_tracks_completed/(double)tracks_to_rip) + 
+                        ((mp3_percent+ogg_percent+flac_percent+wavpack_percent+monkey_percent
+-                         +musepack_percent+aac_percent) /
++                         +musepack_percent) /
+                         (parts-1) / tracks_to_rip);
+             snprintf(sencode, 13, "%d%% (%d/%d)", (int)(pencode*100),
+                      (encode_tracks_completed < tracks_to_rip)
+diff -ruN ../asunder-2.0-orig/src/wrappers.c src/wrappers.c
+--- ../asunder-2.0-orig/src/wrappers.c	2010-07-17 12:13:29.000000000 +0000
++++ src/wrappers.c	2011-11-08 18:19:07.000000000 +0000
+@@ -34,7 +34,6 @@
+ pid_t wavpack_pid;
+ pid_t monkey_pid;
+ pid_t musepack_pid;
+-pid_t aac_pid;
+ 
+ int numCdparanoiaFailed;
+ int numLameFailed;
+@@ -43,7 +42,6 @@
+ int numWavpackFailed;
+ int numMonkeyFailed;
+ int numMusepackFailed;
+-int numAacFailed;
+ 
+ int numCdparanoiaOk;
+ int numLameOk;
+@@ -52,7 +50,6 @@
+ int numWavpackOk;
+ int numMonkeyOk;
+ int numMusepackOk;
+-int numAacOk;
+ 
+ int numchildren = 0;
+ static bool waitBeforeSigchld;
+@@ -89,7 +86,6 @@
+ extern pid_t wavpack_pid;
+ extern pid_t monkey_pid;
+ extern pid_t musepack_pid;
+-extern pid_t aac_pid;
+ 
+ // signal handler to find out when our child has exited
+ void sigchld(int signum)
+@@ -100,9 +96,9 @@
+     pid = wait(&status);
+     
+     debugLog("sigchld for %d (know about wav %d, mp3 %d, ogg %d, flac %d, "
+-             "wv %d, ape %d, mpc %d, m4a %d\n",
++             "wv %d, ape %d, mpc %d\n",
+              pid, cdparanoia_pid, lame_pid, oggenc_pid, flac_pid, 
+-             wavpack_pid, monkey_pid, musepack_pid, aac_pid);
++             wavpack_pid, monkey_pid, musepack_pid);
+     
+     /* this is because i can't seem to be able to block sigchld: */
+     while(waitBeforeSigchld)
+@@ -113,7 +109,7 @@
+     
+     if (pid != cdparanoia_pid && pid != lame_pid && pid != oggenc_pid && 
+         pid != flac_pid && pid != wavpack_pid && pid != monkey_pid &&
+-        pid != musepack_pid && pid != aac_pid)
++        pid != musepack_pid )
+     {
+         printf("SIGCHLD for unknown pid, report bug please");
+     }
+@@ -166,11 +162,6 @@
+             musepack_pid = 0;
+             numMusepackFailed++;
+         }
+-        else if (pid == aac_pid)
+-        {
+-            aac_pid = 0;
+-            numAacFailed++;
+-        }
+     }
+     else
+     {
+@@ -210,11 +201,6 @@
+             musepack_pid = 0;
+             numMusepackOk++;
+         }
+-        else if (pid == aac_pid)
+-        {
+-            aac_pid = 0;
+-            numAacOk++;
+-        }
+     }
+     
+     debugLog("sigchld completed\n");
+@@ -981,50 +967,3 @@
+     }
+ }
+ 
+-void aac(char* wavfilename,
+-         char* aacfilename,
+-         int quality,
+-         double* progress)
+-{
+-    const char* args[8];
+-    int fd;
+-    int pos;
+-    
+-    pos = 0;
+-    args[pos++] = "neroAacEnc";
+-    
+-    args[pos++] = "-q";
+-    char qualityParam[5];
+-    snprintf(qualityParam, 5, "0.%d", quality);
+-    args[pos++] = qualityParam;
+-    
+-    args[pos++] = "-if";
+-    args[pos++] = wavfilename;
+-    args[pos++] = "-of";
+-    args[pos++] = aacfilename;
+-    args[pos++] = NULL;
+-    
+-    fd = exec_with_output(args, STDERR_FILENO, &aac_pid);
+-    
+-    int size;
+-    char buf[256];
+-    do
+-    {
+-        /* The Nero encoder doesn't give me an estimate for completion
+-        * or any way to estimate it myself, just the number of seconds
+-        * done. So just sit in here until the program exits */
+-        size = read(fd, &buf[0], 256);
+-        
+-        if (size == -1 && errno == EINTR)
+-        /* signal interrupted read(), try again */
+-            size = 1;
+-    } while (size > 0);
+-    
+-    close(fd);
+-    /* don't go on until the signal for the previous call is handled */
+-    while (aac_pid != 0)
+-    {
+-        debugLog("w11 (%d)\n", aac_pid);
+-        usleep(100000);
+-    }
+-}
+diff -ruN ../asunder-2.0-orig/src/wrappers.h src/wrappers.h
+--- ../asunder-2.0-orig/src/wrappers.h	2010-04-16 01:15:02.000000000 +0000
++++ src/wrappers.h	2011-11-08 18:19:37.000000000 +0000
+@@ -8,7 +8,6 @@
+ extern pid_t wavpack_pid;
+ extern pid_t monkey_pid;
+ extern pid_t musepack_pid;
+-extern pid_t aac_pid;
+ 
+ extern int numCdparanoiaFailed;
+ extern int numLameFailed;
+@@ -17,7 +16,6 @@
+ extern int numWavpackFailed;
+ extern int numMonkeyFailed;
+ extern int numMusepackFailed;
+-extern int numAacFailed;
+ 
+ extern int numCdparanoiaOk;
+ extern int numLameOk;
+@@ -26,7 +24,6 @@
+ extern int numWavpackOk;
+ extern int numMonkeyOk;
+ extern int numMusepackOk;
+-extern int numAacOk;
+ 
+ // signal handler to find out when out child has exited
+ void sigchld(int signum);
+@@ -130,7 +127,3 @@
+               int quality,
+               double* progress);
+ 
+-void aac(char* wavfilename,
+-         char* aacfilename,
+-         int quality,
+-         double* progress);

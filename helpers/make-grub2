@@ -1,0 +1,48 @@
+#!/bin/sh
+#
+#    Copyright (C) 2011  Rubén Rodríguez <ruben@trisquel.info>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=3
+COMPONENT=main
+
+. ./config
+
+rm debian/patches/ubuntu_grub_standards.patch
+sed /ubuntu_grub_standards/d debian/patches/series -i
+
+replace "with Linux" "with Linux-Libre" util
+replace "with Linux" "with Linux-Libre" debian
+replace "Linux" "Linux-Libre" po
+
+sed 's/\(prefix=@prefix@\)/\1\nGRUB_CMDLINE_EXTRA=$( grep -q nomodeset \/proc\/cmdline \&\& echo nomodeset \|\| echo -n "" )/' util/grub.d/10_linux.in -i
+
+cat << EOF >> debian/default/grub
+
+# Trisquel comes without kernel recovery entries to improve security.
+GRUB_DISABLE_RECOVERY=true
+EOF
+
+changelog "Disable rescue mode by default, nomodeset handler"
+sed "s/-.*)/-${REVISION}trisquel${VERSION})/" -i debian/changelog
+
+apt-get install -y --force-yes kvm-pxe
+# /dev is needed for KVM support
+mount none -t devtmpfs /dev || true
+compile
+umount /dev
+

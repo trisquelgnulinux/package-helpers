@@ -1,0 +1,81 @@
+#!/bin/sh
+#
+#    Copyright (C) 2009-2010  Rubén Rodríguez <ruben@gnu.org>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=1
+NETINST=true
+. ./config
+
+apt-get install trisquel-keyring
+
+cat << EOF > /etc/apt/sources.list
+deb $DEVELMIRROR $UPSTREAM main
+deb-src $DEVELMIRROR $UPSTREAM main
+deb $LOCALMIRROR $CODENAME main
+deb $LOCALMIRROR $CODENAME-updates main
+deb-src $LOCALMIRROR $CODENAME main
+deb-src $LOCALMIRROR $CODENAME-updates main
+deb-src $MIRROR $UPSTREAM main
+deb-src $MIRROR $UPSTREAM-updates main
+deb-src $MIRROR $UPSTREAM-security main
+EOF
+
+apt-get update
+
+find build/pkg-lists -type f | xargs sed -i /media-retriever/d
+
+LASTKERNEL=$(apt-cache showsrc linux-libc-dev|grep ^Version |head -n1|cut -d" " -f2|cut -d. -f1,2,3)
+sed -i "s/3.0.\w*-\w*/$LASTKERNEL/g" ./build/config/i386/netboot/386.cfg ./build/config/i386.cfg ./build/config/amd64.cfg
+
+cp $DATA/splash.png build/boot/x86/pics/trisquel.png
+sed -i 's:archive.gpg:archive.gpg\n\tcp -a $(TREE)/usr/share/keyrings/trisquel-archive-keyring.gpg $(TREE)/usr/share/keyrings/ubuntu-archive-keyring.gpg:' build/Makefile
+sed -i 's/ubuntu.png/trisquel.png/g' build/config/x86.cfg
+
+cat << EOF > build/sources.list.udeb.local
+deb $LOCALMIRROR $CODENAME main/debian-installer
+deb $LOCALMIRROR $CODENAME-updates main/debian-installer
+#deb $LOCALMIRROR $CODENAME-security main/debian-installer
+EOF
+
+rpl 2004-2010 2004-2011 . -R
+rpl 2004-2009 2004-2011 . -R
+rpl 2004-2008 2004-2011 . -R
+rpl 2004-2007 2004-2011 . -R
+rpl www.ubuntu.com trisquel.info . -R
+rpl ubuntu.com trisquel.info build/boot/ -R
+rpl www.ubuntu trisquel build/boot/ -R
+rpl \"com/ \"info/ build/boot/ -R
+rpl Ubuntu Trisquel . -R
+rpl UBUNTU TRISQUEL . -R
+rpl TRISQUEL-PT UBUNTU-PT . -R
+rpl Canonical Trisquel . -R
+rpl Ltd\. GNU/Linux . -R 
+rpl Trisquel-l10n ubuntu-l10n . -R
+rpl "Trisquel Ltd, and Rosetta" "Canonical Ltd, and Rosetta" . -R
+rpl ubuntu-keyring trisquel-keyring . -R
+rpl ubuntu-archive-keyring trisquel-archive-keyring . -R
+
+#sed -i 's:^The default installation.*::g' build/boot/x86/boot.txt
+#sed -i 's:^Press.*::g' build/boot/x86/boot.txt
+#sed -i "s:^To install.*:This is the Trisquel GNU/Linux $TVERSION LTS \"$TCODENAME\" network install CD.:g" build/boot/x86/boot.txt
+#sed -i 's:^For the.*:For the default installation, press ENTER, for more help press F1.:g' build/boot/x86/boot.txt
+
+sed s/tasks=standard/tasks=trisquel-console/ build/boot/x86/syslinux.cfg -i
+
+changelog "Rebranded and adapted for Trisquel"
+compile

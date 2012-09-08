@@ -1,0 +1,254 @@
+<!DOCTYPE Menu PUBLIC "-//freedesktop//DTD Menu 1.0//EN"
+ "http://www.freedesktop.org/standards/menu-spec/1.0/menu.dtd">
+
+<Menu>
+
+  <Name>Applications</Name>
+  <Directory>X-GNOME-Menu-Applications.directory</Directory>
+
+  <!-- Scan legacy dirs first, as later items take priority -->
+  <LegacyDir>/etc/X11/applnk</LegacyDir>
+  <LegacyDir>/usr/share/gnome/apps</LegacyDir>
+
+  <!-- Read standard .directory and .desktop file locations -->
+  <DefaultAppDirs/>
+  <DefaultDirectoryDirs/>
+
+  <!-- Read in overrides and child menus from applications-merged/ -->
+  <DefaultMergeDirs/>
+
+  <!-- Accessories submenu -->
+  <Menu>
+    <Name>Accessories</Name>
+    <Directory>Utility.directory</Directory>
+    <Include>
+      <Or>
+        <Category>Utility</Category>
+        <Category>Accessibility</Category>
+      </Or>
+    </Include>
+    <Exclude>
+        <Category>System</Category>
+        <Category>Settings</Category>
+        <Filename>nautilus.desktop</Filename>
+    </Exclude>
+  </Menu> <!-- End Accessories -->
+
+  <!-- Accessibility submenu items are inside Accessories in Trisquel
+  <Menu>
+    <Name>Universal Access</Name>
+    <Directory>Utility-Accessibility.directory</Directory>
+    <Include>
+      <And>
+        <Category>Accessibility</Category>
+        <Not><Category>Settings</Category></Not>
+      </And>
+    </Include>
+  </Menu>  End Accessibility -->
+
+  <!-- Development Tools -->
+  <Menu>
+    <Name>Development</Name>
+    <Directory>Development.directory</Directory>
+    <Include>
+      <And>
+        <Category>Development</Category>
+      </And>
+      <Filename>emacs.desktop</Filename>
+    </Include>
+  </Menu> <!-- End Development Tools -->
+
+  <!-- Education -->
+  <Menu>
+    <Name>Education</Name>
+    <Directory>Education.directory</Directory>
+    <Include>
+      <And>
+        <Category>Education</Category>
+        <Not><Category>Science</Category></Not>
+      </And>
+    </Include>
+  </Menu> <!-- End Education -->
+
+  <!-- Science -->
+  <Menu>
+    <Name>Science</Name>
+    <Directory>GnomeScience.directory</Directory>
+    <Include>
+      <And>
+        <Category>Education</Category>
+        <Category>Science</Category>
+      </And>
+    </Include>
+  </Menu> <!-- End Science -->
+
+  <!-- Games -->
+  <Menu>
+    <Name>Games</Name>
+    <Directory>Game.directory</Directory>
+    <Include>
+      <And>
+        <Category>Game</Category>
+      </And>
+    </Include>
+    <Exclude>
+        <Filename>freecell.desktop</Filename>
+    </Exclude>
+  </Menu> <!-- End Games -->
+
+  <!-- Graphics -->
+  <Menu>
+    <Name>Graphics</Name>
+    <Directory>Graphics.directory</Directory>
+    <Include>
+      <And>
+        <Category>Graphics</Category>
+      </And>
+    </Include>
+    <Exclude>
+        <Filename>libreoffice-draw.desktop</Filename>
+    </Exclude>
+  </Menu> <!-- End Graphics -->
+
+  <!-- Internet -->
+  <Menu>
+    <Name>Internet</Name>
+    <Directory>Network.directory</Directory>
+        <Layout>
+            <Filename>icecat.desktop</Filename>
+            <Filename>abrowser-3.0.desktop</Filename>
+            <Filename>abrowser-3.5.desktop</Filename>
+            <Filename>abrowser.desktop</Filename>
+            <Filename>iceweasel.desktop</Filename>
+            <Filename>firefox.desktop</Filename>
+            <Filename>epiphany.desktop</Filename>
+            <Filename>epiphany-gecko.desktop</Filename>
+            <Filename>evolution.desktop</Filename>
+            <Filename>thunderbird.desktop</Filename>
+            <Filename>pidgin.desktop</Filename>
+            <Filename>gwibber.desktop</Filename>
+            <Filename>liferea.desktop</Filename>
+            <Filename>remmina.desktop</Filename>
+            <Filename>tsclient.desktop</Filename>
+            <Filename>ekiga.desktop</Filename>
+            <Filename>xchat.desktop</Filename>
+            <Filename>amule.desktop</Filename>
+            <Filename>transmission.desktop</Filename>
+            <Merge type="files"/>
+       </Layout>
+    <Include>
+            <Filename>evolution.desktop</Filename>
+      <And>
+        <Category>Network</Category>
+      </And>
+    </Include>
+    <Exclude>
+        <Filename>evolution-settings.desktop</Filename>
+        <Filename>vino-preferences.desktop</Filename>
+    </Exclude>
+  </Menu>   <!-- End Internet -->
+
+  <!-- Multimedia -->
+  <Menu>
+    <Name>Multimedia</Name>
+    <Directory>AudioVideo.directory</Directory>
+                <Layout>
+                        <Filename>totem.desktop</Filename>
+                        <Filename>exaile.desktop</Filename>
+            <Merge type="files"/>
+                </Layout>
+    <Include>
+      <And>
+        <Category>AudioVideo</Category>
+      </And>
+    </Include>
+    <Exclude>
+        <Filename>gnash.desktop</Filename>
+    </Exclude>
+  </Menu>   <!-- End Multimedia -->
+
+  <!-- Office -->
+  <Menu>
+    <Name>Office</Name>
+    <Directory>Office.directory</Directory>
+                <Layout>
+                        <Filename>libreoffice-writer.desktop</Filename>
+                        <Filename>libreoffice-calc.desktop</Filename>
+                        <Filename>libreoffice-impress.desktop</Filename>
+                        <Filename>libreoffice-base.desktop</Filename>
+                        <Filename>libreoffice-draw.desktop</Filename>
+                        <Filename>lyx.desktop</Filename>
+                        <Filename>gnome-dictionary.desktop</Filename>
+            <Merge type="files"/>
+                </Layout>
+    <Include>
+      <And>
+        <Category>Office</Category>
+      </And>
+    </Include>
+    <Exclude>
+        <Filename>evolution.desktop</Filename>
+        <Filename>libreoffice-startcenter.desktop</Filename>
+    </Exclude>
+  </Menu> <!-- End Office -->
+
+  <!-- System Tools is disabled in Trisquel, goes into gnome-control-center
+  <Menu>
+    <Name>System</Name>
+    <Directory>System-Tools.directory</Directory>
+    <Include>
+      <And>
+        <Category>System</Category>
+        <Not><Category>Settings</Category></Not>
+	<Not><Category>Game</Category></Not>
+      </And>
+    </Include>
+  </Menu>   End System Tools -->
+
+  <!-- Other -->
+  <Menu>
+    <Name>Other</Name>
+    <Directory>X-GNOME-Other.directory</Directory>
+    <OnlyUnallocated/>
+    <Include>
+      <And>
+        <Not><Category>Core</Category></Not>
+        <Not><Category>Screensaver</Category></Not> <Not><Category>System</Category></Not> <Not><Category>Settings</Category></Not>
+        <Not><Category>X-GNOME-Settings-Panel</Category></Not>
+      </And>
+    </Include>
+  </Menu> <!-- End Other -->
+
+  <!-- The Debian menu -->
+  <Menu>
+    <Name>Debian</Name>
+    <MergeFile>debian-menu.menu</MergeFile>
+    <Directory>Debian.directory</Directory>
+  </Menu>
+
+<Include>
+  <Filename>gnome-app-install.desktop</Filename>
+  <Filename>gnome-control-center.desktop</Filename>
+</Include>
+
+<!-- Separator between menus and gnome-app-install -->
+<Layout>
+  <Merge type="menus"/>
+  <Merge type="files"/>
+                <Menuname>Internet</Menuname>
+                <Menuname>Office</Menuname>
+                <Menuname>Education</Menuname>
+                <Menuname>Development</Menuname>
+                <Menuname>Graphics</Menuname>
+                <Menuname>Multimedia</Menuname>
+                <Menuname>Games</Menuname>
+                <Menuname>Accessories</Menuname>
+                <Menuname>Debian</Menuname>
+                <Menuname>Other</Menuname>
+                <Menuname>wine-wine</Menuname>
+  <Separator/>
+  <Filename>gnome-app-install.desktop</Filename>
+  <Filename>gnome-control-center.desktop</Filename>
+</Layout>
+
+</Menu> <!-- End Applications -->

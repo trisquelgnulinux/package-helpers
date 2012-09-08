@@ -1,0 +1,64 @@
+#!/bin/sh
+#
+#    Copyright (C) 2011  Rubén Rodríguez <ruben@trisquel.info>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=1
+
+. ./config
+
+cat << EOF > sweets.recipe
+[DEFAULT]
+depends   = abiword; base/pygtk; base/pygobject; base/python
+ 
+version   = 0.8.0
+stability = stable
+ 
+[Library]
+implement = %(name)s
+name      = pyabiword
+summary   = Python bindings for libabiword
+license   = GPLv2+
+homepage  = http://abisource.com/
+ 
+requires  = %(depends)s
+binding   = PYTHONPATH python
+ 
+[Package]
+project   = SweetsDistribution
+ 
+[Archive]
+arch      = any
+ 
+[Build]
+requires  = %(depends)s; base/pkg-config; base/make; base/gcc-c++
+clean     = make clean
+configure = ./configure
+                --prefix=%(PREFIX)s
+                am_cv_python_pythondir=%(PREFIX)s/python
+                am_cv_python_pyexecdir=%(PREFIX)s/python
+                CFLAGS="%(CFLAGS)s"
+make      = make
+install   = make DESTDIR=%(DESTDIR)s install
+ 
+[Source]
+source    = pyabiword-%(version)s.tar.gz
+EOF
+
+changelog "Compiled for Trisquel On a Sugar TOAST"
+
+compile

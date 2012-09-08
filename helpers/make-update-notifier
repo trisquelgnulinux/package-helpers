@@ -1,0 +1,48 @@
+#!/bin/sh
+#
+#    Copyright (C) 2012 Ruben Rodriguez <ruben@trisquel.info>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=1
+COMPONENT=main
+
+. ./config
+
+patch -p1 << EOF
+diff -ru update-notifier-0.117ubuntu3.2.orig//src/uevent.c update-notifier-0.117ubuntu3.2/src/uevent.c
+--- update-notifier-0.117ubuntu3.2.orig//src/uevent.c	2012-01-18 08:26:28.000000000 +0000
++++ update-notifier-0.117ubuntu3.2/src/uevent.c	2012-06-11 12:38:40.000000000 +0000
+@@ -101,13 +101,13 @@
+     if (found)
+ 	return TRUE;
+ 
+-    g_debug_uevent ("calling jockey");
++    /*g_debug_uevent ("calling jockey");
+     gchar* argv[] = {"jockey-gtk", "-c", NULL };
+     GError* error = NULL;
+     if (!g_spawn_async(NULL, argv, NULL, G_SPAWN_SEARCH_PATH, NULL, NULL, NULL, &error)) {
+ 	g_warning("jockey could not be called: %s", error->message);
+ 	g_error_free (error);
+-    }
++    }*/
+     return TRUE;
+ }
+EOF
+ 
+changelog "Disabled jockey calls"
+
+compile

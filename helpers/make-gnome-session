@@ -1,0 +1,52 @@
+#!/bin/sh
+#
+#    Copyright (C) 2008-2012  Rubén Rodríguez <ruben@trisquel.info>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=3
+COMPONENT=main
+QUILT=skip
+
+. ./config
+
+export QUILT_PATCHES=debian/patches
+quilt push -a
+
+#% Make gnome-session not dependent on unity
+sed 's/unity.*/gnome-shell (>= 3.0),/' -i debian/control*
+
+#% Replace gnome-classic session with gnome-fallback
+cat << EOF > debian/gnome-session-fallback.install
+debian/scripts/gnome-session-classic /usr/bin
+debian/tmp/usr/share/xsessions/gnome-classic.desktop
+debian/tmp/usr/share/gnome-session/sessions/gnome-classic.session
+EOF
+mv debian/scripts/gnome-session-fallback debian/scripts/gnome-session-classic
+sed s/fallback/classic/g debian/scripts/gnome-session-classic -i
+cat << EOF > data/gnome-classic.session.desktop.in.in
+[GNOME Session]
+Name=Trisquel
+RequiredComponents=gnome-panel;gnome-settings-daemon;
+RequiredProviders=windowmanager;
+DefaultProvider-windowmanager=metacity
+DesktopName=GNOME
+EOF
+
+changelog "Adapted for Trisquel"
+
+compile
+

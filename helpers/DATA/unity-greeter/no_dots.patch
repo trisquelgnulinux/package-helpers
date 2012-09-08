@@ -1,0 +1,43 @@
+Description: Upstream changes introduced in version 0.1.1-0ubuntu1~scottseverance1
+ This patch has been created by dpkg-source during the package build.
+ Here's the last changelog entry, hopefully it gives details on why
+ those changes were made:
+ .
+ unity-greeter (0.1.1-0ubuntu1~scottseverance1) oneiric; urgency=low
+ .
+   * Killed the overlay grid, since it can't be turned off and is annoying on
+     backgrounds other than the default.
+ .
+ The person named in the Author field signed this changelog entry.
+Author: Scott Severance <scott@scottseverance.us>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: <vendor|upstream|other>, <url of original patch>
+Bug: <url in upstream bugtracker>
+Bug-Debian: http://bugs.debian.org/<bugnumber>
+Bug-Ubuntu: https://launchpad.net/bugs/<bugnumber>
+Forwarded: <no|not-needed|url proving that it has been forwarded>
+Reviewed-By: <name and email of someone who approved the patch>
+Last-Update: <YYYY-MM-DD>
+
+--- unity-greeter-0.1.1.orig/src/user-list.vala
++++ unity-greeter-0.1.1/src/user-list.vala
+@@ -248,9 +248,11 @@ public class Background
+         bc.paint ();
+ 
+         /* Draw overlay */
+-        bc.set_source (overlay);
+-        bc.rectangle (grid_size - 1, grid_size - 1, width - grid_size * 2 + 2, height - grid_size * 2 + 2);
+-        bc.fill ();
++        /* The overlay is annoying, so I'm killing it. */
++        /* bc.set_source (overlay);
++         * bc.rectangle (grid_size - 1, grid_size - 1, width - grid_size * 2 + 2, height - grid_size * 2 + 2);
++         * bc.fill ();
++         */
+ 
+         /* Draw logo */
+         if (logo_surface != null)

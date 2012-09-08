@@ -1,0 +1,19 @@
+diff -ruN src-old/connman-dbus.conf src/connman-dbus.conf
+--- src-old/connman-dbus.conf	2011-11-08 15:29:09.000000000 +0000
++++ src/connman-dbus.conf	2011-11-08 15:28:11.000000000 +0000
+@@ -9,8 +9,15 @@
+     </policy>
+     <policy at_console="true">
+         <allow send_destination="net.connman"/>
++	<allow send_interface="net.connman.Agent"/>
++        <allow send_interface="net.connman.Counter"/>
++        <allow send_interface="net.connman.Manager"/>
+     </policy>
+     <policy context="default">
++        <deny own="net.connman"/>
+         <deny send_destination="net.connman"/>
++        <deny send_interface="net.connman.Agent"/>
++        <deny send_interface="net.connman.Counter"/>
++        <deny send_interface="net.connman.Manager"/>
+     </policy>
+ </busconfig>

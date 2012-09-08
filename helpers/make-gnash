@@ -1,0 +1,39 @@
+#!/bin/sh
+#
+#    Copyright (C) 2011  Rubén Rodríguez <ruben@trisquel.info>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=2
+EXTERNAL="deb-src http://archive.ubuntu.com/ubuntu precise universe"
+
+. ./config
+
+sed 's/.*startStopped.*/set startStopped on/' ./libbase/gnashpluginrc.in ./libbase/gnashrc.in -i
+
+#sed -i '/Return the MIME/,/}/d' ./plugin/*/plugin.cpp
+#START=$(expr $(grep NP_GetMIMEDescription plugin/npapi/mozilla-sdk/np_entry.cpp -n|cut -d: -f1) - 1 )
+#sed -i "$START,/}/d" plugin/npapi/mozilla-sdk/np_entry.cpp
+#for FILE in  plugin/npapi/gshell.cpp plugin/npapi/test.cpp
+#do
+#START=$(expr $(grep NPP_GetMIMEDescription $FILE -n|cut -d: -f1) - 1 )
+#sed -i "$START,/}/d" $FILE
+#done
+
+changelog "Set startStopped on by default"
+
+compile
+

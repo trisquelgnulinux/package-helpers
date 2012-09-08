@@ -1,0 +1,34 @@
+diff -ru unity-greeter-0.1.1-orig//src/user-list.vala unity-greeter-0.1.1/src/user-list.vala
+--- unity-greeter-0.1.1-orig//src/user-list.vala	2011-09-28 05:32:51.000000000 +0000
++++ unity-greeter-0.1.1/src/user-list.vala	2012-03-07 15:13:33.000000000 +0000
+@@ -604,11 +604,25 @@
+     }
+ 
+     private void screen_reader_toggled_cb (Gtk.CheckMenuItem item)
+-    {
+-        var settings = new Settings ("org.gnome.desktop.a11y.applications");
+-        settings.set_boolean ("screen-reader-enabled", item.active);
+-        settings = new Settings ("org.gnome.desktop.interface");
+-        settings.set_boolean ("toolkit-accessibility", item.active);
++    {   
++        /* FIXME: The below would be sufficient if gnome-session were running
++         * to notice and run a screen reader in /etc/xdg/autostart...  But
++         * since we're not running gnome-session, we hardcode orca here.
++        /*var settings = new Settings ("org.gnome.desktop.a11y.applications");*/
++        /*settings.set_boolean ("screen-reader-enabled", item.active);*/
++
++        /* Hardcoded orca: */
++        try
++        {   
++            if (item.active)
++                Process.spawn_command_line_async ("orcawrapper");
++            else
++                Process.spawn_command_line_async ("orca --quit");
++        }
++        catch (Error e)
++        {   
++            warning ("Failed to run Orca: %s", e.message);
++        }
+     }
+ 
+     public void show_message (string text, bool error = false)
