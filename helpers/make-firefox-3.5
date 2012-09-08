@@ -1,0 +1,114 @@
+#!/bin/sh
+#
+#    Copyright (C) 2008-2010  Rubén Rodríguez <ruben@trisquel.info>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=2
+
+. ./config
+
+sed -i /reload_new_plugins/d debian/patches/series
+
+sed s/Firefox/Abrowser/g -i debian/*restart-required*
+cat <<EOF >> $(ls debian/*restart-required* -1)
+Name-es: Reinicio de Abrowser-3.6 requerido
+Description-es: Abrowser-3.6 ha sido actualizado (o reinstalado) y necesita ser reiniciado.
+ Por favor cierre y reinicie su navegador ahora.
+Name-gl: Reinicio de Abrowser-3.6 requerido
+Description-gl: Abrowser-3.6 foi actualizado (ou reinstalado) e precisa ser reiniciado.
+ Por favor peche e reinicie o seu navegador agora.
+EOF
+
+cp $DATA/firefox.control debian/control
+cp $DATA/abrowser.desktop debian/abrowser.desktop
+cp $DATA/firefox-setup.sh debian/
+cp $DATA/default* debian/
+
+cat << EOF > debian/firefox.js
+// Disable plugin installer
+pref("plugins.hide_infobar_for_missing_plugin", true);
+pref("plugins.hide_infobar_for_outdated_plugin", true);
+pref("plugin.default_plugin_disabled", false);
+
+//Speeding it up
+pref("network.http.pipelining", true);
+pref("network.http.proxy.pipelining", true);
+pref("network.http.pipelining.maxrequests", 10);
+pref("network.dns.disableIPv6", true);
+pref("nglayout.initialpaint.delay", 0);
+
+// Disable third party cookies
+pref("network.cookie.cookieBehavior", 1);
+// Search as we type
+pref("accessibility.typeaheadfind", true);
+
+pref("extensions.update.enabled", true);
+// Use LANG environment variable to choose locale
+pref("intl.locale.matchOS", true);
+// Disable default browser checking.
+pref("browser.shell.checkDefaultBrowser", false);
+// Prevent EULA dialog to popup on first run
+pref("browser.EULA.override", true);
+
+pref("general.useragent.vendor", "Trisquel");
+pref("general.useragent.vendorComment", "$CODENAME");
+pref("general.useragent.vendorSub", "$REVISION");
+pref ("startup.homepage_override_url" , "http://trisquel.info/newbrowser");
+pref ("startup.homepage_welcome_url" , "http://trisquel.info/welcome");
+
+// Preferences for the Get Add-ons panel
+pref ("extensions.update.notifyUser", false);
+pref ("extensions.getAddons.showPane", false);
+pref ("extensions.getAddons.browseAddons", "http://trisquel.info/browser");
+pref ("extensions.getAddons.maxResults", 5);
+pref ("extensions.getAddons.recommended.browseURL", "http://trisquel.info/browser");
+pref ("extensions.getAddons.recommended.url", "http://trisquel.info/browser");
+pref ("extensions.getAddons.search.browseURL", "http://trisquel.info/browser");
+pref ("extensions.getAddons.search.url", "http://trisquel.info/browser");
+pref ("extensions.getMoreExtensionsURL" , "http://trisquel.info/browser");
+pref ("extensions.getMorePluginsURL" , "http://trisquel.info/browser");
+pref ("extensions.getMoreThemesURL" , "http://trisquel.info/browser");
+
+// Dictionary download preference
+pref("browser.dictionaries.download.url", "http://trisquel.info/browser");
+
+EOF
+
+#Remove ubuntu package search engine
+sed -i '/debsearch/d' debian/*.install
+
+#Make default list of search engines appear for all languages
+sed s:searchplugins/en-US:searchplugins:g debian/rules -i
+
+cat << EOF > debian/distribution.ini
+[Global]
+id=trisquel
+version=3.5
+about=Mozilla based browser for Trisquel GNU/Linux
+
+[Preferences]
+app.distributor = “trisquel”
+app.distributor.channel = “trisquel”
+app.partner.ubuntu = “trisquel”
+EOF
+
+#The firefox-setup script needs to be launched during the pre-build stage
+sed 's:\(^pre-build.*$\):\1\n\tsh debian/firefox-setup.sh:' -i debian/rules
+
+changelog  "Firefox branding removed, abrowser tuned up for Trisquel"
+compile
+

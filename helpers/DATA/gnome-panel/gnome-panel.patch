@@ -1,0 +1,32 @@
+Index: gnome-panel-2.27.92/gnome-panel/panel-menu-items.c
+===================================================================
+--- gnome-panel-2.27.92.orig/gnome-panel/panel-menu-items.c	2009-09-08 02:08:42.000000000 +0200
++++ gnome-panel-2.27.92/gnome-panel/panel-menu-items.c	2009-09-18 16:01:01.000000000 +0200
+@@ -991,6 +991,7 @@
+ 	GtkWidget *item;
+ 	char      *gconf_name;
+ 	char      *name;
++	char      *path;
+ 	char      *uri;
+ 	GFile     *file;
+ 
+@@ -1157,9 +1158,18 @@
+ 	if (add_separator)
+ 		add_menu_separator (menu);
+ 
+-	panel_menu_items_append_from_desktop (menu, "yelp.desktop", NULL, FALSE);
++	panel_menu_items_append_from_desktop (menu, "yelp.desktop", _("Help and Support"), FALSE);
++
+ 	panel_menu_items_append_from_desktop (menu, "gnome-about.desktop", NULL, FALSE);
+ 
++	/*if (g_file_test (DATADIR"/omf/about-ubuntu/about-ubuntu-C.omf",
++			 G_FILE_TEST_IS_REGULAR))
++	  panel_menu_items_append_from_desktop (menu, "ubuntu-about.desktop", NULL, FALSE);
++
++	if (g_file_test (DATADIR"/omf/about-edubuntu/about-edubuntu-C.omf",
++			 G_FILE_TEST_IS_REGULAR)) */
++	  panel_menu_items_append_from_desktop (menu, "trisquel-about.desktop", NULL, FALSE);
++
+ 	if (parent->priv->append_lock_logout)
+ 		panel_menu_items_append_lock_logout (menu);
+ }

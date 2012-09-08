@@ -1,0 +1,172 @@
+--- deblob-2.6.31.1	2010-03-16 03:55:26.000000000 +0000
++++ deblob-2.6.31	2010-05-27 01:28:11.923171773 +0000
+@@ -79,10 +79,30 @@
+   have_check=:
+ fi
+ 
++filelist="/tmp/filelist"
+ filetest () {
+-  if [ ! -f $1 ]; then
+-    die $1 does not exist, something is wrong && return 1
+-  fi
++        export FILES=$1
++        if ! [ -f $1 ]
++        then
++                if [ $( basename $1) = Makefile ] || [ $( basename $1) = Kconfig ]
++                then
++                        die File not found: $1
++                        return 1
++                fi
++
++                file=$( basename $1)
++                [ -f $filelist ] || find > $filelist
++                if FILES=$(egrep  /$file$ $filelist)
++                then
++                        die File not found: $1
++                        echo WARNING: Alternative\(s\) to $1 found: $FILES
++                        echo WARNING: Deblobbing alternative\(s\)
++                        return 0
++                else
++                        die File not found: $1, no alternatives found
++                fi
++                return 1
++        fi
+ }
+ 
+ announce () {
+@@ -93,8 +113,8 @@
+ clean_file () {
+   #$1 = filename
+   filetest $1 || return
+-  rm $1
+-  echo $1: removed
++  rm $FILES
++  echo WARNING: Removing $FILES
+ }
+ 
+ check_changed () {
+@@ -109,15 +129,18 @@
+ clean_blob () {
+   #$1 = filename
+   filetest $1 || return
+-  if $have_check; then
+-    name=$1
+-    set fnord "$@" -d
+-    shift 2
+-    $check "$@" -i linux-$kver $name > $name.deblob
+-    check_changed $name && echo $name: removed blobs
+-  else
+-    clean_file $1
+-  fi
++  for FILE in $FILES
++  do
++    if $have_check; then
++      name=$FILE
++      set fnord "$@" -d
++      shift 2
++      $check "$@" -i linux-$kver $name > $name.deblob
++      check_changed $name && echo $name: removed blobs
++    else
++      clean_file $FILE
++    fi
++  done
+ }
+ 
+ dummy_blob () {
+@@ -135,21 +158,27 @@
+ clean_fw () {
+   #$1 = firmware text input, $2 = firmware output
+   filetest $1 || return
+-  if test -f $2; then
+-    die $2 exists, something is wrong && return
+-  fi
+-  clean_blob $1 -s 4
+-  dummy_blob $2
++  for FILE in $FILES
++  do
++    if test -f $2; then
++      die $2 exists, something is wrong && return
++    fi
++    clean_blob $FILE -s 4
++    dummy_blob $2
++  done
+ }
+ 
+ drop_fw_file () {
+   #$1 = firmware text input, $2 = firmware output
+   filetest $1 || return
+-  if test -f $2; then
+-    die $2 exists, something is wrong && return
+-  fi
+-  clean_file $1
+-  dummy_blob $2
++  for FILE in $FILES
++  do
++    if test -f $2; then
++      die $2 exists, something is wrong && return
++    fi
++    clean_file $FILE
++    dummy_blob $2
++  done
+ }
+ 
+ clean_kconfig () {
+@@ -165,10 +194,13 @@
+     ;;
+   esac
+   filetest $1 || return
+-  sed "/^config \\($2\\)\$/{p;i\
++  for FILE in $FILES
++  do
++    sed "/^config \\($2\\)\$/{p;i\
+ 	depends on NONFREE
+-d;}" $1 > $1.deblob
+-  check_changed $1 && echo $1: marked config $2 as depending on NONFREE
++d;}" $FILE > $FILE.deblob
++    check_changed $FILE && echo $FILE: marked config $2 as depending on NONFREE
++  done
+ }
+ 
+ clean_mk () {
+@@ -188,25 +220,34 @@
+ clean_sed () {
+   #$1 = sed-script $2 = file $3 = comment
+   filetest $2 || return
+-  sed -e "$1" "$2" > "$2".deblob || {
+-    die $2: failed: ${3-applied sed script $1} && return 1; }
+-  check_changed $2 && echo $2: ${3-applied sed script $1}
++  for FILE in $FILES
++  do
++    sed -e "$1" "$FILE" > "$FILE".deblob || {
++      die $2: failed: ${3-applied sed script $1} && return 1; }
++    check_changed $FILE && echo $FILE: ${3-applied sed script $1} 
++  done
+ }
+ 
+ reject_firmware () {
+   #$1 = file
+   filetest $1 || return
+-  clean_sed '
++  for FILE in $FILES
++  do
++    clean_sed '
+ s,request\(_ihex\)\?_firmware\(_nowait\)\?,reject_firmware\2,g
+-' "$1" 'disabled non-Free firmware-loading machinery'
++' "$FILE" 'disabled non-Free firmware-loading machinery'
++  done
+ }
+ 
+ maybe_reject_firmware () {
+   #$1 = file
+   filetest $1 || return
+-  clean_sed '
++  for FILE in $FILES
++  do
++    clean_sed '
+ s,request_firmware\(_nowait\)\?,maybe_reject_firmware\1,g
+-' "$1" 'retain Free firmware-loading machinery, disabling non-Free one'
++' "$FILE" 'retain Free firmware-loading machinery, disabling non-Free one'
++  done
+ }
+ 
+ undefine_macro () {

@@ -1,0 +1,107 @@
+#!/bin/sh
+#
+#    Copyright (C) 2008-2010  Rubén Rodríguez <ruben@trisquel.info>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+set -e
+
+PACKAGE=$(echo $0 |sed s/make-//g)
+export DATA=$PWD/DATA/$PACKAGE
+COMPONENT=${COMPONENT:-universe}
+
+if [ -f /CurrentlyBuilding ]
+then
+    echo "Already running $(cat /CurrentlyBuilding)"
+    echo "If $(cat /CurrentlyBuilding) broke and nothing is actually running"
+    echo "remove /CurrentlyBuilding and run this script again"
+    exit 1
+else
+    echo "Package: $PACKAGE
+Component: $COMPONENT" > /CurrentlyBuilding
+fi
+
+[ -d PACKAGES ] || mkdir PACKAGES
+[ -d /proc/sys ] || mount proc /proc -t proc
+hostname devel.trisquel.info
+
+export DEBEMAIL=trisquel-devel@listas.trisquel.info
+export DEBFULLNAME="Trisquel GNU/Linux developers"
+export CODENAME=awen
+export UPSTREAM=karmic
+export REVISION=3.5
+export RELEASE=trisquel
+export DOMAIN=trisquel.info
+
+export PARALLEL=true
+
+cat << EOF > /etc/lsb-release 
+DISTRIB_ID=Trisquel
+DISTRIB_RELEASE=$REVISION
+DISTRIB_CODENAME=$CODENAME
+DISTRIB_DESCRIPTION="Trisquel $REVISION"
+EOF
+
+changelog(){
+echo | dch -D $CODENAME -v $(sed -n '1s/^.*(\(.*\)).*/\1'trisquel${VERSION}'/p' debian/changelog)  "$1"
+}
+
+rm -rf PACKAGES/$PACKAGE
+mkdir PACKAGES/$PACKAGE
+cd PACKAGES/$PACKAGE
+
+cat << EOF > /etc/apt/sources.list
+deb http://archive.ubuntu.com/ubuntu karmic main universe
+deb http://archive.ubuntu.com/ubuntu karmic-updates main universe
+deb http://archive.ubuntu.com/ubuntu karmic-security main universe
+deb-src http://archive.ubuntu.com/ubuntu karmic main universe
+deb-src http://archive.ubuntu.com/ubuntu karmic-updates main universe
+deb-src http://archive.ubuntu.com/ubuntu karmic-security main universe
+EOF
+
+apt-get update
+apt-get install --force-yes -y devscripts rpl
+
+if [ $PACKAGE = linux ]
+then
+    apt-get source linux-libc-dev
+    apt-get --yes build-dep linux-libc-dev
+else
+    apt-get source $PACKAGE
+    apt-get --yes build-dep $PACKAGE
+fi
+
+rm * || true
+cd $PACKAGE*
+
+for i in debian.master/control.stub.in debian.master/control.stub debian.master/control debian/control.stub.in debian/control.stub debian/control
+do
+    [ -f $i ] && sed "s_^Maintainer.*_Maintainer: $DEBFULLNAME <$DEBEMAIL>_g" -i $i
+done
+
+compile(){
+export QUILT_PATCHES=debian/patches
+[ -d debian/patches ] && quilt push -a
+
+if $PARALLEL
+then
+    dpkg-buildpackage -us -uc -j$(cat /proc/cpuinfo |grep processor|wc -l)
+else
+    dpkg-buildpackage -us -uc
+fi
+rm /CurrentlyBuilding
+umount /proc
+}

@@ -1,0 +1,65 @@
+#!/bin/sh
+#
+#    Copyright (C) 2008-2010  Rubén Rodríguez <ruben@trisquel.info>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=1
+
+. ./config
+
+# Remove non-free bits
+sh $DATA/deblob/deblob-2.6.31
+
+# Disable broken drivers
+sed /ME4000/d drivers/staging/Makefile -i
+sed /rt3070/d drivers/staging/Makefile -i
+sed /rt2870/d drivers/staging/Makefile -i
+
+rm -rf debian/firmware/*
+echo > debian.master/d-i/firmware/scsi-modules
+echo > debian.master/d-i/firmware/nic-modules
+
+# Removing some extra Ubuntu modules
+rm -rf ubuntu/ndiswrapper
+sed /ndiswrapper/d -i ubuntu/Makefile
+sed /ndiswrapper/d -i ubuntu/Kconfig
+
+rm -rf ubuntu/lirc/lirc_pvr150
+sed /pvr150/d -i ubuntu/lirc/Makefile
+sed /pvr150/d -i ubuntu/lirc/Kconfig
+
+#rm -rf ubuntu/misc/wireless/acx
+#sed /acx/d -i ubuntu/misc/wireless/Makefile
+#sed /acx/d -i ubuntu/misc/wireless/Kconfig
+
+sed /rt2860/d -i drivers/staging/Makefile
+sed /rt2860/d -i ubuntu/Makefile
+sed /rt2870/d -i drivers/staging/Makefile
+sed /rt2870/d -i ubuntu/Makefile
+sed /radeon/d -i drivers/gpu/drm/Makefile
+
+# Compile with less modules and avoid abi check
+echo 'skipmodule = true' >> debian.master/rules.d/0-common-vars.mk
+echo 'skipabi = true' >> debian.master/rules.d/0-common-vars.mk
+
+changelog "Removed non-free bits"
+
+cp debian/changelog debian.master/changelog
+
+echo COMPILING ------------------------------------------------------
+compile
+

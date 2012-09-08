@@ -1,0 +1,46 @@
+Index: gnome-menus-2.28.0/layout/applications.menu
+===================================================================
+--- gnome-menus-2.28.0.orig/layout/applications.menu	2009-09-24 11:34:44.000000000 +0200
++++ gnome-menus-2.28.0/layout/applications.menu	2009-09-24 11:34:44.000000000 +0200
+@@ -157,4 +157,29 @@
+     <Directory>Debian.directory</Directory>
+   </Menu>
+ 
++<Include>
++  <Filename>gnome-app-install.desktop</Filename>
++</Include>
++
++<!-- Separator between menus and gnome-app-install -->
++<Layout>
++  <Merge type="menus"/>
++  <Menuname>Internet</Menuname>
++  <Menuname>Office</Menuname>
++  <Menuname>Education</Menuname>
++  <Menuname>Development</Menuname>
++  <Menuname>Graphics</Menuname>
++  <Menuname>Multimedia</Menuname>
++  <Menuname>Games</Menuname>
++  <Menuname>Accessories</Menuname>
++  <Menuname>System</Menuname>
++  <Menuname>Universal Access</Menuname>
++  <Menuname>Debian</Menuname>
++  <Menuname>Other</Menuname>
++  <Menuname>wine-wine</Menuname>
++  <Merge type="files"/>
++  <Separator/>
++  <Filename>gnome-app-install.desktop</Filename>
++</Layout>
++
+ </Menu> <!-- End Applications -->
+Index: gnome-menus-2.28.0/layout/settings.menu
+===================================================================
+--- gnome-menus-2.28.0.orig/layout/settings.menu	2009-09-24 11:34:47.000000000 +0200
++++ gnome-menus-2.28.0/layout/settings.menu	2009-09-24 11:35:22.000000000 +0200
+@@ -43,6 +43,7 @@
+       <And>
+         <Category>Settings</Category>
+         <Category>System</Category>
++        <Not><Filename>gnome-app-install.desktop</Filename></Not>
+       </And>
+     </Include>
+   </Menu>     <!-- End System Settings -->

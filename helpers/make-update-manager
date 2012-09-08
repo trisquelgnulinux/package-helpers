@@ -1,0 +1,265 @@
+#!/bin/sh
+#
+#    Copyright (C) 2008-2010  Rubén Rodríguez <ruben@trisquel.info>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=3
+
+. ./config
+
+cat > ./DistUpgrade/Trisquel.info << EOF
+ChangelogURI: http://archive.trisquel.info/trisquel/changelogs/pool/%s/%s/%s/%s_%s/changelog
+
+Suite: $CODENAME
+RepositoryType: deb
+BaseURI: http://archive.trisquel.info/trisquel/
+Description: Trisquel $CODENAME
+Component: main
+Enabled: 1
+CompDescription: Trisquel GNU/linux packages
+
+Suite: $CODENAME-security
+RepositoryType: deb
+BaseURI: http://archive.trisquel.info/trisquel/
+Description: Trisquel $CODENAME Security Updates
+Component: main
+Enabled: 1
+CompDescription: Trisquel GNU/linux packages
+
+Suite: $CODENAME-updates
+RepositoryType: deb
+BaseURI: http://archive.trisquel.info/trisquel/
+Description: Trisquel $CODENAME Updates
+Component: main
+Enabled: 1
+CompDescription: Trisquel GNU/linux packages
+
+Suite: $CODENAME-backports
+RepositoryType: deb
+BaseURI: http://archive.trisquel.info/trisquel/
+Description: Trisquel $CODENAME Backports
+Component: main
+Enabled: 1
+CompDescription: Trisquel GNU/linux packages
+EOF
+
+cp ./DistUpgrade/Trisquel.info ./DistUpgrade/Ubuntu.info
+
+cat << EOF >  DistUpgrade/ReleaseAnnouncement
+= Welcome to Trisquel GNU/Linux $REVISION '$CODENAME' =
+
+The Trisquel team is proud to announce Trisquel $REVISION '$CODENAME'.
+
+Trisquel is a fully free operating system based in GNU/Linux, for domestic
+users, small enterprises and educational centers.
+
+We hope you enjoy Trisquel.
+
+== Feedback and Helping ==
+
+If you would like to help shape Trisquel, take a look at the list of 
+ways you can participate at
+
+  http://trisquel.info/en/wiki/how-help
+
+Your comments, bug reports, patches and suggestions will help ensure
+that our next release is the best release of Trisquel ever.  If you feel
+that you have found a bug please send it to us via
+
+  http://trisquel.info/project/issues
+
+If you have a question, or if you think you may have found a bug but 
+aren't sure, first try asking on the #trisquel IRC channel on Freenode,
+on the Trisquel Users mailing list, or on the Trisquel forums:
+
+ http://listas.trisquel.info/
+ http://trisquel.info/forum
+
+== More Information ==
+
+You can find out more about Trisquel on our website, IRC channel and wiki.
+If you're new to Trisquel, please visit:
+
+  http://trisquel.info
+
+To sign up for future Trisquel announcements, please subscribe to Trisquel's 
+very low volume announcement list at:
+
+  http://listas.trisquel.info/mailman/listinfo/trisquel-announce
+
+EOF
+
+cat << EOF >  DistUpgrade/DevelReleaseAnnouncement
+This is a development release, do not install on production systems!
+
+EOF
+
+cat DistUpgrade/ReleaseAnnouncement >> DistUpgrade/DevelReleaseAnnouncement
+
+cat <<EOF > DistUpgrade/removal_blacklist.cfg
+# blacklist of packages that should never be removed
+trisquel
+trisquel-base
+trisquel-desktop-common
+trisquel-gnome-base
+# update-manager itself should not remove itself
+update-manager
+update-manager-core
+EOF
+
+cat << EOF > DistUpgrade/mirrors.cfg
+http://archive.trisquel.info/trisquel/
+http://us.archive.trisquel.info/trisquel/
+http://es.archive.trisquel.info/trisquel/
+EOF
+
+cat << EOF > DistUpgrade/DistUpgrade.cfg
+[View]
+# the views will be tried in this order, if one fails to import, the next
+# is tried
+View=DistUpgradeViewGtk,DistUpgradeViewKDE,DistUpgradeViewText
+#View=DistUpgradeViewNonInteractive
+#Depends= python-apt (>= 0.6.0), apt (>= 0.6)
+# the views below support upgrades over ssh connection
+SupportSSH=DistUpgradeViewText,DistUpgradeViewNonInteractive
+
+# Distro contains global information about the upgrade
+[Distro]
+# the meta-pkgs we support
+MetaPkgs=trisquel
+BaseMetaPkgs=trisquel-base, trisquel-desktop-common, trisquel-gnome-base
+PostUpgradePurge=xorg-common, libgl1-mesa, ltsp-client, ltspfsd, python2.3
+Demotions=demoted.cfg
+RemoveEssentialOk=sysvinit, sysvutils
+RemovalBlacklistFile=removal_blacklist.cfg
+# if those packages were installed, make sure to keep them installed
+KeepInstalledPkgs=gnumeric, hpijs, grub
+KeepInstalledSection=translations
+RemoveObsoletes=yes
+ForcedObsoletes=esound, esound-common, slocate, ksplash-engine-moodin, powernowd
+# example rule
+#PostUpgrade{Install,Remove,Purge}=evms
+# libflashsupport is now oboselete and causes problems so we remove it
+# early
+PostUpgradeRemove=libflashsupport,casper,ubiquity
+PostUpgradeUpgrade=brasero
+PostInstallScripts=./trisquel-postinstall.sh
+#EnableApport=no
+# this supported blacklisting certain versions to ensure we do not upgrade
+# to a known broken version. python2.6 was broken during intrepid->jaunty
+BadVersions=python2.6_2.6.1-1ubuntu8,python-central_0.6.11ubuntu5
+
+[KernelRemoval]
+Version=2.6.28
+BaseNames=linux-image,linux-headers,linux-image-debug,linux-ubuntu-modules,linux-header-lum,linux-backport-modules,linux-header-lbm,linux-restricted-modules
+Types=386,generic,rt,server,virtual
+
+# information about the individual meta-pkgs
+[trisquel-gnome-base]
+KeyDependencies=gdm, usplash-theme-trisquel, trisquel-sounds
+# those pkgs will be marked remove right after the distUpgrade in the cache
+PostUpgradeRemove=xscreensaver, gnome-cups-manager, powermanagement-interface
+ForcedObsoletes=desktop-effects, cups-pdf, gnome-app-install, policykit-gnome, gnome-mount
+
+[Files]
+BackupExt=distUpgrade
+LogDir=/var/log/dist-upgrade
+
+[Sources]
+From=dwyn
+To=$CODENAME
+ValidOrigin=Trisquel
+ValidMirrors = mirrors.cfg
+Components=main
+
+;[PreRequists]
+;Packages=release-upgrader-apt,release-upgrader-dpkg
+;SourcesList=prerequists-sources.list
+;SourcesList-ia64=prerequists-sources.ports.list
+;SourcesList-hppa=prerequists-sources.ports.list
+
+[Aufs]
+; this is a xor option, either full or chroot overlay
+;EnableFullOverlay=yes
+;EnableChrootOverlay=yes
+; sync changes from the chroot back to the real system
+;EnableChrootRsync=yes
+; what chroot dir to use
+;ChrootDir=/tmp/upgrade-chroot
+; the RW dir to use (either for full overlay or chroot overlay)
+;RWDir=/tmp/upgrade-rw
+
+[Network]
+MaxRetries=3
+
+[NonInteractive]
+ForceOverwrite=yes
+RealReboot=no
+DebugBrokenScripts=no
+DpkgProgressLog=no
+;TerminalTimeout=2400
+EOF
+
+cat << EOF > DistUpgrade/trisquel-postinstall.sh
+#!/bin/sh
+apt-get remove --purge --force-yes -y trisquel-usplash-theme
+[ -f /boot/grub/menu.lst ] && sed 's/ 3.0,/ 3.5,/g' /boot/grub/menu.lst -i
+update-initramfs -u
+sed s/extras//g /etc/apt/sources.list -i
+sudo -u gdm gconftool-2 --set --type string --set /apps/gdm/simple-greeter/logo_icon_name trisquel
+sudo -u gdm gconftool-2 --set --type string --set /desktop/gnome/interface/gtk_theme Glossy
+sudo -u gdm gconftool-2 --set --type string --set /desktop/gnome/interface/icon_theme Trisquel
+sudo -u gdm gconftool-2 --set --type string --set /desktop/gnome/background/picture_filename /usr/share/backgrounds/trisquel.png
+sudo -u gdm gconftool-2 --set --type string --set /desktop/gnome/background/picture_options zoom
+sudo -u gdm gconftool-2 --set --type string --set /apps/metacity/general/theme Trisquel
+EOF
+chomd 755 DistUpgrade/trisquel-postinstall.sh
+
+echo > DistUpgrade/demoted.cfg
+
+apt-get install -y --force-yes rpl
+rpl lucid taranis DistUpgrade po -R
+rpl karmic awen DistUpgrade po -R
+rpl jaunty dwyn DistUpgrade po -R
+rpl hardy robur DistUpgrade po -R
+rpl Ubuntu Trisquel . -R
+rpl " ubuntu " " trisquel " . -R
+rpl archive.ubuntu.com/ubuntu archive.trisquel.info/trisquel . -R
+rpl archive.ubuntu.com archive.trisquel.info . -R
+rpl "main restricted" "main" DistUpgrade -R
+rpl '9.10' $REVISION DistUpgrade po -R
+
+sed 's?\(gather what components are enabled and are inconsitent\)?\1\
+                # Changes made for Trisquel\
+                # Incredibly ugly hack to avoid the upgrader from asking about the useless casper config\
+                if os.path.exists("/etc/init.d/casper"):\
+                    os.system("sed 89,96s/\#// -i /etc/init.d/casper")\
+                # From release 3.5 onwards we only have the main component\
+                for d in ["%s" % self.toDist,\
+                          "%s-updates" % self.toDist,\
+                          "%s-backports" % self.toDist,\
+                          "sugar-%s" % self.toDist,\
+                          "%s-security" % self.toDist]:\
+                    entry.comps = ["main"];?' -i DistUpgrade/DistUpgradeController.py
+
+find -type f | egrep '(sh$|py$|glade$|ui$|po$|pot$|xml$|release$|./update-manager.*)' | xargs sed -i "s/karmic/$CODENAME/g;  s/jaunty/dwyn/g; s/hardy/robur/g; s:archive.ubuntu.com/ubuntu:archive.trisquel.info/trisquel:g; s/archive.ubuntu.com/archive.trisquel.info/g; s/main restricted/main/g; s/9.10/$REVISION/g; s:changelogs.ubuntu.com:archive.trisquel.info/trisquel:g; s/�~Lubuntu/�~Ltrisquel/g; s/被ubuntu/被trisquel/g; s#http://launchpad.net/ubuntu/+source/%s/%s/+changelog#http://trisquel.info/project/issues#g; s/<.*@ubuntu.com/<info@trisquel.info/g; s/\ ubuntu\ /\ trisquel\ /g; s/ubuntu\ /trisquel\ /g; s/\ ubuntu/\ trisquel/g; s/Ubuntu/Trisquel/g; s/xubuntu/trisquel-mini/g; s/kubuntu/trisquel-pro/g; s/edubuntu/trisquel-edu/g; s/ubuntu-desktop/trisquel-/g; s/www.ubuntu.com/trisquel.info/g; s/www.ubuntulinux.org/trisquel.info/g "
+
+changelog "Compiled for Trisquel"
+
+echo COMPILING ------------------------------------------------------
+compile
+
