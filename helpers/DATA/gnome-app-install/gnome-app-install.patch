@@ -1,0 +1,23 @@
+diff -ru data-orig/gnome-app-install.glade data/gnome-app-install.glade
+--- data-orig/gnome-app-install.glade	2009-03-31 12:55:04.000000000 +0000
++++ data/gnome-app-install.glade	2009-06-12 21:35:02.846384370 +0000
+@@ -1008,7 +1008,7 @@
+ 
+ 			  <child>
+ 			    <widget class="GtkHBox" id="hbox24">
+-			      <property name="visible">True</property>
++			      <property name="visible">False</property>
+ 			      <property name="homogeneous">False</property>
+ 			      <property name="spacing">12</property>
+ 
+@@ -1294,9 +1294,7 @@
+       <child>
+ 	<widget class="GtkLabel" id="label_progress">
+ 	  <property name="visible">True</property>
+-	  <property name="label" translatable="yes">&lt;big&gt;&lt;b&gt;Checking installed and available applications&lt;/b&gt;&lt;/big&gt;
+-
+-Ubuntu and third party vendors offer you a large variety of applications that you can install on your system.</property>
++          <property name="label" translatable="yes">&lt;big&gt;&lt;b&gt;Loading...&lt;/b&gt;&lt;/big&gt;</property>
+ 	  <property name="use_underline">False</property>
+ 	  <property name="use_markup">True</property>
+ 	  <property name="justify">GTK_JUSTIFY_LEFT</property>

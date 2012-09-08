@@ -1,0 +1,132 @@
+#!/bin/sh
+#
+#    Copyright (C) 2008-2011  Rubén Rodríguez <ruben@trisquel.info>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=13
+
+. ./config
+
+#rm debian/patches/02_fix_about_home.patch
+#sed -i /02_fix_about_home.patch/d debian/patches/series
+
+# Unbranding
+rm ./content/ubuntulogo32.png
+replace ubuntulogo32.png internet32.png .
+
+# This hack makes Firefox avoid sending a request for a list of plugins, instead returns a hardcoded xml list.
+sed 's/ubuntu/trisquel/; s^https://mozilla-pfs.ubuntu.com/.*ID%^http://trisquel.info/sites/pfs.php?mime=%PLUGIN_MIMETYPE%^' -i defaults/preferences/ubufox-pfs.js
+
+# Changes the link to pfs.mozilla.org in the install wizard
+sed 's_https://pfs.mozilla.org/plugins/_http://trisquel.info/browser/_' -i content/pluginInstallerWizard.js
+
+#sed 's/ubuntu-artwork/trisquel-artwork/; s_http://start.ubuntu.com/_https://trisquel.info/welcome_; s/PREFIX +.*/PREFIX;/' -i ./components/aboutStartpage.js
+rm components/aboutStartpage.js
+sed 's/components //' -i ./config_build.sh debian/patches/addon_installer.patch
+sed /components/d -i ./chrome.manifest
+sed /startup/d -i defaults/preferences/ubuntu-mods.js
+
+sed 's/www.ubuntu.com/trisquel.info/' -i debian/example-homepage.properties
+
+# Stablish Trisquel's default or mandatory settings
+cat << EOF >> debian/xul-ext-ubufox.js
+
+// Release notes and vendor URLs
+pref("app.releaseNotesURL", "http://trisquel.info/browser");
+pref("app.vendorURL", "http://trisquel.info/browser");
+
+// PFS url
+pref("pfs.datasource.url", "http://trisquel.info/sites/pfs.php?mime=%PLUGIN_MIMETYPE%");
+pref("pfs.filehint.url", "http://trisquel.info/sites/pfs.php?mime=%PLUGIN_MIMETYPE%");
+
+// I'm feeling Ducky.
+pref("keyword.URL", "https://duckduckgo.com/?t=trisquel&q=!+");
+pref("browser.search.defaultenginename", "DuckDuckGo (SSL)");
+pref("browser.search.order.extra.duckduckgo", "DuckDuckGo (SSL)");
+
+// Disable plugin installer
+pref("plugins.hide_infobar_for_missing_plugin", true);
+pref("plugins.hide_infobar_for_outdated_plugin", true);
+
+//Speeding it up
+pref("network.http.pipelining", true);
+pref("network.http.proxy.pipelining", true);
+pref("network.http.pipelining.maxrequests", 10);
+pref("network.dns.disableIPv6", true);
+pref("nglayout.initialpaint.delay", 0);
+
+// Disable third party cookies
+pref("network.cookie.cookieBehavior", 1);
+
+// Extensions can be updated
+pref("extensions.update.enabled", true);
+// Use LANG environment variable to choose locale
+pref("intl.locale.matchOS", true);
+// Disable default browser checking.
+pref("browser.shell.checkDefaultBrowser", false);
+// Prevent EULA dialog to popup on first run
+pref("browser.EULA.override", true);
+
+// Default name strings
+pref ("distribution.about", "Abrowser for Trisquel");
+pref ("distribution.id", "trisquel");
+pref ("distribution.version", "$REVISION");
+
+// UserAgeng
+pref("general.useragent.vendor", "Trisquel");
+pref("general.useragent.vendorComment", "$CODENAME");
+pref("general.useragent.vendorSub", "$REVISION");
+// Set useragent to Firefox compatible
+pref("general.useragent.compatMode.abrowser",true);
+
+// Startup pages
+//pref ("browser.startup.page" , 3);
+//pref ("browser.startup.homepage" , "http://trisquel.info");
+//pref ("startup.homepage_welcome_url", "http://trisquel.info/welcome");
+pref ("startup.homepage_override_url" , "http://trisquel.info/newbrowser");
+
+// Preferences for the Get Add-ons panel
+pref ("extensions.webservice.discoverURL", "https://trisquel.info/browser-plain");
+pref ("extensions.getAddons.search.url", "http://trisquel.info");
+
+// Help URL
+pref ("app.support.baseURL", "http://trisquel.info/wiki/");
+
+// Dictionary download preference
+pref("browser.dictionaries.download.url", "http://dictionaries.mozdev.org/");
+pref("browser.search.searchEnginesURL", "http://mycroft.mozdev.org/");
+
+// Apturl preferences
+pref("network.protocol-handler.app.apt","/usr/bin/apturl");
+pref("network.protocol-handler.warn-external.apt",false);
+pref("network.protocol-handler.app.apt+http","/usr/bin/apturl");
+pref("network.protocol-handler.warn-external.apt+http",false);
+pref("network.protocol-handler.external.apt",true);
+pref("network.protocol-handler.external.apt+http",true);
+EOF
+
+sed '/You can uninstall/d; s/ask.com/Duck Duck GO!/; /Add the following options/d; /Get help on-line/d; /Help translating/d; /Trisquel Release/d; ' debian/control -i
+
+replace Mozilla GNU .
+replace Firefox IceCat .
+replace firefox icecat .
+replace Ubuntu Trisquel .
+
+changelog "Adapted for Trisquel"
+
+compile
+

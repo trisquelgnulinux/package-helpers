@@ -1,0 +1,184 @@
+#!/bin/sh
+#
+#    Copyright (C) 2011  Rubén Rodríguez <ruben@trisquel.info>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=3
+
+. ./config
+
+# Fix update issues on clean installations: http://trisquel.info/es/forum/update-issues-clean-install
+sed 's:\(targetdb)\):\1\n        os.system("sudo chmod 644 /target/var/cache/debconf/config.dat"):' bin/ubiquity -i
+
+for i in $(ls -1 d-i/source/apt-setup/generators |grep -v 01setup)
+do
+    sed /$i/d -i debian/ubiquity.install-any d-i/source/apt-setup/debian/*.install
+done
+echo "d-i/source/apt-setup/generators/99trisquel usr/lib/ubiquity/apt-setup/generators" >> debian/ubiquity.install-any
+
+#change icon
+cp $DATA/trisquel.png desktop/ubiquity.png
+
+# remove Ubuntu apt setup for the installer
+find d-i/source/apt-setup/generators -type f | grep -v 01setup | xargs -r rm
+cat << EOF1 > d-i/source/apt-setup/generators/99trisquel
+#!/bin/sh
+set -e
+
+file="\$1"
+
+FASTEST=http://ftp.rediris.es/mirror/Trisquel/packages/
+SPEED=1000000000000
+
+for i in \$(grep 'tp:' /usr/share/python-apt/templates/Trisquel.mirrors)
+do
+    echo Testing \$i
+    TIME=\$(date +%s%N)
+    wget -o /dev/null -O /dev/null \$i/speedtest || continue
+    TIME2=\$(date +%s%N)
+    ELAPSED=\$(expr \$TIME2 - \$TIME)
+    echo Time: \$ELAPSED
+    if [ \$ELAPSED -lt \$SPEED ]
+    then
+        FASTEST=\$i
+        SPEED=\$ELAPSED
+    fi
+done
+
+MIRROR=\$FASTEST
+RELEASE=\$(lsb_release -c | cut -f 2)
+
+cat << EOF > \$file
+# Trisquel repositories for supported software and updates
+deb \$MIRROR \$RELEASE main
+deb-src \$MIRROR \$RELEASE main
+deb \$MIRROR \$RELEASE-security main
+deb-src \$MIRROR \$RELEASE-security main
+deb \$MIRROR \$RELEASE-updates main
+deb-src \$MIRROR \$RELEASE-updates main
+#deb \$MIRROR \$RELEASE-backports main
+#deb-src \$MIRROR \$RELEASE-backports main
+EOF
+EOF1
+chmod 755 d-i/source/apt-setup/generators/99trisquel
+
+# Rebrand
+replace $UPSTREAM $CODENAME .
+replace Ubuntu Trisquel .
+replace Trisquel-Gettext-Domain Ubuntu-Gettext-Domain
+replace "launchpad.net/ubuntu/+source/ubiquity/+filebug" "trisquel.info/project/issues" .
+replace "launchpad.net/ubuntu/+source/ubiquity/" "trisquel.info/project/issues" .
+replace "launchpad.net/ubuntu/+source/" "trisquel.info/project/issues" .
+replace "ubiquity/+filebug" "" .
+replace "+filebug" "" .
+replace archive.ubuntu.com/ubuntu archive.trisquel.info/trisquel .
+replace security.ubuntu.com/trisquel archive.trisquel.info/trisquel .
+replace archive.ubuntu.com archive.trisquel.info .
+replace security.ubuntu.com archive.trisquel.info .
+sed -i 's/apt-install/true #apt-install/' ubiquity/components/check_kernels.py scripts/check-kernels
+sed -i '82s/True/False/g' gui/gtk/stepPrepare.ui
+
+rm -rf d-i/source/apt-setup/release-files/*
+for DIST in $CODENAME $CODENAME-security $CODENAME-updates $CODENAME-backports
+do
+    WD=d-i/source/apt-setup/release-files/archive.trisquel.info/$DIST
+    mkdir $WD -p
+    wget -r -l1 -np http://archive.trisquel.info/trisquel/dists/$DIST/Release -O $WD/Release
+    wget -r -l1 -np http://archive.trisquel.info/trisquel/dists/$DIST/Release.gpg -O $WD/Release.gpg
+done
+
+
+#Hack to apt-get update before starting ubiquity
+sed 's_^import os$_import os\nos.system("sh /usr/bin/preubiquity")_' -i bin/ubiquity
+
+echo "scripts/preubiquity usr/bin/" >> debian/ubiquity-frontend-gtk.install
+cat << EOF > scripts/preubiquity
+#!/bin/sh
+
+#run only as root
+[ \$(id -u) = 0 ] || exit
+
+TITLE_EN="Installer"
+TITLE_ES="Instalador"
+CHECK_EN="Checking internet access"
+CHECK_ES="Comprobando acceso a internet"
+UPDATE_EN="Updating package lists"
+UPDATE_ES="Actualizando listas de paquetes"
+ERROR_EN="The apt lists couldn't be updated, the installer will not download extra language packages."
+ERROR_ES="No se pudieron actualizar las listas de apt, el instalador no descargará paquetes de idioma extras."
+if echo \$LANG|grep -q es_ES || echo \$LANG|grep -q gl_ES
+then
+  TITLE=\$TITLE_ES; CHECK=\$CHECK_ES; UPDATE=\$UPDATE_ES; ERROR=\$ERROR_ES
+else
+  TITLE=\$TITLE_EN; CHECK=\$CHECK_EN; UPDATE=\$UPDATE_EN; ERROR=\$ERROR_EN
+fi
+
+#check for internet access
+[ -p /tmp/preubiquity1 ] || mkfifo /tmp/preubiquity1
+zenity --progress --pulsate --auto-close --no-cancel --title="\$TITLE" --text="\$CHECK" < /tmp/preubiquity1 &
+if ! wget --timeout=10 -O /dev/null -o /dev/null http://archive.trisquel.info/trisquel/meta-release > /tmp/preubiquity1 
+then
+  zenity --error --text="\$ERROR"
+  exit
+fi
+
+#Update apt lists
+[ -p /tmp/preubiquity2 ] || mkfifo /tmp/preubiquity2
+zenity --progress --pulsate --auto-close --no-cancel --title="\$TITLE" --text="\$UPDATE" < /tmp/preubiquity2 &
+apt-get update > /tmp/preubiquity2 || zenity --error --text="\$ERROR"
+EOF
+chmod 755 scripts/preubiquity
+
+# Postinstall hacks
+cat << EOF1 >> scripts/apt-setup
+
+#Trisquel hack to regenerate ssl keys after installation
+rm -f /target/etc/ssh/ssh_host_*
+ssh-keygen -q -f /target/etc/ssh/ssh_host_rsa_key -N '' -t rsa
+ssh-keygen -q -f /target/etc/ssh/ssh_host_dsa_key -N '' -t dsa
+if [ -d /etc/italc ]
+then
+    rm -rf /etc/italc/*
+    /usr/bin/ica -role teacher -createkeypair >/dev/null
+    /usr/bin/ica -role admin -createkeypair >/dev/null
+    /usr/bin/ica -role supporter -createkeypair >/dev/null
+
+    rm /target/etc/italc/ -rf
+    cp /etc/italc/ /target/etc/ -a
+
+    chown root:admin /target/etc/italc/keys/private/*/key
+fi
+
+cat << EOF > /target/etc/grub.d/01_PASSWORD
+#! /bin/sh -e
+# Trisquel enables a random password to grub during install
+# Comment this file to remove the password.
+# This file should only be readable by root.
+
+echo set superusers=grub
+echo password grub \$(bash -c 'echo \$RANDOM')
+EOF
+
+chmod 700 /target/etc/grub.d/01_PASSWORD
+EOF1
+
+changelog "Adapted for Trisquel"
+
+rm -rf debian/source
+
+compile
+

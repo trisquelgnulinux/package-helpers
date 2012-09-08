@@ -1,0 +1,20 @@
+diff -ru gnome-panel-2.30.2.orig/gnome-panel/panel-menu-items.c gnome-panel-2.30.2/gnome-panel/panel-menu-items.c
+--- gnome-panel-2.30.2.orig/gnome-panel/panel-menu-items.c	2010-12-10 13:19:48.000000000 +0000
++++ gnome-panel-2.30.2/gnome-panel/panel-menu-items.c	2010-12-10 13:21:30.249028712 +0000
+@@ -1201,13 +1201,13 @@
+ 
+ 	panel_menu_items_append_from_desktop (menu, "gnome-about.desktop", NULL, FALSE);
+ 
+-	if (g_file_test (DATADIR"/omf/about-ubuntu/about-ubuntu-C.omf",
++	/*if (g_file_test (DATADIR"/omf/about-ubuntu/about-ubuntu-C.omf",
+ 			 G_FILE_TEST_IS_REGULAR))
+ 	  panel_menu_items_append_from_desktop (menu, "ubuntu-about.desktop", NULL, FALSE);
+ 
+ 	if (g_file_test (DATADIR"/omf/about-edubuntu/about-edubuntu-C.omf",
+-			 G_FILE_TEST_IS_REGULAR))
+-	  panel_menu_items_append_from_desktop (menu, "edubuntu-about.desktop", NULL, FALSE);
++			 G_FILE_TEST_IS_REGULAR))*/
++	  panel_menu_items_append_from_desktop (menu, "trisquel-about.desktop", NULL, FALSE);
+ 
+ 	if (parent->priv->append_lock_logout)
+ 		panel_menu_items_append_lock_logout (menu);

@@ -1,0 +1,48 @@
+#!/bin/sh
+#
+#    Copyright (C) 2011  Rubén Rodríguez <ruben@trisquel.info>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=2
+
+. ./config
+
+replace Kubuntu Triskel .
+replace Edubuntu "Trisquel Edu" .
+replace Eubuntu "Trisquel Edu" .
+replace Eduubuntu "Trisquel Edu" .
+replace Xubuntu "Trisquel Mini" .
+replace Xbuntu "Trisquel Mini" .
+replace "Ubuntu MID" "Trisquel Sugar TOAST" .
+replace Mythbuntu "Trisquel Pro" .
+replace Mythubuntu "Trisquel Pro" .
+replace "Enterprise Cloud" "Gamer" .
+#replace "Ubuntu Studio" "Trisquel ..."
+
+replace Ubuntu Trisquel .
+
+sed /txt_option_free/d dia_fulloptions.inc -i
+sed 's:\(.*\)120\(.*\):\181\2\n/timeout.time.x timeout.x 550 add def:' timeout.inc -i
+
+sed 's/gfxboot-theme-ubuntu/gfxboot-theme-trisquel/' debian/control -i
+
+changelog "Rebranded for Trisquel"
+sed '1s/gfxboot-theme-ubuntu/gfxboot-theme-trisquel/' debian/changelog /CurrentlyBuilding -i
+sed 's/main/universe/' /CurrentlyBuilding -i
+
+compile
+

@@ -1,0 +1,38 @@
+#!/bin/sh
+#
+#    Copyright (C) 2008-2010  Rubén Rodríguez <ruben@trisquel.info>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=1
+
+. ./config
+
+cp $DATA/trisquel48.svg ./debian/ubuntu-icons/scalable/places/ubuntu-logo.svg
+cp $DATA/trisquel32.png ./debian/ubuntu-icons/32x32/places/ubuntu-logo.png
+cp $DATA/trisquel24.png ./debian/ubuntu-icons/24x24/places/ubuntu-logo.png
+cp $DATA/trisquel22.png ./debian/ubuntu-icons/22x22/places/ubuntu-logo.png
+cp $DATA/trisquel16.png ./debian/ubuntu-icons/16x16/places/ubuntu-logo.png
+
+replace ubuntu-logo trisquel-logo .
+replace ubuntu-icons trisquel-icons .
+mv debian/ubuntu-icons debian/trisquel-icons
+find | grep ubuntu-logo | xargs rename s/ubuntu-logo/trisquel-logo/
+
+changelog "Rebranded for Trisquel"
+
+compile
+

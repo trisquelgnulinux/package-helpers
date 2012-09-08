@@ -1,0 +1,193 @@
+Source: linux-meta
+Section: devel
+Priority: optional
+Maintainer: Trisquel GNU/Linux developers <trisquel-devel@listas.trisquel.info>
+Standards-Version: 3.6.1
+Build-Depends: dpkg (>= 1.13.19), debhelper (>= 5), gawk
+
+Package: linux
+Architecture: i386 amd64 lpia
+Section: metapackages
+Priority: optional
+Depends: ${misc:Depends}, linux-image (= ${binary:Version})
+Description: Generic complete Linux-libre kernel.
+ This package will always depend on the latest generic complete Linux-libre kernel
+ available.
+
+Package: linux-source
+Architecture: all
+Section: devel
+Priority: optional
+Depends: ${misc:Depends}, linux-source-${kernel-version}
+Description: Linux-libre kernel source
+ This package will always depend on the latest Linux-libre kernel source code
+ available.
+
+Package: linux-image
+Architecture: i386 amd64 lpia
+Section: metapackages
+Priority: optional
+Depends: ${misc:Depends}, linux-image-${generic-depends} (= ${binary:Version})
+Description: Generic Linux-libre kernel image.
+ This package will always depend on the latest generic Linux-libre kernel image
+ available.
+
+Package: linux-crashdump
+Architecture: i386 amd64
+Section: devel
+Depends: ${misc:Depends}, kexec-tools, makedumpfile, grub-pc (>= 1.96+20090611-1ubuntu2) | grub (>= 0.97-29ubuntu24)
+Recommends: apport
+Suggests: crash
+Description: Linux-libre kernel crashdump setup for the latest generic kernel
+ This package installs all the needed infrstracture to get crashdumps from
+ your running system. If you are experiencing kernel crashes that cannot
+ be debugged normally (because the problem is infrequent or panic's the
+ system in such a way as to make information gathering impossible), then
+ you can install this package to automatically enable capture of the
+ vmcore on crashes.
+
+Package: linux-tools
+Architecture: i386 amd64
+Section: metapackages
+Depends: ${misc:Depends}, linux-tools-${kernel-abi-version}
+Description: Linux-libre kernel versioned Tools
+ This package will always depend on the latest Linux-libre kernel versioned tools 
+ available.
+
+
+Package: linux-headers-386
+Architecture: i386 
+Section: devel
+Priority: optional
+Depends: ${misc:Depends}, linux-headers-${kernel-abi-version}-386
+Description: Generic Linux-libre kernel headers
+ This package will always depend on the latest 386 kernel headers
+ available.
+
+Package: linux-image-386
+Architecture: i386
+Section: metapackages
+Priority: optional
+Depends: ${misc:Depends}, linux-image-${kernel-abi-version}-386
+Description: Generic Linux-libre kernel image
+ This package will always depend on the latest 386 kernel image
+ available.
+
+Package: linux-386
+Architecture: i386
+Section: metapackages
+Priority: optional
+Depends: ${misc:Depends}, linux-image-386 (= ${binary:Version})
+Description: Complete Generic Linux-libre kernel
+ This package will always depend on the latest complete 386 Linux-libre kernel
+ available.
+
+
+Package: linux-headers-generic
+Architecture: i386 amd64
+Section: devel
+Priority: optional
+Depends: ${misc:Depends}, linux-headers-${kernel-abi-version}-generic
+Description: Generic Linux-libre kernel headers
+ This package will always depend on the latest generic kernel headers
+ available.
+
+Package: linux-image-generic
+Architecture: i386 amd64
+Section: metapackages
+Priority: optional
+Depends: ${misc:Depends}, linux-image-${kernel-abi-version}-generic
+Description: Generic Linux-libre kernel image
+ This package will always depend on the latest generic kernel image
+ available.
+
+Package: linux-generic
+Architecture: i386 amd64
+Section: metapackages
+Priority: optional
+Depends: ${misc:Depends}, linux-image-generic (= ${binary:Version})
+Description: Complete Generic Linux-libre kernel
+ This package will always depend on the latest complete generic Linux-libre kernel
+ available.
+
+Package: linux-headers-preempt
+Architecture: amd64
+Section: devel
+Priority: optional
+Depends: ${misc:Depends}, linux-headers-${kernel-abi-version}-preempt
+Description: Linux-libre kernel headers for Low Latency Servers.
+ This package will always depend on the latest kernel headers available
+ for Server Equipment.
+
+Package: linux-image-preempt
+Architecture: amd64
+Section: metapackages
+Priority: optional
+Depends: ${misc:Depends}, linux-image-${kernel-abi-version}-preempt
+Description: Linux-libre kernel image for Low Latency Servers.
+ This package will always depend on the latest kernel image available
+ for Server Equipment.
+
+Package: linux-preempt
+Architecture: amd64
+Section: metapackages
+Priority: optional
+Depends: ${misc:Depends}, linux-image-preempt (= ${binary:Version})
+Description: Complete Linux-libre kernel for Low Latency Servers.
+ This package will always depend on the latest complete Linux-libre kernel available
+ for Server Equipment.
+
+Package: linux-headers-server
+Architecture: amd64 i386
+Section: devel
+Priority: optional
+Depends: ${misc:Depends}, linux-headers-${kernel-abi-version}-server [amd64], linux-headers-generic-pae [i386]
+Description: Linux-libre kernel headers on Server Equipment.
+ This package will always depend on the latest kernel headers available
+ for Server Equipment.
+
+Package: linux-image-server
+Architecture: amd64 i386
+Section: metapackages
+Priority: optional
+Depends: ${misc:Depends}, linux-image-${kernel-abi-version}-server [amd64], linux-image-generic-pae [i386]
+Description: Linux-libre kernel image on Server Equipment.
+ This package will always depend on the latest kernel image available
+ for Server Equipment.
+
+Package: linux-server
+Architecture: amd64 i386
+Section: metapackages
+Priority: optional
+Depends: ${misc:Depends}, linux-image-server (= ${binary:Version}) [amd64], linux-generic-pae [i386]
+Description: Complete Linux-libre kernel on Server Equipment.
+ This package will always depend on the latest complete Linux-libre kernel available
+ for Server Equipment.
+
+Package: linux-headers-virtual
+Architecture: i386 amd64
+Section: devel
+Priority: optional
+Depends: ${misc:Depends}, linux-headers-${kernel-abi-version}-server | linux-headers-${kernel-abi-version}-generic-pae
+Description: Linux-libre kernel headers for virtual machines
+ This package will always depend on the latest kernel headers available
+ for virtual machines (which are the same headers as for the server flavour).
+
+Package: linux-image-virtual
+Architecture: i386 amd64
+Section: metapackages
+Priority: optional
+Depends: ${misc:Depends}, linux-image-${kernel-abi-version}-virtual
+Description: Linux-libre kernel image for virtual machines
+ This package will always depend on the latest kernel image available
+ for virtual machines.
+
+Package: linux-virtual
+Architecture: i386 amd64
+Section: metapackages
+Priority: optional
+Depends: ${misc:Depends}, linux-image-virtual (= ${binary:Version})
+Description: Complete Linux-libre kernel for virtual machines
+ This package will always depend on the latest complete Linux-libre kernel available
+ for virtual machines.
+

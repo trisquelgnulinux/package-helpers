@@ -1,0 +1,52 @@
+#!/bin/sh
+#
+#    Copyright (C) 2008-2010  Rubén Rodríguez <ruben@trisquel.info>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=3
+COMPONENT=main
+
+. ./config
+
+patch -p1 < $DATA/gnome-panel.patch
+
+# Hack to limit icon size to 32px
+#sed 's/size = 48;/size = 32;/' -i gnome-panel/button-widget.c
+
+cat << EOF | patch -p1
+--- gnome-panel-2.30.2/applets/notification_area//na-tray-child.c       2010-05-26 08:31:06.000000000 +0000
++++ /root/na-tray-child.c       2011-03-14 20:06:02.616709419 +0000
+@@ -129,6 +129,11 @@
+ {
+   NaTrayChild *child = NA_TRAY_CHILD (widget);
+ 
++  //hack to fix icon sizes to 24x24
++  allocation->y=round((allocation->height - 24)/2);
++  allocation->width=24;
++  allocation->height=24;
++
+   gboolean moved = allocation->x != widget->allocation.x ||
+                    allocation->y != widget->allocation.y;
+   gboolean resized = allocation->width != widget->allocation.width ||
+EOF
+
+
+
+changelog "Compiled for Trisquel"
+
+compile
+

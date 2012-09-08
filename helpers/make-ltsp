@@ -1,0 +1,47 @@
+#!/bin/sh
+#
+#    Copyright (C) 2011  Rubén Rodríguez <ruben@trisquel.info>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=2
+
+. ./config
+
+ln -s Debian-functions server/plugins/ltsp-build-client/Trisquel-functions
+cp -a server/plugins/ltsp-build-client/Ubuntu server/plugins/ltsp-build-client/Trisquel
+
+sed 's/main restricted universe multiverse/main/g;
+s:archive.ubuntu.com/ubuntu:archive.trisquel.info/trisquel:g;
+s:security.ubuntu.com/ubuntu:archive.trisquel.info/trisquel:g;
+s/ubuntu-desktop/trisquel/g;
+s/ubuntu-theme/trisquel-theme/g;
+s/ubuntu-standard/trisquel-recommended/g;
+s/ubuntu/trisquel/g;' server/plugins/ltsp-build-client/Trisquel/* -i
+
+sed 's/theme-ubuntu/theme-trisquel/g;' debian/control -i
+sed 's/Ubuntu/Trisquel/g' debian/ltsp-server.install -i
+
+replace edubuntu trisquel .
+replace Edubuntu Trisquel .
+
+# turn off the encrypted X tunnel via SSH and instead run a less secure, but much faster unencrypted tunnel.
+sed 's/\[example\]/[default]/; s/key=value/LDM_DIRECTX=True/' server/plugins/ltsp-build-client/Trisquel/030-default-lts-conf -i
+
+changelog "Rebranded for Trisquel, LDM_DIRECTX=True by default"
+
+compile
+

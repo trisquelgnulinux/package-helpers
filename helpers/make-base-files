@@ -1,0 +1,114 @@
+#!/bin/sh
+#
+#    Copyright (C) 2008-2010  Rubén Rodríguez <ruben@trisquel.info>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=2
+
+. ./config
+
+RELEASE=$REVISION
+
+cat << EOF > debian/update-motd.d/01-banner
+#!/bin/sh
+echo "\
+   ___        ___               ___        ___       ___        ___        ___
+  /\  \      /\  \      ___    /\  \      /\  \     /\__\      /\  \      /\__\\\\
+  \ \  \    /  \  \    /\  \  /  \  \    /  \  \   / /  /     /  \  \    / /  /
+   \ \  \  / /\ \  \   \ \  \/ /\ \  \  / /\ \  \ / /  /     / /\ \  \  / /  /
+   /  \  \/  \ \ \  \  /  \__\ \ \ \  \/ /  \ \  \ /  /  ___/  \ \ \  \/ /  /
+  / /\ \__\/\ \ \ \__\/ /\/__/\ \ \ \__\/__/ \ \__\__/  /\__\/\ \ \ \__\/__/
+ / /  \/__/_|  \/ /  / /  /\ \ \ \ \/__/\  \ / /  /  \ / /  /\ \ \ \/__/\  \\\\
+/ /  /      | |  /  / /__/  \ \ \ \__\ \ \/\/ /  / \  / /  /\ \ \ \__\ \ \  \\\\
+\/__/       | |\/__/\ \__\   \ \/ /  /  \    /  / \ \/ /  /  \ \ \/__/  \ \  \\\\
+            | |  |   \/__/    \  /  /    \  /  /   \  /  /    \ \__\     \ \__\\\\
+             \|__|             \/__/      \/__/     \/__/      \/__/      \/__/
+"
+EOF
+
+cat << EOF > debian/update-motd.d/10-help-text
+#!/bin/sh
+echo "Welcome to Trisquel GNU/Linux"
+echo "Documentation: http://trisquel.info/wiki/"
+EOF
+
+chmod 755 debian/update-motd.d/*
+
+cat << EOF > etc/legal
+
+  The programs included with the Trisquel GNU/Linux system are free software.
+  The exact distribution terms for each program are described in the individual
+  files in /usr/share/doc/*/copyright.
+
+  Trisquel GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent permitted
+  by applicable law.
+
+EOF
+
+cat << EOF >> share/dot.bashrc
+# Trisquel aliases for root
+if [ "$TERM" != "dumb" ] && [ -x /usr/bin/dircolors ]; then
+    eval "`dircolors -b`"
+    alias ls='ls --color=auto'
+    alias ll='ls -lh'
+    alias la='ls -A'
+    alias l='ls -CF'
+    alias dir='ls --color=auto --format=vertical'
+    alias vdir='ls --color=auto --format=long'
+
+    alias grep='grep --color=auto'
+    alias egrep='egrep --color=auto'
+    alias fgrep='fgrep --color=auto'
+    
+    alias rm='rm -i'
+    [ -f /usr/bin/vim ] && alias vi='vim' || alias vi='vim.tiny'
+    [ -f /usr/bin/vim ] || alias vim='vim.tiny'
+fi
+EOF
+
+cat > etc/issue <<EOF
+Trisquel GNU/Linux $RELEASE \n \l
+
+EOF
+
+cat > etc/issue.net <<EOF
+Trisquel GNU/Linux $RELEASE
+EOF
+
+cat > etc/lsb-release <<EOF
+DISTRIB_ID=Trisquel
+DISTRIB_RELEASE=$RELEASE
+DISTRIB_CODENAME=$CODENAME
+DISTRIB_DESCRIPTION="Trisquel $RELEASE"
+EOF
+
+cat << EOF > origins/trisquel
+Vendor: Trisquel
+Vendor-URL: http://trisquel.info/
+Bugs: http://trisquel.info/project/issues
+Parent: Ubuntu
+EOF
+
+echo /etc/dpkg/origins/trisquel >> debian/conffiles
+
+sed s/ubuntu/trisquel/ -i debian/rules
+
+changelog "Compiled for Trisquel"
+sed -i "1s/(\(.*\))/(1:\1)/" debian/changelog
+
+compile
+
