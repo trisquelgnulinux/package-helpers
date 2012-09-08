@@ -1,0 +1,62 @@
+#!/bin/sh
+#
+#    Copyright (C) 2008-2010  Rubén Rodríguez <ruben@trisquel.info>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=3
+
+. ./config
+
+patch -p1 < $DATA/megaraid.patch
+
+# Remove non-free bits
+sh $DATA/deblob/deblob-2.6.32
+
+# Disable broken drivers
+sed /rtl8192s/d drivers/staging/Makefile -i
+sed /rt3090/d drivers/staging/Makefile -i
+sed /rt2870/d drivers/staging/Makefile -i
+sed /rt2860/d drivers/staging/Makefile -i
+sed /rtl8192se/d ubuntu/Makefile -i
+
+rm -rf debian/firmware/*
+echo > debian.master/d-i/firmware/scsi-modules
+echo > debian.master/d-i/firmware/nic-modules
+
+# Removing some extra Ubuntu modules
+rm -rf ubuntu/ndiswrapper
+sed /ndiswrapper/d -i ubuntu/Makefile
+sed /ndiswrapper/d -i ubuntu/Kconfig
+
+# Compile with less modules and avoid abi check
+echo 'skipmodule = true' >> debian.master/rules.d/0-common-vars.mk
+echo 'skipabi = true' >> debian.master/rules.d/0-common-vars.mk
+echo 'skipmodule = true' >> debian/rules.d/0-common-vars.mk
+echo 'skipabi = true' >> debian/rules.d/0-common-vars.mk
+
+line=$(grep -n ')-Ubuntu' debian/rules.d/0-common-vars.mk|cut -d: -f1)
+sed $(expr $line - 1 ),$(expr $line + 1 )d debian/rules.d/0-common-vars.mk -i
+mv debian.master/config/config.common.ubuntu debian.master/config/config.common.trisquel
+sed s/family=ubuntu/family=trisquel/ -i debian/rules.d/0-common-vars.mk
+sed 's/ with Ubuntu patches//; s/Linux/Linux-libre/g' debian/control debian/control.stub debian.master/control debian.master/control.stub debian.master/control.d/flavour-control.stub debian.master/sub-flavours/control.stub -i
+
+
+changelog "Removed non-free bits"
+
+cp debian/changelog debian.master/changelog
+
+compile

@@ -1,0 +1,29 @@
+_ChangelogURI: http://packages.trisquel.info/changelogs/pool/%s/%s/%s/%s_%s/changelog
+
+Suite: taranis
+RepositoryType: deb
+BaseURI: http://archive.trisquel.info/trisquel/
+MatchURI: archive.trisquel.info/trisquel
+MirrorsFile-amd64: /usr/share/python-apt/templates/Trisquel.mirrors
+MirrorsFile-i386: /usr/share/python-apt/templates/Trisquel.mirrors
+_Description: Trisquel 4.0 LTS 'Taranis'
+Component: main
+_CompDescription: Officially supported
+_CompDescriptionLong: Officially supported
+
+Suite: taranis-security
+ParentSuite: taranis
+RepositoryType: deb
+BaseURI: http://archive.trisquel.info/trisquel/
+MatchURI: archive.trisquel.info/trisquel
+_Description: Important security updates
+
+Suite: taranis-updates
+ParentSuite: taranis
+RepositoryType: deb
+_Description: Recommended updates
+
+Suite: taranis-backports
+ParentSuite: taranis
+RepositoryType: deb
+_Description: Unsupported updates

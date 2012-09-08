@@ -1,0 +1,82 @@
+#!/bin/sh
+#
+#    Copyright (C) 2011  Rubén Rodríguez <ruben@trisquel.info>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=1
+
+. ./config
+
+sed -i /add-debian-searches/d debian/patches/series
+rm debian/patches/add-debian-searches
+
+cat << EOF > data/search
+
+[Duck Duck GO SSL]
+name=Duck Duck GO SSL
+text=DDG Web Search
+uri=https://duckduckgo.com/?q=%s
+icon=
+token=d
+
+[Duck Duck GO]
+name=Duck Duck GO
+text=DDG Web Search
+uri=http://duckduckgo.com/?q=%s
+icon=
+token=
+
+[Google]
+name=Google
+text=Web Search
+uri=http://www.google.com/search?q=%s
+icon=
+token=g
+
+[Trisquel]
+name=Trisquel 
+text=Search Trisquel Site
+uri=http://trisquel.info/search/node/%s
+icon=
+token=t
+
+[Trisquel Packages]
+name=Trisquel Packages
+text=Search Trisquel Packages
+uri=http://packages.trisquel.info/%s
+icon=
+token=tp
+
+[Wikipedia]
+name=Wikipedia
+text=The free encyclopedia
+uri=http://en.wikipedia.org/wiki/Special:Search/%s
+icon=
+token=wp
+
+[The Free Dictionary]
+name=The Free Dictionary
+text=Dictionary, Encyclopedia and Thesaurus
+uri=http://www.thefreedictionary.com/%s
+icon=
+token=fd
+EOF
+
+changelog "Search engines configured for Trisquel"
+
+compile
+

@@ -1,0 +1,10 @@
+Task: ltsp-server
+Section: user
+Description: LTSP server
+ This task provides a LTSP server on a Trisquel console environment with a server optimized kernel.
+Packages: list
+Key:
+ trisquel-base
+ ltsp-server-standalone
+ linux-image-server
+ trisquel-base-recommended

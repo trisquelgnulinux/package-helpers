@@ -1,0 +1,179 @@
+Source: firefox
+Section: web
+Priority: optional
+Maintainer: Trisquel GNU/Linux developers <trisquel-devel@listas.trisquel.info>
+Build-Depends: cdbs, debhelper (>= 5), sharutils, m4,
+	autotools-dev, autoconf2.13,
+	quilt, patchutils (>= 0.2.25),
+	bzip2, zlib1g-dev, zip,
+	libx11-dev, libxt-dev,
+	libgtk2.0-dev (>= 2.10),
+	liborbit2-dev, libidl-dev (>= 0.8.0),
+	libxft-dev, libfreetype6-dev,
+	libpng12-dev, libjpeg62-dev,
+	libxrender-dev, libxinerama-dev,
+	libcairo2-dev, libpixman-1-dev,
+	libgnome2-dev, libgconf2-dev, libgnomevfs2-dev, libgnomeui-dev,
+	libstartup-notification0-dev,
+	libasound2-dev,
+	binutils (>= 2.17-1) [mips mipsel],
+	libhunspell-dev,
+	libdbus-glib-1-dev (>= 0.60),
+	libnspr4-dev, libnss3-dev,
+	mozilla-devscripts (>= 0.10~),
+	hardening-wrapper,
+	lsb-release,
+	libiw-dev,
+	libnotify-dev (>= 0.4)
+Standards-Version: 3.8.1
+
+Package: firefox
+Architecture: any
+Depends: fontconfig,
+	psmisc,
+	lsb-release,
+	debianutils (>= 1.16),
+	${misc:Depends},
+	${shlibs:Depends},
+	abrowser-branding
+Suggests: firefox-gnome-support (= ${binary:Version}), kmozillahelper (>= 0.6), latex-xft-fonts, libthai0
+Provides: www-browser, 
+	firefox-3.6, 
+	firefox-3.5, 
+	firefox-3.0, 
+	firefox-2, 
+	firefox-2-dom-inspector, 
+	firefox-2-libthai
+Conflicts: firefox-3.6 (<< 3.6~hg20100117r33523), 
+	firefox-3.5 (<< 3.6~hg20100117r33523), 
+	firefox-3.0 (<< 3.6~hg20100117r33523), 
+	firefox-3.6-gnome-support (<< 3.6~hg20100117r33523), 
+	firefox-2 (<< 3), 
+	firefox-2-libthai (<< 3), 
+	firefox-2-dom-inspector (<< 3)
+Replaces: firefox-3.6, 
+	firefox-3.5, 
+	firefox-3.0, 
+	firefox-3.6-gnome-support, 
+	firefox-2, firefox-2-libthai, 
+	firefox-2-dom-inspector
+XB-Xul-AppId: {ec8030f7-c20a-464f-9b0e-13a3a9e97384}
+Description: safe and easy web browser from Mozilla
+ Firefox delivers safe, easy web browsing. A familiar user interface,
+ enhanced security features including protection from online identity theft,
+ and integrated search let you get the most out of the web.
+
+Package: firefox-gnome-support
+Architecture: any
+Section: gnome
+Depends: ${shlibs:Depends}, ${misc:Depends}, firefox (= ${binary:Version})
+Provides: gnome-www-browser, 
+	firefox-3.6-gnome-support, 
+	firefox-3.5-gnome-support, 
+	firefox-3.0-gnome-support, 
+	firefox-2
+Conflicts: firefox-3.6-gnome-support (<< 3.6~hg20100117r33523+nobinonly), 
+	firefox-3.5-gnome-support (<< 3.6~hg20100117r33523), 
+	firefox-3.0-gnome-support (<< 3.6~hg20100117r33523), 
+	firefox-2 (<< 3)
+Replaces: firefox-3.6-gnome-support, 
+	firefox-3.5-gnome-support, 
+	firefox-3.0-gnome-support, 
+	firefox-2-gnome-support
+Description: Support for GNOME in Mozilla Firefox
+ This is an extension to Firefox that allows it to use protocol
+ handlers from GnomeVFS, such as smb or sftp, and other GNOME
+ integration features.
+
+Package: abrowser-branding
+Architecture: any
+Depends: firefox (= ${binary:Version}), ${misc:Depends}
+Replaces: firefox, 
+	abrowser-3.6-branding, 
+	abrowser-3.5-branding, 
+	firefox-3.5-branding, 
+	firefox-3.6-branding
+Conflicts: firefox-branding, 
+	firefox-3.5-branding, 
+	firefox-3.6-branding, 
+	abrowser-3.6-branding (<< 3.6~hg20100117r33523+nobinonly), 
+	abrowser-3.5-branding (<< 3.6~hg20100117r33523)
+Provides: abrowser-3.6-branding, 
+	abrowser-3.5-branding, 
+	firefox-branding
+Description: package that ships the abrowser branding
+ The ABrowser refers to the unbranded build of firefox.
+ Install the firefox package if you want a branded build.
+ .
+ This is a metapackage that will point to the latest abrowser package
+ in your distribution. Don't remove this if you want to receive automatic
+ major version upgrades for this package in future.
+
+Package: abrowser
+Architecture: all
+Depends: firefox, abrowser-branding, ${misc:Depends}, apturl
+Conflicts: abrowser-3.6 (<< 3.6~hg20100117r33523+nobinonly), 
+	abrowser-3.5 (<< 3.6~hg20100117r33523)
+Replaces: abrowser-3.6, 
+	abrowser-3.5
+Provides: abrowser-3.6, 
+	abrowser-3.5
+XB-Xul-AppId: {ec8030f7-c20a-464f-9b0e-13a3a9e97384}
+Description: metapackage for the unbranded abrowser
+ ABrowser is an unbranded version of the popular Firefox webbrowser;
+ it is written in the XUL language and designed to be lightweight and
+ cross-platform.
+ .
+ This is a metapackage that will point to the latest abrowser package in
+ your distribution.
+ Don't remove this if you want to receive automatic major version upgrades
+ for this package in future.
+
+Package: firefox-3.5
+Architecture: all
+Depends: firefox
+Description: dummy upgrade package for firefox-3.5 -> firefox
+ This is a transitional package so firefox-3.5 users get firefox on
+ upgrades. It can be safely removed.
+
+Package: firefox-3.5-gnome-support
+Architecture: all
+Depends: firefox-gnome-support
+Description: dummy upgrade package for firefox-3.5 -> firefox
+ This is a transitional package so firefox-3.5 users get firefox on
+ upgrades. It can be safely removed.
+
+Package: firefox-3.5-branding
+Architecture: all
+Depends: firefox-branding
+Description: dummy upgrade package for firefox-3.5 -> firefox
+ This is a transitional package so firefox-3.5 users get firefox on
+ upgrades. It can be safely removed.
+
+Package: abrowser-3.5-branding
+Architecture: all
+Depends: abrowser-branding
+Description: dummy upgrade package for firefox-3.5 -> firefox
+ This is a transitional package so firefox-3.5 users get firefox on
+ upgrades. It can be safely removed.
+
+Package: abrowser-3.5
+Architecture: all
+Depends: abrowser
+Description: dummy upgrade package for firefox-3.5 -> firefox
+ This is a transitional package so firefox-3.5 users get firefox on
+ upgrades. It can be safely removed.
+
+Package: firefox-3.0
+Architecture: all
+Depends: firefox
+Description: dummy upgrade package for firefox-3.0 -> firefox
+ This is a transitional package so firefox-3.0 users get firefox on
+ upgrades. It can be safely removed.
+
+Package: firefox-3.0-gnome-support
+Architecture: all
+Depends: firefox-gnome-support
+Description: dummy upgrade package for firefox-3.0 -> firefox
+ This is a transitional package so firefox-3.0 users get firefox on
+ upgrades. It can be safely removed.

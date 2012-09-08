@@ -1,0 +1,43 @@
+#!/bin/sh
+#
+#    Copyright (C) 2008-2011  Rubén Rodríguez <ruben@trisquel.info>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=4
+
+. ./config
+
+#Remove game subcategories
+cp $DATA/applications.menu menu-data/applications.menu
+
+# We remove any info about non-free packages
+egrep -lr 'X-AppInstall-Section=(multiverse|restricted)' . | xargs -r rm
+for i in firefox jockey ndisgtk chromium-browser bughugger testdrive menueditor lp-review-list groundcontrol
+do
+    find -name *$i*xpm -exec rm {} \;
+    find -name *$i*png -exec rm {} \;
+    find -name *$i*desktop -exec rm {} \;
+done
+
+find -name *.desktop -exec sed -i 's/X-AppInstall-Section=universe/X-AppInstall-Section=main/g' {} \;
+find -name *buntu*desktop -exec rm {} \;
+rm menu-data/uck.desktop
+sed -i '/buntu/d' debian/install
+changelog "Removed references to non-free apps"
+
+compile
+

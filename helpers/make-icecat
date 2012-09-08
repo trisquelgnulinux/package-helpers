@@ -1,0 +1,241 @@
+#!/bin/sh
+#
+#    Copyright (C) 2008-2010  Rubén Rodríguez <ruben@trisquel.info>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=1
+EXTERNAL='deb-src http://ppa.launchpad.net/gnuzilla-team/ppa/ubuntu $UPSTREAM main'
+
+. ./config
+
+#Create transitional packages
+#for PACKAGE in abrowser abrowser-branding abrowser-3.5 abrowser-3.5-branding
+#do
+#cat << EOF >> debian/control
+#
+#Package: $PACKAGE
+#Priority: optional
+#Section: web
+#Maintainer: Trisquel GNU/Linux developers <trisquel-devel@listas.trisquel.info>
+#Architecture: all
+#Depends: icecat
+#Description: GNU version of the Firefox browser
+# This is a transitional package, replacing the abrowser packaging
+# with the IceCat packaging.
+# .
+# It can be safely removed after an upgrade.
+#
+#EOF
+#done
+
+sed "s/libiw30/libiw30, xul-ext-ubufox/; /flash/d" -i debian/control
+
+# Disable Cookie watcher in privacy extension, as third party cookies are disabled via settings
+line=$(grep -n observerService.addObserver\(privacyFeaturesCookiesObserver browser/branding/unofficial/extensions/privacy_features@gnuzilla.gnu.org/content/overlay.js |cut -d: -f1)
+sed "$line,$( expr $line + 1 )d" browser/branding/unofficial/extensions/privacy_features@gnuzilla.gnu.org/content/overlay.js -i
+
+# Postinst script to manage profile migration and system links
+echo '#!/bin/bash
+set -e
+
+if [ "$1" = "configure" ] || [ "$1" = "abort-upgrade" ] ; then
+
+update-alternatives --install /usr/bin/gnome-www-browser gnome-www-browser /usr/bin/icecat 40
+update-alternatives --install /usr/bin/x-www-browser x-www-browser /usr/bin/icecat 40
+
+for HOMEDIR in $(grep :/home/ /etc/passwd |grep -v usbmux |grep -v syslog|cut -d : -f 6)
+do
+    [ -d $HOMEDIR/.gnuzilla ] && continue || true
+    [ -d $HOMEDIR/.mozilla ] || continue
+    echo Copying $HOMEDIR/.gnuzilla/firefox into $HOMEDIR/.gnuzilla/icecat
+    cp -a $HOMEDIR/.mozilla $HOMEDIR/.gnuzilla
+    mv $HOMEDIR/.gnuzilla/firefox $HOMEDIR/.gnuzilla/icecat
+done 
+
+fi
+exit 0 ' > debian/icecat.postinst
+chmod 755 debian/icecat.postinst
+
+echo '#!/bin/sh
+set -e
+
+if [ "$1" = "remove" ] || [ "$1" = "deconfigure" ] ; then
+    update-alternatives --remove gnome-www-browser /usr/bin/icecat
+    update-alternatives --remove x-www-browser /usr/bin/icacat
+fi
+
+exit 0 ' > debian/icecat.prerm
+chmod 755 debian/icecat.prerm
+
+cat << EOF > debian/icecat.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE default-apps SYSTEM "gnome-da-list.dtd">
+<default-apps>
+  <web-browsers>
+    <web-browser>
+      <name>GNU Icecat</name>
+      <executable>icecat</executable>
+      <command>/usr/bin/icecat %s</command>
+      <icon-name>icecat</icon-name>
+      <run-in-terminal>false</run-in-terminal>
+      <netscape-remote>true</netscape-remote>
+      <tab-command>icecat --new-tab "%s"</tab-command>
+      <win-command>icecat --new-window "%s"</win-command>
+    </web-browser>
+  </web-browsers>
+</default-apps>
+EOF
+
+# Make IceCat selectable in gnome-control-center
+sed 's:icecat\.$:icecat\.\n\tcp $(CURDIR)/debian/icecat.xml $(CURDIR)/debian/icecat/usr/share/gnome-control-center/default-apps/icecat.xml:' debian/rules -i
+sed 's:icecat\.$:icecat\.\n\tmkdir -p $(CURDIR)/debian/icecat/usr/share/gnome-control-center/default-apps/:' debian/rules -i
+
+# Custom settings
+cat << EOF >> browser/app/profile/firefox.js
+
+// PFS url
+pref("pfs.datasource.url", "http://trisquel.info/sites/pfs.php?mime=%PLUGIN_MIMETYPE%");
+pref("pfs.filehint.url", "http://trisquel.info/sites/pfs.php?mime=%PLUGIN_MIMETYPE%");
+
+// I'm feeling Ducky.
+pref("keyword.URL", "https://duckduckgo.com/?q=!+");
+pref("browser.search.defaultenginename", "DuckDuckGo (SSL)");
+pref("browser.search.order.extra.duckduckgo", "DuckDuckGo (SSL)");
+
+// Disable plugin installer
+pref("plugins.hide_infobar_for_missing_plugin", true);
+pref("plugins.hide_infobar_for_outdated_plugin", true);
+
+//Speeding it up
+pref("network.http.pipelining", true);
+pref("network.http.proxy.pipelining", true);
+pref("network.http.pipelining.maxrequests", 10);
+pref("network.dns.disableIPv6", true);
+pref("nglayout.initialpaint.delay", 0);
+
+// Disable third party cookies
+pref("network.cookie.cookieBehavior", 1);
+
+// Extensions can be updated
+pref("extensions.update.enabled", true);
+// Use LANG environment variable to choose locale
+pref("intl.locale.matchOS", true);
+// Disable default browser checking.
+pref("browser.shell.checkDefaultBrowser", false);
+// Prevent EULA dialog to popup on first run
+pref("browser.EULA.override", true);
+
+pref ("distribution.about", "GNU IceCat for Trisquel");
+pref ("distribution.id", "trisquel");
+pref ("distribution.version", "$REVISION");
+
+pref("general.useragent.vendor", "Trisquel");
+pref("general.useragent.vendorComment", "$CODENAME");
+pref("general.useragent.vendorSub", "$REVISION");
+pref ("startup.homepage_override_url" , "http://trisquel.info/newbrowser");
+
+// Preferences for the Get Add-ons panel
+pref ("extensions.webservice.discoverURL", "https://trisquel.info/browser");
+pref ("extensions.getAddons.search.url", "http://trisquel.info");
+
+// Help URL
+pref ("app.support.baseURL", "http://trisquel.info/wiki/");
+
+// Dictionary download preference
+pref("browser.dictionaries.download.url", "http://dictionaries.mozdev.org/");
+pref("browser.search.searchEnginesURL", "http://mycroft.mozdev.org/");
+
+EOF
+
+#set default layout
+cat << EOF |patch -p1 -N -r /dev/null
+--- icecat/browser/base/content/browser.xul.old	2011-07-18 02:35:10.000000000 +0000
++++ icecat/browser/base/content/browser.xul	2011-07-18 02:40:51.000000000 +0000
+@@ -477,6 +477,7 @@
+              defaultset="menubar-items"
+              mode="icons" iconsize="small" defaulticonsize="small"
+              lockiconsize="true"
++             autohide="true"
+ #ifdef MENUBAR_CAN_AUTOHIDE
+              toolbarname="&menubarCmd.label;"
+              accesskey="&menubarCmd.accesskey;"
+@@ -499,10 +500,10 @@
+              fullscreentoolbar="true" mode="icons" customizable="true"
+ #ifdef WINCE
+              iconsize="small" defaulticonsize="small"
+-             defaultset="unified-back-forward-button,urlbar-container,reload-button,stop-button,search-container,home-button,bookmarks-menu-button-container,navigator-throbber,fullscreenflex,window-controls"
++             defaultset="unified-back-forward-button,home-button,urlbar-container,reload-button,stop-button,search-container,fullscreenflex,window-controls"
+ #else
+              iconsize="large"
+-             defaultset="unified-back-forward-button,urlbar-container,reload-button,stop-button,search-container,home-button,bookmarks-menu-button-container,fullscreenflex,window-controls"
++             defaultset="unified-back-forward-button,home-button,urlbar-container,reload-button,stop-button,search-container,fullscreenflex,window-controls"
+ #endif
+              context="toolbar-context-menu">
+ 
+@@ -744,7 +745,7 @@
+              context="toolbar-context-menu"
+              defaultset="personal-bookmarks"
+              toolbarname="&personalbarCmd.label;" accesskey="&personalbarCmd.accesskey;"
+-             collapsed="true"
++             collapsed="false"
+              customizable="true">
+       <toolbaritem flex="1" id="personal-bookmarks" title="&bookmarksItem.title;"
+                    removable="true">
+@@ -801,7 +802,7 @@
+              aria-label="&tabsToolbar.label;"
+              context="toolbar-context-menu"
+ #ifdef APPMENU_ON_TABBAR
+-             defaultset="appmenu-toolbar-button,tabbrowser-tabs,new-tab-button,alltabs-button,tabs-closebutton"
++             defaultset="appmenu-toolbar-button,tabbrowser-tabs,new-tab-button,flvideoreplacer-toolbar-button,downloads-button,feed-button,alltabs-button,tabs-closebutton"
+ #else
+              defaultset="tabbrowser-tabs,new-tab-button,alltabs-button,tabs-closebutton"
+ #endif
+EOF
+
+#Trisquel custom bookmarks
+cat << EOF > browser/locales/generic/profile/bookmarks.html.in
+<!DOCTYPE NETSCAPE-Bookmark-file-1>
+<!-- This is an automatically generated file.
+     It will be read and overwritten.
+     DO NOT EDIT! -->
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<TITLE>Bookmarks</TITLE>
+<H1>Bookmarks Menu</H1>
+
+<DL><p>
+    <DT><H3 ADD_DATE="1245542278" LAST_MODIFIED="1245543070" PERSONAL_TOOLBAR_FOLDER="true">Bookmarks Toolbar</H3>
+<DD>Add bookmarks to this folder to see them displayed on the Bookmarks Toolbar
+    <DL><p>
+	<HR>
+        <DT><A HREF="http://trisquel.info/" ADD_DATE="1245542718" LAST_MODIFIED="1245542736" ICON_URI="http://trisquel.info/sites/default/themes/trisquel2/favicon.ico" ICON="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACi0lEQVQ4jY2T3UtTARiH92/0DxR0E10EZTeBF3VhBEqF9EEXUURUpn2AmohNS60oUrRMQ1D86ItKKz+atjmd25w5S82zlXPOqfNsc27nzOPOeboQJlakL/xuXnifi+d9Xx1bLEVZxTHhxzjsRZJXkn3dVob9gQhp+d1kFhs5rv9C6s1ufnjEjQDHhJ+bNXbOlJsprHfwyxdMAgrrHbzvcxONxXF7F6l47eRUaR+qqq4BWgwCO85+5KjeyMm7Jraf62DnhU5aDZMA3KodJByR0DSNmjdDCFML7L/Wy4IYQReNxUm52oXB7sEzG6Lb5sEx7uNgXi8pOT04JuYwO308bB3mrclNfbuTFoNAWoGJmLSCzusPcij3M6GlGJUvhzDYpymuH6Tvq5cDuX0cKzHjW1jCMxtk1DWPecRLZqkFfcPwmoNgOMrhgl5m5sJJu2UNVqZnRY7oLaSXWDlRZuFGjZ3LlVYOFpg5c6+fxVB0XeLjV07OP7LwosfFs7YxGjvGsI3Nkl5iJTW/nz3Zvey+1Mm+rA7y6uyEI9LGNWqahlOY59Ogh1HXPAA51Va2ne4gv86GazqQlPhn/fMOFCXB3qxOMu+YCASXud80RNFzC7Yx/9YAYijKrotd1LZP8OTtKG6viCSvcL16AGF6cXNATFohJbubqnffefruG+M/51FVlWaDQE3b+OYAgOyqQTKKTATEZT6YXQieAOXNIzR2Tf4N0DQNVVVZXV1FURQURcHrF8m4beTsgwFaewTKm0c4qjcy5RNJJBJJoTpN04jH40QiEUKhEKIoJuOemuFBs40rFWbuN9kYFzwEg0HC4TCSJK3/QiKRQJZlZFkmHo//N7IsI0kSiqKgaRq/AbKDgxgo7zYPAAAAAElFTkSuQmCC">Trisquel GNU/Linux</A>
+        <DT><A HREF="http://trisquel.info/wiki/" ADD_DATE="1245542718" LAST_MODIFIED="1245542736" ICON_URI="http://trisquel.info/sites/default/themes/trisquel2/favicon.ico" ICON="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACi0lEQVQ4jY2T3UtTARiH92/0DxR0E10EZTeBF3VhBEqF9EEXUURUpn2AmohNS60oUrRMQ1D86ItKKz+atjmd25w5S82zlXPOqfNsc27nzOPOeboQJlakL/xuXnifi+d9Xx1bLEVZxTHhxzjsRZJXkn3dVob9gQhp+d1kFhs5rv9C6s1ufnjEjQDHhJ+bNXbOlJsprHfwyxdMAgrrHbzvcxONxXF7F6l47eRUaR+qqq4BWgwCO85+5KjeyMm7Jraf62DnhU5aDZMA3KodJByR0DSNmjdDCFML7L/Wy4IYQReNxUm52oXB7sEzG6Lb5sEx7uNgXi8pOT04JuYwO308bB3mrclNfbuTFoNAWoGJmLSCzusPcij3M6GlGJUvhzDYpymuH6Tvq5cDuX0cKzHjW1jCMxtk1DWPecRLZqkFfcPwmoNgOMrhgl5m5sJJu2UNVqZnRY7oLaSXWDlRZuFGjZ3LlVYOFpg5c6+fxVB0XeLjV07OP7LwosfFs7YxGjvGsI3Nkl5iJTW/nz3Zvey+1Mm+rA7y6uyEI9LGNWqahlOY59Ogh1HXPAA51Va2ne4gv86GazqQlPhn/fMOFCXB3qxOMu+YCASXud80RNFzC7Yx/9YAYijKrotd1LZP8OTtKG6viCSvcL16AGF6cXNATFohJbubqnffefruG+M/51FVlWaDQE3b+OYAgOyqQTKKTATEZT6YXQieAOXNIzR2Tf4N0DQNVVVZXV1FURQURcHrF8m4beTsgwFaewTKm0c4qjcy5RNJJBJJoTpN04jH40QiEUKhEKIoJuOemuFBs40rFWbuN9kYFzwEg0HC4TCSJK3/QiKRQJZlZFkmHo//N7IsI0kSiqKgaRq/AbKDgxgo7zYPAAAAAElFTkSuQmCC">Wiki</A>
+        <DT><A HREF="http://trisquel.info/donate" ADD_DATE="1245542718" LAST_MODIFIED="1245542736" ICON_URI="http://trisquel.info/sites/default/themes/trisquel2/favicon.ico" ICON="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACi0lEQVQ4jY2T3UtTARiH92/0DxR0E10EZTeBF3VhBEqF9EEXUURUpn2AmohNS60oUrRMQ1D86ItKKz+atjmd25w5S82zlXPOqfNsc27nzOPOeboQJlakL/xuXnifi+d9Xx1bLEVZxTHhxzjsRZJXkn3dVob9gQhp+d1kFhs5rv9C6s1ufnjEjQDHhJ+bNXbOlJsprHfwyxdMAgrrHbzvcxONxXF7F6l47eRUaR+qqq4BWgwCO85+5KjeyMm7Jraf62DnhU5aDZMA3KodJByR0DSNmjdDCFML7L/Wy4IYQReNxUm52oXB7sEzG6Lb5sEx7uNgXi8pOT04JuYwO308bB3mrclNfbuTFoNAWoGJmLSCzusPcij3M6GlGJUvhzDYpymuH6Tvq5cDuX0cKzHjW1jCMxtk1DWPecRLZqkFfcPwmoNgOMrhgl5m5sJJu2UNVqZnRY7oLaSXWDlRZuFGjZ3LlVYOFpg5c6+fxVB0XeLjV07OP7LwosfFs7YxGjvGsI3Nkl5iJTW/nz3Zvey+1Mm+rA7y6uyEI9LGNWqahlOY59Ogh1HXPAA51Va2ne4gv86GazqQlPhn/fMOFCXB3qxOMu+YCASXud80RNFzC7Yx/9YAYijKrotd1LZP8OTtKG6viCSvcL16AGF6cXNATFohJbubqnffefruG+M/51FVlWaDQE3b+OYAgOyqQTKKTATEZT6YXQieAOXNIzR2Tf4N0DQNVVVZXV1FURQURcHrF8m4beTsgwFaewTKm0c4qjcy5RNJJBJJoTpN04jH40QiEUKhEKIoJuOemuFBs40rFWbuN9kYFzwEg0HC4TCSJK3/QiKRQJZlZFkmHo//N7IsI0kSiqKgaRq/AbKDgxgo7zYPAAAAAElFTkSuQmCC">Donate</A>
+        <DT><A HREF="http://store.trisquel.info/" ADD_DATE="1245542718" LAST_MODIFIED="1245542736" ICON_URI="http://trisquel.info/sites/default/themes/trisquel2/favicon.ico" ICON="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACi0lEQVQ4jY2T3UtTARiH92/0DxR0E10EZTeBF3VhBEqF9EEXUURUpn2AmohNS60oUrRMQ1D86ItKKz+atjmd25w5S82zlXPOqfNsc27nzOPOeboQJlakL/xuXnifi+d9Xx1bLEVZxTHhxzjsRZJXkn3dVob9gQhp+d1kFhs5rv9C6s1ufnjEjQDHhJ+bNXbOlJsprHfwyxdMAgrrHbzvcxONxXF7F6l47eRUaR+qqq4BWgwCO85+5KjeyMm7Jraf62DnhU5aDZMA3KodJByR0DSNmjdDCFML7L/Wy4IYQReNxUm52oXB7sEzG6Lb5sEx7uNgXi8pOT04JuYwO308bB3mrclNfbuTFoNAWoGJmLSCzusPcij3M6GlGJUvhzDYpymuH6Tvq5cDuX0cKzHjW1jCMxtk1DWPecRLZqkFfcPwmoNgOMrhgl5m5sJJu2UNVqZnRY7oLaSXWDlRZuFGjZ3LlVYOFpg5c6+fxVB0XeLjV07OP7LwosfFs7YxGjvGsI3Nkl5iJTW/nz3Zvey+1Mm+rA7y6uyEI9LGNWqahlOY59Ogh1HXPAA51Va2ne4gv86GazqQlPhn/fMOFCXB3qxOMu+YCASXud80RNFzC7Yx/9YAYijKrotd1LZP8OTtKG6viCSvcL16AGF6cXNATFohJbubqnffefruG+M/51FVlWaDQE3b+OYAgOyqQTKKTATEZT6YXQieAOXNIzR2Tf4N0DQNVVVZXV1FURQURcHrF8m4beTsgwFaewTKm0c4qjcy5RNJJBJJoTpN04jH40QiEUKhEKIoJuOemuFBs40rFWbuN9kYFzwEg0HC4TCSJK3/QiKRQJZlZFkmHo//N7IsI0kSiqKgaRq/AbKDgxgo7zYPAAAAAElFTkSuQmCC">Store</A>
+        <DT><A FEEDURL="http://trisquel.info/en/planet/rss" HREF="http://trisquel.info/en/planet">Planet</A>
+        <DT><A HREF="http://identi.ca/group/trisquel" ADD_DATE="1262084293" ICON_URI="http://identi.ca/favicon.ico" ICON="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABEElEQVQ4jZWTsW3EMAxF3wgeQSNkBI2QETyCR1BnII7BLl2gAVyovkrXpbur3B3gwgMYmYBpYkPS2QaOABtJ/4miPiEJB1UPTmAS0CQnAWnBcBSf8C6wFMIylx7qI/GZMMsM4qAqbx6s1dF7nWPUm4gO1j5Vsj3n/83b5o9zuheXui4hHoC0YYO1u+I1ikqWFbAtPkI4BdxEsipaMBlgjvEUMMeYATqwL1Uwep8BPuCN9AcudX0KuDZNBlh74NPF0ftDwCOEFBAAaMGURrk2zdaP1Qu/06Sqql9VtZ6Lm5lKLxzltzEpQB1UG0RAXrHzk6UBOrAC9wPBfWdKw+5ktmA6sD24Dmw6xi2YHhqBIKB/yV7X1RXblbAAAAAASUVORK5CYII=">@identi.ca</A>
+	<HR>
+        <DT><A HREF="http://www.gnu.org/" ADD_DATE="1245542746" LAST_MODIFIED="1245542763" ICON_URI="http://www.gnu.org/graphics/gnu-head-mini.png" ICON="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgBAMAAACBVGfHAAAAGFBMVEVFRUV+fn6mpqa/v7/Ozs7Y2Njg4OD8/Pwuhn+TAAAAAWJLR0QAiAUdSAAAAAlwSFlzAAALEQAACxEBf2RfkQAAAAd0SU1FB9MBDhQ6Gd8s57cAAAEkSURBVHicXdFNc4JADAbgoP0Bi4d6dcGBMzp2z2rrnjulcsavnKuQ9+83K37vDAN5yIZsILws0uv3i7ugLTnAwpjBOsTLOE4VmmKQTFYBioGNKkI5drcCReRItmNAyinSCjianJo6A/aGRtRjtPadpB5CRkQRUaYPGbXW4UgKMfXQxDnJPIeJ0qyOrclrLXoqou8+5p7HM9EkT/JtyEsqB2QYnRv7sT2ArRPLf0kWOp1sA3hYPq3Oh/t0EAjjVIG703II9awr3l3BhxAf5foMLaaasPEZqm5A+0RzGCmuIKJbWi284csIJbzykBQ3aIADsL2CFtBWpovhA1Td7Q6NzqZ/B+38APG3HxU+sYO4B9Akt+AnqGbp/gmwTN6eAWt+gcv6B4rivVin0bWbAAAAAElFTkSuQmCC">GNU&#39;s not UNIX!</A>
+        <DT><A FEEDURL="http://planet.gnu.org/atom.xml" HREF="http://planet.gnu.org/">GNU Planet</A>
+ <DT><A HREF="http://www.fsf.org/" ADD_DATE="1245542771" LAST_MODIFIED="1245542780" ICON_URI="http://www.fsf.org/favicon.ico" ICON="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAACXBIWXMAAAsTAAALEwEAmpwYAAADG0lEQVQoFQEQA+/8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAD///8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAQECAAAAAAAAAAAAAAAAAAAA2qOp7tTXAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAP///wAAAAAAAOCyt7pUXQcSEgcQDwAAAP///wAAAAAAAAD//x9NSDqNhQEBAQQAAAAAAAAAAAAAAAAQJiQGDQ0aPToZPjoAAQEAAAAAAAAAAAABAQEpZV4AAAAAAAAAAAAA////////////////pSIv05KZ////////////////////////////////AAAAAQAAAP///6krNwAAAAAAAPHc3ggSEQcSEQAAAAAAAAAAABY3NEGelQAAAAAAAAEBAQEAAAD///+YARAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGDg1g690CBgYAAAABAQEEAAAAAAAAS7etAAAAAAAAwGVtHklFIlJOAAAAAAAAAAAAAAAA+/X2BwYGAAAAAAAABAAAAAAAAB1IQwAAAAAAAAYNDBAmJB1IQwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAgL//v4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAQEB//7/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAECAv/+/gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD////////////////cqK3qzM////////////////////////////////8AAAABAAAA////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQEBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGuLjDf9F8oBAAAAAElFTkSuQmCC">Free Software Foundation</A>
+    </DL><p>
+</DL><p>
+EOF
+
+changelog  "Tuned up for Trisquel"
+
+compile
+
