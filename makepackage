@@ -46,31 +46,34 @@ REPOSITORY=$PWD/repos/$CODENAME
 HELPERS=$PWD/helpers
 if ! [ -d repos/ ]
 then
-mkdir -p repos/$CODENAME/conf repos/$CODENAME/incoming
-cat << EOF > repos/$CODENAME/conf/distributions
+for i in $(git branch|sed 's/.* //;/master/d')
+do
+mkdir -p repos/$REPO/conf repos/$REPO/incoming
+cat << EOF > repos/$REPO/conf/distributions
 Origin: Trisquel
 Label: Trisquel
-Suite: $CODENAME
+Suite: $REPO
 Version: 42
-Codename: $CODENAME
+Codename: $REPO
 Architectures: i386 amd64 source
 Components: main
 UDebComponents: main
 DebIndices: Packages Release . .gz .bz2
 UDebIndices: Packages . .gz .bz2
 DscIndices: Sources Release .gz .bz2
-Log: $CODENAME.log
+Log: $REPO.log
 Description: Trisquel GNU/Linux packages for the $UPSTREAM based release
 EOF
 
 if gpg -K | grep -q $GPGKEY
 then
-    echo "SignWith: $GPGKEY" >> repos/$CODENAME/conf/distributions
+    echo "SignWith: $GPGKEY" >> repos/$REPO/conf/distributions
 fi
 
-cd repos/$CODENAME
+cd repos/$REPO
 reprepro -v export
 cd ../..
+done
 fi
 
 disablescripts(){
@@ -129,6 +132,8 @@ EOF
     [ $UPSTREAM != hardy -a $UPSTREAM != lucid -a $UPSTREAM != maverick ] &&  echo "force-unsafe-io" > $CHROOT/etc/dpkg/dpkg.cfg.d/02apt-speedup
     $C apt-get update
     [ $UPSTREAM != hardy ] && $C apt-get --force-yes -y install eatmydata
+    $C apt-get --force-yes -y install sysv-rc dpkg sysvinit-utils upstart
+    disablescripts
     $C apt-get --force-yes -y dist-upgrade
     $C apt-get --force-yes -y install devscripts build-essential liburi-perl python-setuptools pkgbinarymangler wget rpl aptitude quilt fakeroot ccache
     $C apt-get clean
@@ -165,6 +170,12 @@ mount -t proc none /proc
 export DEBIAN_FRONTEND=noninteractive
 export LANG=C
 apt-get update
+apt-get --force-yes -y install sysv-rc dpkg sysvinit-utils upstart
+for i in /usr/sbin/invoke-rc.d /sbin/start /sbin/start-stop-daemon
+do
+    mv \$i \$i.real
+    cp /bin/true \$i
+done
 apt-get --force-yes -y dist-upgrade
 umount /proc
 EOF
