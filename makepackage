@@ -146,7 +146,7 @@ EOF
     then
         for BIN in /bin/uname /usr/bin/arch
         do
-        [ -f $BIN ] || continue
+        [ -f $CHROOT/$BIN ] || continue
         mv $CHROOT/$BIN $CHROOT/$BIN.orig
 cat << EOF > $CHROOT/$BIN
 #!/bin/sh
