@@ -3,7 +3,7 @@
 bits_per_pixel = Window.GetBitsPerPixel ();
 if (bits_per_pixel == 4) {
     Window.SetBackgroundColor (0, 0, 0);
-    logo.image = Image("trisquel-logo16.png");
+    logo.image = Image("trisquel_logo16.png");
 } else {
     logo.image = Image("special://logo");
 

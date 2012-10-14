@@ -29,7 +29,7 @@ replace "with Linux" "with Linux-Libre" util
 replace "with Linux" "with Linux-Libre" debian
 replace "Linux" "Linux-Libre" po
 
-sed 's/\(prefix=@prefix@\)/\1\nGRUB_CMDLINE_EXTRA=$( grep -q nomodeset \/proc\/cmdline \&\& echo nomodeset \|\| echo -n "" )/' util/grub.d/10_linux.in -i
+#sed 's/\(prefix=@prefix@\)/\1\nGRUB_CMDLINE_EXTRA=$( grep -q nomodeset \/proc\/cmdline \&\& echo nomodeset \|\| echo -n "" )/' util/grub.d/10_linux.in -i
 
 cat << EOF >> debian/default/grub
 
@@ -40,9 +40,9 @@ EOF
 changelog "Disable rescue mode by default, nomodeset handler"
 sed "s/-.*)/-${REVISION}trisquel${VERSION})/" -i debian/changelog
 
-apt-get install -y --force-yes kvm-pxe
+#apt-get install -y --force-yes kvm-pxe
 # /dev is needed for KVM support
-mount none -t devtmpfs /dev || true
+#mount none -t devtmpfs /dev || true
 compile
-umount /dev
+#umount /dev
 

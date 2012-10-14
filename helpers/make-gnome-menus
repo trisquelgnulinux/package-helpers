@@ -32,7 +32,7 @@ do
   sed /$i/d -i debian/patches/series
 done
 
-cp $DATA/applications.menu layout/applications.menu
+#cp $DATA/applications.menu layout/applications.menu
 
 changelog "Default layout adapted for Trisquel"
 

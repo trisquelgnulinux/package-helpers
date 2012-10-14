@@ -30,14 +30,14 @@ sed '/mozilla/d' -i ./src/ui/ui_prefs.c
 
 replace mozilla abrowser .
 
-rm debian/patches/01_ubuntu_feedlists debian/patches/debian-example-feeds
-sed '/01_ubuntu_feedlists/d; /debian-example-feeds/d;' debian/patches/series -i
+rm debian/patches/ubuntu-example-feeds debian/patches/debian-example-feeds
+sed '/ubuntu-example-feeds/d; /debian-example-feeds/d;' debian/patches/series -i
 
-rm opml/feedlist_*
-sed '/feedlist_/d; s/\(.*feedlist.opml.*\)/\1\n\tfeedlist_es.opml/;' opml/Makefile.* -i
+#rm opml/feedlist_*
+#sed '/feedlist_/d; s/\(.*feedlist.opml.*\)/\1\n\tfeedlist_es.opml/;' opml/Makefile.* -i
 
 
-cat << EOF > opml/feedlist.opml
+cat << EOF > opml/feedlist
 <?xml version="1.0"?>
 <opml version="1.0">
 <head>  
@@ -72,6 +72,11 @@ cat << EOF > opml/feedlist.opml
 </opml>
 EOF
 
+for feed in opml/feedlist_*
+do
+cat opml/feedlist > $feed
+done
+rm opml/feedlist
 
 cat << EOF > opml/feedlist_es.opml
 <?xml version="1.0"?>

@@ -1,4 +1,4 @@
-#!/bin/sh
+#/bin/sh
 #
 #    Copyright (C) 2008-2010  Rubén Rodríguez <ruben@trisquel.info>
 #
@@ -33,9 +33,9 @@ cat << EOF >> debian/copyright
 
 themes/script/taranis.png Copyright (C) 2010 Rubén Rodríguez, GPL-3 license
 themes/glow/sugar.png Copyright (C) 2008 Dongyun Lee CC Attribution 3.0 Unported license
-themes/script/trisquel-logo16.png Copyright (C) 2004-2011 Rubén Rodríguez, GPL-3 license
-themes/glow/trisquel-logo16.png Copyright (C) 2004-2011 Rubén Rodríguez, GPL-3 license
-themes/glow/trisquel-logo-sugar.png Copyright (C) 2004-2011 Rubén Rodríguez, GPL-3 license
+themes/script/trisquel_logo16.png Copyright (C) 2004-2011 Rubén Rodríguez, GPL-3 license
+themes/glow/trisquel_logo16.png Copyright (C) 2004-2011 Rubén Rodríguez, GPL-3 license
+themes/glow/trisquel_logo-sugar.png Copyright (C) 2004-2011 Rubén Rodríguez, GPL-3 license
 
 EOF
 
@@ -63,21 +63,21 @@ replace 2c001e 000000 .
 replace ff4012 0051FF .
 
 
-cp $DATA/trisquel-logo*.png debian
+cp $DATA/*.png themes/script
 cp $DATA/script.script themes/script/script.script
 
 cat << EOF > debian/source/include-binaries
 themes/script/brigantia.png
 themes/glow/sugar.png
-themes/script/trisquel-logo16.png
-themes/glow/trisquel-logo16.png
-themes/glow/trisquel-logo-sugar.png
+themes/script/trisquel_logo16.png
+themes/glow/trisquel_logo16.png
+themes/glow/trisquel_logo-sugar.png
 EOF
 
 rm themes/trisquel-logo themes/glow -rf
 cp themes/script -a themes/trisquel-logo
-cp $DATA/brigantia.png $DATA/trisquel-logo16.png themes/trisquel-logo/
-sed -i 's/progress_bar.png/progress_bar.png\\\n\t\tbrigantia.png\\\n\t\ttrisquel-logo16.png/' themes/trisquel-logo/Makefile*
+cp $DATA/brigantia.png $DATA/trisquel_logo16.png themes/trisquel-logo/
+sed -i 's/progress_bar.png/progress_bar.png\\\n\t\tbrigantia.png\\\n\t\ttrisquel_logo16.png/' themes/trisquel-logo/Makefile*
 sed s:/script:/trisquel-logo:g -i themes/trisquel-logo/script.plymouth.in
 sed 's:=Script:=Trisquel-logo:g' -i themes/trisquel-logo/script.plymouth.in
 sed 's/script\.script/trisquel-logo\.rtoken/g' -i themes/trisquel-logo/Make*
@@ -92,12 +92,12 @@ sed 's:=Script:=Glow:g' -i themes/glow/script.plymouth.in
 sed 's/script\.script/glow\.rtoken/g' -i themes/glow/Make*
 sed 's/script/glow/g' -i themes/glow/Make*
 sed 's/rtoken/script/g' -i themes/glow/Make*
-cp $DATA/sugar.png $DATA/trisquel-logo16.png $DATA/trisquel-logo-sugar.png themes/glow/
+cp $DATA/sugar.png $DATA/trisquel_logo16.png $DATA/trisquel_logo-sugar.png themes/glow/
 sed -i s/brigantia/sugar/g themes/glow/*
-sed -i 's_special://logo_trisquel-logo-sugar.png_g; s/0.3/0.8/' themes/glow/*.script
+sed -i 's_special://logo_trisquel\_logo-sugar.png_g; s/0.3/0.8/' themes/glow/*.script
 rename s/script.script/glow.script/g themes/glow/*
 rename s/script.plymouth.in/glow.plymouth.in/g themes/glow/*
-sed -i 's/progress_bar.png/progress_bar.png\\\n\t\tsugar.png\\\n\t\ttrisquel-logo16.png\\\n\t\ttrisquel-logo-sugar.png/' themes/glow/Makefile*
+sed -i 's/progress_bar.png/progress_bar.png\\\n\t\tsugar.png\\\n\t\ttrisquel_logo16.png\\\n\t\ttrisquel_logo-sugar.png/' themes/glow/Makefile*
 
 find -type d |xargs rename s/glow/sugar/g
 find -type f |xargs rename s/glow/sugar/g

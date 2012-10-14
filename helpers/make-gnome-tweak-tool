@@ -17,11 +17,11 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 
 . ./config
 
-sed '/gnome-shell,/d' debian/control* -i
+sed '/gnome-shell/d' debian/control* -i
 rm gtweak/tweaks/tweak_shell*
 
 changelog "Remove gnome-shell dependency"

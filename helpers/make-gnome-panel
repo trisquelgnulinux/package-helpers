@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=3
 
 . ./config
 
@@ -25,7 +25,10 @@ sed "105s/'none'/'color'/; s/rgba(255,255,255,.2)/rgba(000,000,000,.75)/" -i dat
 #sed "105s/'none'/'image'/; 115s_''_'file:///usr/share/themes/Trisquel/gtk-3.0/panel-bg.png'_; s/rgba(255,255,255,.2)/rgba(000,000,000,.5)/" -i data/org.gnome.gnome-panel.toplevel.gschema.xml.in.in
 sed 's/"tooltip", tooltip,/"tooltip", "Trisquel",/; s/"has-arrow", TRUE,/"has-arrow", FALSE,/' -i gnome-panel/panel-menu-button.c
 
-sed '/gnome-session /d' debian/control*
+#sed '/gnome-session /d' debian/control* 
+
+rm debian/patches/41_classic_layout.patch
+sed /classic_layout/d -i debian/patches/series
 
 cat << EOF > data/panel-default-layout.layout
 [Toplevel panel]
@@ -81,7 +84,7 @@ toplevel-id=panel
 EOF
 
 # This patch allows @instance-config/location in the default layout
-patch -p1 < $DATA/gnome-panel-improved-default-layout-handling.patch
+#patch -p1 < $DATA/gnome-panel-improved-default-layout-handling.patch
 
 # We don't want to show the gnome-online-accounts stuff yet
 patch -p1 < $DATA/hide-online-accounts-menu.patch

@@ -35,6 +35,10 @@ rm $tmp
 rm debian/patches/hp_photosmart_pro_b9100_support.dpatch
 sed -i '/hp_photosmart_pro_b9100_support.dpatch/d' debian/patches/00list
 
+# Fix compilation problems
+sed '/ln -s \/usr\/share\/hplip\/hpssd.py/s:ln.*:cp hpssd.py ./debian/tmp/usr/sbin/hpssd:' -i debian/rules
+apt-get install --force-yes -y hplip
+
 changelog "Removed printers with propietary drivers (required and optional)"
 
 compile

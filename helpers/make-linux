@@ -28,7 +28,7 @@ VERSION=1
 
 patch -p1 < $DATA/megaraid.patch
 
-sh $DATA/deblob/deblob-3.0
+sh $DATA/deblob/deblob-3.2
 
 # fix a broken line that makes it fail to compile
 #sed '304s/$/\nconst struct firmware *fw;/' arch/x86/kernel/microcode_amd.c -i
