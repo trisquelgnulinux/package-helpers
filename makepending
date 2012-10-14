@@ -20,6 +20,10 @@
 #
 #    This script compares two Sources.gz files, and reports available updates
 
+PAIRS="robur-hardy taranis-lucid dagda-natty brigantia-oneiric toutatis-precise"
+CODENAMES="robur taranis dagda brigantia toutatis"
+UPSTREAMS="hardy lucid natty oneiric precise"
+
 [ 1$1 = 1"test" ] && TEST=echo
 
 WD=$PWD
@@ -41,19 +45,11 @@ wget $MIRROR/dists/$DIST/$COMPONENT/source/Sources.gz -q -O - | zcat | egrep dsc
 echo " Done" >&2
 }
 
-listsweets (){
-DIST=$1
-echo -n Downloading Sources.gz from $MIRROR >&2
-wget $MIRROR/Sources.gz -q -O - | zcat | egrep dsc$ | cut -d" " -f 4|sed 's/\.dsc//'
-echo " Done" >&2
-}
-
-
 update(){
 
 MIRROR="http://archive.ubuntu.com/ubuntu"
 
-for i in hardy lucid maverick natty oneiric
+for i in $UPSTREAMS
 do
     listmirror $i main >> $i
     listmirror $i-updates main >> $i
@@ -63,40 +59,16 @@ do
     listmirror $i-security universe >> $i
 done
 
-#MIRROR="http://download.sugarlabs.org/packages/SweetsDistribution:/0.94/Ubuntu-11.04/"
-
-#listsweets >> sweets-natty
-
-MIRROR="ftp://archive.trisquel.info/trisquel"
-
-for i in main extras
+for i in  $CODENAMES
 do
-    listmirror robur $i >> robur
-    listmirror robur-updates $i >> robur
-    listmirror robur-security $i >> robur
-done
-
-for i in taranis slaine dagda brigantia
-do
+    MIRROR="http://archive.trisquel.info/trisquel"
     listmirror $i main >> $i
     listmirror $i-updates main >> $i
     listmirror $i-security main >> $i
-done
 
-MIRROR="http://devel.trisquel.info/trisquel/hardy"
-listmirror hardy main >> robur
-#MIRROR="http://devel.trisquel.info/trisquel/jaunty"
-#listmirror jaunty main >> dwyn
-#MIRROR="http://devel.trisquel.info/trisquel/karmic"
-#listmirror karmic main >> awen
-MIRROR="http://devel.trisquel.info/trisquel/lucid"
-listmirror lucid main >> taranis
-MIRROR="http://devel.trisquel.info/trisquel/maverick"
-listmirror maverick main >> slaine
-MIRROR="http://devel.trisquel.info/trisquel/natty"
-listmirror natty main >> dagda
-MIRROR="http://devel.trisquel.info/trisquel/oneiric"
-listmirror oneiric main >> brigantia
+    MIRROR="http://devel.trisquel.info/trisquel/$i"
+    listmirror $i main >> $i
+done
 
 }
 
@@ -142,9 +114,10 @@ then
         continue
     fi
 
-    echo Running makepackage $package $UPSTREAM at $(date)
-    echo Running makepackage $package $UPSTREAM at $(date) $LOGS/$package-$UPSTREAM-$(date +%Y%m%d).log 1>&2
-    $TEST sh $WD/makepackage $package $UPSTREAM > $LOGS/$package-$UPSTREAM-$(date +%Y%m%d).log && echo -n Done! || echo -n FAILED!
+    echo Upgrading $current at $DISTRO with ${UPSTREAM}_$upstream 1>&2
+    echo Running makepackage $package $DISTRO at $(date) $LOGS/$DISTRO-$package-$(date +%Y%m%d).log
+    echo Running makepackage $package $DISTRO at $(date) $LOGS/$DISTRO-$package-$(date +%Y%m%d).log 1>&2
+    $TEST sh $WD/makepackage $package $DISTRO > $LOGS/$DISTRO-$package-$(date +%Y%m%d).log && echo -n Done! || echo -n FAILED!
     echo " ($(date))"
     echo
 fi
@@ -153,35 +126,13 @@ done
 
 update
 
-DISTRO="robur"
-UPSTREAM="hardy"
-PACKAGES=$(ls -1 $WD/helpers/$UPSTREAM/make-* | sed 's:^.*/::; s:make-::')
+for pair in $PAIRS
+do
+DISTRO=${pair/-*/}
+UPSTREAM=${pair/*-/}
+PACKAGES=$(git --git-dir=/home/systems/devel/.git ls-tree -r --name-only $DISTRO|grep helpers/make-|sed 's/.*make-//')
 check >> $FILE
-
-DISTRO="taranis"
-UPSTREAM="lucid"
-PACKAGES=$(ls -1 $WD/helpers/$UPSTREAM/make-* | sed 's:^.*/::; s:make-::')
-check >> $FILE
-
-DISTRO="slaine"
-UPSTREAM="maverick"
-PACKAGES=$(ls -1 $WD/helpers/$UPSTREAM/make-* | sed 's:^.*/::; s:make-::')
-check >> $FILE
-
-DISTRO="dagda"
-UPSTREAM="natty"
-PACKAGES=$(ls -1 $WD/helpers/$UPSTREAM/make-* | sed 's:^.*/::; s:make-::')
-check >> $FILE
-
-DISTRO="brigantia"
-UPSTREAM="oneiric"
-PACKAGES=$(ls -1 $WD/helpers/$UPSTREAM/make-* | sed 's:^.*/::; s:make-::')
-check >> $FILE
-
-#DISTRO="dagda"
-#UPSTREAM="sweets-natty"
-#PACKAGES=$(ls -1 $WD/helpers/$UPSTREAM/make-* | sed 's:^.*/::; s:make-::')
-#check >> $FILE
+done
 
 report () {
 #address=trisquel-devel@listas.trisquel.info
