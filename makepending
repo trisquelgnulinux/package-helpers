@@ -20,6 +20,12 @@
 #
 #    This script compares two Sources.gz files, and reports available updates
 
+if [ $(git status -s | wc -l) != 0 ]
+then
+    echo You have uncommited git changes, stopping
+    exit 1
+fi
+
 PAIRS="robur-hardy taranis-lucid dagda-natty brigantia-oneiric toutatis-precise"
 CODENAMES="robur taranis dagda brigantia toutatis"
 UPSTREAMS="hardy lucid natty oneiric precise"
@@ -114,6 +120,8 @@ then
         continue
     fi
 
+    $TEST git --git-dir=$WD/.git checkout $DISTRO
+    $TEST git --git-dir=$WD/.git merge master
     echo Upgrading $current at $DISTRO with ${UPSTREAM}_$upstream 1>&2
     echo Running makepackage $package $DISTRO at $(date) $LOGS/$DISTRO-$package-$(date +%Y%m%d).log
     echo Running makepackage $package $DISTRO at $(date) $LOGS/$DISTRO-$package-$(date +%Y%m%d).log 1>&2
