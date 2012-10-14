@@ -46,7 +46,7 @@ REPOSITORY=$PWD/repos/$CODENAME
 HELPERS=$PWD/helpers
 if ! [ -d repos/ ]
 then
-for i in $(git branch|sed 's/.* //;/master/d')
+for REPO in $(git branch|sed 's/.* //;/master/d')
 do
 mkdir -p repos/$REPO/conf repos/$REPO/incoming
 cat << EOF > repos/$REPO/conf/distributions
@@ -198,6 +198,7 @@ tmpumount(){
   exit 1
 }
 tmpmount(){
+  mount|grep tmpfs|grep jails -q && return
   [ $MEM -lt 16000000 ] && return
   echo $PACKAGE | grep -q "linux" && return
   grep jails/$UPSTREAM-$ARCH/tmp /proc/mounts -q && tmpumount
