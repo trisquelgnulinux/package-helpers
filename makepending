@@ -120,10 +120,11 @@ then
         continue
     fi
 
+    $TEST git checkout $DISTRO
+    $TEST git merge master
     echo Upgrading $current at $DISTRO with ${UPSTREAM}_$upstream 1>&2
     echo Running makepackage $package $DISTRO at $(date) $LOGS/$DISTRO-$package-$(date +%Y%m%d).log
     echo Running makepackage $package $DISTRO at $(date) $LOGS/$DISTRO-$package-$(date +%Y%m%d).log 1>&2
-    git checkout $DISTRO
     $TEST sh $WD/makepackage $package $DISTRO > $LOGS/$DISTRO-$package-$(date +%Y%m%d).log && echo -n Done! || echo -n FAILED!
     echo " ($(date))"
     echo
