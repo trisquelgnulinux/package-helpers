@@ -132,7 +132,7 @@ EOF
     [ $UPSTREAM != hardy -a $UPSTREAM != lucid -a $UPSTREAM != maverick ] &&  echo "force-unsafe-io" > $CHROOT/etc/dpkg/dpkg.cfg.d/02apt-speedup
     $C apt-get update
     [ $UPSTREAM != hardy ] && $C apt-get --force-yes -y install eatmydata
-    $C apt-get --force-yes -y install sysv-rc dpkg sysvinit-utils upstart
+    [ $UPSTREAM != hardy ] && $C apt-get --force-yes -y install sysv-rc dpkg sysvinit-utils upstart
     disablescripts
     $C apt-get --force-yes -y dist-upgrade
     $C apt-get --force-yes -y install devscripts build-essential liburi-perl python-setuptools pkgbinarymangler wget rpl aptitude quilt fakeroot ccache
@@ -146,6 +146,7 @@ EOF
     then
         for BIN in /bin/uname /usr/bin/arch
         do
+        [ -f $CHROOT/$BIN ] || continue
         mv $CHROOT/$BIN $CHROOT/$BIN.orig
 cat << EOF > $CHROOT/$BIN
 #!/bin/sh
