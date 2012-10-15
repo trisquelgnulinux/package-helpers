@@ -120,8 +120,10 @@ then
         continue
     fi
 
-    $TEST git --git-dir=$WD/.git checkout $DISTRO
-    $TEST git --git-dir=$WD/.git merge master
+    cd $WD
+    $TEST git checkout $DISTRO
+    $TEST git merge master
+    cd $TMP
     echo Upgrading $current at $DISTRO with ${UPSTREAM}_$upstream 1>&2
     echo Running makepackage $package $DISTRO at $(date) $LOGS/$DISTRO-$package-$(date +%Y%m%d).log
     echo Running makepackage $package $DISTRO at $(date) $LOGS/$DISTRO-$package-$(date +%Y%m%d).log 1>&2
