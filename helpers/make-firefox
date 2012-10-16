@@ -30,12 +30,12 @@ sed 's/iceweasel,/iceweasel, firefox, icecat,/' -i debian/control*
 sed '/Package: firefox/,/It can be safely removed/d' -i debian/control.in
 
 # Remove Ubuntu bookmarks
-sed -i /ubuntu-bookmarks/d debian/patches/series
+sed -i /ubuntu-bookmarks/d debian/patches/series.in
 rm debian/patches/ubuntu-bookmarks*
 
 #Unbrand url codes for google and amazon
-rm debian/patches/ubuntu-codes*
-sed /ubuntu-codes/d debian/patches/series -i
+#rm debian/patches/ubuntu-codes*
+#sed /ubuntu-codes/d debian/patches/series.in -i
 
 cat << EOF > debian/distribution.ini
 [Global]
@@ -56,9 +56,9 @@ sed 's/\(^MOZ_ENABLE_BREAKPAD.*\)1/\1 0/' -i debian/rules
 # Set release to unofficial
 sed "s/\(^MOZ_BUILD_UNOFFICIAL.*\)0/\1 1/; s/release$/$CODENAME/" -i debian/rules
 
-TARBALL=$(ls *.tar.bz2)
-tar -jxf $TARBALL
-rm $TARBALL
+#TARBALL=$(ls *.tar.bz2)
+#tar -jxf $TARBALL
+#rm $TARBALL
 sed  "s/^MOZ_APP_NAME\t.*/MOZ_APP_NAME\t\t:= abrowser/; s/firefox/abrowser/" debian/rules -i
 
 # Hack to avoid compilation to fail on 3.0x kernel
@@ -82,7 +82,7 @@ replace FIREFOX ABROWSER .
 replace " Mozilla " " Trisquel " .
 sed -i '1s/^Source:.*/Source: firefox/' debian/control*
 replace PACKAGES/abrowser PACKAGES/firefox .
-sed s/Trisquel/Mozilla/ debian/compare-locales/scripts/compare-locales -i
+sed s/Trisquel/Mozilla/ compare-locales/scripts/compare-locales -i
 replace "iceweasel, abrowser" "iceweasel, firefox" .
 replace "Replaces: abrowser" "Replaces: firefox" .
 sed s/Ubuntu/Trisquel/g debian/rules -i
@@ -90,14 +90,14 @@ sed s/ubuntu/trisquel/g debian/distribution.ini debian/config/mozconfig.in -i
 sed 's/ubuntu_version/trisquel_version/; s/Ubuntu 10.10/Trisquel 4.0/; s/1010/40/' -i debian/abrowser.postinst.in
 
 # Redirect feedback menu
-sed s:input.mozilla.com/feedback:trisquel.info/contact: -i mozilla/browser/base/content/utilityOverlay.js
+sed s:input.mozilla.com/feedback:trisquel.info/contact: -i browser/base/content/utilityOverlay.js
 
 # Make abrowser-locale-$lang provide firefox-locale-$lang
-sed 's/Package:\(.*\)/Package:\1\nProvides: firefox-locale-@LANGCODE@/g' debian/control.langpacks* -i
+#sed 's/Package:\(.*\)/Package:\1\nProvides: firefox-locale-@LANGCODE@/g' debian/control.langpacks* -i
 
 # Branding files
-rm mozilla/browser/branding/* -rf
-cp -a $DATA/branding/ mozilla/browser/branding/$CODENAME
+rm browser/branding/* -rf
+cp -a $DATA/branding/ browser/branding/$CODENAME
 cat << EOF > debian/config/branch.mk
 CHANNEL                 = $CODENAME
 MOZ_WANT_UNIT_TESTS     = 0
@@ -109,7 +109,7 @@ L10N_REPO = http://hg.mozilla.org/releases/l10n/mozilla-release
 EOF
 
 #set default layout
-cat << EOF |patch -p0 -N -r /dev/null
+cat << EOF |patch -p1 -N -r /dev/null
 --- mozilla/browser/base/content/browser.xul.old	2011-07-18 02:35:10.000000000 +0000
 +++ mozilla/browser/base/content/browser.xul	2011-07-18 02:40:51.000000000 +0000
 @@ -477,6 +477,7 @@
@@ -150,7 +150,7 @@ cat << EOF |patch -p0 -N -r /dev/null
 EOF
 
 #Trisquel custom bookmarks
-cat << EOF > mozilla/browser/locales/generic/profile/bookmarks.html.in
+cat << EOF > browser/locales/generic/profile/bookmarks.html.in
 <!DOCTYPE NETSCAPE-Bookmark-file-1>
 <!-- This is an automatically generated file.
      It will be read and overwritten.
@@ -235,8 +235,8 @@ EOF
 echo "debian/search/* /usr/lib/abrowser-addons/searchplugins" >> debian/abrowser.install.in
 
 # Disable search field at extensions panel
-#sed  '/header-search/d; /search.placeholder/d' -i mozilla/toolkit/mozapps/extensions/content/extensions.xul
-cat << EOF >> ./mozilla/toolkit/mozapps/extensions/content/extensions.css
+#sed  '/header-search/d; /search.placeholder/d' -i toolkit/mozapps/extensions/content/extensions.xul
+cat << EOF >> toolkit/mozapps/extensions/content/extensions.css
 #header-search {
   display:none;
 }
@@ -257,7 +257,7 @@ done
 replace www.mozilla.com/abrowser/central trisquel.info/browser
 replace www.mozilla.com/legal/privacy trisquel.info/legal
 
-sed -i 's/<a\ href\=\"http\:\/\/www.mozilla.org\/\">Mozilla\ Project<\/a>/<a\ href\=\"http\:\/\/www.trisquel.info\/\"\>Trisquel\ Project<\/a>/g' mozilla/browser/base/content/overrides/app-license.html
+sed -i 's/<a\ href\=\"http\:\/\/www.mozilla.org\/\">Mozilla\ Project<\/a>/<a\ href\=\"http\:\/\/www.trisquel.info\/\"\>Trisquel\ Project<\/a>/g' browser/base/content/overrides/app-license.html
 
 # We went too far...
 replace "Trisquel Public" "Mozilla Public" .
@@ -266,14 +266,14 @@ replace "Trisquel Corporation" "Mozilla Corporation" .
 sed -i 's/iceweasel, abrowser, icecat,/iceweasel, firefox, icecat,/g' debian/control*
 
 # Restore useragent to Firefox
-sed '/MOZ_UA_ABROWSER_VERSION/ s:Abrowser/:Firefox/:;' -i mozilla/netwerk/protocol/http/nsHttpHandler.cpp
+sed '/MOZ_UA_ABROWSER_VERSION/ s:Abrowser/:Firefox/:;' -i netwerk/protocol/http/nsHttpHandler.cpp
 
 # Set migrator scripts
-cp mozilla/browser/components/migration/src/FirefoxProfileMigrator.js mozilla/browser/components/migration/src/AbrowserProfileMigrator.js
-sed 's/Abrowser/Firefox/g; s/ABROWSER/FIREFOX/g; s/abrowser/firefox/g' -i mozilla/browser/components/migration/src/FirefoxProfileMigrator.js
+cp browser/components/migration/src/FirefoxProfileMigrator.js browser/components/migration/src/AbrowserProfileMigrator.js
+sed 's/Abrowser/Firefox/g; s/ABROWSER/FIREFOX/g; s/abrowser/firefox/g' -i browser/components/migration/src/FirefoxProfileMigrator.js
 
-tar -cjf $TARBALL mozilla
-rm mozilla -rf
+#tar -cjf $TARBALL mozilla
+#rm mozilla -rf
 #cp $DATA/control debian/control
 
 # Postinst script to manage profile migration and system links
