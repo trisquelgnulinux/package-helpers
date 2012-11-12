@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=8
 COMPONENT=main
 QUILT=skip
 
@@ -32,9 +32,47 @@ sed 's/unity.*/gnome-shell (>= 3.0),/' -i debian/control*
 #% Replace gnome-classic session with gnome-fallback
 cat << EOF > debian/gnome-session-fallback.install
 debian/scripts/gnome-session-classic /usr/bin
+debian/scripts/trisquel-wm /usr/bin
+debian/scripts/trisquel-wm.desktop /usr/share/applications
 debian/tmp/usr/share/xsessions/gnome-classic.desktop
 debian/tmp/usr/share/gnome-session/sessions/gnome-classic.session
 EOF
+
+#% Add a wrapper for compiz
+cat << EOF > debian/scripts/trisquel-wm
+#!/bin/sh
+
+WM=compiz
+FALLBACK=openbox
+which metacity && FALLBACK=metacity
+which compiz || WM=\$FALLBACK
+[ -f ~/.disable-compiz ] && WM=\$FALLBACK
+grep access=v3 /proc/cmdline -q && WM=\$FALLBACK
+[ \$(gsettings get org.gnome.desktop.a11y.applications screen-reader-enabled) = "true" ] && WM=\$FALLBACK
+
+# Ugly hack to fix a hard to catch race condition
+if gconftool --get /apps/metacity/general/titlebar_font |grep -q Cantarell
+then
+  if ! [ -f /usr/share/fonts/opentype/cantarell/Cantarell-Bold.otf ]
+  then
+    echo The gconf db seems corrupted, saving at ~/.gconf.broken and cleaning it up
+    cp -a ~/.gconf ~/.gconf.broken
+    gconftool --recursive-unset /
+  fi
+fi
+
+/usr/lib/gnome-session/gnome-session-check-accelerated && exec \$WM || exec \$FALLBACK
+EOF
+chmod 755 debian/scripts/trisquel-wm
+cat << EOF > debian/scripts/trisquel-wm.desktop
+[Desktop Entry]
+Type=Application
+Name=trisquel-wm
+Exec=trisquel-wm
+NoDisplay=true
+X-GNOME-Provides=windowmanager
+EOF
+
 mv debian/scripts/gnome-session-fallback debian/scripts/gnome-session-classic
 sed s/fallback/classic/g debian/scripts/gnome-session-classic -i
 cat << EOF > data/gnome-classic.session.desktop.in.in
@@ -42,7 +80,7 @@ cat << EOF > data/gnome-classic.session.desktop.in.in
 Name=Trisquel
 RequiredComponents=gnome-panel;gnome-settings-daemon;
 RequiredProviders=windowmanager;
-DefaultProvider-windowmanager=metacity
+DefaultProvider-windowmanager=trisquel-wm
 DesktopName=GNOME
 EOF
 

@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=3
 COMPONENT=main
 
 . ./config
@@ -26,13 +26,13 @@ COMPONENT=main
 #echo 99_trisquel_defaults.patch >> debian/patches/series
 #sed -i 's/ubuntu-software-center/gnome-app-install/' debian/patches/09_app_install_entry.patch
 
-for i in 03_kde-legacydirs.patch 05_debian_menu.patch 09_app_install_entry.patch 09_games-menu.patch 11_science-menu.patch
+for i in 03_kde-legacydirs.patch 05_debian_menu.patch 09_app_install_entry.patch 09_games-menu.patch 11_science-menu.patch 08_settings-menus.patch
 do
   rm debian/patches/$i
   sed /$i/d -i debian/patches/series
 done
 
-#cp $DATA/applications.menu layout/applications.menu
+cp $DATA/applications.menu layout/applications.menu
 
 changelog "Default layout adapted for Trisquel"
 

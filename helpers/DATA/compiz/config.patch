@@ -1,0 +1,265 @@
+=== modified file 'metadata/core.xml.in'
+Index: compiz-0.9.7.4/metadata/core.xml.in
+===================================================================
+--- compiz-0.9.7.4.orig/metadata/core.xml.in	2012-03-30 11:57:16.000000000 +0200
++++ compiz-0.9.7.4/metadata/core.xml.in	2012-04-05 12:43:06.231451763 +0200
+@@ -138,7 +138,7 @@
+ 			<option name="focus_prevention_match" type="match">
+ 			<_short>Focus Prevention Windows</_short>
+ 			<_long>Focus prevention windows</_long>
+-			<default>any</default>
++			<default>!(class=Polkit-gnome-authentication-agent-1)</default>
+ 			</option>
+ 		</group>
+ 		<group>
+@@ -173,7 +173,7 @@
+ 			<option name="minimize_window_key" type="key">
+ 			<_short>Minimize Window</_short>
+ 			<_long>Minimize active window</_long>
+-			<default>&lt;Alt&gt;F9</default>
++			<default>&lt;Control&gt;&lt;Alt&gt;KP_0</default>
+ 			</option>
+ 			<option name="minimize_window_button" type="button">
+ 			<_short>Minimize Window</_short>
+@@ -182,12 +182,12 @@
+ 			<option name="maximize_window_key" type="key">
+ 			<_short>Maximize Window</_short>
+ 			<_long>Maximize active window</_long>
+-			<default>&lt;Alt&gt;F10</default>
++			<default>&lt;Control&gt;&lt;Super&gt;Up</default>
+ 			</option>
+ 			<option name="unmaximize_window_key" type="key">
+ 			<_short>Unmaximize Window</_short>
+ 			<_long>Unmaximize active window</_long>
+-			<default>&lt;Alt&gt;F5</default>
++			<default>&lt;Control&gt;&lt;Super&gt;Down</default>
+ 			</option>
+ 			<option name="maximize_window_horizontally_key" type="key">
+ 			<_short>Maximize Window Horizontally</_short>
+@@ -210,7 +210,7 @@
+ 			<option name="show_desktop_key" type="key">
+ 			<_short>Show Desktop</_short>
+ 			<_long>Hide all windows and focus desktop</_long>
+-			<default>&lt;Control&gt;&lt;Alt&gt;d</default>
++			<default>&lt;Control&gt;&lt;Super&gt;d</default>
+ 			</option>
+ 			<option name="show_desktop_edge" type="edge">
+ 			<_short>Show Desktop</_short>
+@@ -220,6 +220,7 @@
+ 			<option name="toggle_window_maximized_key" type="key">
+ 			<_short>Toggle Window Maximized</_short>
+ 			<_long>Toggle active window maximized</_long>
++            <default>&lt;Control&gt;&lt;Alt&gt;KP_5</default>
+ 			</option>
+ 			<option name="toggle_window_maximized_button" type="button">
+ 			<_short>Toggle Window Maximized</_short>
+@@ -244,14 +245,14 @@
+ 			<option name="hsize" type="int">
+ 			<_short>Horizontal Virtual Size</_short>
+ 			<_long>Screen size multiplier for horizontal virtual size</_long>
+-			<default>4</default>
++			<default>2</default>
+ 			<min>1</min>
+ 			<max>32</max>
+ 			</option>
+ 			<option name="vsize" type="int">
+ 			<_short>Vertical Virtual Size</_short>
+ 			<_long>Screen size multiplier for vertical virtual size</_long>
+-			<default>1</default>
++			<default>2</default>
+ 			<min>1</min>
+ 			<max>32</max>
+ 			</option>
+Index: compiz-0.9.7.4/plugins/fade/fade.xml.in
+===================================================================
+--- compiz-0.9.7.4.orig/plugins/fade/fade.xml.in	2012-03-30 11:57:16.000000000 +0200
++++ compiz-0.9.7.4/plugins/fade/fade.xml.in	2012-04-05 12:43:06.247451838 +0200
+@@ -9,6 +9,7 @@
+ 	    </requirement>
+ 	    <relation type="after">
+ 		<plugin>decor</plugin>
++		<plugin>staticswitcher</plugin>
+ 	    </relation>
+ 	    <relation type="before">
+ 		<plugin>cube</plugin>
+@@ -49,7 +50,7 @@
+ 	    <option name="window_match" type="match">
+ 		<_short>Fade windows</_short>
+ 		<_long>Windows that should be fading</_long>
+-		<default>any</default>
++                <default>any &amp; !(title=notify-osd)</default>
+ 	    </option>
+ 	    <option name="visual_bell" type="bell">
+ 		<_short>Visual Bell</_short>
+Index: compiz-0.9.7.4/plugins/place/place.xml.in
+===================================================================
+--- compiz-0.9.7.4.orig/plugins/place/place.xml.in	2012-03-30 11:57:16.000000000 +0200
++++ compiz-0.9.7.4/plugins/place/place.xml.in	2012-04-05 12:43:06.247451838 +0200
+@@ -19,8 +19,8 @@
+ 	    <option name="mode" type="int">
+ 		<_short>Placement Mode</_short>
+ 		<_long>Algorithm to use for window placement</_long>
+-		<default>0</default>
+-		<min>2</min>
++		<default>2</default>
++		<min>0</min>
+ 		<max>5</max>
+ 		<desc>
+ 		    <value>0</value>
+Index: compiz-0.9.7.4/plugins/resize/resize.xml.in
+===================================================================
+--- compiz-0.9.7.4.orig/plugins/resize/resize.xml.in	2012-03-30 11:57:16.000000000 +0200
++++ compiz-0.9.7.4/plugins/resize/resize.xml.in	2012-04-05 12:43:06.247451838 +0200
+@@ -28,7 +28,7 @@
+ 	    <option name="mode" type="int">
+ 		<_short>Default Resize Mode</_short>
+ 		<_long>Default mode used for window resizing</_long>
+-		<default>0</default>
++		<default>2</default>
+ 		<min>0</min>
+ 		<max>3</max>
+ 		<desc>
+Index: compiz-0.9.7.4/plugins/scale/scale.xml.in
+===================================================================
+--- compiz-0.9.7.4.orig/plugins/scale/scale.xml.in	2012-03-30 11:57:16.000000000 +0200
++++ compiz-0.9.7.4/plugins/scale/scale.xml.in	2012-04-05 12:43:51.243674966 +0200
+@@ -18,14 +18,14 @@
+ 			<option name="spacing" type="int">
+ 				<_short>Spacing</_short>
+ 				<_long>Space between windows</_long>
+-				<default>10</default>
++				<default>68</default>
+ 				<min>0</min>
+ 				<max>250</max>
+ 			</option>
+ 			<option name="speed" type="float">
+ 				<_short>Speed</_short>
+ 				<_long>Scale speed</_long>
+-				<default>1.5</default>
++				<default>2.4</default>
+ 				<min>0.1</min>
+ 				<max>50</max>
+ 				<precision>0.1</precision>
+@@ -33,7 +33,7 @@
+ 			<option name="timestep" type="float">
+ 				<_short>Timestep</_short>
+ 				<_long>Scale timestep</_long>
+-				<default>1.2</default>
++				<default>0.1</default>
+ 				<min>0.1</min>
+ 				<max>50</max>
+ 				<precision>0.1</precision>
+@@ -46,7 +46,7 @@
+ 			<option name="opacity" type="int">
+ 				<_short>Opacity</_short>
+ 				<_long>Amount of opacity in percent</_long>
+-				<default>75</default>
++				<default>100</default>
+ 				<min>0</min>
+ 				<max>100</max>
+ 			</option>
+@@ -55,7 +55,7 @@
+ 				<_long>Overlay an icon on windows once they are scaled</_long>
+ 				<min>0</min>
+ 				<max>2</max>
+-				<default>1</default>
++				<default>0</default>
+ 				<desc>
+ 					<value>0</value>
+ 					<_name>None</_name>
+@@ -96,7 +96,7 @@
+ 				<_long>Selects where windows are scaled if multiple output devices are used.</_long>
+ 				<min>0</min>
+ 				<max>1</max>
+-				<default>0</default>
++				<default>1</default>
+ 				<desc>
+ 					<value>0</value>
+ 					<_name>On current output device</_name>
+@@ -112,7 +112,7 @@
+ 			<option name="key_bindings_toggle" type="bool">
+ 			    <_short>Key Bindings Toggle Scale Mode</_short>
+ 			    <_long>Key bindings toggle scale mode instead of enabling it when pressed and disabling it when released.</_long>
+-			    <default>false</default>
++			    <default>true</default>
+ 			</option>
+ 			<option name="button_bindings_toggle" type="bool">
+ 			    <_short>Button Bindings Toggle Scale Mode</_short>
+@@ -122,9 +122,6 @@
+ 			<option name="initiate_edge" type="edge">
+ 				<_short>Initiate Window Picker</_short>
+ 				<_long>Layout and start transforming windows</_long>
+-				<default>
+-				<edge name="TopRight"/>
+-				</default>
+ 				<allowed edgednd="true"/>
+ 			</option>
+ 			<option name="initiate_key" type="key">
+@@ -148,6 +145,7 @@
+ 			<option name="initiate_all_key" type="key">
+ 				<_short>Initiate Window Picker For All Windows</_short>
+ 				<_long>Layout and start transforming all windows</_long>
++				<default>&lt;Super&gt;w</default>
+ 			</option>
+ 			<option name="initiate_group_edge" type="edge">
+ 				<_short>Initiate Window Picker For Window Group</_short>
+@@ -178,7 +176,7 @@
+ 			<option name="show_desktop" type="bool">
+ 				<_short>Click Desktop to Show Desktop</_short>
+ 				<_long>Enter Show Desktop mode when Desktop is clicked during Scale</_long>
+-				<default>true</default>
++				<default>false</default>
+ 			</option>
+ 	    </group>
+ 	</options>
+Index: compiz-0.9.7.4/plugins/decor/decor.xml.in
+===================================================================
+--- compiz-0.9.7.4.orig/plugins/decor/decor.xml.in	2012-03-30 11:57:16.000000000 +0200
++++ compiz-0.9.7.4/plugins/decor/decor.xml.in	2012-04-05 12:43:06.247451838 +0200
+@@ -30,7 +30,7 @@
+ 		<option name="active_shadow_opacity" type="float">
+ 		    <_short>Shadow Opacity</_short>
+ 		    <_long>Drop shadow opacity</_long>
+-		    <default>0.5</default>
++		    <default>0.8</default>
+ 		    <min>0.01</min>
+ 		    <max>6.0</max>
+ 		    <precision>0.01</precision>
+@@ -65,7 +65,7 @@
+ 		<option name="inactive_shadow_radius" type="float">
+ 		    <_short>Shadow Radius</_short>
+ 		    <_long>Drop shadow radius</_long>
+-		    <default>8.0</default>
++		    <default>5.0</default>
+ 		    <min>0.1</min>
+ 		    <max>13.0</max>
+ 		    <precision>0.1</precision>
+@@ -73,7 +73,7 @@
+ 		<option name="inactive_shadow_opacity" type="float">
+ 		    <_short>Shadow Opacity</_short>
+ 		    <_long>Drop shadow opacity</_long>
+-		    <default>0.5</default>
++		    <default>0.4</default>
+ 		    <min>0.01</min>
+ 		    <max>6.0</max>
+ 		    <precision>0.01</precision>
+@@ -100,6 +100,7 @@
+ 	    <option name="command" type="string">
+ 		<_short>Command</_short>
+ 		<_long>Decorator command line that is executed if no decorator is already running</_long>
++		<default>/usr/bin/compiz-decorator</default>
+ 	    </option>
+ 	    <option name="mipmap" type="bool">
+ 		<_short>Mipmap</_short>
+Index: compiz-0.9.7.4/plugins/gnomecompat/gnomecompat.xml.in
+===================================================================
+--- compiz-0.9.7.4.orig/plugins/gnomecompat/gnomecompat.xml.in	2012-03-30 11:57:16.000000000 +0200
++++ compiz-0.9.7.4/plugins/gnomecompat/gnomecompat.xml.in	2012-04-05 12:43:06.247451838 +0200
+@@ -52,6 +52,7 @@
+ 		<option name="run_command_terminal_key" type="key">
+ 		    <_short>Open a terminal</_short>
+ 		    <_long>Open a terminal</_long>
++		    <default>&lt;Control&gt;&lt;Alt&gt;T</default>
+ 		</option>
+ 	    </group>
+ 	</options>

@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2008-2010  Rubén Rodríguez <ruben@trisquel.info>
+#    Copyright (C) 2012  Rubén Rodríguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,15 +17,14 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
-COMPONENT=main
+VERSION=2
 
 . ./config
 
-sed -i "s:<default>'auto'</default>:<default>'file'</default>:" data/org.gnome.DejaDup.gschema.xml.in
-sed -i 's/Categories.*/Categories=Application;System;Settings;/g' data/deja-dup*desktop*
+cp $DATA/config.patch debian/patches/config.patch
+sed 's/ubuntu-config/config/' -i debian/patches/series
 
-changelog "Compiled for Trisquel"
+changelog "Removed Ubuntu customizations for Unity"
 
 compile
 

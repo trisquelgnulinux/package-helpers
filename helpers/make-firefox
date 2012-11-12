@@ -17,13 +17,14 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
-QUILT=skip
+VERSION=2
 
 . ./config
 
+rm debian/control
+
 # Make ubufox mandatory
-sed 's/Depends: lsb-release,/Depends: lsb-release, xul-ext-ubufox,/' -i debian/control debian/control.in
+sed 's/Depends: lsb-release,/Depends: lsb-release, xul-ext-ubufox,/' -i debian/control.in
 sed 's/iceweasel,/iceweasel, firefox, icecat,/' -i debian/control*
 
 # Remove extra firefox metapackages
@@ -59,7 +60,9 @@ sed "s/\(^MOZ_BUILD_UNOFFICIAL.*\)0/\1 1/; s/release$/$CODENAME/" -i debian/rule
 #TARBALL=$(ls *.tar.bz2)
 #tar -jxf $TARBALL
 #rm $TARBALL
-sed  "s/^MOZ_APP_NAME\t.*/MOZ_APP_NAME\t\t:= abrowser/; s/firefox/abrowser/" debian/rules -i
+#sed  "s/^MOZ_APP_NAME\t.*/MOZ_APP_NAME\t\t:= abrowser/; s/firefox/abrowser/" debian/rules -i
+sed '1s/^/\nMOZ_APP_NAME\t\t:= abrowser/' -i debian/build/mozbuild.mk
+sed '1s/^/\nMOZ_PKG_NAME\t\t:= abrowser/' -i debian/build/mozbuild.mk
 
 # Hack to avoid compilation to fail on 3.0x kernel
 #cp mozilla/security/coreconf/Linux2.6.mk mozilla/security/coreconf/Linux3.0.mk
@@ -293,7 +296,6 @@ done
 fi
 exit 0 ' >> debian/abrowser.postinst.in
 
-rm debian/control
 debian/rules debian/control
 
 changelog  "Rebranded for Trisquel"

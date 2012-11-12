@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 
 . ./config
 
@@ -55,7 +55,47 @@ replace "Enterprise Cloud" "Gamer" .
 replace Ubuntu Trisquel .
 
 sed /txt_option_free/d dia_fulloptions.inc -i
-sed 's:\(.*\)120\(.*\):\181\2\n/timeout.time.x timeout.x 550 add def:' timeout.inc -i
+
+#sed 's:\(.*\)120\(.*\):\181\2\n/timeout.time.x timeout.x 550 add def:' timeout.inc -i
+cat << EOF | patch -p1
+diff -ru gfxboot-theme-ubuntu-0.13.3.orig/common.inc gfxboot-theme-ubuntu-0.13.3/common.inc
+--- gfxboot-theme-ubuntu-0.13.3.orig/common.inc	2012-05-14 23:53:21.000000000 +0000
++++ gfxboot-theme-ubuntu-0.13.3/common.inc	2012-11-10 22:00:04.000000000 +0000
+@@ -431,6 +431,10 @@
+     "maybe-ubiquity " bc.cmd dup length add sprintf
+   } if
+ 
++  timeout.finished {
++    " access=v3 " bc.cmd dup length add sprintf
++  } if
++
+   bc.cmd dropspaces
+ 
+   debug 3 ge {
+diff -ru gfxboot-theme-ubuntu-0.13.3.orig/timeout.inc gfxboot-theme-ubuntu-0.13.3/timeout.inc
+--- gfxboot-theme-ubuntu-0.13.3.orig/timeout.inc	2012-05-14 23:53:21.000000000 +0000
++++ gfxboot-theme-ubuntu-0.13.3/timeout.inc	2012-11-10 23:17:37.000000000 +0000
+@@ -24,6 +24,10 @@
+ 
+     timeout.time.x timeout.time.y moveto timeout.buf showright
+   } if
++
++  timeout.buf "0 s" eq {
++    /timeout.finished true def
++  } if
+ } def
+ 
+ 
+@@ -38,6 +42,8 @@
+ 
+   /timeout.time.x timeout.x def
+   /timeout.time.y timeout.y 120 add def
++  /timeout.time.y timeout.y 81 add def
++  /timeout.time.x timeout.x 550 add def
+ } def
+ 
+ 
+EOF
 
 sed 's/gfxboot-theme-ubuntu/gfxboot-theme-trisquel/' debian/control -i
 

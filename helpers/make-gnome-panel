@@ -17,12 +17,13 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
+VERSION=5
 
 . ./config
 
-sed "105s/'none'/'color'/; s/rgba(255,255,255,.2)/rgba(000,000,000,.75)/" -i data/org.gnome.gnome-panel.toplevel.gschema.xml.in.in
-#sed "105s/'none'/'image'/; 115s_''_'file:///usr/share/themes/Trisquel/gtk-3.0/panel-bg.png'_; s/rgba(255,255,255,.2)/rgba(000,000,000,.5)/" -i data/org.gnome.gnome-panel.toplevel.gschema.xml.in.in
+#makes the panel translucid
+#sed "105s/'none'/'color'/; s/rgba(255,255,255,.2)/rgba(000,000,000,.75)/" -i data/org.gnome.gnome-panel.toplevel.gschema.xml.in.in
+#remove the arrot in the main menu button
 sed 's/"tooltip", tooltip,/"tooltip", "Trisquel",/; s/"has-arrow", TRUE,/"has-arrow", FALSE,/' -i gnome-panel/panel-menu-button.c
 
 #sed '/gnome-session /d' debian/control* 
@@ -63,11 +64,11 @@ pack-index=30
 pack-type=start
 toplevel-id=panel
 
-[Object notification-area]
-object-iid=NotificationAreaAppletFactory::NotificationArea
-pack-index=20
-pack-type=end
+[Object indicators]
+object-iid=IndicatorAppletFactory::IndicatorApplet
 toplevel-id=panel
+pack-type=end
+pack-index=20
 
 [Object clock]
 object-iid=ClockAppletFactory::ClockApplet
