@@ -82,9 +82,7 @@ deb $MIRROR $UPSTREAM-security main universe
 deb-src $MIRROR $UPSTREAM main universe
 deb-src $MIRROR $UPSTREAM-updates main universe
 deb-src $MIRROR $UPSTREAM-security main universe
-deb-src http://download.sugarlabs.org/packages/SweetsDistribution:/0.94/Ubuntu-11.10/ ./
-deb-src http://download.sugarlabs.org/packages/SweetsDistribution/Ubuntu-11.10/ ./
-deb $DEVELMIRROR $UPSTREAM main
+deb $DEVELMIRROR $CODENAME main
 EOF
 
 wget http://download.sugarlabs.org/packages/SweetsDistribution:/0.94/Ubuntu-11.04/Release.key -O - -o /dev/null|apt-key add -
