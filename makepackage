@@ -44,10 +44,9 @@ UPSTREAM=$(grep 'export UPSTREAM=' helpers/config |sed 's/.*=//')
 WORKDIR=tmp/makepackage
 REPOSITORY=$PWD/repos/$CODENAME
 HELPERS=$PWD/helpers
-if ! [ -d repos/ ]
-then
 for REPO in $(git branch|sed 's/.* //;/master/d')
 do
+[ -d $REPOSITORY ] && continue
 mkdir -p repos/$REPO/conf repos/$REPO/incoming
 cat << EOF > repos/$REPO/conf/distributions
 Origin: Trisquel
@@ -74,7 +73,6 @@ cd repos/$REPO
 reprepro -v export
 cd ../..
 done
-fi
 
 disablescripts(){
     # Disable service starter scripts
