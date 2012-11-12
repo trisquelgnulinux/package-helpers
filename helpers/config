@@ -51,7 +51,7 @@ export RELEASE=trisquel
 export DOMAIN=trisquel.info
 export UPSTREAM=maverick
 MIRROR=http://archive.ubuntu.com/ubuntu
-DEVELMIRROR=http://devel.trisquel.info/trisquel/$UPSTREAM
+DEVELMIRROR=http://devel.trisquel.info/trisquel/$CODENAME
 LOCALMIRROR=http://archive.trisquel.info/trisquel
 
 export PARALLEL=true
@@ -82,8 +82,7 @@ deb $MIRROR $UPSTREAM-security main universe
 deb-src $MIRROR $UPSTREAM main universe
 deb-src $MIRROR $UPSTREAM-updates main universe
 deb-src $MIRROR $UPSTREAM-security main universe
-#deb-src http://bazaar-download.sugarlabs.org/Trisquel:/4.0/Ubuntu-10.04/ ./
-deb $DEVELMIRROR $UPSTREAM main
+deb $DEVELMIRROR $CODENAME main
 EOF
 
 [ "1$EXTERNAL" != "1" ] && eval echo "$EXTERNAL" >> /etc/apt/sources.list
