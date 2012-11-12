@@ -52,7 +52,7 @@ export DOMAIN=trisquel.info
 export UPSTREAM=natty
 export UPSTREAMRELEASE=11.04
 MIRROR=http://archive.ubuntu.com/ubuntu
-DEVELMIRROR=http://devel.trisquel.info/trisquel/$UPSTREAM
+DEVELMIRROR=http://devel.trisquel.info/trisquel/$CODENAME
 LOCALMIRROR=http://archive.trisquel.info/trisquel
 
 cat << EOF > /etc/lsb-release 
@@ -81,8 +81,7 @@ deb $MIRROR $UPSTREAM-security main universe
 deb-src $MIRROR $UPSTREAM main universe
 deb-src $MIRROR $UPSTREAM-updates main universe
 deb-src $MIRROR $UPSTREAM-security main universe
-#deb-src http://download.sugarlabs.org/packages/SweetsDistribution:/0.94/Ubuntu-11.04/ ./
-#deb $DEVELMIRROR $UPSTREAM main
+deb $DEVELMIRROR $CODENAME main
 EOF
 
 [ "1$EXTERNAL" != "1" ] && eval echo "$EXTERNAL" >> /etc/apt/sources.list
