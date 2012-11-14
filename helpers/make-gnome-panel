@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=5
+VERSION=6
 
 . ./config
 
@@ -62,6 +62,12 @@ toplevel-id=panel
 object-iid=WnckletFactory::WindowListApplet
 pack-index=30
 pack-type=start
+toplevel-id=panel
+
+[Object notification-area]
+object-iid=NotificationAreaAppletFactory::NotificationArea
+pack-index=30
+pack-type=end
 toplevel-id=panel
 
 [Object indicators]
