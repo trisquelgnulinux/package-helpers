@@ -188,16 +188,12 @@ fi
 }
 
 tmpumount(){
-  [ $MEM -lt 16000000 ] && return
-  echo $PACKAGE | grep -q "linux" && return
-  umount jails/$UPSTREAM-$ARCH/tmp && return
-  fuser -k -m jails/$UPSTREAM-$ARCH/tmp
+  grep jails/$UPSTREAM-$ARCH/tmp /proc/mounts -q || return
   umount jails/$UPSTREAM-$ARCH/tmp && return
   echo ERROR: could not umount tmpfs at jails/$UPSTREAM-$ARCH/tmp
   exit 1
 }
 tmpmount(){
-  mount|grep tmpfs|grep jails -q && return
   [ $MEM -lt 16000000 ] && return
   echo $PACKAGE | grep -q "linux" && return
   grep jails/$UPSTREAM-$ARCH/tmp /proc/mounts -q && tmpumount
