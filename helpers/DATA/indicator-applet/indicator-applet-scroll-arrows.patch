@@ -3,7 +3,7 @@
 diff --git indicator-applet/src/applet-main.c indicator-applet/src/applet-main.c
 --- indicator-applet/src/applet-main.c
 +++ indicator-applet/src/applet-main.c
-@@ -362,6 +362,21 @@ accessible_desc_update (IndicatorObject 
+@@ -362,6 +362,24 @@ accessible_desc_update (IndicatorObject 
    return;
  }
  
@@ -11,25 +11,32 @@ diff --git indicator-applet/src/applet-main.c indicator-applet/src/applet-main.c
 +do_menu_reposition(gpointer menu)
 +{
 +  gtk_widget_set_size_request(menu, -1, -1);
++  gtk_menu_reposition(menu);
++  g_timeout_add(20, (GSourceFunc) gtk_menu_reposition, (gpointer) menu);
 +  g_timeout_add(20, (GSourceFunc) gtk_menu_reposition, (gpointer) menu);
 +  return 0;
 +}
 +
 +static void
 +on_menuitem_show (GtkMenuItem *menuitem, gpointer menu)
-+{
++{ 
 +  gtk_widget_set_size_request(menu, -1, 500);
++  gtk_menu_reposition(menu);
 +  g_idle_add((GSourceFunc) do_menu_reposition, (gpointer) menu);
 +}
 +
  static void
  entry_added (IndicatorObject * io, IndicatorObjectEntry * entry, GtkWidget * menubar)
  {
-@@ -435,6 +450,7 @@ entry_added (IndicatorObject * io, Indic
+@@ -435,6 +450,11 @@ entry_added (IndicatorObject * io, Indic
  
    if (entry->menu != NULL) {
      gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), GTK_WIDGET(entry->menu));
 +    g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(on_menuitem_show), entry->menu);
++    gtk_menu_set_reserve_toggle_size(entry->menu, TRUE);
++    gtk_widget_set_size_request(entry->menu, -1, -1);
++    gtk_widget_set_size_request(entry->menu, -1, 500);
++    gtk_menu_reposition(entry->menu);
    }
  
    place_in_menu(menubar, menuitem, io, entry);
