@@ -17,18 +17,18 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 COMPONENT=main
 
 . ./config
 
-for PATCH in default_to_irc_ubuntu lpi let_crasher_for_apport docklet_default_off
+for PATCH in default_to_irc_ubuntu lpi let_crasher_for_apport
 do
  rm debian/patches/*$PATCH*
  sed -i /$PATCH/d debian/patches/series
 done
 
-sed '/purple_prefs_add_bool.*conv_focus/ s/FALSE/TRUE/' ./finch/gntsound.c -i
+#sed '/purple_prefs_add_bool.*conv_focus/ s/FALSE/TRUE/' ./finch/gntsound.c -i
 
 changelog "Compiled for Trisquel"
 

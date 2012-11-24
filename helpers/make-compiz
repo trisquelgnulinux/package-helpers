@@ -17,10 +17,12 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=4
+COMPONENT=main
 
 . ./config
 
+patch -p1 < $DATA/fix-974242.patch
 cp $DATA/config.patch debian/patches/config.patch
 sed 's/ubuntu-config/config/' -i debian/patches/series
 

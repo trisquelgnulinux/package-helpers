@@ -1,0 +1,25 @@
+diff -uNr compiz-0.9.7.8.orig/plugins/place/src/place.cpp compiz-0.9.7.8/plugins/place/src/place.cpp
+--- compiz-0.9.7.8.orig/plugins/place/src/place.cpp	2012-04-26 07:47:01.000000000 +0100
++++ compiz-0.9.7.8/plugins/place/src/place.cpp	2012-05-11 18:15:22.023909137 +0100
+@@ -228,12 +228,15 @@
+ 	        w = screen->findWindow (event->xproperty.window);
+ 	        if (w)
+ 	        {
+-		    mStrutWindows.remove (w);
+-		    /* Only do when handling screen size change.
+-		       ps->strutWindowCount is 0 at any other time */
+-		    if (mStrutWindows.empty ())
+-			doHandleScreenSizeChange (screen->width (),
+-						  screen->height ()); /* 2nd pass */
++		    if (!mStrutWindows.empty ())
++		    {
++			mStrutWindows.remove (w);
++			/* Only do when handling screen size change.
++			   ps->strutWindowCount is 0 at any other time */
++			if (mStrutWindows.empty ())
++			    doHandleScreenSizeChange (screen->width (),
++						      screen->height ()); /* 2nd pass */
++		    }
+ 	        }
+ 	    }
+     }
