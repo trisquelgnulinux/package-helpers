@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 #    Copyright (C) 2008-2010  Rubén Rodríguez <ruben@trisquel.info>
 #
@@ -19,12 +19,12 @@
 
 set -e
 
-PACKAGE=$(echo $0 |sed s/make-//g)
+PACKAGE=$(echo $0 |/bin/sed s/make-//g)
 export DATA=$PWD/DATA/$PACKAGE
 if ! [ 1$COMPONENT = "1main" ]
 then
     COMPONENT=${COMPONENT:-universe}
-    sed 's/^enable.*/enable: false/g' -i /etc/pkgbinarymangler/*.conf
+    /bin/sed 's/^enable.*/enable: false/g' -i /etc/pkgbinarymangler/*.conf
 fi
 
 if [ -f /CurrentlyBuilding ]
@@ -63,12 +63,10 @@ DISTRIB_DESCRIPTION="Trisquel $REVISION"
 EOF
 
 replace(){
-#find $3 -type f |grep -v changelog |grep -v copyright | xargs sed -i s^"$1"^"$2"^g
-find $3 -type f -not -iregex '.*changelog.*' -not -iregex '.*copyright.*' -execdir sed --follow-symlinks -i s^"$1"^"$2"^g {} \;
+find $3 -type f -not -iregex '.*changelog.*' -not -iregex '.*copyright.*' -execdir /bin/sed --follow-symlinks -i s^"$1"^"$2"^g {} \;
 }
-
 changelog(){
-echo | dch -D $CODENAME -v $(sed -n '1s/^.*(\(.*\)).*/\1'+${REVISION}trisquel${VERSION}'/p' debian/changelog)  "$1"
+echo | dch -D $CODENAME -v $(/bin/sed -n '1s/^.*(\(.*\)).*/\1'+${REVISION}trisquel${VERSION}'/p' debian/changelog)  "$1"
 }
 
 rm -rf PACKAGES/$PACKAGE
@@ -114,13 +112,13 @@ cd source
 
 for i in debian.master/control.stub.in debian.master/control.stub debian.master/control debian/control.stub.in debian/control.stub debian/control
 do
-    [ -f $i ] && sed "s_^Maintainer.*_Maintainer: $DEBFULLNAME <$DEBEMAIL>_g" -i $i
+    [ -f $i ] && /bin/sed "s_^Maintainer.*_Maintainer: $DEBFULLNAME <$DEBEMAIL>_g" -i $i
 done
 
 compile(){
 if [ 1$LOCALDEPENDS = 1true ]
 then
-    DEPENDS=$(sed -n '/Build-Dep/,/^[a-zA-W0-9]/ p' debian/control | head -n -1 | sed 's/.*://; s/(.*)//; s/,//g' |xargs echo -n)
+    DEPENDS=$(/bin/sed -n '/Build-Dep/,/^[a-zA-W0-9]/ p' debian/control | head -n -1 | /bin/sed 's/.*://; s/(.*)//; s/,//g' |xargs echo -n)
     echo Installing Build-Depends: $DEPENDS
     apt-get --force-yes -y install $DEPENDS
 fi
@@ -147,3 +145,45 @@ fi
 rm /CurrentlyBuilding
 umount /proc
 }
+
+sedhelper(){
+  FILE="$1"
+  EXPR="$2"";"
+
+  while [ 1"$EXPR" != 1 ];do
+    SUBEXPR=$(cut -d\; -f 1 <<< "$EXPR")
+    MD5=$(md5sum "$FILE")
+    echo Running modification-aware sed: sed "$SUBEXPR" -i "$FILE"
+    /bin/sed "$SUBEXPR" -i "$FILE"
+    if [ "$MD5" = "$(md5sum "$FILE")" ]; then
+      echo File "$FILE" was not modified, stopping.
+      exit 1
+    fi
+    EXPR=$(cut -d\; -f 2- <<< "$EXPR" )
+    echo $EXPR | egrep ';' -q || break
+  done
+}
+
+sed (){
+if ! echo $@ | grep -qw '\-i'; then
+  echo Running fallback sed: /bin/sed "$@"
+  /bin/sed "$@"
+else
+
+[ 1"$1" = "1-i" ] && shift
+
+  SEDEXPR="$1"
+  shift
+  for FILE in "$@"; do
+  [ 1"$FILE" = "1-i" ] && continue
+  if [ -f "$FILE" ]; then
+    sedhelper "$FILE" "$SEDEXPR"
+  else
+    echo File "$FILE" does not exist, stopping.
+    exit 1
+  fi
+  done
+fi
+}
+
+
