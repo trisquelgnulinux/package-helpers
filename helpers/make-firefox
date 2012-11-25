@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 #    Copyright (C) 2008-2012  Ruben Rodriguez <ruben@trisquel.info>
 #
@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 
 . ./config
 
@@ -25,7 +25,7 @@ rm debian/control
 
 # Make ubufox mandatory
 sed 's/Depends: lsb-release,/Depends: lsb-release, xul-ext-ubufox,/' -i debian/control.in
-sed 's/iceweasel,/iceweasel, firefox, icecat,/' -i debian/control*
+sed 's/iceweasel,/iceweasel, firefox, icecat,/' -i debian/control.in
 
 # Remove extra firefox metapackages
 sed '/Package: firefox/,/It can be safely removed/d' -i debian/control.in
@@ -52,10 +52,11 @@ EOF
 
 # speed up build process
 #sed 's/\(^MOZ_WANT_UNIT_TESTS.*\)1/\1 0/' -i debian/rules
-sed 's/\(^MOZ_ENABLE_BREAKPAD.*\)1/\1 0/' -i debian/rules
+#sed 's/\(^MOZ_ENABLE_BREAKPAD.*\)1/\1 0/' -i debian/rules
 
 # Set release to unofficial
-sed "s/\(^MOZ_BUILD_UNOFFICIAL.*\)0/\1 1/; s/release$/$CODENAME/" -i debian/rules
+sed 's/\(^MOZ_BUILD_UNOFFICIAL.*\)0/\1 1/' debian/config/branch.mk -i
+#sed "s/release$/$CODENAME/" -i debian/rules
 
 #TARBALL=$(ls *.tar.bz2)
 #tar -jxf $TARBALL
@@ -70,8 +71,8 @@ sed '1s/^/\nMOZ_PKG_NAME\t\t:= abrowser/' -i debian/build/mozbuild.mk
 ############################################################################3
 ############################################################################3
 ############################################################################3
-sed -i s/abrowser/abrowser-old/ debian/control*
-sed "s_^Maintainer.*_Maintainer: $DEBFULLNAME <$DEBEMAIL>_g" -i debian/control*
+sed -i s/abrowser/abrowser-old/ debian/control.in
+sed "s_^Maintainer.*_Maintainer: $DEBFULLNAME <$DEBEMAIL>_g" -i debian/control.in
 
 # Replace Firefox branding
 find -type d | grep firefox | xargs rename s/firefox/abrowser/
@@ -83,12 +84,12 @@ replace firefox abrowser .
 replace Firefox Abrowser .
 replace FIREFOX ABROWSER .
 replace " Mozilla " " Trisquel " .
-sed -i '1s/^Source:.*/Source: firefox/' debian/control*
+sed -i '1s/^Source:.*/Source: firefox/' debian/control.in
 replace PACKAGES/abrowser PACKAGES/firefox .
 sed s/Trisquel/Mozilla/ compare-locales/scripts/compare-locales -i
 replace "iceweasel, abrowser" "iceweasel, firefox" .
 replace "Replaces: abrowser" "Replaces: firefox" .
-sed s/Ubuntu/Trisquel/g debian/rules -i
+#sed s/Ubuntu/Trisquel/g debian/rules -i
 sed s/ubuntu/trisquel/g debian/distribution.ini debian/config/mozconfig.in -i
 sed 's/ubuntu_version/trisquel_version/; s/Ubuntu 10.10/Trisquel 4.0/; s/1010/40/' -i debian/abrowser.postinst.in
 
@@ -266,14 +267,14 @@ sed -i 's/<a\ href\=\"http\:\/\/www.mozilla.org\/\">Mozilla\ Project<\/a>/<a\ hr
 replace "Trisquel Public" "Mozilla Public" .
 replace "Trisquel Foundation" "Mozilla Foundation" .
 replace "Trisquel Corporation" "Mozilla Corporation" .
-sed -i 's/iceweasel, abrowser, icecat,/iceweasel, firefox, icecat,/g' debian/control*
+#sed -i 's/iceweasel, abrowser, icecat,/iceweasel, firefox, icecat,/g' debian/control.in
 
 # Restore useragent to Firefox
-sed '/MOZ_UA_ABROWSER_VERSION/ s:Abrowser/:Firefox/:;' -i netwerk/protocol/http/nsHttpHandler.cpp
+sed '/MOZILLA_UAVERSION/ s:Abrowser/:Firefox/:' -i netwerk/protocol/http/nsHttpHandler.cpp
 
 # Set migrator scripts
 cp browser/components/migration/src/FirefoxProfileMigrator.js browser/components/migration/src/AbrowserProfileMigrator.js
-sed 's/Abrowser/Firefox/g; s/ABROWSER/FIREFOX/g; s/abrowser/firefox/g' -i browser/components/migration/src/FirefoxProfileMigrator.js
+sed 's/Abrowser/Firefox/g; s/abrowser/firefox/g' -i browser/components/migration/src/FirefoxProfileMigrator.js
 
 #tar -cjf $TARBALL mozilla
 #rm mozilla -rf
