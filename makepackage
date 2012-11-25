@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 #    Copyright (C) 2011  Ruben Rodriguez <ruben@trisquel.info>
 #
@@ -147,7 +147,7 @@ EOF
         [ -f $CHROOT/$BIN ] || continue
         mv $CHROOT/$BIN $CHROOT/$BIN.orig
 cat << EOF > $CHROOT/$BIN
-#!/bin/sh
+#!/bin/bash
 
 if [ \$# -eq 0 ]
 then   
@@ -178,7 +178,7 @@ done
 apt-get --force-yes -y dist-upgrade
 umount /proc
 EOF
-chroot jails/$UPSTREAM-$ARCH sh /tmp/update
+chroot jails/$UPSTREAM-$ARCH bash /tmp/update
 if [ -f jails/$UPSTREAM-$ARCH/CurrentlyBuilding ]
 then
     echo The $UPSTREAM-$ARCH jail appears to be running $(cat jails/$UPSTREAM-$ARCH/CurrentlyBuilding |grep Package: |sed 's/Package:\ //'), aborting.
@@ -206,7 +206,7 @@ tmpmount
     cp -a helpers/ jails/$UPSTREAM-$ARCH/$WORKDIR/
 
 cat << EOF > jails/$UPSTREAM-$ARCH/usr/local/sbin/makepackage-handler
-#!/bin/sh
+#!/bin/bash
 WORKDIR=$WORKDIR
 PACKAGE=$PACKAGE
 cd $WORKDIR
@@ -214,7 +214,7 @@ cd $WORKDIR
 [ -d PACKAGES ] || mkdir PACKAGES
 export LD_PRELOAD="${LD_PRELOAD:+$LD_PRELOAD:}/usr/lib/libeatmydata/libeatmydata.so"
 export PATH="/usr/lib/ccache:${PATH}"
-sh -e make-$PACKAGE 2>&1 || exit 1
+bash -e make-$PACKAGE 2>&1 || exit 1
 EOF
 
 cat << EOF > jails/$UPSTREAM-$ARCH/etc/pkgbinarymangler/striptranslations.conf
