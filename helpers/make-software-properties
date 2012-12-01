@@ -18,19 +18,20 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 
 . ./config
 
 cat << EOF | patch -p1
 --- software-properties-0.76.7/softwareproperties/SoftwareProperties.py	2010-09-20 13:52:10.000000000 +0100
 +++ software-properties-0.76.7-2/softwareproperties/SoftwareProperties.py	2011-04-17 02:49:49.000000000 +0100
-@@ -644,7 +644,13 @@
+@@ -644,7 +644,14 @@
      Add a source with the given apt line and auto-add
      signing key if we have it in the whitelist
      """
 -    (deb_line, file) = expand_ppa_line(line.strip(), self.distro.codename)
 +    codenames = {}
++    codenames["toutatis"] = "precise" 
 +    codenames["brigantia"] = "oneiric" 
 +    codenames["dagda"] = "natty"
 +    codenames["slaine"] = "maverick"
