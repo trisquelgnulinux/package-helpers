@@ -21,7 +21,7 @@
 # gpg -ba release_name.tar.gz
 # Also, don't forget to update the meta-release files at archive and packages.t.i
 
-VERSION=4
+VERSION=5
 
 . ./config
 
@@ -259,7 +259,7 @@ PostUpgradeRemove=xscreensaver, gnome-cups-manager, powermanagement-interface, d
 ForcedObsoletes=desktop-effects, cups-pdf, policykit-gnome, gnome-mount
 
 [trisquel-mini]
-KeyDependencies=trisquel-mini-data
+KeyDependencies=trisquel-mini-data lxdm
 #Remove previous gnome component from lubuntu to avoid pulling gnome depends on upgrade (LP: #945215)
 PostUpgradeRemove=gnome-bluetooth, gnome-power-manager
 
@@ -365,6 +365,8 @@ sed 's/,"restricted"//g' DistUpgrade/DistUpgradeController.py -i
 #sed 's/","restricted"/\\n"/g' DistUpgrade/DistUpgradeController.py -i
 #rpl '10.04' $REVISION DistUpgrade po -R
 replace Ubuntu Trisquel . -R
+replace Kubuntu Triskel . -R
+replace Canonical Trisquel . -R
 replace Trisquel-Gettext Ubuntu-Gettext . -R
 
 changelog "Compiled for Trisquel"
