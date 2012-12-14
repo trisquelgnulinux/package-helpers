@@ -25,8 +25,8 @@ COMPONENT=main
 cp $DATA/trisquel-archive.gpg share
 
 sed -i 's_http://archive.ubuntu.com/ubuntu/project/_http://archive.trisquel.info/trisquel/_g; s/ubuntu-archive-keyring/trisquel-archive-keyring/g; s/ubuntu-keyring/trisquel-keyring/g; ' cmdline/apt-key debian/control*
-sed -i 's/Ubuntu/Trisquel/' methods/http.cc
-sed -i 's/ubuntu-archive.gpg/trisquel-archive.gpg/g' debian/rules debian/apt.postinst
+replace Ubuntu Trisquel  methods/http.cc
+replace ubuntu-archive.gpg trisquel-archive.gpg .
 
 changelog "Ubuntu keyring replaced with Trisquel's"
 
