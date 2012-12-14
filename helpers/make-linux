@@ -46,10 +46,10 @@ echo > debian.master/d-i/firmware/scsi-modules
 echo > debian.master/d-i/firmware/nic-modules
 
 # Removing some extra Ubuntu modules
-rm -rf ubuntu/ndiswrapper
-sed /ndiswrapper/d -i ubuntu/Makefile ubuntu/Kconfig
-rm -rf ubuntu/rtl8192se
-sed /rtl8192se/d ubuntu/Makefile ubuntu/Kconfig -i
+#rm -rf ubuntu/ndiswrapper
+#sed /ndiswrapper/d -i ubuntu/Makefile ubuntu/Kconfig
+#rm -rf ubuntu/rtl8192se
+#sed /rtl8192se/d ubuntu/Makefile ubuntu/Kconfig -i
 
 # Compile with less modules and avoid abi check
 echo 'skipmodule = true' >> debian.master/rules.d/0-common-vars.mk
@@ -67,4 +67,4 @@ changelog "Removed non-free bits"
 
 cp debian/changelog debian.master/changelog
 
-compile
+PARALLEL=true compile

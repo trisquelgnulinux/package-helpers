@@ -22,7 +22,7 @@ COMPONENT=main
 
 . ./config
 
-patch -p1 < $DATA/fix-974242.patch
+#patch -p1 < $DATA/fix-974242.patch
 cp $DATA/config.patch debian/patches/config.patch
 sed 's/ubuntu-config/config/' -i debian/patches/series
 
