@@ -78,7 +78,7 @@ sed "s_^Maintainer.*_Maintainer: $DEBFULLNAME <$DEBEMAIL>_g" -i debian/control.i
 find -type d | grep firefox | xargs rename s/firefox/abrowser/
 find -type f | grep firefox | xargs rename s/firefox/abrowser/
 replace(){
-find $3 -type f |grep -v changelog |grep -v copyright | xargs sed -i s^"$1"^"$2"^g
+find $3 -type f |grep -v changelog |grep -v copyright | xargs -i sed -i s^"$1"^"$2"^g "{}"
 }
 replace firefox abrowser .
 replace Firefox Abrowser .

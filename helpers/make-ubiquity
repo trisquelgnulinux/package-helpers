@@ -25,7 +25,7 @@ cp $DATA/trisquel_installed.png pixmaps
 rm pixmaps/ubuntu_installed.png
 replace ubuntu_installed trisquel_installed .
 
-sed '/canonical/d' -i debian/ubiquity.install*
+/bin/sed '/canonical/d' -i debian/ubiquity.install*
 rm  tests/test_ubi_partman*
 
 export DEB_BUILD_OPTIONS=nocheck
@@ -35,7 +35,7 @@ sed 's:\(targetdb)\):\1\n        os.system("sudo chmod 644 /target/var/cache/deb
 
 for i in $(ls -1 d-i/source/apt-setup/generators |grep -v 01setup) canonical.com security.ubuntu.com extras.ubuntu.com
 do
-    sed /$i/d -i debian/ubiquity.install-any d-i/source/apt-setup/debian/*.install
+    /bin/sed /$i/d -i debian/ubiquity.install-any d-i/source/apt-setup/debian/*.install
 done
 echo "d-i/source/apt-setup/generators/99trisquel usr/lib/ubiquity/apt-setup/generators" >> debian/ubiquity.install-any
 
@@ -102,8 +102,9 @@ replace archive.ubuntu.com/ubuntu archive.trisquel.info/trisquel .
 replace security.ubuntu.com/trisquel archive.trisquel.info/trisquel .
 replace archive.ubuntu.com archive.trisquel.info .
 replace security.ubuntu.com archive.trisquel.info .
-sed -i 's/apt-install/true #apt-install/' ubiquity/components/check_kernels.py scripts/check-kernels
-sed -i '82s/True/False/g' gui/gtk/stepPrepare.ui
+#sed -i 's/apt-install/true #apt-install/' ubiquity/components/check_kernels.py
+sed -i 's/apt-install/true #apt-install/' scripts/check-kernels
+#sed -i '82s/True/False/g' gui/gtk/stepPrepare.ui
 
 rm -rf d-i/source/apt-setup/release-files/*
 for DIST in $CODENAME $CODENAME-security $CODENAME-updates $CODENAME-backports
