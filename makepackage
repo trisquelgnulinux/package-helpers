@@ -188,7 +188,7 @@ fi
 }
 
 tmpumount(){
-  grep jails/$UPSTREAM-$ARCH/tmp /proc/mounts -q || return
+  grep jails/$UPSTREAM-$ARCH/tmp /proc/mounts -q || return 0
   umount jails/$UPSTREAM-$ARCH/tmp && return
   echo ERROR: could not umount tmpfs at jails/$UPSTREAM-$ARCH/tmp
   exit 1
