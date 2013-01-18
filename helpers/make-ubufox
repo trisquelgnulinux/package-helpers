@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=14
+VERSION=2
 
 . ./config
 
@@ -29,13 +29,11 @@ rm ./content/ubuntulogo32.png
 replace ubuntulogo32.png internet32.png .
 
 # This hack makes Firefox avoid sending a request for a list of plugins, instead returns a hardcoded xml list.
-sed 's^https://mozilla-pfs.ubuntu.com/.*ID%^http://trisquel.info/sites/pfs.php?mime=%PLUGIN_MIMETYPE%^; ' -i modules/distributions/Ubuntu.jsm
+sed 's^https://mozilla-pfs.ubuntu.com/.*ID%^http://trisquel.info/sites/pfs.php?mime=%PLUGIN_MIMETYPE%^; ' -i ./res/distributions/Ubuntu.jsm
 
 # Changes the link to pfs.mozilla.org in the install wizard
 sed 's_https://pfs.mozilla.org/plugins/_http://trisquel.info/browser/_' -i content/pluginInstallerWizard.js
 
-#sed 's/ubuntu-artwork/trisquel-artwork/; s_http://start.ubuntu.com/_https://trisquel.info/welcome_; s/PREFIX +.*/PREFIX;/' -i ./components/aboutStartpage.js
-rm components/aboutStartpage.js
 sed s/components// -i ./config_build.sh
 sed /components/d -i ./chrome.manifest
 sed /startup/d -i defaults/preferences/ubuntu-mods.js
