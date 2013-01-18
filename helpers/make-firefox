@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=4
+VERSION=5
 
 . ./config
 
@@ -95,7 +95,7 @@ sed -i '1s/^Source:.*/Source: firefox/' debian/control.in
 replace PACKAGES/abrowser PACKAGES/firefox .
 sed s/Trisquel/Mozilla/ compare-locales/scripts/compare-locales -i
 replace "iceweasel, abrowser" "iceweasel, firefox" .
-replace "Replaces: abrowser" "Replaces: firefox" .
+replace "Replaces: abrowser" "Replaces: firefox, abrowser-branding" .
 #sed s/Ubuntu/Trisquel/g debian/rules -i
 sed s/ubuntu/trisquel/g debian/distribution.ini debian/config/mozconfig.in -i
 sed 's/ubuntu_version/trisquel_version/; s/Ubuntu 10.10/Trisquel 4.0/; s/1010/40/' -i debian/abrowser.postinst.in
