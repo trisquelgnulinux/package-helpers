@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=8
+VERSION=11
 
 . ./config
 
@@ -97,7 +97,7 @@ sed s/Trisquel/Mozilla/ compare-locales/scripts/compare-locales -i
 replace "iceweasel, abrowser" "iceweasel, firefox" .
 replace "Replaces: abrowser" "Replaces: firefox, abrowser-branding" .
 sed '/app:Replaces/s/^Replaces:/Replaces: abrowser-branding, firefox,/' -i debian/control.in
-sed '/app:Conflicts/s/^Conflicts:/Conflicts: abrowser-branding, firefox,/' -i debian/control.in
+#sed '/app:Conflicts/s/^Conflicts:/Conflicts: abrowser-branding, firefox,/' -i debian/control.in
 sed '/Provides: www-browser/s/^Provides:/Provides: abrowser-branding,/' -i debian/control.in
 #sed s/Ubuntu/Trisquel/g debian/rules -i
 sed s/ubuntu/trisquel/g debian/distribution.ini debian/config/mozconfig.in -i
@@ -279,6 +279,20 @@ replace "Trisquel Foundation" "Mozilla Foundation" .
 replace "Trisquel Corporation" "Mozilla Corporation" .
 #sed -i 's/iceweasel, abrowser, icecat,/iceweasel, firefox, icecat,/g' debian/control.in
 sed -i 's/abrowser-old/firefox/g' debian/control.in
+sed -i 's/abrowser-gnome-support/firefox-gnome-support/g' debian/control.in
+
+sed -i '/Language packs below here/d' debian/control.in
+
+cat << EOF >> debian/control.in
+
+Package: firefox-gnome-support
+Architecture: all
+Description: Safe and easy web browser from Mozilla - transitional package
+ This is a transitional package to ensure that upgrades work correctly.
+ It can be safely removed
+
+# Language packs below here
+EOF
 
 # Restore useragent to Firefox
 sed '/MOZILLA_UAVERSION/ s:Abrowser/:Firefox/:' -i netwerk/protocol/http/nsHttpHandler.cpp
