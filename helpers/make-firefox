@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=5
+VERSION=8
 
 . ./config
 
@@ -35,7 +35,8 @@ sed 's/Depends: lsb-release,/Depends: lsb-release, xul-ext-ubufox,/' -i debian/c
 sed 's/iceweasel,/iceweasel, firefox, icecat,/' -i debian/control.in
 
 # Remove extra firefox metapackages
-sed '/Package: firefox/,/It can be safely removed/d' -i debian/control.in
+#sed '/Package: firefox/,/It can be safely removed/d' -i debian/control.in
+sed -i 's/^Package: abrowser/Package: abrowser-old/' debian/control.in
 
 # Remove Ubuntu bookmarks
 sed -i /ubuntu-bookmarks/d debian/patches/series.in
@@ -78,7 +79,6 @@ sed '1s/^/\nMOZ_PKG_NAME\t\t:= abrowser/' -i debian/build/mozbuild.mk
 ############################################################################3
 ############################################################################3
 ############################################################################3
-sed -i s/abrowser/abrowser-old/ debian/control.in
 sed "s_^Maintainer.*_Maintainer: $DEBFULLNAME <$DEBEMAIL>_g" -i debian/control.in
 
 # Replace Firefox branding
@@ -96,6 +96,9 @@ replace PACKAGES/abrowser PACKAGES/firefox .
 sed s/Trisquel/Mozilla/ compare-locales/scripts/compare-locales -i
 replace "iceweasel, abrowser" "iceweasel, firefox" .
 replace "Replaces: abrowser" "Replaces: firefox, abrowser-branding" .
+sed '/app:Replaces/s/^Replaces:/Replaces: abrowser-branding, firefox,/' -i debian/control.in
+sed '/app:Conflicts/s/^Conflicts:/Conflicts: abrowser-branding, firefox,/' -i debian/control.in
+sed '/Provides: www-browser/s/^Provides:/Provides: abrowser-branding,/' -i debian/control.in
 #sed s/Ubuntu/Trisquel/g debian/rules -i
 sed s/ubuntu/trisquel/g debian/distribution.ini debian/config/mozconfig.in -i
 sed 's/ubuntu_version/trisquel_version/; s/Ubuntu 10.10/Trisquel 4.0/; s/1010/40/' -i debian/abrowser.postinst.in
@@ -275,6 +278,7 @@ replace "Trisquel Public" "Mozilla Public" .
 replace "Trisquel Foundation" "Mozilla Foundation" .
 replace "Trisquel Corporation" "Mozilla Corporation" .
 #sed -i 's/iceweasel, abrowser, icecat,/iceweasel, firefox, icecat,/g' debian/control.in
+sed -i 's/abrowser-old/firefox/g' debian/control.in
 
 # Restore useragent to Firefox
 sed '/MOZILLA_UAVERSION/ s:Abrowser/:Firefox/:' -i netwerk/protocol/http/nsHttpHandler.cpp
