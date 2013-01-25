@@ -175,6 +175,7 @@ do
     mv \$i \$i.real
     cp /bin/true \$i
 done
+export DEBIAN_FRONTEND=noninteractive
 apt-get --force-yes -y dist-upgrade
 umount /proc
 EOF

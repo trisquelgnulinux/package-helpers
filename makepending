@@ -108,6 +108,7 @@ then
  #   echo Upstream version in $UPSTREAM: $upstream 1>&2
 [ $package = "grub2" -a $UPSTREAM = natty ] && continue
 [ $package = "grub2" -a $UPSTREAM = oneiric ] && continue
+[ $package = "grub2" -a $UPSTREAM = precise ] && continue
 [ $package = "yelp" -a $UPSTREAM = natty ] && continue
 
     echo Current version in $DISTRO: $current
