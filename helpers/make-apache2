@@ -17,13 +17,12 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
-QUILT=skip
+VERSION=2
 
 . ./config
 
-sed 's/Ubuntu/Trisquel/' -i debian/rules
-sh $DATA/001_branding -patch || true
+# Make the banner be Trisquel GNU/Linux instead of just Trisquel
+sed '/^LSB_RELEASE/s/$/_GNU\/Linux/'  -i debian/rules
 
 changelog "Compiled for Trisquel"
 
