@@ -32,12 +32,13 @@ replace "Ubuntu" "Trisquel" .
 replace "Trisquel-Gettext" "Ubuntu-Gettext" .
 
 #disable help button
-sed -i 359s/True/False/ gui/usbcreator-gtk.ui
+#sed -i 359s/True/False/ gui/usbcreator-gtk.ui
 
 changelog "Rebranded for Trisquel"
 
 compile
 
+exit 0
 if [ $ARCH = "i386" ]
 then
 # Let's build the win32 executable
