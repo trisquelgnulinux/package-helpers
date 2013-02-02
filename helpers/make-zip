@@ -1,0 +1,178 @@
+#!/bin/sh
+#
+#    Copyright (C) 2012  Rubén Rodríguez <ruben@trisquel.info>
+#    Copyright (C) 2012  DNS <dns@rbose.org>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=1
+COMPONENT=main
+. ./config
+
+cat << EOF | patch -p1
+--- a/man/zip.1	2012-12-01 07:18:11.156374313 +0100
++++ b/man/zip.1	2012-12-01 07:36:43.570167358 +0100
+@@ -49,8 +49,7 @@
+ RISC OS.  It is analogous to a combination of the Unix commands
+ .IR tar (1)
+ and
+-.IR compress (1)
+-and is compatible with PKZIP (Phil Katz's ZIP for MSDOS systems).
++.IR compress (1).
+ .LP
+ A companion program
+ .RI ( unzip (1L))
+@@ -62,11 +61,7 @@
+ and
+ .IR unzip (1L)
+ programs can work with archives produced by PKZIP (supporting
+-most PKZIP features up to PKZIP version 4.6),
+-and PKZIP and PKUNZIP can work with archives produced by
+-\fIzip\fP (with some exceptions, notably streamed archives,
+-but recent changes in the zip file standard may facilitate
+-better compatibility).
++most PKZIP features up to PKZIP version 4.6).
+ .I zip
+ version 3.0 is compatible with PKZIP 2.04 and also supports
+ the Zip64 extensions of PKZIP 4.5 which allow archives
+@@ -88,26 +83,6 @@
+ (if the resulting archive still needs Zip64),
+ the size of the archive will exceed 4 GB, or when the
+ number of entries in the archive will exceed about 64K.
+-Zip64 is also used for archives streamed from standard input as the size
+-of such archives are not known in advance, but the option \fB\-fz\-\fP can
+-be used to force \fIzip\fP to create PKZIP 2 compatible archives (as long
+-as Zip64 extensions are not needed).  You must use a PKZIP 4.5
+-compatible unzip, such as \fIunzip\ 6.0\fP or later, to extract files
+-using the Zip64 extensions.
+-.PP
+-In addition, streamed archives, entries encrypted with standard encryption,
+-or split archives created with the pause option may not be compatible with
+-PKZIP as data descriptors are used
+-and PKZIP at the time of this writing does not support data descriptors
+-(but recent changes in the PKWare published zip standard now include some
+-support for the data descriptor format \fIzip\fP uses).
+-
+-.PP
+-\fBMac OS X.\fP  Though previous Mac versions had their own \fIzip\fP port,
+-\fIzip\fP supports Mac OS X as part of the Unix port and most Unix features
+-apply.  References to "MacOS" below generally refer to MacOS versions older
+-than OS X.  Support for some Mac OS features in the Unix Mac OS X port, such
+-as resource forks, is expected in the next \fIzip\fP release.
+ 
+ .PP
+ For a brief help on \fIzip\fP and \fIunzip\fP,
+@@ -295,8 +270,7 @@
+ used.
+ .LP
+ If Zip64 support for large files and archives is enabled and
+-\fIzip\fR is used as a filter, \fIzip\fR creates a Zip64 archive
+-that requires a PKZIP 4.5 or later compatible unzip to read it.  This is
++\fIzip\fR is used as a filter, \fIzip\fR creates a Zip64 archive. This is
+ to avoid amgibuities in the zip file structure as defined in the current
+ zip standard (PKWARE AppNote) where the decision to use Zip64 needs to
+ be made before data is written for the entry, but for a stream the size
+@@ -1150,14 +1124,7 @@
+ .IP
+ which will include only the files that end in
+ .IR \& .c
+-in the current directory and its subdirectories. (Note for PKZIP
+-users: the equivalent command is
+-.RS
+-.IP
+-\fCpkzip -rP foo *.c\fP
+-.RE
+-.IP
+-PKZIP does not allow recursion in directories other than the current one.)
++in the current directory and its subdirectories.
+ The backslash avoids the shell filename substitution, so that the
+ name matching is performed by
+ .I zip
+@@ -1254,41 +1221,6 @@
+ \fB-R\fR for more on patterns.
+ 
+ .TP
+-.PD 0
+-.B \-I
+-.TP
+-.PD
+-.B \-\-no-image
+-[Acorn RISC OS] Don't scan through Image files.  When used, \fIzip\fP will not
+-consider Image files (eg. DOS partitions or Spark archives when SparkFS
+-is loaded) as directories but will store them as single files.
+-
+-For example, if you have SparkFS loaded, zipping a Spark archive will result
+-in a zipfile containing a directory (and its content) while using the 'I'
+-option will result in a zipfile containing a Spark archive. Obviously this
+-second case will also be obtained (without the 'I' option) if SparkFS isn't
+-loaded.
+-
+-.TP
+-.PD 0
+-.B \-ic
+-.TP
+-.PD
+-.B \-\-ignore-case
+-[VMS, WIN32] Ignore case when matching archive entries.  This option is
+-only available on systems where the case of files is ignored.  On systems
+-with case-insensitive file systems, case is normally ignored when matching files
+-on the file system but is not ignored for -f (freshen), -d (delete), -U (copy),
+-and similar modes when matching against archive entries (currently -f
+-ignores case on VMS) because archive entries can be from systems where
+-case does matter and names that are the same except for case can exist
+-in an archive.  The \fB\-ic\fR option makes all matching case insensitive.
+-This can result in multiple archive entries matching a command line pattern.
+-
+-.TP
+-.PD 0
+-.B \-j
+-.TP
+ .PD
+ .B \-\-junk-paths
+ Store just the name of a saved file (junk the path), and do not store
+@@ -1701,11 +1633,6 @@
+ Note that \fB*.c\fP will match \fBfile.c\fP, \fBa/file.c\fP
+ and \fBa/b/.c\fP.  More than one pattern can be listed as separate
+ arguments.
+-Note for PKZIP users: the equivalent command is
+-.RS
+-.IP
+-\fCpkzip -rP foo *.c\fP
+-.RE
+ .IP
+ Patterns are relative file paths as they appear in the archive, or will after
+ zipping, and can have optional wildcards in them.  For example, given
+@@ -2735,11 +2662,11 @@
+ .I updated
+ by
+ .I zip
+-1.1 or PKZIP 1.10, if they contain
++1.1, if they contain
+ encrypted members or if they have been produced in a pipe or on a non-seekable
+ device. The old versions of
+ .I zip
+-or PKZIP would create an archive with an incorrect format.
++would create an archive with an incorrect format.
+ The old versions can list the contents of the zip file
+ but cannot extract it anyway (because of the new compression algorithm).
+ If you do not use encryption and use regular disk files, you do
+EOF
+
+changelog "Removed proprietary suggestions from the manual file
+	   Closes #6711" 
+
+compile
+
