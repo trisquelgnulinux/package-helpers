@@ -26,18 +26,18 @@ sed 's/] def/  [ "nds" "nds" "Plattdüütsch" ]\n[ "oc" "oc" "Occitan" ]\n[ "aym
 cp po/es.po po/quz.po
 cp po/es.po po/aym.po
 
-for FILE in po/*.po*; do
-[ $FILE = "hi.po" ] && continue
-ACCESSLINE=$(expr $(grep -n \"Accessibility\" $FILE |cut -d: -f1|head -n 1) + 1)
-ACCESSWORD=$(sed -n ${ACCESSLINE}p $FILE |sed 's/msgstr \"//;s/\"//')
-
-LINE=$(expr $(grep -n "Try Ubuntu Netbook without installing" $FILE|cut -d: -f1) + 1 )
-sed "${LINE}s/\"$/ (+ $ACCESSWORD)\"/" -i $FILE
-LINE=$(expr $(grep -n "Install Ubuntu Netbook" $FILE|cut -d: -f1) + 1 )
-sed "${LINE}s/\"$/ (+ $ACCESSWORD)\"/" -i $FILE
-
-sed 's/Try Ubuntu Netbook without installing/Try Ubuntu Netbook without installing (+ Accessibility)/' -i $FILE
-done
+#for FILE in po/*.po*; do
+#[ $FILE = "hi.po" ] && continue
+#ACCESSLINE=$(expr $(grep -n \"Accessibility\" $FILE |cut -d: -f1|head -n 1) + 1)
+#ACCESSWORD=$(sed -n ${ACCESSLINE}p $FILE |sed 's/msgstr \"//;s/\"//')
+#
+#LINE=$(expr $(grep -n "Try Ubuntu Netbook without installing" $FILE|cut -d: -f1) + 1 )
+#sed "${LINE}s/\"$/ (+ $ACCESSWORD)\"/" -i $FILE
+#LINE=$(expr $(grep -n "Install Ubuntu Netbook" $FILE|cut -d: -f1) + 1 )
+#sed "${LINE}s/\"$/ (+ $ACCESSWORD)\"/" -i $FILE
+#
+#sed 's/Try Ubuntu Netbook without installing/Try Ubuntu Netbook without installing (+ Accessibility)/' -i $FILE
+#done
 
 replace Kubuntu Triskel .
 replace "Ubuntu Netbook" Trisquel .
@@ -55,6 +55,7 @@ replace "Enterprise Cloud" "Gamer" .
 replace Ubuntu Trisquel .
 
 sed /txt_option_free/d dia_fulloptions.inc -i
+sed /fulloptions.free/d dia_fulloptions.inc -i
 
 #sed 's:\(.*\)120\(.*\):\181\2\n/timeout.time.x timeout.x 550 add def:' timeout.inc -i
 cat << EOF | patch -p1
@@ -101,7 +102,7 @@ sed 's/gfxboot-theme-ubuntu/gfxboot-theme-trisquel/' debian/control -i
 
 changelog "Rebranded for Trisquel"
 sed '1s/gfxboot-theme-ubuntu/gfxboot-theme-trisquel/' debian/changelog /CurrentlyBuilding -i
-sed 's/main/universe/' /CurrentlyBuilding -i
+#sed 's/main/universe/' /CurrentlyBuilding -i
 
 compile
 
