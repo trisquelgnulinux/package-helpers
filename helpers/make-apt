@@ -17,16 +17,71 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
-QUILT=skip
+VERSION=2
+COMPONENT=main
 
 . ./config
 
 cp $DATA/trisquel-archive.gpg share
 
-sed -i 's_http://archive.ubuntu.com/ubuntu/project/_http://archive.trisquel.info/trisquel/_g; s/ubuntu-archive-keyring/trisquel-archive-keyring/g; s/ubuntu-keyring/trisquel-keyring/g; ' cmdline/apt-key
-sed -i 's/Ubuntu/Trisquel/' methods/http.cc
-sed -i 's/ubuntu-archive.gpg/trisquel-archive.gpg/g' debian/rules debian/apt.postinst
+rm debian/patches/ftparchive-fix-filemode-settings.patch
+sed /ftparchive-fix-filemode-settings.patch/d debian/patches/series -i 
+
+# remove non-free examples https://trisquel.info/en/issues/5518
+replace "contrib non-free" extras .
+replace non-free extras .
+replace contrib universe doc
+replace contrib universe po
+
+cat << EOF > ./doc/examples/sources.list
+deb http://archive.trisquel.info/trisquel/ $CODENAME main
+deb-src http://archive.trisquel.info/trisquel/ $CODENAME main
+deb http://archive.trisquel.info/trisquel/ $CODENAME-updates main
+deb-src http://archive.trisquel.info/trisquel/ $CODENAME-updates main
+deb http://archive.trisquel.info/trisquel/ $CODENAME-security main
+deb-src http://archive.trisquel.info/trisquel/ $CODENAME-security main
+EOF
+
+cat << EOF > ./doc/examples/apt-ftparchive.conf
+// This config is for use with the pool-structure for the packages, thus we
+// don't use a Tree Section in here
+
+// The debian archive should be in the current working dir
+Dir {   
+        ArchiveDir ".";
+        CacheDir ".";
+};
+
+// Create Packages, Packages.gz and Packages.bz2, remove what you don't need
+Default {
+        Packages::Compress ". gzip bzip2";
+        Sources::Compress ". gzip bzip2";
+        Contents::Compress ". gzip bzip2";
+};
+
+// Includes the main section. You can structure the directory tree under
+// ./pool/main any way you like, apt-ftparchive will take any deb (and
+// source package) it can find. This creates a Packages a Sources and a
+// Contents file for these in the main section of the sid release
+BinDirectory "pool/main" {
+        Packages "dists/$CODENAME/main/binary-i386/Packages";
+        Sources "dists/$CODENAME/main/source/Sources";
+        Contents "dists/$CODENAME/Contents-i386";
+}
+
+// By default all Packages should have the extension ".deb"
+Default {
+        Packages {
+                Extensions ".deb";
+        };
+};
+EOF
+## end non-free examples
+
+
+sed -i 's_http://archive.ubuntu.com/ubuntu/project/_http://archive.trisquel.info/trisquel/_g; s/ubuntu-archive-keyring/trisquel-archive-keyring/g; s/ubuntu-keyring/trisquel-keyring/g; ' cmdline/apt-key debian/control*
+replace Ubuntu Trisquel  methods/http.cc
+replace ubuntu-archive.gpg trisquel-archive.gpg .
 
 changelog "Ubuntu keyring replaced with Trisquel's"
 
