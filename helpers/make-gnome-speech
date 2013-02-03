@@ -17,13 +17,25 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 
 . ./config
 
-# Disable packaging of contrib packages
+for driver in swift dectalk; do
+  rm -rf drivers/$driver
+  find | grep Makefile | xargs grep $driver |cut -d: -f1 | xargs sed "/SUBDIRS/s/$driver//" -i
+  find | grep Makefile | xargs grep $driver |cut -d: -f1 | xargs sed "/$driver/d" -i
+  find |grep $driver |grep -v templates|xargs rm
+done
+
+sed '/^ac_config_files/s:drivers/dectalk/Makefile::' -i configure
+sed '/^ac_config_files/s:drivers/dectalk/GNOME_Speech_SynthesisDriver_Dectalk.server::' -i configure
+sed '/^ac_config_files/s:drivers/swift/Makefile::' -i configure
+sed '/^ac_config_files/s:drivers/swift/GNOME_Speech_SynthesisDriver_Swift.server::' -i configure
+
 sed '/Package: gnome-speech-swift/,/system\./d' -i debian/control.in debian/control
 sed '/Package: gnome-speech-dectalk/,/system\./d' -i debian/control.in debian/control
+sed '/;  other backends that require proprietary/,/gnome-speech-swift/d' -i debian/control.in debian/control
 
 changelog "Disable packaging of contrib packages gnome-speech-dectalk and gnome-speech-swift, Closes #2338"
 
