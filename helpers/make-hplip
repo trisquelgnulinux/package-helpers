@@ -1,6 +1,7 @@
 #!/bin/sh
 #
 #    Copyright (C) 2011 MPA
+#    Copyright (C) 2013 Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,23 +18,51 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=4
 
 . ./config
 
+echo Removing printers not supported with free drivers from the database
 tmp=`mktemp`
+output=`mktemp`
 printers='data/models/models.dat'
 
-grep -B 7 'download=True' $printers|grep "\["|sed 's/\[//g; s/\]//g' > $tmp
-for i in `cat $tmp`; do 
-	sed -i '/\['"$i"'\]/,/^$/d' $printers
+# Keep header license
+sed  '/\[/,99999d' $printers > $output
+
+for model in $(grep '\[' $printers | /bin/sed 's/\[//; s/\]//'); do
+  sed -n "/\[$model\]/,/^$/p;" $printers > $tmp
+  grep '^download=True' -q $tmp && continue
+  grep '^plugin=1' -q $tmp && continue
+  grep '^support-type=0' -q $tmp && continue
+  cat $tmp >> $output
 done
+
+cp $output $printers
+
+
+#grep -B 7 'download=True' $printers|grep "\["|/bin/sed 's/\[//g; s/\]//g' > $tmp2
+#grep -B 18 'plugin=1' $printers|grep "\["|/bin/sed 's/\[//g; s/\]//g' >> $tmp2
+#grep -B 33 'support-type=0' $printers|grep "\["|/bin/sed 's/\[//g; s/\]//g' >> $tmp2
+#sort -u < $tmp2 > $tmp
+#for i in `cat $tmp`; do 
+#	/bin/sed -i '/\['"$i"'\]/,/^$/d' $printers
+#done
 sed -i 's/plugin=2/plugin=0/g' $printers
 
-rm $tmp
+rm $tmp $tmp2
 
 rm debian/patches/hp_photosmart_pro_b9100_support.dpatch
 sed -i '/hp_photosmart_pro_b9100_support.dpatch/d' debian/patches/00list
+rm debian/patches/ubuntu-hp-mkuri-notification-text.dpatch
+sed -i '/ubuntu-hp-mkuri-notification-text.dpatch/d' debian/patches/00list
+rm debian/local/scripts/hp-plugin-ubuntu
+sed /hp-plugin-ubuntu/d ./debian/rules -i
+
+# disable downloader
+#rm plugin.py
+#sed s/plugin.py//g -i ./hplip.list.in ./Makefile.in ./Makefile.am
+#sed '/run_plugin_command/s/$/\n    return/' -i ./base/pkit.py
 
 # Fix compilation problems
 sed '/ln -s \/usr\/share\/hplip\/hpssd.py/s:ln.*:cp hpssd.py ./debian/tmp/usr/sbin/hpssd:' -i debian/rules
