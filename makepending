@@ -87,7 +87,7 @@ LIST=$(echo $LIST | cut -d" " -f2-)
 while [ "$LIST" != "EOL" ]
 do
     TEST=$(echo $LIST | cut -d" " -f1)
-    dpkg --compare-versions $HI lt $TEST && HI=$TEST
+    dpkg --compare-versions $HI lt $TEST 2>/dev/null && HI=$TEST
     LIST=$(echo $LIST | cut -d" " -f2-)
 done
 echo $HI
@@ -101,13 +101,14 @@ current=$( higher $LIST)
 LIST=$(egrep ^${package}_ $UPSTREAM)
 upstream=$( higher $LIST)
 
-if dpkg --compare-versions $current lt $upstream 
+if dpkg --compare-versions $current lt $upstream 2>/dev/null
 then
 
  #   echo Current version in $DISTRO: $current 1>&2
  #   echo Upstream version in $UPSTREAM: $upstream 1>&2
 [ $package = "grub2" -a $UPSTREAM = natty ] && continue
 [ $package = "grub2" -a $UPSTREAM = oneiric ] && continue
+[ $package = "grub2" -a $UPSTREAM = precise ] && continue
 [ $package = "yelp" -a $UPSTREAM = natty ] && continue
 
     echo Current version in $DISTRO: $current
