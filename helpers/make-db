@@ -1,0 +1,43 @@
+#!/bin/sh
+#
+#    Copyright (C) 2013  Rubén Rodríguez <ruben@trisquel.info>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=1
+QUILT=skip
+. ./config
+
+# This file is distributed from upstream Berkeley DB under the Artistic
+# License (no version specified), althouth it was later released by the
+# original author under both GPL2+ and BSD.
+# .
+# References:
+# http://web.archive.org/web/20010806225716/http://www.math.keio.ac.jp/matumoto/mt19937int.c
+# http://web.archive.org/web/20130127064020/http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/MT2002/CODES/mt19937ar.c
+# https://bugzilla.redhat.com/show_bug.cgi?format=multiple&id=886838
+# https://lists.nongnu.org/archive/html/gnu-linux-libre/2010-05/msg00000.html
+
+cp $DATA/007-mt19937db.c_license.patch debian/patches
+echo 007-mt19937db.c_license.patch >> debian/patches/series
+
+export QUILT_PATCHES=debian/patches
+quilt push -a
+
+changelog "Update license to include GPL, fixes 5954"
+
+compile
+
