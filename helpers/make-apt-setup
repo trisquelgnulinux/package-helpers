@@ -41,7 +41,7 @@ START=$(getline apt-setup/contrib debian/apt-mirror-setup.templates)
 END=$(getline "Please choose whether you want this software to be made available to you." debian/apt-mirror-setup.templates)
 sed ${START},${END}d debian/apt-mirror-setup.templates -i
 
-sed '/canonical/d;
+/bin/sed '/canonical/d;
 /Canonical/d;
 s/main restricted universe multiverse/main/g;
 s/dists restricted/dists/g;
@@ -69,7 +69,7 @@ find archive.trisquel.info/ |egrep '(index.html|robots.txt)'|xargs rm
 cd ..
 
 rm generators/9[1-9]* generators/50mirror generators/50mirror.ubuntu
-sed -i '/generators\/9[1-9]*/d' debian/*.install
+sed -i '/generators\/9[1-9]*/d' debian/apt-setup-udeb.install
 
 echo "generators/50mirror.trisquel usr/lib/apt-setup/generators
 release-files/archive.trisquel.info usr/share/apt-setup/release-files" > debian/apt-mirror-setup.install

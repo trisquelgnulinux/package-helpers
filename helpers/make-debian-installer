@@ -21,11 +21,9 @@ VERSION=1
 NETINST=true
 . ./config
 
-apt-get install trisquel-keyring
-
 cat << EOF > /etc/apt/sources.list
-deb $DEVELMIRROR $UPSTREAM main
-deb-src $DEVELMIRROR $UPSTREAM main
+deb $DEVELMIRROR $CODENAME main
+deb-src $DEVELMIRROR $CODENAME main
 deb $LOCALMIRROR $CODENAME main
 deb $LOCALMIRROR $CODENAME-updates main
 deb-src $LOCALMIRROR $CODENAME main
@@ -37,13 +35,17 @@ EOF
 
 apt-get update
 
+apt-get install trisquel-keyring
+
 find build/pkg-lists -type f | xargs sed -i /media-retriever/d
 
 LASTKERNEL=$(apt-cache showsrc linux-libc-dev|grep ^Version |head -n1|cut -d" " -f2|cut -d. -f1,2,3)
-sed -i "s/3.0.\w*-\w*/$LASTKERNEL/g" ./build/config/i386/netboot/386.cfg ./build/config/i386.cfg ./build/config/amd64.cfg
+/bin/sed -i "s/^BASEVERSION.*/BASEVERSION = $LASTKERNEL/g" ./build/config/i386.cfg ./build/config/amd64.cfg
+sed -i "s/^MEDIUM_SUPPORTED.*/MEDIUM_SUPPORTED = cdrom netboot/g" ./build/config/i386.cfg ./build/config/amd64.cfg
+
+sed 's/ubuntu-archive-keyring.gpg/trisquel-archive-keyring.gpg/' -i build/config/common
 
 cp $DATA/splash.png build/boot/x86/pics/trisquel.png
-sed -i 's:archive.gpg:archive.gpg\n\tcp -a $(TREE)/usr/share/keyrings/trisquel-archive-keyring.gpg $(TREE)/usr/share/keyrings/ubuntu-archive-keyring.gpg:' build/Makefile
 sed -i 's/ubuntu.png/trisquel.png/g' build/config/x86.cfg
 
 cat << EOF > build/sources.list.udeb.local
@@ -52,6 +54,8 @@ deb $LOCALMIRROR $CODENAME-updates main/debian-installer
 #deb $LOCALMIRROR $CODENAME-security main/debian-installer
 EOF
 
+rpl 2004-2012 2004-2013 . -R
+rpl 2004-2011 2004-2013 . -R
 rpl 2004-2010 2004-2011 . -R
 rpl 2004-2009 2004-2011 . -R
 rpl 2004-2008 2004-2011 . -R
@@ -75,7 +79,9 @@ rpl ubuntu-archive-keyring trisquel-archive-keyring . -R
 #sed -i "s:^To install.*:This is the Trisquel GNU/Linux $TVERSION LTS \"$TCODENAME\" network install CD.:g" build/boot/x86/boot.txt
 #sed -i 's:^For the.*:For the default installation, press ENTER, for more help press F1.:g' build/boot/x86/boot.txt
 
-sed s/tasks=standard/tasks=trisquel-console/ build/boot/x86/syslinux.cfg -i
+#sed s/tasks=standard/tasks=trisquel-console/ build/boot/x86/syslinux.cfg -i
 
 changelog "Rebranded and adapted for Trisquel"
 compile
+
+cp build/tmp/netboot/mini.iso build/tmp/netboot/initrd.gz /root/
