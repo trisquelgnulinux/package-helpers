@@ -17,13 +17,13 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
+VERSION=1
 QUILT=skip
 COMPONENT=main
 . ./config
 
-rm debian/patches/06_make_ubuntu_docs_default.patch
-sed '/make_ubuntu_docs_default/d' -i debian/patches/series
+rm debian/patches/06_use-ubuntu-help.patch
+sed '/use-ubuntu-help/d' -i debian/patches/series
 
 export QUILT_PATCHES=debian/patches
 quilt push -a
