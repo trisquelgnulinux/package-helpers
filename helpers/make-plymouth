@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 QUILT=skip
 . ./config
 
@@ -67,7 +67,7 @@ cp $DATA/*.png themes/script
 cp $DATA/script.script themes/script/script.script
 
 cat << EOF > debian/source/include-binaries
-themes/script/brigantia.png
+themes/script/background.png
 themes/glow/sugar.png
 themes/script/trisquel_logo16.png
 themes/glow/trisquel_logo16.png
@@ -76,8 +76,8 @@ EOF
 
 rm themes/trisquel-logo themes/glow -rf
 cp themes/script -a themes/trisquel-logo
-cp $DATA/brigantia.png $DATA/trisquel_logo16.png themes/trisquel-logo/
-sed -i 's/progress_bar.png/progress_bar.png\\\n\t\tbrigantia.png\\\n\t\ttrisquel_logo16.png/' themes/trisquel-logo/Makefile*
+cp $DATA/background.png $DATA/trisquel_logo16.png themes/trisquel-logo/
+sed -i 's/progress_bar.png/progress_bar.png\\\n\t\tbackground.png\\\n\t\ttrisquel_logo16.png/' themes/trisquel-logo/Makefile*
 sed s:/script:/trisquel-logo:g -i themes/trisquel-logo/script.plymouth.in
 sed 's:=Script:=Trisquel-logo:g' -i themes/trisquel-logo/script.plymouth.in
 sed 's/script\.script/trisquel-logo\.rtoken/g' -i themes/trisquel-logo/Make*
@@ -93,7 +93,7 @@ sed 's/script\.script/glow\.rtoken/g' -i themes/glow/Make*
 sed 's/script/glow/g' -i themes/glow/Make*
 sed 's/rtoken/script/g' -i themes/glow/Make*
 cp $DATA/sugar.png $DATA/trisquel_logo16.png $DATA/trisquel_logo-sugar.png themes/glow/
-sed -i s/brigantia/sugar/g themes/glow/*
+/bin/sed -i s/background/sugar/g themes/glow/*
 sed -i 's_special://logo_trisquel\_logo-sugar.png_g; s/0.3/0.8/' themes/glow/*.script
 rename s/script.script/glow.script/g themes/glow/*
 rename s/script.plymouth.in/glow.plymouth.in/g themes/glow/*

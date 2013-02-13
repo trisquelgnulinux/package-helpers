@@ -7,7 +7,7 @@ if (bits_per_pixel == 4) {
 } else {
     logo.image = Image("special://logo");
 
-    bg_image = Image("brigantia.png");
+    bg_image = Image("background.png");
     bg_sprite = Sprite(bg_image);
 
     customlogo.image = Image("custom.png");
@@ -26,9 +26,7 @@ if (bits_per_pixel == 4) {
 logo.sprite = Sprite(logo.image);
 logo.opacity_angle = 0;
 logo.sprite.SetX (Window.GetX() + Window.GetWidth()  / 2 - logo.image.GetWidth()  / 2);
-logo.sprite.SetY (Window.GetY() + Window.GetHeight() / 4 - logo.image.GetHeight() / 2);
-#logo.sprite.SetX (Window.GetX() + Window.GetWidth()  / 2 - logo.image.GetWidth()  / 2);
-#logo.sprite.SetY (Window.GetY() + Window.GetHeight() / 2 - logo.image.GetHeight() / 2);
+logo.sprite.SetY (Window.GetY() + Window.GetHeight() / 2 - logo.image.GetHeight() / 2);
 logo.sprite.SetOpacity (1);
 
 fun refresh_callback ()
