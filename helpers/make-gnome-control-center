@@ -17,10 +17,13 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=4
 COMPONENT=main
 
 . ./config
+
+# Remove recommendeds as it points to ubuntu-docs
+sed '/ubuntu-docs/d' -i debian/control*
 
 # make the sound daemon compatible with trisquel custom session
 replace gnome-fallback gnome-classic .
