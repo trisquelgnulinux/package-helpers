@@ -1,0 +1,27 @@
+#!/bin/sh
+
+VERSION=1
+
+. ./config
+
+patch -p1 < $DATA/megaraid.patch
+
+sh $DATA/deblob-3.5
+
+# Compile with less modules and avoid abi check
+echo 'skipmodule = true' >> debian.master/rules.d/0-common-vars.mk
+echo 'skipabi = true' >> debian.master/rules.d/0-common-vars.mk
+echo 'skipmodule = true' >> debian/rules.d/0-common-vars.mk
+echo 'skipabi = true' >> debian/rules.d/0-common-vars.mk
+
+line=$(grep -n ')-Ubuntu' debian/rules.d/0-common-vars.mk|cut -d: -f1)
+sed $(expr $line - 1 ),$(expr $line + 1 )d debian/rules.d/0-common-vars.mk -i
+mv debian.master/config/config.common.ubuntu debian.master/config/config.common.trisquel
+sed s/family=ubuntu/family=trisquel/ -i debian/rules.d/0-common-vars.mk
+sed 's/ with Ubuntu patches//; s/Linux/Linux-libre/g' debian/control debian/control.stub -i
+
+changelog "Removed non-free bits"
+
+cp debian/changelog debian.master/changelog
+
+PARALLEL=true compile
