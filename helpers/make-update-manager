@@ -21,7 +21,7 @@
 # gpg -ba release_name.tar.gz
 # Also, don't forget to update the meta-release files at archive and packages.t.i
 
-VERSION=5
+VERSION=6
 
 . ./config
 
@@ -205,8 +205,6 @@ http://us.archive.trisquel.info/trisquel/
 http://nl.archive.trisquel.info/
 http://in.archive.trisquel.info/
 ftp://in.archive.trisquel.info/
-http://ftp.rediris.es/mirror/Trisquel/packages/
-ftp://ftp.rediris.es/mirror/Trisquel/packages/
 EOF
 
 rm DistUpgrade/DistUpgrade.cfg

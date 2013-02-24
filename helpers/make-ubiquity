@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 
 . ./config
 
@@ -50,7 +50,7 @@ set -e
 
 file="\$1"
 
-FASTEST=http://ftp.rediris.es/mirror/Trisquel/packages/
+FASTEST=http://es.archive.trisquel.info/trisquel/
 SPEED=1000000000000
 
 for i in \$(grep 'tp:' /usr/share/python-apt/templates/Trisquel.mirrors)

@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 
 . ./config
 
@@ -111,7 +111,7 @@ pref("general.useragent.vendorSub", "$REVISION");
 pref("general.useragent.compatMode.abrowser",true);
 
 // Startup pages
-//pref ("browser.startup.page" , 3);
+pref ("browser.startup.page" , 3);
 //pref ("browser.startup.homepage" , "http://trisquel.info");
 //pref ("startup.homepage_welcome_url", "http://trisquel.info/welcome");
 //pref ("startup.homepage_override_url" , "http://trisquel.info/newbrowser");
