@@ -21,7 +21,12 @@ VERSION=1
 
 . ./config
 
-sed -i 's/Ubuntu/Trisquel/g;s/10.10/5.0/g; s/11.10/5.5/g;' debian/branding.conf.in
+cat << EOF > debian/branding.conf.in
+[User Agent]
+Vendor=Trisquel GNU/Linux
+VendorSub=Toutatis $REVISION
+VendorComment=@PACKAGEVERSION@
+EOF
 
 changelog "Epiphany browser compiled for Trisquel"
 #Branding purposes. Closes bug 1413
