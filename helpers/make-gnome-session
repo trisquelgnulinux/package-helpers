@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=8
+VERSION=9
 COMPONENT=main
 QUILT=skip
 
@@ -27,7 +27,7 @@ export QUILT_PATCHES=debian/patches
 quilt push -a
 
 #% Make gnome-session not dependent on unity
-sed 's/unity.*/gnome-shell (>= 3.0),/' -i debian/control*
+#sed 's/unity.*/gnome-shell (>= 3.0),/' -i debian/control*
 
 #% Replace gnome-classic session with gnome-fallback
 cat << EOF > debian/gnome-session-fallback.install
