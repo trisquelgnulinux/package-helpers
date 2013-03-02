@@ -25,7 +25,7 @@ COMPONENT=main
 rm debian/patches/01_lpi.patch
 sed -i '/01_lpi/d' debian/patches/series
 
-changelog "Disabled launchpad integration"
+changelog "Disabled launchpad integration, fixes #7509"
 
 compile
 
