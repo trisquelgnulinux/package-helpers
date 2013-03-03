@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=5
 
 . ./config
 
@@ -32,6 +32,9 @@ export DEB_BUILD_OPTIONS=nocheck
 
 # Fix update issues on clean installations: http://trisquel.info/es/forum/update-issues-clean-install
 sed 's:\(targetdb)\):\1\n        os.system("sudo chmod 644 /target/var/cache/debconf/config.dat"):' bin/ubiquity -i
+
+# Fix https://bugs.launchpad.net/ubuntu/+source/ubiquity/+bug/1080701
+sed '/from ubiquity import osextras/s/$/\nos.system("sudo swapoff -a")/' bin/ubiquity-wrapper -i
 
 for i in $(ls -1 d-i/source/apt-setup/generators |grep -v 01setup) canonical.com security.ubuntu.com extras.ubuntu.com
 do
