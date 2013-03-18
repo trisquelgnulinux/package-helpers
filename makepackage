@@ -27,7 +27,9 @@ for VAR in LANG LANGUAGE LC_ALL LC_TIME LC_MONETARY LC_ADDRESS LC_TELEPHONE LC_M
 do
     unset $VAR
 done
+export LANG=C
 export HOME=/root
+export DATE=$(date +'%a, %d %b %Y %T %z')
 
 cd $(dirname $0)
 
