@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=5
+VERSION=8
 
 . ./config
 
@@ -60,7 +60,7 @@ for i in \$(grep 'tp:' /usr/share/python-apt/templates/Trisquel.mirrors)
 do
     echo Testing \$i
     TIME=\$(date +%s%N)
-    wget -o /dev/null -O /dev/null \$i/speedtest || continue
+    wget -t 1 -T 5 --max-redirect=0 -o /dev/null -O /dev/null \$i/speedtest || continue
     TIME2=\$(date +%s%N)
     ELAPSED=\$(expr \$TIME2 - \$TIME)
     echo Time: \$ELAPSED
@@ -166,6 +166,11 @@ toolkit-accessibility=true
 /desktop/gnome/interface/accessibility true" > /target/usr/share/gconf/defaults/91_accessibility
  chroot /target update-gconf-defaults
 
+else 
+  set +e
+  grep -q v3 /proc/cmdline && exit
+  echo "Orca screen reader seems not to be running, disabling accessibility by default in target system"
+  rm /target/home/*/.local/share/orca/user-settings.conf -f
 fi
 
 EOF1
