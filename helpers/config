@@ -67,6 +67,9 @@ find $3 -type f -not -iregex '.*changelog.*' -not -iregex '.*copyright.*' -execd
 }
 changelog(){
 echo | dch -D $CODENAME -v $(/bin/sed -n '1s/^.*(\(.*\)).*/\1'+${REVISION}trisquel${VERSION}'/p' debian/changelog)  "$1"
+
+# Make sure the changelog file is identical between archs
+/bin/sed "/-- Trisquel/s/.*/ -- Trisquel GNU\/Linux developers <trisquel-devel@listas.trisquel.info>  $DATE/" -i debian/changelog
 }
 
 rm -rf PACKAGES/$PACKAGE
@@ -80,12 +83,8 @@ deb $MIRROR $UPSTREAM-security main universe
 deb-src $MIRROR $UPSTREAM main universe
 deb-src $MIRROR $UPSTREAM-updates main universe
 deb-src $MIRROR $UPSTREAM-security main universe
-deb-src http://download.sugarlabs.org/packages/SweetsDistribution:/0.94/Ubuntu-11.10/ ./
-deb-src http://download.sugarlabs.org/packages/SweetsDistribution/Ubuntu-11.10/ ./
 deb $DEVELMIRROR $CODENAME main
 EOF
-
-wget http://download.sugarlabs.org/packages/SweetsDistribution:/0.94/Ubuntu-11.04/Release.key -O - -o /dev/null|apt-key add -
 
 [ "1$EXTERNAL" != "1" ] && eval echo "$EXTERNAL" >> /etc/apt/sources.list
 
