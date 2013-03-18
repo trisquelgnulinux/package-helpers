@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
+VERSION=4
 
 . ./config
 
@@ -26,6 +26,13 @@ rm debian/control
 # Make ubufox mandatory
 sed 's/Depends: lsb-release,/Depends: lsb-release, xul-ext-ubufox,/' -i debian/control.in
 sed 's/iceweasel,/iceweasel, firefox, icecat,/' -i debian/control.in
+
+# Enable gst support
+apt-get install -y --force-yes libgstreamermm-0.10-dev
+echo "ac_add_options --enable-gstreamer" >> debian/config/mozconfig.in
+
+# Locale packages should provide firefox-locale-$LANG
+sed "s/Provides.*/Provides: firefox-locale-@LANGCODE@/" -i debian/control.langpacks
 
 # Remove extra firefox metapackages
 sed '/Package: firefox/,/It can be safely removed/d' -i debian/control.in
@@ -268,6 +275,7 @@ replace "Trisquel Public" "Mozilla Public" .
 replace "Trisquel Foundation" "Mozilla Foundation" .
 replace "Trisquel Corporation" "Mozilla Corporation" .
 #sed -i 's/iceweasel, abrowser, icecat,/iceweasel, firefox, icecat,/g' debian/control.in
+sed '/Provides/s/abrowser-locale/firefox-locale/' -i debian/control.langpacks
 
 # Restore useragent to Firefox
 sed '/MOZILLA_UAVERSION/ s:Abrowser/:Firefox/:' -i netwerk/protocol/http/nsHttpHandler.cpp
