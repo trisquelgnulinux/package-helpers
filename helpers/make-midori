@@ -17,10 +17,15 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 EXTERNAL='deb-src http://ppa.launchpad.net/midori/ppa/ubuntu $UPSTREAM main'
 
 . ./config
+
+# https://trisquel.info/en/issues/7753
+echo "NoDisplay=true" >> data/midori-private.desktop.in
+#sed '/midori-private/d' -i ./po/POTFILES.in
+sed '/Private Shortcut/,1000d' -i data/midori.desktop.in 
 
 rm debian/patches -rf
 
