@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 
 . ./config
 
@@ -48,6 +48,7 @@ replace Ubuntu Trisquel .
 replace ftpmaster@ubuntu.com trisquel-devel@listas.trisquel.info .
 replace cdimage@ubuntu.com trisquel-devel@listas.trisquel.info .
 replace TrisquelDistribution UbuntuDistribution .
+sed '/NoDisplay/d; s/Trisquel/Ubuntu/' -i data/software-properties-gtk.desktop.in
 
 changelog "Adapted for Trisquel codenames"
 
