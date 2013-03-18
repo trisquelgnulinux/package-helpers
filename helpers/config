@@ -69,6 +69,9 @@ find $3 -type f -not -iregex '.*changelog.*' -not -iregex '.*copyright.*' -execd
 
 changelog(){
 echo | dch -D $CODENAME -v $(sed -n '1s/^.*(\(.*\)).*/\1'+${REVISION}trisquel${VERSION}'/p' debian/changelog)  "$1"
+
+# Make sure the changelog file is identical between archs
+/bin/sed "/-- Trisquel/s/.*/ -- Trisquel GNU\/Linux developers <trisquel-devel@listas.trisquel.info>  $DATE/" -i debian/changelog
 }
 
 rm -rf PACKAGES/$PACKAGE
