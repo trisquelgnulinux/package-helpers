@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=9
+VERSION=10
 COMPONENT=main
 QUILT=skip
 
@@ -41,6 +41,20 @@ EOF
 #% Add a wrapper for compiz
 cat << EOF > debian/scripts/trisquel-wm
 #!/bin/sh
+
+# Migrate the profile if needed
+[ -f ~/.config/profilemigrated ] || touch ~/.config/profilemigrated
+if ! grep $(lsb_release -r -s) -q ~/.config/profilemigrated ; then
+  rm ~/.cache/compiz* ~/.compiz* ~/.config/compiz*  -rf
+  for key in /apps/panel /apps/compiz /apps/compiz-1 /apps/compizconfig-1 /apps/compizconfig
+  do
+      gconftool --recursive-unset $key
+  done
+gsettings reset-recursively org.gnome.gnome-panel
+gnome-panel --replace
+
+lsb_release -r -s > ~/.config/profilemigrated
+fi
 
 WM=compiz
 FALLBACK=openbox
