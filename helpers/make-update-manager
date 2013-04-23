@@ -21,7 +21,7 @@
 # gpg -ba release_name.tar.gz
 # Also, don't forget to update the meta-release files at archive and packages.t.i
 
-VERSION=6
+VERSION=12
 
 . ./config
 
@@ -38,6 +38,20 @@ rm tests/test-data/xorg.conf.fglrx
 #% Make sure nvidia-common and fglrx-modaliases are not installed
 apt-get remove --purge -y nvidia-common  || true 
 apt-get remove --purge -y fglrx-modaliases || true
+
+#https://bugs.launchpad.net/ubuntu/+source/python-defaults/+bug/990740
+cat << EOF >> DistUpgrade/DistUpgradeQuirks.py
+
+    def from_taranisPostInitialUpdate(self):
+        logging.debug("Setting APT::Immediate-Configure=false")
+        apt.apt_pkg.config.set("APT::Immediate-Configure", "false")
+        os.system("apt-get install --force-yes -y libblkid1 lzma dpkg")
+
+    def from_taranisPostCleanup(self):
+        logging.debug("Setting APT::Immediate-Configure=true")
+        apt.apt_pkg.config.set("APT::Immediate-Configure", "true")
+EOF
+
 
 rm ./DistUpgrade/Ubuntu.info
 cat << EOF   > DistUpgrade/Trisquel.info
@@ -81,6 +95,7 @@ cat << EOF >  DistUpgrade/ReleaseAnnouncement
 = Welcome to Trisquel GNU/Linux $REVISION '$CODENAME' =
 
 The Trisquel team is proud to announce Trisquel $REVISION '$CODENAME'.
+We recommend to apply all pending updates to the system before upgrading.
 
 Trisquel is a fully free operating system based in GNU/Linux, for domestic
 users, small enterprises and educational centers.
@@ -209,7 +224,6 @@ EOF
 
 rm DistUpgrade/DistUpgrade.cfg*
 cp $DATA/DistUpgrade.cfg* DistUpgrade/
-cp $DATA/DistUpgrade.cfg.$CODENAME DistUpgrade/DistUpgrade.cfg
 
 cat << EOF1 > DistUpgrade/trisquel-postinstall.sh
 #!/bin/sh
@@ -288,3 +302,4 @@ changelog "Compiled for Trisquel"
 
 compile
 
+cp ../dist-upgrader* /root
