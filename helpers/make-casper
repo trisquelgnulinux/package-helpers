@@ -17,9 +17,12 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=4
 
 . ./config
+
+# Get rid of /cow showing in the desktop
+sed '/tmpfs/ s:$:\n/dev/loop1 /cow ext3 noauto 0 0:' scripts/casper-bottom/12fstab -i
 
 sed '/v3/ s/$/\npgrep orca || exit/' ubiquity-hooks/30accessibility -i
 
