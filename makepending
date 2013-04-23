@@ -23,7 +23,7 @@
 if [ $(git status -s | wc -l) != 0 ]
 then
     echo You have uncommited git changes, stopping
-    exit 1
+    [ 1$1 = 1"test" ] || exit 1
 fi
 
 PAIRS="robur-hardy taranis-lucid dagda-natty brigantia-oneiric toutatis-precise"
@@ -87,7 +87,7 @@ LIST=$(echo $LIST | cut -d" " -f2-)
 while [ "$LIST" != "EOL" ]
 do
     TEST=$(echo $LIST | cut -d" " -f1)
-    dpkg --compare-versions $HI lt $TEST && HI=$TEST
+    dpkg --compare-versions $HI lt $TEST 2>/dev/null && HI=$TEST
     LIST=$(echo $LIST | cut -d" " -f2-)
 done
 echo $HI
@@ -101,7 +101,7 @@ current=$( higher $LIST)
 LIST=$(egrep ^${package}_ $UPSTREAM)
 upstream=$( higher $LIST)
 
-if dpkg --compare-versions $current lt $upstream 
+if dpkg --compare-versions $current lt $upstream 2>/dev/null
 then
 
  #   echo Current version in $DISTRO: $current 1>&2
