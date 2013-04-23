@@ -68,9 +68,9 @@ sed 's/\(^MOZ_BUILD_UNOFFICIAL.*\)0/\1 1/' debian/config/branch.mk -i
 #TARBALL=$(ls *.tar.bz2)
 #tar -jxf $TARBALL
 #rm $TARBALL
-#sed  "s/^MOZ_APP_NAME\t.*/MOZ_APP_NAME\t\t:= abrowser/; s/firefox/abrowser/" debian/rules -i
-sed '1s/^/\nMOZ_APP_NAME\t\t:= abrowser/' -i debian/build/mozbuild.mk
-sed '1s/^/\nMOZ_PKG_NAME\t\t:= abrowser/' -i debian/build/mozbuild.mk
+#sed '1s/^/\nMOZ_APP_NAME\t\t:= abrowser/' -i debian/build/mozbuild.mk
+sed  "s/^MOZ_APP_NAME\t.*/MOZ_APP_NAME\t\t:= abrowser/;" debian/build/mozbuild.mk -i
+sed  "s/^MOZ_PKG_NAME\t.*/MOZ_PKG_NAME\t\t:= abrowser/;" debian/build/mozbuild.mk -i
 
 # Hack to avoid compilation to fail on 3.0x kernel
 #cp mozilla/security/coreconf/Linux2.6.mk mozilla/security/coreconf/Linux3.0.mk
@@ -135,7 +135,7 @@ cat << EOF |patch -p1 -N -r /dev/null
               toolbarname="&navbarCmd.label;" accesskey="&navbarCmd.accesskey;"
               fullscreentoolbar="true" mode="icons" customizable="true"
               iconsize="large"
--             defaultset="unified-back-forward-button,urlbar-container,reload-button,stop-button,search-container,home-button,bookmarks-menu-button-container,window-controls"
+-             defaultset="unified-back-forward-button,urlbar-container,reload-button,stop-button,search-container,webrtc-status-button,downloads-button,home-button,bookmarks-menu-button-container,window-controls"
 +             defaultset="unified-back-forward-button,reload-button,stop-button,home-button,urlbar-container,search-container,fullscreenflex,window-controls"
               context="toolbar-context-menu">
  
