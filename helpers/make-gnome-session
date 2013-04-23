@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=10
+VERSION=12
 COMPONENT=main
 QUILT=skip
 
@@ -39,44 +39,7 @@ debian/tmp/usr/share/gnome-session/sessions/gnome-classic.session
 EOF
 
 #% Add a wrapper for compiz
-cat << EOF > debian/scripts/trisquel-wm
-#!/bin/sh
-
-# Migrate the profile if needed
-[ -f ~/.config/profilemigrated ] || touch ~/.config/profilemigrated
-if ! grep $(lsb_release -r -s) -q ~/.config/profilemigrated ; then
-  rm ~/.cache/compiz* ~/.compiz* ~/.config/compiz*  -rf
-  for key in /apps/panel /apps/compiz /apps/compiz-1 /apps/compizconfig-1 /apps/compizconfig
-  do
-      gconftool --recursive-unset $key
-  done
-gsettings reset-recursively org.gnome.gnome-panel
-gnome-panel --replace
-
-lsb_release -r -s > ~/.config/profilemigrated
-fi
-
-WM=compiz
-FALLBACK=openbox
-which metacity && FALLBACK=metacity
-which compiz || WM=\$FALLBACK
-[ -f ~/.disable-compiz ] && WM=\$FALLBACK
-grep access=v3 /proc/cmdline -q && WM=\$FALLBACK
-[ \$(gsettings get org.gnome.desktop.a11y.applications screen-reader-enabled) = "true" ] && WM=\$FALLBACK
-
-# Ugly hack to fix a hard to catch race condition
-if gconftool --get /apps/metacity/general/titlebar_font |grep -q Cantarell
-then
-  if ! [ -f /usr/share/fonts/opentype/cantarell/Cantarell-Bold.otf ]
-  then
-    echo The gconf db seems corrupted, saving at ~/.gconf.broken and cleaning it up
-    cp -a ~/.gconf ~/.gconf.broken
-    gconftool --recursive-unset /
-  fi
-fi
-
-/usr/lib/gnome-session/gnome-session-check-accelerated && exec \$WM || exec \$FALLBACK
-EOF
+cp $DATA/trisquel-wm debian/scripts/trisquel-wm
 chmod 755 debian/scripts/trisquel-wm
 cat << EOF > debian/scripts/trisquel-wm.desktop
 [Desktop Entry]

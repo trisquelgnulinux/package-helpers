@@ -1,0 +1,151 @@
+#!/bin/sh
+
+set +e
+
+# Migrate the profile if needed
+[ -f ~/.config/profilemigrated ] || touch ~/.config/profilemigrated
+
+if ! grep 6.0 -q ~/.config/profilemigrated ; then
+  # Reset Compiz
+  rm ~/.cache/compiz* ~/.compiz* ~/.config/compiz*  -rf
+  for key in /apps/panel /apps/compiz /apps/compiz-1 /apps/compizconfig-1 /apps/compizconfig
+  do
+      gconftool --recursive-unset $key
+  done
+
+  # Update wallpaper if default is still used
+  if gsettings get org.gnome.desktop.background picture-uri |grep /usr/share/backgrounds/brigantia.jpg ; then
+    gsettings set org.gnome.desktop.background picture-uri 'file:///usr/share/backgrounds/toutatis.jpg'
+  fi
+
+  # Reset GNOME panel
+cat << EOF | dconf load /org/gnome/gnome-panel/
+[layout]
+object-id-list=['menu-bar', 'home', 'abrowser', 'window-list', 'notification-area', 'indicators', 'clock', 'show-desktop']
+toplevel-id-list=['panel']
+
+[layout/objects/abrowser-0/instance-config]
+location='file:///usr/share/applications/browser.desktop'
+
+[layout/objects/abrowser-0]
+object-iid='PanelInternalFactory::Launcher'
+pack-index=20
+toplevel-id='panel'
+
+[layout/objects/abrowser/instance-config]
+location='file:///usr/share/applications/browser.desktop'
+
+[layout/objects/abrowser]
+object-iid='PanelInternalFactory::Launcher'
+pack-index=20
+toplevel-id='panel'
+
+[layout/objects/clock]
+object-iid='ClockAppletFactory::ClockApplet'
+pack-index=10
+pack-type='end'
+toplevel-id='panel'
+
+[layout/objects/home/instance-config]
+location='file:///usr/share/applications/home.desktop'
+
+[layout/objects/home]
+object-iid='PanelInternalFactory::Launcher'
+pack-index=10
+pack-type='start'
+toplevel-id='panel'
+
+[layout/objects/indicators]
+object-iid='IndicatorAppletFactory::IndicatorApplet'
+pack-index=20
+pack-type='end'
+toplevel-id='panel'
+
+[layout/objects/menu-bar]
+object-iid='PanelInternalFactory::MenuButton'
+pack-index=0
+pack-type='start'
+toplevel-id='panel'
+
+[layout/objects/notification-area]
+object-iid='NotificationAreaAppletFactory::NotificationArea'
+pack-index=30
+pack-type='end'
+toplevel-id='panel'
+
+[layout/objects/show-desktop]
+object-iid='WnckletFactory::ShowDesktopApplet'
+pack-index=0
+pack-type='end'
+toplevel-id='panel'
+
+[layout/objects/window-list]
+object-iid='WnckletFactory::WindowListApplet'
+pack-index=30
+pack-type='start'
+toplevel-id='panel'
+
+[layout/toplevels/panel-0]
+animation-speed='fast'
+auto-hide=false
+auto-hide-size=1
+enable-arrows=true
+enable-buttons=false
+expand=true
+hide-delay=300
+monitor=0
+orientation='bottom'
+screen=0
+size=44
+unhide-delay=100
+x=0
+x-centered=false
+x-right=-1
+y=724
+y-bottom=0
+y-centered=false
+
+[layout/toplevels/panel]
+animation-speed='fast'
+auto-hide=false
+auto-hide-size=1
+enable-arrows=true
+enable-buttons=false
+expand=true
+hide-delay=300
+monitor=0
+orientation='bottom'
+screen=0
+size=44
+unhide-delay=100
+x=0
+x-centered=false
+x-right=-1
+y=724
+y-bottom=0
+y-centered=false
+EOF
+fi
+
+lsb_release -r -s > ~/.config/profilemigrated
+
+WM=compiz
+FALLBACK=openbox
+which metacity && FALLBACK=metacity
+which compiz || WM=$FALLBACK
+[ -f ~/.disable-compiz ] && WM=$FALLBACK
+grep access=v3 /proc/cmdline -q && WM=$FALLBACK
+[ $(gsettings get org.gnome.desktop.a11y.applications screen-reader-enabled) = "true" ] && WM=$FALLBACK
+
+# Ugly hack to fix a hard to catch race condition
+if gconftool --get /apps/metacity/general/titlebar_font |grep -q Cantarell
+then
+  if ! [ -f /usr/share/fonts/opentype/cantarell/Cantarell-Bold.otf ]
+  then
+    echo The gconf db seems corrupted, saving at ~/.gconf.broken and cleaning it up
+    cp -a ~/.gconf ~/.gconf.broken
+    gconftool --recursive-unset /
+  fi
+fi
+
+/usr/lib/gnome-session/gnome-session-check-accelerated && exec $WM || exec $FALLBACK
