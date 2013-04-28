@@ -23,7 +23,7 @@
 if [ $(git status -s | wc -l) != 0 ]
 then
     echo You have uncommited git changes, stopping
-    exit 1
+    [ 1$1 = 1"test" ] || exit 1
 fi
 
 PAIRS="robur-hardy taranis-lucid dagda-natty brigantia-oneiric toutatis-precise"
