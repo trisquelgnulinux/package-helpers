@@ -198,8 +198,8 @@ tmpumount(){
 }
 tmpmount(){
   [ $MEM -lt 16000000 ] && return
-  echo $PACKAGE | grep -q "linux" && return
   grep jails/$UPSTREAM-$ARCH/tmp /proc/mounts -q && tmpumount
+  echo $PACKAGE | grep -q "linux" && return
   mount -t tmpfs -o size=15G none jails/$UPSTREAM-$ARCH/tmp
 }
 
