@@ -91,9 +91,10 @@ replace firefox abrowser .
 replace Firefox Abrowser .
 replace FIREFOX ABROWSER .
 replace " Mozilla " " Trisquel " .
-sed -i '1s/^Source:.*/Source: firefox/' debian/control.in
+sed -i '2s/^Source:.*/Source: firefox/' debian/control.in
 replace PACKAGES/abrowser PACKAGES/firefox .
-sed s/Trisquel/Mozilla/ compare-locales/scripts/compare-locales -i
+sed s/Trisquel/Mozilla/ python/compare-locales/scripts/compare-locales -i
+sed s/Trisquel/Mozilla/ python/compare-locales/setup.py -i
 replace "iceweasel, abrowser" "iceweasel, firefox" .
 replace "Replaces: abrowser" "Replaces: firefox" .
 #sed s/Ubuntu/Trisquel/g debian/rules -i
