@@ -17,30 +17,35 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=11
+VERSION=4
 
 . ./config
 
 rm debian/control
 
-# Adjust codenames
-sed s/$UPSTREAM/$CODENAME/ -i debian/build/mozbuild.mk debian/patches/series.in debian/rules 
-
-# Disable globalmenu
-rm -rf rm ./debian/firefox-globalmenu* debian/globalmenu/ ./debian/patches/unity-globalmenu-build-support.patch
-sed -i /unity-globalmenu-build-support/d debian/patches/series.in
-
 # Make ubufox mandatory
 sed 's/Depends: lsb-release,/Depends: lsb-release, xul-ext-ubufox,/' -i debian/control.in
 sed 's/iceweasel,/iceweasel, firefox, icecat,/' -i debian/control.in
 
+# Enable gst support
+#apt-get install -y --force-yes libgstreamermm-0.10-dev
+#echo "ac_add_options --enable-gstreamer" >> debian/config/mozconfig.in
+
+# Locale packages should provide firefox-locale-$LANG
+sed "s/Provides.*/Provides: firefox-locale-@LANGCODE@/" -i debian/control.langpacks
+
 # Remove extra firefox metapackages
-#sed '/Package: firefox/,/It can be safely removed/d' -i debian/control.in
-sed -i 's/^Package: abrowser/Package: abrowser-old/' debian/control.in
+sed '/Package: firefox/,/It can be safely removed/d' -i debian/control.in
 
 # Remove Ubuntu bookmarks
 sed -i /ubuntu-bookmarks/d debian/patches/series.in
 rm debian/patches/ubuntu-bookmarks*
+
+# Disable globalmenu support
+sed -i /unity-globalmenu/d debian/patches/series.in
+rm ./debian/patches/unity-globalmenu-build-support.patch
+rm ./debian/globalmenu/ ./extensions/globalmenu/ -rf
+
 
 #Unbrand url codes for google and amazon
 #rm debian/patches/ubuntu-codes*
@@ -69,9 +74,9 @@ sed 's/\(^MOZ_BUILD_UNOFFICIAL.*\)0/\1 1/' debian/config/branch.mk -i
 #TARBALL=$(ls *.tar.bz2)
 #tar -jxf $TARBALL
 #rm $TARBALL
-#sed  "s/^MOZ_APP_NAME\t.*/MOZ_APP_NAME\t\t:= abrowser/; s/firefox/abrowser/" debian/rules -i
-sed '1s/^/\nMOZ_APP_NAME\t\t:= abrowser/' -i debian/build/mozbuild.mk
-sed '1s/^/\nMOZ_PKG_NAME\t\t:= abrowser/' -i debian/build/mozbuild.mk
+#sed '1s/^/\nMOZ_APP_NAME\t\t:= abrowser/' -i debian/build/mozbuild.mk
+sed  "s/^MOZ_APP_NAME\t.*/MOZ_APP_NAME\t\t:= abrowser/;" debian/build/mozbuild.mk -i
+sed  "s/^MOZ_PKG_NAME\t.*/MOZ_PKG_NAME\t\t:= abrowser/;" debian/build/mozbuild.mk -i
 
 # Hack to avoid compilation to fail on 3.0x kernel
 #cp mozilla/security/coreconf/Linux2.6.mk mozilla/security/coreconf/Linux3.0.mk
@@ -79,6 +84,7 @@ sed '1s/^/\nMOZ_PKG_NAME\t\t:= abrowser/' -i debian/build/mozbuild.mk
 ############################################################################3
 ############################################################################3
 ############################################################################3
+sed -i s/abrowser/abrowser-old/ debian/control.in
 sed "s_^Maintainer.*_Maintainer: $DEBFULLNAME <$DEBEMAIL>_g" -i debian/control.in
 
 # Replace Firefox branding
@@ -95,10 +101,7 @@ sed -i '1s/^Source:.*/Source: firefox/' debian/control.in
 replace PACKAGES/abrowser PACKAGES/firefox .
 sed s/Trisquel/Mozilla/ compare-locales/scripts/compare-locales -i
 replace "iceweasel, abrowser" "iceweasel, firefox" .
-replace "Replaces: abrowser" "Replaces: firefox, abrowser-branding" .
-sed '/app:Replaces/s/^Replaces:/Replaces: abrowser-branding, firefox,/' -i debian/control.in
-#sed '/app:Conflicts/s/^Conflicts:/Conflicts: abrowser-branding, firefox,/' -i debian/control.in
-sed '/Provides: www-browser/s/^Provides:/Provides: abrowser-branding,/' -i debian/control.in
+replace "Replaces: abrowser" "Replaces: firefox" .
 #sed s/Ubuntu/Trisquel/g debian/rules -i
 sed s/ubuntu/trisquel/g debian/distribution.ini debian/config/mozconfig.in -i
 sed 's/ubuntu_version/trisquel_version/; s/Ubuntu 10.10/Trisquel 4.0/; s/1010/40/' -i debian/abrowser.postinst.in
@@ -138,7 +141,7 @@ cat << EOF |patch -p1 -N -r /dev/null
               toolbarname="&navbarCmd.label;" accesskey="&navbarCmd.accesskey;"
               fullscreentoolbar="true" mode="icons" customizable="true"
               iconsize="large"
--             defaultset="unified-back-forward-button,urlbar-container,reload-button,stop-button,search-container,home-button,bookmarks-menu-button-container,window-controls"
+-             defaultset="unified-back-forward-button,urlbar-container,reload-button,stop-button,search-container,webrtc-status-button,downloads-button,home-button,bookmarks-menu-button-container,window-controls"
 +             defaultset="unified-back-forward-button,reload-button,stop-button,home-button,urlbar-container,search-container,fullscreenflex,window-controls"
               context="toolbar-context-menu">
  
@@ -278,21 +281,7 @@ replace "Trisquel Public" "Mozilla Public" .
 replace "Trisquel Foundation" "Mozilla Foundation" .
 replace "Trisquel Corporation" "Mozilla Corporation" .
 #sed -i 's/iceweasel, abrowser, icecat,/iceweasel, firefox, icecat,/g' debian/control.in
-sed -i 's/abrowser-old/firefox/g' debian/control.in
-sed -i 's/abrowser-gnome-support/firefox-gnome-support/g' debian/control.in
-
-sed -i '/Language packs below here/d' debian/control.in
-
-cat << EOF >> debian/control.in
-
-Package: firefox-gnome-support
-Architecture: all
-Description: Safe and easy web browser from Mozilla - transitional package
- This is a transitional package to ensure that upgrades work correctly.
- It can be safely removed
-
-# Language packs below here
-EOF
+sed '/Provides/s/abrowser-locale/firefox-locale/' -i debian/control.langpacks
 
 # Restore useragent to Firefox
 sed '/MOZILLA_UAVERSION/ s:Abrowser/:Firefox/:' -i netwerk/protocol/http/nsHttpHandler.cpp
