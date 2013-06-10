@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=4
+VERSION=5
 
 . ./config
 
@@ -100,6 +100,9 @@ replace "Replaces: abrowser" "Replaces: firefox" .
 #sed s/Ubuntu/Trisquel/g debian/rules -i
 sed s/ubuntu/trisquel/g debian/distribution.ini debian/config/mozconfig.in -i
 sed 's/ubuntu_version/trisquel_version/; s/Ubuntu 10.10/Trisquel 4.0/; s/1010/40/' -i debian/abrowser.postinst.in
+
+# abrowser-dev should provide firefox-dev
+sed '/Package: @MOZ_PKG_NAME@-dev/,/Description:/ s/Provides:/Provides:firefox-dev, /' debian/control.in -i
 
 # Redirect feedback menu
 sed s:input.mozilla.com/feedback:trisquel.info/contact: -i browser/base/content/utilityOverlay.js
