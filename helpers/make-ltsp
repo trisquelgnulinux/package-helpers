@@ -24,7 +24,7 @@ VERSION=1
 ln -s Debian-functions server/plugins/ltsp-build-client/Trisquel-functions
 cp -a server/plugins/ltsp-build-client/Ubuntu server/plugins/ltsp-build-client/Trisquel
 
-sed 's/main restricted universe multiverse/main/g;
+/bin/sed 's/main restricted universe multiverse/main/g;
 s:archive.ubuntu.com/ubuntu:archive.trisquel.info/trisquel:g;
 s:security.ubuntu.com/ubuntu:archive.trisquel.info/trisquel:g;
 s/ubuntu-desktop/trisquel/g;
@@ -33,7 +33,8 @@ s/ubuntu-standard/trisquel-recommended/g;
 s/ubuntu/trisquel/g;' server/plugins/ltsp-build-client/Trisquel/* -i
 
 sed 's/theme-ubuntu/theme-trisquel/g;' debian/control -i
-sed 's/Ubuntu/Trisquel/g' debian/ltsp-server.install -i
+sed '/ubuntu-font/d' debian/control -i
+sed 's/DESKTOP_SESSION=ubuntu/DESKTOP_SESSION=gnome-classic/' debian/40-ltsp -i
 
 replace edubuntu trisquel .
 replace Edubuntu Trisquel .
