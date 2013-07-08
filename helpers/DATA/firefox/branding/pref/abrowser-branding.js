@@ -10,6 +10,15 @@ pref("app.update.download.backgroundInterval", 60);
 // attempts fail.
 pref("app.update.url.manual", "http://trisquel.info/browser");
 // A default value for the "More information about this update" link
-// supplied in the "An update is available" page of the update wizard. 
+// supplied in the "An update is available" page of the update wizard.
 pref("app.update.url.details", "http://trisquel.info/browser");
 
+// Release notes and vendor URLs
+pref("app.releaseNotesURL", "http://trisquel.info/browser");
+pref("app.vendorURL", "http://trisquel.info/browser/");
+
+// Search codes belong only in builds with official branding
+pref("browser.search.param.yahoo-fr", "");
+pref("browser.search.param.yahoo-fr-cjkt", ""); // now unused
+pref("browser.search.param.yahoo-fr-ja", "");
+pref("browser.search.param.yahoo-f-CN", "");

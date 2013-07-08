@@ -38,7 +38,7 @@ sed "s/Provides.*/Provides: firefox-locale-@LANGCODE@/" -i debian/control.langpa
 sed '/Package: firefox/,/It can be safely removed/d' -i debian/control.in
 
 # Remove Ubuntu bookmarks
-sed -i /ubuntu-bookmarks/d debian/patches/series.in
+sed -i /ubuntu-bookmarks/d debian/patches/series
 rm debian/patches/ubuntu-bookmarks*
 
 #Unbrand url codes for google and amazon
@@ -105,7 +105,7 @@ sed 's/ubuntu_version/trisquel_version/; s/Ubuntu 10.10/Trisquel 4.0/; s/1010/40
 sed '/Package: @MOZ_PKG_NAME@-dev/,/Description:/ s/Provides:/Provides:firefox-dev, /' debian/control.in -i
 
 # Redirect feedback menu
-sed s:input.mozilla.com/feedback:trisquel.info/contact: -i browser/base/content/utilityOverlay.js
+sed s:input.mozilla.com/feedback:trisquel.info/contact: b2g/app/b2g.js -i
 
 # Make abrowser-locale-$lang provide firefox-locale-$lang
 #sed 's/Package:\(.*\)/Package:\1\nProvides: firefox-locale-@LANGCODE@/g' debian/control.langpacks* -i
