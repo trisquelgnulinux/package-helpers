@@ -62,15 +62,16 @@ EOF
 #sed 's/\(^MOZ_ENABLE_BREAKPAD.*\)1/\1 0/' -i debian/rules
 
 # Set release to unofficial
-sed 's/\(^MOZ_BUILD_UNOFFICIAL.*\)0/\1 1/' debian/config/branch.mk -i
+sed '/MOZ_BUILD_OFFICIAL/d' debian/config/branch.mk -i
+echo 'MOZ_BUILD_OFFICIAL    = 0' >> debian/config/branch.mk
 #sed "s/release$/$CODENAME/" -i debian/rules
 
 #TARBALL=$(ls *.tar.bz2)
 #tar -jxf $TARBALL
 #rm $TARBALL
 #sed '1s/^/\nMOZ_APP_NAME\t\t:= abrowser/' -i debian/build/mozbuild.mk
-sed  "s/^MOZ_APP_NAME\t.*/MOZ_APP_NAME\t\t:= abrowser/;" debian/build/mozbuild.mk -i
-sed  "s/^MOZ_PKG_NAME\t.*/MOZ_PKG_NAME\t\t:= abrowser/;" debian/build/mozbuild.mk -i
+sed  "s/^MOZ_APP_NAME\t.*/MOZ_APP_NAME\t\t:= abrowser/;" debian/build/config.mk -i
+sed  "s/^MOZ_PKG_NAME\t.*/MOZ_PKG_NAME\t\t:= abrowser/;" debian/build/config.mk -i
 
 # Hack to avoid compilation to fail on 3.0x kernel
 #cp mozilla/security/coreconf/Linux2.6.mk mozilla/security/coreconf/Linux3.0.mk
@@ -105,7 +106,7 @@ sed 's/ubuntu_version/trisquel_version/; s/Ubuntu 10.10/Trisquel 4.0/; s/1010/40
 sed '/Package: @MOZ_PKG_NAME@-dev/,/Description:/ s/Provides:/Provides:firefox-dev, /' debian/control.in -i
 
 # Redirect feedback menu
-sed s:input.mozilla.com/feedback:trisquel.info/contact: b2g/app/b2g.js -i
+#sed s:input.mozilla.com/feedback:trisquel.info/contact: b2g/app/b2g.js -i
 
 # Make abrowser-locale-$lang provide firefox-locale-$lang
 #sed 's/Package:\(.*\)/Package:\1\nProvides: firefox-locale-@LANGCODE@/g' debian/control.langpacks* -i
@@ -135,11 +136,11 @@ cat << EOF |patch -p1 -N -r /dev/null
  #ifdef MENUBAR_CAN_AUTOHIDE
               toolbarname="&menubarCmd.label;"
               accesskey="&menubarCmd.accesskey;"
-@@ -473,7 +473,7 @@
+@@ -493,7 +493,7 @@
               toolbarname="&navbarCmd.label;" accesskey="&navbarCmd.accesskey;"
               fullscreentoolbar="true" mode="icons" customizable="true"
               iconsize="large"
--             defaultset="unified-back-forward-button,urlbar-container,reload-button,stop-button,search-container,webrtc-status-button,downloads-button,home-button,bookmarks-menu-button-container,window-controls"
+-             defaultset="unified-back-forward-button,urlbar-container,reload-button,stop-button,search-container,webrtc-status-button,bookmarks-menu-button,downloads-button,home-button,window-controls"
 +             defaultset="unified-back-forward-button,reload-button,stop-button,home-button,urlbar-container,search-container,fullscreenflex,window-controls"
               context="toolbar-context-menu">
  
