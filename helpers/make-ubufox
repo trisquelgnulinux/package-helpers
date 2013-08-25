@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
+VERSION=5
 
 . ./config
 
@@ -134,6 +134,31 @@ pref("network.protocol-handler.app.apt+http","/usr/bin/apturl");
 pref("network.protocol-handler.warn-external.apt+http",false);
 pref("network.protocol-handler.external.apt",true);
 pref("network.protocol-handler.external.apt+http",true);
+
+// Privacy & Freedom Issues
+pref("privacy.donottrackheader.enabled", true);
+pref("dom.ipc.plugins.flash.subprocess.crashreporter.enabled", false);
+pref("browser.safebrowsing.enabled", false);
+pref("browser.safebrowsing.malware.enabled", false);
+pref("services.sync.privacyURL", "http://trisquel.info/en/legal");
+pref("social.enabled", false);
+pref("social.remote-install.enabled", false);
+pref("datareporting.healthreport.uploadEnabled", false);
+pref("social.toast-notifications.enabled", false);
+pref("gecko.handlerService.schemes.mailto.0.name", asl);
+pref("gecko.handlerService.schemes.mailto.1.name", ask);
+pref("handlerService.schemes.mailto.1.uriTemplate",);
+pref("gecko.handlerService.schemes.mailto.0.uriTemplate",);
+pref("browser.contentHandlers.types.0.title", ask);
+pref("browser.contentHandlers.types.0.uri",);
+pref("browser.contentHandlers.types.1.title", ask);
+pref("browser.contentHandlers.types.1.uri", );
+pref("gecko.handlerService.schemes.webcal.0.name", ask);
+pref("gecko.handlerService.schemes.webcal.0.uriTemplate",);
+pref("gecko.handlerService.schemes.ircs.0.name", ask);
+pref("gecko.handlerService.schemes.ircs.0.uriTemplate",);
+pref("datareporting.healthreport.uploadEnabled", false);
+pref("datareporting.healthreport.service.enabled", false);
 EOF
 
 sed '/You can uninstall/d; s/ask.com/Duck Duck GO!/; /Add the following options/d; /Get help on-line/d; /Help translating/d; /Trisquel Release/d; ' debian/control -i
