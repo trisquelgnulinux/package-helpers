@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=4
 COMPONENT=main
 
 . ./config
@@ -29,6 +29,15 @@ replace "contrib non-free" extras .
 replace non-free extras .
 replace contrib universe doc
 replace contrib universe po
+
+# Ubuntu link to changelogs https://trisquel.info/en/issues/9967 
+replace "http://changelogs.ubuntu.com/changelogs" "http://packages.trisquel.info/changelogs" .
+sed 's!http://changelogs.ubuntu.com/changelogs!http://packages.trisquel.info/changelogs!' -i debian/apt.conf.changelog
+
+#Ubuntu references in the doc
+#replace Ubuntu Trisquel .
+#replace ubuntu-archive-keyring .
+#replace ubuntu-archive-removed-keys .
 
 cat << EOF > ./test/interactive-helper/networkless-install-fixes/sources.test.list
 deb http://archive.trisquel.info/trisquel/ $CODENAME main
@@ -78,7 +87,7 @@ EOF
 ## end non-free examples
 
 
-sed -i 's_http://archive.ubuntu.com/ubuntu/project/_http://archive.trisquel.info/trisquel/_g; s/ubuntu-archive-keyring/trisquel-archive-keyring/g; s/ubuntu-keyring/trisquel-keyring/g; ' cmdline/apt-key debian/control*
+/bin/sed -i 's_http://archive.ubuntu.com/ubuntu/project/_http://archive.trisquel.info/trisquel/_g; s/ubuntu-archive-keyring/trisquel-archive-keyring/g; s/ubuntu-keyring/trisquel-keyring/g; ' cmdline/apt-key debian/control*
 replace Ubuntu Trisquel  methods/http.cc
 replace ubuntu-archive.gpg trisquel-archive.gpg .
 
