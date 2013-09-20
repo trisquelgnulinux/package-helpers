@@ -84,4 +84,8 @@ rpl ubuntu-archive-keyring trisquel-archive-keyring . -R
 changelog "Rebranded and adapted for Trisquel"
 compile
 
+if [ $(arch) = i686 ]; then
+cp build/tmp/netboot_non-pae/mini.iso build/tmp/netboot_non-pae/initrd.gz /root/
+else
 cp build/tmp/netboot/mini.iso build/tmp/netboot/initrd.gz /root/
+fi
