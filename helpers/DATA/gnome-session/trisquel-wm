@@ -133,7 +133,7 @@ WM=compiz
 FALLBACK=openbox
 which metacity && FALLBACK=metacity
 which compiz || WM=$FALLBACK
-[ -f ~/.disable-compiz ] && WM=$FALLBACK
+[ -f ~/.disablecompiz ] && WM=$FALLBACK
 grep access=v3 /proc/cmdline -q && WM=$FALLBACK
 [ $(gsettings get org.gnome.desktop.a11y.applications screen-reader-enabled) = "true" ] && WM=$FALLBACK
 
