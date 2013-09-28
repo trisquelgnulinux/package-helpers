@@ -311,6 +311,8 @@ fi
 exit 0 ' >> debian/abrowser.postinst.in
 
 debian/rules debian/control
+touch -d "yesterday" debian/control
+debian/rules debian/control
 
 changelog  "Rebranded for Trisquel"
 
