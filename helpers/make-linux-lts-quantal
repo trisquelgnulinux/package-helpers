@@ -24,7 +24,7 @@ VERSION=2
 
 patch -p1 < $DATA/megaraid.patch
 
-sh $DATA/deblob-3.5
+sh $DATA/deblob-3.5 --force
 
 # Compile with less modules and avoid abi check
 echo 'skipmodule = true' >> debian.master/rules.d/0-common-vars.mk
