@@ -88,8 +88,8 @@ deb $LOCALMIRROR $CODENAME main
 deb $LOCALMIRROR $CODENAME-updates main
 deb $LOCALMIRROR $CODENAME-security main
 
-deb $DEVELMIRROR $CODENAME main
-deb-src $DEVELMIRROR $CODENAME main
+#deb $DEVELMIRROR $CODENAME main
+#deb-src $DEVELMIRROR $CODENAME main
 EOF
 
 [ "1$EXTERNAL" != "1" ] && eval echo "$EXTERNAL" >> /etc/apt/sources.list

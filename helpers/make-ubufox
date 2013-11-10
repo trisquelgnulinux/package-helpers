@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=5
+VERSION=7
 
 . ./config
 
@@ -159,6 +159,7 @@ pref("gecko.handlerService.schemes.ircs.0.name", ask);
 pref("gecko.handlerService.schemes.ircs.0.uriTemplate",);
 pref("datareporting.healthreport.uploadEnabled", false);
 pref("datareporting.healthreport.service.enabled", false);
+pref("browser.slowStartup.notificationDisabled", true);
 EOF
 
 sed '/You can uninstall/d; s/ask.com/Duck Duck GO!/; /Add the following options/d; /Get help on-line/d; /Help translating/d; /Trisquel Release/d; ' debian/control -i
