@@ -1,0 +1,55 @@
+#!/bin/sh
+#
+#    Copyright (C) 2008-2013  Rubén Rodríguez <ruben@trisquel.info>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+
+VERSION=1
+
+. ./config
+
+#patch -p1 < $DATA/megaraid.patch
+
+sh $DATA/deblob-3.11 --force
+
+rm firmware -rf
+cp -a $DATA/firmware .
+
+# Compile with less modules and avoid abi check
+echo 'skipmodule = true' >> debian.master/rules.d/0-common-vars.mk
+echo 'skipabi = true' >> debian.master/rules.d/0-common-vars.mk
+echo 'skipmodule = true' >> debian/rules.d/0-common-vars.mk
+echo 'skipabi = true' >> debian/rules.d/0-common-vars.mk
+
+line=$(grep -n ')-Ubuntu' debian/rules.d/0-common-vars.mk|cut -d: -f1)
+sed $(expr $line - 1 ),$(expr $line + 1 )d debian/rules.d/0-common-vars.mk -i
+sed s/family=ubuntu/family=trisquel/ -i debian/rules.d/0-common-vars.mk
+
+rename s/ubuntu/trisquel/ debian.*/config/config.common.ubuntu 
+
+sed 's/Linux/Linux-libre/g' debian/control debian/control.stub -i
+
+sed '/^firmware/d' ./debian*/abi/*/fwinfo -i
+echo > ./debian.saucy/d-i/firmware/nic-modules
+echo > ./debian.saucy/d-i/firmware/scsi-modules
+
+changelog "Removed non-free bits"
+
+cp debian/changelog debian.master/changelog
+cp debian/changelog debian.saucy/changelog
+
+PARALLEL=true compile
