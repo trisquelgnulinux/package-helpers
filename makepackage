@@ -94,6 +94,7 @@ createjail () {
     mkdir $CHROOT-tmp
     mount -t tmpfs -o size=500M none $CHROOT-tmp
     debootstrap --arch=$ARCH $UPSTREAM $CHROOT-tmp $MIRROR
+    fuser -k $CHROOT-tmp
     cp -a $CHROOT-tmp $CHROOT
     umount $CHROOT-tmp
     rm $CHROOT-tmp -rf

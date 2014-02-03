@@ -45,12 +45,12 @@ hostname devel.trisquel.info
 export DEBIAN_FRONTEND=noninteractive
 export DEBEMAIL=trisquel-devel@listas.trisquel.info
 export DEBFULLNAME="Trisquel GNU/Linux developers"
-export CODENAME=toutatis
-export REVISION=6.0
+export CODENAME=belenos
+export REVISION=7.0
 export RELEASE=trisquel
 export DOMAIN=trisquel.info
-export UPSTREAM=precise
-export UPSTREAMRELEASE=12.04
+export UPSTREAM=trusty
+export UPSTREAMRELEASE=14.04
 MIRROR=http://archive.ubuntu.com/ubuntu
 DEVELMIRROR=http://devel.trisquel.info/trisquel/$CODENAME
 LOCALMIRROR=http://archive.trisquel.info/trisquel
@@ -84,9 +84,9 @@ deb-src $MIRROR $UPSTREAM main universe
 deb-src $MIRROR $UPSTREAM-updates main universe
 deb-src $MIRROR $UPSTREAM-security main universe
 
-deb $LOCALMIRROR $CODENAME main
-deb $LOCALMIRROR $CODENAME-updates main
-deb $LOCALMIRROR $CODENAME-security main
+#deb $LOCALMIRROR $CODENAME main
+#deb $LOCALMIRROR $CODENAME-updates main
+#deb $LOCALMIRROR $CODENAME-security main
 
 #deb $DEVELMIRROR $CODENAME main
 #deb-src $DEVELMIRROR $CODENAME main
