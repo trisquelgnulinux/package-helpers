@@ -17,18 +17,30 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 COMPONENT=main
 
 . ./config
 
 cp $DATA/trisquel-archive.gpg share
+rm share/ubuntu-archive.gpg
+replace ubuntu-keyring trisquel-keyring .
+
+sed '/VERSION/s/ubuntu/trisquel/' -i configure
 
 # remove non-free examples https://trisquel.info/en/issues/5518
-replace "contrib non-free" extras .
-replace non-free extras .
+sed '/non-free/d' -i ./test/integration/Packages-ubuntu-bug-614993 ./test/integration/status-ubuntu-bug-614993
+replace "contrib main non-free" main .
+replace "contrib non-free" main .
+replace "main contrib non-free" main .
+replace "contrib main" main .
+replace "contrib" main test
+
+sed "s/'main', 'contrib', 'non-free'/'main'/" -i ./dselect/setup
+
 replace contrib universe doc
 replace contrib universe po
+replace non-free main .
 
 # Ubuntu link to changelogs https://trisquel.info/en/issues/9967 
 replace "http://changelogs.ubuntu.com/changelogs" "http://packages.trisquel.info/changelogs" .

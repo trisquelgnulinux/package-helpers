@@ -17,22 +17,17 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
-QUILT=skip
+VERSION=2
 NETINST=true
 
 . ./config
 
-cat << EOF > debian/libnewt0.52.postinst
-#!/bin/sh
-set -e
-
-#DEBHELPER#
+rm debian/palette.ubuntu
+cat << EOF > debian/palette.trisquel
+white,blue,black,lightgray,black,lightgray,white,black,red,lightgray,lightgray,red,red,lightgray,lightgray,blue,lightgray,red,lightgray,blue,blue,lightgray,black,lightgray,lightgray,blue,black,lightgray,lightgray,red,white,blue,lightgray,blue,blue,red,blue,lightgray,black,lightgray,lightgray,red,black,brown
 EOF
 
-rm debian/patches/801_configurable-palette.patch
-sed /palette/d -i debian/libnewt0.52.install
-rm debian/palette*
+sed 's/ubuntu/trisquel/' -i ./debian/libnewt0.52.install ./debian/libnewt0.52.postinst
 
 changelog "Color palette set back to default"
 

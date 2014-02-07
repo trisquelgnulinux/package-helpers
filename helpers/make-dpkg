@@ -18,12 +18,12 @@
 #
 
 VERSION=1
-FAKEROOT=true
+#FAKEROOT=true
 COMPONENT=main
 
 . ./config
 
-sed '/x86_64-linux-gnu/,/endif/ d' debian/rules -i
+#sed '/x86_64-linux-gnu/,/endif/ d' debian/rules -i
 
 cat << EOF > scripts/t/origins/trisquel
 Vendor: Trisquel
@@ -59,7 +59,7 @@ EOF
 cp $DATA/Trisquel.pm scripts/Dpkg/Vendor/Trisquel.pm
 
 
-changelog "Multiarch disabled by default"
+changelog "Compiled for Trisquel"
 
 compile
 

@@ -24,8 +24,13 @@ COMPONENT=main
 
 mkdir trisquel-tasks
 cp $DATA/* trisquel-tasks
+sed s/mythbuntu/trisquel-pro/g Makefile -i
+sed s/lubuntu/trisquel-sugar/g Makefile -i
+sed s/xubuntu/trisquel-mini/g Makefile -i
+sed s/edubuntu/trisquel-edu/g Makefile -i
+sed s/kubuntu/triskel/g Makefile -i
 sed s/ubuntu/trisquel/g Makefile -i
-sed s/$UPSTREAM/$CODENAME/g Makefile -i
+sed "/USUITE/s/.*/USUITE=$CODENAME/" Makefile -i
 sed 's/\(UFLAVOURS=\).*/\1trisquel-desktop triskel trisquel-mini trisquel-sugar trisquel-edu trisquel-pro trisquel-console/'  Makefile -i
 
 changelog "Added Trisquel's tasks"
