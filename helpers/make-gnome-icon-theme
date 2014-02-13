@@ -32,8 +32,8 @@ sed '/256/d' -i debian/rules
 rm -rf debian/ubuntu-icons/*/mimetypes
 
 find | grep ubuntu-logo | xargs rename s/ubuntu-logo/trisquel-logo/
-replace ubuntu-logo trisquel-logo .
-replace ubuntu-icons trisquel-icons .
+replace ubuntu-logo trisquel-logo debian
+replace ubuntu-icons trisquel-icons debian
 mv debian/ubuntu-icons debian/trisquel-icons
 
 changelog "Rebranded for Trisquel"
