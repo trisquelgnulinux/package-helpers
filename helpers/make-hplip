@@ -53,9 +53,9 @@ sed -i 's/plugin=2/plugin=0/g' $printers
 rm $tmp $tmp2
 
 rm debian/patches/hp_photosmart_pro_b9100_support.dpatch
-sed -i '/hp_photosmart_pro_b9100_support.dpatch/d' debian/patches/00list
+sed -i '/hp_photosmart_pro_b9100_support.dpatch/d' debian/patches/series
 rm debian/patches/ubuntu-hp-mkuri-notification-text.dpatch
-sed -i '/ubuntu-hp-mkuri-notification-text.dpatch/d' debian/patches/00list
+sed -i '/ubuntu-hp-mkuri-notification-text.dpatch/d' debian/patches/series
 rm debian/local/scripts/hp-plugin-ubuntu
 sed /hp-plugin-ubuntu/d ./debian/rules -i
 
