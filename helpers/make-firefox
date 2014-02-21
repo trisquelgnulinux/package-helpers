@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=7
+VERSION=12
 
 . ./config
 
@@ -30,9 +30,21 @@ cat $DATA/settings.js >> debian/vendor-firefox.js
 #sed 's/Depends: lsb-release,/Depends: lsb-release, xul-ext-ubufox,/' -i debian/control.in
 #sed 's/iceweasel,/iceweasel, firefox, icecat,/' -i debian/control.in
 
+
+sed '/mozilla.org\/legal/d' -i services/healthreport/healthreport-prefs.js
+cat << EOF >>services/healthreport/healthreport-prefs.js
+pref("datareporting.healthreport.infoURL", "https://trisquel.info/legal");
+EOF
+
+sed 's%https://www.mozilla.org/legal/privacy/%https://trisquel.info/legal%' -i ./modules/libpref/src/init/all.js ./browser/app/profile/firefox.js ./browser/base/content/aboutDialog.xul ./toolkit/content/aboutRights.xhtml
+
+sed 's%https://www.mozilla.org/firefox/central/%https://trisquel.info/browser%' -i browser/base/content/browser-appmenu.inc
+
 # Enable gst support
 apt-get install -y --force-yes libgstreamermm-0.10-dev
 echo "ac_add_options --enable-gstreamer" >> debian/config/mozconfig.in
+
+sed 's/com.ubuntu/org.trisquel/' -i debian/config/mozconfig.in
 
 # Locale packages should provide firefox-locale-$LANG
 sed "s/Provides.*/Provides: firefox-locale-@LANGCODE@/" -i debian/control.langpacks
@@ -45,8 +57,9 @@ sed -i /ubuntu-bookmarks/d debian/patches/series
 rm debian/patches/ubuntu-bookmarks*
 
 #Unbrand url codes for google and amazon
-#rm debian/patches/ubuntu-codes*
-#sed /ubuntu-codes/d debian/patches/series.in -i
+find debian/searchplugins |grep google| xargs -i /bin/sed '/ubuntu/d; /channel/d' -i {}
+find debian/searchplugins |grep duck| xargs -i /bin/sed 's/canonical/trisquel/' -i {}
+find debian/searchplugins |grep amazon| xargs -i /bin/sed '/canoniccom/d;' -i {}
 
 # contact link
 sed 's_https://input.mozilla.org/feedback_https://trisquel.info/contact_' -i browser/base/content/utilityOverlay.js
@@ -63,24 +76,8 @@ app.distributor.channel = "trisquel"
 app.partner.ubuntu = "trisquel"
 EOF
 
-# speed up build process
-#sed 's/\(^MOZ_WANT_UNIT_TESTS.*\)1/\1 0/' -i debian/rules
-#sed 's/\(^MOZ_ENABLE_BREAKPAD.*\)1/\1 0/' -i debian/rules
-
-# Set release to unofficial
-sed '/MOZ_BUILD_OFFICIAL/d' debian/config/branch.mk -i
-echo 'MOZ_BUILD_OFFICIAL    = 0' >> debian/config/branch.mk
-#sed "s/release$/$CODENAME/" -i debian/rules
-
-#TARBALL=$(ls *.tar.bz2)
-#tar -jxf $TARBALL
-#rm $TARBALL
-#sed '1s/^/\nMOZ_APP_NAME\t\t:= abrowser/' -i debian/build/mozbuild.mk
 sed  "s/^MOZ_APP_NAME\t.*/MOZ_APP_NAME\t\t:= abrowser/;" debian/build/config.mk -i
 sed  "s/^MOZ_PKG_NAME\t.*/MOZ_PKG_NAME\t\t:= abrowser/;" debian/build/config.mk -i
-
-# Hack to avoid compilation to fail on 3.0x kernel
-#cp mozilla/security/coreconf/Linux2.6.mk mozilla/security/coreconf/Linux3.0.mk
 
 ############################################################################3
 ############################################################################3
@@ -94,6 +91,7 @@ find -type f | grep firefox | xargs rename s/firefox/abrowser/
 replace(){
 find $3 -type f |grep -v changelog |grep -v copyright | xargs -i sed -i s^"$1"^"$2"^g "{}"
 }
+replace "Mozilla Firefox" "Abrowser" .
 replace firefox abrowser .
 replace Firefox Abrowser .
 replace FIREFOX ABROWSER .
@@ -105,30 +103,32 @@ sed s/Trisquel/Mozilla/ python/compare-locales/setup.py -i
 replace "iceweasel, abrowser" "iceweasel, firefox" .
 replace "Replaces: abrowser" "Replaces: firefox" .
 #sed s/Ubuntu/Trisquel/g debian/rules -i
-sed s/ubuntu/trisquel/g debian/distribution.ini debian/config/mozconfig.in -i
+sed s/ubuntu/trisquel/g debian/distribution.ini -i
 sed 's/ubuntu_version/trisquel_version/; s/Ubuntu 10.10/Trisquel 4.0/; s/1010/40/' -i debian/abrowser.postinst.in
 
 # abrowser-dev should provide firefox-dev
 sed '/Package: @MOZ_PKG_NAME@-dev/,/Description:/ s/Provides:/Provides:firefox-dev, /' debian/control.in -i
 
-# Redirect feedback menu
-#sed s:input.mozilla.com/feedback:trisquel.info/contact: b2g/app/b2g.js -i
-
-# Make abrowser-locale-$lang provide firefox-locale-$lang
-#sed 's/Package:\(.*\)/Package:\1\nProvides: firefox-locale-@LANGCODE@/g' debian/control.langpacks* -i
-
 # Branding files
 rm browser/branding/* -rf
-cp -a $DATA/branding/ browser/branding/$CODENAME
+cp -a $DATA/branding/ browser/branding/official
 cat << EOF > debian/config/branch.mk
-CHANNEL                 = $CODENAME
+CHANNEL                 = release
 MOZ_WANT_UNIT_TESTS     = 0
-MOZ_BUILD_UNOFFICIAL    = 1
+# MOZ_BUILD_OFFICIAL    = 1
 MOZ_ENABLE_BREAKPAD     = 0
 
 MOZILLA_REPO = http://hg.mozilla.org/releases/mozilla-release
 L10N_REPO = http://hg.mozilla.org/releases/l10n/mozilla-release
 EOF
+
+# Replace about:home
+rm browser/base/content/abouthome -rf
+cp $DATA/abouthome -a browser/base/content
+sed '/mozilla.*png/d' -i ./browser/base/jar.mn
+
+# Delete stuff we don't use and that may contain trademaked logos
+rm -rf ./browser/metro ./mobile ./addon-sdk/source/doc/static-files/media ./browser/themes/windows ./browser/themes/osx ./b2b
 
 #set default layout
 cat << EOF |patch -p1 -N -r /dev/null
@@ -232,7 +232,7 @@ cat << EOF >> toolkit/mozapps/extensions/content/extensions.css
 }
 EOF
 
-find -wholename '*branding/brand.dtd' |xargs sed 's/trademarkInfo.part1.*/trademarkInfo.part1 "">/' -i
+find -wholename '*/brand.dtd' |xargs /bin/sed 's/trademarkInfo.part1.*/trademarkInfo.part1 "">/' -i
 
 for STRING in community.end3 community.exp.end community.start2 community.mozillaLink community.middle2 community.creditsLink community.end2 contribute.start contribute.getInvolvedLink contribute.end channel.description.start channel.description.end
 do
@@ -262,10 +262,6 @@ sed '/MOZILLA_UAVERSION/ s:Abrowser/:Firefox/:' -i netwerk/protocol/http/nsHttpH
 # Set migrator scripts
 cp browser/components/migration/src/FirefoxProfileMigrator.js browser/components/migration/src/AbrowserProfileMigrator.js
 sed 's/Abrowser/Firefox/g; s/abrowser/firefox/g' -i browser/components/migration/src/FirefoxProfileMigrator.js
-
-#tar -cjf $TARBALL mozilla
-#rm mozilla -rf
-#cp $DATA/control debian/control
 
 # Postinst script to manage profile migration and system links
 echo '
