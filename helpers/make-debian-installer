@@ -38,6 +38,13 @@ apt-get update
 apt-get install trisquel-keyring
 
 find build/pkg-lists -type f | xargs sed -i /media-retriever/d
+cat << EOF >> ./build/pkg-lists/base
+
+# Free wifi firmware files
+firmware-carl9170-udeb
+open-ath9k-htc-firmware-udeb
+openfwwf-udeb
+EOF
 
 LASTKERNEL=$(apt-cache showsrc linux-libc-dev|grep ^Version |head -n1|cut -d" " -f2|cut -d. -f1,2,3)
 /bin/sed -i "s/^BASEVERSION.*/BASEVERSION = $LASTKERNEL/g" ./build/config/i386.cfg ./build/config/amd64.cfg
