@@ -23,21 +23,21 @@ VERSION=3
 . ./config
 
 cat << EOF | patch -p1
---- software-properties-0.76.7/softwareproperties/SoftwareProperties.py	2010-09-20 13:52:10.000000000 +0100
-+++ software-properties-0.76.7-2/softwareproperties/SoftwareProperties.py	2011-04-17 02:49:49.000000000 +0100
-@@ -644,7 +644,14 @@
+--- software-properties-0.82.7.7.orig/softwareproperties/SoftwareProperties.py  2013-12-06 23:44:01.000000000 +0000
++++ software-properties-0.82.7.7/softwareproperties/SoftwareProperties.py       2014-03-18 03:45:07.000000000 +0000
+@@ -694,7 +694,14 @@
      Add a source with the given apt line and auto-add
      signing key if we have it in the whitelist
      """
--    (deb_line, file) = expand_ppa_line(line.strip(), self.distro.codename)
+-    (deb_line, file) = expand_shortcut_line(line.strip(), self.distro.codename)
 +    codenames = {}
 +    codenames["toutatis"] = "precise" 
 +    codenames["brigantia"] = "oneiric" 
 +    codenames["dagda"] = "natty"
 +    codenames["slaine"] = "maverick"
 +    codenames["taranis"] = "lucid"
-+    codenames["awen"] = "karmic" 
-+    (deb_line, file) = expand_ppa_line(line.strip(), codenames[self.distro.codename])
++    codenames["awen"] = "karmic"
++    (deb_line, file) = expand_shortcut_line(line.strip(), codenames[self.distro.codename])
      deb_line = self.expand_http_line(deb_line)
      debsrc_line = 'deb-src' + deb_line[3:]
      new_deb_entry = SourceEntry(deb_line, file)

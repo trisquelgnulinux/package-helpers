@@ -300,6 +300,6 @@ replace Trisquel-Gettext Ubuntu-Gettext . -R
 
 changelog "Compiled for Trisquel"
 
-compile
+PARALLEL=false compile
 
 cp ../dist-upgrader* /root
