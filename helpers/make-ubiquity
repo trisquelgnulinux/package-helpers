@@ -17,9 +17,12 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=8
+VERSION=11
 
 . ./config
+
+replace shim-signed shim .
+replace grub-efi-amd64-signed grub-efi-amd64 .
 
 cp $DATA/trisquel_installed.png pixmaps
 rm pixmaps/ubuntu_installed.png
@@ -36,7 +39,7 @@ sed 's:\(targetdb)\):\1\n        os.system("sudo chmod 644 /target/var/cache/deb
 # Fix https://bugs.launchpad.net/ubuntu/+source/ubiquity/+bug/1080701
 sed '/from ubiquity import osextras/s/$/\nos.system("sudo swapoff -a")/' bin/ubiquity-wrapper -i
 
-for i in $(ls -1 d-i/source/apt-setup/generators |grep -v 01setup) canonical.com security.ubuntu.com extras.ubuntu.com
+for i in $(ls -1 d-i/source/apt-setup/generators |grep -v 01setup |grep -v cdrom) canonical.com security.ubuntu.com extras.ubuntu.com
 do
     /bin/sed /$i/d -i debian/ubiquity.install-any d-i/source/apt-setup/debian/*.install
 done
@@ -46,7 +49,7 @@ echo "d-i/source/apt-setup/generators/99trisquel usr/lib/ubiquity/apt-setup/gene
 cp $DATA/trisquel.png desktop/ubiquity.png
 
 # remove Ubuntu apt setup for the installer
-find d-i/source/apt-setup/generators -type f | grep -v 01setup | xargs -r rm
+find d-i/source/apt-setup/generators -type f | grep -v 01setup | grep -v cdrom | xargs -r rm
 cat << EOF1 > d-i/source/apt-setup/generators/99trisquel
 #!/bin/sh
 set -e
@@ -74,7 +77,7 @@ done
 MIRROR=\$FASTEST
 RELEASE=\$(lsb_release -c | cut -f 2)
 
-cat << EOF > \$file
+cat << EOF >> \$file
 # Trisquel repositories for supported software and updates
 deb \$MIRROR \$RELEASE main
 deb-src \$MIRROR \$RELEASE main
@@ -122,9 +125,9 @@ done
 cat << EOF1 >> scripts/apt-setup
 
 #Trisquel hack to regenerate ssl keys after installation
-rm -f /target/etc/ssh/ssh_host_*
-ssh-keygen -q -f /target/etc/ssh/ssh_host_rsa_key -N '' -t rsa
-ssh-keygen -q -f /target/etc/ssh/ssh_host_dsa_key -N '' -t dsa
+#rm -f /target/etc/ssh/ssh_host_*
+#ssh-keygen -q -f /target/etc/ssh/ssh_host_rsa_key -N '' -t rsa
+#ssh-keygen -q -f /target/etc/ssh/ssh_host_dsa_key -N '' -t dsa
 if [ -d /etc/italc ]
 then
     rm -rf /etc/italc/*
@@ -179,5 +182,5 @@ changelog "Adapted for Trisquel"
 
 rm -rf debian/source
 
-compile
+PARALLEL=false compile
 
