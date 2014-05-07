@@ -49,8 +49,8 @@ pref("general.useragent.compatMode.abrowser",true);
 
 // Startup pages
 pref ("browser.startup.page" , 3);
-//pref ("browser.startup.homepage" , "http://trisquel.info");
-//pref ("startup.homepage_welcome_url", "http://trisquel.info/welcome");
+pref ("browser.startup.homepage" , "http://trisquel.info");
+pref ("startup.homepage_welcome_url", "http://trisquel.info/welcome");
 //pref ("startup.homepage_override_url" , "http://trisquel.info/newbrowser");
 
 // Preferences for the Get Add-ons panel
@@ -59,6 +59,9 @@ pref ("extensions.getAddons.search.url", "http://trisquel.info");
 
 // Help URL
 pref ("app.support.baseURL", "http://trisquel.info/wiki/");
+pref ("browser.uitour.url", "http://trisquel.info/browser");
+pref ("plugins.update.url", "http://trisquel.info/browser");
+pref ("browser.customizemode.tip0.learnMoreUrl", "http://trisquel.info/browser");
 
 // Dictionary download preference
 pref("browser.dictionaries.download.url", "http://dictionaries.mozdev.org/");

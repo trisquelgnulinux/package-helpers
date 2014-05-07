@@ -17,11 +17,14 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=12
+VERSION=19
 
 . ./config
 
 rm debian/control
+
+# revert https://bug851702.bugzilla.mozilla.org/attachment.cgi?id=733785
+patch -p1 -R < $DATA/enable-js-options.patch
 
 # js settings
 cat $DATA/settings.js >> debian/vendor-firefox.js
@@ -38,7 +41,7 @@ EOF
 
 sed 's%https://www.mozilla.org/legal/privacy/%https://trisquel.info/legal%' -i ./modules/libpref/src/init/all.js ./browser/app/profile/firefox.js ./browser/base/content/aboutDialog.xul ./toolkit/content/aboutRights.xhtml
 
-sed 's%https://www.mozilla.org/firefox/central/%https://trisquel.info/browser%' -i browser/base/content/browser-appmenu.inc
+#sed 's%https://www.mozilla.org/firefox/central/%https://trisquel.info/browser%' -i browser/base/content/browser-appmenu.inc
 
 # Enable gst support
 apt-get install -y --force-yes libgstreamermm-0.10-dev
@@ -60,6 +63,8 @@ rm debian/patches/ubuntu-bookmarks*
 find debian/searchplugins |grep google| xargs -i /bin/sed '/ubuntu/d; /channel/d' -i {}
 find debian/searchplugins |grep duck| xargs -i /bin/sed 's/canonical/trisquel/' -i {}
 find debian/searchplugins |grep amazon| xargs -i /bin/sed '/canoniccom/d;' -i {}
+
+replace "mozilla.com/plugincheck" "trisquel.info/browser" .
 
 # contact link
 sed 's_https://input.mozilla.org/feedback_https://trisquel.info/contact_' -i browser/base/content/utilityOverlay.js
@@ -88,6 +93,7 @@ sed "s_^Maintainer.*_Maintainer: $DEBFULLNAME <$DEBEMAIL>_g" -i debian/control.i
 # Replace Firefox branding
 find -type d | grep firefox | xargs rename s/firefox/abrowser/
 find -type f | grep firefox | xargs rename s/firefox/abrowser/
+find -type f | grep Firefox | xargs rename s/Firefox/Abrowser/
 replace(){
 find $3 -type f |grep -v changelog |grep -v copyright | xargs -i sed -i s^"$1"^"$2"^g "{}"
 }
@@ -130,50 +136,8 @@ sed '/mozilla.*png/d' -i ./browser/base/jar.mn
 # Delete stuff we don't use and that may contain trademaked logos
 rm -rf ./browser/metro ./mobile ./addon-sdk/source/doc/static-files/media ./browser/themes/windows ./browser/themes/osx ./b2b
 
-#set default layout
-cat << EOF |patch -p1 -N -r /dev/null
---- mozilla/browser/base/content/browser.xul.old	2011-07-18 02:35:10.000000000 +0000
-+++ mozilla/browser/base/content/browser.xul	2011-07-18 02:40:51.000000000 +0000
-@@ -477,6 +477,7 @@
-              defaultset="menubar-items"
-              mode="icons" iconsize="small" defaulticonsize="small"
-              lockiconsize="true"
-+             autohide="true"
- #ifdef MENUBAR_CAN_AUTOHIDE
-              toolbarname="&menubarCmd.label;"
-              accesskey="&menubarCmd.accesskey;"
-@@ -493,7 +493,7 @@
-              toolbarname="&navbarCmd.label;" accesskey="&navbarCmd.accesskey;"
-              fullscreentoolbar="true" mode="icons" customizable="true"
-              iconsize="large"
--             defaultset="unified-back-forward-button,urlbar-container,reload-button,stop-button,search-container,webrtc-status-button,bookmarks-menu-button,downloads-button,home-button,window-controls"
-+             defaultset="unified-back-forward-button,reload-button,stop-button,home-button,urlbar-container,search-container,fullscreenflex,window-controls"
-              context="toolbar-context-menu">
- 
-       <toolbaritem id="unified-back-forward-button" class="chromeclass-toolbar-additional"
-@@ -724,7 +725,7 @@
-              context="toolbar-context-menu"
-              defaultset="personal-bookmarks"
-              toolbarname="&personalbarCmd.label;" accesskey="&personalbarCmd.accesskey;"
--             collapsed="true"
-+             collapsed="false"
-              customizable="true">
-       <toolbaritem flex="1" id="personal-bookmarks" title="&bookmarksItem.title;"
-                    removable="true">
-@@ -801,7 +802,7 @@
-              aria-label="&tabsToolbar.label;"
-              context="toolbar-context-menu"
- #ifdef APPMENU_ON_TABBAR
--             defaultset="appmenu-toolbar-button,tabbrowser-tabs,new-tab-button,alltabs-button,tabs-closebutton"
-+             defaultset="appmenu-toolbar-button,tabbrowser-tabs,new-tab-button,flvideoreplacer-toolbar-button,downloads-button,feed-button,alltabs-button,tabs-closebutton"
- #else
-              defaultset="tabbrowser-tabs,new-tab-button,alltabs-button,tabs-closebutton"
- #endif
-EOF
-
 #Trisquel custom bookmarks
 cp $DATA/bookmarks.html.in browser/locales/generic/profile/bookmarks.html.in
-
 
 mkdir debian/search
 # Add DDG to search plugins
@@ -260,8 +224,7 @@ sed '/Provides/s/abrowser-locale/firefox-locale/' -i debian/control.langpacks
 sed '/MOZILLA_UAVERSION/ s:Abrowser/:Firefox/:' -i netwerk/protocol/http/nsHttpHandler.cpp
 
 # Set migrator scripts
-cp browser/components/migration/src/FirefoxProfileMigrator.js browser/components/migration/src/AbrowserProfileMigrator.js
-sed 's/Abrowser/Firefox/g; s/abrowser/firefox/g' -i browser/components/migration/src/FirefoxProfileMigrator.js
+sed 's/Abrowser/Firefox/g; s/abrowser/firefox/g' -i browser/components/migration/src/AbrowserProfileMigrator.js
 
 # Postinst script to manage profile migration and system links
 echo '
