@@ -15,6 +15,7 @@ pref("browser.search.order.extra.duckduckgo", "DuckDuckGo (SSL)");
 // Disable plugin installer
 pref("plugins.hide_infobar_for_missing_plugin", true);
 pref("plugins.hide_infobar_for_outdated_plugin", true);
+pref("plugins.notifyMissingFlash", false);
 
 //Speeding it up
 pref("network.http.pipelining", true);
