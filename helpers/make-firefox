@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=20
+VERSION=21
 
 . ./config
 
@@ -213,6 +213,7 @@ sed -i 's/<a\ href\=\"http\:\/\/www.mozilla.org\/\">Mozilla\ Project<\/a>/<a\ hr
 replace "Trisquel Public" "Mozilla Public" .
 replace "Trisquel Foundation" "Mozilla Foundation" .
 replace "Trisquel Corporation" "Mozilla Corporation" .
+replace "abrowser.com" "firefox.com" .
 #sed -i 's/iceweasel, abrowser, icecat,/iceweasel, firefox, icecat,/g' debian/control.in
 sed '/Provides/s/abrowser-locale/firefox-locale/' -i debian/control.langpacks
 
