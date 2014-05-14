@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2008-2010  Rubén Rodríguez <ruben@trisquel.info>
+#    Copyright (C) 2013  Rubén Rodríguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,20 +17,17 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
-
+VERSION=2
 . ./config
 
-for i in omap powerpc powerpc-smp powerpc64-smp
-do
-    rm debian/control.d/$i
-done
-sed 's/\(, \)*linux-firmware//; s/Linux /Linux-libre /g; /linux-backports/,/up-to-date when upgrading/d' debian/control.d/* debian/control.common -i
-sed 's/quantal/belenos/g' debian/control.common debian/control -i
-rm debian/control
-debian/rules debian/control
 
-changelog "Removed non-free bits"
+rm ./debian/control.d/signed-generic
+
+sed 's/, linux-firmware//' -i debian/control ./debian/control.d/generic
+sed 's/Linux/Linux-libre/g' -i debian/control ./debian/control.d/generic
+sed '/signed/,/^$/ d' -i debian/control
+
+changelog "Removed linux-firmware dependency, renamed release for Trisquel"
 
 compile
 

@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2008-2011  Rubén Rodríguez <ruben@trisquel.info>
+#    Copyright (C) 2008-2013  Rubén Rodríguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,39 +17,17 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
+
 VERSION=1
 
 . ./config
 
-# Remove non-free bits
-# To check the results run (being at /root/helpers/DATA/linux):
-#find linux-3.0 -type f | xargs -P4 -i sh /tmp/makepackage/DATA/linux/deblob/deblob-check {}
+#patch -p1 < $DATA/megaraid.patch
 
+sh $DATA/deblob-3.13 --force
 
-patch -p1 < $DATA/megaraid.patch
-
-sh $DATA/deblob/deblob-3.2
-
-# fix a broken line that makes it fail to compile
-#sed '304s/$/\nconst struct firmware *fw;/' arch/x86/kernel/microcode_amd.c -i
-
-# Disable broken drivers
-#sed /rtl8192s/d drivers/staging/Makefile -i
-#sed /rt3090/d drivers/staging/Makefile -i
-#sed /rt2870/d drivers/staging/Makefile -i
-#sed /rt2860/d drivers/staging/Makefile -i
-#sed /wlags49_h2/d drivers/staging/Makefile -i
-#sed /zilog/d drivers/staging/lirc/Makefile -i
-
-rm -rf debian/firmware/*
-echo > debian.master/d-i/firmware/scsi-modules
-echo > debian.master/d-i/firmware/nic-modules
-
-# Removing some extra Ubuntu modules
-#rm -rf ubuntu/ndiswrapper
-#sed /ndiswrapper/d -i ubuntu/Makefile ubuntu/Kconfig
-#rm -rf ubuntu/rtl8192se
-#sed /rtl8192se/d ubuntu/Makefile ubuntu/Kconfig -i
+rm firmware -rf
+cp -a $DATA/firmware .
 
 # Compile with less modules and avoid abi check
 echo 'skipmodule = true' >> debian.master/rules.d/0-common-vars.mk
@@ -59,9 +37,15 @@ echo 'skipabi = true' >> debian/rules.d/0-common-vars.mk
 
 line=$(grep -n ')-Ubuntu' debian/rules.d/0-common-vars.mk|cut -d: -f1)
 sed $(expr $line - 1 ),$(expr $line + 1 )d debian/rules.d/0-common-vars.mk -i
-mv debian.master/config/config.common.ubuntu debian.master/config/config.common.trisquel
 sed s/family=ubuntu/family=trisquel/ -i debian/rules.d/0-common-vars.mk
-sed 's/ with Ubuntu patches//; s/Linux/Linux-libre/g' debian/control debian/control.stub -i
+
+rename s/ubuntu/trisquel/ debian.*/config/config.common.ubuntu 
+
+sed 's/Linux/Linux-libre/g' debian/control debian/control.stub -i
+
+sed '/^firmware/d' ./debian*/abi/*/fwinfo -i
+echo > ./debian.master/d-i/firmware/nic-modules
+echo > ./debian.master/d-i/firmware/scsi-modules
 
 changelog "Removed non-free bits"
 
