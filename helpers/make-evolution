@@ -22,10 +22,10 @@ COMPONENT=main
 
 . ./config
 
-mv debian/patches/01_ubuntu_signature.patch debian/patches/01_trisquel_signature.patch
-sed -i s/01_ubuntu_signature/01_trisquel_signature/ debian/patches/series
-sed -i 's:Ubuntu:Trisquel GNU/Linux:g; s:ubuntu:trisquel:g' debian/patches/01_trisquel_signature.patch debian/signature.py e-util/e-signature-list.c
-for i in 09_add_ubuntuone_email.patch 62_no_upstream_email_notification_by_default.patch 91_add_u1_email_translations.patch
+#mv debian/patches/01_ubuntu_signature.patch debian/patches/01_trisquel_signature.patch
+#sed -i s/01_ubuntu_signature/01_trisquel_signature/ debian/patches/series
+#sed -i 's:Ubuntu:Trisquel GNU/Linux:g; s:ubuntu:trisquel:g' debian/patches/01_trisquel_signature.patch debian/signature.py e-util/e-signature-list.c
+for i in 09_add_ubuntuone_email.patch 91_add_u1_email_translations.patch
 do
     rm debian/patches/$i
     sed -i /$i/d debian/patches/series
