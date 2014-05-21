@@ -21,28 +21,10 @@ VERSION=1
 COMPONENT=main
 
 . ./config
+ 
+rm debian/update-notifier-hp-firmware.conf
+sed '/hp-firmware/d' -i debian/update-notifier.install
 
-patch -p1 << EOF
-diff -ru update-notifier-0.117ubuntu3.2.orig//src/uevent.c update-notifier-0.117ubuntu3.2/src/uevent.c
---- update-notifier-0.117ubuntu3.2.orig//src/uevent.c	2012-01-18 08:26:28.000000000 +0000
-+++ update-notifier-0.117ubuntu3.2/src/uevent.c	2012-06-11 12:38:40.000000000 +0000
-@@ -101,13 +101,13 @@
-     if (found)
- 	return TRUE;
- 
--    g_debug_uevent ("calling jockey");
-+    /*g_debug_uevent ("calling jockey");
-     gchar* argv[] = {"jockey-gtk", "-c", NULL };
-     GError* error = NULL;
-     if (!g_spawn_async(NULL, argv, NULL, G_SPAWN_SEARCH_PATH, NULL, NULL, NULL, &error)) {
- 	g_warning("jockey could not be called: %s", error->message);
- 	g_error_free (error);
--    }
-+    }*/
-     return TRUE;
- }
-EOF
- 
-changelog "Disabled jockey calls"
+changelog "Disabled hp-firmware handling"
 
 compile
