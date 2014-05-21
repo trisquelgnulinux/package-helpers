@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 
 . ./config
 
@@ -43,7 +43,7 @@ done
 echo "d-i/source/apt-setup/generators/99trisquel usr/lib/ubiquity/apt-setup/generators" >> debian/ubiquity.install-any
 
 #change icon
-cp $DATA/trisquel.png desktop/ubiquity.png
+cp $DATA/trisquel.png data/ubiquity.png
 
 # remove Ubuntu apt setup for the installer
 find d-i/source/apt-setup/generators -type f | grep -v 01setup | xargs -r rm
@@ -122,9 +122,11 @@ done
 cat << EOF1 >> scripts/apt-setup
 
 #Trisquel hack to regenerate ssl keys after installation
-rm -f /target/etc/ssh/ssh_host_*
-ssh-keygen -q -f /target/etc/ssh/ssh_host_rsa_key -N '' -t rsa
-ssh-keygen -q -f /target/etc/ssh/ssh_host_dsa_key -N '' -t dsa
+if [ -f /target/etc/ssh/ssh_host_rsa_key ]; then
+    rm -f /target/etc/ssh/ssh_host_*
+    ssh-keygen -q -f /target/etc/ssh/ssh_host_rsa_key -N '' -t rsa
+    ssh-keygen -q -f /target/etc/ssh/ssh_host_dsa_key -N '' -t dsa
+fi
 if [ -d /etc/italc ]
 then
     rm -rf /etc/italc/*
@@ -138,17 +140,17 @@ then
     chown root:admin /target/etc/italc/keys/private/*/key
 fi
 
-cat << EOF > /target/etc/grub.d/01_PASSWORD
+#cat << EOF > /target/etc/grub.d/01_PASSWORD
 #! /bin/sh -e
 # Trisquel enables a random password to grub during install
 # Comment this file to remove the password.
 # This file should only be readable by root.
 
-echo set superusers=grub
-echo password grub \$(bash -c 'echo \$RANDOM')
-EOF
+#echo set superusers=grub
+#echo password grub \$(bash -c 'echo \$RANDOM')
+#EOF
 
-chmod 700 /target/etc/grub.d/01_PASSWORD
+#chmod 700 /target/etc/grub.d/01_PASSWORD
 
 # Hacks for accessibility
 if pgrep orca > /dev/null
@@ -175,9 +177,12 @@ fi
 
 EOF1
 
+sed 's/Trisquel/Trsql/' -i ubiquity/plugins/ubi-partman.py
+sed 's/Trisquel-Battersea/Ubuntu-Battersea/' -i  tests/test_gtkwidgets.py
+
 changelog "Adapted for Trisquel"
 
 rm -rf debian/source
 
-compile
+PARALLEL=false compile
 
