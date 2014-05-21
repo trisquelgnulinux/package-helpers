@@ -31,7 +31,7 @@ START=$(getline "Template: hw-detect/load_media" debian/hw-detect.templates)
 END=$(getline "If you have such media available now, insert it, and continue." debian/hw-detect.templates)
 sed ${START},${END}d debian/hw-detect.templates -i
 
-sed -i '/need_nonfree=1/d' hw-detect.post-base-installer.d/50install-firmware
+sed -i '/non-free/,/^fi$/ d'  hw-detect.post-base-installer.d/50install-firmware
 
 changelog "Rebranded and adapted for Trisquel"
 compile
