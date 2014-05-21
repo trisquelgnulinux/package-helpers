@@ -1,4 +1,29 @@
+#!/bin/sh
+#
+#    Copyright (C) 2008-2010  Rubén Rodríguez <ruben@trisquel.info>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=2
+
+. ./config
+
 # Fixes https://bugs.launchpad.net/indicator-applet/+bug/965953
+
+cat << EOF | patch -p1
 --- indicator-applet-12.10.2+14.04.20140403/src/applet-main.c	2014-04-03 01:10:57.000000000 +0000
 +++ indicator-applet-12.10.2+14.04.20140403.mod/src/applet-main.c	2014-05-20 21:34:34.856698376 +0000
 @@ -364,6 +364,24 @@
@@ -34,3 +59,9 @@
    place_in_menu(menubar, menuitem, io, entry);
  
    return menuitem;
+EOF
+
+changelog "Fixes LP:965953"
+
+compile
+
