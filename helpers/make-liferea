@@ -23,15 +23,12 @@ COMPONENT=main
 . ./config
 
 #remove references to Opera and Mozilla
-sed 's/"opera", //' -i liferea.schemas
-sed '/opera/d' -i ./src/ui/ui_prefs.c 
-sed 's/"mozilla", //' -i liferea.schemas
-sed '/mozilla/d' -i ./src/ui/ui_prefs.c 
+sed '/opera/ s/^.*$/<description>Selects which browser to use to open external links.<\/description>/' -i net.sf.liferea.gschema.xml*
+sed 's/Firefox/Abrowser/g; s/firefox/abrowser/g; /google-chrome/,/{/d; /opera/,/{/d' -i src/browser.c
 
-replace mozilla abrowser .
-
-rm debian/patches/ubuntu-example-feeds debian/patches/debian-example-feeds
+rm debian/patches/ubuntu-example-feeds.patch debian/patches/debian-example-feeds.patch
 sed '/ubuntu-example-feeds/d; /debian-example-feeds/d;' debian/patches/series -i
+
 
 #rm opml/feedlist_*
 #sed '/feedlist_/d; s/\(.*feedlist.opml.*\)/\1\n\tfeedlist_es.opml/;' opml/Makefile.* -i
