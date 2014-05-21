@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=4
 
 . ./config
 
@@ -95,6 +95,9 @@ EOF
 
 # We don't want to show the gnome-online-accounts stuff yet
 patch -p1 < $DATA/hide-online-accounts-menu.patch
+
+# Do not require alt or alt+supr key modifiers for showing menus on right click
+patch -p1 < $DATA/no-mouse-modifier.patch
 
 changelog "Changed default layout"
 

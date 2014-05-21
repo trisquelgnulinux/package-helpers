@@ -1,0 +1,15 @@
+--- gnome-panel-3.8.0/gnome-panel/panel.c	2013-09-25 14:10:00.000000000 +0000
++++ gnome-panel-3.8.0.mod/gnome-panel/panel.c	2014-05-21 18:20:31.000000000 +0000
+@@ -363,9 +363,9 @@
+ 	if (event->button != 3)
+ 		return FALSE;
+ 
+-	modifiers = event->state & gtk_accelerator_get_default_mod_mask ();
++	//modifiers = event->state & gtk_accelerator_get_default_mod_mask ();
+ 
+-	if (modifiers == panel_bindings_get_mouse_button_modifier_keymask ())
++	//if (modifiers == panel_bindings_get_mouse_button_modifier_keymask ())
+ 		return panel_popup_menu (toplevel, event->button, event->time);
+ 
+ 	return FALSE;
+Only in gnome-panel-3.8.0: po
