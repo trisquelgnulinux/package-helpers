@@ -37,9 +37,6 @@ cp $DATA/TrisquelLogo.png debian
 rm ./debian/patches/53_use_ubuntu_help.patch
 sed /use_ubuntu_help/d -i debian/patches/series
 
-# Add Trisquel to the hardcoded list of gtk3 themes
-sed 's/"Adwaita"/"Trisquel", "Adwaita"/' -i debian/patches/04_new_appearance_settings.patch
-
 # Edit menu selections
 cp $DATA/gnomecc.menu.in shell/gnomecc.menu.in
 
