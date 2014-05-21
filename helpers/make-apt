@@ -17,14 +17,16 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 COMPONENT=main
 
 . ./config
 
 cp $DATA/trisquel-archive.gpg share
 rm share/ubuntu-archive.gpg
+replace "http://archive.ubuntu.com/ubuntu/project/ubuntu-archive-keyring.gpg" "http://archive.trisquel.info/trisquel/trisquel-archive-signkey.gpg" .
 replace ubuntu-keyring trisquel-keyring .
+replace ubuntu-archive-keyring trisquel-archive-keyring .
 
 sed '/VERSION/s/ubuntu/trisquel/' -i configure
 
@@ -99,7 +101,7 @@ EOF
 ## end non-free examples
 
 
-/bin/sed -i 's_http://archive.ubuntu.com/ubuntu/project/_http://archive.trisquel.info/trisquel/_g; s/ubuntu-archive-keyring/trisquel-archive-keyring/g; s/ubuntu-keyring/trisquel-keyring/g; ' cmdline/apt-key debian/control*
+/bin/sed -i 's_http://archive.ubuntu.com/ubuntu/project/_http://archive.trisquel.info/trisquel/_g; s/ubuntu-archive-keyring/trisquel-archive-keyring/g; s/ubuntu-keyring/trisquel-keyring/g; ' cmdline/apt-key.in debian/control*
 replace Ubuntu Trisquel  methods/http.cc
 replace ubuntu-archive.gpg trisquel-archive.gpg .
 
