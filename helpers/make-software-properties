@@ -18,30 +18,34 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=3
 
 . ./config
 
 cat << EOF | patch -p1
---- software-properties-0.76.7/softwareproperties/SoftwareProperties.py	2010-09-20 13:52:10.000000000 +0100
-+++ software-properties-0.76.7-2/softwareproperties/SoftwareProperties.py	2011-04-17 02:49:49.000000000 +0100
-@@ -644,7 +644,14 @@
-     Add a source with the given apt line and auto-add
-     signing key if we have it in the whitelist
+--- source.orig/softwareproperties/SoftwareProperties.py        2014-04-14 17:10:58.000000000 +0200
++++ source/softwareproperties/SoftwareProperties.py     2014-05-18 03:02:05.309290804 +0200
+@@ -724,7 +724,15 @@
+     site is in whitelist or the shortcut implementer adds it.
      """
--    (deb_line, file) = expand_ppa_line(line.strip(), self.distro.codename)
+ 
+-    (deb_line, file) = shortcut.expand(codename=self.distro.codename)
 +    codenames = {}
++    codenames["belenos"] = "trusty" 
 +    codenames["toutatis"] = "precise" 
 +    codenames["brigantia"] = "oneiric" 
 +    codenames["dagda"] = "natty"
 +    codenames["slaine"] = "maverick"
 +    codenames["taranis"] = "lucid"
 +    codenames["awen"] = "karmic" 
-+    (deb_line, file) = expand_ppa_line(line.strip(), codenames[self.distro.codename])
++    (deb_line, file) = shortcut.expand(codename=codenames[self.distro.codename])
      deb_line = self.expand_http_line(deb_line)
-     debsrc_line = 'deb-src' + deb_line[3:]
-     new_deb_entry = SourceEntry(deb_line, file)
+     debsrc_entry_type = 'deb-src' if enable_source_code else '# deb-src'
+     debsrc_line = debsrc_entry_type + deb_line[3:]
 EOF
+
+sed '/UbuntuDrivers/d' -i softwareproperties/gtk/SoftwarePropertiesGtk.py
+sed '/vbox_drivers/,+1 s/True/False/' -i data/gtkbuilder/main.ui
 
 replace Kubuntu Triskel .
 replace Ubuntu Trisquel .
@@ -49,6 +53,8 @@ replace ftpmaster@ubuntu.com trisquel-devel@listas.trisquel.info .
 replace cdimage@ubuntu.com trisquel-devel@listas.trisquel.info .
 replace TrisquelDistribution UbuntuDistribution .
 sed '/NoDisplay/d; s/Trisquel/Ubuntu/' -i data/software-properties-gtk.desktop.in
+
+sed '/ubuntu-drivers-common/d' -i debian/control
 
 changelog "Adapted for Trisquel codenames"
 
