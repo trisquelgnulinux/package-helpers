@@ -22,12 +22,20 @@ COMPONENT=main
 
 . ./config
 
-rm debian/patches/ubuntu_grub_standards.patch
-sed /ubuntu_grub_standards/d debian/patches/series -i
+apt-get remove -y --force-yes dosfstools
+sed '/dosfstools/d' -i debian/control
+
+for i in install_efi_ubuntu_flavours.patch mkconfig_ubuntu_distributor.patch; do
+    rm debian/patches/$i
+    sed /$i/d debian/patches/series -i
+done
 
 replace "with Linux" "with Linux-Libre" util
 replace "with Linux" "with Linux-Libre" debian
 replace "Linux" "Linux-Libre" po
+replace Ubuntu Trisquel .
+replace ubuntu trisquel .
+find |grep ubuntu|xargs rename s/ubuntu/trisquel/
 
 #sed 's/\(prefix=@prefix@\)/\1\nGRUB_CMDLINE_EXTRA=$( grep -q nomodeset \/proc\/cmdline \&\& echo nomodeset \|\| echo -n "" )/' util/grub.d/10_linux.in -i
 
