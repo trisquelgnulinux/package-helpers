@@ -1,42 +1,37 @@
 # Fixes https://bugs.launchpad.net/indicator-applet/+bug/965953
 
-diff --git indicator-applet/src/applet-main.c indicator-applet/src/applet-main.c
---- indicator-applet/src/applet-main.c
-+++ indicator-applet/src/applet-main.c
-@@ -362,6 +362,24 @@ accessible_desc_update (IndicatorObject 
-   return;
+--- indicator-applet-0.5.0/src/applet-main.c    2012-04-04 19:20:35.000000000 +0000
++++ indicator-applet-0.5.0.mod/src/applet-main.c        2014-05-21 01:01:28.000000000 +0000
+@@ -363,6 +363,24 @@
  }
  
-+static gboolean
+ static void
 +do_menu_reposition(gpointer menu)
 +{
-+  gtk_widget_set_size_request(menu, -1, -1);
++  gtk_widget_set_size_request(menu, 0,0);
++  while (gtk_events_pending ())
++    gtk_main_iteration ();
 +  gtk_menu_reposition(menu);
-+  g_timeout_add(20, (GSourceFunc) gtk_menu_reposition, (gpointer) menu);
-+  g_timeout_add(20, (GSourceFunc) gtk_menu_reposition, (gpointer) menu);
-+  return 0;
++  while (gtk_events_pending ())
++    gtk_main_iteration ();
 +}
 +
 +static void
 +on_menuitem_show (GtkMenuItem *menuitem, gpointer menu)
-+{ 
-+  gtk_widget_set_size_request(menu, -1, 500);
-+  gtk_menu_reposition(menu);
++{
++  gtk_widget_get_preferred_size (GTK_WIDGET (menu), NULL,NULL);
 +  g_idle_add((GSourceFunc) do_menu_reposition, (gpointer) menu);
 +}
 +
- static void
++static void
  entry_added (IndicatorObject * io, IndicatorObjectEntry * entry, GtkWidget * menubar)
  {
-@@ -435,6 +450,11 @@ entry_added (IndicatorObject * io, Indic
- 
-   if (entry->menu != NULL) {
+   const char *indicator_name = (const gchar *)g_object_get_data(G_OBJECT(io), IO_DATA_NAME);
+@@ -437,6 +455,7 @@
      gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), GTK_WIDGET(entry->menu));
-+    g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(on_menuitem_show), entry->menu);
-+    gtk_menu_set_reserve_toggle_size(entry->menu, TRUE);
-+    gtk_widget_set_size_request(entry->menu, -1, -1);
-+    gtk_widget_set_size_request(entry->menu, -1, 500);
-+    gtk_menu_reposition(entry->menu);
    }
  
++  g_signal_connect(G_OBJECT(entry->menu), "show", G_CALLBACK(on_menuitem_show), entry->menu);
    place_in_menu(menubar, menuitem, io, entry);
+ 
+   if (something_visible) {
