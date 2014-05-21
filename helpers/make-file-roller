@@ -23,9 +23,6 @@ QUILT=skip
 
 . ./config
 
-rm debian/patches/02_lpi.patch
-sed -i '/02_lpi.patch/d;' debian/patches/series
-
 sed 's/--enable-magic/--enable-magic --disable-packagekit/' debian/rules -i
 
 changelog "Dissabled package recommendations, fixes #7747"
