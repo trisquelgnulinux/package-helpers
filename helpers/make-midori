@@ -25,7 +25,7 @@ EXTERNAL='deb-src http://ppa.launchpad.net/midori/ppa/ubuntu $UPSTREAM main'
 # https://trisquel.info/en/issues/7753
 echo "NoDisplay=true" >> data/midori-private.desktop.in
 #sed '/midori-private/d' -i ./po/POTFILES.in
-sed '/Private Shortcut/,1000d' -i data/midori.desktop.in 
+#sed '/Private Shortcut/,1000d' -i data/midori.desktop.in 
 
 rm debian/patches -rf
 
