@@ -17,14 +17,44 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu trusty universe'
 
 . ./config
 
 rm debian/examples compton.sample.conf
-echo "compton.conf /etc" > debian/install
+
+cat << EOF >> debian/install
+compton.conf /etc
+compton-autostart.desktop /etc/xdg/autostart
+compton-launcher /usr/bin
+EOF
+
 cp $DATA/compton.conf .
+
+cat << EOF > compton-autostart.desktop
+[Desktop Entry]
+Type=Application
+Name=Compton composition manager
+Exec=compton-launcher
+NoDisplay=true
+X-GNOME-AutoRestart=true
+X-GNOME-Autostart-Phase=Initialization
+OnlyShowIn=GNOME;
+EOF
+
+cat << EOF > compton-launcher
+#!/bin/sh
+
+FILE=/etc/compton.conf
+[ -f ~/.config/compton.conf ] && FILE="~/.config/compton.conf"
+
+[ 0 != \$(glxinfo |grep "renderer string:" |grep -v llvmpipe | wc -c) ]  && compton --config \$FILE &
+EOF
+
+sed 's/^Depends:/Depends: mesa-utils, /' debian/control* -i
+
+chmod 755 compton-launcher
 
 changelog "Backported into Toutatis"
 
