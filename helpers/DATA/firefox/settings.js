@@ -101,5 +101,5 @@ pref("browser.contentHandlers.types.1.title", "");
 pref("browser.contentHandlers.types.1.uri", "");
 pref("gecko.handlerService.schemes.webcal.0.name", "");
 pref("gecko.handlerService.schemes.webcal.0.uriTemplate", "");
-pref("gecko.handlerService.schemes.ircs.0.name", "");
-pref("gecko.handlerService.schemes.ircs.0.uriTemplate", "");
+pref("gecko.handlerService.schemes.irc.0.name", "");
+pref("gecko.handlerService.schemes.irc.0.uriTemplate", "");
