@@ -23,8 +23,8 @@ VERSION=1
 
 #patch -p1 < $DATA/harcoded_orca.patch
 #patch -p1 < $DATA/no_dots.patch
-sed s/ubuntu/gnome-classic/g src/unity-greeter.vala -i
-rm src/*.c
+sed s/ubuntu/freedesktop/g src/unity-greeter.vala -i
+rm -f src/*.c
 
 #% REBRAND: Replace the logo
 #% CurrentState: 
@@ -47,7 +47,7 @@ cat << EOF > data/unity-greeter.conf
 # xft-rgba = Type of subpixel antialiasing (none, rgb, bgr, vrgb or vbgr)
 #
 [greeter]
-background=/usr/share/backgrounds/dagda-g.jpg
+background=/usr/share/backgrounds/toutatis.jpg
 logo=/usr/share/unity-greeter/logo.png
 theme-name=Trisquel
 icon-theme-name=trisquel
