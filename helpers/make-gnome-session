@@ -23,43 +23,15 @@ QUILT=skip
 
 . ./config
 
+for i in 50_ubuntu_sessions.patch 52_xdg_current_desktop.patch; do
+    rm debian/patches/$i
+    sed "/$i/d" -i debian/patches/series
+done
+
 export QUILT_PATCHES=debian/patches
 quilt push -a
 
-#% Make gnome-session not dependent on unity
-#sed 's/unity.*/gnome-shell (>= 3.0),/' -i debian/control*
-
-#% Replace gnome-classic session with gnome-fallback
-cat << EOF > debian/gnome-session-fallback.install
-debian/scripts/gnome-session-classic /usr/bin
-debian/scripts/trisquel-wm /usr/bin
-debian/scripts/trisquel-wm.desktop /usr/share/applications
-debian/tmp/usr/share/xsessions/gnome-classic.desktop
-debian/tmp/usr/share/gnome-session/sessions/gnome-classic.session
-EOF
-
-#% Add a wrapper for compiz
-cp $DATA/trisquel-wm debian/scripts/trisquel-wm
-chmod 755 debian/scripts/trisquel-wm
-cat << EOF > debian/scripts/trisquel-wm.desktop
-[Desktop Entry]
-Type=Application
-Name=trisquel-wm
-Exec=trisquel-wm
-NoDisplay=true
-X-GNOME-Provides=windowmanager
-EOF
-
-mv debian/scripts/gnome-session-fallback debian/scripts/gnome-session-classic
-sed s/fallback/classic/g debian/scripts/gnome-session-classic -i
-cat << EOF > data/gnome-classic.session.desktop.in.in
-[GNOME Session]
-Name=Trisquel
-RequiredComponents=gnome-panel;gnome-settings-daemon;
-RequiredProviders=windowmanager;
-DefaultProvider-windowmanager=trisquel-wm
-DesktopName=GNOME
-EOF
+sed '/ubuntu/d' -i debian/gnome-session.install
 
 changelog "Adapted for Trisquel"
 
