@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=10
 QUILT=skip
 COMPONENT=main
 . ./config
@@ -27,6 +27,51 @@ sed '/use-ubuntu-help/d' -i debian/patches/series
 
 export QUILT_PATCHES=debian/patches
 quilt push -a
+
+cat << EOF | patch -p1
+diff -ru nautilus-3.10.1/src/nautilus-toolbar.c nautilus-3.10.1.mod/src/nautilus-toolbar.c
+--- nautilus-3.10.1/src/nautilus-toolbar.c	2014-04-26 21:59:56.000000000 +0000
++++ nautilus-3.10.1.mod/src/nautilus-toolbar.c	2014-04-26 22:49:46.000000000 +0000
+@@ -571,7 +571,7 @@
+ 		}
+ 	}
+ 
+-	/* Separator and Close */
++	/* Separator and Close
+         if (!g_strcmp0(g_getenv("XDG_CURRENT_DESKTOP"), "GNOME")) {
+ 		separator = gtk_separator_new (GTK_ORIENTATION_VERTICAL);
+ 		gtk_container_add (GTK_CONTAINER (toolbar), separator);
+@@ -596,7 +596,7 @@
+ 		} else {
+ 			gtk_widget_set_margin_left (button, 6);
+ 		}
+-	}
++	}*/
+ 	g_signal_connect_swapped (nautilus_preferences,
+ 				  "changed::" NAUTILUS_PREFERENCES_ALWAYS_USE_LOCATION_ENTRY,
+ 				  G_CALLBACK (toolbar_update_appearance), self);
+diff -ru nautilus-3.10.1/src/nautilus-window.c nautilus-3.10.1.mod/src/nautilus-window.c
+--- nautilus-3.10.1/src/nautilus-window.c	2014-04-26 21:59:56.000000000 +0000
++++ nautilus-3.10.1.mod/src/nautilus-window.c	2014-04-27 00:42:05.000000000 +0000
+@@ -1500,7 +1500,7 @@
+ 	/* disable automatic menubar handling, since we show our regular
+ 	 * menubar together with the app menu.
+ 	 */
+-	gtk_application_window_set_show_menubar (GTK_APPLICATION_WINDOW (self), FALSE);
++	gtk_application_window_set_show_menubar (GTK_APPLICATION_WINDOW (self), TRUE);
+ 
+ 	grid = gtk_grid_new ();
+ 	gtk_orientable_set_orientation (GTK_ORIENTABLE (grid), GTK_ORIENTATION_VERTICAL);
+@@ -1520,7 +1520,7 @@
+ 			 G_CALLBACK (nautilus_window_load_extension_menus), window, G_CONNECT_SWAPPED);
+ 
+ 	window->details->toolbar = create_toolbar (window);
+-	if (g_strcmp0(g_getenv("XDG_CURRENT_DESKTOP"), "GNOME")) {
++	if (g_strcmp0(g_getenv("XDG_CURRENT_DESKTOP"), "GNOME-shell")) {
+ 		gtk_container_add (GTK_CONTAINER (grid), window->details->toolbar);
+ 		gtk_widget_set_hexpand (window->details->toolbar, TRUE);
+ 		gtk_widget_set_vexpand (window->details->toolbar, FALSE);
+EOF
 
 changelog "Revert from using ubuntu-help to default gnome-help"
 compile
