@@ -26,9 +26,9 @@ then
     [ 1$1 = 1"test" ] || exit 1
 fi
 
-PAIRS="taranis-lucid toutatis-precise belenos-trusty"
-CODENAMES="taranis toutatis belenos"
-UPSTREAMS="lucid precise trusty"
+PAIRS="taranis-lucid toutatis-precise"
+CODENAMES="taranis toutatis"
+UPSTREAMS="lucid precise"
 
 [ 1$1 = 1"test" ] && TEST=echo
 
