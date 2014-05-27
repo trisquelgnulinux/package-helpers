@@ -64,23 +64,11 @@ pack-index=30
 pack-type=start
 toplevel-id=panel
 
-[Object notification-area]
-object-iid=NotificationAreaAppletFactory::NotificationArea
-pack-index=30
-pack-type=end
-toplevel-id=panel
-
 [Object indicators]
-object-iid=IndicatorAppletFactory::IndicatorApplet
+object-iid=IndicatorAppletCompleteFactory::IndicatorAppletComplete
 toplevel-id=panel
 pack-type=end
-pack-index=20
-
-[Object clock]
-object-iid=ClockAppletFactory::ClockApplet
 pack-index=10
-pack-type=end
-toplevel-id=panel
 
 [Object show-desktop]
 object-iid=WnckletFactory::ShowDesktopApplet
