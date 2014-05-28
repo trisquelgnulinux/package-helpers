@@ -26,7 +26,6 @@ do
     rm debian/control.d/$i
 done
 sed 's/\(, \)*linux-firmware//; s/Linux /Linux-libre /g; /linux-backports/,/up-to-date when upgrading/d' debian/control.d/* debian/control.common -i
-sed 's/quantal/belenos/g' debian/control.common debian/control -i
 rm debian/control
 debian/rules debian/control
 
