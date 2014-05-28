@@ -17,11 +17,11 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=4
 
 . ./config
 
-RELEASE=$REVISION
+CODENAME=$(echo $CODENAME | /bin/sed -e "s/\b\(.\)/\u\1/g")
 
 cat << EOF > debian/update-motd.d/01-banner
 #!/bin/sh
@@ -81,19 +81,31 @@ fi
 EOF
 
 cat > etc/issue <<EOF
-Trisquel GNU/Linux $RELEASE \n \l
+Trisquel GNU/Linux $REVISION \n \l
 
 EOF
 
 cat > etc/issue.net <<EOF
-Trisquel GNU/Linux $RELEASE
+Trisquel GNU/Linux $REVISION
 EOF
 
 cat > etc/lsb-release <<EOF
 DISTRIB_ID=Trisquel
-DISTRIB_RELEASE=$RELEASE
+DISTRIB_RELEASE=$REVISION
 DISTRIB_CODENAME=$CODENAME
-DISTRIB_DESCRIPTION="Trisquel $RELEASE"
+DISTRIB_DESCRIPTION="Trisquel GNU/Linux $REVISION, $CODENAME"
+EOF
+
+cat > etc/os-release <<EOF
+NAME="Trisquel GNU/Linux"
+VERSION="$REVISION, $CODENAME"
+ID=trisquel
+ID_LIKE=debian
+PRETTY_NAME="Trisquel GNU/Linux $CODENAME ($REVISION)"
+VERSION_ID="$REVISION"
+HOME_URL="https://trisquel.info/"
+SUPPORT_URL="https://trisquel.info/wiki"
+BUG_REPORT_URL="https://trisquel.info/project/issues"
 EOF
 
 cat << EOF > origins/trisquel
@@ -107,6 +119,7 @@ echo /etc/dpkg/origins/trisquel >> debian/conffiles
 
 sed s/ubuntu/trisquel/ -i debian/rules
 
+set -x
 changelog "Compiled for Trisquel"
 sed -i "1s/(\(.*\))/(1:\1)/" debian/changelog
 
