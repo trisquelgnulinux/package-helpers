@@ -53,5 +53,5 @@ cp debian/changelog debian.master/changelog
 cp debian/changelog debian.saucy/changelog
 
 /bin/sed '/rtlpriv->cfg->fw_name =/s/.*/rtlpriv->cfg->fw_name = "\/*(DEBLOBBED)*\/";/' drivers/net/wireless/rtlwifi/rtl8192cu/sw.c -i
-
+/bin/sed '1624 s%\*/%*/"%' -i drivers/gpu/drm/radeon/si.c
 PARALLEL=true compile
