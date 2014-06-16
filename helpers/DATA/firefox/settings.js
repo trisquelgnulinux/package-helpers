@@ -8,7 +8,7 @@ pref("pfs.datasource.url", "http://trisquel.info/sites/pfs.php?mime=%PLUGIN_MIME
 pref("pfs.filehint.url", "http://trisquel.info/sites/pfs.php?mime=%PLUGIN_MIMETYPE%");
 
 // I'm feeling Ducky.
-pref("keyword.URL", "https://duckduckgo.com/?t=trisquel&q=!+");
+pref("keyword.URL", "https://duckduckgo.com/html?t=trisquel&q=!+");
 pref("browser.search.defaultenginename", "DuckDuckGo (SSL)");
 pref("browser.search.order.extra.duckduckgo", "DuckDuckGo (SSL)");
 
@@ -17,11 +17,13 @@ pref("plugins.hide_infobar_for_missing_plugin", true);
 pref("plugins.hide_infobar_for_outdated_plugin", true);
 pref("plugins.notifyMissingFlash", false);
 
+//https://developer.mozilla.org/en-US/docs/Web/API/MediaSource
+//pref("media.mediasource.enabled",true);
+
 //Speeding it up
 pref("network.http.pipelining", true);
 pref("network.http.proxy.pipelining", true);
 pref("network.http.pipelining.maxrequests", 10);
-pref("network.dns.disableIPv6", true);
 pref("nglayout.initialpaint.delay", 0);
 
 // Disable third party cookies
@@ -39,19 +41,18 @@ pref("browser.EULA.override", true);
 // Default name strings
 pref ("distribution.about", "Abrowser for Trisquel");
 pref ("distribution.id", "trisquel");
-pref ("distribution.version", "$REVISION");
+pref ("distribution.version", "1.0");
 
-// UserAgeng
-pref("general.useragent.vendor", "Trisquel");
-pref("general.useragent.vendorComment", "$CODENAME");
-pref("general.useragent.vendorSub", "$REVISION");
 // Set useragent to Firefox compatible
-pref("general.useragent.compatMode.abrowser",true);
+pref("general.useragent.compatMode.firefox",true);
+// Spoof the useragent to a generic one
+//pref("general.useragent.override", "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:24.0) Gecko/20100101 Firefox/24.0");
+
 
 // Startup pages
-pref ("browser.startup.page" , 3);
-pref ("browser.startup.homepage" , "http://trisquel.info");
-pref ("startup.homepage_welcome_url", "http://trisquel.info/welcome");
+//pref ("browser.startup.page" , 3);
+//pref ("browser.startup.homepage" , "http://trisquel.info");
+//pref ("startup.homepage_welcome_url", "http://trisquel.info/welcome");
 //pref ("startup.homepage_override_url" , "http://trisquel.info/newbrowser");
 
 // Preferences for the Get Add-ons panel
@@ -60,6 +61,8 @@ pref ("extensions.getAddons.search.url", "http://trisquel.info");
 
 // Help URL
 pref ("app.support.baseURL", "http://trisquel.info/wiki/");
+pref ("app.support.inputURL", "https://trisquel.info/contact");
+pref ("app.feedback.baseURL", "https://trisquel.info/contact");
 pref ("browser.uitour.url", "http://trisquel.info/browser");
 pref ("plugins.update.url", "http://trisquel.info/browser");
 pref ("browser.customizemode.tip0.learnMoreUrl", "http://trisquel.info/browser");
@@ -67,6 +70,8 @@ pref ("browser.customizemode.tip0.learnMoreUrl", "http://trisquel.info/browser")
 // Dictionary download preference
 pref("browser.dictionaries.download.url", "http://dictionaries.mozdev.org/");
 pref("browser.search.searchEnginesURL", "http://mycroft.mozdev.org/");
+// Enable Spell Checking In All Text Fields
+pref("layout.spellcheckDefault", 2);
 
 // Apturl preferences
 pref("network.protocol-handler.app.apt","/usr/bin/apturl");
@@ -77,7 +82,11 @@ pref("network.protocol-handler.external.apt",true);
 pref("network.protocol-handler.external.apt+http",true);
 
 // Privacy & Freedom Issues
+// https://webdevelopmentaid.wordpress.com/2013/10/21/customize-privacy-settings-in-mozilla-firefox-part-1-aboutconfig/
+// https://panopticlick.eff.org
+// https://wiki.mozilla.org/Fingerprinting
 pref("privacy.donottrackheader.enabled", true);
+pref("privacy.donottrackheader.value", 1);
 pref("dom.ipc.plugins.flash.subprocess.crashreporter.enabled", false);
 pref("browser.safebrowsing.enabled", false);
 pref("browser.safebrowsing.malware.enabled", false);
@@ -89,6 +98,18 @@ pref("social.toast-notifications.enabled", false);
 pref("datareporting.healthreport.uploadEnabled", false);
 pref("datareporting.healthreport.service.enabled", false);
 pref("browser.slowStartup.notificationDisabled", true);
+pref("network.http.sendRefererHeader", 0);
+//http://grack.com/blog/2010/01/06/3rd-party-cookies-dom-storage-and-privacy/
+//pref("dom.storage.enabled", false);
+pref("dom.event.clipboardevents.enabled",false);
+pref("network.prefetch-next", false);
+pref("network.dns.disablePrefetch", true);
+pref("network.http.sendSecureXSiteReferrer", false);
+pref("toolkit.telemetry.enabled", false);
+// Do not tell what plugins do we have enabled: https://mail.mozilla.org/pipermail/firefox-dev/2013-November/001186.html
+pref("plugins.enumerable_names", "");
+pref("plugin.state.flash", 1);
+
 
 // Services
 pref("gecko.handlerService.schemes.mailto.0.name", "");
