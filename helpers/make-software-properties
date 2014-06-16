@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=4
+VERSION=5
 
 . ./config
 
@@ -56,6 +56,8 @@ sed '/NoDisplay/d; s/Trisquel/Ubuntu/' -i data/software-properties-gtk.desktop.i
 
 sed '/ubuntu-drivers-common/d' -i debian/control
 sed '/software-properties-drivers/d' -i debian/software-properties-gtk.install setup.cfg
+
+replace "Trisquel-Gettext" "Ubuntu-Gettext" .
 
 changelog "Adapted for Trisquel codenames"
 
