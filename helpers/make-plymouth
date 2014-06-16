@@ -17,12 +17,17 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=3
 QUILT=skip
 . ./config
 
+rm ./debian/patches/ubuntu-logo-scale-factor-2.patch
+sed '/ubuntu-logo-scale-factor/d' -i debian/patches/series
+
 export QUILT_PATCHES=debian/patches
 quilt push -a
+
+cp $DATA/plymouth-theme-trisquel-logo* debian
 
 sed 's/a corporate-looking/an illustration/' debian/control -i
 sed 's/pie chart for boot.*/made by Dongyun Lee for the Sugar project/' debian/control -i
