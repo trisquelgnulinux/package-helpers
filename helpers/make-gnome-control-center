@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 COMPONENT=main
 
 . ./config
@@ -30,8 +30,8 @@ replace gnome-fallback gnome-classic .
 
 # Replace logo
 replace UbuntuLogo.png TrisquelLogo.png
-rm debian/UbuntuLogo.png
-cp $DATA/TrisquelLogo.png debian
+rm debian/UbuntuLogoBlank.png
+cp $DATA/TrisquelLogo.png debian/TrisquelLogoBlank.png
 
 # disable ubuntu custom help
 rm ./debian/patches/53_use_ubuntu_help.patch
@@ -39,6 +39,8 @@ sed /use_ubuntu_help/d -i debian/patches/series
 
 # Edit menu selections
 cp $DATA/gnomecc.menu.in shell/gnomecc.menu.in
+
+replace "Trisquel-Gettext" "Ubuntu-Gettext" .
 
 changelog "Replaced references to gnome-fallback with gnome-classic"
 
