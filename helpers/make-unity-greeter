@@ -17,46 +17,27 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=7
 
 . ./config
 
-#patch -p1 < $DATA/harcoded_orca.patch
-#patch -p1 < $DATA/no_dots.patch
+# Custom settings
+cp $DATA/com.canonical.unity-greeter.gschema.xml data
+
+# Change the sound theme
 sed s/ubuntu/freedesktop/g src/unity-greeter.vala -i
 rm -f src/*.c
 
-#% REBRAND: Replace the logo
-#% CurrentState: 
-#% ExpectedState:
-cp $DATA/logo.png data
-
-#% Set default background color to black
-replace 2C001E 000000 .
-
-#% Addapt default settings to Trisquel
-cat << EOF > data/unity-greeter.conf
-#
-# background = Background file to use, either an image path or a color (e.g. #772953)
-# logo = Logo file to use
-# theme-name = GTK+ theme to use
-# font-name = Font to use
-# xft-antialias = Whether to antialias Xft fonts (true or false)
-# xft-dpi = Resolution for Xft in dots per inch (e.g. 96)
-# xft-hintstyle = What degree of hinting to use (hintnone, hintslight, hintmedium, or hintfull)
-# xft-rgba = Type of subpixel antialiasing (none, rgb, bgr, vrgb or vbgr)
-#
-[greeter]
-background=/usr/share/backgrounds/toutatis.jpg
-logo=/usr/share/unity-greeter/logo.png
-theme-name=Trisquel
-icon-theme-name=trisquel
-font-name=Sans 11
-xft-antialias=true
-xft-dpi=96
-xft-hintstyle=hintslight
-xft-rgba=rgb
-EOF
+# Custom artwork
+sed '/logo-bare/d; /rm.*logo.png/d' -i debian/rules
+sed '/paint_with_alpha/s/0.5/1.0/' -i src/background.vala
+cp $DATA/logo.png data/logo.png
+cp $DATA/logo.png .
+cp $DATA/logo-bare.png data/logo-bare.png
+cp $DATA/cof.png data
+cp $DATA/badge.png data/trisquel_badge.png
+cp $DATA/badge.png data/unknown_badge.png
+replace ubuntu_badge trisquel_badge .
 
 changelog "Adapted for Trisquel"
 
