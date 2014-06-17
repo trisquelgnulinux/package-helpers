@@ -108,7 +108,7 @@ pref("network.http.sendSecureXSiteReferrer", false);
 pref("toolkit.telemetry.enabled", false);
 // Do not tell what plugins do we have enabled: https://mail.mozilla.org/pipermail/firefox-dev/2013-November/001186.html
 pref("plugins.enumerable_names", "");
-pref("plugin.state.flash", 1);
+//pref("plugin.state.flash", 1);
 
 
 // Services
