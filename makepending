@@ -152,7 +152,7 @@ address=ruben@trisquel.info
 echo "Subject: Compiling updates
 To: $address
 
-$(cat $FILE)"  | $TEST /usr/sbin/sendmail -f watchdog@devel.trisquel.info -h correo.sognus.com
+$(cat $FILE)"  | $TEST /usr/sbin/sendmail -f watchdog@devel.trisquel.info -h correo.sognus.com -t $address
 }
 
 grep -q makepackage $FILE && $TEST report
