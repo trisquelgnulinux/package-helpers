@@ -17,11 +17,11 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 
 . ./config
 
-RELEASE=$REVISION
+CODENAMECAPS=$(echo $CODENAME | /bin/sed -e "s/\b\(.\)/\u\1/g")
 
 cat << EOF > debian/update-motd.d/01-banner
 #!/bin/sh
@@ -81,19 +81,35 @@ fi
 EOF
 
 cat > etc/issue <<EOF
-Trisquel GNU/Linux $RELEASE \n \l
+Trisquel GNU/Linux $REVISION \n \l
 
 EOF
 
 cat > etc/issue.net <<EOF
-Trisquel GNU/Linux $RELEASE
+Trisquel GNU/Linux $REVISION
 EOF
 
 cat > etc/lsb-release <<EOF
 DISTRIB_ID=Trisquel
-DISTRIB_RELEASE=$RELEASE
+DISTRIB_RELEASE=$REVISION
 DISTRIB_CODENAME=$CODENAME
-DISTRIB_DESCRIPTION="Trisquel $RELEASE"
+<<<<<<< HEAD
+DISTRIB_DESCRIPTION="Trisquel $REVISION"
+=======
+DISTRIB_DESCRIPTION="Trisquel GNU/Linux $REVISION, $CODENAMECAPS"
+EOF
+
+cat > etc/os-release <<EOF
+NAME="Trisquel GNU/Linux"
+VERSION="$REVISION, $CODENAMECAPS"
+ID=trisquel
+ID_LIKE=debian
+PRETTY_NAME="Trisquel GNU/Linux $CODENAMECAPS ($REVISION)"
+VERSION_ID="$REVISION"
+HOME_URL="https://trisquel.info/"
+SUPPORT_URL="https://trisquel.info/wiki"
+BUG_REPORT_URL="https://trisquel.info/project/issues"
+>>>>>>> d34910d... Updated base-files, fixes #11841
 EOF
 
 cat << EOF > origins/trisquel
