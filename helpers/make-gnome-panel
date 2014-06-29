@@ -17,20 +17,73 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=5
+VERSION=8
 
 . ./config
 
-#makes the panel translucid
-#sed "105s/'none'/'color'/; s/rgba(255,255,255,.2)/rgba(000,000,000,.75)/" -i data/org.gnome.gnome-panel.toplevel.gschema.xml.in.in
-#remove the arrot in the main menu button
+# Remove the arrot in the main menu button
 sed 's/"tooltip", tooltip,/"tooltip", "Trisquel",/; s/"has-arrow", TRUE,/"has-arrow", FALSE,/' -i gnome-panel/panel-menu-button.c
 
-#sed '/gnome-session /d' debian/control* 
+# Disable patches related to the gnome sessions
+for patch in 41_classic_layout.patch 01_gnome-wm.patch 50_ubuntu_sessions.patch 49_no_screensaver.patch; do
+  rm debian/patches/$patch
+  sed /$patch/d -i debian/patches/series
+done
 
-rm debian/patches/41_classic_layout.patch
-sed /classic_layout/d -i debian/patches/series
+# Custom xsession
+cat << EOF > data/trisquel-session.desktop
+[Desktop Entry]
+Name=Trisquel
+Comment=This session logs you into GNOME with the traditional panel
+Exec=gnome-session --session=gnome-flashback
+TryExec=gnome-session
+Icon=
+Type=Application
+X-LightDM-DesktopName=GNOME
+EOF
 
+cat << EOF > data/50-trisquel-session.conf
+[SeatDefaults]
+user-session=trisquel-session
+EOF
+
+cat <<EOF > debian/trisquel-session.install
+data/50-trisquel-session.conf /usr/share/lightdm/lightdm.conf.d/
+data/trisquel-session.desktop /usr/share/xsessions
+debian/gnome-wm.desktop /usr/share/applications
+debian/gnome-flashback-services.desktop /usr/share/applications
+debian/scripts/gnome-wm /usr/bin
+usr/share/gnome-session/sessions
+EOF
+
+# Custom package
+sed '/Package: gnome-session/,/^$/d' -i debian/control.in
+cat << EOF >> debian/control.in
+
+Package: trisquel-session
+Architecture: all
+Depends: ${misc:Depends},
+         gnome-panel (>= 3.0),
+         gnome-session-bin,
+         gnome-session-common,
+         metacity (>= 2.30),
+         nautilus (>= 3.8),
+         notification-daemon (>= 0.7),
+         policykit-1-gnome,
+         unity-settings-daemon
+Provides: x-session-manager, gnome-session-flashback
+Replaces: gnome-session-flashback
+Conflicts: gnome-session-flashback
+Description: GNOME Session Manager - Trisquel session
+ The GNOME Session Manager is in charge of starting the core components
+ of the GNOME desktop, and applications that should be launched at
+ login time. It also features a way to save and restore currently
+ running applications.
+ .
+ This package contains the required components for the Trisquel session.
+EOF
+
+# Custom layout
 cat << EOF > data/panel-default-layout.layout
 [Toplevel panel]
 expand=true
@@ -77,9 +130,6 @@ pack-type=end
 toplevel-id=panel
 
 EOF
-
-# This patch allows @instance-config/location in the default layout
-#patch -p1 < $DATA/gnome-panel-improved-default-layout-handling.patch
 
 # We don't want to show the gnome-online-accounts stuff yet
 patch -p1 < $DATA/hide-online-accounts-menu.patch
