@@ -17,26 +17,23 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=3
+QUILT=skip
+COMPONENT=main
 
 . ./config
 
 #%FSDG: Remove method to install non-free plugins
-#rm debian/patches/kubuntu_06_restricted_install.diff
-#sed /kubuntu_06_restricted_install.diff/d debian/patches/series -i
+rm debian/patches/kubuntu_restricted_install.diff
+sed /kubuntu_restricted_install.diff/d debian/patches/series -i
 
-#sed '
-#s/www.google.com,/duckduckgo.com,/; s/Google/Duck Duck Go/;
-#s/userbase.kde.org/trisquel.info/; s/UserBase/Trisquel/;
-#s/www.kubuntuforums.net/store.trisquel.info/; s/Kubuntu Forums/Store/;
-#s:www.kubuntu.org:trisquel.info/donate/:; s/Kubuntu/Donate/;
-#
-#s/www.google.com/trisquel.info/;
-#' debian/patches/kubuntu_05_default_homepages.diff -i
+cp $DATA/patches/kubuntu_default_homepages.diff debian/patches/
 
-cp $DATA/patches debian -a
+export QUILT_PATCHES=debian/patches
+quilt push -a
+
+bash
 
 changelog "Compiled for Trisquel"
 
 compile
-

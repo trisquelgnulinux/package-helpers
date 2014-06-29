@@ -1,0 +1,26 @@
+Index: b/src/rekonq.kcfg
+===================================================================
+--- a/src/rekonq.kcfg
++++ b/src/rekonq.kcfg
+@@ -72,10 +72,10 @@
+ <!-- New Tab Page Settings -->
+ <group name="NewTabPage">
+     <entry name="previewNames" type="StringList">
+-        <default>KDE Homepage,rekonq site</default>
++        <default>DuckDuckGO, Trisquel forum, Donate, Store</default>
+     </entry>
+     <entry name="previewUrls" type="StringList">
+-        <default>http://www.kde.org/,http://rekonq.kde.org/</default>
++        <default>https://duckduckgo.com/?t=trisquel, https://trisquel.info/forum/, https://trisquel.info/donate/, http://store.trisquel.info/</default>
+     </entry>
+ </group>
+ 
+@@ -86,7 +86,7 @@
+         <default>1</default>
+     </entry>
+     <entry name="homePage" type="String">
+-        <default>http://www.kde.org/</default>
++        <default>https://duckduckgo.com/?t=trisquel</default>
+     </entry>
+     <entry name="downloadPath" type="Url">
+         <default code="true">KUrl(KGlobalSettings::downloadPath())</default>
