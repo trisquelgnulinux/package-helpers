@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 
 . ./config
 
@@ -93,9 +93,6 @@ cat > etc/lsb-release <<EOF
 DISTRIB_ID=Trisquel
 DISTRIB_RELEASE=$REVISION
 DISTRIB_CODENAME=$CODENAME
-<<<<<<< HEAD
-DISTRIB_DESCRIPTION="Trisquel $REVISION"
-=======
 DISTRIB_DESCRIPTION="Trisquel GNU/Linux $REVISION, $CODENAMECAPS"
 EOF
 
@@ -109,7 +106,6 @@ VERSION_ID="$REVISION"
 HOME_URL="https://trisquel.info/"
 SUPPORT_URL="https://trisquel.info/wiki"
 BUG_REPORT_URL="https://trisquel.info/project/issues"
->>>>>>> d34910d... Updated base-files, fixes #11841
 EOF
 
 cat << EOF > origins/trisquel
