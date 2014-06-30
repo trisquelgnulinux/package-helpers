@@ -26,9 +26,9 @@ then
     [ 1$1 = 1"test" ] || exit 1
 fi
 
-PAIRS="taranis-lucid toutatis-precise"
-CODENAMES="taranis toutatis"
-UPSTREAMS="lucid precise"
+PAIRS="taranis-lucid toutatis-precise belenos-trusty"
+CODENAMES="taranis toutatis belenos"
+UPSTREAMS="lucid precise trusty"
 
 [ 1$1 = 1"test" ] && TEST=echo
 
@@ -106,17 +106,13 @@ then
 
  #   echo Current version in $DISTRO: $current 1>&2
  #   echo Upstream version in $UPSTREAM: $upstream 1>&2
-[ $package = "grub2" -a $UPSTREAM = natty ] && continue
-[ $package = "grub2" -a $UPSTREAM = oneiric ] && continue
-[ $package = "grub2" -a $UPSTREAM = precise ] && continue
-[ $package = "yelp" -a $UPSTREAM = natty ] && continue
 
     echo Current version in $DISTRO: $current
     echo Upstream version in $UPSTREAM: $upstream
     [ $current = "EOL" ] && continue
-    if echo $package |grep -q linux-ubuntu-modules
+    if [ $package = "grub2" ]
     then
-        echo WARNING! linux-ubuntu-modules packages need to be manually compiled!
+        echo WARNING! grub2 packages need to be manually compiled!
         echo
         continue
     fi
@@ -152,7 +148,7 @@ address=ruben@trisquel.info
 echo "Subject: Compiling updates
 To: $address
 
-$(cat $FILE)"  | $TEST /usr/sbin/sendmail -f watchdog@devel.trisquel.info -h correo.sognus.com
+$(cat $FILE)"  | $TEST /usr/sbin/sendmail -f watchdog@devel.trisquel.info -h correo.sognus.com -t $address
 }
 
 grep -q makepackage $FILE && $TEST report
