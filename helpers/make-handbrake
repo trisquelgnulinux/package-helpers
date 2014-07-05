@@ -18,7 +18,23 @@
 #
 
 VERSION=1
-EXTERNAL='deb-src http://ppa.launchpad.net/stebbins/handbrake-releases/ubuntu/ $UPSTREAM main'
+EXTERNAL='deb-src http://ppa.launchpad.net/stebbins/handbrake-snapshots/ubuntu/ $UPSTREAM main'
+
+cat << EOF | apt-key add -
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: SKS 1.1.4
+Comment: Hostname: keyserver.ubuntu.com
+
+mI0ES8Yj/gEEAND+ODU2t3ZahKHDlM0N5DuPqh5cytE+KA68aRbFXYXUjNHkjcocQ8pEYRJk
+mVijbmYQs+wumvvJYLmXmOLXO3uQlBdL9wWaw2njx8f02JnZE1OSdO0Fo/b6BFEsKvusW5Kx
+SAsjeXAKIVQFN3FDxQu12nZ1bgUSLihpGcxcRlmhABEBAAG0HUxhdW5jaHBhZCBIYW5kQnJh
+a2UgU25hcHNob3RziLYEEwECACAFAkvGI/4CGwMGCwkIBwMCBBUCCAMEFgIDAQIeAQIXgAAK
+CRCHca2wgWlQ2AKrA/46OaXTBunekpRF8aZUZI2+4e6vI8rGqJZECnar8UVyKnBR42xzLx5D
+9G7KlAtkyFYYyUN2Mzm/AfCgvcD+4Q/+E7LV3G/yVYaDpyhqf1ulcHE881sU63JqZP+E4L3f
+3wZ6eyNYUWx84lH/3ui/U07zNDqheIcQsSOdpBD6S1LffA==
+=Pqya
+-----END PGP PUBLIC KEY BLOCK-----
+EOF
 
 . ./config
 
