@@ -31,7 +31,8 @@ done
 export QUILT_PATCHES=debian/patches
 quilt push -a
 
-sed '/ubuntu/d' -i debian/gnome-session.install
+rm debian/ubuntu-session.*
+sed '/Package: ubuntu-session/,/^$/d' debian/control -i
 
 changelog "Adapted for Trisquel"
 
