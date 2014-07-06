@@ -39,7 +39,7 @@ changelog "Rebranded for Trisquel"
 compile
 
 exit 0
-if [ $ARCH = "i386" ]
+if [ $JAILARCH = "i386" ]
 then
 # Let's build the win32 executable
     apt-get -y --force-yes install mingw32 wine bzr
