@@ -87,13 +87,13 @@ disablescripts(){
 
 createjail () {
     [ -d jails ] || mkdir jails
-    CHROOT=jails/$UPSTREAM-$ARCH
+    CHROOT=jails/$UPSTREAM-$JAILARCH
     C="chroot $CHROOT"
     MIRROR=http://mir1.ovh.net/mirrors/ftp.ubuntu.com/ubuntu
 
     mkdir $CHROOT-tmp
     mount -t tmpfs -o size=500M none $CHROOT-tmp
-    debootstrap --arch=$ARCH $UPSTREAM $CHROOT-tmp $MIRROR
+    debootstrap --arch=$JAILARCH $UPSTREAM $CHROOT-tmp $MIRROR
     fuser -k $CHROOT-tmp
     cp -a $CHROOT-tmp $CHROOT
     umount $CHROOT-tmp
@@ -111,7 +111,7 @@ createjail () {
         echo GPG private key for $GPGKEY not found, the packages and repositories will not be signed.
     fi
 
-    echo $UPSTREAM-$ARCH  > $CHROOT/etc/debian_chroot
+    echo $UPSTREAM-$JAILARCH  > $CHROOT/etc/debian_chroot
 cat << EOF > $CHROOT/etc/apt/sources.list
 deb $MIRROR $UPSTREAM main universe
 deb $MIRROR $UPSTREAM-updates main universe
@@ -143,7 +143,7 @@ EOF
     $C apt-key add /tmp/key.gpg
 
     # Hack for i386
-    if [ $ARCH = "i386" ]
+    if [ $JAILARCH = "i386" ]
     then
         for BIN in /bin/uname /usr/bin/arch
         do
@@ -166,8 +166,8 @@ umount $CHROOT/proc $CHROOT/dev/pts
 }
 
 prepare(){
-[ -d jails/$UPSTREAM-$ARCH ] || createjail
-cat << EOF > jails/$UPSTREAM-$ARCH/tmp/update
+[ -d jails/$UPSTREAM-$JAILARCH ] || createjail
+cat << EOF > jails/$UPSTREAM-$JAILARCH/tmp/update
 mount -t proc none /proc
 export DEBIAN_FRONTEND=noninteractive
 export LANG=C
@@ -182,34 +182,34 @@ export DEBIAN_FRONTEND=noninteractive
 apt-get --force-yes -y dist-upgrade
 umount /proc
 EOF
-chroot jails/$UPSTREAM-$ARCH bash /tmp/update
-if [ -f jails/$UPSTREAM-$ARCH/CurrentlyBuilding ]
+chroot jails/$UPSTREAM-$JAILARCH bash /tmp/update
+if [ -f jails/$UPSTREAM-$JAILARCH/CurrentlyBuilding ]
 then
-    echo The $UPSTREAM-$ARCH jail appears to be running $(cat jails/$UPSTREAM-$ARCH/CurrentlyBuilding |grep Package: |sed 's/Package:\ //'), aborting.
+    echo The $UPSTREAM-$JAILARCH jail appears to be running $(cat jails/$UPSTREAM-$JAILARCH/CurrentlyBuilding |grep Package: |sed 's/Package:\ //'), aborting.
     exit 1
 fi
-    CHROOT=jails/$UPSTREAM-$ARCH disablescripts
+    CHROOT=jails/$UPSTREAM-$JAILARCH disablescripts
 }
 
 tmpumount(){
-  grep jails/$UPSTREAM-$ARCH/tmp /proc/mounts -q || return 0
-  umount jails/$UPSTREAM-$ARCH/tmp && return
-  echo ERROR: could not umount tmpfs at jails/$UPSTREAM-$ARCH/tmp
+  grep jails/$UPSTREAM-$JAILARCH/tmp /proc/mounts -q || return 0
+  umount jails/$UPSTREAM-$JAILARCH/tmp && return
+  echo ERROR: could not umount tmpfs at jails/$UPSTREAM-$JAILARCH/tmp
   exit 1
 }
 tmpmount(){
   [ $MEM -lt 16000000 ] && return
-  grep jails/$UPSTREAM-$ARCH/tmp /proc/mounts -q && tmpumount
+  grep jails/$UPSTREAM-$JAILARCH/tmp /proc/mounts -q && tmpumount
   echo $PACKAGE | grep -q "linux" && return
-  mount -t tmpfs -o size=15G none jails/$UPSTREAM-$ARCH/tmp
+  mount -t tmpfs -o size=15G none jails/$UPSTREAM-$JAILARCH/tmp
 }
 
 compile(){
-    [ -d jails/$UPSTREAM-$ARCH/$WORKDIR ] && rm -rf jails/$UPSTREAM-$ARCH/$WORKDIR/
+    [ -d jails/$UPSTREAM-$JAILARCH/$WORKDIR ] && rm -rf jails/$UPSTREAM-$JAILARCH/$WORKDIR/
 tmpmount
-    cp -a helpers/ jails/$UPSTREAM-$ARCH/$WORKDIR/
+    cp -a helpers/ jails/$UPSTREAM-$JAILARCH/$WORKDIR/
 
-cat << EOF > jails/$UPSTREAM-$ARCH/usr/local/sbin/makepackage-handler
+cat << EOF > jails/$UPSTREAM-$JAILARCH/usr/local/sbin/makepackage-handler
 #!/bin/bash
 WORKDIR=$WORKDIR
 PACKAGE=$PACKAGE
@@ -221,7 +221,7 @@ export PATH="/usr/lib/ccache:${PATH}"
 bash -e make-$PACKAGE 2>&1 || exit 1
 EOF
 
-cat << EOF > jails/$UPSTREAM-$ARCH/etc/pkgbinarymangler/striptranslations.conf
+cat << EOF > jails/$UPSTREAM-$JAILARCH/etc/pkgbinarymangler/striptranslations.conf
 enable: true
 components: main
 invalid_currentlybuilding: ignore
@@ -229,36 +229,36 @@ posuffix: translations
 oem_blacklist: partner
 EOF
 
-cat << EOF > jails/$UPSTREAM-$ARCH/etc/pkgbinarymangler/sanitychecks.conf
+cat << EOF > jails/$UPSTREAM-$JAILARCH/etc/pkgbinarymangler/sanitychecks.conf
 enable: true
 EOF
 
-cat << EOF > jails/$UPSTREAM-$ARCH/etc/pkgbinarymangler/maintainermangler.conf
+cat << EOF > jails/$UPSTREAM-$JAILARCH/etc/pkgbinarymangler/maintainermangler.conf
 enable: true
 invalid_currentlybuilding: ignore
 EOF
 
-cat << EOF > jails/$UPSTREAM-$ARCH/etc/pkgbinarymangler/maintainermangler.overrides
+cat << EOF > jails/$UPSTREAM-$JAILARCH/etc/pkgbinarymangler/maintainermangler.overrides
 default: Trisquel GNU/Linux developers <trisquel-devel@listas.trisquel.info>
 ignore_domains: trisquel.info sognus.com listas.trisquel.info gnu.org fsf.org
 ignore_emails: ruben@trisquel.info
 EOF
 
-    chmod 755 jails/$UPSTREAM-$ARCH/usr/local/sbin/makepackage-handler
+    chmod 755 jails/$UPSTREAM-$JAILARCH/usr/local/sbin/makepackage-handler
 
-    if ! chroot jails/$UPSTREAM-$ARCH makepackage-handler /$WORKDIR/make-$PACKAGE
+    if ! chroot jails/$UPSTREAM-$JAILARCH makepackage-handler /$WORKDIR/make-$PACKAGE
     then
-        rm jails/$UPSTREAM-$ARCH/CurrentlyBuilding
+        rm jails/$UPSTREAM-$JAILARCH/CurrentlyBuilding
         exit 1
     fi
-    find jails/$UPSTREAM-$ARCH/$WORKDIR/PACKAGES/$PACKAGE/ -maxdepth 1 -type f -exec cp {} $REPOSITORY/incoming/ \;
+    find jails/$UPSTREAM-$JAILARCH/$WORKDIR/PACKAGES/$PACKAGE/ -maxdepth 1 -type f -exec cp {} $REPOSITORY/incoming/ \;
 tmpumount
 }
 
- ARCH=i386 prepare
- ARCH=amd64 prepare
- ARCH=i386 compile
- ARCH=amd64 compile
+ JAILARCH=i386 prepare
+ JAILARCH=amd64 prepare
+ JAILARCH=i386 compile
+ JAILARCH=amd64 compile
 
 cd $REPOSITORY
 
