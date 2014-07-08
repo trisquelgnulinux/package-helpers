@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2009-2010  Rubén Rodríguez <ruben@gnu.org>
+#    Copyright (C) 2009-2014  Rubén Rodríguez <ruben@gnu.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 NETINST=true
 . ./config
 
@@ -54,8 +54,9 @@ deb $LOCALMIRROR $CODENAME-updates main/debian-installer
 #deb $LOCALMIRROR $CODENAME-security main/debian-installer
 EOF
 
-rpl 2004-2012 2004-2013 . -R
-rpl 2004-2011 2004-2013 . -R
+rpl 2004-2013 2004-2014 . -R
+rpl 2004-2012 2004-2014 . -R
+rpl 2004-2011 2004-2014 . -R
 rpl 2004-2010 2004-2011 . -R
 rpl 2004-2009 2004-2011 . -R
 rpl 2004-2008 2004-2011 . -R
@@ -74,18 +75,7 @@ rpl "Trisquel Ltd, and Rosetta" "Canonical Ltd, and Rosetta" . -R
 rpl ubuntu-keyring trisquel-keyring . -R
 rpl ubuntu-archive-keyring trisquel-archive-keyring . -R
 
-#sed -i 's:^The default installation.*::g' build/boot/x86/boot.txt
-#sed -i 's:^Press.*::g' build/boot/x86/boot.txt
-#sed -i "s:^To install.*:This is the Trisquel GNU/Linux $TVERSION LTS \"$TCODENAME\" network install CD.:g" build/boot/x86/boot.txt
-#sed -i 's:^For the.*:For the default installation, press ENTER, for more help press F1.:g' build/boot/x86/boot.txt
-
-#sed s/tasks=standard/tasks=trisquel-console/ build/boot/x86/syslinux.cfg -i
-
 changelog "Rebranded and adapted for Trisquel"
 compile
 
-if [ $(arch) = i686 ]; then
-cp build/tmp/netboot_non-pae/mini.iso build/tmp/netboot_non-pae/initrd.gz /root/
-else
 cp build/tmp/netboot/mini.iso build/tmp/netboot/initrd.gz /root/
-fi
