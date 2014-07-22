@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 NETINST=true
 . ./config
 
@@ -28,6 +28,9 @@ cat << EOF > debian/rules
 EOF
 
 rm debian/apt-mirror-setup.templates-ubuntu
+
+# Remove multiarch support
+sed '/chroot/,$d' generators/01setup -i
 
 # getline "seed" file
 getline(){
