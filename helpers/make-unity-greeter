@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=7
+VERSION=11
 
 . ./config
 
@@ -38,6 +38,21 @@ cp $DATA/cof.png data
 cp $DATA/badge.png data/trisquel_badge.png
 cp $DATA/badge.png data/unknown_badge.png
 replace ubuntu_badge trisquel_badge .
+
+sed '/paint_with_alpha/s/0.4/0.7/' -i src/menubar.vala
+sed '/set_source_rgb/s/(0.1, 0.1, 0.1)/(0.0, 0.0, 0.0)/' -i src/menubar.vala
+sed '/set_source_rgba/s/(0.1, 0.1, 0.1, 0.4)/(0.0, 0.0, 0.0, 0.7)/' -i src/dash-box.vala
+
+sed '/ttf-ubuntu-font-family/d' -i debian/control
+
+sed '/default_session/ s/ubuntu/trisquel/' -i ./src/user-list.vala
+sed '/session_name/ s/ubuntu/trisquel/' -i ./src/settings-daemon.vala
+
+# Custom fonts
+replace "Ubuntu 1" "Sans 1" .
+replace "Ubuntu Light 1" "Sans 1" .
+sed '/set_family/ s/Ubuntu/Sans/' -i src/logo-generator.vala
+
 
 changelog "Adapted for Trisquel"
 
