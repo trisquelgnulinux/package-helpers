@@ -18,11 +18,13 @@
 #
 
 
-VERSION=1
+VERSION=2
 
 . ./config
 
-#patch -p1 < $DATA/megaraid.patch
+for PATCH in $DATA/*.patch ; do
+  patch -p1 < $PATCH
+done
 
 sh $DATA/deblob-3.13 --force
 
@@ -46,6 +48,18 @@ sed 's/Linux/Linux-libre/g' debian/control debian/control.stub -i
 sed '/^firmware/d' ./debian*/abi/*/fwinfo -i
 echo > ./debian.master/d-i/firmware/nic-modules
 echo > ./debian.master/d-i/firmware/scsi-modules
+
+# Use BFQ scheduler in lowlatency kernels
+cat << EOF >> debian.master/config/config.common.trisquel
+CONFIG_IOSCHED_BFQ=y
+CONFIG_CGROUP_BFQIO=y
+# CONFIG_DEFAULT_BFQ is not set
+EOF
+cat << EOF >> debian.master/config/i386/config.flavour.lowlatency
+CONFIG_DEFAULT_BFQ=y
+CONFIG_DEFAULT_IOSCHED="BFQ"
+EOF
+cp debian.master/config/i386/config.flavour.lowlatency debian.master/config/amd64/config.flavour.lowlatency
 
 changelog "Removed non-free bits"
 
