@@ -17,11 +17,11 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=8
+VERSION=10
 
 . ./config
 
-# Remove the arrot in the main menu button
+# Remove the arrow in the main menu button
 sed 's/"tooltip", tooltip,/"tooltip", "Trisquel",/; s/"has-arrow", TRUE,/"has-arrow", FALSE,/' -i gnome-panel/panel-menu-button.c
 
 # Disable patches related to the gnome sessions
@@ -68,9 +68,7 @@ Depends: ${misc:Depends},
          gnome-session-common,
          metacity (>= 2.30),
          nautilus (>= 3.8),
-         notification-daemon (>= 0.7),
          policykit-1-gnome,
-         unity-settings-daemon
 Provides: x-session-manager, gnome-session-flashback
 Replaces: gnome-session-flashback
 Conflicts: gnome-session-flashback
@@ -118,7 +116,7 @@ pack-type=start
 toplevel-id=panel
 
 [Object indicators]
-object-iid=IndicatorAppletCompleteFactory::IndicatorAppletComplete
+object-iid=IndicatorAppletFactory::IndicatorApplet
 toplevel-id=panel
 pack-type=end
 pack-index=10
