@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 NETINST=true
 . ./config
 
@@ -79,3 +79,4 @@ changelog "Rebranded and adapted for Trisquel"
 compile
 
 cp build/tmp/netboot/mini.iso build/tmp/netboot/initrd.gz /root/
+cp build/dest/cdrom/vmlinuz /root/
