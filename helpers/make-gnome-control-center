@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=4
 COMPONENT=main
 
 . ./config
@@ -32,13 +32,20 @@ replace gnome-fallback gnome-classic .
 replace UbuntuLogo.png TrisquelLogo.png
 rm debian/UbuntuLogoBlank.png
 cp $DATA/TrisquelLogo.png debian/TrisquelLogoBlank.png
+sed 's/ubuntu/trisquel/g; s/Ubuntu/Trisquel/g; s/14.04 LTS/7.0 LTS/' -i debian/rules
 
 # disable ubuntu custom help
-rm ./debian/patches/53_use_ubuntu_help.patch
-sed /use_ubuntu_help/d -i debian/patches/series
+
+for patch in 53_use_ubuntu_help.patch 56_use_ubuntu_info_branding.patch 58_ubuntu_icon_views_redesign.patch; do
+    rm ./debian/patches/$patch
+    sed /$patch/d -i debian/patches/series
+done
 
 # Edit menu selections
 cp $DATA/gnomecc.menu.in shell/gnomecc.menu.in
+
+#Remove top menu
+sed '/G_ACTION/,/Quit/d' -i shell/control-center.c
 
 replace "Trisquel-Gettext" "Ubuntu-Gettext" .
 
