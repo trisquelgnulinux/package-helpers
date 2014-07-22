@@ -17,7 +17,8 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
+COMPONENT=main
 
 . ./config
 
@@ -60,6 +61,10 @@ cat << EOF | patch -p1
  
    return menuitem;
 EOF
+
+# Show datetime in standard applet
+sed '/datetime/,/}/d' -i src/applet-main.c
+
 
 changelog "Fixes LP:965953"
 
