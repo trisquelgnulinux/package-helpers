@@ -17,10 +17,16 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 COMPONENT=main
 
 . ./config
+
+# No install recommends
+sed '/@aptitude=qw/s/aptitude -q/aptitude -q -R/' -i tasksel.pl
+sed '/@aptitude="/s/"aptitude"/"aptitude -R"/' -i tasksel.pl
+sed '/@apt=qw/s/apt-get -q/apt-get -q --no-install-recommends/' -i tasksel.pl
+sed '/@apt="/s/"apt-get"/"apt-get --no-install-recommends"/' -i tasksel.pl
 
 mkdir trisquel-tasks
 cp $DATA/* trisquel-tasks
