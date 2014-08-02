@@ -61,6 +61,8 @@ CONFIG_DEFAULT_IOSCHED="BFQ"
 EOF
 cp debian.master/config/i386/config.flavour.lowlatency debian.master/config/amd64/config.flavour.lowlatency
 
+sed '/%s_mc2/s@snprintf.*@snprintf(fw_name, sizeof(fw_name), "/*(DEBLOBBED)*/", chip_name);@' -i drivers/gpu/drm/radeon/si.c drivers/gpu/drm/radeon/cik.c
+
 changelog "Removed non-free bits"
 
 cp debian/changelog debian.master/changelog
