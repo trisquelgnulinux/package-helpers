@@ -22,7 +22,7 @@ VERSION=2
 . ./config
 
 # Make the banner be Trisquel GNU/Linux instead of just Trisquel
-sed '/^LSB_RELEASE/s/$/_GNU\/Linux/'  -i debian/rules
+sed '/^LSB_RELEASE/s/$/_GNU\/Linux/; /set -e /,/fi/d'  -i debian/rules
 
 changelog "Compiled for Trisquel"
 
