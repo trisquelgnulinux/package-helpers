@@ -47,6 +47,8 @@ sed '/^firmware/d' ./debian*/abi/*/fwinfo -i
 echo > ./debian.trusty/d-i/firmware/nic-modules
 echo > ./debian.trusty/d-i/firmware/scsi-modules
 
+sed '/%s_mc2/s@snprintf.*@snprintf(fw_name, sizeof(fw_name), "/*(DEBLOBBED)*/", chip_name);@' -i drivers/gpu/drm/radeon/si.c drivers/gpu/drm/radeon/cik.c
+
 changelog "Removed non-free bits"
 
 cp debian/changelog debian.master/changelog
