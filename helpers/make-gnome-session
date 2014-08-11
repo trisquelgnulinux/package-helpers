@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 COMPONENT=main
 QUILT=skip
 
@@ -33,6 +33,8 @@ quilt push -a
 
 rm debian/ubuntu-session.*
 sed '/Package: ubuntu-session/,/^$/d' debian/control -i
+
+echo "X-LightDM-DesktopName=GNOME" >> ./data/gnome.desktop.in
 
 changelog "Adapted for Trisquel"
 
