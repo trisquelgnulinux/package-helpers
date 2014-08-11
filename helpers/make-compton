@@ -17,8 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
-EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu trusty universe'
+VERSION=3
 
 . ./config
 
@@ -46,10 +45,12 @@ EOF
 cat << EOF > compton-launcher
 #!/bin/sh
 
+[ \$DESKTOP_SESSION = "trisquel-session" ] || exit 0
+
 FILE=/etc/compton.conf
 [ -f ~/.config/compton.conf ] && FILE="~/.config/compton.conf"
 
-[ 0 != \$(glxinfo |grep "renderer string:" |grep -v llvmpipe | wc -c) ]  && compton --config \$FILE &
+[ 0 != \$(glxinfo |grep "renderer string:" |grep -v llvmpipe | wc -c) ]  && exec compton --config \$FILE &
 EOF
 
 sed 's/^Depends:/Depends: mesa-utils, /' debian/control* -i
