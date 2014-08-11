@@ -57,6 +57,7 @@
       </And>
 <Or>
 <Filename>gnome-universal-access-panel.desktop</Filename>
+<Filename>gnome-info-panel.desktop</Filename>
 </Or>
     </Include>
 <Exclude>
@@ -67,20 +68,12 @@
 <Filename>nm-connection-editor.desktop</Filename>
 <Filename>palimpsest.desktop</Filename>
 <Filename>gnome-online-accounts-panel.desktop</Filename>
+<Filename>gnome-disks.desktop</Filename>
+<Filename>im-config.desktop</Filename>
+<Filename>gnome-user-share-properties.desktop</Filename>
 </Exclude>
   </Menu> <!-- End Personal -->
 
-  <!-- disabled
-  <Menu>
-    <Name>Hardware</Name>
-    <Directory>Hardware.directory</Directory>
-    <Include>
-      <And>
-        <Category>Settings</Category>
-        <Category>HardwareSettings</Category>
-      </And>
-    </Include>
-  </Menu>  -->
 
   <!-- System category -->
   <Menu>
@@ -94,18 +87,23 @@
 <Or>
          <Category>X-GNOME-SystemSettings</Category>
 <Filename>language-selector.desktop</Filename>
-<Filename>nm-connection-editor.desktop</Filename>
-<Filename>palimpsest.desktop</Filename>
 <Filename>gnome-ppp.desktop</Filename>
 <Filename>baobab.desktop</Filename>
 <Filename>gnome-system-monitor.desktop</Filename>
+<Filename>gnome-printers-panel.desktop</Filename>
+<Filename>gnome-disks.desktop</Filename>
+<Filename>gnome-network-panel.desktop</Filename>
 </Or>
     </Include>
 <Exclude>
 <Filename>gnome-universal-access-panel.desktop</Filename>
-<Filename>gnome-user-accounts-panel.desktop</Filename>
+<Filename>nm-connection-editor.desktop</Filename>
 <Filename>gnome-app-install.desktop</Filename>
 <Filename>time.desktop</Filename>
+<Filename>users.desktop</Filename>
+<Filename>network.desktop</Filename>
+<Filename>gnome-info-panel.desktop</Filename>
+<Filename>system-config-printer.desktop</Filename>
 </Exclude>
   </Menu> <!-- End System -->
 
@@ -130,3 +128,4 @@
   </Menu> <!-- End Other -->
 
 </Menu>     <!-- End CC -->
+
