@@ -17,13 +17,17 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=10
+VERSION=13
 QUILT=skip
 COMPONENT=main
 . ./config
 
-rm debian/patches/15_use-ubuntu-help.patch
-sed '/use-ubuntu-help/d' -i debian/patches/series
+for patch in 15_use-ubuntu-help.patch 16_unity_new_documents.patch; do
+  rm debian/patches/$patch
+  sed "/$patch/d" -i debian/patches/series
+done
+
+sed 's/show_app_menu && !show_menubar/1 == 0/' debian/patches/restore-traditional-menu-bar.patch -i
 
 export QUILT_PATCHES=debian/patches
 quilt push -a
