@@ -17,8 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
-COMPONENT=main
+VERSION=2
 
 . ./config
 
@@ -43,9 +42,8 @@ cat << EOF > opml/feedlist
 <body>  
     <outline text="Trisquel GNU/Linux">          <!-- translate this for localized feed list -->
       <outline text="News" htmlUrl="http://trisquel.info/" xmlUrl="http://trisquel.info/en/node/feed" />
-      <outline text="Planet" htmlUrl="http://trisquel.info/en/planet" xmlUrl="http://trisquel.info/en/planet/rss" />
+      <outline text="Release announcements" htmlUrl="http://trisquel.info/" xmlUrl="http://trisquel.info/en/taxonomy/term/700/0/feed"" />
       <outline text="Forum" htmlUrl="http://trisquel.info/en/forum" xmlUrl="http://trisquel.info/en/taxonomy/term/50/0/feed" />
-      <outline text="Identi.ca group" htmlUrl="http://identi.ca/group/trisquel" xmlUrl="http://identi.ca/api/statusnet/groups/timeline/3275.rss" />
     </outline>
     <outline text="Free Software">          <!-- translate this for localized feed list -->
       <outline text="What's New at GNU" htmlUrl="http://www.gnu.org/" xmlUrl="http://www.gnu.org/rss/whatsnew.rss" />
