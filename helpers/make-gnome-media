@@ -17,21 +17,12 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=8
+VERSION=1
 COMPONENT=main
 
 . ./config
 
-for i in 09_app_install_entry.patch 09_games-menu.patch 11_science-menu.patch 08_settings-menus.patch fix-menus-in-gnome-flashback-session.patch
-do
-  rm debian/patches/$i
-  sed /$i/d -i debian/patches/series
-done
-
-cp $DATA/applications.menu layout/gnome-flashback-applications.menu
-echo "layout/gnome-flashback-applications.menu /etc/xdg/menus" >> debian/gnome-menus.install
-
-changelog "Default layout adapted for Trisquel"
+changelog "Reverted to gst 0.10"
 
 compile
 
