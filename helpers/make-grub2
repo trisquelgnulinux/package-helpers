@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=4
 COMPONENT=main
 
 . ./config
@@ -29,6 +29,9 @@ for i in install_efi_ubuntu_flavours.patch mkconfig_ubuntu_distributor.patch; do
     rm debian/patches/$i
     sed /$i/d debian/patches/series -i
 done
+
+#Allow passwords https://bugs.launchpad.net/ubuntu/+source/grub2/+bug/1311302
+sed '/^CLASS/s/class os/class os --unrestricted/' -i util/grub.d/10_linux.in
 
 replace "with Linux" "with Linux-Libre" util
 replace "with Linux" "with Linux-Libre" debian
@@ -45,8 +48,14 @@ cat << EOF >> debian/default/grub
 GRUB_DISABLE_RECOVERY=true
 EOF
 
-changelog "Disable rescue mode by default, nomodeset handler"
-sed "s/-.*)/-${REVISION}trisquel${VERSION})/" -i debian/changelog
+GRUBVERSION=$(head -n1 debian/changelog |/bin/sed 's/.*(//;s/).*//; s/[~+-].*//')
+
+echo $GRUBVERSION 
+echo /bin/sed "/GNU GRUB  version/ s/PACKAGE_VERSION/\"$GRUBVERSION\"/" -i grub-core/normal/main.c
+/bin/sed "/GNU GRUB  version/ s/PACKAGE_VERSION/\"$GRUBVERSION\"/" -i grub-core/normal/main.c
+
+changelog "Disable rescue mode by default, branding"
+#sed "s/-.*)/-${REVISION}trisquel${VERSION})/" -i debian/changelog
 
 #apt-get install -y --force-yes kvm-pxe
 # /dev is needed for KVM support
