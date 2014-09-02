@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=11
+VERSION=13
 
 . ./config
 
@@ -26,6 +26,7 @@ cp $DATA/com.canonical.unity-greeter.gschema.xml data
 
 # Change the sound theme
 sed s/ubuntu/freedesktop/g src/unity-greeter.vala -i
+sed 's/"system-ready"/"bell"/' src/unity-greeter.vala -i
 rm -f src/*.c
 
 # Custom artwork
