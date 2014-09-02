@@ -17,13 +17,17 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=5
 
 . ./config
 
 cp $DATA/trisquel_installed.png pixmaps
 rm pixmaps/ubuntu_installed.png
 replace ubuntu_installed trisquel_installed .
+
+replace linux-signed linux-lowlatency .
+replace shim-signed shim .
+replace grub-efi-amd64-signed grub-efi-amd64 .
 
 /bin/sed '/canonical/d' -i debian/ubiquity.install*
 rm  tests/test_ubi_partman*
@@ -140,17 +144,21 @@ then
     chown root:admin /target/etc/italc/keys/private/*/key
 fi
 
-#cat << EOF > /target/etc/grub.d/01_PASSWORD
+cat << EOF > /target/etc/grub.d/01_PASSWORD
 #! /bin/sh -e
-# Trisquel enables a random password to grub during install
-# Comment this file to remove the password.
-# This file should only be readable by root.
+# As a security measure Trisquel sets a password for GRUB during install.
+# It prevents unauthorized users from gaining root through the boot manager.
+# You can still edit GRUB entries by entering "grub" as user and the password
+# set below in this file. This file should only be readable by root.
+#
+# To disable the password, Comment or remove this file and run this command:
+# sudo update-grub2
 
-#echo set superusers=grub
-#echo password grub \$(bash -c 'echo \$RANDOM')
-#EOF
+echo set superusers=grub
+echo password grub \$(bash -c 'echo \$RANDOM')
+EOF
 
-#chmod 700 /target/etc/grub.d/01_PASSWORD
+chmod 700 /target/etc/grub.d/01_PASSWORD
 
 # Hacks for accessibility
 if pgrep orca > /dev/null
@@ -161,6 +169,9 @@ screen-reader-enabled=true
 
 [org.gnome.desktop.interface]
 toolkit-accessibility=true
+
+[com.canonical.unity-greeter]
+screen-reader=true
 " >> /target/usr/share/glib-2.0/schemas/99_accessibility.gschema.override
   chroot /target glib-compile-schemas /usr/share/glib-2.0/schemas
 
