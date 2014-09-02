@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
+VERSION=6
 
 . ./config
 
@@ -25,6 +25,10 @@ cp $DATA/index.docbook help/C/index.docbook
 
 replace Ubuntu Trisquel .
 replace "Trisquel-Gettext" "Ubuntu-Gettext" .
+
+sed '/%s base/ s/name.*/name = "Trisquel base"/' -i ./UpdateManager/Core/UpdateList.py
+sed 's_http://changelogs.ubuntu.com/changelogs/pool/_http://packages.trisquel.info/changelogs/pool/_' -i UpdateManager/Core/MyCache.py
+sed '/len(changelog) == 0/,/"later."/d' -i UpdateManager/Core/MyCache.py
 
 changelog "Compiled for Trisquel"
 
