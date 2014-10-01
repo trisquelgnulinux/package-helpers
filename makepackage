@@ -201,7 +201,7 @@ tmpmount(){
   [ $MEM -lt 16000000 ] && return
   grep jails/$UPSTREAM-$JAILARCH/tmp /proc/mounts -q && tmpumount
   echo $PACKAGE | grep -q "linux" && return
-  mount -t tmpfs -o size=15G none jails/$UPSTREAM-$JAILARCH/tmp
+  mount -t tmpfs -o size=20G none jails/$UPSTREAM-$JAILARCH/tmp
 }
 
 compile(){
