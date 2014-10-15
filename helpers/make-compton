@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
+VERSION=4
 
 . ./config
 
@@ -46,6 +46,7 @@ cat << EOF > compton-launcher
 #!/bin/sh
 
 [ \$DESKTOP_SESSION = "trisquel-session" ] || exit 0
+[ -f ~/.config/disable-compton ] && exit 0
 
 FILE=/etc/compton.conf
 [ -f ~/.config/compton.conf ] && FILE="~/.config/compton.conf"
