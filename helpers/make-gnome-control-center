@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=5
+VERSION=6
 COMPONENT=main
 
 . ./config
@@ -27,6 +27,9 @@ sed '/ubuntu-docs/d' -i debian/control*
 
 # make the sound daemon compatible with trisquel custom session
 replace gnome-fallback gnome-classic .
+
+# Hide misleading "Experience" label in graphics tab.
+sed '/label19/,+1 s/True/False/' -i panels/info/info.ui
 
 # Replace logo
 replace UbuntuLogo.png TrisquelLogo.png
