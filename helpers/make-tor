@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2012  Grant Houlgate <ghoulgat@member.fsf.org>
+#    Copyright (C) 2011  Rubén Rodríguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -18,13 +18,12 @@
 #
 
 VERSION=1
+EXTERNAL='deb-src http://deb.torproject.org/torproject.org trusty main'
+
+apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 886DDD89
 
 . ./config
 
-sed '/The official binary/d; /by root./d;' -i debian/control 
-
-
-changelog "Removed references to non-free programs"
+changelog "Imported into Trisquel"
 
 compile
-

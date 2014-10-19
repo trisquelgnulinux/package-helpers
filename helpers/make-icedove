@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2013  Rubén Rodríguez <ruben@trisquel.info>
+#    Copyright (C) 2014  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -18,12 +18,25 @@
 #
 
 VERSION=1
-EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu quantal universe'
-
+EXTERNAL='deb-src http://security.debian.org/ wheezy/updates main'
 
 . ./config
 
-changelog "Fixes bug: Battery icon doesn't show any charging progress, #7725"
+sed '/libffi/d' -i debian/control debian/patches/series
+rm debian/patches/system-libs/Allow-to-build-against-system-libffi.patch
+
+cat << EOF >> debian/icedove.js
+
+// Trisquel settings
+pref("mail.shell.checkDefaultClient", false);
+pref("spellchecker.dictionaries.download.url", "http://dictionaries.mozdev.org/installation.html");
+pref("extensions.webservice.discoverURL", "https://directory.fsf.org/wiki/Icedove");
+pref("extensions.blocklist.enabled", false);
+pref("mail.rights.version", 1);
+pref("toolkit.telemetry.prompted", 2);
+pref("toolkit.telemetry.rejected", true);
+EOF
+
+changelog "Imported into Trisquel"
 
 compile
-
