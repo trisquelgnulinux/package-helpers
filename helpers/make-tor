@@ -18,7 +18,7 @@
 #
 
 VERSION=1
-EXTERNAL='deb-src http://deb.torproject.org/torproject.org trusty main'
+EXTERNAL='deb-src http://deb.torproject.org/torproject.org $UPSTREAM main'
 
 apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 886DDD89
 
