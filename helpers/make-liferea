@@ -17,8 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
-COMPONENT=main
+VERSION=3
 
 . ./config
 
@@ -43,9 +42,9 @@ cat << EOF > opml/feedlist
 <body>  
     <outline text="Trisquel GNU/Linux">          <!-- translate this for localized feed list -->
       <outline text="News" htmlUrl="http://trisquel.info/" xmlUrl="http://trisquel.info/en/node/feed" />
-      <outline text="Planet" htmlUrl="http://trisquel.info/en/planet" xmlUrl="http://trisquel.info/en/planet/rss" />
+      <outline text="Release announcements" htmlUrl="http://trisquel.info/" xmlUrl="http://trisquel.info/en/taxonomy/term/700/0/feed" />
       <outline text="Forum" htmlUrl="http://trisquel.info/en/forum" xmlUrl="http://trisquel.info/en/taxonomy/term/50/0/feed" />
-      <outline text="Identi.ca group" htmlUrl="http://identi.ca/group/trisquel" xmlUrl="http://identi.ca/api/statusnet/groups/timeline/3275.rss" />
+      <outline text="Trisquel at Reddit" htmlUrl="http://www.reddit.com/r/gnu" xmlUrl="http://www.reddit.com/r/trisquel/.rss" />
     </outline>
     <outline text="Free Software">          <!-- translate this for localized feed list -->
       <outline text="What's New at GNU" htmlUrl="http://www.gnu.org/" xmlUrl="http://www.gnu.org/rss/whatsnew.rss" />
@@ -84,9 +83,9 @@ cat << EOF > opml/feedlist_es.opml
 <body>  
     <outline text="Trisquel GNU/Linux">          <!-- translate this for localized feed list -->
       <outline text="Noticias" htmlUrl="http://trisquel.info/" xmlUrl="http://trisquel.info/es/node/feed" />
-      <outline text="Planet" htmlUrl="http://trisquel.info/es/planet" xmlUrl="http://trisquel.info/es/planet/rss" />
       <outline text="Foro" htmlUrl="http://trisquel.info/es/forum" xmlUrl="http://trisquel.info/es/taxonomy/term/29/0/feed" />
-      <outline text="Grupo en Identi.ca" htmlUrl="http://identi.ca/group/trisquel" xmlUrl="http://identi.ca/api/statusnet/groups/timeline/3275.rss" />
+      <outline text="Anuncio de nuevas versiones" htmlUrl="http://trisquel.info/" xmlUrl="http://trisquel.info/en/taxonomy/term/700/0/feed" />
+      <outline text="Trisquel en Reddit" htmlUrl="http://www.reddit.com/r/gnu" xmlUrl="http://www.reddit.com/r/trisquel/.rss" />
     </outline>
     <outline text="Free Software">          <!-- translate this for localized feed list -->
       <outline text="What's New at GNU" htmlUrl="http://www.gnu.org/" xmlUrl="http://www.gnu.org/rss/whatsnew.rss" />
@@ -94,7 +93,7 @@ cat << EOF > opml/feedlist_es.opml
       <outline text="FSF Events" htmlUrl="http://www.fsf.org/" xmlUrl="http://static.fsf.org/fsforg/rss/events.xml" />
       <outline text="FSF Blogs" htmlUrl="http://www.fsf.org/" xmlUrl="http://static.fsf.org/fsforg/rss/blogs.xml" />
       <outline text="fsdaily.com - Free Software News" htmlUrl="http://www.fsdaily.com/" xmlUrl="http://www.fsdaily.com/feed/published/All" />
-      <outline text="GNU at Reddit" htmlUrl="http://www.reddit.com/r/gnu" xmlUrl="http://www.reddit.com/r/gnu/.rss" />
+      <outline text="GNU en Reddit" htmlUrl="http://www.reddit.com/r/gnu" xmlUrl="http://www.reddit.com/r/gnu/.rss" />
     </outline>
 
         <!-- the following search folders should also be in sync for all feed lists -->
