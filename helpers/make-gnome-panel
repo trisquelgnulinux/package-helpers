@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2008-2012  Rubén Rodríguez <ruben@trisquel.info>
+#    Copyright (C) 2008-2014  Rubén Rodríguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=10
+VERSION=11
 
 . ./config
 
@@ -29,6 +29,30 @@ for patch in 41_classic_layout.patch 01_gnome-wm.patch 50_ubuntu_sessions.patch 
   rm debian/patches/$patch
   sed /$patch/d -i debian/patches/series
 done
+
+# Profile handling
+cat << EOF > data/trisquel-panel-profile.desktop
+[Desktop Entry]
+Type=Application
+Name=Trisquel panel profile updater
+Exec=trisquel-panel-profile
+NoDisplay=true
+X-GNOME-AutoRestart=false
+X-GNOME-Autostart-Phase=Initialization
+OnlyShowIn=GNOME;
+EOF
+
+cat << EOF > data/trisquel-panel-profile
+#!/bin/sh
+VERSION=\$(lsb_release -rs)
+if ! grep "^\$VERSION$" \$HOME/.config/profilemigrated -q 2>/dev/null; then
+  GS=\$(gsettings get org.gnome.gnome-panel.layout object-id-list | sed "s/, 'clock'//")
+  gsettings set org.gnome.gnome-panel.layout object-id-list "\$GS"
+  echo \$VERSION > \$HOME/.config/profilemigrated
+fi
+EOF
+
+chmod 755 data/trisquel-panel-profile
 
 # Custom xsession
 cat << EOF > data/trisquel-session.desktop
@@ -54,6 +78,8 @@ debian/gnome-wm.desktop /usr/share/applications
 debian/gnome-flashback-services.desktop /usr/share/applications
 debian/scripts/gnome-wm /usr/bin
 usr/share/gnome-session/sessions
+data/trisquel-panel-profile.desktop /etc/xdg/autostart
+data/trisquel-panel-profile /usr/sbin
 EOF
 
 # Custom package
