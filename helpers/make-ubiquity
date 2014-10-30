@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=5
+VERSION=7
 
 . ./config
 
@@ -40,7 +40,7 @@ sed 's:\(targetdb)\):\1\n        os.system("sudo chmod 644 /target/var/cache/deb
 # Fix https://bugs.launchpad.net/ubuntu/+source/ubiquity/+bug/1080701
 sed '/from ubiquity import osextras/s/$/\nos.system("sudo swapoff -a")/' bin/ubiquity-wrapper -i
 
-for i in $(ls -1 d-i/source/apt-setup/generators |grep -v 01setup) canonical.com security.ubuntu.com extras.ubuntu.com
+for i in $(ls -1 d-i/source/apt-setup/generators |grep -v 01setup|grep -v 40cdrom) canonical.com security.ubuntu.com extras.ubuntu.com
 do
     /bin/sed /$i/d -i debian/ubiquity.install-any d-i/source/apt-setup/debian/*.install
 done
@@ -50,7 +50,7 @@ echo "d-i/source/apt-setup/generators/99trisquel usr/lib/ubiquity/apt-setup/gene
 cp $DATA/trisquel.png data/ubiquity.png
 
 # remove Ubuntu apt setup for the installer
-find d-i/source/apt-setup/generators -type f | grep -v 01setup | xargs -r rm
+find d-i/source/apt-setup/generators -type f | grep -v 01setup |grep -v 40cdrom| xargs -r rm
 cat << EOF1 > d-i/source/apt-setup/generators/99trisquel
 #!/bin/sh
 set -e
