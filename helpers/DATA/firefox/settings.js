@@ -8,7 +8,7 @@ pref("pfs.datasource.url", "http://trisquel.info/sites/pfs.php?mime=%PLUGIN_MIME
 pref("pfs.filehint.url", "http://trisquel.info/sites/pfs.php?mime=%PLUGIN_MIMETYPE%");
 
 // I'm feeling Ducky.
-pref("keyword.URL", "https://duckduckgo.com/html?t=trisquel&q=!+");
+pref("keyword.URL", "https://duckduckgo.com/?t=trisquel&q=!+");
 pref("browser.search.defaultenginename", "DuckDuckGo (SSL)");
 pref("browser.search.order.extra.duckduckgo", "DuckDuckGo (SSL)");
 
@@ -54,6 +54,7 @@ pref("general.useragent.compatMode.firefox",true);
 //pref ("browser.startup.homepage" , "http://trisquel.info");
 //pref ("startup.homepage_welcome_url", "http://trisquel.info/welcome");
 //pref ("startup.homepage_override_url" , "http://trisquel.info/newbrowser");
+pref ("browser.startup.homepage_override.mstone", "ignore");
 
 // Preferences for the Get Add-ons panel
 pref ("extensions.webservice.discoverURL", "https://trisquel.info/browser-plain");
@@ -124,3 +125,27 @@ pref("gecko.handlerService.schemes.webcal.0.name", "");
 pref("gecko.handlerService.schemes.webcal.0.uriTemplate", "");
 pref("gecko.handlerService.schemes.irc.0.name", "");
 pref("gecko.handlerService.schemes.irc.0.uriTemplate", "");
+
+// Poodle attack
+pref("security.tls.version.min", 1);
+
+// Do not autoupdate search engines
+pref("browser.search.update", false);
+// Warn when the page tries to redirect or refresh
+pref("accessibility.blockautorefresh", true);
+
+// Disable channel updates
+pref("app.update.enabled", false);
+pref("app.update.auto", false);
+pref("toolkit.telemetry.enabled", false);
+
+// Don't call home for blacklisting
+pref("extensions.blocklist.enabled", false);
+
+pref("font.default.x-western", "sans-serif");
+
+// Disable Gecko media plugins: https://wiki.mozilla.org/GeckoMediaPlugins
+pref("media.gmp-manager.url", "http://127.0.0.1/");
+// Don't install openh264 codec
+pref("media.gmp-gmpopenh264.provider.enabled", false);
+

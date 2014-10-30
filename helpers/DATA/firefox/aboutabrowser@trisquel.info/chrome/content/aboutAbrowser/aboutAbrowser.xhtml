@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+
+<!DOCTYPE html [
+  <!ENTITY % htmlDTD
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "DTD/xhtml1-strict.dtd">
+  %htmlDTD;
+  <!ENTITY % globalDTD SYSTEM "chrome://global/locale/global.dtd">
+  %globalDTD;
+  <!ENTITY % aboutHomeDTD SYSTEM "chrome://browser/locale/aboutHome.dtd">
+  %aboutHomeDTD;
+  <!ENTITY % browserDTD SYSTEM "chrome://browser/locale/browser.dtd" >
+  %browserDTD;
+]>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>&abouthome.pageTitle;</title>
+
+    <link rel="icon" type="image/png" id="favicon"
+          href="chrome://branding/content/icon32.png"/>
+    <link rel="stylesheet" type="text/css" media="all"
+          href="chrome://browser/content/abouthome/aboutHome.css"/>
+
+<style>
+
+label{
+position:relative;
+bottom:2px;
+left:2px;
+}
+
+#addonsform form{
+position:relative;
+left:10px;
+}
+
+em {
+color:#600
+}
+
+a{
+color:#004998
+}
+
+#addonsform{
+background-color:#fff;
+font-size:14px;
+padding:10px 25px 20px 25px;
+border-radius: 5px;
+box-shadow: 0 0px 5px hsla(0,0%,0%,.3) inset;
+}
+
+.block-side-margin {
+  min-width: 16px;
+  -moz-box-flex: 1;
+}
+
+#block-horizontal-margin {
+  display: -moz-box;
+  -moz-box-flex: 1;
+}
+
+ul li {
+list-style:none;
+background:#ddd;
+border-radius:3px;
+padding:3px 5px 3px 5px;
+margin:5px;
+box-shadow: 0px 2px 0 #ccc ;
+float:left;
+}
+
+ul li a{
+font-weight:bold;
+color:#666;
+text-shadow:0px 1px 0px #fff;
+}
+
+.titlelink{
+font-weight:bold;
+color: #678;
+text-shadow: 0px 1px 0px white;
+}
+
+#footer{
+min-height:50px;
+display: -moz-box;
+-moz-box-align: center;
+-moz-box-pack: center;
+width: 100%;
+background-color: hsla(0,0%,0%,.03);
+border-top: 1px solid hsla(0,0%,0%,.03);
+box-shadow: 0 2px 5px hsla(0,0%,0%,.1) inset, 0 -1px 0 hsla(0,0%,100%,.25);
+}
+
+</style>
+
+<script type="text/javascript">
+<![CDATA[
+
+Components.utils.import("resource://gre/modules/AddonManager.jsm");
+Components.utils.import("resource://gre/modules/Services.jsm");
+
+function flip(sel){
+  var id = sel.id;
+  var addonObj=-1;
+  AddonManager.getAddonByID(id, function(addon) {
+    addonObj=addon;
+  });
+  var thread = Components.classes["@mozilla.org/thread-manager;1"].getService().currentThread;
+  while (addonObj == null || addonObj == -1)
+  thread.processNextEvent(true);
+  addonObj.userDisabled = addonObj.isActive;
+  if ( addonObj.operationsRequiringRestart != 0)
+      alert("This change will be applied when you restart Abrowser");
+}
+
+function languagesettings(sel){
+  if (sel.checked)
+    Services.prefs.setCharPref(sel.id,sel.value);
+  else
+    Services.prefs.clearUserPref(sel.id);
+}
+
+function fontsettings(sel){
+  if (sel.checked)
+    Services.prefs.setIntPref(sel.id,sel.value);
+  else
+    Services.prefs.clearUserPref(sel.id);
+}
+
+function jssettings(sel){
+  if (sel.checked){
+    Services.prefs.setBoolPref(sel.id, !sel.checked);}
+  else
+    Services.prefs.clearUserPref(sel.id);
+}
+
+function prepare(){
+
+/*try {
+Services.prefs.getCharPref("extensions.abrowserhome.intl.accept_languages");
+}catch(err){
+Services.prefs.setCharPref("intl.accept_languages","en-US, en");
+Services.prefs.setCharPref("extensions.abrowserhome.intl.accept_languages","en-US, en");
+}
+
+try {
+Services.prefs.getIntPref("extensions.abrowserhome.browser.display.use_document_fonts");
+}catch(err){
+Services.prefs.setIntPref("browser.display.use_document_fonts",0);
+Services.prefs.setIntPref("extensions.abrowserhome.browser.display.use_document_fonts",0);
+}*/
+
+  var f = document.createElement("form");
+
+  var extensions=[
+["jid1-KtlZuoiikVfFew@jetpack","Block execution of non-free <a target=\"_blank\" href=\"http://www.gnu.org/software/librejs/\">JavaScript</a> <em>(experimental)</em>"],
+["spyblock@gnu.org","Block privacy <a target=\"_blank\" href=\"https://easylist.adblockplus.org\">trackers</a>"],
+["torproxy@trisquel","Use <a target=\"_blank\" href=\"https://www.torproject.org/about/overview.html.en#overview\">Tor</a> when in Private Mode"],
+["https-everywhere@eff.org","Get redirected to <a target=\"_blank\" href=\"https://www.eff.org/https-everywhere/faq\">HTTPS</a> when possible"],
+]
+
+  for (var i=0; i<extensions.length; ++i) {
+    var ex=extensions[i][0];
+
+    var tmp = document.createElement("input");
+    tmp.setAttribute('type',"checkbox");
+    tmp.setAttribute('id', ex);
+    tmp.setAttribute('onclick','flip(this);');
+
+    var label = document.createElement("label");
+    label.htmlFor =  ex ;
+    label.id = ex+'label';
+    label.appendChild(document.createTextNode(''));
+
+    f.appendChild(tmp);
+    f.appendChild(label);
+
+    document.getElementById("addonsform").appendChild(f);
+  }
+
+  var tmp = document.createElement("input");
+  tmp.setAttribute('type',"checkbox");
+  tmp.setAttribute('id', "intl.accept_languages");
+  tmp.setAttribute('value', "en-US, en");
+  tmp.setAttribute('onclick','languagesettings(this);');
+  value=Services.prefs.getCharPref("intl.accept_languages");
+  tmp.checked=(value=="en-US, en");
+  var label = document.createElement("label");
+  label.htmlFor =  "intl.accept_languages" ;
+  label.id = "intl.accept_languageslabel";
+  label.appendChild(document.createTextNode("Request pages in English"));
+  f.appendChild(tmp);
+  f.appendChild(label);
+  f.appendChild(document.createElement("br"));
+  document.getElementById("addonsform").appendChild(f);
+
+  var tmp = document.createElement("input");
+  tmp.setAttribute('type',"checkbox");
+  tmp.setAttribute('id', "browser.display.use_document_fonts");
+  tmp.setAttribute('value', 0);
+  tmp.setAttribute('onclick','fontsettings(this);');
+  value=Services.prefs.getIntPref("browser.display.use_document_fonts");
+  tmp.checked=(value==0);
+  var label = document.createElement("label");
+  label.htmlFor =  "browser.display.use_document_fonts" ;
+  label.id = "browser.display.use_document_fontslabel";
+  label.appendChild(document.createTextNode("Use system fonts"));
+  f.appendChild(tmp);
+  f.appendChild(label);
+  f.appendChild(document.createElement("br"));
+  document.getElementById("addonsform").appendChild(f);
+
+  var tmp = document.createElement("input");
+  tmp.setAttribute('type',"checkbox");
+  tmp.setAttribute('id', "javascript.enabled");
+  tmp.setAttribute('value', 0);
+  tmp.setAttribute('onclick','jssettings(this);');
+  value=Services.prefs.getBoolPref("javascript.enabled");
+  tmp.checked=(value==0);
+  var label = document.createElement("label");
+  label.htmlFor =  "javascript.enabled" ;
+  label.id = "javascript.enabledlabel";
+  label.appendChild(document.createTextNode("Disable JavaScript"));
+  f.appendChild(tmp);
+  f.appendChild(label);
+  f.appendChild(document.createElement("br"));
+  document.getElementById("addonsform").appendChild(f);
+
+  for (var i=0; i<extensions.length; ++i) {
+    var ex=extensions[i][0];
+    var addonObj=-1;
+
+    AddonManager.getAddonByID(ex, function(addon) {
+    addonObj=addon;
+    });
+
+    var thread = Components.classes["@mozilla.org/thread-manager;1"].getService().currentThread;
+    while ( addonObj == -1)
+    thread.processNextEvent(true);
+    if ( addonObj != null){
+      document.getElementById(ex).checked = addonObj.isActive;
+      //document.getElementById(ex+'label').innerHTML = addonObj.name;
+      document.getElementById(ex+'label').innerHTML = extensions[i][1]+"<br/>";
+    }else{
+      document.getElementById(ex).style.display='none';
+      document.getElementById(ex+'label').style.display='none';
+    }
+  }
+}
+
+
+]]>
+</script>
+
+  </head>
+
+  <body dir="&locale.dir;" onload="prepare();">
+
+    <div class="spacer"/>
+    <div id="topSection">
+      <img src="chrome://branding/content/about-logo.png"/>
+
+      <div id="searchContainer">
+        <form name="searchForm" id="searchForm" action="https://duckduckgo.com/">
+          <input type="hidden" name="t" value="trisquel"/>
+          <input type="text" name="q" value="" id="searchText" maxlength="256"
+                 autofocus="autofocus"/>
+          <input id="searchSubmit" type="submit" value="&abouthome.searchEngineButton.label; DuckDuckGO"/>
+        </form>
+      </div>
+
+    </div>
+
+    <div class="spacer"/>
+
+<div id="block-horizontal-margin">
+<div class="block-side-margin"></div>
+<div id="addonsform">
+<!--<h3>Enabled privacy features:</h3>-->
+<p><a target="_blank" href="https://trisquel.info/browser">Abrowser</a> protects your <a target="_blank" href="http://www.gnu.org/philosophy/free-sw.html">freedom</a> and your privacy!<br/><small>For a browser with an even bigger focus on privacy, <a href="apt:icecat">install GNU/IceCat</a></small></p>
+</div>
+<div class="block-side-margin"></div>
+</div>
+
+    <div class="spacer"/>
+
+<div id="footer">
+<p ><a class="titlelink" href="https://trisquel.info">Trisquel GNU/Linux</a></p>
+<ul style="font-size:0.8em">
+<li><a href="https://trisquel.info/forum">Forum</a></li>
+<li><a href="https://trisquel.info/wiki">Wiki</a></li>
+<li><a href="http://store.trisquel.info/">Store</a></li>
+<li><a href="https://trisquel.info/donate">Donate</a></li>
+</ul>
+</div>
+
+
+  </body>
+</html>
+
