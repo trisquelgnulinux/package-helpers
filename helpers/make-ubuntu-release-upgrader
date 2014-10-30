@@ -21,7 +21,7 @@
 # gpg -ba release_name.tar.gz
 # Also, don't forget to update the meta-release files at archive and packages.t.i
 
-VERSION=9
+VERSION=10
 
 . ./config
 
@@ -318,6 +318,10 @@ replace Trisquel-Gettext Ubuntu-Gettext . -R
 
 sed '1s/trisquel/ubuntu/' debian/control -i
 sed '/drivers/d' debian/control -i
+
+for i in core gtk qt; do
+  sed "/Package: trisquel-release-upgrader-$i/ s/$/\nProvides: ubuntu-release-upgrader-$i/" -i debian/control
+done
 
 changelog "Compiled for Trisquel"
 
