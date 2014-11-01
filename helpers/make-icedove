@@ -22,8 +22,8 @@ EXTERNAL='deb-src http://security.debian.org/ wheezy/updates main'
 
 . ./config
 
-sed '/libffi/d' -i debian/control debian/patches/series
-rm debian/patches/system-libs/Allow-to-build-against-system-libffi.patch
+#sed '/libffi/d' -i debian/control debian/patches/series
+#rm debian/patches/system-libs/Allow-to-build-against-system-libffi.patch
 
 cat << EOF >> debian/icedove.js
 
