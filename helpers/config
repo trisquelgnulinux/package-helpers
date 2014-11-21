@@ -88,7 +88,7 @@ deb $LOCALMIRROR $CODENAME main
 deb $LOCALMIRROR $CODENAME-updates main
 deb $LOCALMIRROR $CODENAME-security main
 
-#deb $DEVELMIRROR $CODENAME main
+deb $DEVELMIRROR $CODENAME main
 #deb-src $DEVELMIRROR $CODENAME main
 EOF
 
@@ -123,7 +123,7 @@ done
 compile(){
 if [ 1$LOCALDEPENDS = 1true ]
 then
-    DEPENDS=$(/bin/sed -n '/Build-Dep/,/^[a-zA-W0-9]/ p' debian/control | head -n -1 | /bin/sed 's/.*://; s/(.*)//; s/,//g' |xargs echo -n)
+    DEPENDS=$(/bin/sed -n '/Build-Dep/,/^[a-zA-W0-9]/ p' debian/control | head -n -1 | /bin/sed 's/.*://; s/(.*)//; s/\[.*\]//; s/,//g' |xargs echo -n)
     echo Installing Build-Depends: $DEPENDS
     apt-get --force-yes -y install $DEPENDS
 fi
