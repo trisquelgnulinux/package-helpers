@@ -1,0 +1,44 @@
+#!/bin/sh
+#
+#    Copyright (C) 2014  Ruben Rodriguez <ruben@trisquel.info>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=1
+
+. ./config
+
+sed '/disable-maintainer-mode/s/$/\n--enable-tee=yes \\/' -i debian/rules
+
+cat << EOF | patch -p1
+--- a/debian/libcairo2.symbols (libcairo2_1.10.2-6.1ubuntu3+6.0.1trisquel1_i386)
++++ b/debian/libcairo2.symbols       2014-11-21 05:09:37.093227018 +0000
+@@ -283,6 +283,10 @@
+  cairo_svg_surface_create_for_stream@Base 1.2.4
+  cairo_svg_surface_restrict_to_version@Base 1.2.4
+  cairo_svg_version_to_string@Base 1.2.4
++ cairo_tee_surface_add@Base 1.10.2-6.1ubuntu3+6.0.1trisquel1
++ cairo_tee_surface_create@Base 1.10.2-6.1ubuntu3+6.0.1trisquel1
++ cairo_tee_surface_index@Base 1.10.2-6.1ubuntu3+6.0.1trisquel1
++ cairo_tee_surface_remove@Base 1.10.2-6.1ubuntu3+6.0.1trisquel1
+  cairo_text_cluster_allocate@Base 1.7.2
+  cairo_text_cluster_free@Base 1.7.2
+  cairo_text_extents@Base 1.2.4
+EOF
+
+changelog "Enabled tee backend for compiling icedove"
+
+compile
