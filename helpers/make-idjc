@@ -23,7 +23,7 @@ EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu $UPSTREAM multiverse'
 . ./config
 
 # It fails to compile with the twolame patch
-sed /idjc-twolame.patch/d -i debian/patches/series
+#sed /idjc-twolame.patch/d -i debian/patches/series
 
 changelog "Imported into Trisquel"
 
