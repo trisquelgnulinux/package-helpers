@@ -19,6 +19,7 @@
 
 VERSION=1
 EXTERNAL="deb-src http://ftp.debian.org/debian testing main"
+SIGNKEY="46925553"
 
 apt-get install --force-yes -y debian-archive-keyring
 

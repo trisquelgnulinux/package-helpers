@@ -19,8 +19,7 @@
 
 VERSION=1
 EXTERNAL='deb-src http://deb.torproject.org/torproject.org trusty main'
-
-apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 886DDD89
+SIGNKEY="886DDD89"
 
 . ./config
 
