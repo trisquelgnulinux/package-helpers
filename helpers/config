@@ -142,6 +142,7 @@ fi
 
 if [ $FAKEROOT ]
 then
+/bin/sed '/nobody/ s_/usr/sbin/nologin_/bin/bash_' -i /etc/passwd
 chown nobody ../ -R
 su nobody -c 'dpkg-buildpackage -us -uc -j$PROCESSORS -rfakeroot'
 else
