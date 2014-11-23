@@ -22,7 +22,8 @@ FAKEROOT=true
 
 . ./config
 
-rm debian/patches/ -rf
+rm debian/patches/10_defaults.patch
+sed /10_defaults.patch/d -i debian/patches/series
 
 cat << EOF > data/config/settings.ini
 [plugins]
@@ -44,14 +45,14 @@ minimize_to_tray = B: True
 use_splash = B: False
 EOF
 
-FILE=data/exaile.desktop
-
-echo 'Comment[es]=Escuche, explore o gestione su colección de música' >> $FILE
-echo 'Comment[gl]=Escoite, explore ou xestione a súa colección de música' >> $FILE
-echo 'GenericName[es]=Reproductor de música' >> $FILE
-echo 'GenericName[gl]=Reproductor de música' >> $FILE
-echo 'X-GNOME-FullName[es]=Reproductor de música Exaile' >> $FILE
-echo 'X-GNOME-FullName[gl]=Reproductor de música Exaile' >> $FILE
+cat << EOF >> data/exaile.desktop
+Comment[es]=Escuche, explore o gestione su colección de música
+Comment[gl]=Escoite, explore ou xestione a súa colección de música
+GenericName[es]=Reproductor de música
+GenericName[gl]=Reproductor de música
+X-GNOME-FullName[es]=Reproductor de música Exaile
+X-GNOME-FullName[gl]=Reproductor de música Exaile
+EOF
 
 changelog "Default settings changed for Trisquel"
 
