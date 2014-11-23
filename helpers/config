@@ -93,6 +93,7 @@ deb $DEVELMIRROR $CODENAME main
 EOF
 
 [ "1$EXTERNAL" != "1" ] && eval echo "$EXTERNAL" >> /etc/apt/sources.list
+[ "1$SIGNKEY" != "1" ] && apt-key adv --recv-keys --keyserver keyserver.ubuntu.com $SIGNKEY
 
 apt-get update
 apt-get install --force-yes -y devscripts
