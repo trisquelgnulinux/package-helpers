@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=4
+VERSION=5
 COMPONENT=main
 
 . ./config
@@ -56,6 +56,9 @@ echo /bin/sed "/GNU GRUB  version/ s/PACKAGE_VERSION/\"$GRUBVERSION\"/" -i grub-
 
 changelog "Disable rescue mode by default, branding"
 #sed "s/-.*)/-${REVISION}trisquel${VERSION})/" -i debian/changelog
+
+# Allow Windows and MacOX entries to boot without a password
+sed 's/class osx/class osx --unrestricted/; s/class windows/class osx --unrestricted/;' -i ./util/grub.d/30_os-prober.in
 
 #apt-get install -y --force-yes kvm-pxe
 # /dev is needed for KVM support

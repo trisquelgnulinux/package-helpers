@@ -19,6 +19,7 @@
 
 set -e
 
+export LD_PRELOAD="${LD_PRELOAD:+$LD_PRELOAD:}/usr/lib/libeatmydata/libeatmydata.so"
 export DEBIAN_FRONTEND=noninteractive
 MEM=$(cat /proc/meminfo |grep MemTotal| awk '{print $2}')
 GPGKEY=8D8AEBF1
@@ -132,7 +133,6 @@ EOF
 
     [ $UPSTREAM != hardy -a $UPSTREAM != lucid -a $UPSTREAM != maverick ] &&  echo "force-unsafe-io" > $CHROOT/etc/dpkg/dpkg.cfg.d/02apt-speedup
     $C apt-get update
-    [ $UPSTREAM != hardy ] && $C apt-get --force-yes -y install eatmydata
     [ $UPSTREAM != hardy ] && $C apt-get --force-yes -y install sysv-rc dpkg sysvinit-utils upstart
     disablescripts
     $C apt-get --force-yes -y dist-upgrade
@@ -216,7 +216,6 @@ PACKAGE=$PACKAGE
 cd $WORKDIR
 [ -d LOGS ] || mkdir LOGS
 [ -d PACKAGES ] || mkdir PACKAGES
-export LD_PRELOAD="${LD_PRELOAD:+$LD_PRELOAD:}/usr/lib/libeatmydata/libeatmydata.so"
 export PATH="/usr/lib/ccache:${PATH}"
 bash -e make-$PACKAGE 2>&1 || exit 1
 EOF
