@@ -18,29 +18,20 @@
 #
 
 set -e
-
+export LANG=C
 PACKAGE=$(echo $0 |/bin/sed s/make-//g)
+
+
+export DATE=$(date +'%a, %d %b %Y %T %z')
+
 export DATA=$PWD/DATA/$PACKAGE
 if ! [ 1$COMPONENT = "1main" ]
 then
     COMPONENT=${COMPONENT:-universe}
-    /bin/sed 's/^enable.*/enable: false/g' -i /etc/pkgbinarymangler/*.conf
-fi
-
-if [ -f /CurrentlyBuilding ]
-then
-    echo "Already running $(cat /CurrentlyBuilding)"
-    echo "If $(cat /CurrentlyBuilding) broke and nothing is actually running"
-    echo "remove /CurrentlyBuilding and run this script again"
-    exit 1
-else
-    echo "Package: $PACKAGE
-Component: $COMPONENT" > /CurrentlyBuilding
+    export NO_PKG_MANGLE=1
 fi
 
 [ -d PACKAGES ] || mkdir PACKAGES
-[ -d /proc/sys ] || mount proc /proc -t proc
-hostname devel.trisquel.info
 
 export DEBIAN_FRONTEND=noninteractive
 export DEBEMAIL=trisquel-devel@listas.trisquel.info
@@ -54,13 +45,7 @@ export UPSTREAMRELEASE=14.04
 MIRROR=http://archive.ubuntu.com/ubuntu
 DEVELMIRROR=http://devel.trisquel.info/trisquel/$CODENAME
 LOCALMIRROR=http://archive.trisquel.info/trisquel
-
-cat << EOF > /etc/lsb-release 
-DISTRIB_ID=Trisquel
-DISTRIB_RELEASE=$REVISION
-DISTRIB_CODENAME=$CODENAME
-DISTRIB_DESCRIPTION="Trisquel $REVISION"
-EOF
+LOCAL_APT=`mktemp -d` 
 
 replace(){
 find $3 -type f -not -iregex '.*changelog.*' -not -iregex '.*copyright.*' -execdir /bin/sed --follow-symlinks -i s^"$1"^"$2"^g {} \;
@@ -76,7 +61,32 @@ rm -rf PACKAGES/$PACKAGE
 mkdir PACKAGES/$PACKAGE
 cd PACKAGES/$PACKAGE
 
-cat << EOF > /etc/apt/sources.list
+
+#Setup local apt
+
+trap "rm -rf ${LOCAL_APT}" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
+
+mkdir -p ${LOCAL_APT}/var/lib/apt/partial
+mkdir -p ${LOCAL_APT}/var/cache/apt/archives/partial
+mkdir -p ${LOCAL_APT}/etc/
+mkdir -p ${LOCAL_APT}/var/lib/dpkg
+touch ${LOCAL_APT}/var/lib/dpkg/status
+cp /etc/apt/trusted.gpg ${LOCAL_APT}/etc/trusted.gpg
+
+cat << EOF > ${LOCAL_APT}/etc/apt.conf
+Dir::State "${LOCAL_APT}/var/lib/apt";
+Dir::State::status "${LOCAL_APT}/var/lib/dpkg/status";
+Dir::Etc::SourceList "${LOCAL_APT}/etc/apt.sources.list";
+Dir::Cache "${LOCAL_APT}/var/cache/apt";
+pkgCacheGen::Essential "none";
+Dir::Etc::Trusted "${LOCAL_APT}/etc/trusted.gpg";
+EOF
+
+apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver keyserver.ubuntu.com --recv-keys 40976EAF437D05B5
+apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver keyserver.ubuntu.com --recv-keys 3B4FE6ACC0B21F32
+
+
+cat << EOF > ${LOCAL_APT}/etc/apt.sources.list
 deb $MIRROR $UPSTREAM main universe
 deb $MIRROR $UPSTREAM-updates main universe
 deb $MIRROR $UPSTREAM-security main universe
@@ -92,11 +102,11 @@ deb $DEVELMIRROR $CODENAME main
 #deb-src $DEVELMIRROR $CODENAME main
 EOF
 
-[ "1$EXTERNAL" != "1" ] && eval echo "$EXTERNAL" >> /etc/apt/sources.list
-[ "1$SIGNKEY" != "1" ] && apt-key adv --recv-keys --keyserver keyserver.ubuntu.com $SIGNKEY
+[ "1$EXTERNAL" != "1" ] && eval echo "$EXTERNAL" >> ${LOCAL_APT}/etc/apt.sources.list
 
-apt-get update
-apt-get install --force-yes -y devscripts
+[ "1$SIGNKEY" != "1" ] && apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --recv-keys --keyserver keyserver.ubuntu.com $SIGNKEY
+
+apt-get update -c $LOCAL_APT/etc/apt.conf
 
 if [ $PACKAGE = linux ]
 then
@@ -104,8 +114,7 @@ then
     apt-get source linux-libc-dev --download-only
     dpkg-source -x --skip-patches *.dsc source
 else
-    [ 1$LOCALDEPENDS = 1true ] || apt-get --force-yes -y build-dep $PACKAGE
-    apt-get source $PACKAGE --download-only
+    apt-get source $PACKAGE --download-only -c ${LOCAL_APT}/etc/apt.conf
     dpkg-source -x --skip-patches *.dsc source
 fi
 
@@ -122,12 +131,7 @@ do
 done
 
 compile(){
-if [ 1$LOCALDEPENDS = 1true ]
-then
-    DEPENDS=$(/bin/sed -n '/Build-Dep/,/^[a-zA-W0-9]/ p' debian/control | head -n -1 | /bin/sed 's/.*://; s/(.*)//; s/\[.*\]//; s/,//g' |xargs echo -n)
-    echo Installing Build-Depends: $DEPENDS
-    apt-get --force-yes -y install $DEPENDS
-fi
+
 
 PROCESSORS=1
 if [ 1$PARALLEL != "1false" ]
@@ -135,22 +139,17 @@ then
     PROCESSORS=$(grep processor /proc/cpuinfo | wc -l)
 fi
 
+
 if [ 1$QUILT != 1skip ]; then
 export QUILT_PATCHES=debian/patches
 [ -s debian/patches/series ] && quilt push -a
 fi
 
-if [ $FAKEROOT ]
-then
-/bin/sed '/nobody/ s_/usr/sbin/nologin_/bin/bash_' -i /etc/passwd
-chown nobody ../ -R
-su nobody -c 'dpkg-buildpackage -us -uc -j$PROCESSORS -rfakeroot'
-else
-dpkg-buildpackage -us -uc -j$PROCESSORS
-fi
+cd ..
+dpkg-source -b source
+rm -rf ${LOCAL_APT}
+echo "Trisquel source package built!"
 
-rm /CurrentlyBuilding
-umount /proc
 }
 
 sedhelper2(){
