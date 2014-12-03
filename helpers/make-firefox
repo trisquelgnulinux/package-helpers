@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=32
+VERSION=33
 
 . ./config
 
@@ -39,7 +39,7 @@ cat << EOF >>services/healthreport/healthreport-prefs.js
 pref("datareporting.healthreport.infoURL", "https://trisquel.info/legal");
 EOF
 
-sed 's%https://www.mozilla.org/legal/privacy/%https://trisquel.info/legal%' -i ./modules/libpref/src/init/all.js ./browser/app/profile/firefox.js ./toolkit/content/aboutRights.xhtml
+sed 's%https://www.mozilla.org/legal/privacy/%https://trisquel.info/legal%' -i ./modules/libpref/init/all.js ./browser/app/profile/firefox.js ./toolkit/content/aboutRights.xhtml
 
 #sed 's%https://www.mozilla.org/firefox/central/%https://trisquel.info/browser%' -i browser/base/content/browser-appmenu.inc
 
@@ -228,7 +228,7 @@ sed '/Provides/s/abrowser-locale/firefox-locale/' -i debian/control.langpacks
 sed '/MOZILLA_UAVERSION/ s:Abrowser/:Firefox/:' -i netwerk/protocol/http/nsHttpHandler.cpp
 
 # Set migrator scripts
-sed 's/Abrowser/Firefox/g; s/abrowser/firefox/g' -i browser/components/migration/src/AbrowserProfileMigrator.js
+sed 's/Abrowser/Firefox/g; s/abrowser/firefox/g' -i browser/components/migration/AbrowserProfileMigrator.js
 
 # Postinst script to manage profile migration and system links
 echo '
