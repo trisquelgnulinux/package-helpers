@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=32
+VERSION=33
 
 . ./config
 
@@ -39,7 +39,7 @@ cat << EOF >>services/healthreport/healthreport-prefs.js
 pref("datareporting.healthreport.infoURL", "https://trisquel.info/legal");
 EOF
 
-sed 's%https://www.mozilla.org/legal/privacy/%https://trisquel.info/legal%' -i ./modules/libpref/src/init/all.js ./browser/app/profile/firefox.js ./toolkit/content/aboutRights.xhtml
+sed 's%https://www.mozilla.org/legal/privacy/%https://trisquel.info/legal%' -i ./modules/libpref/init/all.js ./browser/app/profile/firefox.js ./toolkit/content/aboutRights.xhtml
 
 #sed 's%https://www.mozilla.org/firefox/central/%https://trisquel.info/browser%' -i browser/base/content/browser-appmenu.inc
 
