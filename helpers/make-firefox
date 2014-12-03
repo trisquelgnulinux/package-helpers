@@ -232,7 +232,7 @@ sed '/Provides/s/abrowser-locale/firefox-locale/' -i debian/control.langpacks
 sed '/MOZILLA_UAVERSION/ s:Abrowser/:Firefox/:' -i netwerk/protocol/http/nsHttpHandler.cpp
 
 # Set migrator scripts
-sed 's/Abrowser/Firefox/g; s/abrowser/firefox/g' -i browser/components/migration/src/AbrowserProfileMigrator.js
+sed 's/Abrowser/Firefox/g; s/abrowser/firefox/g' -i browser/components/migration/AbrowserProfileMigrator.js
 
 # Postinst script to manage profile migration and system links
 echo '
