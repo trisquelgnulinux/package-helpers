@@ -18,7 +18,7 @@
 #
 
 set -e
-export LANG=C
+export LANG=C LC_TIME=C
 PACKAGE=$(echo $0 |/bin/sed s/make-//g)
 
 
