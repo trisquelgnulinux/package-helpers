@@ -71,7 +71,7 @@ mkdir -p ${LOCAL_APT}/var/cache/apt/archives/partial
 mkdir -p ${LOCAL_APT}/etc/
 mkdir -p ${LOCAL_APT}/var/lib/dpkg
 touch ${LOCAL_APT}/var/lib/dpkg/status
-cp /etc/apt/trusted.gpg ${LOCAL_APT}/etc/trusted.gpg
+touch ${LOCAL_APT}/etc/trusted.gpg
 
 cat << EOF > ${LOCAL_APT}/etc/apt.conf
 Dir::State "${LOCAL_APT}/var/lib/apt";
@@ -82,24 +82,16 @@ pkgCacheGen::Essential "none";
 Dir::Etc::Trusted "${LOCAL_APT}/etc/trusted.gpg";
 EOF
 
+#Trisquel key
+apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver keyserver.ubuntu.com --recv-keys B4EFB9F38D8AEBF1
+#Ubuntu gpg keys
 apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver keyserver.ubuntu.com --recv-keys 40976EAF437D05B5
 apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver keyserver.ubuntu.com --recv-keys 3B4FE6ACC0B21F32
 
-
 cat << EOF > ${LOCAL_APT}/etc/apt.sources.list
-deb $MIRROR $UPSTREAM main universe
-deb $MIRROR $UPSTREAM-updates main universe
-deb $MIRROR $UPSTREAM-security main universe
 deb-src $MIRROR $UPSTREAM main universe
 deb-src $MIRROR $UPSTREAM-updates main universe
 deb-src $MIRROR $UPSTREAM-security main universe
-
-#deb $LOCALMIRROR $CODENAME main
-#deb $LOCALMIRROR $CODENAME-updates main
-#deb $LOCALMIRROR $CODENAME-security main
-
-deb $DEVELMIRROR $CODENAME main
-#deb-src $DEVELMIRROR $CODENAME main
 EOF
 
 [ "1$EXTERNAL" != "1" ] && eval echo "$EXTERNAL" >> ${LOCAL_APT}/etc/apt.sources.list
