@@ -92,6 +92,7 @@ cat << EOF > ${LOCAL_APT}/etc/apt.sources.list
 deb-src $MIRROR $UPSTREAM main universe
 deb-src $MIRROR $UPSTREAM-updates main universe
 deb-src $MIRROR $UPSTREAM-security main universe
+
 EOF
 
 [ "1$EXTERNAL" != "1" ] && eval echo "$EXTERNAL" >> ${LOCAL_APT}/etc/apt.sources.list
@@ -100,15 +101,9 @@ EOF
 
 apt-get update -c $LOCAL_APT/etc/apt.conf
 
-if [ $PACKAGE = linux ]
-then
-    apt-get --force-yes -y build-dep linux-libc-dev
-    apt-get source linux-libc-dev --download-only
-    dpkg-source -x --skip-patches *.dsc source
-else
-    apt-get source $PACKAGE --download-only -c ${LOCAL_APT}/etc/apt.conf
-    dpkg-source -x --skip-patches *.dsc source
-fi
+#Get package and uncompress it
+apt-get source $PACKAGE --download-only -c ${LOCAL_APT}/etc/apt.conf
+dpkg-source -x --skip-patches *.dsc source
 
 find -maxdepth 1 -type f | xargs rm
 cd source
