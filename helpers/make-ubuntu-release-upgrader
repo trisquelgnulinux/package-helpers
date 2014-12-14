@@ -1,6 +1,7 @@
 #!/bin/sh
 #
 #    Copyright (C) 2008-2010  Rubén Rodríguez <ruben@trisquel.info>
+#    Copyright (C)      2014  Santiago Rodriguez <santi@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -20,8 +21,9 @@
 # Note that you would need to publish and sign the upgrade tarball
 # gpg -ba release_name.tar.gz
 # Also, don't forget to update the meta-release files at archive and packages.t.i
+# The "obsoletes" list from ubuntu has been removed
 
-VERSION=10
+VERSION=11
 
 . ./config
 
@@ -316,6 +318,10 @@ sed '/drivers/d' debian/control -i
 for i in core gtk qt; do
   sed "/Package: trisquel-release-upgrader-$i/ s/$/\nProvides: ubuntu-release-upgrader-$i/" -i debian/control
 done
+
+#ubuntu-drivers-common is not a build-dep, nor avaliable in trisquel.
+sed -i 's/cp \/usr\/share\/ubuntu-drivers-common\/obsolete/touch/g' DistUpgrade/build-tarball.sh
+
 
 changelog "Compiled for Trisquel"
 
