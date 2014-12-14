@@ -57,10 +57,6 @@ echo | dch -D $CODENAME -v $(/bin/sed -n '1s/^.*(\(.*\)).*/\1'+${REVISION}trisqu
 /bin/sed "/-- Trisquel/s/.*/ -- Trisquel GNU\/Linux developers <trisquel-devel@listas.trisquel.info>  $DATE/" -i debian/changelog
 }
 
-rm -rf PACKAGES/$PACKAGE
-mkdir PACKAGES/$PACKAGE
-cd PACKAGES/$PACKAGE
-
 
 #Setup local apt
 
@@ -82,11 +78,17 @@ pkgCacheGen::Essential "none";
 Dir::Etc::Trusted "${LOCAL_APT}/etc/trusted.gpg";
 EOF
 
+if [ -f trusted.local.gpg ]
+then
+cp trusted.local.gpg "${LOCAL_APT}/etc/trusted.gpg"
+else
 #Trisquel key
 apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver keyserver.ubuntu.com --recv-keys B4EFB9F38D8AEBF1
 #Ubuntu gpg keys
 apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver keyserver.ubuntu.com --recv-keys 40976EAF437D05B5
 apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver keyserver.ubuntu.com --recv-keys 3B4FE6ACC0B21F32
+fi
+
 
 cat << EOF > ${LOCAL_APT}/etc/apt.sources.list
 deb-src $MIRROR $UPSTREAM main universe
@@ -99,9 +101,13 @@ EOF
 
 [ "1$SIGNKEY" != "1" ] && apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --recv-keys --keyserver keyserver.ubuntu.com $SIGNKEY
 
-apt-get update -c $LOCAL_APT/etc/apt.conf
+#Cleanup
+rm -rf PACKAGES/$PACKAGE
+mkdir PACKAGES/$PACKAGE
+cd PACKAGES/$PACKAGE
 
 #Get package and uncompress it
+apt-get update -c $LOCAL_APT/etc/apt.conf
 apt-get source $PACKAGE --download-only -c ${LOCAL_APT}/etc/apt.conf
 dpkg-source -x --skip-patches *.dsc source
 
