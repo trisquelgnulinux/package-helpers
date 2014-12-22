@@ -21,21 +21,6 @@ VERSION=3
 NETINST=true
 . ./config
 
-cat << EOF > /etc/apt/sources.list
-deb $DEVELMIRROR $CODENAME main
-deb-src $DEVELMIRROR $CODENAME main
-deb $LOCALMIRROR $CODENAME main
-deb $LOCALMIRROR $CODENAME-updates main
-deb-src $LOCALMIRROR $CODENAME main
-deb-src $LOCALMIRROR $CODENAME-updates main
-deb-src $MIRROR $UPSTREAM main
-deb-src $MIRROR $UPSTREAM-updates main
-deb-src $MIRROR $UPSTREAM-security main
-EOF
-
-apt-get update
-
-apt-get install trisquel-keyring
 
 find build/pkg-lists -type f | xargs sed -i /media-retriever/d
 
@@ -78,5 +63,3 @@ rpl ubuntu-archive-keyring trisquel-archive-keyring . -R
 changelog "Rebranded and adapted for Trisquel"
 compile
 
-cp build/tmp/netboot/mini.iso build/tmp/netboot/initrd.gz /root/
-cp build/dest/cdrom/vmlinuz /root/
