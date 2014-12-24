@@ -1,6 +1,7 @@
 #!/bin/sh
 #
-#    Copyright (C) 2008-2010  Rubén Rodríguez <ruben@trisquel.info>
+#    Copyright (C) 2008-2014  Rubén Rodríguez <ruben@trisquel.info>
+#    Copyright (C) 2014 Salman Mohammadi <salman@ubuntu.ir>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,13 +18,19 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 
 . ./config
 
+rm gnome-colors-common/16x16/apps/skype.png
+rm gnome-colors-common/22x22/apps/skype.png
+rm gnome-colors-common/24x24/apps/skype.png
+rm gnome-colors-common/32x32/apps/skype.png
+rm gnome-colors-common/scalable/apps/skype.svg
+
 sed 's/Depends: gnome-colors-common,/Depends: gnome-colors-common, gnome-icon-theme-full/' -i debian/control
 
-changelog "Fixed installation problem"
+changelog "Fixed installation problem. Removed Skype logo"
 
 compile
 
