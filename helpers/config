@@ -63,11 +63,12 @@ echo | dch -D $CODENAME -v $(/bin/sed -n '1s/^.*(\(.*\)).*/\1'+${REVISION}trisqu
 
 trap "rm -rf ${LOCAL_APT}" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
 
-mkdir -p ${LOCAL_APT}/var/lib/apt/partial
+mkdir -p ${LOCAL_APT}/var/lib/apt/lists/partial
 mkdir -p ${LOCAL_APT}/var/cache/apt/archives/partial
 mkdir -p ${LOCAL_APT}/etc/
 mkdir -p ${LOCAL_APT}/var/lib/dpkg
 touch ${LOCAL_APT}/var/lib/dpkg/status
+touch ${LOCAL_APT}/var/lib/apt/lists/lock
 touch ${LOCAL_APT}/etc/trusted.gpg
 
 cat << EOF > ${LOCAL_APT}/etc/apt.conf
