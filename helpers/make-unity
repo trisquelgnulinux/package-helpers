@@ -30,13 +30,13 @@ cp $DATA/bfb.png tests/data
 sed -i '
 s/firefox/abrowser/g
 /ubuntu-amazon-default/d
-s/ubuntu-software-center/gnome-app-install' com.canonical.Unity.gschema.xml
+s/ubuntu-software-center/gnome-app-install/' com.canonical.Unity.gschema.xml
 
 # remove Skype preview
 rm dash/previews/Skype.png
 
 # replace default background
-sed -i 's/warty-final-ubuntu/belenos' tests/data/external.gschema.xml
+sed -i 's/warty-final-ubuntu/belenos/' tests/data/external.gschema.xml
 
 changelog "Replace default applications in launcher, and adapt for Trisquel"
 
