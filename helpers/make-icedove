@@ -19,7 +19,7 @@
 
 VERSION=1
 EXTERNAL='deb-src http://security.debian.org/ wheezy/updates main'
-apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 8B48AD6246925553
+SIGNKEY="8B48AD6246925553"
 LOCALDEPENDS=true
 QUILT=skip
 
