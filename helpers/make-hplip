@@ -53,9 +53,9 @@ sed -i 's/plugin=2/plugin=0/g' $printers
 rm $tmp $tmp2
 
 rm debian/patches/hp_photosmart_pro_b9100_support.dpatch
-sed -i '/hp_photosmart_pro_b9100_support.dpatch/d' debian/patches/series
+sed -i '/hp_photosmart_pro_b9100_support.dpatch/d' debian/patches/00list
 rm debian/patches/ubuntu-hp-mkuri-notification-text.dpatch
-sed -i '/ubuntu-hp-mkuri-notification-text.dpatch/d' debian/patches/series
+sed -i '/ubuntu-hp-mkuri-notification-text.dpatch/d' debian/patches/00list
 rm debian/local/scripts/hp-plugin-ubuntu
 sed /hp-plugin-ubuntu/d ./debian/rules -i
 
@@ -66,7 +66,6 @@ sed /hp-plugin-ubuntu/d ./debian/rules -i
 
 # Fix compilation problems
 sed '/ln -s \/usr\/share\/hplip\/hpssd.py/s:ln.*:cp hpssd.py ./debian/tmp/usr/sbin/hpssd:' -i debian/rules
-apt-get install --force-yes -y hplip
 
 changelog "Removed printers with propietary drivers (required and optional)"
 
