@@ -1,0 +1,43 @@
+#!/bin/sh
+#
+#    Copyright (C) 2014  Salman Mohammadi <salman@ubuntu.ir>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=1
+
+. ./config
+
+# replace Ubuntu branding
+cp $DATA/cof.png resources
+cp $DATA/launcher_bfb.png resources
+cp $DATA/bfb.png tests/data
+
+# replace firefox with abrowser in default launcher; remove amazon from default launcher; replace ubuntu-software-center in default launcher with gnome-app-install
+sed -i '
+s/firefox/abrowser/g
+/ubuntu-amazon-default/d
+s/ubuntu-software-center/gnome-app-install/' com.canonical.Unity.gschema.xml
+
+# remove Skype preview
+rm dash/previews/Skype.png
+
+# replace default background
+sed -i 's/warty-final-ubuntu/belenos/' tests/data/external.gschema.xml
+
+changelog "Replace default applications in launcher, and adapt for Trisquel"
+
+compile
