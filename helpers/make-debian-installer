@@ -71,6 +71,9 @@ rpl ubuntu-archive-keyring trisquel-archive-keyring . -R
 #sed -i "s:^To install.*:This is the Trisquel GNU/Linux $TVERSION LTS \"$TCODENAME\" network install CD.:g" build/boot/x86/boot.txt
 #sed -i 's:^For the.*:For the default installation, press ENTER, for more help press F1.:g' build/boot/x86/boot.txt
 
+#Don't use shim-signed as build dep
+sed -i 's/shim-signed \[amd64\]\,//g' debian/control
+
 #sed s/tasks=standard/tasks=trisquel-console/ build/boot/x86/syslinux.cfg -i
 
 changelog "Rebranded and adapted for Trisquel"
