@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2009-2010  Rubén Rodríguez <ruben@gnu.org>
+#    Copyright (C) 2009-2014  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 NETINST=true
 . ./config
 
@@ -31,7 +31,7 @@ open-ath9k-htc-firmware-udeb
 openfwwf-udeb
 EOF
 
-LASTKERNEL=$(apt-cache showsrc linux-libc-dev|grep ^Version |head -n1|cut -d" " -f2|cut -d. -f1,2,3)
+LASTKERNEL=$(apt-cache showsrc linux-libc-dev|grep ^Version |sed 's/.* //'|sort -rg |head -n1 |cut -d. -f1,2,3 )
 /bin/sed -i "s/^BASEVERSION.*/BASEVERSION = $LASTKERNEL/g" ./build/config/i386.cfg ./build/config/amd64.cfg
 sed -i "s/^MEDIUM_SUPPORTED.*/MEDIUM_SUPPORTED = cdrom netboot/g" ./build/config/i386.cfg ./build/config/amd64.cfg
 
