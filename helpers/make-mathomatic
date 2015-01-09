@@ -21,7 +21,8 @@ VERSION=1
 EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu trusty multiverse'
 
 . ./config
-
+sed -i 's/rman/groff/g' debian/control
+sed -i 's/rman/groff/g' makefile
 changelog "Imported into Trisquel"
 
 compile
