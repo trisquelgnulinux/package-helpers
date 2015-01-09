@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2011  Rubén Rodríguez <ruben@trisquel.info>
+#    Copyright (C) 2011-2015  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=7
+VERSION=8
 
 . ./config
 
@@ -31,6 +31,8 @@ replace grub-efi-amd64-signed grub-efi-amd64 .
 
 /bin/sed '/canonical/d' -i debian/ubiquity.install*
 rm  tests/test_ubi_partman*
+
+sed 's/, ubuntu-artwork//' debian/control -i
 
 export DEB_BUILD_OPTIONS=nocheck
 
