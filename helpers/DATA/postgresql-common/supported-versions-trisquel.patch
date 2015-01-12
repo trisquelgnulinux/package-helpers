@@ -1,0 +1,38 @@
+--- debian/supported-versions	2013-10-21 23:13:52.000000000 +0200
++++ debian/supported-versions.trisquel	2015-01-11 17:57:00.020523090 +0100
+@@ -67,6 +67,9 @@
+         [dD]ebian)
+             debian "$RELEASE"
+             ;;
++        [tT]risquel)
++	    trisquel "$RELEASE"
++            ;;
+         *)
+             echo "supported_versions: WARNING! Unknown distribution: $DISTRO" >&2
+             echo "Please submit this as a bug report to your distribution." >&2
+@@ -120,6 +123,25 @@
+     esac
+ }
+ 
++trisquel() {
++    case "$1" in
++        4.0*) # Taranis
++            /bin/echo -e "8.4"
++            ;;
++        6.0*) # Toutatis
++            /bin/echo -e "9.1"
++            ;;
++        7.0*) # Belenos
++            /bin/echo -e "9.3"
++            ;;
++        *)
++            echo "supported_versions: WARNING: Unknown Trisquel release: $1" >&2
++            /bin/echo -e "$DEFAULT"
++            ;;
++    esac
++}
++
++
+ debian_backports() {
+     case "$1" in
+         5.0*) # Lenny
