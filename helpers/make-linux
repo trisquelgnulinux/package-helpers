@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2008-2011  Rubén Rodríguez <ruben@trisquel.info>
+#    Copyright (C) 2008-2015  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -61,7 +61,7 @@ line=$(grep -n ')-Ubuntu' debian/rules.d/0-common-vars.mk|cut -d: -f1)
 sed $(expr $line - 1 ),$(expr $line + 1 )d debian/rules.d/0-common-vars.mk -i
 mv debian.master/config/config.common.ubuntu debian.master/config/config.common.trisquel
 sed s/family=ubuntu/family=trisquel/ -i debian/rules.d/0-common-vars.mk
-sed 's/ with Ubuntu patches//; s/Linux/Linux-libre/g' debian/control debian/control.stub -i
+find debian* -type f -name *control* -exec sed 's/ with Ubuntu patches//; s/Linux/Linux-libre/g' -i {} \;
 
 changelog "Removed non-free bits"
 

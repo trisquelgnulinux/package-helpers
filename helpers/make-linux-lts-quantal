@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2008-2013  Rubén Rodríguez <ruben@trisquel.info>
+#    Copyright (C) 2008-2015  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -38,8 +38,8 @@ sed s/family=ubuntu/family=trisquel/ -i debian/rules.d/0-common-vars.mk
 
 rename s/ubuntu/trisquel/ debian.*/config/config.common.ubuntu 
 
-sed 's/Linux/Linux-libre/g' debian/control debian/control.stub -i
-sed '2,$s/quantal/belenos/g' debian/control debian/control.stub -i
+find debian* -type f -name *control* -exec sed 's/Linux/Linux-libre/g' -i {} \;
+#sed '2,$s/quantal/belenos/g' debian/control debian/control.stub -i
 
 changelog "Removed non-free bits"
 
