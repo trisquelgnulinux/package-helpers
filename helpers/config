@@ -1,6 +1,7 @@
-#!/bin/sh
+#!/bin/bash
 #
 #    Copyright (C) 2008-2010  Rubén Rodríguez <ruben@trisquel.info>
+#    Copyright (C)      2014  Santiago Rodriguez <santi@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -18,29 +19,20 @@
 #
 
 set -e
+export LANG=C LC_TIME=C
+PACKAGE=$(echo $0 |/bin/sed s/make-//g)
 
-PACKAGE=$(echo $0 |sed s/make-//g)
+
+export DATE=$(date +'%a, %d %b %Y %T %z')
+
 export DATA=$PWD/DATA/$PACKAGE
 if ! [ 1$COMPONENT = "1main" ]
 then
     COMPONENT=${COMPONENT:-universe}
-    sed 's/^enable.*/enable: false/g' -i /etc/pkgbinarymangler/*.conf
-fi
-
-if [ -f /CurrentlyBuilding ]
-then
-    echo "Already running $(cat /CurrentlyBuilding)"
-    echo "If $(cat /CurrentlyBuilding) broke and nothing is actually running"
-    echo "remove /CurrentlyBuilding and run this script again"
-    exit 1
-else
-    echo "Package: $PACKAGE
-Component: $COMPONENT" > /CurrentlyBuilding
+    export NO_PKG_MANGLE=1
 fi
 
 [ -d PACKAGES ] || mkdir PACKAGES
-[ -d /proc/sys ] || mount proc /proc -t proc
-hostname devel.trisquel.info
 
 export DEBIAN_FRONTEND=noninteractive
 export DEBEMAIL=trisquel-devel@listas.trisquel.info
@@ -50,101 +42,162 @@ export REVISION=4.1
 export RELEASE=trisquel
 export DOMAIN=trisquel.info
 export UPSTREAM=lucid
+export UPSTREAMRELEASE=10.04
 MIRROR=http://archive.ubuntu.com/ubuntu
-LOCALMIRROR=http://archive.trisquel.info/trisquel
 DEVELMIRROR=http://devel.trisquel.info/trisquel/$CODENAME
-
-cat << EOF > /etc/lsb-release 
-DISTRIB_ID=Trisquel
-DISTRIB_RELEASE=$REVISION
-DISTRIB_CODENAME=$CODENAME
-DISTRIB_DESCRIPTION="Trisquel $REVISION"
-EOF
+LOCALMIRROR=http://archive.trisquel.info/trisquel
+LOCAL_APT=`mktemp -d` 
 
 replace(){
-find $3 -type f |grep -v changelog |grep -v copyright | xargs sed -i s%"$1"%"$2"%g
+find $3 -type f -not -iregex '.*changelog.*' -not -iregex '.*copyright.*' -execdir /bin/sed --follow-symlinks -i s^"$1"^"$2"^g {} \;
 }
-
 changelog(){
-echo | dch -D $CODENAME -v $(sed -n '1s/^.*(\(.*\)).*/\1'+${REVISION}trisquel${VERSION}'/p' debian/changelog)  "$1"
+echo | dch -D $CODENAME -v $(/bin/sed -n '1s/^.*(\(.*\)).*/\1'+${REVISION}trisquel${VERSION}'/p' debian/changelog)  "$1"
+
+# Make sure the changelog file is identical between archs
+/bin/sed "/-- Trisquel/s/.*/ -- Trisquel GNU\/Linux developers <trisquel-devel@listas.trisquel.info>  $DATE/" -i debian/changelog
 }
 
+
+#Setup local apt
+
+trap "rm -rf ${LOCAL_APT}" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
+
+mkdir -p ${LOCAL_APT}/var/lib/apt/lists/partial
+mkdir -p ${LOCAL_APT}/var/cache/apt/archives/partial
+mkdir -p ${LOCAL_APT}/etc/
+mkdir -p ${LOCAL_APT}/var/lib/dpkg
+touch ${LOCAL_APT}/var/lib/dpkg/status
+touch ${LOCAL_APT}/var/lib/apt/lists/lock
+touch ${LOCAL_APT}/etc/trusted.gpg
+
+cat << EOF > ${LOCAL_APT}/etc/apt.conf
+Dir::State "${LOCAL_APT}/var/lib/apt";
+Dir::State::status "${LOCAL_APT}/var/lib/dpkg/status";
+Dir::Etc::SourceList "${LOCAL_APT}/etc/apt.sources.list";
+Dir::Cache "${LOCAL_APT}/var/cache/apt";
+pkgCacheGen::Essential "none";
+Dir::Etc::Trusted "${LOCAL_APT}/etc/trusted.gpg";
+EOF
+
+if [ -f trusted.local.gpg ]
+then
+cp trusted.local.gpg "${LOCAL_APT}/etc/trusted.gpg"
+else
+#Trisquel key
+apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver keyserver.ubuntu.com --recv-keys B4EFB9F38D8AEBF1
+#Ubuntu gpg keys
+apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver keyserver.ubuntu.com --recv-keys 40976EAF437D05B5
+apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver keyserver.ubuntu.com --recv-keys 3B4FE6ACC0B21F32
+fi
+
+
+cat << EOF > ${LOCAL_APT}/etc/apt.sources.list
+deb-src $MIRROR $UPSTREAM main universe
+deb-src $MIRROR $UPSTREAM-updates main universe
+deb-src $MIRROR $UPSTREAM-security main universe
+
+EOF
+
+[ "1$EXTERNAL" != "1" ] && eval echo "$EXTERNAL" >> ${LOCAL_APT}/etc/apt.sources.list
+
+[ "1$SIGNKEY" != "1" ] && apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --recv-keys --keyserver keyserver.ubuntu.com $SIGNKEY
+
+#Cleanup
 rm -rf PACKAGES/$PACKAGE
 mkdir PACKAGES/$PACKAGE
 cd PACKAGES/$PACKAGE
 
-cat << EOF > /etc/apt/sources.list
-deb $MIRROR $UPSTREAM main universe
-deb $MIRROR $UPSTREAM-updates main universe
-deb $MIRROR $UPSTREAM-security main universe
-deb-src $MIRROR $UPSTREAM main universe
-deb-src $MIRROR $UPSTREAM-updates main universe
-deb-src $MIRROR $UPSTREAM-security main universe
-deb $DEVELMIRROR $CODENAME main
-EOF
-
-[ "1$EXTERNAL" != "1" ] && eval echo "$EXTERNAL" >> /etc/apt/sources.list
-
-if [ $PACKAGE = "debian-installer" ]
-then
-cat << EOF > /etc/apt/sources.list
-deb $DEVELMIRROR $UPSTREAM main
-deb-src $DEVELMIRROR $UPSTREAM main
-deb $LOCALMIRROR $CODENAME main
-deb $LOCALMIRROR $CODENAME-updates main
-deb-src $LOCALMIRROR $CODENAME main
-deb-src $LOCALMIRROR $CODENAME-updates main
-deb-src $MIRROR $UPSTREAM main
-deb-src $MIRROR $UPSTREAM-updates main
-deb-src $MIRROR $UPSTREAM-security main
-EOF
-fi
-
-#wget -o /dev/null -O /tmp/sugar.key http://bazaar-download.sugarlabs.org/Trisquel%3a/4.0/Ubuntu-10.04/Release.key
-#apt-key add /tmp/sugar.key
-
-apt-get update
-apt-get install --force-yes -y devscripts
-
-if [ $PACKAGE = linux ]
-then
-    apt-get source linux-libc-dev --download-only
-    dpkg-source -x --skip-patches *.dsc source
-    apt-get --force-yes -y build-dep linux-libc-dev
-else
-    apt-get source $PACKAGE --download-only
-    dpkg-source -x --skip-patches *.dsc source
-    apt-get --force-yes -y build-dep $PACKAGE
-fi
+#Get package and uncompress it
+apt-get update -c $LOCAL_APT/etc/apt.conf
+apt-get source $PACKAGE --download-only -c ${LOCAL_APT}/etc/apt.conf
+dpkg-source -x --skip-patches *.dsc source
 
 find -maxdepth 1 -type f | xargs rm
 cd source
 
+#disable 3.0 deb source format
+[ -f debian/source/format ] && rm debian/source/format
+[ -f debian/source/options ] && rm debian/source/options
+
 for i in debian.master/control.stub.in debian.master/control.stub debian.master/control debian/control.stub.in debian/control.stub debian/control
 do
-    [ -f $i ] && sed "s_^Maintainer.*_Maintainer: $DEBFULLNAME <$DEBEMAIL>_g" -i $i
+    [ -f $i ] && /bin/sed "s_^Maintainer.*_Maintainer: $DEBFULLNAME <$DEBEMAIL>_g" -i $i
 done
 
 compile(){
+
+
 PROCESSORS=1
-if [ 1$PARALLEL = "1true" ]
+if [ 1$PARALLEL != "1false" ]
 then
     PROCESSORS=$(grep processor /proc/cpuinfo | wc -l)
 fi
+
 
 if [ 1$QUILT != 1skip ]; then
 export QUILT_PATCHES=debian/patches
 [ -s debian/patches/series ] && quilt push -a
 fi
 
-if [ $FAKEROOT ]
-then
-chown nobody ../ -R
-su nobody -c 'dpkg-buildpackage -us -uc -j$PROCESSORS -rfakeroot'
-else
-dpkg-buildpackage -us -uc -j$PROCESSORS
-fi
+cd ..
+dpkg-source -b source
+rm -rf ${LOCAL_APT}
+echo "Trisquel source package built!"
 
-rm /CurrentlyBuilding
-umount /proc
 }
+
+sedhelper2(){
+  FILE="$1"
+  EXPR="$2"";"
+
+  while [ 1"$EXPR" != 1 ];do
+    SUBEXPR=$(cut -d\; -f 1 <<< "$EXPR")
+    MD5=$(md5sum "$FILE")
+    echo Running modification-aware sed: sed "$SUBEXPR" -i "$FILE"
+    /bin/sed "$SUBEXPR" -i "$FILE"
+    if [ "$MD5" = "$(md5sum "$FILE")" ]; then
+      echo File "$FILE" was not modified, stopping.
+      exit 1
+    fi
+    EXPR=$(cut -d\; -f 2- <<< "$EXPR" )
+    echo $EXPR | egrep ';' -q || break
+  done
+}
+
+sedhelper(){
+  FILE="$1"
+  EXPR="$2"
+
+  MD5=$(md5sum "$FILE")
+  echo Running modification-aware sed: sed "$EXPR" -i "$FILE"
+  /bin/sed "$EXPR" -i "$FILE"
+  if [ "$MD5" = "$(md5sum "$FILE")" ]; then
+    echo File "$FILE" was not modified, stopping.
+    exit 1
+  fi
+}
+
+sed (){
+if ! echo $@ | grep -qw '\-i'; then
+  echo Running fallback sed: /bin/sed "$@"
+  /bin/sed "$@"
+else
+
+[ 1"$1" = "1-i" ] && shift
+
+  SEDEXPR="$1"
+  shift
+  for FILE in "$@"; do
+  [ 1"$FILE" = "1-i" ] && continue
+  if [ -f "$FILE" ]; then
+    sedhelper "$FILE" "$SEDEXPR"
+  else
+    echo File "$FILE" does not exist, stopping.
+    exit 1
+  fi
+  done
+fi
+}
+
+
