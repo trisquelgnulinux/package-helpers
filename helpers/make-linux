@@ -63,6 +63,9 @@ mv debian.master/config/config.common.ubuntu debian.master/config/config.common.
 sed s/family=ubuntu/family=trisquel/ -i debian/rules.d/0-common-vars.mk
 find debian* -type f -name *control* -exec sed 's/ with Ubuntu patches//; s/Linux/Linux-libre/g' -i {} \;
 
+# Descriptions should not change based on the build arch
+sed 's/on DESC//; s/PKGVER on/PKGVER/; /^ DESC.$/d;' debian*/control.d/flavour-control.stub -i
+
 changelog "Removed non-free bits"
 
 cp debian/changelog debian.master/changelog
