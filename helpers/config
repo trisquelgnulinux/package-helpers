@@ -109,6 +109,7 @@ cd PACKAGES/$PACKAGE
 
 #Get package and uncompress it
 apt-get update -c $LOCAL_APT/etc/apt.conf
+[ $PACKAGE = linux ] && PACKAGE=linux-libc-dev
 apt-get source $PACKAGE --download-only -c ${LOCAL_APT}/etc/apt.conf
 dpkg-source -x --skip-patches *.dsc source
 
