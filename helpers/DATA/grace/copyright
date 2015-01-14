@@ -1,246 +1,277 @@
-This package was debianized by Helen Faulkner <helen_ml_faulkner@yahoo.co.uk> on
-Thu, 7 Oct 2004 22:46:19 +0100.
+Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: Grace
+Source: ftp://plasma-gate.weizmann.ac.il/pub/grace/src/
+Comment: This is Debian GNU/Linux's prepackaged version of Grace, an XY plotting tool
+ based on Xmgr. Xmgr was written by Paul J Turner. Grace is maintained by a 
+ team coordinated by Evgeny Stambulchik <fnevgeny@plasma-gate.weizmann.ac.il>.
 
-It was downloaded from http://labplot.sourceforge.net/
-
-Upstream Author: Stefan Gerlach <stefan.gerlach@uni-konstanz.de>
 
 Files: *
-Copyright: © 2003-2008 Stefan Gerlach
+Copyright: Copyright (c) 1991-1995 Paul J Turner, Portland, OR
+           Copyright (c) 1996-2014 Grace Development Team
+           Maintained by Evgeny Stambulchik
 License: GPL-2+
-
+ This program is free software; you can redistribute it
+ and/or modify it under the terms of the GNU General Public
+ License as published by the Free Software Foundation; either
+ version 2 of the License, or (at your option) any later
+ version.
+ .
+ This program is distributed in the hope that it will be
+ useful, but WITHOUT ANY WARRANTY; without even the implied
+ warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ PURPOSE.  See the GNU General Public License for more
+ details.
+ .
+ You should have received a copy of the GNU General Public
+ License along with this package; if not, write to the Free
+ Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+ Boston, MA  02110-1301 USA
+ .
+ On Debian systems, the full text of the GNU General Public
+ License version 2 can be found in the file
+ `/usr/share/common-licenses/GPL-2'.
 
 Files: cephes/*
 Copyright: © 1984-1985, 1987-1989, 1991-1993, 1995-1996 Stephen L. Moshier
 License: GPL-2
  The file cephes/COPYING states:
-
+ .
    This software is derived from the Cephes Math Library. It is
    incorporated herein, and licensed in accordance with the Gnu
    General Public License, Version 2, by permission of the author.
-
- This email from Steve Moshier, the copyright owner of cephes, to Helen
- Faulkner (Debian maintainer of labplot), and other interested parties
- (labplot and grace authors, grace maintainer and labplot sponsor), confirms
+ .
+ On Debian systems, the full text of the GNU General Public
+ License version 2 can be found in the file
+ `/usr/share/common-licenses/GPL-2'.
+Comment:
+ This email from Steve Moshier, the copyright owner of cephes, to Helen 
+ Faulkner (Debian maintainer of labplot), and other interested parties 
+ (labplot and grace authors, grace maintainer and labplot sponsor), confirms 
  that we may release labplot with cephes licensed under the GPL.
+ .
+ .
+ -------- Original Message --------
+ Subject: Re: licensing of cephes
+ Date: Sun, 2 Jan 2005 21:48:02 -0500 (EST)
+ From: Steve Moshier <steve@moshier.net>
+ To: Helen Faulkner <helen_ml_faulkner@yahoo.co.uk>
+ CC: twerner@debian.org, Ben Burton <bab@debian.org>, evgeny@stambulchik.net,
+ Stefan Gerlach <gerlach@mbi-berlin.de>
+ References: <41D14354.4040506@yahoo.co.uk> 
+ <Pine.LNX.4.58.0412280836250.9987@moshier.net> 
+ <41D17BE3.3020708@yahoo.co.uk>
+ <Pine.LNX.4.58.0412281219420.10873@moshier.net> 
+ <41D1FB8D.6030002@yahoo.co.uk> 
+ <Pine.LNX.4.58.0412291032190.15474@moshier.net> 
+ <41D2D8EF.9010702@yahoo.co.uk> 
+ <Pine.LNX.4.58.0412291632540.17032@moshier.net> 
+ <41D41B2E.80508@yahoo.co.uk>
+ .
+ .
+ .
+ On Thu, 30 Dec 2004, Helen Faulkner wrote:
+ .
+ >   http://www.debian.org/social_contract#guidelines
+ .
+ This is fine with me.  To acknowedge your terms explicily,
+ how about augmenting the permission to read something like
+ the following --
+ .
+   This software is derived from the Cephes Math Library. It is
+   incorporated herein, and licensed in accordance with DFSG,
+   by permission of the author.
+ .
+ .
+ If you are trying to get me to suggest a specific form for your
+ license, then from looking at Debian programs such as dpkg it seems to
+ me that you would find the GPL to be appropriate and the permission
+ statement could reference one of the GPL documents instead of DFSG.
+ Alternatively, the packages you have been talking about distributing
+ with Debian presumably come with some sort of licenses and it would
+ make sense to propose those licenses.
 
-   -------- Original Message --------
-   Subject: Re: licensing of cephes
-   Date: Sun, 2 Jan 2005 21:48:02 -0500 (EST)
-   From: Steve Moshier <steve@moshier.net>
-   To: Helen Faulkner <helen_ml_faulkner@yahoo.co.uk>
-   CC: twerner@debian.org, Ben Burton <bab@debian.org>, evgeny@stambulchik.net,
-   Stefan Gerlach <gerlach@mbi-berlin.de>
-   References: <41D14354.4040506@yahoo.co.uk>
-   <Pine.LNX.4.58.0412280836250.9987@moshier.net>
-   <41D17BE3.3020708@yahoo.co.uk>
-   <Pine.LNX.4.58.0412281219420.10873@moshier.net>
-   <41D1FB8D.6030002@yahoo.co.uk>
-   <Pine.LNX.4.58.0412291032190.15474@moshier.net>
-   <41D2D8EF.9010702@yahoo.co.uk>
-   <Pine.LNX.4.58.0412291632540.17032@moshier.net>
-   <41D41B2E.80508@yahoo.co.uk>
-
-
-
-   On Thu, 30 Dec 2004, Helen Faulkner wrote:
-
-   >   http://www.debian.org/social_contract#guidelines
-
-   This is fine with me.  To acknowedge your terms explicily,
-   how about augmenting the permission to read something like
-   the following --
-
-     This software is derived from the Cephes Math Library. It is
-     incorporated herein, and licensed in accordance with DFSG,
-     by permission of the author.
-
-
-   If you are trying to get me to suggest a specific form for your
-   license, then from looking at Debian programs such as dpkg it seems to
-   me that you would find the GPL to be appropriate and the permission
-   statement could reference one of the GPL documents instead of DFSG.
-   Alternatively, the packages you have been talking about distributing
-   with Debian presumably come with some sort of licenses and it would
-   make sense to propose those licenses.
-
-
-Files: cephes/cmath.h
-Copyright: © 1991-1995 Paul J Turner, Portland, OR
-           © 1996-2000 Grace Development Team
+Files: T1lib/*
+Copyright: Copyright (C) 1996-2003 Rainer Menzner
 License: GPL-2+
+ This program is free software; you can redistribute it
+ and/or modify it under the terms of the GNU General Public
+ License as published by the Free Software Foundation; either
+ version 2 of the License, or (at your option) any later
+ version.
+ .
+ This program is distributed in the hope that it will be
+ useful, but WITHOUT ANY WARRANTY; without even the implied
+ warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ PURPOSE.  See the GNU General Public License for more
+ details.
+ .
+ You should have received a copy of the GNU General Public
+ License along with this package; if not, write to the Free
+ Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+ Boston, MA  02110-1301 USA
+ .
+ On Debian systems, the full text of the GNU General Public
+ License version 2 can be found in the file
+ `/usr/share/common-licenses/GPL-2'.
+
+Files: T1lib/t1lib/parseAFM.*
+Copyright: (C) 1988, 1989, 1990 by Adobe Systems Incorporated.
+License: MIT
+ * (C) 1988, 1989, 1990 by Adobe Systems Incorporated. All rights reserved.
+ *
+ * This file may be freely copied and redistributed as long as:
+ *   1) This entire notice continues to be included in the file, 
+ *   2) If the file has been modified in any way, a notice of such
+ *      modification is conspicuously indicated.
+ *
+ * PostScript, Display PostScript, and Adobe are registered trademarks of
+ * Adobe Systems Incorporated.
+ * 
+ * ************************************************************************
+ * THE INFORMATION BELOW IS FURNISHED AS IS, IS SUBJECT TO CHANGE WITHOUT
+ * NOTICE, AND SHOULD NOT BE CONSTRUED AS A COMMITMENT BY ADOBE SYSTEMS
+ * INCORPORATED. ADOBE SYSTEMS INCORPORATED ASSUMES NO RESPONSIBILITY OR 
+ * LIABILITY FOR ANY ERRORS OR INACCURACIES, MAKES NO WARRANTY OF ANY 
+ * KIND (EXPRESS, IMPLIED OR STATUTORY) WITH RESPECT TO THIS INFORMATION, 
+ * AND EXPRESSLY DISCLAIMS ANY AND ALL WARRANTIES OF MERCHANTABILITY, 
+ * FITNESS FOR PARTICULAR PURPOSES AND NONINFRINGEMENT OF THIRD PARTY RIGHTS.
+ * ************************************************************************
+
+Files: T1lib/type1/*
+Copyright: Copyright International Business Machines, Corp. 1991
+           Copyright Lexmark International, Inc. 1991
+           Portions Copyright (c) 1990 Adobe Systems Incorporated.
+License: MIT
+ * Copyright International Business Machines, Corp. 1991
+ * All Rights Reserved
+ * Copyright Lexmark International, Inc. 1991
+ * All Rights Reserved
+ * Portions Copyright (c) 1990 Adobe Systems Incorporated.
+ * All Rights Reserved
+ *
+ * License to use, copy, modify, and distribute this software and its
+ * documentation for any purpose and without fee is hereby granted,
+ * provided that the above copyright notice appear in all copies and that
+ * both that copyright notice and this permission notice appear in
+ * supporting documentation, and that the name of IBM or Lexmark or Adobe
+ * not be used in advertising or publicity pertaining to distribution of
+ * the software without specific, written prior permission.
+ *
+ * IBM, LEXMARK, AND ADOBE PROVIDE THIS SOFTWARE "AS IS", WITHOUT ANY
+ * WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING, BUT NOT
+ * LIMITED TO ANY IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+ * PARTICULAR PURPOSE, AND NONINFRINGEMENT OF THIRD PARTY RIGHTS.  THE
+ * ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE SOFTWARE, INCLUDING
+ * ANY DUTY TO SUPPORT OR MAINTAIN, BELONGS TO THE LICENSEE.  SHOULD ANY
+ * PORTION OF THE SOFTWARE PROVE DEFECTIVE, THE LICENSEE (NOT IBM,
+ * LEXMARK, OR ADOBE) ASSUMES THE ENTIRE COST OF ALL SERVICING, REPAIR AND
+ * CORRECTION.  IN NO EVENT SHALL IBM, LEXMARK, OR ADOBE BE LIABLE FOR ANY
+ * SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER
+ * RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF
+ * CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
+ * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+Files: T1lib/type1/ffilest.h
+       T1lib/type1/fontfile.h
+       T1lib/type1/fontmisc.h
+       T1lib/type1/fontxlfd.h
+Copyright: Copyright 1991 Massachusetts Institute of Technology
+License: MIT
+ * Permission to use, copy, modify, distribute, and sell this software and its
+ * documentation for any purpose is hereby granted without fee, provided that
+ * the above copyright notice appear in all copies and that both that
+ * copyright notice and this permission notice appear in supporting
+ * documentation, and that the name of M.I.T. not be used in advertising or
+ * publicity pertaining to distribution of the software without specific,
+ * written prior permission.  M.I.T. makes no representations about the
+ * suitability of this software for any purpose.  It is provided "as is"
+ * without express or implied warranty.
+ *
+ * M.I.T. DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING ALL
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL M.I.T.
+ * BE LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
+ * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN 
+ * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ *
+ * Author:  Keith Packard, MIT X Consortium
+
+Files: T1lib/type1/font.h
+       T1lib/type1/fontstruct.h
+       T1lib/type1/fsmasks.h
+Copyright: Copyright 1987 by Digital Equipment Corporation, Maynard, Massachusetts
+           Copyright 1987 by the Massachusetts Institute of Technology, Cambridge, Massachusetts
+License: MIT
+ Permission to use, copy, modify, and distribute this software and its
+ documentation for any purpose and without fee is hereby granted,
+ provided that the above copyright notice appear in all copies and that
+ both that copyright notice and this permission notice appear in
+ supporting documentation, and that the names of Digital or MIT not be
+ used in advertising or publicity pertaining to distribution of the
+ software without specific, written prior permission.
+ .
+ DIGITAL DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING
+ ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL
+ DIGITAL BE LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR
+ ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+ WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION,
+ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
+ SOFTWARE.
 
 
-Files: doc/*/index.docbook
-Copyright: © 2007 Stefan Gerlach
-License: GFDL-1.1+
- Permission is granted to copy, distribute and/or modify this document
- under the terms of the GNU Free Documentation License, Version 1.1 or
- any later version published by the Free Software Foundation; with no
- Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
- Texts.
+
+Files: Xbae/*
+Comment: Xbae files are distributed in the upstream tarball, but the
+         binaries are compiled using the separate xbae packages.  This
+         code copy is unused.
+Copyright: Copyright (c) 1991, 1992 Bell Communications Research, Inc. (Bellcore)
+           Copyright (c) 1995-97 Andrew Lister
+License: MIT
+ Permission  to use, copy, modify  and distribute this material for any
+ purpose and  without  fee is  hereby granted,  provided that the above
+ copyright notices and this permission notice appear in all copies, and
+ that the name  of any author  not be used  in advertising or publicity
+ pertaining  to  this material   without  the specific,  prior  written
+ permission of an  authorized  representative of Bellcore  and  current
+ maintainer.
+ .
+ BELLCORE AND OTHER CONTRIBUTORS MAKE  NO REPRESENTATIONS AND EXTEND NO
+ WARRANTIES, EXPRESS   OR  IMPLIED, WITH  RESPECT  TO  THE INFORMATION,
+ INCLUDING, BUT    NOT    LIMITED  TO,  THE   IMPLIED   WARRANTIES   OF
+ MERCHANTABILITY  AND FITNESS FOR  ANY   PARTICULAR  PURPOSE, AND   THE
+ WARRANTY     AGAINST INFRINGEMENT OF    PATENTS  OR OTHER INTELLECTUAL
+ PROPERTY RIGHTS. THE  SOFTWARE IS PROVIDED  "AS  IS", AND IN NO  EVENT
+ SHALL ANY AUTHOR OR ANY OF THEIR AFFILIATES BE LIABLE FOR ANY DAMAGES,
+ INCLUDING ANY  LOST   PROFITS OR  OTHER INCIDENTAL   OR  CONSEQUENTIAL
+ DAMAGES RELATING TO THE INFORMATION.
 
 
-Files: netcdf/*
-Copyright: © 1993-2004 University Corporation for Atmospheric Research/Unidata
-License: other
- Portions of this software were developed by the Unidata Program at the
- University Corporation for Atmospheric Research.
 
- Access and use of this software shall impose the following obligations
- and understandings on the user. The user is granted the right, without
- any fee or cost, to use, copy, modify, alter, enhance and distribute
- this software, and any derivative works thereof, and its supporting
- documentation for any purpose whatsoever, provided that this entire
- notice appears in all copies of the software, derivative works and
- supporting documentation.  Further, UCAR requests that the user credit
- UCAR/Unidata in any publications that result from the use of this
- software or in any product that includes this software, although this
- is not an obligation. The names UCAR and/or Unidata, however, may not
- be used in any advertising or publicity to endorse or promote any
- products or commercial entity unless specific written permission is
- obtained from UCAR/Unidata. The user also understands that
- UCAR/Unidata is not obligated to provide the user with any support,
- consulting, training or assistance of any kind with regard to the use,
- operation and performance of this software nor to provide the user
- with any updates, revisions, new versions or "bug fixes."
-
- THIS SOFTWARE IS PROVIDED BY UCAR/UNIDATA "AS IS" AND ANY EXPRESS OR
- IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- DISCLAIMED. IN NO EVENT SHALL UCAR/UNIDATA BE LIABLE FOR ANY SPECIAL,
- INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING
- FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT,
- NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION
- WITH THE ACCESS, USE OR PERFORMANCE OF THIS SOFTWARE.
-
-
-Files: qhull/*
-Copyright: © 1993-2003 The Geometry Center
-License: other
-                     Qhull, Copyright (c) 1993-2003
-
-        The National Science and Technology Research Center for
-         Computation and Visualization of Geometric Structures
-                         (The Geometry Center)
-                        University of Minnesota
-
-                        email: qhull@qhull.org
-
- This software includes Qhull from The Geometry Center.  Qhull is
- copyrighted as noted above.  Qhull is free software and may be obtained
- via http from www.qhull.org.  It may be freely copied, modified,
- and redistributed under the following conditions:
-
- 1. All copyright notices must remain intact in all files.
-
- 2. A copy of this text file must be distributed along with any copies
-    of Qhull that you redistribute; this includes copies that you have
-    modified, or copies of programs or other software products that
-    include Qhull.
-
- 3. If you modify Qhull, you must include a notice giving the
-    name of the person performing the modification, the date of
-    modification, and the reason for such modification.
-
- 4. When distributing modified versions of Qhull, or other software
-    products that include Qhull, you must provide notice that the original
-    source code may be obtained as noted above.
-
- 5. There is no warranty or other guarantee of fitness for Qhull, it is
-    provided solely "as is".  Bug reports or fixes may be sent to
-    qhull_bug@qhull.org; the authors may or may not act on them as
-    they desire.
-
-
-Files: qwtplot3d/*
-Copyright: © 2003-2005 Michael Bieber
-License: other
- This software is provided 'as-is', without any express or implied
- warranty.  In no event will the author be held liable for any damages
- arising from the use of this software.
-
- Permission is granted to anyone to use this software for any purpose,
- including commercial applications, and to alter it and redistribute it
- freely, subject to the following restrictions:
-
- 1. The origin of this software must not be misrepresented; you must not
-    claim that you wrote the original software. If you use this software
-    in a product, an acknowledgment in the product documentation would be
-    appreciated but is not required.
- 2. Altered source versions must be plainly marked as such, and must not be
-    misrepresented as being the original software.
- 3. This notice may not be removed or altered from any source distribution.
-
-
-Files: qwtplot3d/gl2ps.[ch]
-Copyright: © 1999-2006 Christophe Geuzaine <geuz@geuz.org>
-License: LGPL-2+ | other
- This program is free software; you can redistribute it and/or
- modify it under the terms of either:
-
- a) the GNU Library General Public License as published by the Free
- Software Foundation, either version 2 of the License, or (at your
- option) any later version; or
-
- b) the GL2PS License as published by Christophe Geuzaine, either
- version 2 of the License, or (at your option) any later version.
-
- The complete text of the GL2PS License follows:
-
-                              GL2PS LICENSE
-                         Version 2, November 2003
-
-                 Copyright (C) 2003, Christophe Geuzaine
-
-   Permission to use, copy, and distribute this software and its
-   documentation for any purpose with or without fee is hereby granted,
-   provided that the copyright notice appear in all copies and that both
-   that copyright notice and this permission notice appear in supporting
-   documentation.
-
-   Permission to modify and distribute modified versions of this software
-   is granted, provided that:
-
-   1) the modifications are licensed under the same terms as this
-   software;
-
-   2) you make available the source code of any modifications that you
-   distribute, either on the same media as you distribute any executable
-   or other form of this software, or via a mechanism generally accepted
-   in the software development community for the electronic transfer of
-   data.
-
-   This software is provided "as is" without express or implied warranty.
-
-
-Files: src/parser.c
-Copyright: © 1984, 1989, 1990, 2000, 2001, 2002 Free Software Foundation, Inc.
+Files: debian/*
+Copyright: Copyright 1997-1998 Enrique Zanardi
+           Copyright 1999-2009 Torsten Werner
+           Copyright 2005-2008 Ionut Georgescu
+           Copyright 2010-2014 Nicholas Breen
 License: GPL-2+
- As a special exception, when this file is copied by Bison into a
- Bison output file, you may use that output file without restriction.
- This special exception was added by the Free Software Foundation
- in version 1.24 of Bison.
+ This program is free software; you can redistribute it
+ and/or modify it under the terms of the GNU General Public
+ License as published by the Free Software Foundation; either
+ version 2 of the License, or (at your option) any later
+ version.
+ .
+ This program is distributed in the hope that it will be
+ useful, but WITHOUT ANY WARRANTY; without even the implied
+ warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ PURPOSE.  See the GNU General Public License for more
+ details.
+ .
+ You should have received a copy of the GNU General Public
+ License along with this package; if not, write to the Free
+ Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+ Boston, MA  02110-1301 USA
+ .
+ On Debian systems, the full text of the GNU General Public
+ License version 2 can be found in the file
+ `/usr/share/common-licenses/GPL-2'.
 
-
-Files: src/qjp2io.*
-Copyright: © 2003 Dmitry V. Fedorov <www.dimin.net>
-License: ?
-
-
-Files: src/qtiffio.*
-Copyright: © 1999 Markus L. Noga <markus@noga.de>
-           © 2001-2002 Dmitry V. Fedorov <www.dimin.net>
-License: LGPL-2+
-
-
-Files: texvc/*
-Copyright: © Tomasz Wegrzanowski
-License: GPL-2+
-
-
-On Debian systems, the complete text of the GNU General Public License
-can be found in `/usr/share/common-licenses/GPL', the complete text of
-the GNU Lesser General Public License can be found in
-`/usr/share/common-licenses/LGPL' and the complete text of the GNU Free
-Documentation License can be found in `/usr/share/common-licenses/GFDL'.
