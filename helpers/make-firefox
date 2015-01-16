@@ -249,6 +249,9 @@ debian/rules debian/control
 touch -d "yesterday" debian/control
 debian/rules debian/control
 
+# Regenerate addon-sdk/moz.build
+./mach generate-addon-sdk-moz-build
+
 #https://bugzilla.mozilla.org/show_bug.cgi?id=1047803
 sed 's/--enable-optimize$/--enable-optimize="-O2"/' -i debian/config/mozconfig.in
 
