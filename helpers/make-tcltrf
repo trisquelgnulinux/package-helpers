@@ -21,7 +21,8 @@ VERSION=1
 
 . ./config
 
-# Replace nonfree RIPEMD code with free code also included in Debian
+# Replace nonfree RIPEMD code with free code, also included in Debian
+# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=751879
 rm -rf generic/ripemd/*
 cp $DATA/ripemd/* generic/ripemd
 
