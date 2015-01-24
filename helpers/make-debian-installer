@@ -21,21 +21,6 @@ VERSION=5
 NETINST=true
 . ./config
 
-cat << EOF > /etc/apt/sources.list
-deb $DEVELMIRROR $CODENAME main
-deb-src $DEVELMIRROR $CODENAME main
-deb $LOCALMIRROR $CODENAME main
-deb $LOCALMIRROR $CODENAME-updates main
-deb-src $LOCALMIRROR $CODENAME main
-deb-src $LOCALMIRROR $CODENAME-updates main
-deb-src $MIRROR $UPSTREAM main
-deb-src $MIRROR $UPSTREAM-updates main
-deb-src $MIRROR $UPSTREAM-security main
-EOF
-
-apt-get update
-
-apt-get install trisquel-keyring
 
 find build/pkg-lists -type f | xargs sed -i /media-retriever/d
 
@@ -44,6 +29,8 @@ LASTKERNEL=$(apt-cache showsrc linux-libc-dev|grep ^Version |head -n1|cut -d" " 
 sed -i "s/^MEDIUM_SUPPORTED.*/MEDIUM_SUPPORTED = cdrom netboot/g" ./build/config/i386.cfg ./build/config/amd64.cfg
 
 sed 's/ubuntu-archive-keyring.gpg/trisquel-archive-keyring.gpg/' -i build/config/common
+
+sed -i 's/shim-signed/shim/g' debian/control
 
 cp $DATA/splash.png build/boot/x86/pics/trisquel.png
 sed -i 's/ubuntu.png/trisquel.png/g' build/config/x86.cfg
@@ -78,5 +65,3 @@ rpl ubuntu-archive-keyring trisquel-archive-keyring . -R
 changelog "Rebranded and adapted for Trisquel"
 compile
 
-cp build/tmp/netboot/mini.iso build/tmp/netboot/initrd.gz /root/
-cp build/dest/cdrom/vmlinuz /root/

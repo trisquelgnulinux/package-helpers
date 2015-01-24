@@ -19,6 +19,9 @@
 
 VERSION=1
 
+#https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=733013
+EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu vivid universe'
+
 . ./config
 
 sed 's/Gnash flash client and//g; s/Adobe Flash Player/Gnash flash player/g' debian/control -i

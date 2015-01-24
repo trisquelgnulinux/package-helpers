@@ -24,13 +24,13 @@ VERSION=1
 rm ./TOOLS/w32codec_dl.pl ./TOOLS/binary_codecs.sh ./rpm/mplayer-codecs.spec
 cp $DATA/README ./TOOLS/README
 
-sed -i /Win32/d debian/control
+#sed -i /Win32/d debian/control
 sed -i /binary_codecs/d ./debian/mplayer.install
-sed -i '/w32codec/,/binary_codecs.sh\ uninstall/d' debian/copyright 
-sed -i 's/\(--disable-libswscale_a \\\)/\1\n\t--disable-win32dll \\/' debian/rules 
-sed -i 's/\(--disable-libswscale_a \\\)/\1\n\t--disable-qtx \\/' debian/rules 
-sed -i 's/\(--disable-libswscale_a \\\)/\1\n\t--disable-xanim \\/' debian/rules 
-sed -i 's/\(--disable-libswscale_a \\\)/\1\n\t--disable-real \\/' debian/rules 
+#sed -i '/w32codec/,/binary_codecs.sh\ uninstall/d' debian/copyright 
+sed -i 's/\(--disable-arts \\\)/\1\n\t--disable-win32dll \\/' debian/rules 
+sed -i 's/\(--disable-arts \\\)/\1\n\t--disable-qtx \\/' debian/rules 
+sed -i 's/\(--disable-arts \\\)/\1\n\t--disable-xanim \\/' debian/rules 
+sed -i 's/\(--disable-arts \\\)/\1\n\t--disable-real \\/' debian/rules 
 
 changelog "Removed references to non-free stuff"
 

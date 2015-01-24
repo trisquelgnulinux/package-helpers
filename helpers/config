@@ -1,6 +1,7 @@
 #!/bin/bash
 #
 #    Copyright (C) 2008-2010  Rubén Rodríguez <ruben@trisquel.info>
+#    Copyright (C)      2014  Santiago Rodriguez <santi@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -18,19 +19,18 @@
 #
 
 set -e
-
+export LANG=C LC_TIME=C
 PACKAGE=$(echo $0 |/bin/sed s/make-//g)
+
+
 export DATE=$(date +'%a, %d %b %Y %T %z')
 
 export DATA=$PWD/DATA/$PACKAGE
 if ! [ 1$COMPONENT = "1main" ]
 then
     COMPONENT=${COMPONENT:-universe}
-    /bin/sed 's/^enable.*/enable: false/g' -i /etc/pkgbinarymangler/*.conf
-    echo "Disabled pkgbinarymangler"
-    #TODO: Use NO_PKG_MANGLE instead of changing conf file
+    export NO_PKG_MANGLE=1
 fi
-
 
 [ -d PACKAGES ] || mkdir PACKAGES
 
@@ -46,6 +46,7 @@ export UPSTREAMRELEASE=14.04
 MIRROR=http://archive.ubuntu.com/ubuntu
 DEVELMIRROR=http://devel.trisquel.info/trisquel/$CODENAME
 LOCALMIRROR=http://archive.trisquel.info/trisquel
+LOCAL_APT=`mktemp -d` 
 
 replace(){
 find $3 -type f -not -iregex '.*changelog.*' -not -iregex '.*copyright.*' -execdir /bin/sed --follow-symlinks -i s^"$1"^"$2"^g {} \;
@@ -53,34 +54,65 @@ find $3 -type f -not -iregex '.*changelog.*' -not -iregex '.*copyright.*' -execd
 changelog(){
 echo | dch -D $CODENAME -v $(/bin/sed -n '1s/^.*(\(.*\)).*/\1'+${REVISION}trisquel${VERSION}'/p' debian/changelog)  "$1"
 
-
 # Make sure the changelog file is identical between archs
 /bin/sed "/-- Trisquel/s/.*/ -- Trisquel GNU\/Linux developers <trisquel-devel@listas.trisquel.info>  $DATE/" -i debian/changelog
 }
 
+
+#Setup local apt
+
+trap "rm -rf ${LOCAL_APT}" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
+
+mkdir -p ${LOCAL_APT}/var/lib/apt/partial
+mkdir -p ${LOCAL_APT}/var/cache/apt/archives/partial
+mkdir -p ${LOCAL_APT}/etc/
+mkdir -p ${LOCAL_APT}/var/lib/dpkg
+touch ${LOCAL_APT}/var/lib/dpkg/status
+touch ${LOCAL_APT}/etc/trusted.gpg
+
+cat << EOF > ${LOCAL_APT}/etc/apt.conf
+Dir::State "${LOCAL_APT}/var/lib/apt";
+Dir::State::status "${LOCAL_APT}/var/lib/dpkg/status";
+Dir::Etc::SourceList "${LOCAL_APT}/etc/apt.sources.list";
+Dir::Cache "${LOCAL_APT}/var/cache/apt";
+pkgCacheGen::Essential "none";
+Dir::Etc::Trusted "${LOCAL_APT}/etc/trusted.gpg";
+EOF
+
+if [ -f trusted.local.gpg ]
+then
+cp trusted.local.gpg "${LOCAL_APT}/etc/trusted.gpg"
+else
+#Trisquel key
+apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver keyserver.ubuntu.com --recv-keys B4EFB9F38D8AEBF1
+#Ubuntu gpg keys
+apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver keyserver.ubuntu.com --recv-keys 40976EAF437D05B5
+apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver keyserver.ubuntu.com --recv-keys 3B4FE6ACC0B21F32
+fi
+
+
+cat << EOF > ${LOCAL_APT}/etc/apt.sources.list
+deb-src $MIRROR $UPSTREAM main universe
+deb-src $MIRROR $UPSTREAM-updates main universe
+deb-src $MIRROR $UPSTREAM-security main universe
+
+EOF
+
+[ "1$EXTERNAL" != "1" ] && eval echo "$EXTERNAL" >> ${LOCAL_APT}/etc/apt.sources.list
+
+[ "1$SIGNKEY" != "1" ] && apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --recv-keys --keyserver keyserver.ubuntu.com $SIGNKEY
+
+#Cleanup
 rm -rf PACKAGES/$PACKAGE
 mkdir PACKAGES/$PACKAGE
 cd PACKAGES/$PACKAGE
 
-
-
-[ "1$EXTERNAL" != "1" ] && eval echo "$EXTERNAL" >> /etc/apt/sources.list
-
-apt-get update
-
-if [ $PACKAGE = linux ]
-then
-    apt-get --force-yes -y build-dep linux-libc-dev
-    apt-get source linux-libc-dev --download-only
-    dpkg-source -x --skip-patches *.dsc source
-else
-    apt-get source $PACKAGE --download-only
-    dpkg-source -x --skip-patches *.dsc source
-fi
+#Get package and uncompress it
+apt-get update -c $LOCAL_APT/etc/apt.conf
+apt-get source $PACKAGE --download-only -c ${LOCAL_APT}/etc/apt.conf
+dpkg-source -x --skip-patches *.dsc source
 
 find -maxdepth 1 -type f | xargs rm
-echo COMPONENT=$COMPONENT > envvars
-
 cd source
 
 #disable 3.0 deb source format
@@ -94,13 +126,21 @@ done
 
 compile(){
 
-if [ 1$QUILT != 1skip ]; then
-export QUILT_PATCHES=debian/patches
-[ -s debian/patches/series ] && quilt push -a || true
+
+PROCESSORS=1
+if [ 1$PARALLEL != "1false" ]
+then
+    PROCESSORS=$(grep processor /proc/cpuinfo | wc -l)
 fi
 
-cd ..
-dpkg-source -b source
+
+if [ 1$QUILT != 1skip ]; then
+export QUILT_PATCHES=debian/patches
+[ -s debian/patches/series ] && quilt push -a
+fi
+
+dpkg-buildpackage -d -S -us -uc -tc
+rm -rf ${LOCAL_APT}
 echo "Trisquel source package built!"
 
 }

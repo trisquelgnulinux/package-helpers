@@ -52,7 +52,7 @@ background-color:#fff;
 font-size:14px;
 padding:10px 25px 20px 25px;
 border-radius: 5px;
-box-shadow: 0 0px 5px hsla(0,0%,0%,.3) inset;
+box-shadow: 0 0px 2px hsla(0,0%,0%,.3) inset;
 }
 
 .block-side-margin {
@@ -67,18 +67,25 @@ box-shadow: 0 0px 5px hsla(0,0%,0%,.3) inset;
 
 ul li {
 list-style:none;
-background:#ddd;
-border-radius:3px;
-padding:3px 5px 3px 5px;
-margin:5px;
-box-shadow: 0px 2px 0 #ccc ;
 float:left;
 }
 
 ul li a{
 font-weight:bold;
-color:#666;
 text-shadow:0px 1px 0px #fff;
+padding:5px 10px 5px 10px;
+border-radius:3px;
+margin:5px;
+color:#888;
+background:#dcdcdc;
+box-shadow: 0px 2px 0 #ccc ;
+}
+
+ul li a:hover{
+color:#666;
+background:#ccc;
+box-shadow: 0px 2px 0 #aaa;
+
 }
 
 .titlelink{
@@ -95,7 +102,12 @@ display: -moz-box;
 width: 100%;
 background-color: hsla(0,0%,0%,.03);
 border-top: 1px solid hsla(0,0%,0%,.03);
-box-shadow: 0 2px 5px hsla(0,0%,0%,.1) inset, 0 -1px 0 hsla(0,0%,100%,.25);
+box-shadow: 0 -1px 2px hsla(0,0%,0%,.1) inset, 0 -1px 0 hsla(0,0%,100%,.25);
+}
+
+#searchLogoContainer{
+color:#888;
+text-shadow: 0 1px 0 #fff;
 }
 
 </style>
@@ -142,6 +154,10 @@ function jssettings(sel){
 }
 
 function prepare(){
+
+srchsvc = Components.classes["@mozilla.org/browser/search-service;1"].getService(Components.interfaces.nsIBrowserSearchService);
+currentEngine = srchsvc.defaultEngine.name;
+document.getElementById("searchLogoContainer").innerHTML=currentEngine+":"; 
 
 /*try {
 Services.prefs.getCharPref("extensions.abrowserhome.intl.accept_languages");
@@ -255,6 +271,15 @@ Services.prefs.setIntPref("extensions.abrowserhome.browser.display.use_document_
   }
 }
 
+function onSearchSubmit(){
+
+  srchsvc = Components.classes["@mozilla.org/browser/search-service;1"].getService(Components.interfaces.nsIBrowserSearchService);
+  currentEngine = srchsvc.defaultEngine;
+  var selectedText=document.getElementById("searchText").value;
+  submission = currentEngine.getSubmission(selectedText,null);
+  window.location = submission.uri.spec;
+
+}
 
 ]]>
 </script>
@@ -266,13 +291,14 @@ Services.prefs.setIntPref("extensions.abrowserhome.browser.display.use_document_
     <div class="spacer"/>
     <div id="topSection">
       <img src="chrome://branding/content/about-logo.png"/>
-
+<br/>
+<br/>
       <div id="searchContainer">
-        <form name="searchForm" id="searchForm" action="https://duckduckgo.com/">
-          <input type="hidden" name="t" value="trisquel"/>
+        <form name="searchForm" id="searchForm" onsubmit="onSearchSubmit(); return false">
+          <div id="searchLogoContainer"></div>
           <input type="text" name="q" value="" id="searchText" maxlength="256"
-                 autofocus="autofocus"/>
-          <input id="searchSubmit" type="submit" value="&abouthome.searchEngineButton.label; DuckDuckGO"/>
+                 autofocus="autofocus" dir="auto"/>
+          <input id="searchSubmit" type="submit" value="&abouthome.searchEngineButton.label;"/>
         </form>
       </div>
 
@@ -284,7 +310,7 @@ Services.prefs.setIntPref("extensions.abrowserhome.browser.display.use_document_
 <div class="block-side-margin"></div>
 <div id="addonsform">
 <!--<h3>Enabled privacy features:</h3>-->
-<p><a target="_blank" href="https://trisquel.info/browser">Abrowser</a> protects your <a target="_blank" href="http://www.gnu.org/philosophy/free-sw.html">freedom</a> and your privacy!<br/><small>For a browser with an even bigger focus on privacy, <a href="apt:icecat">install GNU/IceCat</a></small></p>
+<p><a target="_blank" href="https://trisquel.info/browser">Abrowser</a> protects your <a target="_blank" href="http://www.gnu.org/philosophy/free-sw.html">freedom</a> and your privacy!<br/><small>For a browser with an even bigger focus on privacy, <a href="apt:icecat">install GNU IceCat</a></small></p>
 </div>
 <div class="block-side-margin"></div>
 </div>
