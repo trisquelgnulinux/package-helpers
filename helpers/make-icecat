@@ -27,12 +27,12 @@ ICEATVERSION=$(head -n1 debian/changelog |sed 's/.*(//; s/).*//')
 
 cat << EOF >> browser/app/profile/icecat.js
 // Preferences for the Get Add-ons panel
-pref ("extensions.webservice.discoverURL", "https://trisquel.info/browser_plain");
-pref ("extensions.getAddons.search.url", "https://trisquel.info/browser_plain");
+pref ("extensions.webservice.discoverURL", "https://trisquel.info/browser-plain");
+pref ("extensions.getAddons.search.url", "https://trisquel.info/browser-plain");
 
 // PFS url
-pref("pfs.datasource.url", "http://trisquel.info/sites/pfs.php?mime=%PLUGIN_MIMETYPE%");
-pref("pfs.filehint.url", "http://trisquel.info/sites/pfs.php?mime=%PLUGIN_MIMETYPE%");
+pref("pfs.datasource.url", "https://trisquel.info/sites/pfs.php?mime=%PLUGIN_MIMETYPE%");
+pref("pfs.filehint.url", "https://trisquel.info/sites/pfs.php?mime=%PLUGIN_MIMETYPE%");
 
 // I'm feeling Ducky.
 pref("keyword.URL", "https://duckduckgo.com/html?t=trisquel&q=!+");
