@@ -120,10 +120,10 @@ cd source
 [ -f debian/source/format ] && rm debian/source/format
 [ -f debian/source/options ] && rm debian/source/options
 
-for i in debian.master/control.stub.in debian.master/control.stub debian.master/control debian/control.stub.in debian/control.stub debian/control
-do
-    [ -f $i ] && /bin/sed "s_^Maintainer.*_Maintainer: $DEBFULLNAME <$DEBEMAIL>_g" -i $i
-done
+#for i in debian.master/control.stub.in debian.master/control.stub debian.master/control debian/control.stub.in debian/control.stub debian/control
+#do
+#    [ -f $i ] && /bin/sed "s_^Maintainer.*_Maintainer: $DEBFULLNAME <$DEBEMAIL>_g" -i $i
+#done
 
 compile(){
 
