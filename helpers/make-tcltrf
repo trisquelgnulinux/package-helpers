@@ -1,0 +1,36 @@
+#!/bin/sh
+#
+#    Copyright (C) 2015  Legimet <legimet.calc@gmail.com>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=1
+
+. ./config
+
+# Remove nonfree msvcrt.dll
+# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=685207
+rm win/msvcrt.dll
+
+# Replace nonfree RIPEMD code with free code, also included in Debian
+# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=751879
+rm generic/ripemd/*
+cp $DATA/ripemd/* generic/ripemd
+
+changelog "Remove nonfree file and replace nonfree RIPEMD code"
+
+compile
+
