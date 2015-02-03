@@ -23,11 +23,11 @@ VERSION=1
 
 # Remove nonfree msvcrt.dll
 # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=685207
-rm -f win/msvcrt.dll
+rm win/msvcrt.dll
 
 # Replace nonfree RIPEMD code with free code, also included in Debian
 # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=751879
-rm -f generic/ripemd/*
+rm generic/ripemd/*
 cp $DATA/ripemd/* generic/ripemd
 
 changelog "Remove nonfree file and replace nonfree RIPEMD code"
