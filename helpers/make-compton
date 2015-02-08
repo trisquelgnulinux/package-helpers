@@ -1,6 +1,7 @@
 #!/bin/sh
 #
 #    Copyright (C) 2011  Rubén Rodríguez <ruben@trisquel.info>
+#    Copyright (C) 2015  Francisco Parra <franparpe@openmailbox.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -46,10 +47,10 @@ cat << EOF > compton-launcher
 #!/bin/sh
 
 [ \$DESKTOP_SESSION = "trisquel-session" ] || exit 0
-[ -f ~/.config/disable-compton ] && exit 0
+[ -f $HOME/.config/disable-compton ] && exit 0
 
 FILE=/etc/compton.conf
-[ -f ~/.config/compton.conf ] && FILE="~/.config/compton.conf"
+[ -f $HOME/.config/compton.conf ] && FILE="$HOME/.config/compton.conf"
 
 [ 0 != \$(glxinfo |grep "renderer string:" |grep -v llvmpipe | wc -c) ]  && exec compton --config \$FILE &
 EOF
