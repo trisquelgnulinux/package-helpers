@@ -137,7 +137,7 @@ cp $DATA/abouthome -a browser/base/content
 sed '/mozilla.*png/d' -i ./browser/base/jar.mn
 
 # Delete stuff we don't use and that may contain trademaked logos
-rm -rf ./browser/metro ./mobile ./addon-sdk/source/doc/static-files/media ./browser/themes/windows ./browser/themes/osx ./b2b
+rm -rf ./browser/metro ./addon-sdk/source/doc/static-files/media ./browser/themes/windows ./browser/themes/osx ./b2g
 
 #Trisquel custom bookmarks
 cp $DATA/bookmarks.html.in browser/locales/generic/profile/bookmarks.html.in
