@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=4
+VERSION=5
 
 . ./config
 
@@ -47,10 +47,10 @@ cat << EOF > compton-launcher
 #!/bin/sh
 
 [ \$DESKTOP_SESSION = "trisquel-session" ] || exit 0
-[ -f $HOME/.config/disable-compton ] && exit 0
+[ -f \$HOME/.config/disable-compton ] && exit 0
 
 FILE=/etc/compton.conf
-[ -f $HOME/.config/compton.conf ] && FILE="$HOME/.config/compton.conf"
+[ -f \$HOME/.config/compton.conf ] && FILE="\$HOME/.config/compton.conf"
 
 [ 0 != \$(glxinfo |grep "renderer string:" |grep -v llvmpipe | wc -c) ]  && exec compton --config \$FILE &
 EOF
