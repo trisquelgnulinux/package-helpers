@@ -139,7 +139,8 @@ export QUILT_PATCHES=debian/patches
 [ -s debian/patches/series ] && quilt push -a
 fi
 
-dpkg-buildpackage -d -S -us -uc -tc
+cd ..
+dpkg-source -b source
 rm -rf ${LOCAL_APT}
 echo "Trisquel source package built!"
 
