@@ -23,7 +23,7 @@
 # Also, don't forget to update the meta-release files at archive and packages.t.i
 # The "obsoletes" list from ubuntu has been removed
 
-VERSION=11
+VERSION=12
 
 . ./config
 
@@ -34,6 +34,8 @@ sed s/self.checkForNvidia/#self.checkForNvidia/ DistUpgrade/DistUpgradeCache.py 
 #sed s/self._test_and_warn_on_old_nvidia/#self._test_and_warn_on_old_nvidia/  -i DistUpgrade/DistUpgradeQuirks.py
 #sed s/self._test_and_warn_on_nvidia_and_no_sse/#self._test_and_warn_on_nvidia_and_no_sse/  -i DistUpgrade/DistUpgradeQuirks.py
 sed s/self._test_and_warn_on_dropped_fglrx_support/#self._test_and_warn_on_dropped_fglrx_support/  -i DistUpgrade/DistUpgradeQuirks.py
+sed 's/self._add_extras_repository()/#self._add_extras_repository()/' -i DistUpgrade/DistUpgradeQuirks.py
+sed 's/01ubuntu/01backports/' -i DistUpgrade/DistUpgradeController.py
 sed '/nvidia/d' DistUpgrade/build-tarball.sh -i
 rm tests/test-data/xorg.conf.fglrx
 
@@ -195,6 +197,7 @@ rm DistUpgrade/EOLReleaseAnnouncement.html DistUpgrade/ReleaseAnnouncement.html
 
 parsewiki DistUpgrade/EOLReleaseAnnouncement > DistUpgrade/EOLReleaseAnnouncement.html
 parsewiki DistUpgrade/ReleaseAnnouncement > DistUpgrade/ReleaseAnnouncement.html
+parsewiki DistUpgrade/DevelReleaseAnnouncement > DistUpgrade/DevelReleaseAnnouncement.html
 
 rm data/removal_blacklist.cfg
 cat <<EOF > data/removal_blacklist.cfg
@@ -262,7 +265,6 @@ chmod 755 DistUpgrade/trisquel-postinstall.sh
 
 replace changelogs.ubuntu.com packages.trisquel.info .
 
-/bin/sed -i 's/�~Lubuntu/�~Ltrisquel/g; s/被ubuntu/被trisquel/g; s#http://launchpad.net/ubuntu/+source/%s/%s/+changelog#http://trisquel.info/project/issues#g; s/<.*@ubuntu.com/<info@trisquel.info/g; s/ ubuntu\n/ trisquel\n/g; s/ubuntu\ /trisquel\ /g; s/\ ubuntu/\ trisquel/g; s/Ubuntu/Trisquel/g; s/ubuntu-desktop/trisquel-/g; s/www.ubuntu.com/trisquel.info/g; s/www.ubuntulinux.org/trisquel.info/g ' po/*.po $(find -type f | grep py$) $(find -type f | grep '\.glade$')
 
 rpl 11\.04 5\.0 DistUpgrade/*.ui
 rpl 11\.04 5\.0 po/* -R
@@ -292,6 +294,19 @@ rm utils/demoted.cfg.lucid utils/demoted.cfg.hardy utils/demoted.cfg.dapper util
 echo "notification-daemon" > data/demoted.cfg
 echo "notification-daemon" $DATA/demoted utils/demoted.cfg
 
+sed 's|.ubuntu-bug ubuntu-release-upgrader-core. in a terminal|https://trisquel.info/en/project/issues in a browser.|' DistUpgrade/DistUpgradeCache.py -i
+replace "https*://launchpad.net/ubuntu/+source/ubuntu-release-upgrader/+filebug" "https://trisquel.info/project/issues" .
+replace "https*://launchpad.net/ubuntu/+source/ubuntu-release-upgrader" "https://trisquel.info/project/issues" .
+replace "https*://bugs.launchpad.net/ubuntu/+source/ubuntu-release-upgrader/+filebug" "https://trisquel.info/project/issues" .
+find -type f |xargs rename 's/ubuntu-release-upgrader/trisquel-release-upgrader/g'
+replace  "ubuntu-release-upgrader" "trisquel-release-upgrader" .
+mv kubuntu-devel-release-upgrade triskel-devel-release-upgrade
+mv tests/test-data-cdrom/ubuntu tests/test-data-cdrom/trisquel
+replace old-releases.ubuntu.com oldarchive.trisquel.info
+
+rpl "edubuntu" "trisquel-edu" . -R
+rpl "kubuntu" "triskel" . -R
+rpl "Kubuntu" "Triskel" . -R
 rpl " Ubuntu " " Trisquel " . -R
 rpl "Ubuntu " "Trisquel " . -R
 rpl " Ubuntu" " Trisquel" . -R
@@ -308,8 +323,14 @@ sed 's/,"restricted"//g' DistUpgrade/DistUpgradeController.py -i
 #sed 's/","restricted"/\\n"/g' DistUpgrade/DistUpgradeController.py -i
 #rpl '10.04' $REVISION DistUpgrade po -R
 replace Ubuntu Trisquel . -R
-replace Kubuntu Triskel . -R
 replace Canonical Trisquel . -R
+replace "https*://www.ubuntu.com/" "https://trisquel.info" .
+replace "https*://wiki.ubuntu.com/X/Bugs/" "https://trisquel.info/project/issues" .
+replace "https*://wiki.ubuntu.com/" "https://trisquel.info/wiki" .
+replace "https*://help.ubuntu.com/community" "https://trisquel.info/wiki" .
+
+
+/bin/sed -i 's/kubuntu/triskel/g; s/xubuntu/trisquel-mini/g; s/�~Lubuntu/�~Ltrisquel/g; s/被ubuntu/被trisquel/g; s#http://launchpad.net/ubuntu/+source/%s/%s/+changelog#http://trisquel.info/project/issues#g; s/<.*@ubuntu.com/<info@trisquel.info/g; s/ ubuntu\n/ trisquel\n/g; s/ubuntu\ /trisquel\ /g; s/\ ubuntu/\ trisquel/g; s/Ubuntu/Trisquel/g; s/ubuntu-desktop/trisquel-/g; s/www.ubuntu.com/trisquel.info/g; s/www.ubuntulinux.org/trisquel.info/g ' po/*.po $(find -type f | grep py$) $(find -type f | grep '\.glade$')
 replace Trisquel-Gettext Ubuntu-Gettext . -R
 
 sed '1s/trisquel/ubuntu/' debian/control -i
