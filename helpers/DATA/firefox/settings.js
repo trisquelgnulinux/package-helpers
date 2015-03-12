@@ -149,3 +149,6 @@ pref("media.gmp-manager.url", "http://127.0.0.1/");
 // Don't install openh264 codec
 pref("media.gmp-gmpopenh264.provider.enabled", false);
 
+//Disable middle click content load
+//Avoid loading urls by mistake 
+pref("middlemouse.contentLoadURL", false);
