@@ -1,0 +1,63 @@
+#!/bin/bash
+
+#Check if compton is currently running.
+case "$(pgrep -u $USER compton | wc -w)" in
+    
+    0)  COMPTON_RUNNING=false
+	;;
+    1)  COMPTON_RUNNING=true
+	;;
+esac
+
+
+if $COMPTON_RUNNING; then
+    COMPTON=true
+    DISCOMPTON=false
+
+elif ! $COMPTON_RUNNING; then
+    COMPTON=false
+    DISCOMPTON=true
+
+fi
+
+#The text that will be showed to the user.
+TEXT="Use Compton compositor if 3d acceleration available"
+TITLE="Choose between enabling or disabling Compton"
+COMPTON_ENABLED="Compton enabled"
+COMPTON_DISABLED="Compton disabled"
+INFO="Compton is already running"
+
+
+#Checks the languange of the system (more can be added in the future) and displays the text corresponding to the language selected.
+if [ $LANG = es_ES.UTF-8 ]; then
+    TEXT="Usar el compositor Compton si el equipo soporta aceleración 3D"
+    TITLE="Seleccionar entre habilitar o deshabilitar los efectos de Compton"
+    COMPTON_ENABLED="Compton habilitado"
+    COMPTON_DISABLED="Compton deshabilitado"
+    INFO="Compton ya se encuentra en ejecución"
+fi
+
+#Zenity is summoned to interact with the user.
+ans=$(zenity --list --hide-header\
+    --title "$TITLE"\
+    --text "$TEXT"\
+    --radiolist\
+    --column "" --column ""\
+    $COMPTON "$COMPTON_ENABLED"\
+    $DISCOMPTON "$COMPTON_DISABLED")
+
+#The program reacts to the user's decision.
+if [[ $ans = "$COMPTON_ENABLED" ]] && ! $COMPTON_RUNNING; then
+    rm  $HOME/.config/disable-compton
+    compton-launcher
+
+#A message is displayed if the user decides to run a program that is already running
+elif [[ $ans = "$COMPTON_ENABLED" ]] && $COMPTON_RUNNING; then
+    zenity --info \
+	--text="$INFO"
+
+else
+    killall compton
+    touch $HOME/.config/disable-compton
+
+fi

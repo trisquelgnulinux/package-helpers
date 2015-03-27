@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 #    Copyright (C) 2011  Rubén Rodríguez <ruben@trisquel.info>
-#    Copyright (C) 2015  Francisco Parra <franparpe@openmailbox.org>
+#    Copyright (C) 2015  Francisco Javier Parra <franparpe@openmailbox.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=5
+VERSION=6
 
 . ./config
 
@@ -28,9 +28,14 @@ cat << EOF >> debian/install
 compton.conf /etc
 compton-autostart.desktop /etc/xdg/autostart
 compton-launcher /usr/bin
+trisquel-compton-switcher /usr/bin
+trisquel-compton-switcher.desktop /usr/share/applications
 EOF
 
+
 cp $DATA/compton.conf .
+cp $DATA/compton-launcher .
+cp $DATA/trisquel-compton-switcher .
 
 cat << EOF > compton-autostart.desktop
 [Desktop Entry]
@@ -43,21 +48,29 @@ X-GNOME-Autostart-Phase=Initialization
 OnlyShowIn=GNOME;
 EOF
 
-cat << EOF > compton-launcher
-#!/bin/sh
+cat << EOF > trisquel-compton-switcher.desktop
+[Desktop Entry]
+Name=Compton compositor switcher
+Comment=Allows to enable or disable Compton
+Exec=trisquel-compton-switcher
+Icon=checkbox
+Terminal=false
+Type=Application
+StartupNotify=true
+Categories=GNOME;Settings;DesktopSettings;
+OnlyShowIn=GNOME;
+Keywords=Compton;Compositing;Window manager;
+X-Ubuntu-Gettext-Domain=trisquel-compton-switcher
 
-[ \$DESKTOP_SESSION = "trisquel-session" ] || exit 0
-[ -f \$HOME/.config/disable-compton ] && exit 0
-
-FILE=/etc/compton.conf
-[ -f \$HOME/.config/compton.conf ] && FILE="\$HOME/.config/compton.conf"
-
-[ 0 != \$(glxinfo |grep "renderer string:" |grep -v llvmpipe | wc -c) ]  && exec compton --config \$FILE &
+Name[es]=Gestor del compositor Compton
+Comment[es]=Permite activar o desactivar Compton
 EOF
 
 sed 's/^Depends:/Depends: mesa-utils, /' debian/control* -i
+sed 's/^Depends:/Depends: zenity, /' debian/control* -i
 
 chmod 755 compton-launcher
+chmod 755 trisquel-compton-switcher
 
 changelog "Backported into Toutatis"
 
