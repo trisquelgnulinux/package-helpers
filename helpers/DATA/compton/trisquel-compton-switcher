@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #Check if compton is currently running.
-case "$(pidof compton | wc -w)" in
+case "$(pgrep -u $USER compton | wc -w)" in
     
     0)  COMPTON_RUNNING=false
 	;;
