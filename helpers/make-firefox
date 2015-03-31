@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#    Copyright (C) 2008-2012  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2008-2014  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=33
+VERSION=37
 
 . ./config
 
@@ -29,10 +29,8 @@ patch -p1 < $DATA/enable-js-options.patch
 # js settings
 cat $DATA/settings.js >> debian/vendor-firefox.js
 
-# Make ubufox mandatory
-#sed 's/Depends: lsb-release,/Depends: lsb-release, xul-ext-ubufox,/' -i debian/control.in
-#sed 's/iceweasel,/iceweasel, firefox, icecat,/' -i debian/control.in
-
+# Replace ubufox recommendation
+sed 's/xul-ext-ubufox/xul-ext-youtube-html5-video-player/' -i debian/control.in
 
 sed '/mozilla.org\/legal/d' -i services/healthreport/healthreport-prefs.js
 cat << EOF >>services/healthreport/healthreport-prefs.js
@@ -53,9 +51,6 @@ sed 's/com.ubuntu/org.trisquel/' -i debian/config/mozconfig.in
 
 # Locale packages should provide firefox-locale-$LANG
 sed "s/Provides.*/Provides: firefox-locale-@LANGCODE@/" -i debian/control.langpacks
-
-# Remove extra firefox metapackages
-sed '/Package: firefox/,/It can be safely removed/d' -i debian/control.in
 
 # Remove Ubuntu bookmarks
 sed -i /ubuntu-bookmarks/d debian/patches/series
@@ -89,7 +84,6 @@ sed  "s/^MOZ_PKG_NAME\t.*/MOZ_PKG_NAME\t\t:= abrowser/;" debian/build/config.mk 
 ############################################################################3
 ############################################################################3
 ############################################################################3
-sed -i s/abrowser/abrowser-old/ debian/control.in
 sed "s_^Maintainer.*_Maintainer: $DEBFULLNAME <$DEBEMAIL>_g" -i debian/control.in
 
 # Replace Firefox branding
