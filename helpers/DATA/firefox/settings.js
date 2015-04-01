@@ -164,3 +164,7 @@ pref("media.gmp-gmpopenh264.provider.enabled", false);
 //Disable middle click content load
 //Avoid loading urls by mistake 
 pref("middlemouse.contentLoadURL", false);
+
+//Disable heartbeat
+pref("browser.selfsupport.url", "");
+
