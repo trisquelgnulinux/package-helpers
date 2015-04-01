@@ -21,7 +21,7 @@ VERSION=1
 QUILT=skip
 . ./config
 
-sed -i 's/Ubuntu/Trisquel/g' debian/patches/ubuntu-branding.patch
+sed -i 's/Ubuntu/Trisquel GNU\/Linux/g' debian/patches/ubuntu-branding.patch
 
 export QUILT_PATCHES=debian/patches
 quilt push -a
