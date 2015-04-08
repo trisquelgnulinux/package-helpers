@@ -169,3 +169,5 @@ pref("middlemouse.contentLoadURL", false);
 //Disable heartbeat
 pref("browser.selfsupport.url", "");
 
+//Disable Link to FireFox Marketplace, currently loaded with non-free "apps"
+pref("browser.apps.URL", "");
