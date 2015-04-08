@@ -1,0 +1,56 @@
+# Download the compressed source CSVs for GNU FSDG compliance
+
+GEOLITE_COUNTRY_CSV_PATH=""
+GEOLITE_COUNTRY_CSV_FILE="GeoIPCountryCSV.zip"
+
+GEOLITE_COUNTRY_IPV6_CSV_PATH=""
+GEOLITE_COUNTRY_IPV6_CSV_FILE="GeoIPv6.csv.gz"
+
+GEOLITE_CITY_CSV_PATH="GeoLiteCity_CSV/"
+GEOLITE_CITY_CSV_FILE="GeoLiteCity-latest.tar.xz"
+
+GEOLITE_CITY_IPV6_CSV_PATH="GeoLiteCityv6-beta/"
+GEOLITE_CITY_IPV6_CSV_FILE="GeoLiteCityv6.csv.gz"
+
+GEOLITE_ASNUM_CSV_PATH="asnum/"
+GEOLITE_ASNUM_CSV_FILE="GeoIPASNum2.zip"
+
+GEOLITE_ASNUM_IPV6_CSV_PATH="asnum/"
+GEOLITE_ASNUM_IPV6_CSV_FILE="GeoIPASNum2v6.zip"
+
+GEOIP_CSV_DIR="/usr/share/doc/geoip-database-contrib/csv/"
+
+FAILED=0
+
+mkdir -p $GEOIP_CSV_DIR
+
+for url in \
+    "$GEOIP_URL$GEOLITE_COUNTRY_CSV_PATH$GEOLITE_COUNTRY_CSV_FILE" \
+    "$GEOIP_URL$GEOLITE_COUNTRY_IPV6_CSV_PATH$GEOLITE_COUNTRY_IPV6_CSV_FILE" \
+    "$GEOIP_URL$GEOLITE_CITY_CSV_PATH$GEOLITE_CITY_CSV_FILE" \
+    "$GEOIP_URL$GEOLITE_CITY_IPV6_CSV_PATH$GEOLITE_CITY_IPV6_CSV_FILE" \
+    "$GEOIP_URL$GEOLITE_ASNUM_CSV_PATH$GEOLITE_ASNUM_CSV_FILE" \
+    "$GEOIP_URL$GEOLITE_ASNUM_IPV6_CSV_PATH$GEOLITE_ASNUM_IPV6_CSV_FILE"
+do
+    echo "Downloading: $url"
+
+    # Download file in the same directory as the final one so that the "mv"
+    # below can be atomic.
+    TEMP=$(mktemp --tmpdir=$GEOIP_CSV_DIR)
+    FILE=$(basename $url)
+
+    /usr/bin/wget -q -t3 -T15 "$url" -O $TEMP
+
+    if [ "$?" != "0" ]
+    then
+        echo "Failed to download $url"
+    else
+        rm -f $GEOIP_CSV_DIR$FILE
+        mv $TEMP $GEOIP_CSV_DIR$FILE
+        chmod 644 $GEOIP_CSV_DIR$FILE
+    fi
+
+    rm -f $TEMP
+done
+
+exit 0
