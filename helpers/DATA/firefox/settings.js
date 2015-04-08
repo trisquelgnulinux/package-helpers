@@ -122,7 +122,8 @@ pref("plugin.state.flash", 1);
 pref("browser.newtabpage.directory.source", "");
 pref("browser.newtabpage.directory.ping", "");
 pref("browser.newtabpage.introShown", true);
-
+// Disable home snippets
+pref("browser.aboutHomeSnippets.updateUrl", "data:text/html");
 
 // Services
 pref("gecko.handlerService.schemes.mailto.0.name", "");
