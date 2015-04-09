@@ -22,9 +22,13 @@ EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu $UPSTREAM multiverse'
 
 . ./config
 
-sed "/exit 0/d" -i geoip-database-contrib_update
+sed "/^exit 0/d" -i geoip-database-contrib_update
 cat $DATA/geoip-database-contrib_update.shim >> geoip-database-contrib_update
 cat $DATA/copyright.shim >> debian/copyright 
+
+sed '/rm -f \/usr\/share\/GeoIP\/GeoLiteCityv6\.dat/a\
+        rm -rf /usr/share/doc/geoip-database-contrib/csv
+' -i debian/postrm
 
 changelog 'Imported into Trisquel #13927'
 
