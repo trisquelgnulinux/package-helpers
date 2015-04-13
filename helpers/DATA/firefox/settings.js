@@ -122,7 +122,8 @@ pref("plugin.state.flash", 1);
 pref("browser.newtabpage.directory.source", "");
 pref("browser.newtabpage.directory.ping", "");
 pref("browser.newtabpage.introShown", true);
-
+// Disable home snippets
+pref("browser.aboutHomeSnippets.updateUrl", "data:text/html");
 
 // Services
 pref("gecko.handlerService.schemes.mailto.0.name", "");
@@ -168,3 +169,8 @@ pref("middlemouse.contentLoadURL", false);
 //Disable heartbeat
 pref("browser.selfsupport.url", "");
 
+//Disable Link to FireFox Marketplace, currently loaded with non-free "apps"
+pref("browser.apps.URL", "");
+
+//Disable Firefox Hello
+pref("loop.enabled","false");
