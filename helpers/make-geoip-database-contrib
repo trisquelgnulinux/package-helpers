@@ -35,7 +35,7 @@ sed '/rm -f \/usr\/share\/GeoIP\/GeoLiteCityv6\.dat/a\
         rm -f /usr/share/doc/geoip-database-contrib/csv/GeoIPASNum2v6.zip
 ' -i debian/postrm
 
-changelog 'Imported into Trisquel #13927'
+changelog 'Handle CSV source in geoip-database-contrib_update and postrm #13927'
 
 compile
 
