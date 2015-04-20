@@ -81,6 +81,9 @@ EOF
 sed  "s/^MOZ_APP_NAME\t.*/MOZ_APP_NAME\t\t:= abrowser/;" debian/build/config.mk -i
 sed  "s/^MOZ_PKG_NAME\t.*/MOZ_PKG_NAME\t\t:= abrowser/;" debian/build/config.mk -i
 
+#Disable MOZ_LOCALE_PKGS (only used in -testsuite)
+sed -i '/@MOZ_LOCALE_PKGS@/d' debian/control.in
+
 ############################################################################3
 ############################################################################3
 ############################################################################3
