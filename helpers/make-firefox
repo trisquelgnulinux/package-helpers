@@ -83,6 +83,9 @@ sed  "s/^MOZ_PKG_NAME\t.*/MOZ_PKG_NAME\t\t:= abrowser/;" debian/build/config.mk 
 #Disable MOZ_LOCALE_PKGS (only used in -testsuite)
 sed -i '/@MOZ_LOCALE_PKGS@/d' debian/control.in
 
+# Remove extra firefox metapackages
+sed '/Package: abrowser/,/It can be safely removed/d' -i debian/control.in
+
 ############################################################################3
 ############################################################################3
 ############################################################################3
