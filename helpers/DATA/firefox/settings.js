@@ -1,7 +1,4 @@
 
-// Enable hello
-pref("loop.throttled", false);
-
 // Release notes and vendor URLs
 pref("app.releaseNotesURL", "http://trisquel.info/browser");
 pref("app.vendorURL", "http://trisquel.info/browser");
@@ -173,4 +170,5 @@ pref("browser.selfsupport.url", "");
 pref("browser.apps.URL", "");
 
 //Disable Firefox Hello
-pref("loop.enabled","false");
+pref("loop.enabled",false);
+
