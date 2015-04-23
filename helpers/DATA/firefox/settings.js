@@ -1,4 +1,7 @@
 
+// Enable hello
+pref("loop.throttled", false);
+
 // Release notes and vendor URLs
 pref("app.releaseNotesURL", "http://trisquel.info/browser");
 pref("app.vendorURL", "http://trisquel.info/browser");
@@ -11,6 +14,11 @@ pref("pfs.filehint.url", "http://trisquel.info/sites/pfs.php?mime=%PLUGIN_MIMETY
 pref("keyword.URL", "https://duckduckgo.com/?t=trisquel&q=!+");
 pref("browser.search.defaultenginename", "DuckDuckGo (SSL)");
 pref("browser.search.order.extra.duckduckgo", "DuckDuckGo (SSL)");
+pref("browser.search.showOneOffButtons", false);
+pref("browser.search.suggest.enabled",false);
+// Disable preconnecting to search engine when clicking on the search bar
+//pref("network.http.speculative-parallel-limit", 0);
+
 
 // Disable plugin installer
 pref("plugins.hide_infobar_for_missing_plugin", true);
@@ -99,7 +107,7 @@ pref("social.toast-notifications.enabled", false);
 pref("datareporting.healthreport.uploadEnabled", false);
 pref("datareporting.healthreport.service.enabled", false);
 pref("browser.slowStartup.notificationDisabled", true);
-pref("network.http.sendRefererHeader", 0);
+pref("network.http.sendRefererHeader", 2);
 //http://grack.com/blog/2010/01/06/3rd-party-cookies-dom-storage-and-privacy/
 //pref("dom.storage.enabled", false);
 pref("dom.event.clipboardevents.enabled",false);
@@ -109,8 +117,13 @@ pref("network.http.sendSecureXSiteReferrer", false);
 pref("toolkit.telemetry.enabled", false);
 // Do not tell what plugins do we have enabled: https://mail.mozilla.org/pipermail/firefox-dev/2013-November/001186.html
 pref("plugins.enumerable_names", "");
-//pref("plugin.state.flash", 1);
-
+pref("plugin.state.flash", 1);
+// Don't download ads for the newtab page
+pref("browser.newtabpage.directory.source", "");
+pref("browser.newtabpage.directory.ping", "");
+pref("browser.newtabpage.introShown", true);
+// Disable home snippets
+pref("browser.aboutHomeSnippets.updateUrl", "data:text/html");
 
 // Services
 pref("gecko.handlerService.schemes.mailto.0.name", "");
@@ -132,7 +145,7 @@ pref("security.tls.version.min", 1);
 // Do not autoupdate search engines
 pref("browser.search.update", false);
 // Warn when the page tries to redirect or refresh
-pref("accessibility.blockautorefresh", true);
+//pref("accessibility.blockautorefresh", true);
 
 // Disable channel updates
 pref("app.update.enabled", false);
@@ -156,3 +169,8 @@ pref("middlemouse.contentLoadURL", false);
 //Disable heartbeat
 pref("browser.selfsupport.url", "");
 
+//Disable Link to FireFox Marketplace, currently loaded with non-free "apps"
+pref("browser.apps.URL", "");
+
+//Disable Firefox Hello
+pref("loop.enabled","false");
