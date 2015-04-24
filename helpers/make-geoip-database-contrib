@@ -1,0 +1,41 @@
+#!/bin/sh
+#
+#    Copyright (C) 2015 Andrew M. Lindley <andrew@andrewlindley.co.uk>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=1
+EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu $UPSTREAM multiverse'
+
+. ./config
+
+sed "/^exit 0/d" -i geoip-database-contrib_update
+cat $DATA/geoip-database-contrib_update.shim >> geoip-database-contrib_update
+cat $DATA/copyright.shim >> debian/copyright 
+
+sed '/rm -f \/usr\/share\/GeoIP\/GeoLiteCityv6\.dat/a\
+        rm -f /usr/share/doc/geoip-database-contrib/csv/GeoIPCountryCSV.zip\
+        rm -f /usr/share/doc/geoip-database-contrib/csv/GeoIPv6.csv.gz\
+        rm -f /usr/share/doc/geoip-database-contrib/csv/GeoLiteCity-latest.tar.xz\
+        rm -f /usr/share/doc/geoip-database-contrib/csv/GeoLiteCityv6.csv.gz\
+        rm -f /usr/share/doc/geoip-database-contrib/csv/GeoIPASNum2.zip\
+        rm -f /usr/share/doc/geoip-database-contrib/csv/GeoIPASNum2v6.zip
+' -i debian/postrm
+
+changelog 'Handle CSV source in geoip-database-contrib_update and postrm #13927'
+
+compile
+
