@@ -1,6 +1,7 @@
 #!/bin/sh
 #
 #    Copyright (C) 2008-2010  Rubén Rodríguez <ruben@trisquel.info>
+#              (C) 2015 Andrew M. Lindley <andrew@andrewlindley.co.uk>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -21,7 +22,7 @@
 # gpg -ba release_name.tar.gz
 # Also, don't forget to update the meta-release files at archive and packages.t.i
 
-VERSION=12
+VERSION=13
 
 . ./config
 
@@ -250,6 +251,8 @@ echo "notification-daemon" > DistUpgrade/demoted.cfg
 replace changelogs.ubuntu.com packages.trisquel.info .
 
 /bin/sed -i 's/�~Lubuntu/�~Ltrisquel/g; s/被ubuntu/被trisquel/g; s#http://launchpad.net/ubuntu/+source/%s/%s/+changelog#http://trisquel.info/project/issues#g; s/<.*@ubuntu.com/<info@trisquel.info/g; s/ ubuntu\n/ trisquel\n/g; s/ubuntu\ /trisquel\ /g; s/\ ubuntu/\ trisquel/g; s/Ubuntu/Trisquel/g; s/ubuntu-desktop/trisquel-/g; s/www.ubuntu.com/trisquel.info/g; s/www.ubuntulinux.org/trisquel.info/g ' po/*.po $(find -type f | grep py$) $(find -type f | grep '\.glade$')
+
+sed 's/"later\.") % (srcpkg, srcver_epoch)/"later.")/' -i UpdateManager/Core/MyCache.py
 
 rpl 11\.04 5\.0 DistUpgrade/*.ui
 rpl 11\.04 5\.0 po/* -R
