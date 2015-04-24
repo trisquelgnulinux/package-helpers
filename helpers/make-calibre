@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 #    Copyright (C) 2015 Andrew M. Lindley <andrew@andrewlindley.co.uk>
 #
@@ -36,7 +36,8 @@ chmod 0644 $EPUB
 rm -rf $TEMP
 rm -f $TEMP_EPUB
 
-changelog "FSDG compliance #5426"
+changelog 'Remove steer to non-free software from resources/quick_start.epub
+           #5426'
 
 compile
 
