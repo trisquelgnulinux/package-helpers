@@ -72,5 +72,6 @@ cp debian.master/config/amd64/config.flavour.lowlatency debian.utopic/config/amd
 changelog "Removed non-free bits"
 
 cp debian/changelog debian.master/changelog
+cp debian/changelog debian.utopic/changelog
 
 PARALLEL=true compile
