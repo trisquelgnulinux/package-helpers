@@ -1,0 +1,45 @@
+#!/bin/bash
+#
+#    Copyright (C) 2015 Andrew M. Lindley <andrew@andrewlindley.co.uk>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+# One release to rule them all :)
+EXTERNAL='deb-src http://ftp.es.debian.org/debian/ jessie main'
+SIGNKEY="46925553"
+
+VERSION=1
+
+. ./config
+
+# Drop languages Trisquel modifications haven't been translated for yet
+sed '/^LANGALL/s/en ja fr it pt de/en/' -i debian/rules 
+sed '/Recommends: debian-reference-fr,/,/debian-reference-pt$/d;/Recommends:" are installed./d;/Package: debian-reference-de/,$d' -i debian/control
+
+# English ASCIIDOC source
+# remove references to the non-GNU FSDG contrib and non-free repos
+sed 's/ contrib non-free//;s/ and no dependency to `non-free`//;/non-free/d;s/ contrib//' -i asciidoc/02_package.txt 
+sed 's/(non-free)//' -i asciidoc/04_auth.txt
+sed '/non-free/d' -i asciidoc/05_network.txt
+sed 's/Debian also offers helper programs to install non-free browser plugin packages as contrib or non-free archive area.//;/contrib/d' -i asciidoc/06_netapp.txt
+sed 's/previously non-free,//;/non-free/d;/sharing some commercial/,/contaminating/d' -i asciidoc/07_xwindow.txt
+sed 's/, and `non-free` for binary-only drivers supported by the vendor//;/non-free/d;/Softmodem/d' -i asciidoc/09_systips.txt
+sed 's/  You may need to include the `contrib` and `non-free` archives in addition to the `main` archive since some GFDL documentations are not considered to be DFSG compliant.//' -i asciidoc/12_program.txt
+
+changelog 'Remove references to non-free repos #5950'
+
+compile
+
