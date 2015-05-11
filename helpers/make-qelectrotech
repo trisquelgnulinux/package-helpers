@@ -21,6 +21,8 @@ VERSION=1
 EXTERNAL='deb-src http://debian.qelectrotech.org/qet/debian/ stable main'
 SIGNKEY="BC9F825E1D4FB6C1"
 
+sed -i 's/libqt5sql5-sqlite/libqt5sql5-sqlite, libqt5printsupport5/g' debian/control
+
 . ./config
 
 changelog "Qelectrotech imported into Trisquel"
