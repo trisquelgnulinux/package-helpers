@@ -189,6 +189,13 @@ echo "debian/search/* /usr/lib/abrowser-addons/searchplugins" >> debian/abrowser
 cp $DATA/aboutabrowser@trisquel.info -r debian
 echo "debian/aboutabrowser@trisquel.info @MOZ_ADDONDIR@/extensions/" >> debian/abrowser.install.in
 
+# Disable newtab "What is this" popup and config button
+cat << EOF >> ./browser/base/content/newtab/newTab.css
+#newtab.customize.what, #newtab.customize.button {
+display:none;
+}
+EOF
+
 # Disable search field at extensions panel
 #sed  '/header-search/d; /search.placeholder/d' -i toolkit/mozapps/extensions/content/extensions.xul
 cat << EOF >> toolkit/mozapps/extensions/content/extensions.css
