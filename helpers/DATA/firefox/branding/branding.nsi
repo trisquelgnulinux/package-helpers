@@ -12,6 +12,7 @@
 !define CompanyName           "Trisquel"
 !define URLInfoAbout          "http://trisquel.info/browser"
 !define URLUpdateInfo         "http://trisquel.info/wiki"
+!define HelpLink              "https://trisquel.info/en/wiki/abrowser-help"
 
 !define URLStubDownload "http://trisquel.info/browser"
 !define URLManualDownload "http://trisquel.info/browser"
@@ -42,9 +43,8 @@
 !define FOOTER_CONTROL_TEXT_COLOR_FADED 0x666666
 !define FOOTER_BKGRD_COLOR 0xFFFFFF
 !define INTRO_BLURB_TEXT_COLOR 0x666666
-!define OPTIONS_TEXT_COLOR_NORMAL 0x000000
-!define OPTIONS_TEXT_COLOR_FADED 0x666666
-!define OPTIONS_BKGRD_COLOR 0xF0F0F0
 !define INSTALL_BLURB_TEXT_COLOR 0x666666
 !define INSTALL_PROGRESS_TEXT_COLOR_NORMAL 0x666666
-!define INSTALL_PROGRESS_TEXT_COLOR_FADED 0x999999
+!define COMMON_TEXT_COLOR_NORMAL 0x000000
+!define COMMON_TEXT_COLOR_FADED 0x666666
+!define COMMON_BKGRD_COLOR 0xF0F0F0
