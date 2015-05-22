@@ -172,3 +172,5 @@ pref("browser.apps.URL", "");
 //Disable Firefox Hello
 pref("loop.enabled",false);
 
+// Use old style preferences, that allow javascript to be disabled
+pref("browser.preferences.inContent",false);
