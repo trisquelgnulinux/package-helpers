@@ -23,8 +23,6 @@ SIGNKEY="D7E04784"
 
 . ./config
 
-ICEATVERSION=$(head -n1 debian/changelog |sed 's/.*(//; s/).*//')
-
 cat << EOF >> browser/app/profile/icecat.js
 // Preferences for the Get Add-ons panel
 pref ("extensions.webservice.discoverURL", "https://trisquel.info/browser-plain");
@@ -45,7 +43,7 @@ find . -type f |grep duckduckgo |xargs sed -i '/value/s/gnu/trisquel/'
 cat << EOF > debian/distribution.ini
 [Global]
 id=trisquel
-version=$ICEATVERSION
+version=1.0
 about=IceCat for Trisquel GNU/Linux
 
 [Preferences]
