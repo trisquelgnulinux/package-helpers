@@ -1,6 +1,7 @@
 #!/bin/bash
 #
 #    Copyright (C) 2008-2014  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2015       Santiago Rodriguez <santi@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -188,6 +189,13 @@ echo "debian/search/* /usr/lib/abrowser-addons/searchplugins" >> debian/abrowser
 # install aboutabrowser extension
 cp $DATA/aboutabrowser@trisquel.info -r debian
 echo "debian/aboutabrowser@trisquel.info @MOZ_ADDONDIR@/extensions/" >> debian/abrowser.install.in
+
+# Disable newtab "What is this" popup and config button
+cat << EOF >> ./browser/base/content/newtab/newTab.css
+#newtab.customize.what, #newtab.customize.button {
+display:none;
+}
+EOF
 
 # Disable search field at extensions panel
 #sed  '/header-search/d; /search.placeholder/d' -i toolkit/mozapps/extensions/content/extensions.xul
