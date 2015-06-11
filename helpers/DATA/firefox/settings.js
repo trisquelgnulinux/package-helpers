@@ -156,8 +156,9 @@ pref("font.default.x-western", "sans-serif");
 
 // Disable Gecko media plugins: https://wiki.mozilla.org/GeckoMediaPlugins
 pref("media.gmp-manager.url", "http://127.0.0.1/");
+pref("media.gmp-provider.enabled", false);
 // Don't install openh264 codec
-pref("media.gmp-gmpopenh264.provider.enabled", false);
+pref("media.gmp-gmpopenh264.enabled", false);
 
 //Disable middle click content load
 //Avoid loading urls by mistake 
