@@ -49,7 +49,6 @@ find debian* -type f -name *control* -exec sed 's/ with Ubuntu patches//; s/Linu
 # Descriptions should not change based on the build arch
 sed 's/on DESC//; s/PKGVER on/PKGVER/; /^ DESC.$/d;' debian*/control.d/flavour-control.stub -i
 
-sed '/^firmware/d' ./debian*/abi/*/fwinfo -i
 echo > ./debian.master/d-i/firmware/nic-modules
 echo > ./debian.master/d-i/firmware/scsi-modules
 
