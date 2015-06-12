@@ -25,7 +25,7 @@ VERSION=1
 # Need to remove an 'option' in the XML file.
 # It extends for five lines, so we will comment
 # them out.
-xmlFileName=workarounds/workarounds.xml.in
+xmlFileName=plugins/workarounds/workarounds.xml.in
 xmlStringToLookFor=fglrx_xgl_fix
 xmlSkipLines=4
 
@@ -60,7 +60,7 @@ mv $xmlFileName.tmp $xmlFileName
 # It's defined at the end of the "*.cpp" file.
 # There is another call to a related method.
 # I just comment out that call.
-cppFileName=workarounds/src/workarounds.cpp
+cppFileName=plugins/workarounds/src/workarounds.cpp
 cppStringToLookFor=optionSetFglrxXglFixNotify
 cppSkipLines=2
 
@@ -88,12 +88,12 @@ mv $cppFileName.tmp $cppFileName
 
 
 # Create declaration of method in the *.h file
-echo "extern bool optionGetFglrxXglFix();" >> workarounds/src/workarounds.h
+echo "extern bool optionGetFglrxXglFix();" >> plugins/workarounds/src/workarounds.h
 
 # Create definition of method in the *.cpp file
-echo "// Providing dummy method to always return false due to the removal" >> workarounds/src/workarounds.cpp
-echo "// of non-free software recommendation" >> workarounds/src/workarounds.cpp
-echo "bool optionGetFglrxXglFix() { return false; }" >> workarounds/src/workarounds.cpp
+echo "// Providing dummy method to always return false due to the removal" >> plugins/workarounds/src/workarounds.cpp
+echo "// of non-free software recommendation" >> plugins/workarounds/src/workarounds.cpp
+echo "bool optionGetFglrxXglFix() { return false; }" >> plugins/workarounds/src/workarounds.cpp
 
 changelog "Remove recomendation to use fglrx (non-free software)"
 
