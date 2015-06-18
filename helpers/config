@@ -136,7 +136,7 @@ fi
 
 if [ 1$QUILT != 1skip ]; then
 export QUILT_PATCHES=debian/patches
-[ -s debian/patches/series ] && quilt push -a
+grep -qv '^#' debian/patches/series 2>/dev/null && quilt push -a
 fi
 
 cd ..
