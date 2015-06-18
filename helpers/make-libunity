@@ -26,9 +26,6 @@ VERSION=1
 sed -i '0,/all/s/all/none/' data/com.canonical.Unity.Lenses.gschema.xml.in.in 
 sed -i '0,/ALL/s/ALL/NONE/' test/vala/test-preferences.vala
 
-#Patch  is now part of Makefile.am
-rm debian/patches/*
-
 changelog "Improved privacy"
 
 compile
