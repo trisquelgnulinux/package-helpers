@@ -25,30 +25,8 @@ VERSION=1
 # Need to remove an 'option' in the XML file.
 # It extends for five lines, so we will comment
 # them out.
-xmlFileName=plugins/workarounds/workarounds.xml.in
-xmlStringToLookFor=fglrx_xgl_fix
-xmlSkipLines=4
 
-cat $xmlFileName | while read line; do
-
-   if (echo $line|grep $xmlStringToLookFor>/dev/null); then
-       echo "<!-- Removing recommendation to use non-free software"
-       echo "$line"
-       count=0
-
-       while [ "$count" -lt "$xmlSkipLines" ] ; do
-          count=`expr $count + 1`;
-          read line
-          echo "$line"
-       done
-
-       echo "-->"
-   else
-       echo "$line"
-   fi
-
-done  > $xmlFileName.tmp 
-mv $xmlFileName.tmp $xmlFileName
+sed -i '/fglrx_xgl_fix"/,/option/d' plugins/workarounds/workarounds.xml.in
 
 # The C++ code calls methods that appear to be based
 # on the part of the XML file that we removed. 
@@ -60,32 +38,8 @@ mv $xmlFileName.tmp $xmlFileName
 # It's defined at the end of the "*.cpp" file.
 # There is another call to a related method.
 # I just comment out that call.
-cppFileName=plugins/workarounds/src/workarounds.cpp
-cppStringToLookFor=optionSetFglrxXglFixNotify
-cppSkipLines=2
 
-
-cat $cppFileName | while read line; do
-
-   if (echo $line|grep $cppStringToLookFor>/dev/null); then
-       echo "/**************** Removing recommendation to use non-free software"
-       echo "$line"
-       count=0
-
-       while [ "$count" -lt "$cppSkipLines" ] ; do
-          count=`expr $count + 1`;
-          read line
-          echo "$line"
-       done
-
-       echo "****************/"
-   else
-       echo "$line"
-   fi
-
-done  > $cppFileName.tmp 
-mv $cppFileName.tmp $cppFileName
-
+sed -i '/optionSetFglrxXglFixNotify/,/_1/ s:^://:' plugins/workarounds/src/workarounds.cpp
 
 # Create declaration of method in the *.h file
 echo "extern bool optionGetFglrxXglFix();" >> plugins/workarounds/src/workarounds.h
