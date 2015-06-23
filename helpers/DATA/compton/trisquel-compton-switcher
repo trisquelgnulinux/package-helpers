@@ -101,7 +101,7 @@ then
 	touch $HOME/.config/disable-compton
 	killall compton
     elif [[ $ans == $COMPTON_ENABLED  ]]; then
-	zenity --info --text="Compton is already running"
+	zenity --info --text="$INFO"
     fi
 else  # Compton not running
     if [[ $ans == $COMPTON_ENABLED ]]; then
