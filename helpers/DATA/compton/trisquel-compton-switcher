@@ -1,8 +1,21 @@
 #!/bin/bash
 
-#Check if compton is currently running.
+
+DONT_SUPPORT_3D="Your machine does not support 3D acceleration"
+
+if [ $LANG = es_ES.UTF-8 ]; then
+    DONT_SUPPORT_3D="Su equipo no soporta aceleración 3D"
+fi
+
+# First, check if the computer
+# supports 3D acceleration. If not, it 
+# it informs the user and then exits.
+[ 0 = $(glxinfo |grep "renderer string:" |grep -v llvmpipe | wc -c) ] && zenity \
+    --info --text="$DONT_SUPPORT_3D" && exit 0
+
+# Check if compton is currently running.
 case "$(pgrep -u $USER compton | wc -w)" in
-    
+
     0)  COMPTON_RUNNING=false
 	;;
     1)  COMPTON_RUNNING=true
@@ -17,10 +30,9 @@ if $COMPTON_RUNNING; then
 elif ! $COMPTON_RUNNING; then
     COMPTON=false
     DISCOMPTON=true
-
 fi
 
-#The text that will be showed to the user.
+# The text that will be showed to the user.
 TEXT="Use Compton compositor if 3d acceleration available"
 TITLE="Choose between enabling or disabling Compton"
 COMPTON_ENABLED="Compton enabled"
@@ -37,27 +49,65 @@ if [ $LANG = es_ES.UTF-8 ]; then
     INFO="Compton ya se encuentra en ejecución"
 fi
 
-#Zenity is summoned to interact with the user.
+# Zenity is summoned to interact with the user.
+# The XOR with the "exit 0" means that the script
+# will exit with no error if zenity is "canceled"
+# (user clicking on the "cancel" button, for
+# instance).
 ans=$(zenity --list --hide-header\
     --title "$TITLE"\
     --text "$TEXT"\
     --radiolist\
     --column "" --column ""\
     $COMPTON "$COMPTON_ENABLED"\
-    $DISCOMPTON "$COMPTON_DISABLED")
+    $DISCOMPTON "$COMPTON_DISABLED" || exit 0)
 
-#The program reacts to the user's decision.
-if [[ $ans = "$COMPTON_ENABLED" ]] && ! $COMPTON_RUNNING; then
-    rm  $HOME/.config/disable-compton
-    compton-launcher
-
-#A message is displayed if the user decides to run a program that is already running
-elif [[ $ans = "$COMPTON_ENABLED" ]] && $COMPTON_RUNNING; then
-    zenity --info \
-	--text="$INFO"
-
-else
-    killall compton
-    touch $HOME/.config/disable-compton
-
+# Evaluate if compton is runnning or not, if it does,
+# warn the user if he/she tries to run compton again
+# or disable the compositor if he/she select to disable
+# it. If compton is not running, run and enable it if
+# the user selects to do so:
+# .-----------------.
+# |                 |
+# |                 |
+# | Compton running |
+# |                 |
+# |                 |
+# '-----------------'
+#          |
+#          |   .-----------------.   .-----------------.
+#          |-->| User selects no |-->| Disable compton |
+#          |   '-----------------'   '-----------------'
+#          |   .------------------.  .-----------------.
+#          '-->| User selects yes |->| Inform the user |
+#              '------------------'  '-----------------'
+# .---------------------.
+# |                     |
+# |                     |
+# | Compton not running |
+# |                     |
+# |                     |
+# '---------------------'
+#            |
+#            |   .-----------------.   .------------.
+#            |-->| User selects no |-->| Do nothing |
+#            |   '-----------------'   '------------'
+#            |   .------------------.   .-----------------.
+#            '-->| User selects yes |-->| Enable compton  |
+#                '------------------'   '-----------------'
+if $COMPTON_RUNNING  # Compton running
+then
+    if  [[ $ans == $COMPTON_DISABLED ]]; then
+	touch $HOME/.config/disable-compton
+	killall compton
+    elif [[ $ans == $COMPTON_ENABLED  ]]; then
+	zenity --info --text="$INFO"
+    fi
+else  # Compton not running
+    if [[ $ans == $COMPTON_ENABLED ]]; then
+	rm -f $HOME/.config/disable-compton
+	compton-launcher
+    else
+	exit 0
+    fi
 fi
