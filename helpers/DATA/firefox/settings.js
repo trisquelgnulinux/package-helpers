@@ -175,3 +175,10 @@ pref("loop.enabled",false);
 
 // Use old style preferences, that allow javascript to be disabled
 pref("browser.preferences.inContent",false);
+
+// Avoid logjam attack
+pref("security.ssl3.dhe_rsa_aes_128_sha", false);
+pref("security.ssl3.dhe_rsa_aes_256_sha", false);
+pref("security.ssl3.dhe_dss_aes_128_sha", false);
+pref("security.ssl3.dhe_rsa_des_ede3_sha", false);
+
