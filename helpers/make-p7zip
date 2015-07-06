@@ -23,7 +23,11 @@ VERSION=1
 
 sed -i  '/Suggests: p7zip-rar/d'  debian/control 
 #Our versions doesn't handle rar files, due to licenses
-sed -i 's/RAR, ARJ,/ARJ,/g' debian/control
+sed -i 's/RAR (only/RPM,/g' debian/control
+sed -i '/if non-free p7zip-rar/,+1d' debian/control
+sed -i 's/RPM,/RPM,\n     SquashFS, UDF, VHD, WIM, XAR and Z./g' debian/control
+
+
 #
 changelog "Remove non free suggests"
 #Closes https://trisquel.info/es/issues/4360
