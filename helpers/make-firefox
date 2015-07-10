@@ -50,6 +50,9 @@ sed 's/1204/60/g; s/1210/65/g; s/1404/70/g' -i debian/config/mozconfig.in debian
 
 sed 's/com.ubuntu/org.trisquel/' -i debian/config/mozconfig.in
 
+# Disable DRM support
+echo ac_add_options --disable-eme >> debian/config/mozconfig.in
+
 # Locale packages should provide firefox-locale-$LANG
 sed "s/Provides.*/Provides: firefox-locale-@LANGCODE@/" -i debian/control.langpacks
 
