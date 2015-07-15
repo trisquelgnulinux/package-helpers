@@ -118,8 +118,9 @@ sed s/ubuntu/trisquel/g debian/distribution.ini -i
 sed 's/ubuntu_version/trisquel_version/; s/Ubuntu 10.10/Trisquel 4.0/; s/1010/40/' -i debian/abrowser.postinst.in
 replace "Adobe Flash" "Flash" .
 
-# abrowser-dev should provide firefox-dev
-sed '/Package: @MOZ_PKG_NAME@-dev/,/Description:/ s/Provides:/Provides:firefox-dev, /' debian/control.in -i
+# abrowser should provide firefox
+sed '/Package: @MOZ_PKG_NAME@-dev/,/Description:/ s/Provides:/Provides: firefox-dev, /' debian/control.in -i
+sed '/Package: @MOZ_PKG_NAME@$/,/Description:/ s/Provides:/Provides: firefox, /' debian/control.in -i
 
 # Branding files
 rm browser/branding/* -rf
