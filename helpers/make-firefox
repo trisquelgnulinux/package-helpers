@@ -56,6 +56,7 @@ sed '/Google API/,$ d' debian/config/mozconfig.in -i
 
 # Disable DRM support
 echo ac_add_options --disable-eme >> debian/config/mozconfig.in
+sed '/gmp-clearkey/d' -i ./debian/abrowser.install.in
 
 # Locale packages should provide firefox-locale-$LANG
 sed "s/Provides.*/Provides: firefox-locale-@LANGCODE@/" -i debian/control.langpacks
