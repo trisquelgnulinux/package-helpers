@@ -42,16 +42,16 @@ sed 's%https://www.mozilla.org/legal/privacy/%https://trisquel.info/legal%' -i .
 
 #sed 's%https://www.mozilla.org/firefox/central/%https://trisquel.info/browser%' -i browser/base/content/browser-appmenu.inc
 
+# Remove Google API key
+rm debian/ga debian/go
+sed '/Google API/,$ d' debian/config/mozconfig.in -i
+
 # Enable gst support
 [ $REVISION = "6.0.1" ] && echo "ac_add_options --enable-gstreamer=0.10" >> debian/config/mozconfig.in
 [ $REVISION = "7.0" ] && echo "ac_add_options --enable-gstreamer=1.0" >> debian/config/mozconfig.in
 sed 's/1204/60/g; s/1210/65/g; s/1404/70/g' -i debian/config/mozconfig.in debian/firefox-dev.install.in debian/firefox-dev.links.in
 
 sed 's/com.ubuntu/org.trisquel/' -i debian/config/mozconfig.in
-
-# Remove Google API key
-rm debian/ga debian/go
-sed '/Google API/,$ d' debian/config/mozconfig.in -i
 
 # Disable DRM support
 echo ac_add_options --disable-eme >> debian/config/mozconfig.in
