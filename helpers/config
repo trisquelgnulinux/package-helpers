@@ -52,7 +52,8 @@ replace(){
 find $3 -type f -not -iregex '.*changelog.*' -not -iregex '.*copyright.*' -execdir /bin/sed --follow-symlinks -i s^"$1"^"$2"^g {} \;
 }
 changelog(){
-echo | dch -D $CODENAME -v $(/bin/sed -n '1s/^.*(\(.*\)).*/\1'+${REVISION}trisquel${VERSION}'/p' debian/changelog)  "$1"
+head -n 1 debian/changelog | grep -q $UPSTREAM-security && REPO=$CODENAME-security || REPO=$CODENAME
+echo | dch -D $REPO -v $(/bin/sed -n '1s/^.*(\(.*\)).*/\1'+${REVISION}trisquel${VERSION}'/p' debian/changelog)  "$1"
 
 # Make sure the changelog file is identical between archs
 /bin/sed "/-- Trisquel/s/.*/ -- Trisquel GNU\/Linux developers <trisquel-devel@listas.trisquel.info>  $DATE/" -i debian/changelog
