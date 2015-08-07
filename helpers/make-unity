@@ -1,6 +1,7 @@
 #!/bin/sh
 #
 #    Copyright (C) 2014  Salman Mohammadi <salman@ubuntu.ir>
+#    Copyright (C) 2015  Francisco Javier Parra <franparpe@openmailbox.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,9 +18,36 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 
 . ./config
+
+# make the session appear on the login manager
+cat << EOF >> debian/unity.install
+ubuntu.session /usr/share/gnome-session/sessions
+ubuntu.desktop /usr/share/xsessions
+EOF
+
+# this creates the session file
+cat << EOF > ubuntu.session
+[GNOME Session]
+Name=Ubuntu
+RequiredComponents=unity-settings-daemon;compiz;
+DesktopName=Unity
+EOF
+
+# this creates the desktop file for the session to exists
+cat <<EOF > ubuntu.desktop
+[Desktop Entry]
+Name=Unity
+Comment=This session logs you into Unity
+Exec=gnome-session --session=ubuntu
+TryExec=unity
+Icon=
+Type=Application
+X-LightDM-DesktopName=Unity
+X-Ubuntu-Gettext-Domain=gnome-session-3.0
+EOF
 
 # replace Ubuntu branding
 cp $DATA/cof.png resources
