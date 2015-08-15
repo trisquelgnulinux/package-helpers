@@ -1,6 +1,7 @@
 #!/bin/sh
 #
 #    Copyright (C) 2011  Rubén Rodríguez <ruben@trisquel.info>
+#    Copyright (C) 2015  Santiago Rodríguez <santi@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -99,10 +100,11 @@ diff -ru gfxboot-theme-ubuntu-0.13.3.orig/timeout.inc gfxboot-theme-ubuntu-0.13.
 EOF
 
 sed 's/gfxboot-theme-ubuntu/gfxboot-theme-trisquel/' debian/control -i
+sed '1s/gfxboot-theme-ubuntu/gfxboot-theme-trisquel/' debian/changelog -i
+mv debian/gfxboot-theme-ubuntu.install debian/gfxboot-theme-trisquel.install
+sed 's/ubuntu/trisquel/' debian/gfxboot-theme-trisquel.install -i
 
 changelog "Rebranded for Trisquel"
-sed '1s/gfxboot-theme-ubuntu/gfxboot-theme-trisquel/' debian/changelog /CurrentlyBuilding -i
-#sed 's/main/universe/' /CurrentlyBuilding -i
 
 compile
 
