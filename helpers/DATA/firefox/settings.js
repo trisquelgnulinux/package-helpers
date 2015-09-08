@@ -14,7 +14,7 @@ pref("browser.search.order.extra.duckduckgo", "DuckDuckGo (SSL)");
 pref("browser.search.showOneOffButtons", false);
 pref("browser.search.suggest.enabled",false);
 // Disable preconnecting to search engine when clicking on the search bar
-//pref("network.http.speculative-parallel-limit", 0);
+pref("network.http.speculative-parallel-limit", 0);
 
 
 // Disable plugin installer

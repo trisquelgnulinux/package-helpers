@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=40
+VERSION=41
 
 . ./config
 
@@ -205,9 +205,9 @@ cp $DATA/aboutabrowser@trisquel.info -r debian
 echo "debian/aboutabrowser@trisquel.info @MOZ_ADDONDIR@/extensions/" >> debian/abrowser.install.in
 
 # Disable newtab "What is this" popup and config button
-cat << EOF >> ./browser/base/content/newtab/newTab.css
-#newtab.customize.what, #newtab.customize.button {
-display:none;
+cat << EOF >> toolkit/themes/linux/global/global.css
+#newtab-customize-button, #newtab-intro-what{
+display:none
 }
 EOF
 
