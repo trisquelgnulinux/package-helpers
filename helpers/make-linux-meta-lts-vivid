@@ -1,6 +1,7 @@
 #!/bin/sh
 #
 #    Copyright (C) 2015  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2015  Santi Rodriguez <santi@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,14 +18,20 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 . ./config
 
 
 rm ./debian/control.d/signed-generic
 
-sed 's/, linux-firmware//' -i debian/control ./debian/control.d/generic
-sed 's/Linux/Linux-libre/g' -i debian/control ./debian/control.d/generic
+for FILE in debian/control ./debian/control.d/generic ./debian/control.d/lowlatency \
+            debian/control.d/generic-lpae
+do
+sed 's/, linux-firmware//' -i $FILE
+sed 's/Linux/Linux-libre/g' -i $FILE
+done
+
+
 sed '/signed/,/EFI/d' -i debian/control
 
 changelog "Removed linux-firmware dependency, renamed release for Trisquel"
