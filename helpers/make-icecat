@@ -57,6 +57,11 @@ cp $DATA/aboutIceCat.xhtml extensions/gnu/abouticecat@gnu.org/chrome/content/abo
 cp $DATA/bookmarks.html.in browser/locales/generic/profile/bookmarks.html.in
 cp $DATA/aboutHome.xhtml browser/base/content/abouthome/aboutHome.xhtml
 
+for patch in dont-include-hyphenation-patterns.patch allow-lockPref-everywhere.patch test- fix-make-package-tests-without-webrtc.patch; do
+  #rm debian/patches/$patch
+  sed "/$patch/d" -i debian/patches/series
+done
+
 changelog "Customized for Trisquel"
 
 compile
