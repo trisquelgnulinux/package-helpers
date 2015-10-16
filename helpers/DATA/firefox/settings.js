@@ -9,8 +9,10 @@ pref("pfs.filehint.url", "http://trisquel.info/sites/pfs.php?mime=%PLUGIN_MIMETY
 
 // I'm feeling Ducky.
 pref("keyword.URL", "https://duckduckgo.com/?t=trisquel&q=!+");
-pref("browser.search.defaultenginename", "DuckDuckGo (SSL)");
-pref("browser.search.order.extra.duckduckgo", "DuckDuckGo (SSL)");
+pref("browser.search.defaultenginename", "DuckDuckGo");
+pref("browser.search.order.1", "DuckDuckGo");
+pref("browser.search.defaultenginename", "DuckDuckGo");
+pref("browser.search.order.extra.duckduckgo", "DuckDuckGo");
 pref("browser.search.showOneOffButtons", false);
 pref("browser.search.suggest.enabled",false);
 // Disable preconnecting to search engine when clicking on the search bar
