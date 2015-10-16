@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=41
+VERSION=42
 
 . ./config
 
@@ -63,6 +63,10 @@ sed "s/Provides.*/Provides: firefox-locale-@LANGCODE@/" -i debian/control.langpa
 # Remove Ubuntu bookmarks
 sed -i /ubuntu-bookmarks/d debian/patches/series
 rm debian/patches/ubuntu-bookmarks*
+
+# Remove Ubuntu l10n search preferences
+sed -i /ubuntu-search-defaults/d debian/patches/series
+rm debian/patches/ubuntu-search-defaults*
 
 #Unbrand url codes for google and amazon
 find debian/searchplugins |grep google| xargs -i /bin/sed '/ubuntu/d; /channel/d' -i {}
