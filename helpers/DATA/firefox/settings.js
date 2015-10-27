@@ -101,6 +101,7 @@ pref("browser.safebrowsing.malware.enabled", false);
 pref("services.sync.privacyURL", "http://trisquel.info/en/legal");
 pref("social.enabled", false);
 pref("social.remote-install.enabled", false);
+pref("datareporting.policy.dataSubmissionEnabled", false);
 pref("datareporting.healthreport.uploadEnabled", false);
 pref("social.toast-notifications.enabled", false);
 pref("datareporting.healthreport.uploadEnabled", false);
