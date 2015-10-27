@@ -29,6 +29,9 @@ done
 
 sh $DATA/deblob-3.19 --force
 
+#Fix syntax error caused by deblob
+sed -i 's%/,%/",%g' drivers/bluetooth/btusb.c
+
 # Compile with less modules and avoid abi check
 echo 'skipmodule = true' >> debian.master/rules.d/0-common-vars.mk
 echo 'skipabi = true' >> debian.master/rules.d/0-common-vars.mk
