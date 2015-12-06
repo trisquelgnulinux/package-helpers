@@ -105,10 +105,8 @@ clean_file () {
 
 check_changed () {
   #$1 = filename
-  [ $1 = firmware/Makefile ] && return
   if cmp $1.deblob $1 > /dev/null; then
-    rm $1.deblob
-    die $1 did not change, something is wrong && return 1
+    die $1 did not change, something is wrong
   fi
   mv $1.deblob $1
 }
@@ -1395,6 +1393,8 @@ drop_fw_file firmware/bnx2/bnx2-rv2p-09-6.0.17.fw.ihex firmware/bnx2/bnx2-rv2p-0
 drop_fw_file firmware/bnx2/bnx2-rv2p-09ax-6.0.17.fw.ihex firmware/bnx2/bnx2-rv2p-09ax-6.0.17.fw
 drop_fw_file firmware/bnx2/bnx2-mips-06-6.2.1.fw.ihex firmware/bnx2/bnx2-mips-06-6.2.1.fw
 drop_fw_file firmware/bnx2/bnx2-rv2p-06-6.0.15.fw.ihex firmware/bnx2/bnx2-rv2p-06-6.0.15.fw
+drop_fw_file firmware/bnx2/bnx2-mips-09-6.2.1b.fw.ihex firmware/bnx2/bnx2-mips-09-6.2.1b.fw
+drop_fw_file firmware/bnx2/bnx2-mips-06-6.2.3.fw.ihex firmware/bnx2/bnx2-mips-06-6.2.3.fw
 reject_firmware drivers/net/ethernet/broadcom/bnx2.c
 clean_blob drivers/net/ethernet/broadcom/bnx2.c
 clean_kconfig drivers/net/ethernet/broadcom/Kconfig BNX2
@@ -1404,6 +1404,9 @@ announce BNX2X - "Broadcom NetXtremeII 10Gb support"
 drop_fw_file firmware/bnx2x/bnx2x-e1-6.2.9.0.fw.ihex firmware/bnx2x/bnx2x-e1-6.2.9.0.fw
 drop_fw_file firmware/bnx2x/bnx2x-e1h-6.2.9.0.fw.ihex firmware/bnx2x/bnx2x-e1h-6.2.9.0.fw
 drop_fw_file firmware/bnx2x/bnx2x-e2-6.2.9.0.fw.ihex firmware/bnx2x/bnx2x-e2-6.2.9.0.fw
+drop_fw_file firmware/bnx2x/bnx2x-e1-7.10.51.0.fw.ihex firmware/bnx2x/bnx2x-e1-7.10.51.0.fw
+drop_fw_file firmware/bnx2x/bnx2x-e1h-7.10.51.0.fw.ihex firmware/bnx2x/bnx2x-e1h-7.10.51.0.fw
+drop_fw_file firmware/bnx2x/bnx2x-e2-7.10.51.0.fw.ihex firmware/bnx2x/bnx2x-e2-7.10.51.0.fw
 reject_firmware drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
 clean_sed '
 /^#include "bnx2x_init\.h"/,/^$/{
