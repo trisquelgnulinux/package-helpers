@@ -27,6 +27,13 @@ for PATCH in $DATA/*.patch ; do
   patch -p1 < $PATCH
 done
 
+#
+# Turn off strong stack protection as it requires gcc 4.9+
+#
+/bin/sed -i 's/^.*CONFIG_CC_STACKPROTECTOR_REGULAR.*$/CONFIG_CC_STACKPROTECTOR_REGULAR=y/' debian.wily/config/config.common.ubuntu debian.master/config/config.common.ubuntu
+/bin/sed -i 's/^CONFIG_CC_STACKPROTECTOR_STRONG.*$/# CONFIG_CC_STACKPROTECTOR_STRONG is not set/' debian.wily/config/config.common.ubuntu debian.master/config/config.common.ubuntu
+/bin/sed -i 's/CONFIG_CC_STACKPROTECTOR_STRONG/CONFIG_CC_STACKPROTECTOR_REGULAR/' debian.wily/config/annotations debian.master/config/annotations
+
 sh $DATA/deblob-4.2 --force
 
 # Compile with less modules and avoid abi check
