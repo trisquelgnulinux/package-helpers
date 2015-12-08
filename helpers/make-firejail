@@ -57,7 +57,7 @@ sed '/dropbox/d' Makefile.in -i
 sed 's/iceweasel/abrowser/' Makefile.in -i
 
 # Changelog
-changelog "Bringing firejail from Debian to Trisquel"
+changelog "Bringing firejail from Debian to Trisquel purging proprietary software references"
 
 compile
 
