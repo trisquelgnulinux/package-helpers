@@ -19,6 +19,9 @@
 
 EXTERNAL='deb-src http://ftp.es.debian.org/debian testing main'
 SIGNKEY="7638D0442B90D010"
+PROFILES_TO_BE_DELETED="chromium-browser.profile chromium.profile \
+dropbox.profile google-chrome.profile opera.profile skype.profile \
+spotify.profile steam.profile"
 
 VERSION=1
 
@@ -28,7 +31,9 @@ VERSION=1
 mv etc/iceweasel.profile etc/abrowser.profile
 
 # Delete any trace of proprietary software configuration
-rm etc/chromium-browser.profile etc/chromium.profile etc/dropbox.profile etc/google-chrome.profile  etc/opera.profile etc/skype.profile etc/spotify.profile etc/steam.profile
+for PROFILE in $PROFILES_TO_BE_DELETED; do
+rm etc/$PROFILE
+done
 
 # Delete proprietary software instances in the control file
 sed 's/Chromium/Icecat/' platform/debian/control -i
@@ -57,7 +62,7 @@ sed '/dropbox/d' Makefile.in -i
 sed 's/iceweasel/abrowser/' Makefile.in -i
 
 # Changelog
-changelog "Bringing firejail from Debian to Trisquel purging proprietary software references"
+changelog "Bringing firejail to Trisquel purging proprietary software references"
 
 compile
 
