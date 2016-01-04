@@ -1,64 +1,3 @@
-diff -ru firefox-32.0.3+build1.orig/browser/components/preferences/content.js firefox-32.0.3+build1/browser/components/preferences/content.js
---- firefox-32.0.3+build1.orig/browser/components/preferences/content.js	2014-09-24 06:33:20.000000000 +0000
-+++ firefox-32.0.3+build1/browser/components/preferences/content.js	2014-09-30 13:03:48.000000000 +0000
-@@ -69,7 +69,18 @@
-                                         "chrome://browser/content/preferences/permissions.xul",
-                                         "", params);
-   },
-+  
-+  // JAVASCRIPT
- 
-+  /**
-+   * Displays the advanced JavaScript preferences for enabling or disabling
-+   * various annoying behaviors.
-+   */
-+  showAdvancedJS: function ()
-+  {
-+    openDialog("chrome://browser/content/preferences/advanced-scripts.xul", 
-+               "Browser:AdvancedScripts", null); 
-+  },
- 
-   // FONTS
- 
-diff -ru firefox-32.0.3+build1.orig/browser/components/preferences/content.xul firefox-32.0.3+build1/browser/components/preferences/content.xul
---- firefox-32.0.3+build1.orig/browser/components/preferences/content.xul	2014-09-24 06:33:20.000000000 +0000
-+++ firefox-32.0.3+build1/browser/components/preferences/content.xul	2014-09-30 13:03:48.000000000 +0000
-@@ -22,8 +22,13 @@
-     <preferences id="contentPreferences">
-       <!--XXX buttons prefs -->
- 
--      <!-- POPUPS -->
-+      <!-- POPUPS, JAVASCRIPT -->
-       <preference id="dom.disable_open_during_load"   name="dom.disable_open_during_load"   type="bool"/>
-+      <preference id="javascript.enabled"             name="javascript.enabled"             type="bool"/>
-+
-+      <preference id="pref.advanced.javascript.disable_button.advanced"
-+                  name="pref.advanced.javascript.disable_button.advanced"
-+                  type="bool"/>
- 
-       <!-- FONTS -->
-       <preference id="font.language.group"
-@@ -61,6 +66,20 @@
-                     oncommand="gContentPane.showPopupExceptions();"
-                     accesskey="&popupExceptions.accesskey;"/>
-           </row>
-+          <row id="enableJavaScriptRow">
-+            <vbox align="start">
-+              <checkbox id="enableJavaScript" preference="javascript.enabled"
-+                        label="&enableJavaScript.label;" accesskey="&enableJavaScript.accesskey;"
-+                        onsyncfrompreference="return gContentPane.updateButtons('advancedJSButton', 
-+                                                                            'javascript.enabled');"/>
-+            </vbox>
-+            <vbox>
-+              <button id="advancedJSButton" label="&advancedJS.label;"
-+                      accesskey="&advancedJS.accesskey;"
-+                      oncommand="gContentPane.showAdvancedJS();"
-+                      preference="pref.advanced.javascript.disable_button.advanced"/>
-+            </vbox>
-+          </row>
-         </rows>
-       </grid>
-     </groupbox>
 diff -ru firefox-32.0.3+build1.orig/browser/components/preferences/in-content/content.js firefox-32.0.3+build1/browser/components/preferences/in-content/content.js
 --- firefox-32.0.3+build1.orig/browser/components/preferences/in-content/content.js	2014-09-24 06:33:20.000000000 +0000
 +++ firefox-32.0.3+build1/browser/components/preferences/in-content/content.js	2014-09-30 13:03:48.000000000 +0000
@@ -121,17 +60,17 @@ diff -ru firefox-32.0.3+build1.orig/browser/components/preferences/in-content/co
      </rows>
    </grid>
  </groupbox>
-diff -ru firefox-32.0.3+build1.orig/browser/components/preferences/jar.mn firefox-32.0.3+build1/browser/components/preferences/jar.mn
---- firefox-32.0.3+build1.orig/browser/components/preferences/jar.mn	2014-09-24 06:33:20.000000000 +0000
-+++ firefox-32.0.3+build1/browser/components/preferences/jar.mn	2014-09-30 13:03:48.000000000 +0000
-@@ -9,6 +9,7 @@
-     content/browser/preferences/aboutPermissions.xml
- *   content/browser/preferences/advanced.xul
- *   content/browser/preferences/advanced.js
-+    content/browser/preferences/advanced-scripts.xul
-     content/browser/preferences/applications.xul
- *   content/browser/preferences/applications.js
-     content/browser/preferences/applicationManager.xul
+diff -ru firefox-32.0.3+build1.orig/browser/components/preferences/in-content/jar.mn firefox-32.0.3+build1/browser/components/preferences/jar.mn
+--- firefox-32.0.3+build1.orig/browser/components/preferences/in-content/jar.mn	2014-09-24 06:33:20.000000000 +0000
++++ firefox-32.0.3+build1/browser/components/preferences/in-content/jar.mn	2014-09-30 13:03:48.000000000 +0000
+@@ -10,6 +10,7 @@
+ *  content/browser/preferences/in-content/main.js
+ *  content/browser/preferences/in-content/privacy.js
+ *  content/browser/preferences/in-content/advanced.js
++   content/browser/preferences/advanced-scripts.xul
+ *  content/browser/preferences/in-content/applications.js
+    content/browser/preferences/in-content/content.js
+    content/browser/preferences/in-content/sync.js
 diff -ru firefox-32.0.3+build1.orig/browser/locales/en-US/chrome/browser/preferences/content.dtd firefox-32.0.3+build1/browser/locales/en-US/chrome/browser/preferences/content.dtd
 --- firefox-32.0.3+build1.orig/browser/locales/en-US/chrome/browser/preferences/content.dtd	2014-09-24 06:33:22.000000000 +0000
 +++ firefox-32.0.3+build1/browser/locales/en-US/chrome/browser/preferences/content.dtd	2014-09-30 13:03:48.000000000 +0000
