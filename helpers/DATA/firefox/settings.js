@@ -187,3 +187,6 @@ pref("security.ssl3.dhe_rsa_des_ede3_sha", false);
 
 // Disable Pocket integration
 pref("browser.pocket.enabled", false);
+
+// disable xpi signing verification
+pref("xpinstall.signatures.required", false);
