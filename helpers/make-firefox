@@ -26,6 +26,7 @@ rm debian/control
 
 # revert https://bug851702.bugzilla.mozilla.org/attachment.cgi?id=733785
 patch -p1 < $DATA/enable-js-options.patch
+cp ./browser/components/preferences/advanced-scripts.xul ./browser/components/preferences/in-content/
 
 # js settings
 cat $DATA/settings.js >> debian/vendor-firefox.js
