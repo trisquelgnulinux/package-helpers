@@ -28,6 +28,29 @@ rm debian/control
 patch -p1 < $DATA/enable-js-options.patch
 cp ./browser/components/preferences/advanced-scripts.xul ./browser/components/preferences/in-content/
 
+# KDE integration patches from https://www.rosenauer.org/hg/mozilla
+# These should be taken from the hg branch corresponding to the right version
+# (or default) and placed in the DATA directory in unmodified form
+cp $DATA/mozilla-kde.patch debian/patches/
+cp $DATA/firefox-kde.patch debian/patches/abrowser-kde.patch
+
+# Add to series
+cat << EOF >> debian/patches/series
+mozilla-kde.patch
+abrowser-kde.patch
+EOF
+
+# Add kde.js file
+echo 'pref("browser.preferences.instantApply", false);' > debian/kde.js
+sed -i '/pre-build/r /dev/stdin' debian/rules << 'EOF'
+	mkdir -p $(MOZ_DISTDIR)/bin/defaults/pref
+	cp $(CURDIR)/debian/kde.js $(MOZ_DISTDIR)/bin/defaults/pref/kde.js
+EOF
+
+# A line is added to widget/gtk/moz.build by unity-menubar.patch, so we have to fix mozilla-kde.patch
+sed -i "/widget\/gtk\/moz\.build/,/widget\/gtk\/nsFilePicker\.cpp/{ /chromium/d; /generic/a\ \ \ \ \ '/layout/style',
+; }" debian/patches/mozilla-kde.patch
+
 # js settings
 cat $DATA/settings.js >> debian/vendor-firefox.js
 
