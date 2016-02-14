@@ -21,6 +21,7 @@
 set -e
 export LANG=C LC_TIME=C
 PACKAGE=$(echo $0 |/bin/sed s/make-//g)
+PKGVERSION=$(dpkg-parsechangelog --show-field Version)
 
 
 export DATE=$(date +'%a, %d %b %Y %T %z')
@@ -53,7 +54,7 @@ find $3 -type f -not -iregex '.*changelog.*' -not -iregex '.*copyright.*' -execd
 }
 changelog(){
 head -n 1 debian/changelog | grep -q $UPSTREAM-security && REPO=$CODENAME-security || REPO=$CODENAME
-echo | dch -D $REPO -v $(/bin/sed -n '1s/^.*(\(.*\)).*/\1'+${REVISION}trisquel${VERSION}'/p' debian/changelog)  "$1"
+echo | dch -D $REPO -v ${PKGVERSION}+${REVISION}trisquel${VERSION} "$1"
 
 # Make sure the changelog file is identical between archs
 /bin/sed "/-- Trisquel/s/.*/ -- Trisquel GNU\/Linux developers <trisquel-devel@listas.trisquel.info>  $DATE/" -i debian/changelog
