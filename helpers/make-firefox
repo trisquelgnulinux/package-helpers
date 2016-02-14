@@ -29,10 +29,14 @@ patch -p1 < $DATA/enable-js-options.patch
 cp ./browser/components/preferences/advanced-scripts.xul ./browser/components/preferences/in-content/
 
 # KDE integration patches from https://www.rosenauer.org/hg/mozilla
-# These should be taken from the hg branch corresponding to the right version
-# (or default) and placed in the DATA directory in unmodified form
-cp $DATA/mozilla-kde.patch debian/patches/
-cp $DATA/firefox-kde.patch debian/patches/abrowser-kde.patch
+# Use firefox$MAJORVERSION branch if available, otherwise use default
+MAJORVERSION=echo "$PKGVERSION" | sed 's/\([0-9]\+\).*/\1/'
+BRANCH=firefox$MAJORVERSION
+if ! wget --spider https://rosenauer.org/hg/mozilla/log/$BRANCH; then
+	BRANCH=default
+fi
+wget https://rosenauer.org/hg/mozilla/raw-file/$BRANCH/mozilla-kde.patch -O debian/patches/mozilla-kde.patch
+wget https://rosenauer.org/hg/mozilla/raw-file/$BRANCH/firefox-kde.patch -O debian/patches/abrowser-kde.patch
 
 # Add to series
 cat << EOF >> debian/patches/series
