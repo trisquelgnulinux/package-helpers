@@ -21,8 +21,6 @@
 set -e
 export LANG=C LC_TIME=C
 PACKAGE=$(echo $0 |/bin/sed s/make-//g)
-PKGVERSION=$(dpkg-parsechangelog --show-field Version)
-
 
 export DATE=$(date +'%a, %d %b %Y %T %z')
 
@@ -49,6 +47,9 @@ DEVELMIRROR=http://devel.trisquel.info/trisquel/$CODENAME
 LOCALMIRROR=http://archive.trisquel.info/trisquel
 LOCAL_APT=`mktemp -d` 
 
+pkgversion(){
+	dpkg-parsechangelog --show-field Version
+}
 replace(){
 find $3 -type f -not -iregex '.*changelog.*' -not -iregex '.*copyright.*' -execdir /bin/sed --follow-symlinks -i s^"$1"^"$2"^g {} \;
 }
