@@ -30,7 +30,7 @@ cp ./browser/components/preferences/advanced-scripts.xul ./browser/components/pr
 
 # KDE integration patches from https://www.rosenauer.org/hg/mozilla
 # Use firefox$MAJORVERSION branch if available, otherwise use default
-MAJORVERSION=echo `pkgversion` | sed 's/\([0-9]\+\).*/\1/'
+MAJORVERSION=$(echo `pkgversion` | sed 's/\([0-9]\+\).*/\1/')
 BRANCH=firefox$MAJORVERSION
 if ! wget --spider https://rosenauer.org/hg/mozilla/log/$BRANCH; then
 	BRANCH=default
