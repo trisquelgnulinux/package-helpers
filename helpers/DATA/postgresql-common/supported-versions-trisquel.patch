@@ -24,6 +24,9 @@
 +            ;;
 +        7.0*) # Belenos
 +            /bin/echo -e "9.3"
++	     ;;
++        8.0*) # Belenos
++            /bin/echo -e "9.4"
 +            ;;
 +        *)
 +            echo "supported_versions: WARNING: Unknown Trisquel release: $1" >&2
