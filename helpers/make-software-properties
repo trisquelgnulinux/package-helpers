@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2011  Rubén Rodríguez <ruben@trisquel.info>
+#    Copyright (C) 2011-2016  Rubén Rodríguez <ruben@trisquel.info>
 #    Copyright (C) 2011  Carlos Pais <freemind@lavabit.com>
 #
 #    This program is free software; you can redistribute it and/or modify
@@ -18,18 +18,17 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=5
+VERSION=1
 
 . ./config
 
 cat << EOF | patch -p1
 --- source.orig/softwareproperties/SoftwareProperties.py        2014-04-14 17:10:58.000000000 +0200
 +++ source/softwareproperties/SoftwareProperties.py     2014-05-18 03:02:05.309290804 +0200
-@@ -724,7 +724,15 @@
+@@ -725,8 +725,16 @@
      site is in whitelist or the shortcut implementer adds it.
      """
  
--    (deb_line, file) = shortcut.expand(codename=self.distro.codename)
 +    codenames = {}
 +    codenames["flidas"] = "xenial" 
 +    codenames["belenos"] = "trusty" 
@@ -40,6 +39,8 @@ cat << EOF | patch -p1
 +    codenames["taranis"] = "lucid"
 +    codenames["awen"] = "karmic" 
 +    (deb_line, file) = shortcut.expand(codename=codenames[self.distro.codename])
+-    (deb_line, file) = shortcut.expand(
+-        codename=self.distro.codename, distro=self.distro.id.lower())
      deb_line = self.expand_http_line(deb_line)
      debsrc_entry_type = 'deb-src' if enable_source_code else '# deb-src'
      debsrc_line = debsrc_entry_type + deb_line[3:]
