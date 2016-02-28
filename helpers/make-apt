@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2008-2010  Rubén Rodríguez <ruben@trisquel.info>
+#    Copyright (C) 2008-2016  Rubén Rodríguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,18 +17,19 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
+VERSION=1
 COMPONENT=main
 
 . ./config
 
-cp $DATA/trisquel-archive.gpg share
-rm share/ubuntu-archive.gpg
+cp $DATA/trisquel vendor -a
+
+replace ubuntu-codename trisquel-codename .
+replace Ubuntu Trisquel .
+
 replace "http://archive.ubuntu.com/ubuntu/project/ubuntu-archive-keyring.gpg" "http://archive.trisquel.info/trisquel/trisquel-archive-signkey.gpg" .
 replace ubuntu-keyring trisquel-keyring .
 replace ubuntu-archive-keyring trisquel-archive-keyring .
-
-sed '/VERSION/s/ubuntu/trisquel/' -i configure
 
 # remove non-free examples https://trisquel.info/en/issues/5518
 sed '/non-free/d' -i ./test/integration/Packages-ubuntu-bug-614993 ./test/integration/status-ubuntu-bug-614993
@@ -46,12 +47,8 @@ replace non-free main .
 
 # Ubuntu link to changelogs https://trisquel.info/en/issues/9967 
 replace "http://changelogs.ubuntu.com/changelogs" "http://packages.trisquel.info/changelogs" .
-sed 's!http://changelogs.ubuntu.com/changelogs!http://packages.trisquel.info/changelogs!' -i debian/apt.conf.changelog
-
-#Ubuntu references in the doc
-#replace Ubuntu Trisquel .
-#replace ubuntu-archive-keyring .
-#replace ubuntu-archive-removed-keys .
+replace changelogs.ubuntu.com packages.trisquel.info .
+replace ubuntu.com/changelogs trisquel.info/changelogs .
 
 cat << EOF > ./test/interactive-helper/networkless-install-fixes/sources.test.list
 deb http://archive.trisquel.info/trisquel/ $CODENAME main
