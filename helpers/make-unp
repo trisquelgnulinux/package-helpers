@@ -1,6 +1,7 @@
 #!/bin/sh
 #
 #    Copyright (C) 2011  Santiago Rodríguez  <santi@trisquel.info>
+#    Copyright (C) 2016  Salman Mohammadi  <salman@ubuntu.ir>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,13 +18,16 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 COMPONENT=main
 . ./config
 
 sed -i 's/You may also want to install some non-free packages like "unace-nonfree",//g;s/"unrar-nonfree" and "lha" to extract archives of these types\.//g' debian/control
 
-changelog "Description changed
+# remove unrar (non-free) suggestion
+sed -i 's/ unrar |//' debian/control
+
+changelog "Description changed, remove unrar suggestion
 	   Closes #2076 " 
 
 compile
