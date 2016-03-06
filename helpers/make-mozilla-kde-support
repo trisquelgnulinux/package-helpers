@@ -1,0 +1,39 @@
+#!/bin/sh
+#
+#    Copyright (C) 2016  Legimet <legimet.calc@gmail.com>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=1
+EXTERNAL='deb-src http://ppa.launchpad.net/plasmazilla/releases/ubuntu  $UPSTREAM main'
+SIGNKEY="35128FD7"
+
+. ./config
+
+# Replace bug reporting address
+sed -i '/setBugAddress/s/".*"/"https:\/\/trisquel\.info\/project\/issues"/' main.cpp
+
+# Replace references to Firefox
+sed -i 's/firefox/abrowser/g' main.cpp
+sed -i '/MozillaFirefox/d' main.cpp
+sed -i '/!abrowser/s/    ||/return/' main.cpp
+sed -i 's/Firefox/Abrowser/g' kmozillahelper.notifyrc
+sed -i 's/firefox/abrowser/g' kmozillahelper.notifyrc
+
+changelog "Modify for Abrowser"
+
+compile
+
