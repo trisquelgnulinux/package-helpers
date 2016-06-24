@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2008-2015  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2008-2016  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,16 +17,13 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
+VERSION=1
 COMPONENT=main
 
 . ./config
 
 # No install recommends
-sed '/@aptitude=qw/s/aptitude -q/aptitude -q -R/' -i tasksel.pl
-sed '/@aptitude="/s/"aptitude"/"aptitude -R"/' -i tasksel.pl
-sed '/@apt=qw/s/apt-get -q/apt-get -q --no-install-recommends/' -i tasksel.pl
-sed '/@apt="/s/"apt-get"/"apt-get --no-install-recommends"/' -i tasksel.pl
+sed 's/Install-Recommends=true/Install-Recommends=false/g' -i tasksel.pl
 
 mkdir trisquel-tasks
 cp $DATA/* trisquel-tasks
