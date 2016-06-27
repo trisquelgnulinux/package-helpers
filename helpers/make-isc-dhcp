@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2014  Rubén Rodríguez <ruben@trisquel.info>
+#    Copyright (C) 2014-2016  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ VERSION=1
 
 . ./config
 
-sed 's/send host-name/#send host-name/' -i debian/dhclient.conf client/dhclient.conf
+sed 's/send host-name/#send host-name/' -i debian/dhclient.conf
 
 changelog "Disable sending hostname through dhcp by default"
 
