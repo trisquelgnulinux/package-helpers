@@ -234,6 +234,9 @@ sed '/MOZILLA_UAVERSION/ s:Abrowser/:Firefox/:' -i netwerk/protocol/http/nsHttpH
 
 # Set migrator scripts
 sed 's/Abrowser/Firefox/g; s/abrowser/firefox/g' -i browser/components/migration/AbrowserProfileMigrator.js
+sed s/ChromeProfileMigrator/_temp_/ -i browser/components/migration/moz.build
+sed s/AbrowserProfileMigrator/ChromeProfileMigrator/ -i browser/components/migration/moz.build
+sed s/_temp_/AbrowserProfileMigrator/ -i browser/components/migration/moz.build
 
 # Postinst script to manage profile migration and system links
 echo '
