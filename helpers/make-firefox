@@ -61,10 +61,13 @@ cat $DATA/settings.js >> debian/vendor-firefox.js
 # Replace ubufox recommendation
 sed 's/xul-ext-ubufox/xul-ext-youtube-html5-video-player/' -i debian/control.in
 
-sed '/mozilla.org\/legal/d' -i services/healthreport/healthreport-prefs.js
-cat << EOF >>services/healthreport/healthreport-prefs.js
+# Disable healtreport
+cat << EOF > toolkit/components/telemetry/healthreport-prefs.js
+pref("datareporting.healthreport.uploadEnabled", false);
+pref("datareporting.healthreport.about.reportUrl", "https://trisquel.info/legal");
 pref("datareporting.healthreport.infoURL", "https://trisquel.info/legal");
 EOF
+cp toolkit/components/telemetry/healthreport-prefs.js mobile/android/chrome/content/healthreport-prefs.js
 
 sed 's%https://www.mozilla.org/legal/privacy/%https://trisquel.info/legal%' -i ./modules/libpref/init/all.js ./browser/app/profile/firefox.js ./toolkit/content/aboutRights.xhtml
 
@@ -130,11 +133,10 @@ sed "s_^Maintainer.*_Maintainer: $DEBFULLNAME <$DEBEMAIL>_g" -i debian/control.i
 
 # Replace Firefox branding
 find -type d | grep firefox | xargs rename s/firefox/abrowser/
+find -type d | grep firefox | xargs rename s/firefox/abrowser/
 find -type f | grep firefox | xargs rename s/firefox/abrowser/
 find -type f | grep Firefox | xargs rename s/Firefox/Abrowser/
-replace(){
-find $3 -type f |grep -v changelog |grep -v copyright | xargs -i sed -i s^"$1"^"$2"^g "{}"
-}
+
 replace "Mozilla Firefox" "Abrowser" .
 replace firefox abrowser .
 replace Firefox Abrowser .
