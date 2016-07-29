@@ -28,6 +28,36 @@
 
 <style>
 
+body{
+ margin:0;
+ background-color:#f2f2f2;
+}
+#box{   
+ display: flex;
+ flex-flow: column;
+ justify-content: space-between;
+ align-items: center;
+ align-content: center;
+ height: 100vh;
+}
+
+#topSection, #box3, #block-horizontal-margin{
+ flex: 0 1 auto;
+ align-self: auto;
+}
+#topSection {
+ margin-top:10vh;
+ order:1;
+}
+#block-horizontal-margin{
+ order:2;
+}
+#box3{
+ order:3;
+ width:100vw;
+}
+
+
 label{
 position:relative;
 bottom:2px;
@@ -84,8 +114,8 @@ min-height:100px;
 
   <body dir="&locale.dir;">
 
-
-    <div class="spacer"/>
+  <div id="box">
+   <div id="box1">
     <div id="topSection">
       <img src="chrome://branding/content/about-logo.png"/>
 
@@ -99,9 +129,9 @@ min-height:100px;
       </div>
 
     </div>
+   </div>
 
-    <div class="spacer"/>
-
+   <div id="box2">
 <div id="footer" style="  display: -moz-box;   -moz-box-align: center;   -moz-box-pack: center;   width: 100%;   background-color: hsla(0,0%,0%,.03);   border-top: 1px solid hsla(0,0%,0%,.03);   box-shadow: 0 2px 5px hsla(0,0%,0%,.1) inset,              0 -1px 0 hsla(0,0%,100%,.25);">
 <p ><a class="titlelink" href="https://trisquel.info">Trisquel GNU/Linux</a>:</p>
 <ul style="font-size:0.8em">
@@ -110,6 +140,8 @@ min-height:100px;
 <li><a href="http://store.trisquel.info/">Store</a></li>
 <li><a href="https://trisquel.info/donate">Donate</a></li>
 </ul>
+</div>
+</div>
 </div>
 
   </body>

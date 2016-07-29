@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#    Copyright (C) 2008-2015  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2008-2016  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C) 2015       Santiago Rodriguez <santi@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
@@ -174,6 +174,7 @@ EOF
 rm browser/base/content/abouthome -rf
 cp $DATA/abouthome -a browser/base/content
 sed '/mozilla.*png/d' -i ./browser/base/jar.mn
+sed '/abouthome/s/*/ /' -i ./browser/base/jar.mn
 
 # Delete stuff we don't use and that may contain trademaked logos
 rm -rf ./browser/metro ./addon-sdk/source/doc/static-files/media ./browser/themes/windows ./browser/themes/osx ./b2g
@@ -203,6 +204,9 @@ cat << EOF >> toolkit/mozapps/extensions/content/extensions.css
   display:none;
 }
 EOF
+
+# Disable mobile promo
+sed '/fxaMobilePromo/,/label>$/d' -i browser/components/preferences/in-content/sync.xul
 
 find -wholename '*/brand.dtd' |xargs /bin/sed 's/trademarkInfo.part1.*/trademarkInfo.part1 "">/' -i
 

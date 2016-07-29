@@ -28,6 +28,36 @@
 
 <style>
 
+body{
+ margin:0;
+ background-color:#f2f2f2;
+}
+#box{
+ display: flex;
+ flex-flow: column;
+ justify-content: space-between;
+ align-items: center;
+ align-content: center;
+ height: 100vh;
+}
+
+#topSection, #box3, #block-horizontal-margin{
+ flex: 0 1 auto;
+ align-self: auto;
+}
+#topSection {
+ margin-top:10vh;
+ order:1;
+}
+#block-horizontal-margin{
+ order:2;
+}
+#box3{
+ order:3;
+ width:100vw;
+}
+
+
 label{
 position:relative;
 bottom:2px;
@@ -57,13 +87,8 @@ box-shadow: 0 0px 2px hsla(0,0%,0%,.3) inset;
 
 .block-side-margin {
   min-width: 16px;
-  -moz-box-flex: 1;
 }
 
-#block-horizontal-margin {
-  display: -moz-box;
-  -moz-box-flex: 1;
-}
 
 ul li {
 list-style:none;
@@ -288,7 +313,9 @@ function onSearchSubmit(){
 
   <body dir="&locale.dir;" onload="prepare();">
 
-    <div class="spacer"/>
+
+  <div id="box">
+   <div id="box1">
     <div id="topSection">
       <img src="chrome://branding/content/about-logo.png"/>
 <br/>
@@ -303,9 +330,10 @@ function onSearchSubmit(){
       </div>
 
     </div>
+   </div>
 
-    <div class="spacer"/>
 
+   <div id="box2">
 <div id="block-horizontal-margin">
 <div class="block-side-margin"></div>
 <div id="addonsform">
@@ -314,17 +342,20 @@ function onSearchSubmit(){
 </div>
 <div class="block-side-margin"></div>
 </div>
+</div>
 
-    <div class="spacer"/>
 
-<div id="footer">
-<p ><a class="titlelink" href="https://trisquel.info">Trisquel GNU/Linux</a></p>
-<ul style="font-size:0.8em">
-<li><a href="https://trisquel.info/forum">Forum</a></li>
-<li><a href="https://trisquel.info/wiki">Wiki</a></li>
-<li><a href="http://store.trisquel.info/">Store</a></li>
-<li><a href="https://trisquel.info/donate">Donate</a></li>
-</ul>
+   <div id="box3">
+     <div id="footer">
+       <p ><a class="titlelink" href="https://trisquel.info">Trisquel GNU/Linux</a></p>
+       <ul style="font-size:0.8em">
+       <li><a href="https://trisquel.info/forum">Forum</a></li>
+       <li><a href="https://trisquel.info/wiki">Wiki</a></li>
+       <li><a href="http://store.trisquel.info/">Store</a></li>
+       <li><a href="https://trisquel.info/donate">Donate</a></li>
+       </ul>
+    </div>
+  </div>
 </div>
 
 

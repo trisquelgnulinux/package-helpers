@@ -1,3 +1,9 @@
+#filter substitution
+#include @BOOKMARKS_INCLUDE_DIR@/bookmarks.inc
+#define ja_jp_mac ja-JP-mac
+#if AB_CD == ja_jp_mac
+#define AB_CD ja
+#endif
 <!DOCTYPE NETSCAPE-Bookmark-file-1>
 <!-- This is an automatically generated file.
      It will be read and overwritten.
@@ -7,8 +13,8 @@
 <H1>Bookmarks Menu</H1>
 
 <DL><p>
-    <DT><H3 ADD_DATE="1245542278" LAST_MODIFIED="1245543070" PERSONAL_TOOLBAR_FOLDER="true">Bookmarks Toolbar</H3>
-<DD>Add bookmarks to this folder to see them displayed on the Bookmarks Toolbar
+    <DT><H3 ADD_DATE="1245542278" LAST_MODIFIED="1245543070" PERSONAL_TOOLBAR_FOLDER="true">@bookmarks_toolbarfolder@</H3>
+<DD>@bookmarks_toolbarfolder_description@
     <DL><p>
 	<HR>
         <DT><A HREF="http://trisquel.info/" ADD_DATE="1245542718" LAST_MODIFIED="1245542736" ICON_URI="http://trisquel.info/sites/default/themes/trisquel3/favicon.ico" ICON="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACRklEQVQ4jY2SXU/SYRiHL9xwUzd7s80AzRmzmiKhgCKof0X4C4FHYZtOV2nMWZvTtFyNyQwrX1gwshTzDQQN8f0gD9w6ydo6aJ201Rfoc3Sgs+wg+Z3e9/Xcv117IOWUS1F7NJSNVYMrI3UOoGAgF/PCDg0LccyLK4jRPfTeouNLao+G+rkXWCLzCLNDXBssOJoJs0Po/Q5oy0LVW0jNq3s0LEaAtIMFY7AZMfEDMZLAshDFvvYT++p3TAEXALWhYQrdpwAJ5d5OFB1KbMmP5LrOA21ZWJf3qRipo/hRPjq/GfWgBnFlF/vqPuphDTp/FaZgD8ZAE9qRdozBZqyJHXBngrxVgTXynoJbp9E976ZitA7jxGO0z4w4Nj4gxt9x+aGM4p58Sr0l6HxV2FfjCNNPDurnt5zBEtumqEt+ZNcwOoDsdh7O9U2cW2s0rixhmRvFEglyfWMXcWkeefu5PwKNk/exRKeonrxBTagDw3gLeq8W59Yaju09HOtfsCW+IsY+0TDjO/RxLBLKPSoMAZFSbwkA9bMTODd/IYSfUuK+dCQxtbilNC5/RozGkblzqPT3YXjpQe/TpsZnu85iT37DFL6DKehGNVgIrgzqpsYo61Wm0iATcXkf4XUX1YG7qB5cAdKoCd1EmO5MrYX5rR9rLInMnYNmxEZxtxIh3I8p1HISKgHSyGuSYY0lMUdnqA25EML9iJEE8lYFB1/4v0IlQDoXrl7EONZL/ZsAleN9ZAtKIP0k+O9HpMhbFeh92sPL0n/h3yJfoqCu2Os+AAAAAElFTkSuQmCC">Trisquel GNU/Linux</A>
