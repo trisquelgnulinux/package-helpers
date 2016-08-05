@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2008-2015  Rubén Rodríguez <ruben@trisquel.info>
+#    Copyright (C) 2008-2016  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -18,18 +18,43 @@
 #
 
 
-VERSION=2
+VERSION=1
 
 . ./config
 
 for PATCH in $DATA/*.patch ; do
+  echo $PATCH
   patch -p1 < $PATCH
 done
 
-sh $DATA/deblob-3.13 --force
+rm -rf /tmp/preserve
+mkdir /tmp/preserve
+PRESERVE=$(grep '^+++' $DATA/silent-accept-firmware.patch | /bin/sed 's/+++ //; s/\t.*//;' | cut -d/ -f2- | sort -u )
+for FILE in $PRESERVE; do
+  cp $FILE /tmp/preserve --parents -a
+done
 
-rm firmware -rf
-cp -a $DATA/firmware .
+sh $DATA/deblob-4.4 --force
+
+# Extra firmware deblobbing
+for fw in $(find firmware/|grep -i hex$ |grep -v -e dsp56k/bootstrap.bin.ihex -e keyspan_pda)
+do
+ grep -q DEBLOBBED $fw || echo ':/*(DEBLOBBED)*/' > $fw
+done
+
+cp /tmp/preserve/* . -a
+
+# Remove ZFS
+rm zfs spl debian/scripts/misc/update-zfs.sh -rf
+sed '/zfs/d; /spl/d' -i debian.master/reconstruct
+/bin/sed 's/spl-dkms, zfs-dkms//' -i debian/control debian.master/control.d/vars.generic debian.master/control.d/vars.*
+/bin/sed  '/zfs/d' -i debian.master/rules.d/* debian.master/d-i/modules/fs-core-modules debian.master/control.d/generic.inclusion-list debian.master/abi/*/*/*.modules debian/rules debian.master/control.d/vars.*
+/bin/sed '/^define build_zfs/,/^endef/d; /^define install_zfs/,/^endef/d; /zfs/d' -i debian/rules.d/2-binary-arch.mk
+
+# Remove VBox
+rm ubuntu/vbox* -rf
+sed /vbox/d -i debian.master/info/RECONCILE debian.master/control.d/generic.inclusion-list ubuntu/Makefile 
+sed '/vbox/d' -i debian.master/reconstruct
 
 # Compile with less modules and avoid abi check
 echo 'skipmodule = true' >> debian.master/rules.d/0-common-vars.mk
@@ -43,12 +68,12 @@ sed s/family=ubuntu/family=trisquel/ -i debian/rules.d/0-common-vars.mk
 
 rename s/ubuntu/trisquel/ debian.*/config/config.common.ubuntu 
 
-#sed 's/Linux/Linux-libre/g' debian/control debian/control.stub -i
 find debian* -type f -name *control* -exec sed 's/ with Ubuntu patches//; s/Linux/Linux-libre/g' -i {} \;
 
 # Descriptions should not change based on the build arch
 sed 's/on DESC//; s/PKGVER on/PKGVER/; /^ DESC.$/d;' debian*/control.d/flavour-control.stub -i
 
+sed '/^firmware/d' ./debian*/abi/*/fwinfo -i
 echo > ./debian.master/d-i/firmware/nic-modules
 echo > ./debian.master/d-i/firmware/scsi-modules
 
@@ -56,6 +81,7 @@ echo > ./debian.master/d-i/firmware/scsi-modules
 cat << EOF >> debian.master/config/config.common.trisquel
 CONFIG_IOSCHED_BFQ=y
 CONFIG_CGROUP_BFQIO=y
+CONFIG_BFQ_GROUP_IOSCHED=y
 # CONFIG_DEFAULT_BFQ is not set
 EOF
 cat << EOF >> debian.master/config/i386/config.flavour.lowlatency
@@ -64,10 +90,11 @@ CONFIG_DEFAULT_IOSCHED="BFQ"
 EOF
 cp debian.master/config/i386/config.flavour.lowlatency debian.master/config/amd64/config.flavour.lowlatency
 
-sed '/%s_mc2/s@snprintf.*@snprintf(fw_name, sizeof(fw_name), "/*(DEBLOBBED)*/", chip_name);@' -i drivers/gpu/drm/radeon/si.c drivers/gpu/drm/radeon/cik.c
+# Disable using udev as a fallback for firmware loading
+replace "CONFIG_FW_LOADER_USER_HELPER=y" "CONFIG_FW_LOADER_USER_HELPER=n" debian.master/config
 
 changelog "Removed non-free bits"
 
 cp debian/changelog debian.master/changelog
 
-PARALLEL=true compile
+compile
