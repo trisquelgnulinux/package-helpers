@@ -77,12 +77,7 @@ sed 's%https://www.mozilla.org/legal/privacy/%https://trisquel.info/legal%' -i .
 rm debian/ga debian/go
 sed '/Google API/,$ d' debian/config/mozconfig.in -i
 
-# Enable gst support
-[ $REVISION = "6.0" ] && apt-get install -y --force-yes libgstreamermm-0.10-dev
-[ $REVISION = "6.0" ] && echo "ac_add_options --enable-gstreamer=0.10" >> debian/config/mozconfig.in
-[ $REVISION = "7.0" ] && echo "ac_add_options --enable-gstreamer=1.0" >> debian/config/mozconfig.in
-sed 's/1204/60/g; s/1210/65/g; s/1404/70/g' -i debian/config/mozconfig.in debian/firefox-dev.install.in debian/firefox-dev.links.in
-
+# Org branding
 sed 's/com.ubuntu/org.trisquel/' -i debian/config/mozconfig.in
 
 # Disable DRM support
