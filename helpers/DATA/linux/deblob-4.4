@@ -1393,6 +1393,9 @@ drop_fw_file firmware/bnx2/bnx2-rv2p-09-6.0.17.fw.ihex firmware/bnx2/bnx2-rv2p-0
 drop_fw_file firmware/bnx2/bnx2-rv2p-09ax-6.0.17.fw.ihex firmware/bnx2/bnx2-rv2p-09ax-6.0.17.fw
 drop_fw_file firmware/bnx2/bnx2-mips-06-6.2.1.fw.ihex firmware/bnx2/bnx2-mips-06-6.2.1.fw
 drop_fw_file firmware/bnx2/bnx2-rv2p-06-6.0.15.fw.ihex firmware/bnx2/bnx2-rv2p-06-6.0.15.fw
+# Trisquel extras
+drop_fw_file firmware/bnx2/bnx2-mips-09-6.2.1b.fw.ihex firmware/bnx2/bnx2-mips-09-6.2.1b.fw.ihex
+drop_fw_file firmware/bnx2/bnx2-mips-06-6.2.3.fw.ihex firmware/bnx2/bnx2-mips-06-6.2.3.fw.ihex
 reject_firmware drivers/net/ethernet/broadcom/bnx2.c
 clean_blob drivers/net/ethernet/broadcom/bnx2.c
 clean_kconfig drivers/net/ethernet/broadcom/Kconfig BNX2
@@ -1402,6 +1405,10 @@ announce BNX2X - "Broadcom NetXtremeII 10Gb support"
 drop_fw_file firmware/bnx2x/bnx2x-e1-6.2.9.0.fw.ihex firmware/bnx2x/bnx2x-e1-6.2.9.0.fw
 drop_fw_file firmware/bnx2x/bnx2x-e1h-6.2.9.0.fw.ihex firmware/bnx2x/bnx2x-e1h-6.2.9.0.fw
 drop_fw_file firmware/bnx2x/bnx2x-e2-6.2.9.0.fw.ihex firmware/bnx2x/bnx2x-e2-6.2.9.0.fw
+# Trisquel extras
+drop_fw_file firmware/bnx2x/bnx2x-e2-7.12.30.0.fw.ihex firmware/bnx2x/bnx2x-e2-7.12.30.0.fw.ihex
+drop_fw_file firmware/bnx2x/bnx2x-e1h-7.12.30.0.fw.ihex firmware/bnx2x/bnx2x-e1h-7.12.30.0.fw.ihex
+drop_fw_file firmware/bnx2x/bnx2x-e1-7.12.30.0.fw.ihex firmware/bnx2x/bnx2x-e1-7.12.30.0.fw.ihex
 reject_firmware drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
 clean_sed '
 /^#include "bnx2x_init\.h"/,/^$/{

@@ -35,18 +35,13 @@ for FILE in $PRESERVE; do
 done
 
 sh $DATA/deblob-4.4 --force
-
-# Extra firmware deblobbing
-for fw in $(find firmware/|grep -i hex$ |grep -v -e dsp56k/bootstrap.bin.ihex -e keyspan_pda)
-do
- grep -q DEBLOBBED $fw || echo ':/*(DEBLOBBED)*/' > $fw
-done
+sed 's/bnx2.*fw/$(DEBLOBBED)/' -i firmware/Makefile
 
 cp /tmp/preserve/* . -a
 
 # Remove ZFS
 rm zfs spl debian/scripts/misc/update-zfs.sh -rf
-sed '/zfs/d; /spl/d' -i debian.master/reconstruct
+#sed '/zfs/d; /spl/d' -i debian.master/reconstruct
 /bin/sed 's/spl-dkms, zfs-dkms//' -i debian/control debian.master/control.d/vars.generic debian.master/control.d/vars.*
 /bin/sed  '/zfs/d' -i debian.master/rules.d/* debian.master/d-i/modules/fs-core-modules debian.master/control.d/generic.inclusion-list debian.master/abi/*/*/*.modules debian/rules debian.master/control.d/vars.*
 /bin/sed '/^define build_zfs/,/^endef/d; /^define install_zfs/,/^endef/d; /zfs/d' -i debian/rules.d/2-binary-arch.mk

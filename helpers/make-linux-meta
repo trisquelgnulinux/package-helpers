@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2016  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2008-2016  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -23,8 +23,10 @@ VERSION=1
 rm ./debian/control.d/signed-generic
 
 sed 's/, linux-firmware//' -i debian/control ./debian/control.d/generic
+sed 's/Ubuntu/upstream/' -i debian/control
 sed 's/Linux/Linux-libre/g' -i debian/control ./debian/control.d/generic
 sed '/signed/,/^$/ d' -i debian/control
+sed '/Package.*powerpc/,/^$/ d' -i debian/control
 
 changelog "Removed linux-firmware dependency, renamed release for Trisquel"
 
