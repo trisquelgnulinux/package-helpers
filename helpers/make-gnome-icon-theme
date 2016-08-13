@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2008-2010  Rubén Rodríguez <ruben@trisquel.info>
+#    Copyright (C) 2008-2016  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -27,8 +27,6 @@ cp $DATA/trisquel24.png ./debian/ubuntu-icons/24x24/places/ubuntu-logo.png
 cp $DATA/trisquel22.png ./debian/ubuntu-icons/22x22/places/ubuntu-logo.png
 cp $DATA/trisquel16.png ./debian/ubuntu-icons/16x16/places/ubuntu-logo.png
 
-rm gnome/8x8 gnome/256x256 -rf
-sed '/256/d' -i debian/rules
 rm -rf debian/ubuntu-icons/*/mimetypes
 
 find | grep ubuntu-logo | xargs rename s/ubuntu-logo/trisquel-logo/
