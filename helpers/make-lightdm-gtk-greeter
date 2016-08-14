@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2014  Rubén Rodríguez <ruben@trisquel.info>
+#    Copyright (C) 2014-2016  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,15 +17,14 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=1
 COMPONENT=main
 
 . ./config
 
-rm debian/lightdm-gtk-greeter-ubuntu.conf
-replace lightdm-gtk-greeter-ubuntu lightdm-gtk-greeter-trisquel .
+sed 's/ubuntu/trisquel/' -i debian/rules
 
-cat << EOF > debian/lightdm-gtk-greeter-trisquel.conf
+cat << EOF > debian/01_trisquel.conf
 #
 # background = Background file to use, either an image path or a color (e.g. #772953)
 # theme-name = GTK+ theme to use
