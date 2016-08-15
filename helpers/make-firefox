@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=46
+VERSION=47
 
 . ./config
 
@@ -153,7 +153,7 @@ sed '/Package: @MOZ_PKG_NAME@-dev/,/Description:/ s/Provides:/Provides: firefox-
 sed '/Package: @MOZ_PKG_NAME@$/,/Description:/ s/Provides:/Provides: firefox, /' debian/control.in -i
 
 # Branding files
-rm browser/branding/* -rf
+rm browser/branding/{official,aurora,nightly,unofficial} -rf
 cp -a $DATA/branding/ browser/branding/official
 cat << EOF > debian/config/branch.mk
 CHANNEL                 = release
