@@ -17,15 +17,20 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 COMPONENT=main
 QUILT=skip
 
 . ./config
 
 sed 's/--enable-magic/--enable-magic --disable-packagekit/' debian/rules -i
+rm debian/patches/01_package_names.patch
+sed '/^01_package_names\.patch/d' debian/patches/series -i
 
-changelog "Dissabled package recommendations, fixes #7747"
+export QUILT_PATCHES=debian/patches
+quilt push -a
+
+changelog "Disabled package recommendations, fixes #7747"
 
 compile
 
