@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2012  Rubén Rodríguez <ruben@trisquel.info>
+#    Copyright (C) 2009-2010  Rubén Rodríguez <ruben@gnu.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,20 +17,15 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
-COMPONENT=main
+VERSION=1
 QUILT=skip
-
 . ./config
 
-sed 's/--enable-magic/--enable-magic --disable-packagekit/' debian/rules -i
-rm debian/patches/01_package_names.patch
-sed '/^01_package_names\.patch/d' debian/patches/series -i
+cp $DATA/*.patch debian/patches/
+echo 20-set_handles_command_line.patch >> debian/patches/series
 
 export QUILT_PATCHES=debian/patches
 quilt push -a
 
-changelog "Disabled package recommendations, fixes #7747"
-
+changelog "Fixed to allow opening multiple instances from e.g. Nautilus"
 compile
-
