@@ -32,6 +32,10 @@ cp ./browser/components/preferences/advanced-scripts.xul ./browser/components/pr
 # Use firefox$MAJORVERSION branch if available, otherwise use default
 MAJORVERSION=$(echo `pkgversion` | /bin/sed 's/\([0-9]\+\).*/\1/')
 BRANCH=firefox$MAJORVERSION
+
+# Temporary hack since the upstream repository is not branched correctly
+BRANCH=firefox48
+
 if ! wget --spider https://rosenauer.org/hg/mozilla/log/$BRANCH; then
 	BRANCH=default
 fi
