@@ -55,6 +55,7 @@ find $3 -type f -not -iregex '.*changelog.*' -not -iregex '.*copyright.*' -execd
 }
 changelog(){
 head -n 1 debian/changelog | grep -q $UPSTREAM-security && REPO=$CODENAME-security || REPO=$CODENAME
+PKGVERSION=$(dpkg-parsechangelog --show-field Version)
 echo | dch -D $REPO -v ${PKGVERSION}+${REVISION}trisquel${VERSION} "$1"
 
 # Make sure the changelog file is identical between archs
