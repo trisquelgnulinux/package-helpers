@@ -1,0 +1,84 @@
+#!/bin/sh
+#
+#    Copyright (C) 2016  Ruben Rodriguez <ruben@trisquel.info>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=1
+
+. ./config
+
+# Remove the arrow in the main menu button
+sed 's/"tooltip", tooltip,/"tooltip", "Trisquel",/; s/"has-arrow", TRUE,/"has-arrow", FALSE,/' -i mate-panel/panel-menu-button.c
+
+# Custom layout
+cat << EOF > data/panel-default-layout.layout
+[Toplevel panel]
+expand=true
+orientation=bottom
+size=44
+y-bottom=0
+
+[Object menu-bar]
+object-iid=PanelInternalFactory::MenuButton
+toplevel-id=panel
+pack-type=start
+pack-index=0
+
+[Object home]
+object-iid=PanelInternalFactory::Launcher
+@instance-config/location="file:///usr/share/applications/home.desktop"
+pack-index=10
+pack-type=start
+toplevel-id=panel
+
+[Object abrowser]
+object-iid=PanelInternalFactory::Launcher
+@instance-config/location="file:///usr/share/applications/browser.desktop"
+pack-index=20
+pack-type=start  
+toplevel-id=panel
+
+[Object window-list]
+object-iid=WnckletFactory::WindowListApplet
+pack-index=30
+pack-type=start
+toplevel-id=panel
+
+[Object notification-area]
+object-iid=NotificationAreaAppletFactory::NotificationArea
+pack-index=11
+pack-type=end
+toplevel-id=panel
+
+[Object indicators]
+object-iid=IndicatorAppletFactory::IndicatorApplet
+toplevel-id=panel
+pack-type=end
+pack-index=10
+
+[Object show-desktop]
+object-iid=WnckletFactory::ShowDesktopApplet
+pack-index=0
+pack-type=end
+toplevel-id=panel
+
+EOF
+
+changelog "Changed default layout"
+
+compile
+
