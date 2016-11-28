@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 
 . ./config
 
@@ -77,6 +77,9 @@ pack-type=end
 toplevel-id=panel
 
 EOF
+
+cp data/panel-default-layout.layout data/ubuntu.layout
+sed 's/ubuntu/trisquel/' -i data/Makefile.am
 
 changelog "Changed default layout"
 
