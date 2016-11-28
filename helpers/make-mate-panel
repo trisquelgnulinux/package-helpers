@@ -79,6 +79,7 @@ toplevel-id=panel
 EOF
 
 cp data/panel-default-layout.layout data/ubuntu.layout
+mv data/ubuntu.layout data/trisquel.layout
 sed 's/ubuntu/trisquel/' -i data/Makefile.am
 
 changelog "Changed default layout"
