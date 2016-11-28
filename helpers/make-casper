@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2012  Rubén Rodríguez <ruben@trisquel.info>
+#    Copyright (C) 2012-2016  Ruben Rodriguuez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=5
+VERSION=1
 
 . ./config
 
@@ -27,10 +27,6 @@ sed '/tmpfs/ s:$:\n/dev/loop1 /cow ext3 noauto 0 0:' scripts/casper-bottom/12fst
 rm scripts/casper-premount/10driver_updates
 rm scripts/casper-bottom/33enable_apport_crashes
 
-# Fix orca settings
-sed '/set -e/d' -i bin/casper-a11y-enable
-sed '/Empathy/d' -i bin/casper-a11y-enable
-sed 's/-initramfs/-login -initramfs/' -i scripts/casper-bottom/30accessibility
 
 changelog "Compiled for Trisquel"
 
