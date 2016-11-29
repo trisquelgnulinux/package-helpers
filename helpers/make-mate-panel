@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 
 . ./config
 
@@ -26,55 +26,73 @@ sed 's/"tooltip", tooltip,/"tooltip", "Trisquel",/; s/"has-arrow", TRUE,/"has-ar
 
 # Custom layout
 cat << EOF > data/panel-default-layout.layout
-[Toplevel panel]
+[Toplevel bottom]
 expand=true
 orientation=bottom
-size=44
-y-bottom=0
+size=42
 
-[Object menu-bar]
-object-iid=PanelInternalFactory::MenuButton
-toplevel-id=panel
-pack-type=start
-pack-index=0
+[Object mate-menu]
+locked=true
+position=0
+toplevel-id=bottom
+applet-iid=MateMenuAppletFactory::MateMenuApplet
+object-type=applet
 
-[Object home]
-object-iid=PanelInternalFactory::Launcher
-@instance-config/location="file:///usr/share/applications/home.desktop"
-pack-index=10
-pack-type=start
-toplevel-id=panel
 
-[Object abrowser]
-object-iid=PanelInternalFactory::Launcher
-@instance-config/location="file:///usr/share/applications/browser.desktop"
-pack-index=20
-pack-type=start  
-toplevel-id=panel
+[Object files]
+locked=true
+position=20
+launcher-location=/usr/share/applications/caja.desktop
+toplevel-id=bottom
+object-type=launcher
+menu-path=applications:/
+
+[Object browser]
+locked=true
+position=30
+launcher-location=/usr/share/applications/abrowser.desktop
+toplevel-id=bottom
+object-type=launcher
+menu-path=applications:/
 
 [Object window-list]
-object-iid=WnckletFactory::WindowListApplet
-pack-index=30
-pack-type=start
-toplevel-id=panel
+object-type=applet
+applet-iid=WnckletFactory::WindowListApplet
+toplevel-id=bottom
+position=40
+locked=true
 
 [Object notification-area]
-object-iid=NotificationAreaAppletFactory::NotificationArea
-pack-index=11
-pack-type=end
-toplevel-id=panel
+object-type=applet
+applet-iid=NotificationAreaAppletFactory::NotificationArea
+toplevel-id=bottom
+position=30
+panel-right-stick=true
+locked=true
 
-[Object indicators]
-object-iid=IndicatorAppletFactory::IndicatorApplet
-toplevel-id=panel
-pack-type=end
-pack-index=10
+[Object indicatorappletcomplete]
+object-type=applet
+applet-iid=IndicatorAppletCompleteFactory::IndicatorAppletComplete
+toplevel-id=bottom
+position=20
+panel-right-stick=true
+locked=true
 
-[Object show-desktop]
-object-iid=WnckletFactory::ShowDesktopApplet
-pack-index=0
-pack-type=end
-toplevel-id=panel
+[Object clock]
+object-type=applet
+applet-iid=ClockAppletFactory::ClockApplet
+toplevel-id=bottom
+position=10
+panel-right-stick=true
+locked=true
+
+[Object showdesktopapplet]
+locked=true
+position=0
+panel-right-stick=true
+toplevel-id=bottom
+applet-iid=WnckletFactory::ShowDesktopApplet
+object-type=applet
 
 EOF
 
