@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 
 . ./config
 
@@ -108,6 +108,10 @@ sed 's/Mirrors.masterlist.ubuntu/Mirrors.masterlist/' -i  d-i/source/choose-mirr
 
 # Set apt-mirror-setup.templates
 cat << EOF > d-i/source/apt-setup/debian/apt-mirror-setup.templates-ubuntu
+Template: apt-setup/restricted
+Type: boolean
+Default: false
+
 Template: apt-setup/backports
 Type: boolean
 Default: true
