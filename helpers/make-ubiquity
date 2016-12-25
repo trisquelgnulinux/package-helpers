@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2011-2015  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2011-2016  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=8
+VERSION=1
 
 . ./config
 
@@ -93,6 +93,77 @@ deb-src \$MIRROR \$RELEASE-updates main
 EOF
 EOF1
 chmod 755 d-i/source/apt-setup/generators/99trisquel
+
+# Redirect ports.ubuntu.com
+sed '/ports.ubuntu.com/d' -i ./d-i/source/apt-setup/debian/apt-mirror-setup.install 
+sed 's/ports.ubuntu.com/archive.trisquel.info/g; s/ubuntu-ports/trisquel/g; s/ubuntu/trisquel/g' -i ./d-i/source/apt-setup/debian/rules ./d-i/source/base-installer/library.sh
+sed 's/CC.ports.ubuntu.com/archive.trisquel.info/g; s/.ports.ubuntu.com/archive.trisquel.info/g' -i ./d-i/source/choose-mirror/choose-mirror.c ./d-i/source/choose-mirror/debian/choose-mirror-bin.templates.ftp.sel-in ./d-i/source/choose-mirror/debian/choose-mirror-bin.templates.http-in
+
+# Set Mirrors.masterlist
+wget http://archive.trisquel.info/trisquel/Mirrors.masterlist -O ./d-i/source/choose-mirror/Mirrors.masterlist
+sed '/Location/d; /Comment/d;' -i ./d-i/source/choose-mirror/Mirrors.masterlist
+cp ./d-i/source/choose-mirror/Mirrors.masterlist ./d-i/source/choose-mirror/Mirrors.masterlist.trisquel
+rm ./d-i/source/choose-mirror/Mirrors.masterlist.ubuntu
+sed 's/Mirrors.masterlist.ubuntu/Mirrors.masterlist/' -i  d-i/source/choose-mirror/Makefile
+
+# Set apt-mirror-setup.templates
+cat << EOF > d-i/source/apt-setup/debian/apt-mirror-setup.templates-ubuntu
+Template: apt-setup/backports
+Type: boolean
+Default: true
+# This template is used by the Trisquel version of d-i.
+# :sl2:
+_Description: Use backported software?
+ Some software has been backported from the development tree to work with
+ this release. Although this software has not gone through such complete
+ testing as that contained in the release, it includes newer versions of
+ some applications which may provide useful features.
+ .
+ Please choose whether you want this software to be made available to you.
+EOF
+mv d-i/source/apt-setup/debian/apt-mirror-setup.templates-ubuntu d-i/source/apt-setup/debian/apt-mirror-setup.templates-trisquel
+
+cat << EOF > d-i/source/apt-setup/debian/apt-mirror-setup.templates
+Template: apt-setup/progress/mirror
+Type: text
+# :sl1:
+_Description: Scanning the mirror...
+
+Template: apt-setup/mirror/error
+Type: select
+Default: Retry
+# :sl2:
+# These are choices of actions so this is, at least in English,
+# an infinitive form
+__Choices: Retry, Change mirror, Ignore
+_Description: Downloading a file failed:
+ The installer failed to access the mirror. This may be a problem with your
+ network, or with the mirror. You can choose to retry the download, select
+ a different mirror, or ignore the problem and continue without all the
+ packages from this mirror.
+
+# Default is determined in mirror generators!
+Template: apt-setup/use_mirror
+Type: boolean
+# :sl1:
+#flag:translate!:3
+_Description: Use a network mirror?
+ A network mirror can be used to supplement the software that is included
+ on the CD-ROM. This may also make newer versions of software available.
+ .
+ \${EXPLANATION}
+
+Template: apt-setup/no_mirror
+Type: boolean
+Default: false
+# :sl2:
+_Description: Continue without a network mirror?
+ No network mirror was selected.
+ .
+ If you are installing from a netinst CD and choose not to use a mirror,
+ you will end up with only a very minimal base system.
+EOF
+
 
 # Rebrand
 replace $UPSTREAM $CODENAME .
