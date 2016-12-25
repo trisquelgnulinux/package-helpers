@@ -168,9 +168,6 @@ _Description: Continue without a network mirror?
  you will end up with only a very minimal base system.
 EOF
 
-# Remove restricted/nonfree handling
-sed '/apt-setup\/restricted/,/^$/d' -i ./ubiquity/plugins/ubi-prepare.py 
-
 # Rebrand
 replace $UPSTREAM $CODENAME .
 replace Ubuntu Trisquel .
