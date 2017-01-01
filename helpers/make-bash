@@ -24,7 +24,7 @@ VERSION=1
 sed '/To run a command as administrator/s/$/\n\tTo become root use "sudo -i"./' debian/etc.bash.bashrc
 
 # Hack to fix build failures in flidas. TODO: fix the problem properly
-echo > tests/exec8.sub
+echo exit $? >> tests/exec8.sub
 
 changelog "Extended explanation for sudo_root, gnu.org #835148"
 
