@@ -95,7 +95,7 @@ diff -ru source.orig/apt/progress/base.py source/apt/progress/base.py
          elif status == "pmstatus":
 -            # FIXME: Float comparison
 +            if isinstance(percent, str):
-+                percent = float(percent.replace(',' , '.'))
++                percent = float(percent.replace(',', '.'))
              if float(percent) != self.percent or status_str != self.status:
                  self.status_change(pkgname, float(percent), status_str.strip())
                  self.percent = float(percent)
