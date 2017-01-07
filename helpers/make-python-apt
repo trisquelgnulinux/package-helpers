@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 COMPONENT=main
 
 . ./config
@@ -82,6 +82,23 @@ Suite: $CODENAME-backports
 ParentSuite: $CODENAME
 RepositoryType: deb
 _Description: Unsupported updates
+EOF
+
+# Fix locale issues that break ubiquity install
+cat << EOF | patch -p1
+diff -ru source.orig/apt/progress/base.py source/apt/progress/base.py
+--- source.orig/apt/progress/base.py	2015-11-26 11:33:29.000000000 -0500
++++ source/apt/progress/base.py	2017-01-07 14:33:29.879872269 -0500
+@@ -251,7 +251,8 @@
+             if match:
+                 self.conffile(match.group(1), match.group(2))
+         elif status == "pmstatus":
+-            # FIXME: Float comparison
++            if isinstance(percent, str):
++                percent = float(percent.replace(',' , '.'))
+             if float(percent) != self.percent or status_str != self.status:
+                 self.status_change(pkgname, float(percent), status_str.strip())
+                 self.percent = float(percent)
 EOF
 
 export DEB_BUILD_OPTIONS=nocheck
