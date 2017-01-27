@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2014-2016  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2014-2017  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
 #
 
 VERSION=1
-EXTERNAL='deb-src http://security.debian.org/ stable/updates main'
-SIGNKEY="46925553"
+EXTERNAL='deb-src http://security.debian.org/debian-security wheezy/updates main'
+SIGNKEY="EA98120B"
 
 . ./config
 
