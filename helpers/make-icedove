@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2014  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2014-2017  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ SIGNKEY="46925553"
 
 . ./config
 
-sed 's/Provides: mail-reader/Provides: mail-reader, thunderbird/' debian/control -i
+sed 's/mail-reader/mail-reader, thunderbird/' debian/control -i
 
 cat << EOF >> debian/icedove.js
 
