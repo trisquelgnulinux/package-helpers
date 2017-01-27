@@ -1,0 +1,3476 @@
+From f1d7f0664f27f9f18202ea749bd51a96459af0c8 Mon Sep 17 00:00:00 2001
+From: =?utf8?q?Cl=C3=A9ment=20DAVID?= <clement.david@scilab-enterprises.com>
+Date: Mon, 3 Oct 2016 19:06:18 +0200
+Subject: [PATCH] * bug #13469: Scilab contained non free code
+
+fsultra removed as this code license is "commercial use restriction".
+Its non-free (Violate DFSG 6)
+
+rpoly.f removed as this code license is "commercial use restriction".
+The BSD rpoly_plus_plus is used instead.
+
+Change-Id: I6212105c7014dc3590ea044d6e40ef3bfcadeed9
+---
+ scilab/ACKNOWLEDGEMENTS                            |    3 -
+ scilab/modules/polynomials/Makefile.am             |   10 +-
+ scilab/modules/polynomials/help/en_US/roots.xml    |    8 -
+ scilab/modules/polynomials/help/fr_FR/roots.xml    |    9 -
+ scilab/modules/polynomials/help/ja_JP/roots.xml    |    8 -
+ scilab/modules/polynomials/help/pt_BR/roots.xml    |    7 -
+ scilab/modules/polynomials/license.txt             |   20 +-
+ .../src/cpp/find_polynomial_roots_jenkins_traub.cc |  844 ++++++++++++++++++++
+ .../src/cpp/find_polynomial_roots_jenkins_traub.h  |   58 ++
+ scilab/modules/polynomials/src/cpp/polynomial.cc   |  113 +++
+ scilab/modules/polynomials/src/cpp/polynomial.h    |   84 ++
+ scilab/modules/polynomials/src/cpp/rpoly.cpp       |   73 ++
+ scilab/modules/polynomials/src/fortran/rpoly.f     |  276 -------
+ .../polynomials/tests/unit_tests/roots.dia.ref     |   86 +-
+ .../modules/polynomials/tests/unit_tests/roots.tst |   88 +-
+ .../tests/unit_tests/roots_difficult.tst           |   50 ++
+ scilab/modules/randlib/Makefile.am                 |    3 +-
+ scilab/modules/randlib/help/en_US/grand.xml        |   31 +-
+ scilab/modules/randlib/help/fr_FR/grand.xml        |   32 +-
+ scilab/modules/randlib/help/ja_JP/grand.xml        |   34 +-
+ scilab/modules/randlib/help/ru_RU/grand.xml        |   36 +-
+ .../modules/randlib/includes/others_generators.h   |    6 -
+ scilab/modules/randlib/license.txt                 |    7 -
+ scilab/modules/randlib/src/c/fsultra.c             |  257 ------
+ .../tests/unit_tests/grand_generators.dia.ref      |  475 +++++------
+ .../randlib/tests/unit_tests/grand_generators.tst  |  477 +++++------
+ .../tests/unit_tests/grand_hypermat.dia.ref        |  120 ++-
+ .../randlib/tests/unit_tests/grand_hypermat.tst    |  121 ++-
+ 41 files changed, 1982 insertions(+), 1619 deletions(-)
+ create mode 100644 scilab/modules/polynomials/src/cpp/find_polynomial_roots_jenkins_traub.cc
+ create mode 100644 scilab/modules/polynomials/src/cpp/find_polynomial_roots_jenkins_traub.h
+ create mode 100644 scilab/modules/polynomials/src/cpp/polynomial.cc
+ create mode 100644 scilab/modules/polynomials/src/cpp/polynomial.h
+ create mode 100644 scilab/modules/polynomials/src/cpp/rpoly.cpp
+ delete mode 100644 scilab/modules/polynomials/src/fortran/rpoly.f
+ create mode 100644 scilab/modules/polynomials/tests/unit_tests/roots_difficult.tst
+ delete mode 100644 scilab/modules/randlib/src/c/fsultra.c
+
+Index: scilab-5.5.2/ACKNOWLEDGEMENTS
+===================================================================
+--- scilab-5.5.2.orig/ACKNOWLEDGEMENTS
++++ scilab-5.5.2/ACKNOWLEDGEMENTS
+@@ -201,9 +201,6 @@ calelm: low level routines (INRIA).
+ 
+ control: LINPACK + EISPACK + INRIA routines.
+          dsubsp and exchnqz: Paul van Dooren.
+-         rpoly: copyrighted by the ACM (alg. 493), which grants
+-                 general permission to distribute provided 
+-                 the copies are not made for direct commercial advantage. 
+          lybsc, lydsr, lybad,sydsr and sybad are adapted from SLICE 
+                 (M. Denham).
+          sszer: Emami-naeini, A. and van Dooren, P. (Automatica paper).
+Index: scilab-5.5.2/modules/polynomials/help/en_US/roots.xml
+===================================================================
+--- scilab-5.5.2.orig/modules/polynomials/help/en_US/roots.xml
++++ scilab-5.5.2/modules/polynomials/help/en_US/roots.xml
+@@ -167,12 +167,4 @@ max(abs(r1-r2))
+             ACM TOMS 1, 1 (March 1975), pp. 26-34
+         </para>
+     </refsection>
+-    <refsection>
+-        <title>Used Functions</title>
+-        <para>The rpoly.f source codes can be found in the directory
+-            SCI/modules/polynomials/src/fortran of a Scilab source distribution. In the case where the
+-            companion matrix is used, the eigenvalue computation is perfomed using
+-            DGEEV and ZGEEV LAPACK codes.
+-        </para>
+-    </refsection>
+ </refentry>
+Index: scilab-5.5.2/modules/polynomials/src/cpp/find_polynomial_roots_jenkins_traub.cc
+===================================================================
+--- /dev/null
++++ scilab-5.5.2/modules/polynomials/src/cpp/find_polynomial_roots_jenkins_traub.cc
+@@ -0,0 +1,844 @@
++// Copyright (C) 2015 Chris Sweeney. All rights reserved.
++//
++// Redistribution and use in source and binary forms, with or without
++// modification, are permitted provided that the following conditions are
++// met:
++//
++//     * Redistributions of source code must retain the above copyright
++//       notice, this list of conditions and the following disclaimer.
++//
++//     * Redistributions in binary form must reproduce the above
++//       copyright notice, this list of conditions and the following
++//       disclaimer in the documentation and/or other materials provided
++//       with the distribution.
++//
++//     * Neither the name of Chris Sweeney nor the names of its contributors may
++//       be used to endorse or promote products derived from this software
++//       without specific prior written permission.
++//
++// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
++// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
++// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
++// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
++// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
++// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
++// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
++// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
++// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
++// POSSIBILITY OF SUCH DAMAGE.
++//
++// Please contact the author of this library if you have any questions.
++// Author: Chris Sweeney (cmsweeney@cs.ucsb.edu)
++
++#include "find_polynomial_roots_jenkins_traub.h"
++
++#include <Eigen/Core>
++
++#include <cmath>
++#include <complex>
++#include <iostream>
++#include <limits>
++#include <vector>
++
++#include "polynomial.h"
++
++namespace rpoly_plus_plus {
++
++using Eigen::MatrixXd;
++using Eigen::Vector3d;
++using Eigen::VectorXd;
++using Eigen::Vector3cd;
++using Eigen::VectorXcd;
++
++namespace {
++
++#ifndef M_PI
++#define M_PI 3.14159265358979323846264338327950288
++#endif
++
++// Machine precision constants.
++static const double mult_eps = std::numeric_limits<double>::epsilon();
++static const double sum_eps = std::numeric_limits<double>::epsilon();
++
++enum ConvergenceType{
++  NO_CONVERGENCE = 0,
++  LINEAR_CONVERGENCE = 1,
++  QUADRATIC_CONVERGENCE = 2
++};
++
++// Solves for the root of the equation ax + b = 0.
++double FindLinearPolynomialRoots(const double a, const double b) {
++  return -b / a;
++}
++
++// Stable quadratic roots according to BKP Horn.
++// http://people.csail.mit.edu/bkph/articles/Quadratics.pdf
++void FindQuadraticPolynomialRoots(const double a,
++                                  const double b,
++                                  const double c,
++                                  std::complex<double>* roots) {
++  const double D = b * b - 4 * a * c;
++  const double sqrt_D = std::sqrt(std::abs(D));
++
++  // Real roots.
++  if (D >= 0) {
++    if (b >= 0) {
++      roots[0] = std::complex<double>((-b - sqrt_D) / (2.0 * a), 0);
++      roots[1] = std::complex<double>((2.0 * c) / (-b - sqrt_D), 0);
++    } else {
++      roots[0] = std::complex<double>((2.0 * c) / (-b + sqrt_D), 0);
++      roots[1] = std::complex<double>((-b + sqrt_D) / (2.0 * a), 0);
++    }
++    return;
++  }
++
++  // Use the normal quadratic formula for the complex case.
++  roots[0] = std::complex<double>(-b / (2.0 * a), sqrt_D / (2.0 * a));
++  roots[1] = std::complex<double>(-b / (2.0 * a), -sqrt_D / (2.0 * a));
++}
++
++// Perform division by a linear term of the form (z - x) and evaluate P at x.
++void SyntheticDivisionAndEvaluate(const VectorXd& polynomial,
++                                  const double x,
++                                  VectorXd* quotient,
++                                  double* eval) {
++  quotient->setZero(polynomial.size() - 1);
++  (*quotient)(0) = polynomial(0);
++  for (int i = 1; i < polynomial.size() - 1; i++) {
++    (*quotient)(i) = polynomial(i) + (*quotient)(i - 1) * x;
++  }
++  const VectorXd::ReverseReturnType& creverse_quotient = quotient->reverse();
++  *eval = polynomial.reverse()(0) + creverse_quotient(0) * x;
++}
++
++// Perform division of a polynomial by a quadratic factor. The quadratic divisor
++// should have leading 1s.
++void QuadraticSyntheticDivision(const VectorXd& polynomial,
++                                const VectorXd& quadratic_divisor,
++                                VectorXd* quotient,
++                                VectorXd* remainder) {
++  quotient->setZero(polynomial.size() - 2);
++  remainder->setZero(2);
++
++  (*quotient)(0) = polynomial(0);
++
++  // If the quotient is a constant then polynomial is degree 2 and the math is
++  // simple.
++  if (quotient->size() == 1) {
++    *remainder =
++        polynomial.tail<2>() - polynomial(0) * quadratic_divisor.tail<2>();
++    return;
++  }
++
++  (*quotient)(1) = polynomial(1) - polynomial(0) * quadratic_divisor(1);
++  for (int i = 2; i < polynomial.size() - 2; i++) {
++    (*quotient)(i) = polynomial(i) - (*quotient)(i - 2) * quadratic_divisor(2) -
++                     (*quotient)(i - 1) * quadratic_divisor(1);
++  }
++
++  const VectorXd::ReverseReturnType &creverse_quotient = quotient->reverse();
++  (*remainder)(0) = polynomial.reverse()(1) -
++                    quadratic_divisor(1) * creverse_quotient(0) -
++                    quadratic_divisor(2) * creverse_quotient(1);
++  (*remainder)(1) =
++      polynomial.reverse()(0) - quadratic_divisor(2) * creverse_quotient(0);
++}
++
++// Determines whether the iteration has converged by examining the three most
++// recent values for convergence.
++template<typename T>
++bool HasConverged(const T& sequence) {
++  const bool convergence_condition_1 =
++      std::abs(sequence(1) - sequence(0)) < std::abs(sequence(0)) / 2.0;
++  const bool convergence_condition_2 =
++      std::abs(sequence(2) - sequence(1)) < std::abs(sequence(1)) / 2.0;
++
++  // If the sequence has converged then return true.
++  return convergence_condition_1 && convergence_condition_2;
++}
++
++// Determines if the root has converged by measuring the relative and absolute
++// change in the root value. This stopping criterion is a simple measurement
++// that proves to work well. It is referred to as "Ward's method" in the
++// following reference:
++//
++// Nikolajsen, Jorgen L. "New stopping criteria for iterative root finding."
++// Royal Society open science (2014)
++template <typename T>
++bool HasRootConverged(const std::vector<T>& roots) {
++  static const double kRootMagnitudeTolerance = 1e-8;
++  static const double kAbsoluteTolerance = 1e-14;
++  static const double kRelativeTolerance = 1e-10;
++
++  if (roots.size() != 3) {
++    return false;
++  }
++
++  const double e_i = std::abs(roots[2] - roots[1]);
++  const double e_i_minus_1 = std::abs(roots[1] - roots[0]);
++  const double mag_root = std::abs(roots[1]);
++  if (e_i <= e_i_minus_1) {
++    if (mag_root < kRootMagnitudeTolerance) {
++      return e_i < kAbsoluteTolerance;
++    } else {
++      return e_i / mag_root <= kRelativeTolerance;
++    }
++  }
++
++  return false;
++}
++
++// Implementation closely follows the three-stage algorithm for finding roots of
++// polynomials with real coefficients as outlined in: "A Three-Stage Algorithm
++// for Real Polynomaials Using Quadratic Iteration" by Jenkins and Traub, SIAM
++// 1970. Please note that this variant is different than the complex-coefficient
++// version, and is estimated to be up to 4 times faster.
++class JenkinsTraubSolver {
++ public:
++  JenkinsTraubSolver(const VectorXd& coeffs,
++                     VectorXd* real_roots,
++                     VectorXd* complex_roots)
++      : polynomial_(coeffs),
++        real_roots_(real_roots),
++        complex_roots_(complex_roots),
++        num_solved_roots_(0) {}
++
++  // Extracts the roots using the Jenkins Traub method.
++  bool ExtractRoots();
++
++ private:
++  // Removes any zero roots and divides polynomial by z.
++  void RemoveZeroRoots();
++
++  // Computes the magnitude of the roots to provide and initial search radius
++  // for the iterative solver.
++  double ComputeRootRadius();
++
++  // Computes the zero-shift applied to the K-Polynomial.
++  void ComputeZeroShiftKPolynomial();
++
++  // Stage 1 of the Jenkins-Traub method. This stage is not technically
++  // necessary, but helps separate roots that are close to zero.
++  void ApplyZeroShiftToKPolynomial(const int num_iterations);
++
++  // Computes and returns the update of sigma(z) based on the current
++  // K-polynomial.
++  //
++  // NOTE: This function is used by the fixed shift iterations (which hold sigma
++  // constant) so sigma is *not* modified internally by this function. If you
++  // want to change sigma, simply call
++  //    sigma = ComputeNextSigma();
++  VectorXd ComputeNextSigma();
++
++  // Updates the K-polynomial based on the current value of sigma for the fixed
++  // or variable shift stage.
++  void UpdateKPolynomialWithQuadraticShift(
++      const VectorXd& polynomial_quotient,
++      const VectorXd& k_polynomial_quotient);
++
++  // Apply fixed-shift iterations to the K-polynomial to separate the
++  // roots. Based on the convergence of the K-polynomial, we apply a
++  // variable-shift linear or quadratic iteration to determine a real root or
++  // complex conjugate pair of roots respectively.
++  ConvergenceType ApplyFixedShiftToKPolynomial(const std::complex<double>& root,
++                                               const int max_iterations);
++
++  // Applies one of the variable shifts to the K-Polynomial. Returns true upon
++  // successful convergence to a good root, and false otherwise.
++  bool ApplyVariableShiftToKPolynomial(
++      const ConvergenceType& fixed_shift_convergence,
++      const std::complex<double>& root);
++
++  // Applies a quadratic shift to the K-polynomial to determine a pair of roots
++  // that are complex conjugates. Return true if a root was successfully found.
++  bool ApplyQuadraticShiftToKPolynomial(const std::complex<double>& root,
++                                        const int max_iterations);
++
++  // Applies a linear shift to the K-polynomial to determine a single real root.
++  // Return true if a root was successfully found.
++  bool ApplyLinearShiftToKPolynomial(const std::complex<double>& root,
++                                     const int max_iterations);
++
++  // Adds the root to the output variables.
++  void AddRootToOutput(const double real, const double imag);
++
++  // Solves polynomials of degree <= 2.
++  bool SolveClosedFormPolynomial();
++
++  // Helper variables to manage the polynomials as they are being manipulated
++  // and deflated.
++  VectorXd polynomial_;
++  VectorXd k_polynomial_;
++  // Sigma is the quadratic factor the divides the K-polynomial.
++  Vector3d sigma_;
++
++  // Let us define a, b, c, and d such that:
++  //   P(z) = Q_P * sigma(z) + b * (z + u) + a
++  //   K(z) = Q_K * sigma(z) + d * (z + u ) + c
++  //
++  // where Q_P and Q_K are the quotients from polynomial division of
++  // sigma(z). Note that this means for a given a root s of sigma:
++  //
++  //   P(s)      = a - b * s_conj
++  //   P(s_conj) = a - b * s
++  //   K(s)      = c - d * s_conj
++  //   K(s_conj) = c - d * s
++  double a_, b_, c_, d_;
++
++  // Output reference variables.
++  VectorXd* real_roots_;
++  VectorXd* complex_roots_;
++  int num_solved_roots_;
++
++  // Keeps track of whether the linear and quadratic shifts have been attempted
++  // yet so that we do not attempt the same shift twice.
++  bool attempted_linear_shift_;
++  bool attempted_quadratic_shift_;
++
++  // Number of zero-shift iterations to perform.
++  static const int kNumZeroShiftIterations = 20;
++
++  // The number of fixed shift iterations is computed as
++  //   # roots found * this multiplier.
++  static const int kFixedShiftIterationMultiplier = 20;
++
++  // If the fixed shift iterations fail to converge, we restart this many times
++  // before considering the solve attempt as a failure.
++  static const int kMaxFixedShiftRestarts = 20;
++
++  // The maximum number of linear shift iterations to perform before considering
++  // the shift as a failure.
++  static const int kMaxLinearShiftIterations = 20;
++
++  // The maximum number of quadratic shift iterations to perform before
++  // considering the shift as a failure.
++  static const int kMaxQuadraticShiftIterations = 20;
++
++  // When quadratic shift iterations are stalling, we attempt a few fixed shift
++  // iterations to help convergence.
++  static const int kInnerFixedShiftIterations = 5;
++
++  // During quadratic iterations, the real values of the root pairs should be
++  // nearly equal since the root pairs are complex conjugates. This tolerance
++  // measures how much the real values may diverge before consider the quadratic
++  // shift to be failed.
++  static const double kRootPairTolerance;;
++};
++
++const double JenkinsTraubSolver::kRootPairTolerance = 0.01;
++
++bool JenkinsTraubSolver::ExtractRoots() {
++  if (polynomial_.size() == 0) {
++    // std::cout << "Invalid polynomial of size 0 passed to "
++    //              "FindPolynomialRootsJenkinsTraub" << std::endl;
++    return false;
++  }
++
++  // Remove any leading zeros of the polynomial.
++  polynomial_ = RemoveLeadingZeros(polynomial_);
++  // Normalize the polynomial.
++  polynomial_ /= polynomial_(0);
++  const int degree = polynomial_.size() - 1;
++
++  // Allocate the output roots.
++  if (real_roots_ != NULL) {
++    real_roots_->setZero(degree);
++  }
++  if (complex_roots_ != NULL) {
++    complex_roots_->setZero(degree);
++  }
++
++  // Remove any zero roots.
++  RemoveZeroRoots();
++
++  // Choose the initial starting value for the root-finding on the complex
++  // plane.
++  const double kDegToRad = M_PI / 180.0;
++  double phi = 49.0 * kDegToRad;
++
++  // Iterate until the polynomial has been completely deflated.
++  for (int i = 0; i < degree; i++) {
++    // Compute the root radius.
++    const double root_radius = ComputeRootRadius();
++
++    // Solve in closed form if the polynomial is small enough.
++    if (polynomial_.size() <= 3) {
++      break;
++    }
++
++    // Stage 1: Apply zero-shifts to the K-polynomial to separate the small
++    // zeros of the polynomial.
++    ApplyZeroShiftToKPolynomial(kNumZeroShiftIterations);
++
++    // Stage 2: Apply fixed shift iterations to the K-polynomial to separate the
++    // roots further.
++    std::complex<double> root;
++    ConvergenceType convergence = NO_CONVERGENCE;
++    for (int j = 0; j < kMaxFixedShiftRestarts; j++) {
++      root = root_radius * std::complex<double>(std::cos(phi), std::sin(phi));
++      convergence = ApplyFixedShiftToKPolynomial(
++          root, kFixedShiftIterationMultiplier * (i + 1));
++      if (convergence != NO_CONVERGENCE) {
++        break;
++      }
++
++      // Rotate the initial root value on the complex plane and try again.
++      phi += 94.0 * kDegToRad;
++    }
++
++    // Stage 3: Find the root(s) with variable shift iterations on the
++    // K-polynomial. If this stage was not successful then we return a failure.
++    if (!ApplyVariableShiftToKPolynomial(convergence, root)) {
++      return false;
++    }
++  }
++  return SolveClosedFormPolynomial();
++}
++
++// Stage 1: Generate K-polynomials with no shifts (i.e. zero-shifts).
++void JenkinsTraubSolver::ApplyZeroShiftToKPolynomial(
++    const int num_iterations) {
++  // K0 is the first order derivative of polynomial.
++  k_polynomial_ = DifferentiatePolynomial(polynomial_) / polynomial_.size();
++  for (int i = 1; i < num_iterations; i++) {
++    ComputeZeroShiftKPolynomial();
++  }
++}
++
++ConvergenceType JenkinsTraubSolver::ApplyFixedShiftToKPolynomial(
++    const std::complex<double>& root, const int max_iterations) {
++  // Compute the fixed-shift quadratic:
++  // sigma(z) = (x - m - n * i) * (x - m + n * i) = x^2 - 2 * m + m^2 + n^2.
++  sigma_(0) = 1.0;
++  sigma_(1) = -2.0 * root.real();
++  sigma_(2) = root.real() * root.real() + root.imag() * root.imag();
++
++  // Compute the quotient and remainder for divinding P by the quadratic
++  // divisor. Since this iteration involves a fixed-shift sigma these may be
++  // computed once prior to any iterations.
++  VectorXd polynomial_quotient, polynomial_remainder;
++  QuadraticSyntheticDivision(
++      polynomial_, sigma_, &polynomial_quotient, &polynomial_remainder);
++
++  // Compute a and b from the above equations.
++  b_ = polynomial_remainder(0);
++  a_ = polynomial_remainder(1) - b_ * sigma_(1);
++
++  // Precompute P(s) for later using the equation above.
++  const std::complex<double> p_at_root = a_ - b_ * std::conj(root);
++
++  // These two containers hold values that we test for convergence such that the
++  // zero index is the convergence value from 2 iterations ago, the first
++  // index is from one iteration ago, and the second index is the current value.
++  Vector3cd t_lambda = Vector3cd::Zero();
++  Vector3d sigma_lambda = Vector3d::Zero();
++  VectorXd k_polynomial_quotient, k_polynomial_remainder;
++  for (int i = 0; i < max_iterations; i++) {
++    k_polynomial_ /= k_polynomial_(0);
++
++    // Divide the shifted polynomial by the quadratic polynomial.
++    QuadraticSyntheticDivision(
++        k_polynomial_, sigma_, &k_polynomial_quotient, &k_polynomial_remainder);
++    d_ = k_polynomial_remainder(0);
++    c_ = k_polynomial_remainder(1) - d_ * sigma_(1);
++
++    // Test for convergence.
++    const VectorXd variable_shift_sigma = ComputeNextSigma();
++    const std::complex<double> k_at_root = c_ - d_ * std::conj(root);
++
++    t_lambda.head<2>() = t_lambda.tail<2>().eval();
++    sigma_lambda.head<2>() = sigma_lambda.tail<2>().eval();
++    t_lambda(2) = root - p_at_root / k_at_root;
++    sigma_lambda(2) = variable_shift_sigma(2);
++
++    // Return with the convergence code if the sequence has converged.
++    if (HasConverged(sigma_lambda)) {
++      return QUADRATIC_CONVERGENCE;
++    } else if (HasConverged(t_lambda)) {
++      return LINEAR_CONVERGENCE;
++    }
++
++    // Compute K_next using the formula above.
++    UpdateKPolynomialWithQuadraticShift(polynomial_quotient,
++                                        k_polynomial_quotient);
++  }
++
++  return NO_CONVERGENCE;
++}
++
++bool JenkinsTraubSolver::ApplyVariableShiftToKPolynomial(
++    const ConvergenceType& fixed_shift_convergence,
++    const std::complex<double>& root) {
++  attempted_linear_shift_ = false;
++  attempted_quadratic_shift_ = false;
++
++  if (fixed_shift_convergence == LINEAR_CONVERGENCE) {
++    return ApplyLinearShiftToKPolynomial(root, kMaxLinearShiftIterations);
++  } else if (fixed_shift_convergence == QUADRATIC_CONVERGENCE) {
++    return ApplyQuadraticShiftToKPolynomial(root, kMaxQuadraticShiftIterations);
++  }
++  return false;
++}
++
++// Generate K-polynomials with variable-shifts. During variable shifts, the
++// quadratic shift is computed as:
++//                | K0(s1)  K0(s2)  z^2 |
++//                | K1(s1)  K1(s2)    z |
++//                | K2(s1)  K2(s2)    1 |
++//    sigma(z) = __________________________
++//                  | K1(s1)  K2(s1) |
++//                  | K2(s1)  K2(s2) |
++// Where K0, K1, and K2 are successive zero-shifts of the K-polynomial.
++//
++// The K-polynomial shifts are otherwise exactly the same as Stage 2 after
++// accounting for a variable-shift sigma.
++bool JenkinsTraubSolver::ApplyQuadraticShiftToKPolynomial(
++    const std::complex<double>& root, const int max_iterations) {
++  // Only proceed if we have not already tried a quadratic shift.
++  if (attempted_quadratic_shift_) {
++    return false;
++  }
++
++  const double kTinyRelativeStep = 0.01;
++
++  // Compute the fixed-shift quadratic:
++  // sigma(z) = (x - m - n * i) * (x - m + n * i) = x^2 - 2 * m + m^2 + n^2.
++  sigma_(0) = 1.0;
++  sigma_(1) = -2.0 * root.real();
++  sigma_(2) = root.real() * root.real() + root.imag() * root.imag();
++
++  // These two containers hold values that we test for convergence such that the
++  // zero index is the convergence value from 2 iterations ago, the first
++  // index is from one iteration ago, and the second index is the current value.
++  VectorXd polynomial_quotient, polynomial_remainder, k_polynomial_quotient,
++      k_polynomial_remainder;
++  double poly_at_root(0), prev_poly_at_root(0), prev_v(0);
++  bool tried_fixed_shifts = false;
++
++  // These containers maintain a history of the predicted roots. The convergence
++  // of the algorithm is determined by the convergence of the root value.
++  std::vector<std::complex<double> > roots1, roots2;
++  roots1.push_back(root);
++  roots2.push_back(std::conj(root));
++  for (int i = 0; i < max_iterations; i++) {
++    // Terminate if the root evaluation is within our tolerance. This will
++    // return false if we do not have enough samples.
++    if (HasRootConverged(roots1) && HasRootConverged(roots2)) {
++      AddRootToOutput(roots1[1].real(), roots1[1].imag());
++      AddRootToOutput(roots2[1].real(), roots2[1].imag());
++      polynomial_ = polynomial_quotient;
++      return true;
++    }
++
++    QuadraticSyntheticDivision(
++        polynomial_, sigma_, &polynomial_quotient, &polynomial_remainder);
++
++    // Compute a and b from the above equations.
++    b_ = polynomial_remainder(0);
++    a_ = polynomial_remainder(1) - b_ * sigma_(1);
++
++    std::complex<double> roots[2];
++    FindQuadraticPolynomialRoots(sigma_(0), sigma_(1), sigma_(2), roots);
++
++    // Check that the roots are close. If not, then try a linear shift.
++    if (std::abs(std::abs(roots[0].real()) - std::abs(roots[1].real())) >
++        kRootPairTolerance * std::abs(roots[1].real())) {
++      return ApplyLinearShiftToKPolynomial(root, kMaxLinearShiftIterations);
++    }
++
++    // If the iteration is stalling at a root pair then apply a few fixed shift
++    // iterations to help convergence.
++    poly_at_root =
++        std::abs(a_ - roots[0].real() * b_) + std::abs(roots[0].imag() * b_);
++    const double rel_step = std::abs((sigma_(2) - prev_v) / sigma_(2));
++    if (!tried_fixed_shifts && rel_step < kTinyRelativeStep &&
++        prev_poly_at_root > poly_at_root) {
++      tried_fixed_shifts = true;
++      ApplyFixedShiftToKPolynomial(roots[0], kInnerFixedShiftIterations);
++    }
++
++    // Divide the shifted polynomial by the quadratic polynomial.
++    QuadraticSyntheticDivision(
++        k_polynomial_, sigma_, &k_polynomial_quotient, &k_polynomial_remainder);
++    d_ = k_polynomial_remainder(0);
++    c_ = k_polynomial_remainder(1) - d_ * sigma_(1);
++
++    prev_v = sigma_(2);
++    sigma_ = ComputeNextSigma();
++
++    // Compute K_next using the formula above.
++    UpdateKPolynomialWithQuadraticShift(polynomial_quotient,
++                                        k_polynomial_quotient);
++    k_polynomial_ /= k_polynomial_(0);
++    prev_poly_at_root = poly_at_root;
++
++    // Save the roots for convergence testing.
++    roots1.push_back(roots[0]);
++    roots2.push_back(roots[1]);
++    if (roots1.size() > 3) {
++      roots1.erase(roots1.begin());
++      roots2.erase(roots2.begin());
++    }
++  }
++
++  attempted_quadratic_shift_ = true;
++  return ApplyLinearShiftToKPolynomial(root, kMaxLinearShiftIterations);
++}
++
++// Generate K-Polynomials with variable-shifts that are linear. The shift is
++// computed as:
++//   K_next(z) = 1 / (z - s) * (K(z) - K(s) / P(s) * P(z))
++//   s_next = s - P(s) / K_next(s)
++bool JenkinsTraubSolver::ApplyLinearShiftToKPolynomial(
++    const std::complex<double>& root, const int max_iterations) {
++  if (attempted_linear_shift_) {
++    return false;
++  }
++
++  // Compute an initial guess for the root.
++  double real_root = (root -
++                      EvaluatePolynomial(polynomial_, root) /
++                          EvaluatePolynomial(k_polynomial_, root)).real();
++
++  VectorXd deflated_polynomial, deflated_k_polynomial;
++  double polynomial_at_root, k_polynomial_at_root;
++
++  // This container maintains a history of the predicted roots. The convergence
++  // of the algorithm is determined by the convergence of the root value.
++  std::vector<double> roots;
++  roots.push_back(real_root);;
++  for (int i = 0; i < max_iterations; i++) {
++    // Terminate if the root evaluation is within our tolerance. This will
++    // return false if we do not have enough samples.
++    if (HasRootConverged(roots)) {
++      AddRootToOutput(roots[1], 0);
++      polynomial_ = deflated_polynomial;
++      return true;
++    }
++
++    const double prev_polynomial_at_root = polynomial_at_root;
++    SyntheticDivisionAndEvaluate(
++        polynomial_, real_root, &deflated_polynomial, &polynomial_at_root);
++
++    // If the root is exactly the root then end early. Otherwise, the k
++    // polynomial will be filled with inf or nans.
++    if (polynomial_at_root == 0) {
++      AddRootToOutput(real_root, 0);
++      polynomial_ = deflated_polynomial;
++      return true;
++    }
++
++    // Update the K-Polynomial.
++    SyntheticDivisionAndEvaluate(k_polynomial_, real_root,
++                                 &deflated_k_polynomial, &k_polynomial_at_root);
++    k_polynomial_ = AddPolynomials(
++        deflated_k_polynomial,
++        -k_polynomial_at_root / polynomial_at_root * deflated_polynomial);
++
++    k_polynomial_ /= k_polynomial_(0);
++
++    // Compute the update for the root estimation.
++    k_polynomial_at_root = EvaluatePolynomial(k_polynomial_, real_root);
++    const double delta_root = polynomial_at_root / k_polynomial_at_root;
++    real_root -= polynomial_at_root / k_polynomial_at_root;
++
++    // Save the root so that convergence can be measured. Only the 3 most
++    // recently root values are needed.
++    roots.push_back(real_root);
++    if (roots.size() > 3) {
++      roots.erase(roots.begin());
++    }
++
++    // If the linear iterations appear to be stalling then we may have found a
++    // double real root of the form (z - x^2). Attempt a quadratic variable
++    // shift from the current estimate of the root.
++    if (i >= 2 &&
++        std::abs(delta_root) < 0.001 * std::abs(real_root) &&
++        std::abs(prev_polynomial_at_root) < std::abs(polynomial_at_root)) {
++      const std::complex<double> new_root(real_root, 0);
++      return ApplyQuadraticShiftToKPolynomial(new_root,
++                                              kMaxQuadraticShiftIterations);
++    }
++  }
++
++  attempted_linear_shift_ = true;
++  return ApplyQuadraticShiftToKPolynomial(root, kMaxQuadraticShiftIterations);
++}
++
++void JenkinsTraubSolver::AddRootToOutput(const double real, const double imag) {
++  if (real_roots_ != NULL) {
++    (*real_roots_)(num_solved_roots_) = real;
++  }
++  if (complex_roots_ != NULL) {
++    (*complex_roots_)(num_solved_roots_) = imag;
++  }
++  ++num_solved_roots_;
++}
++
++void JenkinsTraubSolver::RemoveZeroRoots() {
++  int num_zero_roots = 0;
++
++  const VectorXd::ReverseReturnType& creverse_polynomial =
++      polynomial_.reverse();
++  while (creverse_polynomial(num_zero_roots) == 0) {
++    ++num_zero_roots;
++  }
++
++  // The output roots have 0 as the default value so there is no need to
++  // explicitly add the zero roots.
++  polynomial_ = polynomial_.head(polynomial_.size() - num_zero_roots).eval();
++}
++
++bool JenkinsTraubSolver::SolveClosedFormPolynomial() {
++  const int degree = polynomial_.size() - 1;
++
++  // Is the polynomial constant?
++  if (degree == 0) {
++    // std::cout << "Trying to extract roots from a constant "
++    //          << "polynomial in FindPolynomialRoots" << std::endl;
++    // We return true with no roots, not false, as if the polynomial is constant
++    // it is correct that there are no roots. It is not the case that they were
++    // there, but that we have failed to extract them.
++    return true;
++  }
++  
++  // Linear
++  if (degree == 1) {
++    AddRootToOutput(FindLinearPolynomialRoots(polynomial_(0), polynomial_(1)),
++                    0);
++    return true;
++  }
++
++  // Quadratic
++  if (degree == 2) {
++    std::complex<double> roots[2];
++    FindQuadraticPolynomialRoots(polynomial_(0), polynomial_(1), polynomial_(2),
++                                 roots);
++    AddRootToOutput(roots[0].real(), roots[0].imag());
++    AddRootToOutput(roots[1].real(), roots[1].imag());
++    return true;
++  }
++
++  return false;
++}
++
++// Computes a lower bound on the radius of the roots of polynomial by examining
++// the Cauchy sequence:
++//
++//    z^n + |a_1| * z^{n - 1} + ... + |a_{n-1}| * z - |a_n|
++//
++// The unique positive zero of this polynomial is an approximate lower bound of
++// the radius of zeros of the original polynomial.
++double JenkinsTraubSolver::ComputeRootRadius() {
++  static const double kEpsilon = 1e-2;
++  static const int kMaxIterations = 100;
++
++  VectorXd poly = polynomial_;
++  // Take the absolute value of all coefficients.
++  poly = poly.array().abs();
++  // Negate the last coefficient.
++  poly.reverse()(0) *= -1.0;
++
++  // Find the unique positive zero using Newton-Raphson iterations.
++  double x0 = 1.0;
++  return FindRootIterativeNewton(poly, x0, kEpsilon, kMaxIterations);
++}
++
++// The k polynomial with a zero-shift is
++//  (K(x) - K(0) / P(0) * P(x)) / x.
++//
++// This is equivalent to:
++//    K(x) - K(0)      K(0)     P(x) - P(0)
++//    ___________   -  ____  *  ___________
++//         x           P(0)          x
++//
++// Note that removing the constant term and dividing by x is equivalent to
++// shifting the polynomial to one degree lower in our representation.
++void JenkinsTraubSolver::ComputeZeroShiftKPolynomial() {
++  // Evaluating the polynomial at zero is equivalent to the constant term
++  // (i.e. the last coefficient). Note that reverse() is an expression and does
++  // not actually reverse the vector elements.
++  const double polynomial_at_zero = polynomial_(polynomial_.size() - 1);
++  const double k_at_zero = k_polynomial_(k_polynomial_.size() - 1);
++
++  k_polynomial_ = AddPolynomials(k_polynomial_.head(k_polynomial_.size() - 1),
++                                 -k_at_zero / polynomial_at_zero *
++                                     polynomial_.head(polynomial_.size() - 1));
++}
++
++// The iterations are computed with the following equation:
++//              a^2 + u * a * b + v * b^2
++//   K_next =  ___________________________ * Q_K
++//                    b * c - a * d
++//
++//                      a * c + u * a * d + v * b * d
++//             +  (z - _______________________________) * Q_P + b.
++//                              b * c - a * d
++//
++// This is done using *only* realy arithmetic so it can be done very fast!
++void JenkinsTraubSolver::UpdateKPolynomialWithQuadraticShift(
++    const VectorXd& polynomial_quotient,
++    const VectorXd& k_polynomial_quotient) {
++  const double coefficient_q_k =
++      (a_ * a_ + sigma_(1) * a_ * b_ + sigma_(2) * b_ * b_) /
++      (b_ * c_ - a_ * d_);
++  VectorXd linear_polynomial(2);
++  linear_polynomial(0) = 1.0;
++  linear_polynomial(1) =
++      -(a_ * c_ + sigma_(1) * a_ * d_ + sigma_(2) * b_ * d_) /
++      (b_ * c_ - a_ * d_);
++  k_polynomial_ = AddPolynomials(
++      coefficient_q_k * k_polynomial_quotient,
++      MultiplyPolynomials(linear_polynomial, polynomial_quotient));
++  k_polynomial_(k_polynomial_.size() - 1) += b_;
++}
++
++// Using a bit of algebra, the update of sigma(z) can be computed from the
++// previous value along with a, b, c, and d defined above. The details of this
++// simplification can be found in "Three Stage Variable-Shift Iterations for the
++// Solution of Polynomial Equations With a Posteriori Error Bounds for the
++// Zeros" by M.A. Jenkins, Doctoral Thesis, Stanford Univeristy, 1969.
++//
++// NOTE: we assume the leading term of quadratic_sigma is 1.0.
++VectorXd JenkinsTraubSolver::ComputeNextSigma() {
++  const double u = sigma_(1);
++  const double v = sigma_(2);
++
++  const VectorXd::ReverseReturnType& creverse_k_polynomial =
++      k_polynomial_.reverse();
++  const VectorXd::ReverseReturnType& creverse_polynomial =
++      polynomial_.reverse();
++
++  const double b1 = -creverse_k_polynomial(0) / creverse_polynomial(0);
++  const double b2 = -(creverse_k_polynomial(1) + b1 * creverse_polynomial(1)) /
++                    creverse_polynomial(0);
++
++  const double a1 = b_* c_ - a_ * d_;
++  const double a2 = a_ * c_ + u * a_ * d_ + v * b_* d_;
++  const double c2 = b1 * a2;
++  const double c3 = b1 * b1 * (a_ * a_ + u * a_ * b_ + v * b_ * b_);
++  const double c4 = v * b2 * a1 - c2 - c3;
++  const double c1 = c_ * c_ + u * c_ * d_ + v * d_ * d_ +
++                    b1 * (a_ * c_ + u * b_ * c_ + v * b_ * d_) - c4;
++  const double delta_u = -(u * (c2 + c3) + v * (b1 * a1 + b2 * a2)) / c1;
++  const double delta_v = v * c4 / c1;
++
++  // Update u and v in the quadratic sigma.
++  VectorXd new_quadratic_sigma(3);
++  new_quadratic_sigma(0) = 1.0;
++  new_quadratic_sigma(1) = u + delta_u;
++  new_quadratic_sigma(2) = v + delta_v;
++  return new_quadratic_sigma;
++}
++
++}  // namespace
++
++bool FindPolynomialRootsJenkinsTraub(const VectorXd& polynomial,
++                                     VectorXd* real_roots,
++                                     VectorXd* complex_roots) {
++  JenkinsTraubSolver solver(polynomial, real_roots, complex_roots);
++  return solver.ExtractRoots();
++}
++
++}  // namespace rpoly_plus_plus
+Index: scilab-5.5.2/modules/polynomials/src/cpp/find_polynomial_roots_jenkins_traub.h
+===================================================================
+--- /dev/null
++++ scilab-5.5.2/modules/polynomials/src/cpp/find_polynomial_roots_jenkins_traub.h
+@@ -0,0 +1,58 @@
++// Copyright (C) 2015 Chris Sweeney. All rights reserved.
++//
++// Redistribution and use in source and binary forms, with or without
++// modification, are permitted provided that the following conditions are
++// met:
++//
++//     * Redistributions of source code must retain the above copyright
++//       notice, this list of conditions and the following disclaimer.
++//
++//     * Redistributions in binary form must reproduce the above
++//       copyright notice, this list of conditions and the following
++//       disclaimer in the documentation and/or other materials provided
++//       with the distribution.
++//
++//     * Neither the name of Chris Sweeney nor the names of its contributors may
++//       be used to endorse or promote products derived from this software
++//       without specific prior written permission.
++//
++// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
++// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
++// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
++// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
++// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
++// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
++// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
++// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
++// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
++// POSSIBILITY OF SUCH DAMAGE.
++//
++// Please contact the author of this library if you have any questions.
++// Author: Chris Sweeney (cmsweeney@cs.ucsb.edu)
++
++#ifndef RPOLY_PLUS_PLUS_FIND_POLYNOMIAL_ROOTS_JENKINS_TRAUB_H_
++#define RPOLY_PLUS_PLUS_FIND_POLYNOMIAL_ROOTS_JENKINS_TRAUB_H_
++
++#include <Eigen/Core>
++
++namespace rpoly_plus_plus
++{
++
++// A three-stage algorithm for finding roots of polynomials with real
++// coefficients as outlined in: "A Three-Stage Algorithm for Real Polynomaials
++// Using Quadratic Iteration" by Jenkins and Traub, SIAM 1970. Please note that
++// this variant is different than the complex-coefficient version, and is
++// estimated to be up to 4 times faster.
++//
++// The algorithm works by computing shifts in so-called "K-polynomials" that
++// exaggerate the roots. Once a root is found (or in the real-polynomial case, a
++// pair of roots) then it is divided from the polynomial and the process is
++// repeated.
++bool FindPolynomialRootsJenkinsTraub(const Eigen::VectorXd& polynomial,
++                                     Eigen::VectorXd* real_roots,
++                                     Eigen::VectorXd* complex_roots);
++
++}  // namespace rpoly_plus_plus
++
++#endif  // RPOLY_PLUS_PLUS_FIND_POLYNOMIAL_ROOTS_JENKINS_TRAUB_H_
+Index: scilab-5.5.2/modules/polynomials/src/cpp/polynomial.cc
+===================================================================
+--- /dev/null
++++ scilab-5.5.2/modules/polynomials/src/cpp/polynomial.cc
+@@ -0,0 +1,113 @@
++// Copyright (C) 2015 Chris Sweeney. All rights reserved.
++//
++// Redistribution and use in source and binary forms, with or without
++// modification, are permitted provided that the following conditions are
++// met:
++//
++//     * Redistributions of source code must retain the above copyright
++//       notice, this list of conditions and the following disclaimer.
++//
++//     * Redistributions in binary form must reproduce the above
++//       copyright notice, this list of conditions and the following
++//       disclaimer in the documentation and/or other materials provided
++//       with the distribution.
++//
++//     * Neither the name of Chris Sweeney nor the names of its contributors may
++//       be used to endorse or promote products derived from this software
++//       without specific prior written permission.
++//
++// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
++// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
++// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
++// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
++// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
++// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
++// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
++// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
++// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
++// POSSIBILITY OF SUCH DAMAGE.
++//
++// Please contact the author of this library if you have any questions.
++// Author: Chris Sweeney (cmsweeney@cs.ucsb.edu)
++
++#include "polynomial.h"
++
++#include <Eigen/Core>
++#include <cmath>
++
++namespace rpoly_plus_plus {
++
++using Eigen::MatrixXd;
++using Eigen::VectorXd;
++using Eigen::VectorXcd;
++
++// Remove leading terms with zero coefficients.
++VectorXd RemoveLeadingZeros(const VectorXd& polynomial_in) {
++  int i = 0;
++  while (i < (polynomial_in.size() - 1) && polynomial_in(i) == 0) {
++    ++i;
++  }
++  return polynomial_in.tail(polynomial_in.size() - i);
++}
++
++VectorXd DifferentiatePolynomial(const VectorXd& polynomial) {
++  const int degree = polynomial.rows() - 1;
++
++  // Degree zero polynomials are constants, and their derivative does
++  // not result in a smaller degree polynomial, just a degree zero
++  // polynomial with value zero.
++  if (degree == 0) {
++    return VectorXd::Zero(1);
++  }
++
++  VectorXd derivative(degree);
++  for (int i = 0; i < degree; ++i) {
++    derivative(i) = (degree - i) * polynomial(i);
++  }
++
++  return derivative;
++}
++
++VectorXd MultiplyPolynomials(const VectorXd& poly1, const VectorXd& poly2) {
++  VectorXd multiplied_poly = VectorXd::Zero(poly1.size() + poly2.size() - 1);;
++  for (int i = 0; i < poly1.size(); i++) {
++    for (int j = 0; j < poly2.size(); j++) {
++      multiplied_poly.reverse()(i + j) +=
++          poly1.reverse()(i) * poly2.reverse()(j);
++    }
++  }
++  return multiplied_poly;
++}
++
++VectorXd AddPolynomials(const VectorXd& poly1, const VectorXd& poly2) {
++  if (poly1.size() > poly2.size()) {
++    VectorXd sum = poly1;
++    sum.tail(poly2.size()) += poly2;
++    return sum;
++  } else {
++    VectorXd sum = poly2;
++    sum.tail(poly1.size()) += poly1;
++    return sum;
++  }
++}
++
++double FindRootIterativeNewton(const Eigen::VectorXd& polynomial,
++                               const double x0,
++                               const double epsilon,
++                               const int max_iterations) {
++  double root = x0;
++  const Eigen::VectorXd derivative = DifferentiatePolynomial(polynomial);
++  double prev;
++  for (int i = 0; i < max_iterations; i++) {
++    prev = root;
++    root -= EvaluatePolynomial(polynomial, root) /
++            EvaluatePolynomial(derivative, root);
++    if (std::abs(prev - root) < epsilon) {
++      break;
++    }
++  }
++  return root;
++}
++
++}  // namespace rpoly_plus_plus
+Index: scilab-5.5.2/modules/polynomials/src/cpp/polynomial.h
+===================================================================
+--- /dev/null
++++ scilab-5.5.2/modules/polynomials/src/cpp/polynomial.h
+@@ -0,0 +1,84 @@
++// Copyright (C) 2015 Chris Sweeney
++// All rights reserved.
++//
++// Redistribution and use in source and binary forms, with or without
++// modification, are permitted provided that the following conditions are
++// met:
++//
++//     * Redistributions of source code must retain the above copyright
++//       notice, this list of conditions and the following disclaimer.
++//
++//     * Redistributions in binary form must reproduce the above
++//       copyright notice, this list of conditions and the following
++//       disclaimer in the documentation and/or other materials provided
++//       with the distribution.
++//
++//     * Neither the name of Chris Sweeney nor the names of its contributors may
++//       be used to endorse or promote products derived from this software
++//       without specific prior written permission.
++//
++// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
++// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
++// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
++// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
++// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
++// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
++// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
++// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
++// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
++// POSSIBILITY OF SUCH DAMAGE.
++//
++// Please contact the author of this library if you have any questions.
++// Author: Chris Sweeney (cmsweeney@cs.ucsb.edu)
++
++#ifndef RPOLY_PLUS_PLUS_POLYNOMIAL_H_
++#define RPOLY_PLUS_PLUS_POLYNOMIAL_H_
++
++#include <Eigen/Core>
++
++namespace rpoly_plus_plus
++{
++
++// All polynomials are assumed to be the form
++//
++//   sum_{i=0}^N polynomial(i) x^{N-i}.
++//
++// and are given by a vector of coefficients of size N + 1.
++
++// Remove leading terms with zero coefficients.
++Eigen::VectorXd RemoveLeadingZeros(const Eigen::VectorXd& polynomial_in);
++
++// Evaluate the polynomial at x using the Horner scheme.
++template <typename T>
++inline T EvaluatePolynomial(const Eigen::VectorXd& polynomial, const T& x)
++{
++    T v = 0.0;
++    for (int i = 0; i < polynomial.size(); ++i)
++    {
++        v = v * x + polynomial(i);
++    }
++    return v;
++}
++
++// Return the derivative of the given polynomial. It is assumed that
++// the input polynomial is at least of degree zero.
++Eigen::VectorXd DifferentiatePolynomial(const Eigen::VectorXd& polynomial);
++
++// Multiplies the two polynoimals together.
++Eigen::VectorXd MultiplyPolynomials(const Eigen::VectorXd& poly1,
++                                    const Eigen::VectorXd& poly2);
++
++// Adds two polynomials together.
++Eigen::VectorXd AddPolynomials(const Eigen::VectorXd& poly1,
++                               const Eigen::VectorXd& poly2);
++
++// Find a root from the starting guess using Newton's method.
++double FindRootIterativeNewton(const Eigen::VectorXd& polynomial,
++                               const double x0,
++                               const double epsilon,
++                               const int max_iterations);
++
++}  // namespace rpoly_plus_plus
++
++#endif  // RPOLY_PLUS_PLUS_POLYNOMIAL_H_
+Index: scilab-5.5.2/modules/polynomials/src/cpp/rpoly.cpp
+===================================================================
+--- /dev/null
++++ scilab-5.5.2/modules/polynomials/src/cpp/rpoly.cpp
+@@ -0,0 +1,73 @@
++/*
++ * Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
++ * Copyright (C) 2016 - Scilab Enterprises - Clement DAVID
++ *
++ * Copyright (C) 2012 - 2016 - Scilab Enterprises
++ *
++ * This file is hereby licensed under the terms of the GNU GPL v2.0,
++ * pursuant to article 5.3.4 of the CeCILL v.2.1.
++ * This file was originally licensed under the terms of the CeCILL v2.1,
++ * and continues to be available under such terms.
++ * For more information, see the COPYING file which you should have received
++ * along with this program.
++ *
++ */
++
++extern "C" {
++#include "dynlib_polynomials.h"
++#include "machine.h"            /* C2F */
++
++    POLYNOMIALS_IMPEXP int C2F(rpoly)(double* op, int* degree, double* zeror, double* zeroi, int* fail);
++}
++
++#include "find_polynomial_roots_jenkins_traub.h"
++#include <Eigen/Core>
++
++/**
++ * finds the zeros of a real polynomial (compatible with the original rpoly.f)
++ *
++ * \param op  double precision vector of coefficients in
++ *            order of decreasing powers.
++ * \param degree integer degree of polynomial.
++ * \param zeror real part of the zeros
++ * \param zeroi imaginary part of the zeros
++ * \param fail output parameter,
++ *             2 if  leading coefficient is zero
++ *             1 for non convergence or if rpoly has found fewer than degree
++ *               zeros. In the latter case degree is reset to the number of
++ *               zeros found.
++ *             3 if degree>100
++ */
++POLYNOMIALS_IMPEXP int C2F(rpoly)(double* op, int* degree, double* zeror, double* zeroi, int* fail)
++{
++    if (*degree > 100)
++    {
++        *fail = 3;
++        return 0;
++    }
++
++    // let's copy there as Map<VectorXd> is not supported yet on rpoly_plus_plus
++    Eigen::Map<Eigen::VectorXd> mapped_op(op, *degree + 1);
++    Eigen::Map<Eigen::VectorXd> mapped_zeror(zeror, *degree);
++    Eigen::Map<Eigen::VectorXd> mapped_zeroi(zeroi, *degree);
++
++    // reverse as the polynomials are used in different ordering
++    Eigen::VectorXd polynomial(mapped_op);
++    Eigen::VectorXd real_roots(*degree);
++    Eigen::VectorXd complex_roots(*degree);
++
++    bool valid = rpoly_plus_plus::FindPolynomialRootsJenkinsTraub(polynomial, &real_roots, &complex_roots);
++    if (!valid)
++    {
++        *fail = 1;
++        return 0;
++    }
++
++    mapped_zeror = real_roots;
++    mapped_zeroi = complex_roots;
++
++    *fail = 0;
++    return 0;
++}
++
++
+Index: scilab-5.5.2/modules/polynomials/tests/unit_tests/roots.dia.ref
+===================================================================
+--- scilab-5.5.2.orig/modules/polynomials/tests/unit_tests/roots.dia.ref
++++ scilab-5.5.2/modules/polynomials/tests/unit_tests/roots.dia.ref
+@@ -14,30 +14,30 @@ function sortedRoots=sortRoots(rootsToSo
+     sortedRoots = rootsToSort(kRoots);
+ endfunction
+ function checkroots(p,expectedroots,varargin)
+-     // Checks the roots function against given roots.
+-     //
+-     // 1. Check default algorithm
+-     myroots=roots(p);
+-     computedroots = sortRoots(myroots);
+-     expectedroots  = sortRoots(expectedroots);
+-     assert_checkalmostequal(computedroots,expectedroots,varargin(:));
+-     //
+-     // 2. Check "e" algorithm
+-     myroots=roots(p,"e");
+-     computedroots = sortRoots(myroots);
+-     expectedroots  = sortRoots(expectedroots);
+-     assert_checkalmostequal(computedroots,expectedroots,varargin(:));
+-     //
+-     // 3. Check "f" algorithm
+-     if ( isreal(p) ) then
+-         myroots=roots(p,"f");
+-         computedroots = sortRoots(myroots);
+-         expectedroots  = sortRoots(expectedroots);
+-         assert_checkalmostequal(computedroots,expectedroots,varargin(:));
+-     end
++    // Checks the roots function against given roots.
++    //
++    // 1. Check default algorithm
++    myroots=roots(p);
++    computedroots = sortRoots(myroots);
++    expectedroots  = sortRoots(expectedroots);
++    assert_checkalmostequal(computedroots,expectedroots,varargin(:));
++    //
++    // 2. Check "e" algorithm
++    myroots=roots(p,"e");
++    computedroots = sortRoots(myroots);
++    expectedroots  = sortRoots(expectedroots);
++    assert_checkalmostequal(computedroots,expectedroots,varargin(:));
++    //
++    // 3. Check "f" algorithm
++    if ( isreal(p) ) then
++        myroots=roots(p,"f");
++        computedroots = sortRoots(myroots);
++        expectedroots  = sortRoots(expectedroots);
++        assert_checkalmostequal(computedroots,expectedroots,varargin(:));
++    end
+ endfunction
+ //   Check the computation of the roots of a polynomial
+-//   with different kinds of polynomials and different 
++//   with different kinds of polynomials and different
+ //   kinds of roots :
+ //   - real poly,
+ //   - complex poly,
+@@ -79,42 +79,6 @@ checkroots(p,expectedroots,%eps);
+ p=(%s-%pi)^2;
+ expectedroots  = [%pi;%pi];
+ checkroots(p,expectedroots,10*%eps);
+-//
+-// Caution !
+-// The following are difficult root-finding problems
+-// with expected precision problems.
+-// See "Principles for testing polynomial 
+-// zerofinding programs"
+-// Jenkins, Traub
+-// 1975
+-// p.28
+-// "The accuracy which one may expect to achieve in calculating
+-// zeros is limited by the condition of these zeros. In particular,
+-// for multiple zeros perturbations of size epsilon in the 
+-// coefficients cause perturbations of size epsilon^(1/m)
+-// in the zeros."
+-// 
+-//
+-// 3 real roots with a zero derivate at the root
+-// Really difficult problem : only simple precision computed, instead of double precision ***
+-p=(%s-%pi)^3;
+-expectedroots  = [%pi;%pi;%pi];
+-checkroots(p,expectedroots,%eps^(1/3),5*%eps^(1/3));
+-// 4 real roots with a zero derivate at the root
+-// Really difficult problem : only simple precision
+-p=(%s-%pi)^4;
+-expectedroots  = [%pi;%pi;%pi;%pi];
+-checkroots(p,expectedroots,%eps^(1/4),5*%eps^(1/4))
+-// 10 real roots with a zero derivate at the root
+-// Really difficult problem : only one correct digit
+-p=(%s-%pi)^10;
+-expectedroots  = [%pi;%pi;%pi;%pi;%pi;%pi;%pi;%pi;%pi;%pi];
+-checkroots(p,expectedroots,%eps^(1/10),8*%eps^(1/10))
+-// "Numerical computing with Matlab", Cleve Moler.
+-A = diag(1:20);
+-p = poly(A,'x');
+-e = [1:20]';
+-checkroots(p,e,%eps,0.2);
+ // Tests from CPOLY
+ // M. A. Jenkins and J. F. Traub. 1972.
+ // Algorithm 419: zeros of a complex polynomial.
+@@ -242,7 +206,7 @@ E = [
+ E = sortRoots(E);
+ R = sortRoots(R);
+ assert_checkalmostequal(R, E, 1.e-3, 1.e-3);
+-// EXAMPLE 5. 12 ZEROS EVENLY DISTRIBUTE ON A CIRCLE OF 
++// EXAMPLE 5. 12 ZEROS EVENLY DISTRIBUTE ON A CIRCLE OF
+ // RADIUS 1. CENTERED AT 0+2I
+ // Real part:
+ // 4095 - 67584*x^2 + 126720*x^4 - 59136*x^6 + 7920*x^8 - 264*x^10 + x^12
+@@ -296,5 +260,5 @@ E = [
+ E = sortRoots(E);
+ R = sortRoots(R);
+ assert_checkalmostequal(R, E, 1.e-10, 1.e-8);
+-assert_checkequal(roots([4 3 2 1]), roots(poly([1 2 3 4], 'x', 'coeff')));
+-assert_checkequal(roots([4 3 2 1] + [1 2 3 4]*%i), roots(poly([1 2 3 4]+[4 3 2 1]*%i,'x','coeff')));
++assert_checkequal(roots([4 3 2 1]), roots(poly([1 2 3 4], "x", "coeff")));
++assert_checkequal(roots([4 3 2 1] + [1 2 3 4]*%i), roots(poly([1 2 3 4]+[4 3 2 1]*%i,"x","coeff")));
+Index: scilab-5.5.2/modules/polynomials/tests/unit_tests/roots.tst
+===================================================================
+--- scilab-5.5.2.orig/modules/polynomials/tests/unit_tests/roots.tst
++++ scilab-5.5.2/modules/polynomials/tests/unit_tests/roots.tst
+@@ -9,7 +9,6 @@
+ 
+ // <-- CLI SHELL MODE -->
+ 
+-
+ function sortedRoots=sortRoots(rootsToSort)
+     //Sort roots using rounded values to avoid rounding errors
+     //Here 10000 is ok due to roots values
+@@ -18,31 +17,31 @@ function sortedRoots=sortRoots(rootsToSo
+ endfunction
+ 
+ function checkroots(p,expectedroots,varargin)
+-     // Checks the roots function against given roots.
+-     //
+-     // 1. Check default algorithm
+-     myroots=roots(p);
+-     computedroots = sortRoots(myroots);
+-     expectedroots  = sortRoots(expectedroots);
+-     assert_checkalmostequal(computedroots,expectedroots,varargin(:));
+-     //
+-     // 2. Check "e" algorithm
+-     myroots=roots(p,"e");
+-     computedroots = sortRoots(myroots);
+-     expectedroots  = sortRoots(expectedroots);
+-     assert_checkalmostequal(computedroots,expectedroots,varargin(:));
+-     //
+-     // 3. Check "f" algorithm
+-     if ( isreal(p) ) then
+-         myroots=roots(p,"f");
+-         computedroots = sortRoots(myroots);
+-         expectedroots  = sortRoots(expectedroots);
+-         assert_checkalmostequal(computedroots,expectedroots,varargin(:));
+-     end
++    // Checks the roots function against given roots.
++    //
++    // 1. Check default algorithm
++    myroots=roots(p);
++    computedroots = sortRoots(myroots);
++    expectedroots  = sortRoots(expectedroots);
++    assert_checkalmostequal(computedroots,expectedroots,varargin(:));
++    //
++    // 2. Check "e" algorithm
++    myroots=roots(p,"e");
++    computedroots = sortRoots(myroots);
++    expectedroots  = sortRoots(expectedroots);
++    assert_checkalmostequal(computedroots,expectedroots,varargin(:));
++    //
++    // 3. Check "f" algorithm
++    if ( isreal(p) ) then
++        myroots=roots(p,"f");
++        computedroots = sortRoots(myroots);
++        expectedroots  = sortRoots(expectedroots);
++        assert_checkalmostequal(computedroots,expectedroots,varargin(:));
++    end
+ endfunction
+ 
+ //   Check the computation of the roots of a polynomial
+-//   with different kinds of polynomials and different 
++//   with different kinds of polynomials and different
+ //   kinds of roots :
+ //   - real poly,
+ //   - complex poly,
+@@ -86,43 +85,6 @@ checkroots(p,expectedroots,%eps);
+ p=(%s-%pi)^2;
+ expectedroots  = [%pi;%pi];
+ checkroots(p,expectedroots,10*%eps);
+-//
+-// Caution !
+-// The following are difficult root-finding problems
+-// with expected precision problems.
+-// See "Principles for testing polynomial 
+-// zerofinding programs"
+-// Jenkins, Traub
+-// 1975
+-// p.28
+-// "The accuracy which one may expect to achieve in calculating
+-// zeros is limited by the condition of these zeros. In particular,
+-// for multiple zeros perturbations of size epsilon in the 
+-// coefficients cause perturbations of size epsilon^(1/m)
+-// in the zeros."
+-// 
+-//
+-// 3 real roots with a zero derivate at the root
+-// Really difficult problem : only simple precision computed, instead of double precision ***
+-p=(%s-%pi)^3;
+-expectedroots  = [%pi;%pi;%pi];
+-checkroots(p,expectedroots,%eps^(1/3),5*%eps^(1/3));
+-// 4 real roots with a zero derivate at the root
+-// Really difficult problem : only simple precision
+-p=(%s-%pi)^4;
+-expectedroots  = [%pi;%pi;%pi;%pi];
+-checkroots(p,expectedroots,%eps^(1/4),5*%eps^(1/4))
+-// 10 real roots with a zero derivate at the root
+-// Really difficult problem : only one correct digit
+-p=(%s-%pi)^10;
+-expectedroots  = [%pi;%pi;%pi;%pi;%pi;%pi;%pi;%pi;%pi;%pi];
+-checkroots(p,expectedroots,%eps^(1/10),8*%eps^(1/10))
+-
+-// "Numerical computing with Matlab", Cleve Moler.
+-A = diag(1:20);
+-p = poly(A,'x');
+-e = [1:20]';
+-checkroots(p,e,%eps,0.2);
+ 
+ // Tests from CPOLY
+ // M. A. Jenkins and J. F. Traub. 1972.
+@@ -255,7 +217,7 @@ E = sortRoots(E);
+ R = sortRoots(R);
+ assert_checkalmostequal(R, E, 1.e-3, 1.e-3);
+ 
+-// EXAMPLE 5. 12 ZEROS EVENLY DISTRIBUTE ON A CIRCLE OF 
++// EXAMPLE 5. 12 ZEROS EVENLY DISTRIBUTE ON A CIRCLE OF
+ // RADIUS 1. CENTERED AT 0+2I
+ // Real part:
+ // 4095 - 67584*x^2 + 126720*x^4 - 59136*x^6 + 7920*x^8 - 264*x^10 + x^12
+@@ -311,6 +273,6 @@ E = sortRoots(E);
+ R = sortRoots(R);
+ assert_checkalmostequal(R, E, 1.e-10, 1.e-8);
+ 
+-assert_checkequal(roots([4 3 2 1]), roots(poly([1 2 3 4], 'x', 'coeff')));
+-assert_checkequal(roots([4 3 2 1] + [1 2 3 4]*%i), roots(poly([1 2 3 4]+[4 3 2 1]*%i,'x','coeff')));
++assert_checkequal(roots([4 3 2 1]), roots(poly([1 2 3 4], "x", "coeff")));
++assert_checkequal(roots([4 3 2 1] + [1 2 3 4]*%i), roots(poly([1 2 3 4]+[4 3 2 1]*%i,"x","coeff")));
+ 
+Index: scilab-5.5.2/modules/polynomials/tests/unit_tests/roots_difficult.tst
+===================================================================
+--- /dev/null
++++ scilab-5.5.2/modules/polynomials/tests/unit_tests/roots_difficult.tst
+@@ -0,0 +1,50 @@
++// =============================================================================
++// Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
++// Copyright (C) 2008 - 2009 - INRIA - Michael Baudin
++// Copyright (C) 2011 - DIGITEO - Michael Baudin
++// Copyright (C) 2012 - INRIA - Serge Steer
++// Copyright (C) 2016 - Scilab Enterprises - Clement David
++//
++//  This file is distributed under the same license as the Scilab package.
++// =============================================================================
++
++// <-- CLI SHELL MODE -->
++// <-- NOT FIXED YET -->
++
++//
++// Caution !
++// The following are difficult root-finding problems
++// with expected precision problems.
++// See "Principles for testing polynomial
++// zerofinding programs"
++// Jenkins, Traub
++// 1975
++// p.28
++// "The accuracy which one may expect to achieve in calculating
++// zeros is limited by the condition of these zeros. In particular,
++// for multiple zeros perturbations of size epsilon in the
++// coefficients cause perturbations of size epsilon^(1/m)
++// in the zeros."
++//
++//
++// 3 real roots with a zero derivate at the root
++// Really difficult problem : only simple precision computed, instead of double precision ***
++p=(%s-%pi)^3;
++expectedroots  = [%pi;%pi;%pi];
++checkroots(p,expectedroots,%eps^(1/3),5*%eps^(1/3));
++// 4 real roots with a zero derivate at the root
++// Really difficult problem : only simple precision
++p=(%s-%pi)^4;
++expectedroots  = [%pi;%pi;%pi;%pi];
++checkroots(p,expectedroots,%eps^(1/4),5*%eps^(1/4))
++// 10 real roots with a zero derivate at the root
++// Really difficult problem : only one correct digit
++p=(%s-%pi)^10;
++expectedroots  = [%pi;%pi;%pi;%pi;%pi;%pi;%pi;%pi;%pi;%pi];
++checkroots(p,expectedroots,%eps^(1/10),8*%eps^(1/10))
++
++// "Numerical computing with Matlab", Cleve Moler.
++A = diag(1:20);
++p = poly(A,"x");
++e = [1:20]';
++checkroots(p,e,%eps,0.2);
+Index: scilab-5.5.2/modules/randlib/Makefile.am
+===================================================================
+--- scilab-5.5.2.orig/modules/randlib/Makefile.am
++++ scilab-5.5.2/modules/randlib/Makefile.am
+@@ -1,10 +1,12 @@
+ # Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+ # Copyright (C) 2006 - INRIA - Sylvestre LEDRU
++# Copyright (C) 2016 - Scilab Enterprises - Clement DAVID
++#
+ #
+ # This file is distributed under the same license as the Scilab package.
+ 
+ 
+-RANDLIB_C_SOURCES = src/c/fsultra.c \
++RANDLIB_C_SOURCES = \
+ src/c/mt.c \
+ src/c/igngeom.c \
+ src/c/kiss.c \
+Index: scilab-5.5.2/modules/randlib/help/en_US/grand.xml
+===================================================================
+--- scilab-5.5.2.orig/modules/randlib/help/en_US/grand.xml
++++ scilab-5.5.2/modules/randlib/help/en_US/grand.xml
+@@ -473,7 +473,7 @@
+                     <itemizedlist>
+                         <listitem>
+                             <para>
+-                                <literal>[0, 2^32 - 1]</literal> for mt, kiss and fsultra;
++                                <literal>[0, 2^32 - 1]</literal> for mt and kiss;
+                             </para>
+                         </listitem>
+                         <listitem>
+@@ -545,17 +545,6 @@
+                 </listitem>
+             </varlistentry>
+             <varlistentry>
+-                <term>fsultra</term>
+-                <listitem>
+-                    <para>
+-                        A Subtract-with-Borrow generator mixing with a congruential
+-                        generator of Arif Zaman and George Marsaglia, period more than <literal>10^356</literal>,
+-                        state given by an array of <literal>37</literal> integers (plus an index onto this array, a flag (<literal>0</literal> or <literal>1</literal>)
+-                        and another integer).
+-                    </para>
+-                </listitem>
+-            </varlistentry>
+-            <varlistentry>
+                 <term>urand</term>
+                 <listitem>
+                     <para>
+@@ -580,7 +569,7 @@
+                     <para>
+                         <code>S = grand("getgen")</code> returns the current base generator.
+                         In this case <varname>S</varname> is
+-                        a string among <literal>"mt"</literal>, <literal>"kiss"</literal>, <literal>"clcg2"</literal>, <literal>"clcg4"</literal>, <literal>"urand"</literal>, <literal>"fsultra"</literal>.
++                        a string among <literal>"mt"</literal>, <literal>"kiss"</literal>, <literal>"clcg2"</literal>, <literal>"clcg4"</literal>, <literal>"urand"</literal>.
+                     </para>
+                 </listitem>
+             </varlistentry>
+@@ -589,7 +578,7 @@
+                 <listitem>
+                     <para>
+                         <code>grand("setgen",gen)</code> sets the current base generator to be <varname>gen</varname>
+-                        a string among <literal>"mt"</literal>, <literal>"kiss"</literal>, <literal>"clcg2"</literal>, <literal>"clcg4"</literal>, <literal>"urand"</literal>, <literal>"fsultra"</literal>.
++                        a string among <literal>"mt"</literal>, <literal>"kiss"</literal>, <literal>"clcg2"</literal>, <literal>"clcg4"</literal>, <literal>"urand"</literal>.
+                         Notice that this call returns the new current generator, i.e. <varname>gen</varname>.
+                     </para>
+                 </listitem>
+@@ -601,7 +590,7 @@
+                         <code>S = grand("getsd")</code> gets the current state (the current seeds) of the current base
+                         generator ; <varname>S</varname> is given as a column vector (of integers) of dimension <literal>625</literal>
+                         for mt (the first being an index in <literal>[1,624]</literal>), <literal>4</literal> for kiss, <literal>2</literal>
+-                        for clcg2,  <literal>40</literal> for fsultra, <literal>4</literal> for clcg4
++                        for clcg2,  <literal>4</literal> for clcg4
+                         (for this last one you get the current state of the current virtual generator) and <literal>1</literal>
+                         for urand.
+                     </para>
+@@ -670,18 +659,6 @@
+                                 </para>
+                             </listitem>
+                         </varlistentry>
+-                        <varlistentry>
+-                            <term>for fsultra</term>
+-                            <listitem>
+-                                <para>
+-                                    <varname>S</varname> is a vector of integers of dim <literal>40</literal> (the first component
+-                                    is an index and must be in <literal>[0,37]</literal>, the 2nd component is a flag (0 or 1), the 3rd component is
+-                                    an integer in <literal>[1,2^32[</literal> and the 37 others integers are in <literal>[0,2^32[</literal>) ; a simpler (and recommended)
+-                                    initialization may be done with two integers <varname>s1</varname> and <varname>s2</varname> in
+-                                    <literal>[0,2^32[</literal>.
+-                                </para>
+-                            </listitem>
+-                        </varlistentry>
+                     </variablelist>
+                 </listitem>
+             </varlistentry>
+Index: scilab-5.5.2/modules/randlib/help/fr_FR/grand.xml
+===================================================================
+--- scilab-5.5.2.orig/modules/randlib/help/fr_FR/grand.xml
++++ scilab-5.5.2/modules/randlib/help/fr_FR/grand.xml
+@@ -444,7 +444,7 @@
+                     <itemizedlist>
+                         <listitem>
+                             <para>
+-                                <literal>[0, 2^32 - 1]</literal> for mt, kiss and fsultra;
++                                <literal>[0, 2^32 - 1]</literal> for mt and kiss;
+                             </para>
+                         </listitem>
+                         <listitem>
+@@ -518,18 +518,6 @@
+                 </listitem>
+             </varlistentry>
+             <varlistentry>
+-                <term>fsultra</term>
+-                <listitem>
+-                    <para>
+-                        Un générateur SWB (subtract-with-borrow) mixé avec un générator congruentiel
+-                        concu par Arif Zaman et George Marsaglia. Sa période est supérieure à <literal>10^356</literal>,
+-                        et son état interne est constitué d'un tableau de 37 entiers, d'un index sur
+-                        ce tableau et d'un drapeau (0 ou 1) ainsi qu'un autre entier donnant l'état interne
+-                        du générateur congruentiel.
+-                    </para>
+-                </listitem>
+-            </varlistentry>
+-            <varlistentry>
+                 <term>urand</term>
+                 <listitem>
+                     <para>
+@@ -554,7 +542,7 @@
+                 <listitem>
+                     <para>
+                         <literal>S = grand("getgen")</literal> retourne le nom du générateur de base actuel (<literal>S</literal> est
+-                        l'une des chaînes de caractères "mt", "kiss", "clcg2", "clcg4", "urand", "fsultra").
++                        l'une des chaînes de caractères "mt", "kiss", "clcg2", "clcg4", "urand").
+                     </para>
+                 </listitem>
+             </varlistentry>
+@@ -563,7 +551,7 @@
+                 <listitem>
+                     <para>
+                         <literal>grand("setgen", gen)</literal> permet de changer le générateur de base : <literal>gen</literal>
+-                        doit être l'une des chaînes de caractères "mt", "kiss", "clcg2", "clcg4", "urand", "fsultra".
++                        doit être l'une des chaînes de caractères "mt", "kiss", "clcg2", "clcg4", "urand".
+                         En cas de succès la fonction retourne cette même chaîne.
+                     </para>
+                 </listitem>
+@@ -577,7 +565,7 @@
+                         <literal>S</literal> est un vecteur colonne (d'entiers) de dimension <literal>625</literal>
+                         pour mt (la première composante étant un 'index' sur l'état, c-a-d un entier de l'intervalle
+                         <literal>[1,624]</literal>), <literal>4</literal>
+-                        pour kiss, <literal>2</literal> pour clcg2 , <literal>40</literal>pour fsultra, <literal>4</literal> pour clcg4
++                        pour kiss, <literal>2</literal> pour clcg2 , <literal>4</literal> pour clcg4
+                         (pour ce dernier vous obtenez l'état interne du générateur virtuel courant), et <literal>1</literal>
+                         pour urand.
+                     </para>
+@@ -645,18 +633,6 @@
+                                 </para>
+                             </listitem>
+                         </varlistentry>
+-                        <varlistentry>
+-                            <term>for fsultra</term>
+-                            <listitem>
+-                                <para>
+-                                    <literal>S</literal> est un vecteur de <literal>40</literal> entiers (son premier élément doit être dans
+-                                    l'intervalle<literal>[0, 37]</literal>, son deuxième (drapeau) doit être 0 ou 1, le troisième un
+-                                    entier de <literal>[1, 2^32[</literal> et les 37 composantes suivantes, des entiers de <literal>[0, 2^32[</literal>) ; il est recommandé
+-                                    d'utiliser l'autre procédure d'initialisation (plus simple) avec deux entiers <literal>s1</literal> et
+-                                    <literal>s2</literal> de <literal>[0, 2^32[</literal>.
+-                                </para>
+-                            </listitem>
+-                        </varlistentry>
+                     </variablelist>
+                 </listitem>
+             </varlistentry>
+Index: scilab-5.5.2/modules/randlib/help/ru_RU/grand.xml
+===================================================================
+--- scilab-5.5.2.orig/modules/randlib/help/ru_RU/grand.xml
++++ scilab-5.5.2/modules/randlib/help/ru_RU/grand.xml
+@@ -440,7 +440,7 @@
+                     <itemizedlist>
+                         <listitem>
+                             <para>
+-                                <literal>[0, 2^32 - 1]</literal>  для mt, kiss и fsultra;
++                                <literal>[0, 2^32 - 1]</literal>  для mt, kiss;
+                             </para>
+                         </listitem>
+                         <listitem>
+@@ -516,20 +516,6 @@
+                 </listitem>
+             </varlistentry>
+             <varlistentry>
+-                <term>fsultra</term>
+-                <listitem>
+-                    <para>
+-                        Генератор вычитания с займом (Subtract-with-Borrow), смешанный с
+-                        конгруэнтным генератором Арифа Замана (Arif Zaman) и Джорджа
+-                        Марсальи (George Marsaglia), с периодом свыше
+-                        <literal>10^356</literal>, состояние задаётся массивом из
+-                        <literal>37</literal> целых чисел (плюс индекс на этот массив,
+-                        флаг (<literal>0</literal> или <literal>1</literal>) и другое
+-                        целое число).
+-                    </para>
+-                </listitem>
+-            </varlistentry>
+-            <varlistentry>
+                 <term>urand</term>
+                 <listitem>
+                     <para>
+@@ -557,7 +543,7 @@
+                         генератор. В данном случае <varname>S</varname> является одной
+                         строкой из <literal>"mt"</literal>, <literal>"kiss"</literal>,
+                         <literal>"clcg2"</literal>, <literal>"clcg4"</literal>,
+-                        <literal>"urand"</literal>, <literal>"fsultra"</literal>.
++                        <literal>"urand"</literal>.
+                     </para>
+                 </listitem>
+             </varlistentry>
+@@ -569,7 +555,7 @@
+                         генератор. В данном случае <varname>gen</varname> может быть одной
+                         строкой из <literal>"mt"</literal>, <literal>"kiss"</literal>,
+                         <literal>"clcg2"</literal>, <literal>"clcg4"</literal>,
+-                        <literal>"urand"</literal>, <literal>"fsultra"</literal>.
++                        <literal>"urand"</literal>.
+                         Заметьте, что этот вызов возвращает новый текущий генератор, т.е.
+                         <varname>gen</varname>.
+                     </para>
+@@ -586,8 +572,7 @@
+                         <literal>"mt"</literal> (первое значение является индексом в
+                         интервале <literal>[1,624]</literal>),  <literal>4</literal> для
+                         <literal>"kiss"</literal>,  <literal>2</literal> для
+-                        <literal>"clcg2"</literal>, <literal>40</literal> для
+-                        <literal>"fsultra"</literal>,  <literal>4</literal> для
++                        <literal>"clcg2"</literal>, <literal>4</literal> для
+                         <literal>"clcg4"</literal> (для последнего вы получите текущее
+                         состояние текущего виртуального генератора) и
+                         <literal>1</literal> для <literal>"urand"</literal>.
+@@ -660,19 +645,6 @@
+                                 </para>
+                             </listitem>
+                         </varlistentry>
+-                        <varlistentry>
+-                            <term>для fsultra</term>
+-                            <listitem>
+-                                <para>
+-                                    <varname>S</varname> является вектором целых чисел, состоящий из 40 элементов  (первый элемент является
+-                                    индексом и должен быть на интервале <literal>[0,37]</literal>, второй элемент является
+-                                    флагом (0 или 1), третий элемент является целым числом на интервале  <literal>[1,2^32[</literal>, а 37
+-                                    остальных целых чисел должны быть на интервале <literal>[0,2^32[</literal>. Более простая (и
+-                                    рекомендованная) инициализация может быть сделана с помощью двух целых чисел <varname>s1</varname> и
+-                                    <varname>s2</varname> на интервале <literal>[0,2^32[</literal>.
+-                                </para>
+-                            </listitem>
+-                        </varlistentry>
+                     </variablelist>
+                 </listitem>
+             </varlistentry>
+Index: scilab-5.5.2/modules/randlib/includes/others_generators.h
+===================================================================
+--- scilab-5.5.2.orig/modules/randlib/includes/others_generators.h
++++ scilab-5.5.2/modules/randlib/includes/others_generators.h
+@@ -37,12 +37,6 @@ RANDLIB_IMPEXP unsigned long int urandc(
+ RANDLIB_IMPEXP int set_state_urand(double g);
+ RANDLIB_IMPEXP void get_state_urand(double g[]);
+ 
+-/* header for scilab fsultra */
+-RANDLIB_IMPEXP unsigned long int fsultra(void);
+-RANDLIB_IMPEXP int set_state_fsultra(double g[]);
+-RANDLIB_IMPEXP int set_state_fsultra_simple(double g1, double g2);
+-RANDLIB_IMPEXP void get_state_fsultra(double g[]);
+-
+ #endif /** SCI_OTHER_GEN   **/
+ 
+ 
+Index: scilab-5.5.2/modules/randlib/tests/unit_tests/grand_generators.dia.ref
+===================================================================
+--- scilab-5.5.2.orig/modules/randlib/tests/unit_tests/grand_generators.dia.ref
++++ scilab-5.5.2/modules/randlib/tests/unit_tests/grand_generators.dia.ref
+@@ -158,11 +158,11 @@ endfunction
+ // MinInt : minimum of the uniform integer interval for random number generation
+ // MaxInt : maximum of the uniform integer interval for random number generation
+ //
+-NGen = 6;
+-generators = ["mt"   "kiss" "clcg2"    "clcg4" "fsultra" "urand"];
+-seedsize =   [625    4      2          4       40        1];
+-MinInt =     [0      0      0          0       0         0];
+-MaxInt =     [2^32-1 2^32-1 2147483561 2^31-2  2^32-1    2^31-1];
++NGen = 5;
++generators = ["mt"   "kiss" "clcg2"    "clcg4" "urand"];
++seedsize =   [625    4      2          4       1];
++MinInt =     [0      0      0          0       0];
++MaxInt =     [2^32-1 2^32-1 2147483561 2^31-2  2^31-1];
+ rtol = 1.e-2;
+ // The number of classes in the histogram
+ // NC must be even.
+@@ -170,7 +170,7 @@ NC = 2*12;
+ N=10000;
+ //
+ // The default generator must be Mersenne-Twister
+-S=grand('getgen');
++S=grand("getgen");
+ assert_checkequal ( S , "mt" );
+ // The maximum integer generable with uin option
+ UinMax = 2147483560;
+@@ -181,39 +181,39 @@ UinMax = 2147483560;
+ kgen = 1;
+ gen = "mt";
+ sdsize = seedsize(kgen);
+-grand('setgen',gen);
+-S=grand('getgen');
++grand("setgen",gen);
++S=grand("getgen");
+ assert_checkequal ( S , gen );
+ //
+-grand('setsd',0);
+-S=grand('getsd');
++grand("setsd",0);
++S=grand("getsd");
+ assert_checkequal ( typeof(S) , "constant" );
+ assert_checkequal ( size(S) , [sdsize 1] );
+ //
+-grand('setsd',123456);
+-S=grand('getsd');
++grand("setsd",123456);
++S=grand("getsd");
+ assert_checkequal ( typeof(S) , "constant" );
+ assert_checkequal ( size(S) , [sdsize 1] );
+ //
+ // Check numbers
+ expected = [
+-0.5488135    0.6027634    0.4236548    0.4375872    0.9636628    0.7917250  
+-0.5928446    0.8579456    0.6235637    0.2975346    0.2726563    0.8121687  
+-0.7151894    0.5448832    0.6458941    0.891773     0.3834415    0.5288949  
+-0.8442657    0.8472517    0.3843817    0.0567130    0.4776651    0.4799772  
++0.5488135    0.6027634    0.4236548    0.4375872    0.9636628    0.7917250
++0.5928446    0.8579456    0.6235637    0.2975346    0.2726563    0.8121687
++0.7151894    0.5448832    0.6458941    0.891773     0.3834415    0.5288949
++0.8442657    0.8472517    0.3843817    0.0567130    0.4776651    0.4799772
+ ];
+-grand('setsd',0);
++grand("setsd",0);
+ computed = grand(4,6,"def");
+ assert_checkalmostequal ( computed , expected, 1.e-6 );
+ //
+ // Check integers
+ expected = [
+-    2357136044.    2588848963.    1819583497.    1879422756.    4138900056.    3400433126.  
+-    2546248239.    3684848379.    2678185683.    1277901399.    1171049868.    3488238119.  
+-    3071714933.    2340255427.    2774094101.    3830135878.    1646868794.    2271586391.  
+-    3626093760.    3638918503.    1650906866.    243580376.     2051556033.    2061486254.  
++2357136044.    2588848963.    1819583497.    1879422756.    4138900056.    3400433126.
++2546248239.    3684848379.    2678185683.    1277901399.    1171049868.    3488238119.
++3071714933.    2340255427.    2774094101.    3830135878.    1646868794.    2271586391.
++3626093760.    3638918503.    1650906866.    243580376.     2051556033.    2061486254.
+ ];
+-grand('setsd',0);
++grand("setsd",0);
+ computed = grand(4,6,"lgi");
+ assert_checkequal ( computed , expected );
+ //
+@@ -234,39 +234,39 @@ checkPieceLaw0arg ( "lgi" , mycdflgi , N
+ kgen = 2;
+ gen = "kiss";
+ sdsize = seedsize(kgen);
+-grand('setgen',gen);
+-S=grand('getgen');
++grand("setgen",gen);
++S=grand("getgen");
+ assert_checkequal ( S , gen );
+ //
+-grand('setsd',0,0,0,0);
+-S=grand('getsd');
++grand("setsd",0,0,0,0);
++S=grand("getsd");
+ assert_checkequal ( typeof(S) , "constant" );
+ assert_checkequal ( size(S) , [sdsize 1] );
+ //
+-grand('setsd',123456,123456,123456,123456);
+-S=grand('getsd');
++grand("setsd",123456,123456,123456,123456);
++S=grand("getsd");
+ assert_checkequal ( typeof(S) , "constant" );
+ assert_checkequal ( size(S) , [sdsize 1] );
+ //
+ // Check numbers
+ expected = [
+-    2.874450D-04    9.423555D-01    7.707249D-02    2.078324D-02    4.746445D-01    1.895302D-01  
+-    8.538282D-01    5.493145D-01    3.200836D-01    4.775516D-01    2.245108D-01    6.637360D-01  
+-    5.815227D-02    6.006782D-01    8.569004D-01    1.235649D-02    7.357421D-01    5.837571D-01  
+-    5.196679D-01    2.448867D-01    2.568304D-01    4.503826D-01    9.680347D-01    5.214808D-01  
++2.874450D-04    9.423555D-01    7.707249D-02    2.078324D-02    4.746445D-01    1.895302D-01
++8.538282D-01    5.493145D-01    3.200836D-01    4.775516D-01    2.245108D-01    6.637360D-01
++5.815227D-02    6.006782D-01    8.569004D-01    1.235649D-02    7.357421D-01    5.837571D-01
++5.196679D-01    2.448867D-01    2.568304D-01    4.503826D-01    9.680347D-01    5.214808D-01
+ ];
+-grand('setsd',0,0,0,0);
++grand("setsd",0,0,0,0);
+ computed = grand(4,6,"def");
+ assert_checkalmostequal ( computed , expected, 1.e-6 );
+ //
+ // Check integers
+ expected = [
+-    1234567.       4047385867.    331023823.     89263315.      2038582807.    814026139.   
+-    3667164066.    2359287638.    1374748746.    2051068542.    964266482.     2850724518.  
+-    249762113.     2579893349.    3680359369.    53070701.      3159988049.    2507217781.  
+-    2231956628.    1051780200.    1103078268.    1934378448.    4157677412.    2239743032.  
++1234567.       4047385867.    331023823.     89263315.      2038582807.    814026139.
++3667164066.    2359287638.    1374748746.    2051068542.    964266482.     2850724518.
++249762113.     2579893349.    3680359369.    53070701.      3159988049.    2507217781.
++2231956628.    1051780200.    1103078268.    1934378448.    4157677412.    2239743032.
+ ];
+-grand('setsd',0,0,0,0);
++grand("setsd",0,0,0,0);
+ computed = grand(4,6,"lgi");
+ assert_checkequal ( computed , expected );
+ //
+@@ -287,39 +287,39 @@ checkPieceLaw0arg ( "lgi" , mycdflgi , N
+ kgen = 3;
+ gen = "clcg2";
+ sdsize = seedsize(kgen);
+-grand('setgen',gen);
+-S=grand('getgen');
++grand("setgen",gen);
++S=grand("getgen");
+ assert_checkequal ( S , gen );
+ //
+-grand('setsd',1,1);
+-S=grand('getsd');
++grand("setsd",1,1);
++S=grand("getsd");
+ assert_checkequal ( typeof(S) , "constant" );
+ assert_checkequal ( size(S) , [sdsize 1] );
+ //
+-grand('setsd',123456,123456);
+-S=grand('getsd');
++grand("setsd",123456,123456);
++S=grand("getsd");
+ assert_checkequal ( typeof(S) , "constant" );
+ assert_checkequal ( size(S) , [sdsize 1] );
+ //
+ // Check numbers
+ expected = [
+-0.9999997    0.0369445    0.2041364    0.9100817    0.6998243    0.9596867  
+-0.9745196    0.1617119    0.1673069    0.1117162    0.9502824    0.9149753  
+-0.6474839    0.6646450    0.6549574    0.2990212    0.0918107    0.4411791  
+-0.3330856    0.0846729    0.1288161    0.2654475    0.9023415    0.0735483  
++0.9999997    0.0369445    0.2041364    0.9100817    0.6998243    0.9596867
++0.9745196    0.1617119    0.1673069    0.1117162    0.9502824    0.9149753
++0.6474839    0.6646450    0.6549574    0.2990212    0.0918107    0.4411791
++0.3330856    0.0846729    0.1288161    0.2654475    0.9023415    0.0735483
+ ];
+-grand('setsd',1,1);
++grand("setsd",1,1);
+ computed = grand(4,6,"def");
+ assert_checkalmostequal ( computed , expected, 1.e-5 );
+ //
+ // Check integers
+ expected = [
+-    2147482884.    79337801.      438379562.     1954385533.    1502861091.    2060911403.  
+-    2092764894.    347273588.     359288887.     239908781.     2040715732.    1964894377.  
+-    1390461064.    1427314282.    1406510214.    642143055.     197161966.     947424871.   
+-    715295839.     181833602.     276630551.     570044126.     1937763493.    157943826.   
++2147482884.    79337801.      438379562.     1954385533.    1502861091.    2060911403.
++2092764894.    347273588.     359288887.     239908781.     2040715732.    1964894377.
++1390461064.    1427314282.    1406510214.    642143055.     197161966.     947424871.
++715295839.     181833602.     276630551.     570044126.     1937763493.    157943826.
+ ];
+-grand('setsd',1,1);
++grand("setsd",1,1);
+ computed = grand(4,6,"lgi");
+ assert_checkequal ( computed , expected );
+ //
+@@ -340,46 +340,46 @@ checkPieceLaw0arg ( "lgi" , mycdflgi , N
+ kgen = 4;
+ gen = "clcg4";
+ sdsize = seedsize(kgen);
+-grand('setgen',gen);
+-S=grand('getgen');
++grand("setgen",gen);
++S=grand("getgen");
+ assert_checkequal ( S , gen );
+ //
+ warning("off");
+-grand('setsd',1,1,1,1);
++grand("setsd",1,1,1,1);
+ warning("on");
+-S=grand('getsd');
++S=grand("getsd");
+ assert_checkequal ( typeof(S) , "constant" );
+ assert_checkequal ( size(S) , [sdsize 1] );
+ //
+ warning("off");
+-grand('setsd',123456,123456,123456,123456);
++grand("setsd",123456,123456,123456,123456);
+ warning("on");
+-S=grand('getsd');
++S=grand("getsd");
+ assert_checkequal ( typeof(S) , "constant" );
+ assert_checkequal ( size(S) , [sdsize 1] );
+ //
+ // Check numbers
+ expected = [
+-0.9999661    0.0552914    0.6345306    0.0640227    0.2885048    0.2781458  
+-0.6852419    0.1806991    0.8665501    0.0981421    0.2660715    0.4279616  
+-0.4370514    0.4956021    0.6870544    0.8501209    0.1271038    0.4554926  
+-0.4202952    0.2903676    0.5712601    0.4764120    0.1818799    0.3121748  
++0.9999661    0.0552914    0.6345306    0.0640227    0.2885048    0.2781458
++0.6852419    0.1806991    0.8665501    0.0981421    0.2660715    0.4279616
++0.4370514    0.4956021    0.6870544    0.8501209    0.1271038    0.4554926
++0.4202952    0.2903676    0.5712601    0.4764120    0.1818799    0.3121748
+ ];
+ warning("off");
+-grand('setsd',1,1,1,1);
++grand("setsd",1,1,1,1);
+ warning("on");
+ computed = grand(4,6,"def");
+ assert_checkalmostequal ( computed , expected, 1.e-6 );
+ //
+ // Check integers
+ expected = [
+-    2147410798.    118737467.     1362644105.    137487708.     619559402.    597313629.  
+-    1471545799.    388048305.     1860902184.    210758531.     571384155.    919040470.  
+-    938560647.     1064297484.    1475437993.    1825620628.    272953383.    978162913.  
+-    902576998.     623559632.     1226771622.    1023086907.    390584072.    670390361.  
++2147410798.    118737467.     1362644105.    137487708.     619559402.    597313629.
++1471545799.    388048305.     1860902184.    210758531.     571384155.    919040470.
++938560647.     1064297484.    1475437993.    1825620628.    272953383.    978162913.
++902576998.     623559632.     1226771622.    1023086907.    390584072.    670390361.
+ ];
+ warning("off");
+-grand('setsd',1,1,1,1);
++grand("setsd",1,1,1,1);
+ warning("on");
+ computed = grand(4,6,"lgi");
+ assert_checkequal ( computed , expected );
+@@ -396,94 +396,41 @@ checkPieceLaw2arg ( "uin" , mycdfuin , N
+ checkPieceLaw0arg ( "lgi" , mycdflgi , N , NC , rtol );
+ ////////////////////////////////////////////////////////////////////
+ //
+-// "fsultra"
+-//
+-kgen = 5;
+-gen = "fsultra";
+-sdsize = seedsize(kgen);
+-grand('setgen',gen);
+-S=grand('getgen');
+-assert_checkequal ( S , gen );
+-//
+-grand('setsd',1,1);
+-S=grand('getsd');
+-assert_checkequal ( typeof(S) , "constant" );
+-assert_checkequal ( size(S) , [sdsize 1] );
+-//
+-grand('setsd',123456,123456);
+-S=grand('getsd');
+-assert_checkequal ( typeof(S) , "constant" );
+-assert_checkequal ( size(S) , [sdsize 1] );
+-//
+-// Check numbers
+-expected = [
+-0.3314877    0.3699260    0.4383216    0.99706      0.0577929    0.4836669  
+-0.5826624    0.9600475    0.2037475    0.6774254    0.4450278    0.3082941  
+-0.1630857    0.2033307    0.4214824    0.6372521    0.0782678    0.4409892  
+-0.7211611    0.1833922    0.8065496    0.6375251    0.2572713    0.8039582  
+-];
+-grand('setsd',1,1);
+-computed = grand(4,6,"def");
+-assert_checkalmostequal ( computed , expected, 1.e-6 );
+-//
+-// Check integers
+-expected = [
+-    1423728774.    1588820113.    1882577034.    4282340079.    248218608.     2077333598.  
+-    2502516061.    4123372468.    875088704.     2909519830.    1911379739.    1324113135.  
+-    700447838.     873298853.     1810253313.    2736976953.    336157762.     1894034123.  
+-    3097363227.    787663378.     3464104206.    2738149622.    1104971606.    3452974260.  
+-];
+-grand('setsd',1,1);
+-computed = grand(4,6,"lgi");
+-assert_checkequal ( computed , expected );
+-//
+-// Check distribution of uniform numbers in [0,1[
+-checkMeanVariance0arg ( 400 , 800 , "def" , 1/2 , 1/12 , rtol );
+-checkLaw0arg ( "def" , mycdfdef , N , NC , rtol );
+-//
+-// Check distribution of uniform integers in [A,B]
+-A = MinInt(kgen);
+-B = MaxInt(kgen);
+-checkMeanVariance0arg ( 400 , 800 , "lgi" , (A+B)/2 , ((B-A+1)^2-1)/12 , rtol );
+-checkPieceLaw2arg ( "uin" , mycdfuin , N , NC , 0 , UinMax , rtol );
+-checkPieceLaw0arg ( "lgi" , mycdflgi , N , NC , rtol );
+-////////////////////////////////////////////////////////////////////
+-//
+ // "urand"
+ //
+-kgen = 6;
++kgen = 5;
+ gen = "urand";
+-grand('setgen',gen);
+-S=grand('getgen');
++grand("setgen",gen);
++S=grand("getgen");
+ assert_checkequal ( S , gen );
+ //
+-grand('setsd',1);
+-S=grand('getsd');
++grand("setsd",1);
++S=grand("getsd");
+ assert_checkequal ( S , 1 );
+ //
+-grand('setsd',123456);
+-S=grand('getsd');
++grand("setsd",123456);
++S=grand("getsd");
+ assert_checkequal ( S , 123456 );
+ //
+ // Check numbers
+ expected = [
+-0.6040239    0.5321420    0.2276811    0.8979351    0.8925854    0.6928366  
+-0.0079647    0.4138784    0.6656067    0.8274020    0.0848163    0.6776849  
+-0.6643966    0.5036204    0.9694369    0.0664231    0.2566682    0.4284010  
+-0.9832111    0.6850569    0.0775390    0.1099766    0.6507795    0.3725794  
++0.6040239    0.5321420    0.2276811    0.8979351    0.8925854    0.6928366
++0.0079647    0.4138784    0.6656067    0.8274020    0.0848163    0.6776849
++0.6643966    0.5036204    0.9694369    0.0664231    0.2566682    0.4284010
++0.9832111    0.6850569    0.0775390    0.1099766    0.6507795    0.3725794
+ ];
+-grand('setsd',1);
++grand("setsd",1);
+ computed = grand(4,6,"def");
+ assert_checkalmostequal ( computed , expected, 1.e-5 );
+ //
+ // Check integers
+ expected = [
+-    1297131554.    1142766270.    488941338.     1928300854.    1916812562.    1487855278.  
+-    17103983.      888797147.     1429379591.    1776832243.    182141599.     1455317259.  
+-    1426780792.    1081516660.    2081849904.    142642604.     551190760.     919984100.   
+-    2111429773.    1471148505.    166513637.     236172977.     1397538365.    800108169.   
++1297131554.    1142766270.    488941338.     1928300854.    1916812562.    1487855278.
++17103983.      888797147.     1429379591.    1776832243.    182141599.     1455317259.
++1426780792.    1081516660.    2081849904.    142642604.     551190760.     919984100.
++2111429773.    1471148505.    166513637.     236172977.     1397538365.    800108169.
+ ];
+-grand('setsd',1);
++grand("setsd",1);
+ computed = grand(4,6,"lgi");
+ assert_checkequal ( computed , expected );
+ //
+Index: scilab-5.5.2/modules/randlib/tests/unit_tests/grand_generators.tst
+===================================================================
+--- scilab-5.5.2.orig/modules/randlib/tests/unit_tests/grand_generators.tst
++++ scilab-5.5.2/modules/randlib/tests/unit_tests/grand_generators.tst
+@@ -9,160 +9,160 @@
+ // <-- ENGLISH IMPOSED -->
+ 
+ function checkMeanVariance2arg ( m , n , name , A , B , mu , va , rtol )
+-  // Check the mean and variance of random numbers.
+-  //
+-  // Parameters
+-  // m : a 1-by-1 matrix of floating point integers, the number of rows
+-  // n : a 1-by-1 matrix of floating point integers, the number of columns
+-  // name: a 1-by-1 string, the name of the distribution function
+-  // A : a 1-by-1 matrix of doubles, the value of the 1st parameter
+-  // B : a 1-by-1 matrix of doubles, the value of the 2nd parameter
+-  // mu : a 1-by-1 matrix of doubles, the expected mean
+-  // va : a 1-by-1 matrix of doubles, the expected variance. If va==[], then the variance is not checked.
+-  // rtol : a 1-by-1 matrix of doubles, the relative tolerance
+-  
+-  R=grand(m,n,name,A,B);
+-  assert_checkequal ( size(R) , [m,n] );
+-  assert_checkequal ( typeof(R) , "constant" );
+-  assert_checkalmostequal ( mean(R) , mu , rtol );
+-  if ( va<>[] ) then
+-    assert_checkalmostequal ( variance(R) , va , rtol );
+-  end
++    // Check the mean and variance of random numbers.
++    //
++    // Parameters
++    // m : a 1-by-1 matrix of floating point integers, the number of rows
++    // n : a 1-by-1 matrix of floating point integers, the number of columns
++    // name: a 1-by-1 string, the name of the distribution function
++    // A : a 1-by-1 matrix of doubles, the value of the 1st parameter
++    // B : a 1-by-1 matrix of doubles, the value of the 2nd parameter
++    // mu : a 1-by-1 matrix of doubles, the expected mean
++    // va : a 1-by-1 matrix of doubles, the expected variance. If va==[], then the variance is not checked.
++    // rtol : a 1-by-1 matrix of doubles, the relative tolerance
++
++    R=grand(m,n,name,A,B);
++    assert_checkequal ( size(R) , [m,n] );
++    assert_checkequal ( typeof(R) , "constant" );
++    assert_checkalmostequal ( mean(R) , mu , rtol );
++    if ( va<>[] ) then
++        assert_checkalmostequal ( variance(R) , va , rtol );
++    end
+ endfunction
+ 
+ function checkMeanVariance0arg ( m , n , name , mu , va , rtol )
+-  // Check the mean and variance of random numbers.
+-  //
+-  // Parameters
+-  // m : a 1-by-1 matrix of floating point integers, the number of rows
+-  // n : a 1-by-1 matrix of floating point integers, the number of columns
+-  // name: a 1-by-1 string, the name of the distribution function
+-  // mu : a 1-by-1 matrix of doubles, the expected mean
+-  // va : a 1-by-1 matrix of doubles, the expected variance. If va==[], then the variance is not checked.
+-  // rtol : a 1-by-1 matrix of doubles, the relative tolerance
+-  
+-  R=grand(m,n,name);
+-  assert_checkequal ( size(R) , [m,n] );
+-  assert_checkequal ( typeof(R) , "constant" );
+-  assert_checkalmostequal ( mean(R) , mu , rtol );
+-  if ( va<>[] ) then
+-    assert_checkalmostequal ( variance(R) , va , rtol );
+-  end
++    // Check the mean and variance of random numbers.
++    //
++    // Parameters
++    // m : a 1-by-1 matrix of floating point integers, the number of rows
++    // n : a 1-by-1 matrix of floating point integers, the number of columns
++    // name: a 1-by-1 string, the name of the distribution function
++    // mu : a 1-by-1 matrix of doubles, the expected mean
++    // va : a 1-by-1 matrix of doubles, the expected variance. If va==[], then the variance is not checked.
++    // rtol : a 1-by-1 matrix of doubles, the relative tolerance
++
++    R=grand(m,n,name);
++    assert_checkequal ( size(R) , [m,n] );
++    assert_checkequal ( typeof(R) , "constant" );
++    assert_checkalmostequal ( mean(R) , mu , rtol );
++    if ( va<>[] ) then
++        assert_checkalmostequal ( variance(R) , va , rtol );
++    end
+ endfunction
+ 
+ function checkLaw0arg ( name , cdffun , N , NC , rtol )
+-  //
+-  // Check the random number generator for a continuous distribution function.
+-  //
+-  // Parameters
+-  // name: a 1-by-1 string, the name of the distribution function
+-  // cdffun : a function, the Cumulated Distribution Function
+-  // NC : a 1-by-1 matrix of floating point integers, the number of classes
+-  // N : a 1-by-1 matrix of floating point integers, the number of random values to test
+-  // rtol : a 1-by-1 matrix of doubles, the relative tolerance
+-  //
+-  // Description
+-  //  Compare the empirical histogram with the theoretical histogram.
+-
+-  R = grand(1,N,name);
+-  [X,EmpiricalPDF] = histcompute(NC,R);
+-  CDF = cdffun(X)
+-  TheoricPDF = diff(CDF);
+-  assert_checktrue ( abs(EmpiricalPDF-TheoricPDF) < rtol );
++    //
++    // Check the random number generator for a continuous distribution function.
++    //
++    // Parameters
++    // name: a 1-by-1 string, the name of the distribution function
++    // cdffun : a function, the Cumulated Distribution Function
++    // NC : a 1-by-1 matrix of floating point integers, the number of classes
++    // N : a 1-by-1 matrix of floating point integers, the number of random values to test
++    // rtol : a 1-by-1 matrix of doubles, the relative tolerance
++    //
++    // Description
++    //  Compare the empirical histogram with the theoretical histogram.
++
++    R = grand(1,N,name);
++    [X,EmpiricalPDF] = histcompute(NC,R);
++    CDF = cdffun(X)
++    TheoricPDF = diff(CDF);
++    assert_checktrue ( abs(EmpiricalPDF-TheoricPDF) < rtol );
+     if ( %f ) then
+-      plot(X(1:$-1),EmpiricalPDF,"bo-"); // Empirical Histogram
+-      plot(X(1:$-1),TheoricPDF,"rox-"); // Theoretical Histogram
++        plot(X(1:$-1),EmpiricalPDF,"bo-"); // Empirical Histogram
++        plot(X(1:$-1),TheoricPDF,"rox-"); // Theoretical Histogram
+     end
+ endfunction
+ 
+ function checkPieceLaw0arg ( name , cdffun , N , NC , rtol )
+-  //
+-  // Check the random number generator for a piecewise distribution function.
+-  //
+-  // Parameters
+-  // name: a 1-by-1 string, the name of the distribution function
+-  // cdffun : a function, the Cumulated Distribution Function
+-  // NC : a 1-by-1 matrix of floating point integers, the number of classes
+-  // N : a 1-by-1 matrix of floating point integers, the number of random values to test
+-  // rtol : a 1-by-1 matrix of doubles, the relative tolerance
+-  //
+-  // Description
+-  //  Compare the empirical histogram with the theoretical histogram.
+-  //  The classes of the histogram are computed from the random samples, 
+-  //  from which the unique entries are extracted.
+-
+-  R=grand(N,1,name);
+-  X = unique(R);
+-  for k = 1 : size(X,"*")
+-    EmpiricalPDF(k) = length(find(R==X(k)));
+-  end
+-  EmpiricalPDF = EmpiricalPDF./N;
+-  CDF = cdffun(X)
+-  TheoricPDF=[CDF(1);diff(CDF)];
+-  assert_checktrue( abs(EmpiricalPDF-TheoricPDF) < rtol );
+-  if ( %f ) then
+-    plot(X,EmpiricalPDF,"bo-"); // Empirical Histogram
+-    plot(X,TheoricPDF,"rox-"); // Theoretical Histogram
+-  end
++    //
++    // Check the random number generator for a piecewise distribution function.
++    //
++    // Parameters
++    // name: a 1-by-1 string, the name of the distribution function
++    // cdffun : a function, the Cumulated Distribution Function
++    // NC : a 1-by-1 matrix of floating point integers, the number of classes
++    // N : a 1-by-1 matrix of floating point integers, the number of random values to test
++    // rtol : a 1-by-1 matrix of doubles, the relative tolerance
++    //
++    // Description
++    //  Compare the empirical histogram with the theoretical histogram.
++    //  The classes of the histogram are computed from the random samples,
++    //  from which the unique entries are extracted.
++
++    R=grand(N,1,name);
++    X = unique(R);
++    for k = 1 : size(X,"*")
++        EmpiricalPDF(k) = length(find(R==X(k)));
++    end
++    EmpiricalPDF = EmpiricalPDF./N;
++    CDF = cdffun(X)
++    TheoricPDF=[CDF(1);diff(CDF)];
++    assert_checktrue( abs(EmpiricalPDF-TheoricPDF) < rtol );
++    if ( %f ) then
++        plot(X,EmpiricalPDF,"bo-"); // Empirical Histogram
++        plot(X,TheoricPDF,"rox-"); // Theoretical Histogram
++    end
+ endfunction
+ 
+ function checkPieceLaw2arg ( name , cdffun , N , NC , A , B , rtol )
+-  //
+-  // Check the random number generator for a piecewise distribution function.
+-  //
+-  // Parameters
+-  // name: a 1-by-1 string, the name of the distribution function
+-  // cdffun : a function, the Cumulated Distribution Function
+-  // NC : a 1-by-1 matrix of floating point integers, the number of classes
+-  // N : a 1-by-1 matrix of floating point integers, the number of random values to test
+-  // A : a 1-by-1 matrix of doubles, the value of the parameter
+-  // rtol : a 1-by-1 matrix of doubles, the relative tolerance
+-  //
+-  // Description
+-  //  Compare the empirical histogram with the theoretical histogram.
+-  //  The classes of the histogram are computed from the random samples, 
+-  //  from which the unique entries are extracted.
+-
+-  R=grand(N,1,name,A,B);
+-  X = unique(R);
+-  for k = 1 : size(X,"*")
+-    EmpiricalPDF(k) = length(find(R==X(k)));
+-  end
+-  EmpiricalPDF = EmpiricalPDF./N;
+-  CDF = cdffun(X,A,B)
+-  TheoricPDF=[CDF(1);diff(CDF)];
+-  assert_checktrue( abs(EmpiricalPDF-TheoricPDF) < rtol );
+-  if ( %f ) then
+-    plot(X,EmpiricalPDF,"bo-"); // Empirical Histogram
+-    plot(X,TheoricPDF,"rox-"); // Theoretical Histogram
+-  end
++    //
++    // Check the random number generator for a piecewise distribution function.
++    //
++    // Parameters
++    // name: a 1-by-1 string, the name of the distribution function
++    // cdffun : a function, the Cumulated Distribution Function
++    // NC : a 1-by-1 matrix of floating point integers, the number of classes
++    // N : a 1-by-1 matrix of floating point integers, the number of random values to test
++    // A : a 1-by-1 matrix of doubles, the value of the parameter
++    // rtol : a 1-by-1 matrix of doubles, the relative tolerance
++    //
++    // Description
++    //  Compare the empirical histogram with the theoretical histogram.
++    //  The classes of the histogram are computed from the random samples,
++    //  from which the unique entries are extracted.
++
++    R=grand(N,1,name,A,B);
++    X = unique(R);
++    for k = 1 : size(X,"*")
++        EmpiricalPDF(k) = length(find(R==X(k)));
++    end
++    EmpiricalPDF = EmpiricalPDF./N;
++    CDF = cdffun(X,A,B)
++    TheoricPDF=[CDF(1);diff(CDF)];
++    assert_checktrue( abs(EmpiricalPDF-TheoricPDF) < rtol );
++    if ( %f ) then
++        plot(X,EmpiricalPDF,"bo-"); // Empirical Histogram
++        plot(X,TheoricPDF,"rox-"); // Theoretical Histogram
++    end
+ endfunction
+ 
+ function [x,y] = histcompute(n,data)
+-   //
+-   // Computes the histogram of a data.
+-   //
+-   // Parameters
+-   // n : a 1-by-1 matrix of floating point integers, the number of classes.
+-   // data : a matrix of doubles, the data
+-   // x : 1-by-n+1 matrix of doubles, the classes of the histogram
+-   // y : 1-by-n+1 matrix of doubles, the empirical probability that one value in data which fall in each class
+-   x = linspace(min(data), max(data), n+1);
+-   [ind , y] = dsearch(data, x)
+-   y = y./length(data)
++    //
++    // Computes the histogram of a data.
++    //
++    // Parameters
++    // n : a 1-by-1 matrix of floating point integers, the number of classes.
++    // data : a matrix of doubles, the data
++    // x : 1-by-n+1 matrix of doubles, the classes of the histogram
++    // y : 1-by-n+1 matrix of doubles, the empirical probability that one value in data which fall in each class
++    x = linspace(min(data), max(data), n+1);
++    [ind , y] = dsearch(data, x)
++    y = y./length(data)
+ endfunction
+ 
+ function p = mycdfdef (X)
+-  p = X
++    p = X
+ endfunction
+ 
+ function p = mycdfuin (X,A,B)
+-  p = (floor(X)-A+1)/(B-A+1)
++    p = (floor(X)-A+1)/(B-A+1)
+ endfunction
+ 
+ function p = mycdflgi (X)
+-  // Here, A and B are read from the environment
+-  p = (floor(X)-A+1)/(B-A+1)
++    // Here, A and B are read from the environment
++    p = (floor(X)-A+1)/(B-A+1)
+ endfunction
+ 
+ 
+@@ -174,11 +174,11 @@ endfunction
+ // MinInt : minimum of the uniform integer interval for random number generation
+ // MaxInt : maximum of the uniform integer interval for random number generation
+ //
+-NGen = 6;
+-generators = ["mt"   "kiss" "clcg2"    "clcg4" "fsultra" "urand"];
+-seedsize =   [625    4      2          4       40        1];
+-MinInt =     [0      0      0          0       0         0];
+-MaxInt =     [2^32-1 2^32-1 2147483561 2^31-2  2^32-1    2^31-1];
++NGen = 5;
++generators = ["mt"   "kiss" "clcg2"    "clcg4" "urand"];
++seedsize =   [625    4      2          4       1];
++MinInt =     [0      0      0          0       0];
++MaxInt =     [2^32-1 2^32-1 2147483561 2^31-2  2^31-1];
+ 
+ rtol = 1.e-2;
+ 
+@@ -189,7 +189,7 @@ N=10000;
+ 
+ //
+ // The default generator must be Mersenne-Twister
+-S=grand('getgen');
++S=grand("getgen");
+ assert_checkequal ( S , "mt" );
+ 
+ // The maximum integer generable with uin option
+@@ -202,39 +202,39 @@ UinMax = 2147483560;
+ kgen = 1;
+ gen = "mt";
+ sdsize = seedsize(kgen);
+-grand('setgen',gen);
+-S=grand('getgen');
++grand("setgen",gen);
++S=grand("getgen");
+ assert_checkequal ( S , gen );
+ //
+-grand('setsd',0);
+-S=grand('getsd');
++grand("setsd",0);
++S=grand("getsd");
+ assert_checkequal ( typeof(S) , "constant" );
+ assert_checkequal ( size(S) , [sdsize 1] );
+ //
+-grand('setsd',123456);
+-S=grand('getsd');
++grand("setsd",123456);
++S=grand("getsd");
+ assert_checkequal ( typeof(S) , "constant" );
+ assert_checkequal ( size(S) , [sdsize 1] );
+ //
+ // Check numbers
+ expected = [
+-0.5488135    0.6027634    0.4236548    0.4375872    0.9636628    0.7917250  
+-0.5928446    0.8579456    0.6235637    0.2975346    0.2726563    0.8121687  
+-0.7151894    0.5448832    0.6458941    0.891773     0.3834415    0.5288949  
+-0.8442657    0.8472517    0.3843817    0.0567130    0.4776651    0.4799772  
++0.5488135    0.6027634    0.4236548    0.4375872    0.9636628    0.7917250
++0.5928446    0.8579456    0.6235637    0.2975346    0.2726563    0.8121687
++0.7151894    0.5448832    0.6458941    0.891773     0.3834415    0.5288949
++0.8442657    0.8472517    0.3843817    0.0567130    0.4776651    0.4799772
+ ];
+-grand('setsd',0);
++grand("setsd",0);
+ computed = grand(4,6,"def");
+ assert_checkalmostequal ( computed , expected, 1.e-6 );
+ //
+ // Check integers
+ expected = [
+-    2357136044.    2588848963.    1819583497.    1879422756.    4138900056.    3400433126.  
+-    2546248239.    3684848379.    2678185683.    1277901399.    1171049868.    3488238119.  
+-    3071714933.    2340255427.    2774094101.    3830135878.    1646868794.    2271586391.  
+-    3626093760.    3638918503.    1650906866.    243580376.     2051556033.    2061486254.  
++2357136044.    2588848963.    1819583497.    1879422756.    4138900056.    3400433126.
++2546248239.    3684848379.    2678185683.    1277901399.    1171049868.    3488238119.
++3071714933.    2340255427.    2774094101.    3830135878.    1646868794.    2271586391.
++3626093760.    3638918503.    1650906866.    243580376.     2051556033.    2061486254.
+ ];
+-grand('setsd',0);
++grand("setsd",0);
+ computed = grand(4,6,"lgi");
+ assert_checkequal ( computed , expected );
+ //
+@@ -256,39 +256,39 @@ checkPieceLaw0arg ( "lgi" , mycdflgi , N
+ kgen = 2;
+ gen = "kiss";
+ sdsize = seedsize(kgen);
+-grand('setgen',gen);
+-S=grand('getgen');
++grand("setgen",gen);
++S=grand("getgen");
+ assert_checkequal ( S , gen );
+ //
+-grand('setsd',0,0,0,0);
+-S=grand('getsd');
++grand("setsd",0,0,0,0);
++S=grand("getsd");
+ assert_checkequal ( typeof(S) , "constant" );
+ assert_checkequal ( size(S) , [sdsize 1] );
+ //
+-grand('setsd',123456,123456,123456,123456);
+-S=grand('getsd');
++grand("setsd",123456,123456,123456,123456);
++S=grand("getsd");
+ assert_checkequal ( typeof(S) , "constant" );
+ assert_checkequal ( size(S) , [sdsize 1] );
+ //
+ // Check numbers
+ expected = [
+-    2.874450D-04    9.423555D-01    7.707249D-02    2.078324D-02    4.746445D-01    1.895302D-01  
+-    8.538282D-01    5.493145D-01    3.200836D-01    4.775516D-01    2.245108D-01    6.637360D-01  
+-    5.815227D-02    6.006782D-01    8.569004D-01    1.235649D-02    7.357421D-01    5.837571D-01  
+-    5.196679D-01    2.448867D-01    2.568304D-01    4.503826D-01    9.680347D-01    5.214808D-01  
++2.874450D-04    9.423555D-01    7.707249D-02    2.078324D-02    4.746445D-01    1.895302D-01
++8.538282D-01    5.493145D-01    3.200836D-01    4.775516D-01    2.245108D-01    6.637360D-01
++5.815227D-02    6.006782D-01    8.569004D-01    1.235649D-02    7.357421D-01    5.837571D-01
++5.196679D-01    2.448867D-01    2.568304D-01    4.503826D-01    9.680347D-01    5.214808D-01
+ ];
+-grand('setsd',0,0,0,0);
++grand("setsd",0,0,0,0);
+ computed = grand(4,6,"def");
+ assert_checkalmostequal ( computed , expected, 1.e-6 );
+ //
+ // Check integers
+ expected = [
+-    1234567.       4047385867.    331023823.     89263315.      2038582807.    814026139.   
+-    3667164066.    2359287638.    1374748746.    2051068542.    964266482.     2850724518.  
+-    249762113.     2579893349.    3680359369.    53070701.      3159988049.    2507217781.  
+-    2231956628.    1051780200.    1103078268.    1934378448.    4157677412.    2239743032.  
++1234567.       4047385867.    331023823.     89263315.      2038582807.    814026139.
++3667164066.    2359287638.    1374748746.    2051068542.    964266482.     2850724518.
++249762113.     2579893349.    3680359369.    53070701.      3159988049.    2507217781.
++2231956628.    1051780200.    1103078268.    1934378448.    4157677412.    2239743032.
+ ];
+-grand('setsd',0,0,0,0);
++grand("setsd",0,0,0,0);
+ computed = grand(4,6,"lgi");
+ assert_checkequal ( computed , expected );
+ //
+@@ -309,39 +309,39 @@ checkPieceLaw0arg ( "lgi" , mycdflgi , N
+ kgen = 3;
+ gen = "clcg2";
+ sdsize = seedsize(kgen);
+-grand('setgen',gen);
+-S=grand('getgen');
++grand("setgen",gen);
++S=grand("getgen");
+ assert_checkequal ( S , gen );
+ //
+-grand('setsd',1,1);
+-S=grand('getsd');
++grand("setsd",1,1);
++S=grand("getsd");
+ assert_checkequal ( typeof(S) , "constant" );
+ assert_checkequal ( size(S) , [sdsize 1] );
+ //
+-grand('setsd',123456,123456);
+-S=grand('getsd');
++grand("setsd",123456,123456);
++S=grand("getsd");
+ assert_checkequal ( typeof(S) , "constant" );
+ assert_checkequal ( size(S) , [sdsize 1] );
+ //
+ // Check numbers
+ expected = [
+-0.9999997    0.0369445    0.2041364    0.9100817    0.6998243    0.9596867  
+-0.9745196    0.1617119    0.1673069    0.1117162    0.9502824    0.9149753  
+-0.6474839    0.6646450    0.6549574    0.2990212    0.0918107    0.4411791  
+-0.3330856    0.0846729    0.1288161    0.2654475    0.9023415    0.0735483  
++0.9999997    0.0369445    0.2041364    0.9100817    0.6998243    0.9596867
++0.9745196    0.1617119    0.1673069    0.1117162    0.9502824    0.9149753
++0.6474839    0.6646450    0.6549574    0.2990212    0.0918107    0.4411791
++0.3330856    0.0846729    0.1288161    0.2654475    0.9023415    0.0735483
+ ];
+-grand('setsd',1,1);
++grand("setsd",1,1);
+ computed = grand(4,6,"def");
+ assert_checkalmostequal ( computed , expected, 1.e-5 );
+ //
+ // Check integers
+ expected = [
+-    2147482884.    79337801.      438379562.     1954385533.    1502861091.    2060911403.  
+-    2092764894.    347273588.     359288887.     239908781.     2040715732.    1964894377.  
+-    1390461064.    1427314282.    1406510214.    642143055.     197161966.     947424871.   
+-    715295839.     181833602.     276630551.     570044126.     1937763493.    157943826.   
++2147482884.    79337801.      438379562.     1954385533.    1502861091.    2060911403.
++2092764894.    347273588.     359288887.     239908781.     2040715732.    1964894377.
++1390461064.    1427314282.    1406510214.    642143055.     197161966.     947424871.
++715295839.     181833602.     276630551.     570044126.     1937763493.    157943826.
+ ];
+-grand('setsd',1,1);
++grand("setsd",1,1);
+ computed = grand(4,6,"lgi");
+ assert_checkequal ( computed , expected );
+ //
+@@ -362,46 +362,46 @@ checkPieceLaw0arg ( "lgi" , mycdflgi , N
+ kgen = 4;
+ gen = "clcg4";
+ sdsize = seedsize(kgen);
+-grand('setgen',gen);
+-S=grand('getgen');
++grand("setgen",gen);
++S=grand("getgen");
+ assert_checkequal ( S , gen );
+ //
+ warning("off");
+-grand('setsd',1,1,1,1);
++grand("setsd",1,1,1,1);
+ warning("on");
+-S=grand('getsd');
++S=grand("getsd");
+ assert_checkequal ( typeof(S) , "constant" );
+ assert_checkequal ( size(S) , [sdsize 1] );
+ //
+ warning("off");
+-grand('setsd',123456,123456,123456,123456);
++grand("setsd",123456,123456,123456,123456);
+ warning("on");
+-S=grand('getsd');
++S=grand("getsd");
+ assert_checkequal ( typeof(S) , "constant" );
+ assert_checkequal ( size(S) , [sdsize 1] );
+ //
+ // Check numbers
+ expected = [
+-0.9999661    0.0552914    0.6345306    0.0640227    0.2885048    0.2781458  
+-0.6852419    0.1806991    0.8665501    0.0981421    0.2660715    0.4279616  
+-0.4370514    0.4956021    0.6870544    0.8501209    0.1271038    0.4554926  
+-0.4202952    0.2903676    0.5712601    0.4764120    0.1818799    0.3121748  
++0.9999661    0.0552914    0.6345306    0.0640227    0.2885048    0.2781458
++0.6852419    0.1806991    0.8665501    0.0981421    0.2660715    0.4279616
++0.4370514    0.4956021    0.6870544    0.8501209    0.1271038    0.4554926
++0.4202952    0.2903676    0.5712601    0.4764120    0.1818799    0.3121748
+ ];
+ warning("off");
+-grand('setsd',1,1,1,1);
++grand("setsd",1,1,1,1);
+ warning("on");
+ computed = grand(4,6,"def");
+ assert_checkalmostequal ( computed , expected, 1.e-6 );
+ //
+ // Check integers
+ expected = [
+-    2147410798.    118737467.     1362644105.    137487708.     619559402.    597313629.  
+-    1471545799.    388048305.     1860902184.    210758531.     571384155.    919040470.  
+-    938560647.     1064297484.    1475437993.    1825620628.    272953383.    978162913.  
+-    902576998.     623559632.     1226771622.    1023086907.    390584072.    670390361.  
++2147410798.    118737467.     1362644105.    137487708.     619559402.    597313629.
++1471545799.    388048305.     1860902184.    210758531.     571384155.    919040470.
++938560647.     1064297484.    1475437993.    1825620628.    272953383.    978162913.
++902576998.     623559632.     1226771622.    1023086907.    390584072.    670390361.
+ ];
+ warning("off");
+-grand('setsd',1,1,1,1);
++grand("setsd",1,1,1,1);
+ warning("on");
+ computed = grand(4,6,"lgi");
+ assert_checkequal ( computed , expected );
+@@ -418,94 +418,41 @@ checkPieceLaw2arg ( "uin" , mycdfuin , N
+ checkPieceLaw0arg ( "lgi" , mycdflgi , N , NC , rtol );
+ ////////////////////////////////////////////////////////////////////
+ //
+-// "fsultra"
+-//
+-kgen = 5;
+-gen = "fsultra";
+-sdsize = seedsize(kgen);
+-grand('setgen',gen);
+-S=grand('getgen');
+-assert_checkequal ( S , gen );
+-//
+-grand('setsd',1,1);
+-S=grand('getsd');
+-assert_checkequal ( typeof(S) , "constant" );
+-assert_checkequal ( size(S) , [sdsize 1] );
+-//
+-grand('setsd',123456,123456);
+-S=grand('getsd');
+-assert_checkequal ( typeof(S) , "constant" );
+-assert_checkequal ( size(S) , [sdsize 1] );
+-//
+-// Check numbers
+-expected = [
+-0.3314877    0.3699260    0.4383216    0.99706      0.0577929    0.4836669  
+-0.5826624    0.9600475    0.2037475    0.6774254    0.4450278    0.3082941  
+-0.1630857    0.2033307    0.4214824    0.6372521    0.0782678    0.4409892  
+-0.7211611    0.1833922    0.8065496    0.6375251    0.2572713    0.8039582  
+-];
+-grand('setsd',1,1);
+-computed = grand(4,6,"def");
+-assert_checkalmostequal ( computed , expected, 1.e-6 );
+-//
+-// Check integers
+-expected = [
+-    1423728774.    1588820113.    1882577034.    4282340079.    248218608.     2077333598.  
+-    2502516061.    4123372468.    875088704.     2909519830.    1911379739.    1324113135.  
+-    700447838.     873298853.     1810253313.    2736976953.    336157762.     1894034123.  
+-    3097363227.    787663378.     3464104206.    2738149622.    1104971606.    3452974260.  
+-];
+-grand('setsd',1,1);
+-computed = grand(4,6,"lgi");
+-assert_checkequal ( computed , expected );
+-//
+-// Check distribution of uniform numbers in [0,1[
+-checkMeanVariance0arg ( 400 , 800 , "def" , 1/2 , 1/12 , rtol );
+-checkLaw0arg ( "def" , mycdfdef , N , NC , rtol );
+-//
+-// Check distribution of uniform integers in [A,B]
+-A = MinInt(kgen);
+-B = MaxInt(kgen);
+-checkMeanVariance0arg ( 400 , 800 , "lgi" , (A+B)/2 , ((B-A+1)^2-1)/12 , rtol );
+-checkPieceLaw2arg ( "uin" , mycdfuin , N , NC , 0 , UinMax , rtol );
+-checkPieceLaw0arg ( "lgi" , mycdflgi , N , NC , rtol );
+-////////////////////////////////////////////////////////////////////
+-//
+ // "urand"
+ //
+-kgen = 6;
++kgen = 5;
+ gen = "urand";
+-grand('setgen',gen);
+-S=grand('getgen');
++grand("setgen",gen);
++S=grand("getgen");
+ assert_checkequal ( S , gen );
+ //
+-grand('setsd',1);
+-S=grand('getsd');
++grand("setsd",1);
++S=grand("getsd");
+ assert_checkequal ( S , 1 );
+ //
+-grand('setsd',123456);
+-S=grand('getsd');
++grand("setsd",123456);
++S=grand("getsd");
+ assert_checkequal ( S , 123456 );
+ //
+ // Check numbers
+ expected = [
+-0.6040239    0.5321420    0.2276811    0.8979351    0.8925854    0.6928366  
+-0.0079647    0.4138784    0.6656067    0.8274020    0.0848163    0.6776849  
+-0.6643966    0.5036204    0.9694369    0.0664231    0.2566682    0.4284010  
+-0.9832111    0.6850569    0.0775390    0.1099766    0.6507795    0.3725794  
++0.6040239    0.5321420    0.2276811    0.8979351    0.8925854    0.6928366
++0.0079647    0.4138784    0.6656067    0.8274020    0.0848163    0.6776849
++0.6643966    0.5036204    0.9694369    0.0664231    0.2566682    0.4284010
++0.9832111    0.6850569    0.0775390    0.1099766    0.6507795    0.3725794
+ ];
+-grand('setsd',1);
++grand("setsd",1);
+ computed = grand(4,6,"def");
+ assert_checkalmostequal ( computed , expected, 1.e-5 );
+ //
+ // Check integers
+ expected = [
+-    1297131554.    1142766270.    488941338.     1928300854.    1916812562.    1487855278.  
+-    17103983.      888797147.     1429379591.    1776832243.    182141599.     1455317259.  
+-    1426780792.    1081516660.    2081849904.    142642604.     551190760.     919984100.   
+-    2111429773.    1471148505.    166513637.     236172977.     1397538365.    800108169.   
++1297131554.    1142766270.    488941338.     1928300854.    1916812562.    1487855278.
++17103983.      888797147.     1429379591.    1776832243.    182141599.     1455317259.
++1426780792.    1081516660.    2081849904.    142642604.     551190760.     919984100.
++2111429773.    1471148505.    166513637.     236172977.     1397538365.    800108169.
+ ];
+-grand('setsd',1);
++grand("setsd",1);
+ computed = grand(4,6,"lgi");
+ assert_checkequal ( computed , expected );
+ //
+Index: scilab-5.5.2/modules/randlib/tests/unit_tests/grand_hypermat.dia.ref
+===================================================================
+--- scilab-5.5.2.orig/modules/randlib/tests/unit_tests/grand_hypermat.dia.ref
++++ scilab-5.5.2/modules/randlib/tests/unit_tests/grand_hypermat.dia.ref
+@@ -10,89 +10,77 @@
+ ///////////////////////////////////////////////////////////////////////////////
+ //
+ // Dimensions
+-mat = grand(100, 101, 102, 'unf', 0, 1);
++mat = grand(100, 101, 102, "unf", 0, 1);
+ assert_checktrue(size(mat) == [100 101 102]);
+ ///////////////////////////////////////////////////////////////////////////////
+ //
+ // Generators
+ // The grand(i, j, ...) should be equal to the first element of grand(i, j, k, ...).
+ // mt generator
+-grand('setgen', 'mt');
+-grand('setsd', 0);
+-expected = grand(4, 6, 'def');
+-grand('setsd', 0); // Resetting the seed to obtain the same results
+-computed = grand(4, 6, 5, 'def');
+-assert_checkequal(expected, computed(:, :, 1));
+-grand('setsd', 0);
+-expected = grand(4, 6, 'lgi');
+-grand('setsd', 0); // Resetting the seed to obtain the same results
+-computed = grand(4, 6, 5, 'lgi');
++grand("setgen", "mt");
++grand("setsd", 0);
++expected = grand(4, 6, "def");
++grand("setsd", 0); // Resetting the seed to obtain the same results
++computed = grand(4, 6, 5, "def");
++assert_checkequal(expected, computed(:, :, 1));
++grand("setsd", 0);
++expected = grand(4, 6, "lgi");
++grand("setsd", 0); // Resetting the seed to obtain the same results
++computed = grand(4, 6, 5, "lgi");
+ assert_checkequal(expected, computed(:, :, 1));
+ // kiss generator
+-grand('setgen', 'kiss');
+-grand('setsd', 0, 0, 0, 0);
+-expected = grand(4, 6, 'def');
+-grand('setsd', 0, 0, 0, 0); // Resetting the seed to obtain the same results
+-computed = grand(4, 6, 5, 'def');
+-assert_checkequal(expected, computed(:, :, 1));
+-grand('setsd', 0, 0, 0, 0);
+-expected = grand(4, 6, 'lgi');
+-grand('setsd', 0, 0, 0, 0); // Resetting the seed to obtain the same results
+-computed = grand(4, 6, 5, 'lgi');
++grand("setgen", "kiss");
++grand("setsd", 0, 0, 0, 0);
++expected = grand(4, 6, "def");
++grand("setsd", 0, 0, 0, 0); // Resetting the seed to obtain the same results
++computed = grand(4, 6, 5, "def");
++assert_checkequal(expected, computed(:, :, 1));
++grand("setsd", 0, 0, 0, 0);
++expected = grand(4, 6, "lgi");
++grand("setsd", 0, 0, 0, 0); // Resetting the seed to obtain the same results
++computed = grand(4, 6, 5, "lgi");
+ assert_checkequal(expected, computed(:, :, 1));
+ // clcg2 generator
+-grand('setgen', 'clcg2');
+-grand('setsd', 1, 1);
+-expected = grand(4, 6, 'def');
+-grand('setsd', 1, 1); // Resetting the seed to obtain the same results
+-computed = grand(4, 6, 5, 'def');
+-assert_checkequal(expected, computed(:, :, 1));
+-grand('setsd', 1, 1);
+-expected = grand(4, 6, 'lgi');
+-grand('setsd', 1, 1); // Resetting the seed to obtain the same results
+-computed = grand(4, 6, 5, 'lgi');
++grand("setgen", "clcg2");
++grand("setsd", 1, 1);
++expected = grand(4, 6, "def");
++grand("setsd", 1, 1); // Resetting the seed to obtain the same results
++computed = grand(4, 6, 5, "def");
++assert_checkequal(expected, computed(:, :, 1));
++grand("setsd", 1, 1);
++expected = grand(4, 6, "lgi");
++grand("setsd", 1, 1); // Resetting the seed to obtain the same results
++computed = grand(4, 6, 5, "lgi");
+ assert_checkequal(expected, computed(:, :, 1));
+ // clcg4 generator
+-grand('setgen', 'clcg4');
+-warning('off');
+-grand('setsd',1,1,1,1);
+-warning('on');
+-expected = grand(4, 6, 'def');
+-warning('off');
+-grand('setsd',1,1,1,1); // Resetting the seed to obtain the same results
+-warning('on');
+-computed = grand(4, 6, 5, 'def');
+-assert_checkequal(expected, computed(:, :, 1));
+-warning('off');
+-grand('setsd',1,1,1,1); // Resetting the seed to obtain the same results
+-warning('on');
+-expected = grand(4, 6, 'lgi');
+-warning('off');
+-grand('setsd',1,1,1,1); // Resetting the seed to obtain the same results
+-warning('on');
+-computed = grand(4, 6, 5, 'lgi');
+-assert_checkequal(expected, computed(:, :, 1));
+-// fsultra generator
+-grand('setgen', 'fsultra');
+-grand('setsd', 1, 1);
+-expected = grand(4, 6, 'def');
+-grand('setsd', 1, 1); // Resetting the seed to obtain the same results
+-computed = grand(4, 6, 5, 'def');
+-assert_checkequal(expected, computed(:, :, 1));
+-grand('setsd', 1, 1);
+-expected = grand(4, 6, 'lgi');
+-grand('setsd', 1, 1); // Resetting the seed to obtain the same results
+-computed = grand(4, 6, 5, 'lgi');
++grand("setgen", "clcg4");
++warning("off");
++grand("setsd",1,1,1,1);
++warning("on");
++expected = grand(4, 6, "def");
++warning("off");
++grand("setsd",1,1,1,1); // Resetting the seed to obtain the same results
++warning("on");
++computed = grand(4, 6, 5, "def");
++assert_checkequal(expected, computed(:, :, 1));
++warning("off");
++grand("setsd",1,1,1,1); // Resetting the seed to obtain the same results
++warning("on");
++expected = grand(4, 6, "lgi");
++warning("off");
++grand("setsd",1,1,1,1); // Resetting the seed to obtain the same results
++warning("on");
++computed = grand(4, 6, 5, "lgi");
+ assert_checkequal(expected, computed(:, :, 1));
+ // urand generator
+-grand('setgen', 'urand');
+-grand('setsd', 1);
+-expected = grand(4, 6, 'def');
+-grand('setsd', 1); // Resetting the seed to obtain the same results
+-computed = grand(4, 6, 5, 'def');
+-assert_checkequal(expected, computed(:, :, 1));
+-grand('setsd', 1);
+-expected = grand(4, 6, 'lgi');
+-grand('setsd', 1); // Resetting the seed to obtain the same results
+-computed = grand(4, 6, 5, 'lgi');
++grand("setgen", "urand");
++grand("setsd", 1);
++expected = grand(4, 6, "def");
++grand("setsd", 1); // Resetting the seed to obtain the same results
++computed = grand(4, 6, 5, "def");
++assert_checkequal(expected, computed(:, :, 1));
++grand("setsd", 1);
++expected = grand(4, 6, "lgi");
++grand("setsd", 1); // Resetting the seed to obtain the same results
++computed = grand(4, 6, 5, "lgi");
+ assert_checkequal(expected, computed(:, :, 1));
+Index: scilab-5.5.2/modules/randlib/tests/unit_tests/grand_hypermat.tst
+===================================================================
+--- scilab-5.5.2.orig/modules/randlib/tests/unit_tests/grand_hypermat.tst
++++ scilab-5.5.2/modules/randlib/tests/unit_tests/grand_hypermat.tst
+@@ -14,7 +14,7 @@
+ ///////////////////////////////////////////////////////////////////////////////
+ //
+ // Dimensions
+-mat = grand(100, 101, 102, 'unf', 0, 1);
++mat = grand(100, 101, 102, "unf", 0, 1);
+ assert_checktrue(size(mat) == [100 101 102]);
+ 
+ ///////////////////////////////////////////////////////////////////////////////
+@@ -23,87 +23,74 @@ assert_checktrue(size(mat) == [100 101 1
+ // The grand(i, j, ...) should be equal to the first element of grand(i, j, k, ...).
+ 
+ // mt generator
+-grand('setgen', 'mt');
+-grand('setsd', 0);
+-expected = grand(4, 6, 'def');
+-grand('setsd', 0); // Resetting the seed to obtain the same results
+-computed = grand(4, 6, 5, 'def');
+-assert_checkequal(expected, computed(:, :, 1));
+-grand('setsd', 0);
+-expected = grand(4, 6, 'lgi');
+-grand('setsd', 0); // Resetting the seed to obtain the same results
+-computed = grand(4, 6, 5, 'lgi');
++grand("setgen", "mt");
++grand("setsd", 0);
++expected = grand(4, 6, "def");
++grand("setsd", 0); // Resetting the seed to obtain the same results
++computed = grand(4, 6, 5, "def");
++assert_checkequal(expected, computed(:, :, 1));
++grand("setsd", 0);
++expected = grand(4, 6, "lgi");
++grand("setsd", 0); // Resetting the seed to obtain the same results
++computed = grand(4, 6, 5, "lgi");
+ assert_checkequal(expected, computed(:, :, 1));
+ 
+ // kiss generator
+-grand('setgen', 'kiss');
+-grand('setsd', 0, 0, 0, 0);
+-expected = grand(4, 6, 'def');
+-grand('setsd', 0, 0, 0, 0); // Resetting the seed to obtain the same results
+-computed = grand(4, 6, 5, 'def');
+-assert_checkequal(expected, computed(:, :, 1));
+-grand('setsd', 0, 0, 0, 0);
+-expected = grand(4, 6, 'lgi');
+-grand('setsd', 0, 0, 0, 0); // Resetting the seed to obtain the same results
+-computed = grand(4, 6, 5, 'lgi');
++grand("setgen", "kiss");
++grand("setsd", 0, 0, 0, 0);
++expected = grand(4, 6, "def");
++grand("setsd", 0, 0, 0, 0); // Resetting the seed to obtain the same results
++computed = grand(4, 6, 5, "def");
++assert_checkequal(expected, computed(:, :, 1));
++grand("setsd", 0, 0, 0, 0);
++expected = grand(4, 6, "lgi");
++grand("setsd", 0, 0, 0, 0); // Resetting the seed to obtain the same results
++computed = grand(4, 6, 5, "lgi");
+ assert_checkequal(expected, computed(:, :, 1));
+ 
+ // clcg2 generator
+-grand('setgen', 'clcg2');
+-grand('setsd', 1, 1);
+-expected = grand(4, 6, 'def');
+-grand('setsd', 1, 1); // Resetting the seed to obtain the same results
+-computed = grand(4, 6, 5, 'def');
+-assert_checkequal(expected, computed(:, :, 1));
+-grand('setsd', 1, 1);
+-expected = grand(4, 6, 'lgi');
+-grand('setsd', 1, 1); // Resetting the seed to obtain the same results
+-computed = grand(4, 6, 5, 'lgi');
++grand("setgen", "clcg2");
++grand("setsd", 1, 1);
++expected = grand(4, 6, "def");
++grand("setsd", 1, 1); // Resetting the seed to obtain the same results
++computed = grand(4, 6, 5, "def");
++assert_checkequal(expected, computed(:, :, 1));
++grand("setsd", 1, 1);
++expected = grand(4, 6, "lgi");
++grand("setsd", 1, 1); // Resetting the seed to obtain the same results
++computed = grand(4, 6, 5, "lgi");
+ assert_checkequal(expected, computed(:, :, 1));
+ 
+ // clcg4 generator
+-grand('setgen', 'clcg4');
+-warning('off');
+-grand('setsd',1,1,1,1);
+-warning('on');
+-expected = grand(4, 6, 'def');
+-warning('off');
+-grand('setsd',1,1,1,1); // Resetting the seed to obtain the same results
+-warning('on');
+-computed = grand(4, 6, 5, 'def');
+-assert_checkequal(expected, computed(:, :, 1));
+-warning('off');
+-grand('setsd',1,1,1,1); // Resetting the seed to obtain the same results
+-warning('on');
+-expected = grand(4, 6, 'lgi');
+-warning('off');
+-grand('setsd',1,1,1,1); // Resetting the seed to obtain the same results
+-warning('on');
+-computed = grand(4, 6, 5, 'lgi');
+-assert_checkequal(expected, computed(:, :, 1));
+-
+-// fsultra generator
+-grand('setgen', 'fsultra');
+-grand('setsd', 1, 1);
+-expected = grand(4, 6, 'def');
+-grand('setsd', 1, 1); // Resetting the seed to obtain the same results
+-computed = grand(4, 6, 5, 'def');
+-assert_checkequal(expected, computed(:, :, 1));
+-grand('setsd', 1, 1);
+-expected = grand(4, 6, 'lgi');
+-grand('setsd', 1, 1); // Resetting the seed to obtain the same results
+-computed = grand(4, 6, 5, 'lgi');
++grand("setgen", "clcg4");
++warning("off");
++grand("setsd",1,1,1,1);
++warning("on");
++expected = grand(4, 6, "def");
++warning("off");
++grand("setsd",1,1,1,1); // Resetting the seed to obtain the same results
++warning("on");
++computed = grand(4, 6, 5, "def");
++assert_checkequal(expected, computed(:, :, 1));
++warning("off");
++grand("setsd",1,1,1,1); // Resetting the seed to obtain the same results
++warning("on");
++expected = grand(4, 6, "lgi");
++warning("off");
++grand("setsd",1,1,1,1); // Resetting the seed to obtain the same results
++warning("on");
++computed = grand(4, 6, 5, "lgi");
+ assert_checkequal(expected, computed(:, :, 1));
+ 
+ // urand generator
+-grand('setgen', 'urand');
+-grand('setsd', 1);
+-expected = grand(4, 6, 'def');
+-grand('setsd', 1); // Resetting the seed to obtain the same results
+-computed = grand(4, 6, 5, 'def');
+-assert_checkequal(expected, computed(:, :, 1));
+-grand('setsd', 1);
+-expected = grand(4, 6, 'lgi');
+-grand('setsd', 1); // Resetting the seed to obtain the same results
+-computed = grand(4, 6, 5, 'lgi');
++grand("setgen", "urand");
++grand("setsd", 1);
++expected = grand(4, 6, "def");
++grand("setsd", 1); // Resetting the seed to obtain the same results
++computed = grand(4, 6, 5, "def");
++assert_checkequal(expected, computed(:, :, 1));
++grand("setsd", 1);
++expected = grand(4, 6, "lgi");
++grand("setsd", 1); // Resetting the seed to obtain the same results
++computed = grand(4, 6, 5, "lgi");
+ assert_checkequal(expected, computed(:, :, 1));
+Index: scilab-5.5.2/modules/randlib/help/ja_JP/grand.xml
+===================================================================
+--- scilab-5.5.2.orig/modules/randlib/help/ja_JP/grand.xml
++++ scilab-5.5.2/modules/randlib/help/ja_JP/grand.xml
+@@ -408,7 +408,7 @@
+                     <itemizedlist>
+                         <listitem>
+                             <para>
+-                                mt, kiss および fsultra の場合は <literal>[0, 2^32 - 1]</literal>
++                                mt, および kiss の場合は <literal>[0, 2^32 - 1]</literal>
+                             </para>
+                         </listitem>
+                         <listitem>
+@@ -494,18 +494,6 @@
+                     </para>
+                 </listitem>
+             </varlistentry>
+-            <varlistentry>
+-                <term>fsultra</term>
+-                <listitem>
+-                    <para>
+-                        Arif Zaman および George Marsagliaの合同生成器に基づく
+-                        Subtract-with-Borrow 生成器,
+-                        周期は <literal>10^356</literal>以上,
+-                        状態は37個の整数の配列(およびこの配列へのインデックス,
+-                        フラグ (0または1)および他の整数)により指定されます.
+-                    </para>
+-                </listitem>
+-            </varlistentry>
+         </variablelist>
+         <para>全ての生成器に共通なアクションの動作を以下に示します:
+         </para>
+@@ -516,7 +504,7 @@
+                     <para>
+                         <literal>S=grand('getgen')</literal> はカレントの基底生成器を返します
+                         ( <literal>S</literal> は以下の文字列のどれかです:
+-                        'mt', 'kiss', 'clcg2', 'clcg4', 'urand', 'fsultra'.
++                        'mt', 'kiss', 'clcg2', 'clcg4', 'urand'.
+                     </para>
+                 </listitem>
+             </varlistentry>
+@@ -526,7 +514,7 @@
+                     <para>
+                         <literal>grand('setgen',gen)</literal>は
+                         カレントの基底生成器を<literal>gen</literal>に設定します.
+-                        この文字列には 'mt', 'kiss', 'clcg2', 'clcg4', 'urand', 'fsultra' 
++                        この文字列には 'mt', 'kiss', 'clcg2', 'clcg4', 'urand' 
+                         のどれかを指定します(
+                         このコールは新しいカレントの生成器を返すことに注意してください).
+                     </para>
+@@ -541,7 +529,7 @@
+                         <literal>S</literal> には, mt の場合は<literal>625</literal>次
+                         (先頭は<literal>[1,624]</literal>の範囲のインデックスです),
+                         kiss の場合は <literal>4</literal> 次, clcg2の場合は <literal>2</literal>次,
+-                        fsultraの場合は <literal>40</literal> , clcg4 の場合は <literal>4</literal>次 
++                        clcg4 の場合は <literal>4</literal>次 
+                         (最後の1つについてはカレントの仮想生成器のカレントの状態が取得されます),
+                         および urand の場合は <literal>1</literal>次
+                         の(整数)列ベクトルが出力されます.
+@@ -614,20 +602,6 @@
+                                 </para>
+                             </listitem>
+                         </varlistentry>
+-                        <varlistentry>
+-                            <term>fsultraの場合</term>
+-                            <listitem>
+-                                <para>
+-                                    <literal>S</literal> は<literal>40</literal>次の整数ベクトルで,
+-                                    (最初の要素はインデックスで<literal>[0,37]</literal>の範囲とします,
+-                                    2番目の要素はフラグ (0または1),3番目は[1,2^32[ の範囲の整数,
+-                                    367個のその他の整数(範囲: [0,2^32[)));
+-                                    <literal>[0,2^32[</literal>の範囲の
+-                                    整数を2つだけ (<literal>s1</literal> および <literal>s2</literal>)
+-                                    指定することでより簡単に(そして推奨される)初期化を行うことができます.
+-                                </para>
+-                            </listitem>
+-                        </varlistentry>
+                     </variablelist>
+                 </listitem>
+             </varlistentry>
+Index: scilab-5.5.2/modules/polynomials/Makefile.am
+===================================================================
+--- scilab-5.5.2.orig/modules/polynomials/Makefile.am
++++ scilab-5.5.2/modules/polynomials/Makefile.am
+@@ -36,7 +36,6 @@ src/fortran/idegre.f \
+ src/fortran/fxshfr.f \
+ src/fortran/mpdiag.f \
+ src/fortran/dmpcle.f \
+-src/fortran/rpoly.f \
+ src/fortran/wpodiv.f \
+ src/fortran/wdmpmu.f \
+ src/fortran/wmptra.f \
+@@ -61,6 +60,11 @@ src/fortran/calcsc.f \
+ src/fortran/writebufsfact.f \
+ src/fortran/chkvar.f
+ 
++POLYNOMIALS_CXX_SOURCES = \
++    src/cpp/rpoly.cpp \
++    src/cpp/find_polynomial_roots_jenkins_traub.cc \
++    src/cpp/polynomial.cc
++
+ 
+ GATEWAY_C_SOURCES = sci_gateway/c/gw_polynomials.c \
+ sci_gateway/c/sci_sfact.c \
+@@ -99,11 +103,13 @@ sci_gateway/fortran/sci_f_pclean.f \
+ sci_gateway/fortran/sci_f_sfact.f \
+ sci_gateway/fortran/sci_f_simpmd.f
+ 
++EIGEN_CPPFLAGS := -I/usr/include/eigen3
+ 
+ libscipolynomials_la_CPPFLAGS = -I$(srcdir)/includes/ \
+ 				-I$(top_srcdir)/modules/api_scilab/includes/ \
+ 				-I$(top_srcdir)/modules/output_stream/includes/ \
+ 				-I$(top_srcdir)/modules/localization/includes/ \
++				$(EIGEN_CPPFLAGS) \
+ 				$(AM_CPPFLAGS)
+ 
+ if MAINTAINER_MODE
+@@ -115,7 +121,7 @@ endif
+ 
+ 
+ 
+-libscipolynomials_algo_la_SOURCES = $(POLYNOMIALS_FORTRAN_SOURCES)
++libscipolynomials_algo_la_SOURCES = $(POLYNOMIALS_FORTRAN_SOURCES) $(POLYNOMIALS_CXX_SOURCES)
+ libscipolynomials_la_SOURCES = $(GATEWAY_FORTRAN_SOURCES) $(GATEWAY_C_SOURCES)
+ libscipolynomials_algo_la_CPPFLAGS = $(libscipolynomials_la_CPPFLAGS)
+ 
+Index: scilab-5.5.2/modules/randlib/sci_gateway/c/sci_grand.c
+===================================================================
+--- scilab-5.5.2.orig/modules/randlib/sci_gateway/c/sci_grand.c
++++ scilab-5.5.2/modules/randlib/sci_gateway/c/sci_grand.c
+@@ -34,7 +34,7 @@
+ #include "Scierror.h"
+ #include "gw_randlib.h"
+ 
+-enum {MT, KISS, CLCG4, CLCG2, URAND, FSULTRA};
++enum {MT, KISS, CLCG4, CLCG2, URAND};
+ 
+ /* the current generator : */
+ static int current_gen = MT;
+@@ -51,10 +51,10 @@ static unsigned long int clcg4_with_gen(
+ #define NbGenInScilab 6
+ 
+ /*  pointers onto the generators func */
+-unsigned long int (*gen[NbGenInScilab])(void) = { randmt, kiss,  clcg4_with_gen, clcg2 , urandc , fsultra};
++unsigned long int (*gen[NbGenInScilab])(void) = { randmt, kiss,  clcg4_with_gen, clcg2 , urandc };
+ 
+ /*  names at the scilab level */
+-static char *names_gen[NbGenInScilab] = { "mt",  "kiss", "clcg4", "clcg2", "urand", "fsultra" };
++static char *names_gen[NbGenInScilab] = { "mt",  "kiss", "clcg4", "clcg2", "urand" };
+ 
+ /* all the generators provided integers in [0, RngMaxInt] :        */
+ static
+@@ -62,18 +62,16 @@ unsigned long RngMaxInt[NbGenInScilab] =
+         4294967295ul,  /* kiss  */
+         2147483646ul,  /* clcg4 */
+         2147483561ul,  /* clcg2 */
+-        2147483647ul,  /* urand */
+-        4294967295ul
+-                                         }; /* fsultra*/
++        2147483647ul   /* urand */
++                                         };
+ /* the factors (1/(RngMaxInt+1)) to get reals in [0,1) :           */
+ static
+ double factor[NbGenInScilab] = { 2.3283064365386963e-10,  /* mt    */
+                                  2.3283064365386963e-10,  /* kiss  */
+                                  4.6566128752457969e-10,  /* clcg4 */
+                                  4.6566130595601735e-10,  /* clcg2 */
+-                                 4.6566128730773926e-10,  /* urand */
+-                                 2.3283064365386963e-10
+-                               }; /* fsultra*/
++                                 4.6566128730773926e-10   /* urand */
++                               };
+ 
+ 
+ static double* createOutputVar(void* _pvCtx, int _iVar, int _iRows, int _iCols, int* _piDims, int _iDims);
+@@ -147,7 +145,7 @@ int sci_Rand(char *fname, unsigned long
+     CheckLhs(minlhs, maxlhs);
+     if (GetType(1) != sci_matrix && GetType(1) != 17)
+     {
+-        int un = 1, deux = 2, dim_state_mt = 625, dim_state_fsultra = 40, dim_state_4 = 4;
++        int un = 1, deux = 2, dim_state_mt = 625, dim_state_4 = 4;
+         GetRhsVar(1, STRING_DATATYPE, &ms, &ns, &ls);
+         if ( strcmp(cstk(ls), "getsd") == 0)
+         {
+@@ -184,10 +182,6 @@ int sci_Rand(char *fname, unsigned long
+                     CreateVar(Rhs + 2, MATRIX_OF_DOUBLE_DATATYPE, &un, &un, &lr);
+                     get_state_urand(stk(lr));
+                     break;
+-                case (FSULTRA) :
+-                    CreateVar(Rhs + 2, MATRIX_OF_DOUBLE_DATATYPE, &dim_state_fsultra, &un, &lr);
+-                    get_state_fsultra(stk(lr));
+-                    break;
+             };
+             LhsVar(1) = Rhs + 2;
+             PutLhsVar();
+@@ -273,49 +267,6 @@ int sci_Rand(char *fname, unsigned long
+                     };
+                     break;
+ 
+-                case (FSULTRA) :
+-                    if ( Rhs == 2 ) /* init via a "complete" state */
+-                    {
+-                        GetRhsVar(2, MATRIX_OF_DOUBLE_DATATYPE, &m1, &n1, &l1);
+-                        if ( m1 != 40  ||  n1 != 1)
+-                        {
+-                            Scierror(999, _("%s: Wrong size for input argument #%d: %dx%d expected.\n"), fname, 2, 40, 1);
+-                            return 0;
+-                        };
+-                        if (! set_state_fsultra(stk(l1)) )
+-                        {
+-                            SciError(999);
+-                            return(0);
+-                        }
+-                        ;
+-                    }
+-                    else if ( Rhs == 3 ) /* init with 2 integers (like before) */
+-                    {
+-                        GetRhsVar(2, MATRIX_OF_DOUBLE_DATATYPE, &m1, &n1, &l1);
+-                        if ( m1 * n1 != 1)
+-                        {
+-                            Scierror(999, _("%s: Wrong type for input argument #%d: Scalar expected.\n"), fname, 2);
+-                            return 0;
+-                        };
+-                        GetRhsVar(3, MATRIX_OF_DOUBLE_DATATYPE, &m1, &n1, &l2);
+-                        if ( m1 * n1 != 1)
+-                        {
+-                            Scierror(999, _("%s: Wrong type for input argument #%d: Scalar expected.\n"), fname, 3);
+-                            return 0;
+-                        };
+-                        if (! set_state_fsultra_simple(*stk(l1), *stk(l2)) )
+-                        {
+-                            SciError(999);
+-                            return(0);
+-                        };
+-                    }
+-                    else
+-                    {
+-                        Scierror(999, _("%s: Wrong number of input arguments: %d or %d expected for '%s' option with the %s generator.\n"), fname, 2, 3, "setsd", "fsultra");
+-                        return 0;
+-                    }
+-                    break;
+-
+                 case (KISS) :
+                 case (CLCG4) :
+                     if ( Rhs != 5 )
+@@ -550,13 +501,9 @@ int sci_Rand(char *fname, unsigned long
+             {
+                 current_gen = URAND;
+             }
+-            else if (strcmp("fsultra", cstk(lsb)) == 0)
+-            {
+-                current_gen = FSULTRA;
+-            }
+             else
+             {
+-                Scierror(999, _("%s: Wrong value for input argument #%d: '%s', '%s', '%s', '%s', '%s' or '%s' expected.\n"), fname, 2, "mt", "kiss", "clcg4", "clcg2", "urand", "fsultra");
++                Scierror(999, _("%s: Wrong value for input argument #%d: '%s', '%s', '%s', '%s', '%s' or '%s' expected.\n"), fname, 2, "mt", "kiss", "clcg4", "clcg2", "urand");
+                 return 0;
+             }
+             LhsVar(1) = 2;
+Index: scilab-5.5.2/configure.ac
+===================================================================
+--- scilab-5.5.2.orig/configure.ac
++++ scilab-5.5.2/configure.ac
+@@ -743,6 +743,12 @@ AC_CHECK_UNDERSCORE_FORTRAN()
+ 
+ 
+ #################
++## Eigen for polynomial modules
++#################
++AC_CHECK_HEADERS([eigen3/Eigen/Core])
++
++
++#################
+ ## HDF5
+ #################
+ 
