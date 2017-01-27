@@ -23,7 +23,7 @@ SIGNKEY="EA98120B"
 
 . ./config
 
-sed 's/Provides: mail-reader/Provides: mail-reader, thunderbird/' debian/control -i
+sed 's/mail-reader/mail-reader, thunderbird/' debian/control -i
 
 cat << EOF >> debian/icedove.js
 
