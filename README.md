@@ -5,7 +5,7 @@ from the Ubuntu upstream which need it. It might be because they contain
 non-free stuff, references to Ubuntu that need to be changed, or because we
 want the package to work our way.
 
-This helpers are similar to some of those in the [gNewSense](http://www.gnewsense.org/Builder/HowToCreateourOwnGNULinuxDistribution) builder, we took
+This helpers are similar to some of those in the [gNewSense](http://www.gnewsense.org/Builder/HowToCreateYourOwnGNULinuxDistribution) builder, we took
 some ideas and even some lines from them. If you plan to build an Ubuntu
 derivative of your own, we suggest you to use Builder instead of this helpers.
 
