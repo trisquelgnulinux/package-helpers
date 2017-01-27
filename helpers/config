@@ -113,7 +113,9 @@ cd PACKAGES/$PACKAGE
 #Get package and uncompress it
 apt-get update -c $LOCAL_APT/etc/apt.conf
 apt-get source $PACKAGE --download-only -c ${LOCAL_APT}/etc/apt.conf
-dpkg-source -x --skip-patches *.dsc source
+# verify it first
+gpgv --keyring ${LOCAL_APT}/etc/trusted.gpg *.dsc
+dpkg-source --no-check -x --skip-patches *.dsc source
 
 find -maxdepth 1 -type f | xargs rm
 cd source
