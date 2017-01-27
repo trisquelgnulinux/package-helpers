@@ -21,9 +21,8 @@ VERSION=1
 
 . ./config
 
-sedhelper debian/rules 's/archive\.ubuntu\.com/archive\.trisquel\.info/g'
-sedhelper debian/rules "s/$UPSTREAM/$CODENAME/g"
+sed "s/archive\.ubuntu\.com\/ubuntu/archive\.trisquel\.info\/trisquel/g" -i debian/rules
+sed "s/$UPSTREAM/$CODENAME/g" -i debian/rules
 
 changelog "Rebrand for Trisquel"
 compile
-
