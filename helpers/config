@@ -86,16 +86,18 @@ if [ -f trusted.local.gpg ]
 then
 cp trusted.local.gpg "${LOCAL_APT}/etc/trusted.gpg"
 else
-#Trisquel key
-apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver keyserver.ubuntu.com --recv-keys B4EFB9F38D8AEBF1
-#Ubuntu gpg keys
-apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver keyserver.ubuntu.com --recv-keys 40976EAF437D05B5
-apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver keyserver.ubuntu.com --recv-keys 3B4FE6ACC0B21F32
-#Debian gpg keys
-apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver keyserver.ubuntu.com --recv-keys 9D6D8F6BC857C906
-apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver keyserver.ubuntu.com --recv-keys 8B48AD6246925553
+# Trisquel key
+apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver keyserver.ubuntu.com --recv-keys B4EFB9F38D8AEBF1 > /dev/null
+# Ubuntu gpg keys
+apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver keyserver.ubuntu.com --recv-keys 40976EAF437D05B5 > /dev/null
+apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver keyserver.ubuntu.com --recv-keys 3B4FE6ACC0B21F32 > /dev/null
+# Debian gpg keys
+apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver keyserver.ubuntu.com --recv-keys 9D6D8F6BC857C906 > /dev/null
+apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver keyserver.ubuntu.com --recv-keys 8B48AD6246925553 > /dev/null
 fi
 
+# Also import the repository key optionally listed in the helper
+[ "1$REPOKEY" != "1" ] && apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --recv-keys --keyserver keyserver.ubuntu.com $REPOKEY
 
 cat << EOF > ${LOCAL_APT}/etc/apt.sources.list
 deb-src $MIRROR $UPSTREAM main universe
@@ -106,8 +108,6 @@ EOF
 
 [ "1$EXTERNAL" != "1" ] && eval echo "$EXTERNAL" >> ${LOCAL_APT}/etc/apt.sources.list
 
-[ "1$SIGNKEY" != "1" ] && apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --recv-keys --keyserver keyserver.ubuntu.com $SIGNKEY
-
 #Cleanup
 rm -rf PACKAGES/$PACKAGE
 mkdir PACKAGES/$PACKAGE
@@ -116,8 +116,23 @@ cd PACKAGES/$PACKAGE
 #Get package and uncompress it
 apt-get update -c $LOCAL_APT/etc/apt.conf
 apt-get source $PACKAGE --download-only -c ${LOCAL_APT}/etc/apt.conf
-# verify it first
-gpgv --keyring ${LOCAL_APT}/etc/trusted.gpg *.dsc
+# Verify it first
+#   Import the key for the package uploader
+#   Use the one listed in the helper if available, otherwise download the one listed in the dsc
+if [ "1$SIGNKEY" != "1" ] ; then
+  apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --recv-keys --keyserver keyserver.ubuntu.com $SIGNKEY > /dev/null
+  gpgv --keyring ${LOCAL_APT}/etc/trusted.gpg *.dsc
+else
+  if grep -q "BEGIN PGP SIGNATURE" *.dsc; then
+    KEY=$(gpgv --keyring ${LOCAL_APT}/etc/trusted.gpg *.dsc 2>&1 | grep "key ID" | sed 's/.*key ID //' || true)
+    apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --recv-keys --keyserver keyserver.ubuntu.com $KEY > /dev/null
+    gpgv --keyring ${LOCAL_APT}/etc/trusted.gpg *.dsc
+  else
+    echo WARNING! The dsc file is not gpg signed!
+    [ -z "$EXTERNAL" ] && exit 1
+  fi
+fi
+
 dpkg-source --no-check -x --skip-patches *.dsc source
 
 find -maxdepth 1 -type f | xargs rm
