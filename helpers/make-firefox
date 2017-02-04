@@ -24,10 +24,6 @@ VERSION=47
 
 rm debian/control
 
-# revert https://bug851702.bugzilla.mozilla.org/attachment.cgi?id=733785
-patch -p1 < $DATA/enable-js-options.patch
-cp ./browser/components/preferences/advanced-scripts.xul ./browser/components/preferences/in-content/
-
 # KDE integration patches from https://www.rosenauer.org/hg/mozilla
 # Use firefox$MAJORVERSION branch if available, otherwise use default
 MAJORVERSION=$(echo `pkgversion` | /bin/sed 's/\([0-9]\+\).*/\1/')
@@ -74,7 +70,6 @@ sed 's%https://www.mozilla.org/legal/privacy/%https://trisquel.info/legal%' -i .
 #sed 's%https://www.mozilla.org/firefox/central/%https://trisquel.info/browser%' -i browser/base/content/browser-appmenu.inc
 
 # Remove Google API key
-rm debian/ga debian/go
 sed '/Google API/,$ d' debian/config/mozconfig.in -i
 
 # Org branding
