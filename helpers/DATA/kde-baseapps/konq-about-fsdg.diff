@@ -1,0 +1,33 @@
+diff -ru source.orig/konqueror/about/konq_aboutpage.cc source/konqueror/about/konq_aboutpage.cc
+--- source.orig/konqueror/about/konq_aboutpage.cc	2014-07-09 23:11:04.000000000 -0400
++++ source/konqueror/about/konq_aboutpage.cc	2017-03-05 14:41:47.307284541 -0500
+@@ -214,14 +214,11 @@
+ 		     QString("http://www.ecma-international.org/publications/standards/ECMA-262.HTM")) )
+           .arg( i18n("JavaScript disabled (globally). Enable JavaScript <A HREF=\"%1\">here</A>.", QString("exec:/kcmshell4 khtml_java_js")) )
+           .arg( i18n("JavaScript enabled (globally). Configure JavaScript <A HREF=\\\"%1\\\">here</A>.", QString("exec:/kcmshell4 khtml_java_js")) ) // leave the double backslashes here, they are necessary for javascript !
+-          .arg( i18n("Secure <A HREF=\"%1\">Java</A><SUP>&reg;</SUP> support", QString("http://www.oracle.com/technetwork/java/index.html")) )
+-          .arg( i18n("JDK 1.2.0 (Java 2) compatible VM (<A HREF=\"%1\">IBM</A> or <A HREF=\"%2\">Sun/Oracle</A>)",
+-                       QString("http://www.ibm.com"), QString("http://www.oracle.com/technetwork/java/index.html")) )
++          .arg(i18n("Secure Java<SUP>&reg;</SUP> support"),
++                    QStringLiteral("about:plugins"))
+           .arg( i18n("Enable Java (globally) <A HREF=\"%1\">here</A>.", QString("exec:/kcmshell4 khtml_java_js")) ) // TODO Maybe test if Java is enabled ?
+-          .arg( i18n("Netscape Communicator<SUP>&reg;</SUP> <A HREF=\"%4\">plugins</A> (for viewing <A HREF=\"%1\">Flash<SUP>&reg;</SUP></A>, <A HREF=\"%2\">Real<SUP>&reg;</SUP></A>Audio, <A HREF=\"%3\">Real<SUP>&reg;</SUP></A>Video, etc.)",
+-                       QString("http://www.macromedia.com/shockwave/download/index.cgi?P1_Prod_Version=ShockwaveFlash"),
+-                       QString("http://www.real.com"), QString("http://www.real.com"),
+-                       QString("about:plugins")) )
++          .arg(i18n("Netscape Communicator<SUP>&reg;</SUP> <A HREF=\"%1\">plugins</A>"),
++                    QStringLiteral("about:plugins"))
+           .arg( i18n("built-in") )
+           .arg( i18n("Secure Sockets Layer") )
+           .arg( i18n("(TLS/SSL v2/3) for secure communications up to 168bit") )
+@@ -293,8 +290,8 @@
+ 	.arg( i18n( "Tips" ) )
+ 	.arg( i18n( "Specifications" ) )
+ 	.arg( i18n( "Tips &amp; Tricks" ) )
+-	  .arg( i18n( "Use Web-Shortcuts: by typing \"gg: KDE\" one can search the Internet, "
+-		      "using Google, for the search phrase \"KDE\". There are a lot of "
++          .arg(i18n("Use Web-Shortcuts: by typing \"dd: KDE\" one can search the Internet, "
++                    "using DuckDuckGo HTML, for the search phrase \"KDE\". There are a lot of "
+ 		      "Web-Shortcuts predefined to make searching for software or looking "
+ 		      "up certain words in an encyclopedia a breeze. You can even "
+                       "<a href=\"%1\">create your own</a> Web-Shortcuts." , QString("exec:/kcmshell4 ebrowsing")) )
