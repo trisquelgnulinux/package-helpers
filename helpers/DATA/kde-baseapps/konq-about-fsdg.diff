@@ -9,14 +9,14 @@ diff -ru source.orig/konqueror/about/konq_aboutpage.cc source/konqueror/about/ko
 -          .arg( i18n("JDK 1.2.0 (Java 2) compatible VM (<A HREF=\"%1\">IBM</A> or <A HREF=\"%2\">Sun/Oracle</A>)",
 -                       QString("http://www.ibm.com"), QString("http://www.oracle.com/technetwork/java/index.html")) )
 +          .arg(i18n("Secure Java<SUP>&reg;</SUP> support"),
-+                    QStringLiteral("about:plugins"))
++                    QString("about:plugins"))
            .arg( i18n("Enable Java (globally) <A HREF=\"%1\">here</A>.", QString("exec:/kcmshell4 khtml_java_js")) ) // TODO Maybe test if Java is enabled ?
 -          .arg( i18n("Netscape Communicator<SUP>&reg;</SUP> <A HREF=\"%4\">plugins</A> (for viewing <A HREF=\"%1\">Flash<SUP>&reg;</SUP></A>, <A HREF=\"%2\">Real<SUP>&reg;</SUP></A>Audio, <A HREF=\"%3\">Real<SUP>&reg;</SUP></A>Video, etc.)",
 -                       QString("http://www.macromedia.com/shockwave/download/index.cgi?P1_Prod_Version=ShockwaveFlash"),
 -                       QString("http://www.real.com"), QString("http://www.real.com"),
 -                       QString("about:plugins")) )
 +          .arg(i18n("Netscape Communicator<SUP>&reg;</SUP> <A HREF=\"%1\">plugins</A>"),
-+                    QStringLiteral("about:plugins"))
++                    QString("about:plugins"))
            .arg( i18n("built-in") )
            .arg( i18n("Secure Sockets Layer") )
            .arg( i18n("(TLS/SSL v2/3) for secure communications up to 168bit") )
