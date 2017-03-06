@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2009-2014  Rubén Rodríguez <ruben@gnu.org>
+#    Copyright (C) 2009-2017  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,16 +17,16 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
+VERSION=1
 NETINST=true
 . ./config
 
-
 find build/pkg-lists -type f | xargs sed -i /media-retriever/d
 
-LASTKERNEL=$(apt-cache showsrc linux-libc-dev|grep ^Version |head -n1|cut -d" " -f2|cut -d. -f1,2,3)
+LASTKERNEL=$(apt-cache showsrc linux-libc-dev|grep ^Version | tac |head -n1|cut -d" " -f2|cut -d. -f1,2,3)
 /bin/sed -i "s/^BASEVERSION.*/BASEVERSION = $LASTKERNEL/g" ./build/config/i386.cfg ./build/config/amd64.cfg
 sed -i "s/^MEDIUM_SUPPORTED.*/MEDIUM_SUPPORTED = cdrom netboot/g" ./build/config/i386.cfg ./build/config/amd64.cfg
+sed -i "/signed/d" ./build/config/amd64.cfg
 
 sed 's/ubuntu-archive-keyring.gpg/trisquel-archive-keyring.gpg/' -i build/config/common
 
@@ -41,13 +41,13 @@ deb $LOCALMIRROR $CODENAME-updates main/debian-installer
 #deb $LOCALMIRROR $CODENAME-security main/debian-installer
 EOF
 
-rpl 2004-2013 2004-2014 . -R
-rpl 2004-2012 2004-2014 . -R
-rpl 2004-2011 2004-2014 . -R
-rpl 2004-2010 2004-2011 . -R
-rpl 2004-2009 2004-2011 . -R
-rpl 2004-2008 2004-2011 . -R
-rpl 2004-2007 2004-2011 . -R
+rpl 2004-2013 2004-2017 . -R
+rpl 2004-2012 2004-2017 . -R
+rpl 2004-2011 2004-2017 . -R
+rpl 2004-2010 2004-2017 . -R
+rpl 2004-2009 2004-2017 . -R
+rpl 2004-2008 2004-2017 . -R
+rpl 2004-2007 2004-2017 . -R
 rpl www.ubuntu.com trisquel.info . -R
 rpl ubuntu.com trisquel.info build/boot/ -R
 rpl www.ubuntu trisquel build/boot/ -R
