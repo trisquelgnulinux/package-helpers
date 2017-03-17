@@ -39,6 +39,8 @@ pref("toolkit.telemetry.prompted", 2);
 pref("toolkit.telemetry.rejected", true);
 EOF
 
+sed '/kPStaticModules/s/protected/default/' -i mozilla/xpcom/components/Module.h
+
 changelog "Imported into Trisquel"
 
 compile
