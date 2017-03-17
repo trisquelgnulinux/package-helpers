@@ -25,6 +25,8 @@ SIGNKEY="EA98120B"
 
 sed 's/mail-reader/mail-reader, thunderbird/' debian/control -i
 
+sed 's/gcc-4.7/gcc-4.9/; s/g++-4.7/g++-4.9/;' debian/control debian/rules
+
 cat << EOF >> debian/icedove.js
 
 // Trisquel settings
