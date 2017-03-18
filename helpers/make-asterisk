@@ -22,6 +22,8 @@ EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu zesty universe'
 
 . ./config
 
+sed '/debhelper/s/10/9/' -i debian/control
+
 changelog "Backported from zesty"
 
 compile
