@@ -22,7 +22,7 @@ EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu zesty universe'
 
 . ./config
 
-sed '/debhelper/s/10/9/' -i debian/control
+sed '/debhelper/s/10/9/; s/default-libmysqlclient-dev/libmysqlclient-dev/' -i debian/control
 
 changelog "Backported from zesty"
 
