@@ -259,6 +259,9 @@ debian/rules debian/control
 #https://bugzilla.mozilla.org/show_bug.cgi?id=1047803
 sed 's/--enable-optimize$/--enable-optimize="-O2"/' -i debian/config/mozconfig.in
 
+# dom/plugins/test/testplugin/nptest_gtk2.cpp fails to build on gtk3
+sed "s/'testplugin',//" -i dom/plugins/test/moz.build
+
 changelog  "Rebranded for Trisquel"
 
 compile
