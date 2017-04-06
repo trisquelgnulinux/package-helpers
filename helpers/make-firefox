@@ -256,9 +256,6 @@ debian/rules debian/control
 # Regenerate addon-sdk/moz.build
 ./mach generate-addon-sdk-moz-build
 
-# Attempt to work around http://jenkins.trisquel.info:8085/job/signed-binaries/BUILDARCH=amd64/6809/consoleFull
-sed 's/--enable-tests/--disable-tests/' -i debian/config/mozconfig.in
-
 changelog  "Rebranded for Trisquel"
 
 compile
