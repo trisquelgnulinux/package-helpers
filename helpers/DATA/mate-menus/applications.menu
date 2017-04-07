@@ -22,7 +22,7 @@
   <!-- Accessories submenu -->
   <Menu>
     <Name>Accessories</Name>
-    <Directory>Utility.directory</Directory>
+    <Directory>mate-utility.directory</Directory>
     <Include>
       <Or>
         <Category>Utility</Category>
@@ -45,7 +45,7 @@
   <!-- Accessibility submenu items are inside Accessories in Trisquel
   <Menu>
     <Name>Universal Access</Name>
-    <Directory>Utility-Accessibility.directory</Directory>
+    <Directory>mate-utility-accessibility.directory</Directory>
     <Include>
       <And>
         <Category>Accessibility</Category>
@@ -57,7 +57,7 @@
   <!-- Development Tools -->
   <Menu>
     <Name>Development</Name>
-    <Directory>Development.directory</Directory>
+    <Directory>mate-development.directory</Directory>
     <Include>
       <And>
         <Category>Development</Category>
@@ -69,7 +69,7 @@
   <!-- Education -->
   <Menu>
     <Name>Education</Name>
-    <Directory>Education.directory</Directory>
+    <Directory>mate-education.directory</Directory>
     <Include>
       <And>
         <Category>Education</Category>
@@ -78,26 +78,10 @@
     </Include>
   </Menu> <!-- End Education -->
 
-  <!-- Science -->
-  <Menu>
-    <Name>Science</Name>
-    <Directory>GnomeScience.directory</Directory>
-    <Include>
-      <And>
-        <Category>Education</Category>
-        <Category>Science</Category>
-      </And>
-    </Include>
-    <Exclude>
-        <Filename>libreoffice-math.desktop</Filename>
-    </Exclude>
-
-  </Menu> <!-- End Science -->
-
   <!-- Games -->
   <Menu>
     <Name>Games</Name>
-    <Directory>Game.directory</Directory>
+    <Directory>mate-game.directory</Directory>
     <Include>
       <And>
         <Category>Game</Category>
@@ -106,12 +90,12 @@
     <Exclude>
         <Filename>freecell.desktop</Filename>
     </Exclude>
-  </Menu> <!-- End Games -->
+  </Menu> <!-- End Ganmes -->
 
   <!-- Graphics -->
   <Menu>
     <Name>Graphics</Name>
-    <Directory>Graphics.directory</Directory>
+    <Directory>mate-graphics.directory</Directory>
     <Include>
       <And>
         <Category>Graphics</Category>
@@ -128,7 +112,7 @@
   <!-- Internet -->
   <Menu>
     <Name>Internet</Name>
-    <Directory>Network.directory</Directory>
+    <Directory>mate-network.directory</Directory>
         <Layout>
             <Filename>icecat.desktop</Filename>
             <Filename>abrowser-3.0.desktop</Filename>
@@ -167,7 +151,7 @@
   <!-- Multimedia -->
   <Menu>
     <Name>Multimedia</Name>
-    <Directory>AudioVideo.directory</Directory>
+    <Directory>mate-audio-video.directory</Directory>
                 <Layout>
                         <Filename>totem.desktop</Filename>
                         <Filename>exaile.desktop</Filename>
@@ -186,7 +170,7 @@
   <!-- Office -->
   <Menu>
     <Name>Office</Name>
-    <Directory>Office.directory</Directory>
+    <Directory>mate-office.directory</Directory>
                 <Layout>
                         <Filename>libreoffice-writer.desktop</Filename>
                         <Filename>libreoffice-calc.desktop</Filename>
@@ -217,7 +201,7 @@
   <!-- System Tools is disabled in Trisquel, goes into gnome-control-center
   <Menu>
     <Name>System</Name>
-    <Directory>System-Tools.directory</Directory>
+    <Directory>mate-system-tools.directory</Directory>
     <Include>
       <And>
         <Category>System</Category>
@@ -230,7 +214,7 @@
   <!-- Other -->
   <Menu>
     <Name>Other</Name>
-    <Directory>X-GNOME-Other.directory</Directory>
+    <Dairectory>mate-other.directory</Directory>
     <OnlyUnallocated/>
     <Include>
       <And>
@@ -241,16 +225,9 @@
     </Include>
   </Menu> <!-- End Other -->
 
-  <!-- The Debian menu -->
-  <Menu>
-    <Name>Debian</Name>
-    <MergeFile>debian-menu.menu</MergeFile>
-    <Directory>Debian.directory</Directory>
-  </Menu>
 
 <Include>
   <Filename>gnome-app-install.desktop</Filename>
-  <Filename>mate-control-center.desktop</Filename>
 </Include>
 
 <!-- Separator between menus and gnome-app-install -->
@@ -265,12 +242,10 @@
                 <Menuname>Multimedia</Menuname>
                 <Menuname>Games</Menuname>
                 <Menuname>Accessories</Menuname>
-                <Menuname>Debian</Menuname>
                 <Menuname>Other</Menuname>
                 <Menuname>wine-wine</Menuname>
   <Separator/>
   <Filename>gnome-app-install.desktop</Filename>
-  <Filename>gnome-control-center.desktop</Filename>
 </Layout>
 
 </Menu> <!-- End Applications -->
