@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#    Copyright (C) 2008-2016  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2008-2017  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C) 2015       Santiago Rodriguez <santi@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=47
+VERSION=48
 
 . ./config
 
@@ -195,8 +195,14 @@ cat << EOF >> toolkit/mozapps/extensions/content/extensions.css
 }
 EOF
 
-# Disable mobile promo
-sed '/fxaMobilePromo/,/label>$/d' -i browser/components/preferences/in-content/sync.xul
+# Hide mobile promo
+echo ".fxaMobilePromo {  display: none !important; }" >> browser/themes/shared/incontentprefs/preferences.inc.css
+# Hide plugindeprecation-notice
+echo "#plugindeprecation-notice {  display: none !important; }" >> toolkit/mozapps/extensions/content/extensions.css
+# Hide warnings on unsigned extensions
+echo ".warning{display: none!important; } .addon[notification=warning]{background-image: none!important;}" >> toolkit/mozapps/extensions/content/extensions.css
+# Hide extra links in about box
+sed '/releaseNotes.link/d; /helpus/d' -i ./browser/base/content/aboutDialog.xul
 
 find -wholename '*/brand.dtd' |xargs /bin/sed 's/trademarkInfo.part1.*/trademarkInfo.part1 "">/' -i
 
