@@ -21,7 +21,7 @@ VERSION=1
 
 . ./config
 
-sed 's/Ubuntu/Trisquel' -i ./src/service.c
+sed 's/Ubuntu/Trisquel/' -i ./src/service.c
 
 changelog "Unbranded"
 
