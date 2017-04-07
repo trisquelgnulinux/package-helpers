@@ -214,17 +214,16 @@
   <!-- Other -->
   <Menu>
     <Name>Other</Name>
-    <Dairectory>mate-other.directory</Directory>
+    <Directory>mate-other.directory</Directory>
     <OnlyUnallocated/>
     <Include>
       <And>
         <Not><Category>Core</Category></Not>
-        <Not><Category>Screensaver</Category></Not> <Not><Category>System</Category></Not> <Not><Category>Settings</Category></Not>
-        <Not><Category>X-GNOME-Settings-Panel</Category></Not>
+        <Not><Category>Settings</Category></Not>
+        <Not><Category>Screensaver</Category></Not>
       </And>
     </Include>
   </Menu> <!-- End Other -->
-
 
 <Include>
   <Filename>gnome-app-install.desktop</Filename>
