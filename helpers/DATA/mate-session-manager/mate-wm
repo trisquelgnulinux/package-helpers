@@ -72,7 +72,8 @@ if [ -z "$WINDOW_MANAGER" ] ; then
   # marco is still the default wm in MATE
   KNOWN_WM="marco $KNOWN_WM"
 
-  xdpyinfo 2> /dev/null | grep -q "^ *Composite$" 2> /dev/null
+  #xdpyinfo 2> /dev/null | grep -q "^ *Composite$" 2> /dev/null
+  glxinfo |grep "OpenGL renderer"| grep -vi Gallium | grep -q .
   IS_X_COMPOSITED=$?
   if [ $IS_X_COMPOSITED -eq 0 ] ; then
     KNOWN_WM="marco-compton mutter compiz-manager compiz beryl $KNOWN_WM"
