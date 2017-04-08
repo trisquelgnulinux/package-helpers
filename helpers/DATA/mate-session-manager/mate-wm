@@ -40,9 +40,22 @@ for n in "$@" ; do
   esac
 done
 
+glxinfo |grep "OpenGL renderer"| grep -vi Gallium | grep -q .
+IS_X_COMPOSITED=$?
+
 # WINDOW_MANAGER overrides all
 if [ -z "$WINDOW_MANAGER" ] ; then
-    WINDOW_MANAGER=`gsettings get org.mate.session.required-components windowmanager 2> /dev/null`
+    WINDOW_MANAGER=`gsettings get org.mate.session.required-components windowmanager 2> /dev/null | sed s/\'//g`
+fi
+
+if [ "x$WINDOW_MANAGER" = "xmarco-compton" ] && [ $IS_X_COMPOSITED != 0 ]; then
+    WINDOW_MANAGER=marco-no-composite
+    gsettings set org.mate.session.required-components windowmanager marco-no-composite
+fi
+
+if [ "x$WINDOW_MANAGER" = "xmarco-compton" ] && [ $IS_X_COMPOSITED = 0 ]; then
+    WINDOW_MANAGER=marco-compton
+    gsettings set org.mate.session.required-components windowmanager marco-compton
 fi
 
 # Migrate compiz to compiz-manager if possible and needed
@@ -69,15 +82,13 @@ if [ -z "$WINDOW_MANAGER" ] ; then
   # compositing ones when it makes sense
 
   KNOWN_WM="sawfish sawmill enlightenment icewm wmaker fvwm2 qvwm fvwm twm kwm"
-  # marco is still the default wm in MATE
-  KNOWN_WM="marco $KNOWN_WM"
 
-  #xdpyinfo 2> /dev/null | grep -q "^ *Composite$" 2> /dev/null
-  glxinfo |grep "OpenGL renderer"| grep -vi Gallium | grep -q .
-  IS_X_COMPOSITED=$?
   if [ $IS_X_COMPOSITED -eq 0 ] ; then
     KNOWN_WM="marco-compton mutter compiz-manager compiz beryl $KNOWN_WM"
   fi
+
+  # marco is still the default wm in MATE
+  KNOWN_WM="marco $KNOWN_WM"
 
   OLDIFS=$IFS
   if [ -z "$DEFWM" -o "x$DEFWM" = "xmate-wm" ]; then
