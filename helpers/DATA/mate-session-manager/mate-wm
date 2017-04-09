@@ -74,7 +74,13 @@ fi
 # Avoid looping if the session configuration tells us to use mate-wm or if
 # the user forces mate-wm via WINDOW_MANAGER
 if [ "x$WINDOW_MANAGER" = "xmate-wm" ]; then
-  WINDOW_MANAGER=""
+  if [ $IS_X_COMPOSITED = 0 ]; then
+    WINDOW_MANAGER="marco-compton"
+    gsettings set org.mate.session.required-components windowmanager marco-compton
+  else
+    WINDOW_MANAGER="marco-no-composite"
+    gsettings set org.mate.session.required-components windowmanager marco-no-composite
+  fi
 fi
 
 if [ -z "$WINDOW_MANAGER" ] ; then
