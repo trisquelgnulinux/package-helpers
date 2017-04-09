@@ -23,7 +23,7 @@ NETINST=true
 
 find build/pkg-lists -type f | xargs sed -i /media-retriever/d
 
-LASTKERNEL=$(apt-cache showsrc linux-libc-dev|grep ^Version | tac |head -n1|cut -d" " -f2|cut -d. -f1,2,3)
+LASTKERNEL=$(apt-cache show linux-libc-dev|grep ^Version |head -n1|cut -d" " -f2|cut -d. -f1,2,3)
 /bin/sed -i "s/^BASEVERSION.*/BASEVERSION = $LASTKERNEL/g" ./build/config/i386.cfg ./build/config/amd64.cfg
 sed -i "s/^MEDIUM_SUPPORTED.*/MEDIUM_SUPPORTED = cdrom netboot/g" ./build/config/i386.cfg ./build/config/amd64.cfg
 sed -i "/signed/d" ./build/config/amd64.cfg
