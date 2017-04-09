@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2012-2016  Ruben Rodriguuez <ruben@trisquel.info>
+#    Copyright (C) 2012-2017  Ruben Rodriguuez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,12 +17,15 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 
 . ./config
 
 # Get rid of /cow showing in the desktop
 sed '/tmpfs/ s:$:\n/dev/loop1 /cow ext3 noauto 0 0:' scripts/casper-bottom/12fstab -i
+
+# Only generate the locale selected at boot
+sed 's/keep-existing/keep-existing $LANG/' -i scripts/casper-bottom/14locales
 
 rm scripts/casper-premount/10driver_updates
 rm scripts/casper-bottom/33enable_apport_crashes
