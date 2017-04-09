@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 
 . ./config
 
@@ -26,6 +26,12 @@ sed '/tmpfs/ s:$:\n/dev/loop1 /cow ext3 noauto 0 0:' scripts/casper-bottom/12fst
 
 # Only generate the locale selected at boot
 sed 's/keep-existing/keep-existing $LANG/' -i scripts/casper-bottom/14locales
+
+# Adapt 30accessibility to mate desktop
+for profile in blindness braille high-contrast onscreen-keyboard; do
+  sed "s/setup_profile $profile/setup-profile mate-$profile/" -i scripts/casper-bottom/30accessibility
+done
+sed "s/setup_profile keyboard-modifiers/setup-profile mate-motor-difficulties/" -i scripts/casper-bottom/30accessibility
 
 rm scripts/casper-premount/10driver_updates
 rm scripts/casper-bottom/33enable_apport_crashes
