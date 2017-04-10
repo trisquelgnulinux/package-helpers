@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=4
+VERSION=5
 
 . ./config
 
@@ -32,6 +32,22 @@ for profile in blindness braille high-contrast onscreen-keyboard; do
   sed "s/setup_profile $profile/setup_profile mate-$profile/" -i scripts/casper-bottom/30accessibility
 done
 sed "s/setup_profile keyboard-modifiers/setup_profile mate-motor-difficulties/" -i scripts/casper-bottom/30accessibility
+
+# Install gsettings for the lightdm user as well
+cat << EOF | patch -p0
+--- scripts/casper-bottom/30accessibility	2017-04-09 15:17:52.538923862 -0400
++++ scripts/casper-bottom/30accessibility	2017-04-09 20:05:56.018921800 -0400
+@@ -20,6 +20,9 @@
+ 		chroot /root /usr/bin/a11y-profile-manager -s \$1 -D /tmp/a11y-profile-casper.d/01-profile
+ 		chroot /root /usr/bin/dconf compile /tmp/dconf.\$USERNAME /tmp/a11y-profile-casper.d
+ 		mkdir -p /root/home/\$USERNAME/.config/dconf
++		mkdir -p /root/var/lib/lightdm/.config/dconf
++                cp /root/tmp/dconf.\$USERNAME /root/var/lib/lightdm/.config/dconf/user
++		chroot /root chown lightdm.lightdm -R /root/var/lib/lightdm/.config
+ 		mv /root/tmp/dconf.\$USERNAME /root/home/\$USERNAME/.config/dconf/user
+ 		chroot /root chown \$USERNAME.\$USERNAME -R /home/\$USERNAME/.config
+ 		rmdir /root/tmp/a11y-profile-casper.d
+EOF
 
 rm scripts/casper-premount/10driver_updates
 rm scripts/casper-bottom/33enable_apport_crashes
