@@ -58,6 +58,8 @@ cp $DATA/aboutIceCat.xhtml extensions/gnu/abouticecat@gnu.org/chrome/content/abo
 cp $DATA/bookmarks.html.in browser/locales/generic/profile/bookmarks.html.in
 cp $DATA/aboutHome.xhtml browser/base/content/abouthome/aboutHome.xhtml
 
+mv browser/locales/searchplugins/google-nocodes.xml browser/locales/searchplugins/google.xml
+
 changelog "Customized for Trisquel"
 
 compile
