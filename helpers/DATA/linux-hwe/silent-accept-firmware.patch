@@ -1,0 +1,1103 @@
+diff -ru source.bak/drivers/base/firmware_class.c source/drivers/base/firmware_class.c
+--- source.bak/drivers/base/firmware_class.c	2017-05-31 17:29:09.000000000 -0400
++++ source/drivers/base/firmware_class.c	2017-05-31 17:32:41.346386778 -0400
+@@ -97,7 +97,7 @@
+ 	FW_STATUS_ABORT,
+ };
+ 
+-static int loading_timeout = 60;	/* In seconds */
++static int loading_timeout = 5;	/* In seconds */
+ 
+ static inline long firmware_loading_timeout(void)
+ {
+@@ -351,14 +351,14 @@
+ 						id);
+ 		if (rc) {
+ 			if (rc == -ENOENT)
+-				dev_dbg(device, "loading %s failed with error %d\n",
+-					 path, rc);
++				dev_dbg(device, "loading failed with error %d\n",
++					 rc);
+ 			else
+-				dev_warn(device, "loading %s failed with error %d\n",
+-					 path, rc);
++				dev_warn(device, "loading failed with error %d\n",
++					 rc);
+ 			continue;
+ 		}
+-		dev_dbg(device, "direct-loading %s\n", buf->fw_id);
++		dev_dbg(device, "direct-loading\n", buf->fw_id);
+ 		buf->size = size;
+ 		fw_finish_direct_load(device, buf);
+ 		break;
+@@ -949,7 +949,7 @@
+ 	if (opt_flags & FW_OPT_UEVENT) {
+ 		buf->need_uevent = true;
+ 		dev_set_uevent_suppress(f_dev, false);
+-		dev_dbg(f_dev, "firmware: requesting %s\n", buf->fw_id);
++		dev_dbg(f_dev, "firmware: requesting\n", buf->fw_id);
+ 		kobject_uevent(&fw_priv->dev.kobj, KOBJ_ADD);
+ 	} else {
+ 		timeout = MAX_JIFFY_OFFSET;
+@@ -1065,7 +1065,7 @@
+ 	}
+ 
+ 	if (fw_get_builtin_firmware(firmware, name, dbuf, size)) {
+-		dev_dbg(device, "using built-in %s\n", name);
++		dev_dbg(device, "using built-in\n", name);
+ 		return 0; /* assigned */
+ 	}
+ 
+@@ -1152,11 +1152,11 @@
+ 		goto out;
+ 
+ 	ret = 0;
+-	timeout = firmware_loading_timeout();
++	timeout = is_nonfree_firmware(name) ? 1 : firmware_loading_timeout();
+ 	if (opt_flags & FW_OPT_NOWAIT) {
+ 		timeout = usermodehelper_read_lock_wait(timeout);
+ 		if (!timeout) {
+-			dev_dbg(device, "firmware: %s loading timed out\n",
++			dev_dbg(device, "firmware: loading timed out\n",
+ 				name);
+ 			ret = -EBUSY;
+ 			goto out;
+@@ -1164,7 +1164,7 @@
+ 	} else {
+ 		ret = usermodehelper_read_trylock();
+ 		if (WARN_ON(ret)) {
+-			dev_err(device, "firmware: %s will not be loaded\n",
++			dev_err(device, "firmware: will not be loaded\n",
+ 				name);
+ 			goto out;
+ 		}
+@@ -1174,12 +1174,13 @@
+ 	if (ret) {
+ 		if (!(opt_flags & FW_OPT_NO_WARN))
+ 			dev_warn(device,
+-				 "Direct firmware load for %s failed with error %d\n",
+-				 name, ret);
++				 "Direct firmware load failed with error %d\n",
++				 ret);
+ 		if (opt_flags & FW_OPT_USERHELPER) {
+ 			dev_warn(device, "Falling back to user helper\n");
+ 			ret = fw_load_from_user_helper(fw, name, device,
+ 						       opt_flags, timeout);
++                        dev_warn(device, "Please read https://www.gnu.org/distros/free-system-distribution-guidelines.html#nonfree-firmware\n");
+ 		}
+ 	}
+ 
+diff -ru source.bak/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c source/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
+--- source.bak/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c	2016-10-02 19:24:33.000000000 -0400
++++ source/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c	2017-05-31 17:32:41.354386778 -0400
+@@ -786,7 +786,7 @@
+ 
+ 			err = amdgpu_ucode_validate(adev->pm.fw);
+ 			if (err) {
+-				DRM_ERROR("Failed to load firmware \"%s\"", fw_name);
++				DRM_ERROR("Failed to load firmware", fw_name);
+ 				release_firmware(adev->pm.fw);
+ 				adev->pm.fw = NULL;
+ 				return err;
+diff -ru source.bak/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c source/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c
+--- source.bak/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c	2016-10-02 19:24:33.000000000 -0400
++++ source/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c	2017-05-31 17:32:41.354386778 -0400
+@@ -155,7 +155,7 @@
+ 
+ 	r = request_firmware(&adev->uvd.fw, fw_name, adev->dev);
+ 	if (r) {
+-		dev_err(adev->dev, "amdgpu_uvd: Can't load firmware \"%s\"\n",
++		dev_err(adev->dev, "amdgpu_uvd: Can't load firmware\n",
+ 			fw_name);
+ 		return r;
+ 	}
+diff -ru source.bak/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c source/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c
+--- source.bak/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c	2016-10-02 19:24:33.000000000 -0400
++++ source/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c	2017-05-31 17:32:41.358386778 -0400
+@@ -128,7 +128,7 @@
+ 
+ 	r = request_firmware(&adev->vce.fw, fw_name, adev->dev);
+ 	if (r) {
+-		dev_err(adev->dev, "amdgpu_vce: Can't load firmware \"%s\"\n",
++		dev_err(adev->dev, "amdgpu_vce: Can't load firmware\n",
+ 			fw_name);
+ 		return r;
+ 	}
+diff -ru source.bak/drivers/gpu/drm/amd/amdgpu/ci_dpm.c source/drivers/gpu/drm/amd/amdgpu/ci_dpm.c
+--- source.bak/drivers/gpu/drm/amd/amdgpu/ci_dpm.c	2016-10-02 19:24:33.000000000 -0400
++++ source/drivers/gpu/drm/amd/amdgpu/ci_dpm.c	2017-05-31 17:32:41.358386778 -0400
+@@ -5792,7 +5792,7 @@
+ out:
+ 	if (err) {
+ 		printk(KERN_ERR
+-		       "cik_smc: Failed to load firmware \"%s\"\n",
++		       "cik_smc: Failed to load firmware\n",
+ 		       fw_name);
+ 		release_firmware(adev->pm.fw);
+ 		adev->pm.fw = NULL;
+diff -ru source.bak/drivers/gpu/drm/amd/amdgpu/cik_sdma.c source/drivers/gpu/drm/amd/amdgpu/cik_sdma.c
+--- source.bak/drivers/gpu/drm/amd/amdgpu/cik_sdma.c	2016-10-02 19:24:33.000000000 -0400
++++ source/drivers/gpu/drm/amd/amdgpu/cik_sdma.c	2017-05-31 17:32:41.358386778 -0400
+@@ -143,7 +143,7 @@
+ out:
+ 	if (err) {
+ 		printk(KERN_ERR
+-		       "cik_sdma: Failed to load firmware \"%s\"\n",
++		       "cik_sdma: Failed to load firmware\n",
+ 		       fw_name);
+ 		for (i = 0; i < adev->sdma.num_instances; i++) {
+ 			release_firmware(adev->sdma.instance[i].fw);
+diff -ru source.bak/drivers/gpu/drm/amd/amdgpu/fiji_dpm.c source/drivers/gpu/drm/amd/amdgpu/fiji_dpm.c
+--- source.bak/drivers/gpu/drm/amd/amdgpu/fiji_dpm.c	2016-10-02 19:24:33.000000000 -0400
++++ source/drivers/gpu/drm/amd/amdgpu/fiji_dpm.c	2017-05-31 17:32:41.358386778 -0400
+@@ -51,7 +51,7 @@
+ 
+ out:
+ 	if (err) {
+-		DRM_ERROR("Failed to load firmware \"%s\"", fw_name);
++		DRM_ERROR("Failed to load firmware\n", fw_name);
+ 		release_firmware(adev->pm.fw);
+ 		adev->pm.fw = NULL;
+ 	}
+diff -ru source.bak/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c source/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c
+--- source.bak/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c	2016-10-02 19:24:33.000000000 -0400
++++ source/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c	2017-05-31 17:32:41.358386778 -0400
+@@ -973,7 +973,7 @@
+ out:
+ 	if (err) {
+ 		printk(KERN_ERR
+-		       "gfx7: Failed to load firmware \"%s\"\n",
++		       "gfx7: Failed to load firmware\n",
+ 		       fw_name);
+ 		release_firmware(adev->gfx.pfp_fw);
+ 		adev->gfx.pfp_fw = NULL;
+diff -ru source.bak/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c source/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
+--- source.bak/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c	2017-05-31 17:29:09.000000000 -0400
++++ source/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c	2017-05-31 17:32:41.358386778 -0400
+@@ -1069,7 +1069,7 @@
+ out:
+ 	if (err) {
+ 		dev_err(adev->dev,
+-			"gfx8: Failed to load firmware \"%s\"\n",
++			"gfx8: Failed to load firmware\n",
+ 			fw_name);
+ 		release_firmware(adev->gfx.pfp_fw);
+ 		adev->gfx.pfp_fw = NULL;
+diff -ru source.bak/drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c source/drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c
+--- source.bak/drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c	2016-10-02 19:24:33.000000000 -0400
++++ source/drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c	2017-05-31 17:32:41.358386778 -0400
+@@ -162,7 +162,7 @@
+ out:
+ 	if (err) {
+ 		printk(KERN_ERR
+-		       "cik_mc: Failed to load firmware \"%s\"\n",
++		       "cik_mc: Failed to load firmware\n",
+ 		       fw_name);
+ 		release_firmware(adev->mc.fw);
+ 		adev->mc.fw = NULL;
+diff -ru source.bak/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c source/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c
+--- source.bak/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c	2016-10-02 19:24:33.000000000 -0400
++++ source/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c	2017-05-31 17:32:41.358386778 -0400
+@@ -240,7 +240,7 @@
+ out:
+ 	if (err) {
+ 		printk(KERN_ERR
+-		       "mc: Failed to load firmware \"%s\"\n",
++		       "mc: Failed to load firmware\n",
+ 		       fw_name);
+ 		release_firmware(adev->mc.fw);
+ 		adev->mc.fw = NULL;
+diff -ru source.bak/drivers/gpu/drm/amd/amdgpu/iceland_dpm.c source/drivers/gpu/drm/amd/amdgpu/iceland_dpm.c
+--- source.bak/drivers/gpu/drm/amd/amdgpu/iceland_dpm.c	2016-10-02 19:24:33.000000000 -0400
++++ source/drivers/gpu/drm/amd/amdgpu/iceland_dpm.c	2017-05-31 17:32:41.358386778 -0400
+@@ -51,7 +51,7 @@
+ 
+ out:
+ 	if (err) {
+-		DRM_ERROR("Failed to load firmware \"%s\"", fw_name);
++		DRM_ERROR("Failed to load firmware\n", fw_name);
+ 		release_firmware(adev->pm.fw);
+ 		adev->pm.fw = NULL;
+ 	}
+diff -ru source.bak/drivers/gpu/drm/amd/amdgpu/sdma_v2_4.c source/drivers/gpu/drm/amd/amdgpu/sdma_v2_4.c
+--- source.bak/drivers/gpu/drm/amd/amdgpu/sdma_v2_4.c	2016-10-02 19:24:33.000000000 -0400
++++ source/drivers/gpu/drm/amd/amdgpu/sdma_v2_4.c	2017-05-31 17:32:41.362386778 -0400
+@@ -171,7 +171,7 @@
+ out:
+ 	if (err) {
+ 		printk(KERN_ERR
+-		       "sdma_v2_4: Failed to load firmware \"%s\"\n",
++		       "sdma_v2_4: Failed to load firmware\n",
+ 		       fw_name);
+ 		for (i = 0; i < adev->sdma.num_instances; i++) {
+ 			release_firmware(adev->sdma.instance[i].fw);
+diff -ru source.bak/drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c source/drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c
+--- source.bak/drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c	2016-10-02 19:24:33.000000000 -0400
++++ source/drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c	2017-05-31 17:32:41.362386778 -0400
+@@ -316,7 +316,7 @@
+ out:
+ 	if (err) {
+ 		printk(KERN_ERR
+-		       "sdma_v3_0: Failed to load firmware \"%s\"\n",
++		       "sdma_v3_0: Failed to load firmware\n",
+ 		       fw_name);
+ 		for (i = 0; i < adev->sdma.num_instances; i++) {
+ 			release_firmware(adev->sdma.instance[i].fw);
+diff -ru source.bak/drivers/gpu/drm/amd/amdgpu/tonga_dpm.c source/drivers/gpu/drm/amd/amdgpu/tonga_dpm.c
+--- source.bak/drivers/gpu/drm/amd/amdgpu/tonga_dpm.c	2016-10-02 19:24:33.000000000 -0400
++++ source/drivers/gpu/drm/amd/amdgpu/tonga_dpm.c	2017-05-31 17:32:41.362386778 -0400
+@@ -50,7 +50,7 @@
+ 
+ out:
+ 	if (err) {
+-		DRM_ERROR("Failed to load firmware \"%s\"", fw_name);
++		DRM_ERROR("Failed to load firmware\n", fw_name);
+ 		release_firmware(adev->pm.fw);
+ 		adev->pm.fw = NULL;
+ 	}
+diff -ru source.bak/drivers/gpu/drm/drm_edid_load.c source/drivers/gpu/drm/drm_edid_load.c
+--- source.bak/drivers/gpu/drm/drm_edid_load.c	2016-10-02 19:24:33.000000000 -0400
++++ source/drivers/gpu/drm/drm_edid_load.c	2017-05-31 17:32:41.362386778 -0400
+@@ -188,8 +188,8 @@
+ 		err = request_firmware(&fw, name, &pdev->dev);
+ 		platform_device_unregister(pdev);
+ 		if (err) {
+-			DRM_ERROR("Requesting EDID firmware \"%s\" failed (err=%d)\n",
+-				  name, err);
++			DRM_ERROR("Requesting EDID firmware failed (err=%d)\n",
++				  err);
+ 			return ERR_PTR(err);
+ 		}
+ 
+diff -ru source.bak/drivers/gpu/drm/nouveau/nvkm/engine/xtensa.c source/drivers/gpu/drm/nouveau/nvkm/engine/xtensa.c
+--- source.bak/drivers/gpu/drm/nouveau/nvkm/engine/xtensa.c	2016-10-02 19:24:33.000000000 -0400
++++ source/drivers/gpu/drm/nouveau/nvkm/engine/xtensa.c	2017-05-31 17:32:41.362386778 -0400
+@@ -109,7 +109,7 @@
+ 
+ 		ret = request_firmware(&fw, name, device->dev);
+ 		if (ret) {
+-			nvkm_warn(subdev, "unable to load firmware %s\n", name);
++			nvkm_warn(subdev, "unable to load firmware\n", name);
+ 			return ret;
+ 		}
+ 
+diff -ru source.bak/drivers/gpu/drm/r128/r128_cce.c source/drivers/gpu/drm/r128/r128_cce.c
+--- source.bak/drivers/gpu/drm/r128/r128_cce.c	2016-10-02 19:24:33.000000000 -0400
++++ source/drivers/gpu/drm/r128/r128_cce.c	2017-05-31 17:32:41.362386778 -0400
+@@ -155,14 +155,14 @@
+ 	rc = request_firmware(&fw, FIRMWARE_NAME, &pdev->dev);
+ 	platform_device_unregister(pdev);
+ 	if (rc) {
+-		printk(KERN_ERR "r128_cce: Failed to load firmware \"%s\"\n",
++		printk(KERN_ERR "r128_cce: Failed to load firmware\n",
+ 		       FIRMWARE_NAME);
+ 		return rc;
+ 	}
+ 
+ 	if (fw->size != 256 * 8) {
+ 		printk(KERN_ERR
+-		       "r128_cce: Bogus length %zu in firmware \"%s\"\n",
++		       "r128_cce: Bogus length %zu in firmware\n",
+ 		       fw->size, FIRMWARE_NAME);
+ 		rc = -EINVAL;
+ 		goto out_release;
+diff -ru source.bak/drivers/gpu/drm/radeon/cik.c source/drivers/gpu/drm/radeon/cik.c
+--- source.bak/drivers/gpu/drm/radeon/cik.c	2016-10-02 19:24:33.000000000 -0400
++++ source/drivers/gpu/drm/radeon/cik.c	2017-05-31 17:32:41.362386778 -0400
+@@ -2078,7 +2078,7 @@
+ 			goto out;
+ 		if (rdev->pfp_fw->size != pfp_req_size) {
+ 			printk(KERN_ERR
+-			       "cik_cp: Bogus length %zu in firmware \"%s\"\n",
++			       "cik_cp: Bogus length %zu in firmware\n",
+ 			       rdev->pfp_fw->size, fw_name);
+ 			err = -EINVAL;
+ 			goto out;
+@@ -2087,7 +2087,7 @@
+ 		err = radeon_ucode_validate(rdev->pfp_fw);
+ 		if (err) {
+ 			printk(KERN_ERR
+-			       "cik_fw: validation failed for firmware \"%s\"\n",
++			       "cik_fw: validation failed for firmware\n",
+ 			       fw_name);
+ 			goto out;
+ 		} else {
+@@ -2104,7 +2104,7 @@
+ 			goto out;
+ 		if (rdev->me_fw->size != me_req_size) {
+ 			printk(KERN_ERR
+-			       "cik_cp: Bogus length %zu in firmware \"%s\"\n",
++			       "cik_cp: Bogus length %zu in firmware\n",
+ 			       rdev->me_fw->size, fw_name);
+ 			err = -EINVAL;
+ 		}
+@@ -2112,7 +2112,7 @@
+ 		err = radeon_ucode_validate(rdev->me_fw);
+ 		if (err) {
+ 			printk(KERN_ERR
+-			       "cik_fw: validation failed for firmware \"%s\"\n",
++			       "cik_fw: validation failed for firmware\n",
+ 			       fw_name);
+ 			goto out;
+ 		} else {
+@@ -2129,7 +2129,7 @@
+ 			goto out;
+ 		if (rdev->ce_fw->size != ce_req_size) {
+ 			printk(KERN_ERR
+-			       "cik_cp: Bogus length %zu in firmware \"%s\"\n",
++			       "cik_cp: Bogus length %zu in firmware\n",
+ 			       rdev->ce_fw->size, fw_name);
+ 			err = -EINVAL;
+ 		}
+@@ -2137,7 +2137,7 @@
+ 		err = radeon_ucode_validate(rdev->ce_fw);
+ 		if (err) {
+ 			printk(KERN_ERR
+-			       "cik_fw: validation failed for firmware \"%s\"\n",
++			       "cik_fw: validation failed for firmware\n",
+ 			       fw_name);
+ 			goto out;
+ 		} else {
+@@ -2154,7 +2154,7 @@
+ 			goto out;
+ 		if (rdev->mec_fw->size != mec_req_size) {
+ 			printk(KERN_ERR
+-			       "cik_cp: Bogus length %zu in firmware \"%s\"\n",
++			       "cik_cp: Bogus length %zu in firmware\n",
+ 			       rdev->mec_fw->size, fw_name);
+ 			err = -EINVAL;
+ 		}
+@@ -2162,7 +2162,7 @@
+ 		err = radeon_ucode_validate(rdev->mec_fw);
+ 		if (err) {
+ 			printk(KERN_ERR
+-			       "cik_fw: validation failed for firmware \"%s\"\n",
++			       "cik_fw: validation failed for firmware\n",
+ 			       fw_name);
+ 			goto out;
+ 		} else {
+@@ -2194,7 +2194,7 @@
+ 			goto out;
+ 		if (rdev->rlc_fw->size != rlc_req_size) {
+ 			printk(KERN_ERR
+-			       "cik_rlc: Bogus length %zu in firmware \"%s\"\n",
++			       "cik_rlc: Bogus length %zu in firmware\n",
+ 			       rdev->rlc_fw->size, fw_name);
+ 			err = -EINVAL;
+ 		}
+@@ -2202,7 +2202,7 @@
+ 		err = radeon_ucode_validate(rdev->rlc_fw);
+ 		if (err) {
+ 			printk(KERN_ERR
+-			       "cik_fw: validation failed for firmware \"%s\"\n",
++			       "cik_fw: validation failed for firmware\n",
+ 			       fw_name);
+ 			goto out;
+ 		} else {
+@@ -2219,7 +2219,7 @@
+ 			goto out;
+ 		if (rdev->sdma_fw->size != sdma_req_size) {
+ 			printk(KERN_ERR
+-			       "cik_sdma: Bogus length %zu in firmware \"%s\"\n",
++			       "cik_sdma: Bogus length %zu in firmware\n",
+ 			       rdev->sdma_fw->size, fw_name);
+ 			err = -EINVAL;
+ 		}
+@@ -2227,7 +2227,7 @@
+ 		err = radeon_ucode_validate(rdev->sdma_fw);
+ 		if (err) {
+ 			printk(KERN_ERR
+-			       "cik_fw: validation failed for firmware \"%s\"\n",
++			       "cik_fw: validation failed for firmware\n",
+ 			       fw_name);
+ 			goto out;
+ 		} else {
+@@ -2251,7 +2251,7 @@
+ 			if ((rdev->mc_fw->size != mc_req_size) &&
+ 			    (rdev->mc_fw->size != mc2_req_size)){
+ 				printk(KERN_ERR
+-				       "cik_mc: Bogus length %zu in firmware \"%s\"\n",
++				       "cik_mc: Bogus length %zu in firmware\n",
+ 				       rdev->mc_fw->size, fw_name);
+ 				err = -EINVAL;
+ 			}
+@@ -2260,7 +2260,7 @@
+ 			err = radeon_ucode_validate(rdev->mc_fw);
+ 			if (err) {
+ 				printk(KERN_ERR
+-				       "cik_fw: validation failed for firmware \"%s\"\n",
++				       "cik_fw: validation failed for firmware\n",
+ 				       fw_name);
+ 				goto out;
+ 			} else {
+@@ -2278,14 +2278,14 @@
+ 			err = request_firmware(&rdev->smc_fw, fw_name, rdev->dev);
+ 			if (err) {
+ 				printk(KERN_ERR
+-				       "smc: error loading firmware \"%s\"\n",
++				       "smc: error loading firmware\n",
+ 				       fw_name);
+ 				release_firmware(rdev->smc_fw);
+ 				rdev->smc_fw = NULL;
+ 				err = 0;
+ 			} else if (rdev->smc_fw->size != smc_req_size) {
+ 				printk(KERN_ERR
+-				       "cik_smc: Bogus length %zu in firmware \"%s\"\n",
++				       "cik_smc: Bogus length %zu in firmware\n",
+ 				       rdev->smc_fw->size, fw_name);
+ 				err = -EINVAL;
+ 			}
+@@ -2293,7 +2293,7 @@
+ 			err = radeon_ucode_validate(rdev->smc_fw);
+ 			if (err) {
+ 				printk(KERN_ERR
+-				       "cik_fw: validation failed for firmware \"%s\"\n",
++				       "cik_fw: validation failed for firmware\n",
+ 				       fw_name);
+ 				goto out;
+ 			} else {
+@@ -2315,7 +2315,7 @@
+ 	if (err) {
+ 		if (err != -EINVAL)
+ 			printk(KERN_ERR
+-			       "cik_cp: Failed to load firmware \"%s\"\n",
++			       "cik_cp: Failed to load firmware\n",
+ 			       fw_name);
+ 		release_firmware(rdev->pfp_fw);
+ 		rdev->pfp_fw = NULL;
+diff -ru source.bak/drivers/gpu/drm/radeon/ni.c source/drivers/gpu/drm/radeon/ni.c
+--- source.bak/drivers/gpu/drm/radeon/ni.c	2017-05-31 17:29:09.000000000 -0400
++++ source/drivers/gpu/drm/radeon/ni.c	2017-05-31 17:32:41.362386778 -0400
+@@ -775,7 +775,7 @@
+ 		goto out;
+ 	if (rdev->pfp_fw->size != pfp_req_size) {
+ 		printk(KERN_ERR
+-		       "ni_cp: Bogus length %zu in firmware \"%s\"\n",
++		       "ni_cp: Bogus length %zu in firmware\n",
+ 		       rdev->pfp_fw->size, fw_name);
+ 		err = -EINVAL;
+ 		goto out;
+@@ -787,7 +787,7 @@
+ 		goto out;
+ 	if (rdev->me_fw->size != me_req_size) {
+ 		printk(KERN_ERR
+-		       "ni_cp: Bogus length %zu in firmware \"%s\"\n",
++		       "ni_cp: Bogus length %zu in firmware\n",
+ 		       rdev->me_fw->size, fw_name);
+ 		err = -EINVAL;
+ 	}
+@@ -798,7 +798,7 @@
+ 		goto out;
+ 	if (rdev->rlc_fw->size != rlc_req_size) {
+ 		printk(KERN_ERR
+-		       "ni_rlc: Bogus length %zu in firmware \"%s\"\n",
++		       "ni_rlc: Bogus length %zu in firmware\n",
+ 		       rdev->rlc_fw->size, fw_name);
+ 		err = -EINVAL;
+ 	}
+@@ -811,7 +811,7 @@
+ 			goto out;
+ 		if (rdev->mc_fw->size != mc_req_size) {
+ 			printk(KERN_ERR
+-			       "ni_mc: Bogus length %zu in firmware \"%s\"\n",
++			       "ni_mc: Bogus length %zu in firmware\n",
+ 			       rdev->mc_fw->size, fw_name);
+ 			err = -EINVAL;
+ 		}
+@@ -822,14 +822,14 @@
+ 		err = request_firmware(&rdev->smc_fw, fw_name, rdev->dev);
+ 		if (err) {
+ 			printk(KERN_ERR
+-			       "smc: error loading firmware \"%s\"\n",
++			       "smc: error loading firmware\n",
+ 			       fw_name);
+ 			release_firmware(rdev->smc_fw);
+ 			rdev->smc_fw = NULL;
+ 			err = 0;
+ 		} else if (rdev->smc_fw->size != smc_req_size) {
+ 			printk(KERN_ERR
+-			       "ni_mc: Bogus length %zu in firmware \"%s\"\n",
++			       "ni_mc: Bogus length %zu in firmware\n",
+ 			       rdev->mc_fw->size, fw_name);
+ 			err = -EINVAL;
+ 		}
+@@ -839,7 +839,7 @@
+ 	if (err) {
+ 		if (err != -EINVAL)
+ 			printk(KERN_ERR
+-			       "ni_cp: Failed to load firmware \"%s\"\n",
++			       "ni_cp: Failed to load firmware\n",
+ 			       fw_name);
+ 		release_firmware(rdev->pfp_fw);
+ 		rdev->pfp_fw = NULL;
+diff -ru source.bak/drivers/gpu/drm/radeon/r100.c source/drivers/gpu/drm/radeon/r100.c
+--- source.bak/drivers/gpu/drm/radeon/r100.c	2016-10-02 19:24:33.000000000 -0400
++++ source/drivers/gpu/drm/radeon/r100.c	2017-05-31 17:32:41.362386778 -0400
+@@ -1042,11 +1042,11 @@
+ 
+ 	err = request_firmware(&rdev->me_fw, fw_name, rdev->dev);
+ 	if (err) {
+-		printk(KERN_ERR "radeon_cp: Failed to load firmware \"%s\"\n",
++		printk(KERN_ERR "radeon_cp: Failed to load firmware\n",
+ 		       fw_name);
+ 	} else if (rdev->me_fw->size % 8) {
+ 		printk(KERN_ERR
+-		       "radeon_cp: Bogus length %zu in firmware \"%s\"\n",
++		       "radeon_cp: Bogus length %zu in firmware\n",
+ 		       rdev->me_fw->size, fw_name);
+ 		err = -EINVAL;
+ 		release_firmware(rdev->me_fw);
+diff -ru source.bak/drivers/gpu/drm/radeon/r600.c source/drivers/gpu/drm/radeon/r600.c
+--- source.bak/drivers/gpu/drm/radeon/r600.c	2016-10-02 19:24:33.000000000 -0400
++++ source/drivers/gpu/drm/radeon/r600.c	2017-05-31 17:32:41.362386778 -0400
+@@ -2551,7 +2551,7 @@
+ 		goto out;
+ 	if (rdev->pfp_fw->size != pfp_req_size) {
+ 		printk(KERN_ERR
+-		       "r600_cp: Bogus length %zu in firmware \"%s\"\n",
++		       "r600_cp: Bogus length %zu in firmware \n",
+ 		       rdev->pfp_fw->size, fw_name);
+ 		err = -EINVAL;
+ 		goto out;
+@@ -2563,7 +2563,7 @@
+ 		goto out;
+ 	if (rdev->me_fw->size != me_req_size) {
+ 		printk(KERN_ERR
+-		       "r600_cp: Bogus length %zu in firmware \"%s\"\n",
++		       "r600_cp: Bogus length %zu in firmware \n",
+ 		       rdev->me_fw->size, fw_name);
+ 		err = -EINVAL;
+ 	}
+@@ -2574,7 +2574,7 @@
+ 		goto out;
+ 	if (rdev->rlc_fw->size != rlc_req_size) {
+ 		printk(KERN_ERR
+-		       "r600_rlc: Bogus length %zu in firmware \"%s\"\n",
++		       "r600_rlc: Bogus length %zu in firmware \n",
+ 		       rdev->rlc_fw->size, fw_name);
+ 		err = -EINVAL;
+ 	}
+@@ -2584,14 +2584,14 @@
+ 		err = request_firmware(&rdev->smc_fw, fw_name, rdev->dev);
+ 		if (err) {
+ 			printk(KERN_ERR
+-			       "smc: error loading firmware \"%s\"\n",
++			       "smc: error loading firmware \n",
+ 			       fw_name);
+ 			release_firmware(rdev->smc_fw);
+ 			rdev->smc_fw = NULL;
+ 			err = 0;
+ 		} else if (rdev->smc_fw->size != smc_req_size) {
+ 			printk(KERN_ERR
+-			       "smc: Bogus length %zu in firmware \"%s\"\n",
++			       "smc: Bogus length %zu in firmware \n",
+ 			       rdev->smc_fw->size, fw_name);
+ 			err = -EINVAL;
+ 		}
+@@ -2601,7 +2601,7 @@
+ 	if (err) {
+ 		if (err != -EINVAL)
+ 			printk(KERN_ERR
+-			       "r600_cp: Failed to load firmware \"%s\"\n",
++			       "r600_cp: Failed to load firmware \n",
+ 			       fw_name);
+ 		release_firmware(rdev->pfp_fw);
+ 		rdev->pfp_fw = NULL;
+diff -ru source.bak/drivers/gpu/drm/radeon/radeon_uvd.c source/drivers/gpu/drm/radeon/radeon_uvd.c
+--- source.bak/drivers/gpu/drm/radeon/radeon_uvd.c	2016-10-02 19:24:33.000000000 -0400
++++ source/drivers/gpu/drm/radeon/radeon_uvd.c	2017-05-31 17:32:41.366386778 -0400
+@@ -140,7 +140,7 @@
+ 		/* Let's try to load the newer firmware first */
+ 		r = request_firmware(&rdev->uvd_fw, fw_name, rdev->dev);
+ 		if (r) {
+-			dev_err(rdev->dev, "radeon_uvd: Can't load firmware \"%s\"\n",
++			dev_err(rdev->dev, "radeon_uvd: Can't load firmware\n",
+ 				fw_name);
+ 		} else {
+ 			struct common_firmware_header *hdr = (void *)rdev->uvd_fw->data;
+@@ -175,7 +175,7 @@
+ 	if (!fw_name || r) {
+ 		r = request_firmware(&rdev->uvd_fw, legacy_fw_name, rdev->dev);
+ 		if (r) {
+-			dev_err(rdev->dev, "radeon_uvd: Can't load firmware \"%s\"\n",
++			dev_err(rdev->dev, "radeon_uvd: Can't load firmware\n",
+ 				legacy_fw_name);
+ 			return r;
+ 		}
+diff -ru source.bak/drivers/gpu/drm/radeon/radeon_vce.c source/drivers/gpu/drm/radeon/radeon_vce.c
+--- source.bak/drivers/gpu/drm/radeon/radeon_vce.c	2016-10-02 19:24:33.000000000 -0400
++++ source/drivers/gpu/drm/radeon/radeon_vce.c	2017-05-31 17:32:41.366386778 -0400
+@@ -87,7 +87,7 @@
+ 
+ 	r = request_firmware(&rdev->vce_fw, fw_name, rdev->dev);
+ 	if (r) {
+-		dev_err(rdev->dev, "radeon_vce: Can't load firmware \"%s\"\n",
++		dev_err(rdev->dev, "radeon_vce: Can't load firmware\n",
+ 			fw_name);
+ 		return r;
+ 	}
+diff -ru source.bak/drivers/gpu/drm/radeon/si.c source/drivers/gpu/drm/radeon/si.c
+--- source.bak/drivers/gpu/drm/radeon/si.c	2017-05-31 17:29:09.000000000 -0400
++++ source/drivers/gpu/drm/radeon/si.c	2017-05-31 17:32:41.366386778 -0400
+@@ -1765,7 +1765,7 @@
+ 			goto out;
+ 		if (rdev->pfp_fw->size != pfp_req_size) {
+ 			printk(KERN_ERR
+-			       "si_cp: Bogus length %zu in firmware \"%s\"\n",
++			       "si_cp: Bogus length %zu in firmware\n",
+ 			       rdev->pfp_fw->size, fw_name);
+ 			err = -EINVAL;
+ 			goto out;
+@@ -1774,7 +1774,7 @@
+ 		err = radeon_ucode_validate(rdev->pfp_fw);
+ 		if (err) {
+ 			printk(KERN_ERR
+-			       "si_cp: validation failed for firmware \"%s\"\n",
++			       "si_cp: validation failed for firmware\n",
+ 			       fw_name);
+ 			goto out;
+ 		} else {
+@@ -1791,7 +1791,7 @@
+ 			goto out;
+ 		if (rdev->me_fw->size != me_req_size) {
+ 			printk(KERN_ERR
+-			       "si_cp: Bogus length %zu in firmware \"%s\"\n",
++			       "si_cp: Bogus length %zu in firmware\n",
+ 			       rdev->me_fw->size, fw_name);
+ 			err = -EINVAL;
+ 		}
+@@ -1799,7 +1799,7 @@
+ 		err = radeon_ucode_validate(rdev->me_fw);
+ 		if (err) {
+ 			printk(KERN_ERR
+-			       "si_cp: validation failed for firmware \"%s\"\n",
++			       "si_cp: validation failed for firmware\n",
+ 			       fw_name);
+ 			goto out;
+ 		} else {
+@@ -1816,7 +1816,7 @@
+ 			goto out;
+ 		if (rdev->ce_fw->size != ce_req_size) {
+ 			printk(KERN_ERR
+-			       "si_cp: Bogus length %zu in firmware \"%s\"\n",
++			       "si_cp: Bogus length %zu in firmware\n",
+ 			       rdev->ce_fw->size, fw_name);
+ 			err = -EINVAL;
+ 		}
+@@ -1824,7 +1824,7 @@
+ 		err = radeon_ucode_validate(rdev->ce_fw);
+ 		if (err) {
+ 			printk(KERN_ERR
+-			       "si_cp: validation failed for firmware \"%s\"\n",
++			       "si_cp: validation failed for firmware\n",
+ 			       fw_name);
+ 			goto out;
+ 		} else {
+@@ -1841,7 +1841,7 @@
+ 			goto out;
+ 		if (rdev->rlc_fw->size != rlc_req_size) {
+ 			printk(KERN_ERR
+-			       "si_rlc: Bogus length %zu in firmware \"%s\"\n",
++			       "si_rlc: Bogus length %zu in firmware\n",
+ 			       rdev->rlc_fw->size, fw_name);
+ 			err = -EINVAL;
+ 		}
+@@ -1849,7 +1849,7 @@
+ 		err = radeon_ucode_validate(rdev->rlc_fw);
+ 		if (err) {
+ 			printk(KERN_ERR
+-			       "si_cp: validation failed for firmware \"%s\"\n",
++			       "si_cp: validation failed for firmware\n",
+ 			       fw_name);
+ 			goto out;
+ 		} else {
+@@ -1871,7 +1871,7 @@
+ 		if ((rdev->mc_fw->size != mc_req_size) &&
+ 		    (rdev->mc_fw->size != mc2_req_size)) {
+ 			printk(KERN_ERR
+-			       "si_mc: Bogus length %zu in firmware \"%s\"\n",
++			       "si_mc: Bogus length %zu in firmware\n",
+ 			       rdev->mc_fw->size, fw_name);
+ 			err = -EINVAL;
+ 		}
+@@ -1880,7 +1880,7 @@
+ 		err = radeon_ucode_validate(rdev->mc_fw);
+ 		if (err) {
+ 			printk(KERN_ERR
+-			       "si_cp: validation failed for firmware \"%s\"\n",
++			       "si_cp: validation failed for firmware\n",
+ 			       fw_name);
+ 			goto out;
+ 		} else {
+@@ -1898,14 +1898,14 @@
+ 		err = request_firmware(&rdev->smc_fw, fw_name, rdev->dev);
+ 		if (err) {
+ 			printk(KERN_ERR
+-			       "smc: error loading firmware \"%s\"\n",
++			       "smc: error loading firmware\n",
+ 			       fw_name);
+ 			release_firmware(rdev->smc_fw);
+ 			rdev->smc_fw = NULL;
+ 			err = 0;
+ 		} else if (rdev->smc_fw->size != smc_req_size) {
+ 			printk(KERN_ERR
+-			       "si_smc: Bogus length %zu in firmware \"%s\"\n",
++			       "si_smc: Bogus length %zu in firmware\n",
+ 			       rdev->smc_fw->size, fw_name);
+ 			err = -EINVAL;
+ 		}
+@@ -1913,7 +1913,7 @@
+ 		err = radeon_ucode_validate(rdev->smc_fw);
+ 		if (err) {
+ 			printk(KERN_ERR
+-			       "si_cp: validation failed for firmware \"%s\"\n",
++			       "si_cp: validation failed for firmware\n",
+ 			       fw_name);
+ 			goto out;
+ 		} else {
+@@ -1933,7 +1933,7 @@
+ 	if (err) {
+ 		if (err != -EINVAL)
+ 			printk(KERN_ERR
+-			       "si_cp: Failed to load firmware \"%s\"\n",
++			       "si_cp: Failed to load firmware\n",
+ 			       fw_name);
+ 		release_firmware(rdev->pfp_fw);
+ 		rdev->pfp_fw = NULL;
+diff -ru source.bak/drivers/net/wireless/intel/ipw2x00/ipw2200.c source/drivers/net/wireless/intel/ipw2x00/ipw2200.c
+--- source.bak/drivers/net/wireless/intel/ipw2x00/ipw2200.c	2016-10-02 19:24:33.000000000 -0400
++++ source/drivers/net/wireless/intel/ipw2x00/ipw2200.c	2017-05-31 17:32:41.366386778 -0400
+@@ -3419,12 +3419,12 @@
+ 	/* ask firmware_class module to get the boot firmware off disk */
+ 	rc = request_firmware(raw, name, &priv->pci_dev->dev);
+ 	if (rc < 0) {
+-		IPW_ERROR("%s request_firmware failed: Reason %d\n", name, rc);
++		IPW_ERROR("request_firmware failed: Reason %d\n", rc);
+ 		return rc;
+ 	}
+ 
+ 	if ((*raw)->size < sizeof(*fw)) {
+-		IPW_ERROR("%s is too small (%zd)\n", name, (*raw)->size);
++		IPW_ERROR("Firmware file is too small (%zd)\n", (*raw)->size);
+ 		return -EINVAL;
+ 	}
+ 
+@@ -3432,13 +3432,12 @@
+ 
+ 	if ((*raw)->size < sizeof(*fw) + le32_to_cpu(fw->boot_size) +
+ 	    le32_to_cpu(fw->ucode_size) + le32_to_cpu(fw->fw_size)) {
+-		IPW_ERROR("%s is too small or corrupt (%zd)\n",
+-			  name, (*raw)->size);
++		IPW_ERROR("Firmware file is too small or corrupt (%zd)\n",
++			  (*raw)->size);
+ 		return -EINVAL;
+ 	}
+ 
+-	IPW_DEBUG_INFO("Read firmware '%s' image v%d.%d (%zd bytes)\n",
+-		       name,
++	IPW_DEBUG_INFO("Read firmware image v%d.%d (%zd bytes)\n",
+ 		       le32_to_cpu(fw->ver) >> 16,
+ 		       le32_to_cpu(fw->ver) & 0xff,
+ 		       (*raw)->size - sizeof(*fw));
+@@ -3574,7 +3573,7 @@
+ 	/* DMA the initial boot firmware into the device */
+ 	rc = ipw_load_firmware(priv, boot_img, le32_to_cpu(fw->boot_size));
+ 	if (rc < 0) {
+-		IPW_ERROR("Unable to load boot firmware: %d\n", rc);
++		IPW_ERROR("Unable to load boot firmware\n", rc);
+ 		goto error;
+ 	}
+ 
+@@ -3606,7 +3605,7 @@
+ 	/* DMA bss firmware into the device */
+ 	rc = ipw_load_firmware(priv, fw_img, le32_to_cpu(fw->fw_size));
+ 	if (rc < 0) {
+-		IPW_ERROR("Unable to load firmware: %d\n", rc);
++		IPW_ERROR("Unable to load firmware\n", rc);
+ 		goto error;
+ 	}
+ #ifdef CONFIG_PM
+@@ -11217,7 +11216,7 @@
+ 		 * Also start the clocks. */
+ 		rc = ipw_load(priv);
+ 		if (rc) {
+-			IPW_ERROR("Unable to load firmware: %d\n", rc);
++			IPW_ERROR("Unable to load firmware\n", rc);
+ 			return rc;
+ 		}
+ 
+diff -ru source.bak/drivers/net/wireless/intel/iwlegacy/3945-mac.c source/drivers/net/wireless/intel/iwlegacy/3945-mac.c
+--- source.bak/drivers/net/wireless/intel/iwlegacy/3945-mac.c	2016-10-02 19:24:33.000000000 -0400
++++ source/drivers/net/wireless/intel/iwlegacy/3945-mac.c	2017-05-31 17:32:41.366386778 -0400
+@@ -1861,7 +1861,7 @@
+ 		sprintf(buf, "%s%u%s", name_pre, idx, ".ucode");
+ 		ret = request_firmware(&ucode_raw, buf, &il->pci_dev->dev);
+ 		if (ret < 0) {
+-			IL_ERR("%s firmware file req failed: %d\n", buf, ret);
++			IL_ERR("Firmware file req failed\n", buf, ret);
+ 			if (ret == -ENOENT)
+ 				continue;
+ 			else
+@@ -1870,7 +1870,7 @@
+ 			if (idx < api_max)
+ 				IL_ERR("Loaded firmware %s, "
+ 				       "which is deprecated. "
+-				       " Please use API v%u instead.\n", buf,
++				       "\n", buf,
+ 				       api_max);
+ 			D_INFO("Got firmware '%s' file "
+ 			       "(%zd bytes) from disk\n", buf, ucode_raw->size);
+@@ -1906,16 +1906,14 @@
+ 
+ 	if (api_ver < api_min || api_ver > api_max) {
+ 		IL_ERR("Driver unable to support your firmware API. "
+-		       "Driver supports v%u, firmware is v%u.\n", api_max,
++		       "\n", api_max,
+ 		       api_ver);
+ 		il->ucode_ver = 0;
+ 		ret = -EINVAL;
+ 		goto err_release;
+ 	}
+ 	if (api_ver != api_max)
+-		IL_ERR("Firmware has old API version. Expected %u, "
+-		       "got %u. New firmware can be obtained "
+-		       "from http://www.intellinuxwireless.org.\n", api_max,
++		IL_ERR("Firmware has old API version\n", api_max,
+ 		       api_ver);
+ 
+ 	IL_INFO("loaded firmware version %u.%u.%u.%u\n",
+diff -ru source.bak/drivers/net/wireless/intel/iwlegacy/4965-mac.c source/drivers/net/wireless/intel/iwlegacy/4965-mac.c
+--- source.bak/drivers/net/wireless/intel/iwlegacy/4965-mac.c	2016-10-02 19:24:33.000000000 -0400
++++ source/drivers/net/wireless/intel/iwlegacy/4965-mac.c	2017-05-31 17:32:41.370386778 -0400
+@@ -4706,7 +4706,7 @@
+ 
+ 	sprintf(il->firmware_name, "%s%s%s", name_pre, tag, ".ucode");
+ 
+-	D_INFO("attempting to load firmware '%s'\n", il->firmware_name);
++	D_INFO("attempting to load firmware\n", il->firmware_name);
+ 
+ 	return request_firmware_nowait(THIS_MODULE, 1, il->firmware_name,
+ 				       &il->pci_dev->dev, GFP_KERNEL, il,
+@@ -4797,7 +4797,7 @@
+ 
+ 	if (!ucode_raw) {
+ 		if (il->fw_idx <= il->cfg->ucode_api_max)
+-			IL_ERR("request for firmware file '%s' failed.\n",
++			IL_ERR("request for firmware failed.\n",
+ 			       il->firmware_name);
+ 		goto try_again;
+ 	}
+@@ -4827,16 +4827,13 @@
+ 	 * on the API version read from firmware header from here on forward
+ 	 */
+ 	if (api_ver < api_min || api_ver > api_max) {
+-		IL_ERR("Driver unable to support your firmware API. "
+-		       "Driver supports v%u, firmware is v%u.\n", api_max,
++		IL_ERR("Driver unable to support your firmware API.\n", api_max,
+ 		       api_ver);
+ 		goto try_again;
+ 	}
+ 
+ 	if (api_ver != api_max)
+-		IL_ERR("Firmware has old API version. Expected v%u, "
+-		       "got v%u. New firmware can be obtained "
+-		       "from http://www.intellinuxwireless.org.\n", api_max,
++		IL_ERR("Firmware has old API version.\n", api_max,
+ 		       api_ver);
+ 
+ 	IL_INFO("loaded firmware version %u.%u.%u.%u\n",
+diff -ru source.bak/drivers/net/wireless/intel/iwlwifi/iwl-drv.c source/drivers/net/wireless/intel/iwlwifi/iwl-drv.c
+--- source.bak/drivers/net/wireless/intel/iwlwifi/iwl-drv.c	2016-10-02 19:24:33.000000000 -0400
++++ source/drivers/net/wireless/intel/iwlwifi/iwl-drv.c	2017-05-31 17:32:41.370386778 -0400
+@@ -232,7 +232,7 @@
+ 	snprintf(drv->firmware_name, sizeof(drv->firmware_name), "%s%s.ucode",
+ 		 name_pre, tag);
+ 
+-	IWL_DEBUG_INFO(drv, "attempting to load firmware '%s'\n",
++	IWL_DEBUG_INFO(drv, "attempting to load firmware\n",
+ 		       drv->firmware_name);
+ 
+ 	return request_firmware_nowait(THIS_MODULE, 1, drv->firmware_name,
+diff -ru source.bak/drivers/net/wireless/intel/iwlwifi/mvm/fw.c source/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
+--- source.bak/drivers/net/wireless/intel/iwlwifi/mvm/fw.c	2017-05-31 17:29:09.000000000 -0400
++++ source/drivers/net/wireless/intel/iwlwifi/mvm/fw.c	2017-05-31 17:32:41.370386778 -0400
+@@ -1279,7 +1279,7 @@
+ 
+ 	ret = iwl_mvm_load_ucode_wait_alive(mvm, IWL_UCODE_WOWLAN);
+ 	if (ret) {
+-		IWL_ERR(mvm, "Failed to start WoWLAN firmware: %d\n", ret);
++		IWL_ERR(mvm, "Failed to start WoWLAN firmware\n", ret);
+ 		goto error;
+ 	}
+ 
+diff -ru source.bak/drivers/net/wireless/intel/iwlwifi/mvm/nvm.c source/drivers/net/wireless/intel/iwlwifi/mvm/nvm.c
+--- source.bak/drivers/net/wireless/intel/iwlwifi/mvm/nvm.c	2016-10-02 19:24:33.000000000 -0400
++++ source/drivers/net/wireless/intel/iwlwifi/mvm/nvm.c	2017-05-31 17:32:41.370386778 -0400
+@@ -415,7 +415,7 @@
+ 	ret = request_firmware(&fw_entry, mvm->nvm_file_name,
+ 			       mvm->trans->dev);
+ 	if (ret) {
+-		IWL_ERR(mvm, "ERROR: %s isn't available %d\n",
++		IWL_ERR(mvm, "ERROR: firmware isn't available \n",
+ 			mvm->nvm_file_name, ret);
+ 		return ret;
+ 	}
+diff -ru source.bak/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c source/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
+--- source.bak/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c	2017-05-31 17:29:09.000000000 -0400
++++ source/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c	2017-05-31 17:35:21.326386759 -0400
+@@ -2074,9 +2074,9 @@
+ 	int ret = 0;
+ 	u16 signature;
+ 
+-	dev_info(dev, "%s: Loading firmware %s\n", DRIVER_NAME, fw_name);
++	dev_info(dev, "%s: Loading firmware\n", DRIVER_NAME, fw_name);
+ 	if (request_firmware(&fw, fw_name, &priv->udev->dev)) {
+-		dev_warn(dev, "request_firmware(%s) failed\n", fw_name);
++		dev_warn(dev, "request_firmware failed\n", fw_name);
+ 		ret = -EAGAIN;
+ 		goto exit;
+ 	}
+diff -ru source.bak/drivers/net/wireless/realtek/rtlwifi/core.c source/drivers/net/wireless/realtek/rtlwifi/core.c
+--- source.bak/drivers/net/wireless/realtek/rtlwifi/core.c	2017-05-31 17:29:09.000000000 -0400
++++ source/drivers/net/wireless/realtek/rtlwifi/core.c	2017-05-31 17:32:41.370386778 -0400
+@@ -106,12 +106,12 @@
+ 			err = request_firmware(&firmware,
+ 					       rtlpriv->cfg->alt_fw_name,
+ 					       rtlpriv->io.dev);
+-			pr_info("Loading alternative firmware %s\n",
++			pr_info("Loading alternative firmware\n",
+ 				rtlpriv->cfg->alt_fw_name);
+ 			if (!err)
+ 				goto found_alt;
+ 		}
+-		pr_err("Firmware %s not available\n", rtlpriv->cfg->fw_name);
++		pr_err("Firmware not available\n", rtlpriv->cfg->fw_name);
+ 		rtlpriv->max_fw_size = 0;
+ 		return;
+ 	}
+diff -ru source.bak/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/sw.c source/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/sw.c
+--- source.bak/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/sw.c	2016-10-02 19:24:33.000000000 -0400
++++ source/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/sw.c	2017-05-31 17:32:41.370386778 -0400
+@@ -171,7 +171,7 @@
+ 
+ 	rtlpriv->cfg->fw_name = "rtlwifi/rtl8188efw.bin";
+ 	rtlpriv->max_fw_size = 0x8000;
+-	pr_info("Using firmware %s\n", rtlpriv->cfg->fw_name);
++	pr_info("Requesting firmware\n", rtlpriv->cfg->fw_name);
+ 	err = request_firmware_nowait(THIS_MODULE, 1, rtlpriv->cfg->fw_name,
+ 				      rtlpriv->io.dev, GFP_KERNEL, hw,
+ 				      rtl_fw_cb);
+diff -ru source.bak/drivers/net/wireless/realtek/rtlwifi/rtl8192ce/sw.c source/drivers/net/wireless/realtek/rtlwifi/rtl8192ce/sw.c
+--- source.bak/drivers/net/wireless/realtek/rtlwifi/rtl8192ce/sw.c	2016-10-02 19:24:33.000000000 -0400
++++ source/drivers/net/wireless/realtek/rtlwifi/rtl8192ce/sw.c	2017-05-31 17:32:41.370386778 -0400
+@@ -174,7 +174,7 @@
+ 		rtlpriv->cfg->fw_name = "rtlwifi/rtl8192cfwU_B.bin";
+ 
+ 	rtlpriv->max_fw_size = 0x4000;
+-	pr_info("Using firmware %s\n", rtlpriv->cfg->fw_name);
++	pr_info("Requesting firmware\n", rtlpriv->cfg->fw_name);
+ 	err = request_firmware_nowait(THIS_MODULE, 1, rtlpriv->cfg->fw_name,
+ 				      rtlpriv->io.dev, GFP_KERNEL, hw,
+ 				      rtl_fw_cb);
+diff -ru source.bak/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/sw.c source/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/sw.c
+--- source.bak/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/sw.c	2016-10-02 19:24:33.000000000 -0400
++++ source/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/sw.c	2017-05-31 17:32:41.370386778 -0400
+@@ -85,7 +85,7 @@
+ 	}
+ 	/* provide name of alternative file */
+ 	rtlpriv->cfg->alt_fw_name = "rtlwifi/rtl8192cufw.bin";
+-	pr_info("Loading firmware %s\n", rtlpriv->cfg->fw_name);
++	pr_info("Requesting firmware\n", rtlpriv->cfg->fw_name);
+ 	rtlpriv->max_fw_size = 0x4000;
+ 	err = request_firmware_nowait(THIS_MODULE, 1,
+ 				      rtlpriv->cfg->fw_name, rtlpriv->io.dev,
+diff -ru source.bak/drivers/net/wireless/realtek/rtlwifi/rtl8192de/sw.c source/drivers/net/wireless/realtek/rtlwifi/rtl8192de/sw.c
+--- source.bak/drivers/net/wireless/realtek/rtlwifi/rtl8192de/sw.c	2016-10-02 19:24:33.000000000 -0400
++++ source/drivers/net/wireless/realtek/rtlwifi/rtl8192de/sw.c	2017-05-31 17:32:41.370386778 -0400
+@@ -181,7 +181,7 @@
+ 
+ 	rtlpriv->max_fw_size = 0x8000;
+ 	pr_info("Driver for Realtek RTL8192DE WLAN interface\n");
+-	pr_info("Loading firmware file %s\n", rtlpriv->cfg->fw_name);
++	pr_info("Loading firmware file\n", rtlpriv->cfg->fw_name);
+ 
+ 	/* request fw */
+ 	err = request_firmware_nowait(THIS_MODULE, 1, rtlpriv->cfg->fw_name,
+diff -ru source.bak/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/sw.c source/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/sw.c
+--- source.bak/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/sw.c	2016-10-02 19:24:33.000000000 -0400
++++ source/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/sw.c	2017-05-31 17:34:08.242386768 -0400
+@@ -173,7 +173,7 @@
+ 	rtlpriv->cfg->fw_name = "rtlwifi/rtl8192eefw.bin";
+ 
+ 	rtlpriv->max_fw_size = 0x8000;
+-	pr_info("Using firmware %s\n", rtlpriv->cfg->fw_name);
++	pr_info("Loading firmware\n", rtlpriv->cfg->fw_name);
+ 	err = request_firmware_nowait(THIS_MODULE, 1, rtlpriv->cfg->fw_name,
+ 				      rtlpriv->io.dev, GFP_KERNEL, hw,
+ 				      rtl_fw_cb);
+diff -ru source.bak/drivers/net/wireless/realtek/rtlwifi/rtl8192se/sw.c source/drivers/net/wireless/realtek/rtlwifi/rtl8192se/sw.c
+--- source.bak/drivers/net/wireless/realtek/rtlwifi/rtl8192se/sw.c	2016-10-02 19:24:33.000000000 -0400
++++ source/drivers/net/wireless/realtek/rtlwifi/rtl8192se/sw.c	2017-05-31 17:32:41.370386778 -0400
+@@ -94,7 +94,7 @@
+ 			 "Firmware callback routine entered!\n");
+ 	complete(&rtlpriv->firmware_loading_complete);
+ 	if (!firmware) {
+-		pr_err("Firmware %s not available\n", rtlpriv->cfg->fw_name);
++		pr_err("Firmware not available\n", rtlpriv->cfg->fw_name);
+ 		rtlpriv->max_fw_size = 0;
+ 		return;
+ 	}
+@@ -214,7 +214,7 @@
+ 	rtlpriv->max_fw_size = RTL8190_MAX_FIRMWARE_CODE_SIZE*2 +
+ 			       sizeof(struct fw_hdr);
+ 	pr_info("Driver for Realtek RTL8192SE/RTL8191SE\n"
+-		"Loading firmware %s\n", rtlpriv->cfg->fw_name);
++		"Loading firmware\n", rtlpriv->cfg->fw_name);
+ 	/* request fw */
+ 	err = request_firmware_nowait(THIS_MODULE, 1, rtlpriv->cfg->fw_name,
+ 				      rtlpriv->io.dev, GFP_KERNEL, hw,
+diff -ru source.bak/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/sw.c source/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/sw.c
+--- source.bak/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/sw.c	2016-10-02 19:24:33.000000000 -0400
++++ source/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/sw.c	2017-05-31 17:32:41.370386778 -0400
+@@ -182,7 +182,7 @@
+ 		rtlpriv->cfg->fw_name = "rtlwifi/rtl8723fw_B.bin";
+ 
+ 	rtlpriv->max_fw_size = 0x6000;
+-	pr_info("Using firmware %s\n", rtlpriv->cfg->fw_name);
++	pr_info("Requesting firmware\n", rtlpriv->cfg->fw_name);
+ 	err = request_firmware_nowait(THIS_MODULE, 1, rtlpriv->cfg->fw_name,
+ 				      rtlpriv->io.dev, GFP_KERNEL, hw,
+ 				      rtl_fw_cb);
+diff -ru source.bak/drivers/net/wireless/realtek/rtlwifi/rtl8723be/sw.c source/drivers/net/wireless/realtek/rtlwifi/rtl8723be/sw.c
+--- source.bak/drivers/net/wireless/realtek/rtlwifi/rtl8723be/sw.c	2016-10-02 19:24:33.000000000 -0400
++++ source/drivers/net/wireless/realtek/rtlwifi/rtl8723be/sw.c	2017-05-31 17:33:46.026386770 -0400
+@@ -184,7 +184,7 @@
+ 	}
+ 
+ 	rtlpriv->max_fw_size = 0x8000;
+-	pr_info("Using firmware %s\n", rtlpriv->cfg->fw_name);
++	pr_info("Loading firmware\n", rtlpriv->cfg->fw_name);
+ 	err = request_firmware_nowait(THIS_MODULE, 1, rtlpriv->cfg->fw_name,
+ 				      rtlpriv->io.dev, GFP_KERNEL, hw,
+ 				      rtl_fw_cb);
+diff -ru source.bak/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/sw.c source/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/sw.c
+--- source.bak/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/sw.c	2016-10-02 19:24:33.000000000 -0400
++++ source/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/sw.c	2017-05-31 17:34:40.466386764 -0400
+@@ -212,7 +212,7 @@
+ 
+ 	rtlpriv->max_fw_size = 0x8000;
+ 	/*load normal firmware*/
+-	pr_info("Using firmware %s\n", rtlpriv->cfg->fw_name);
++	pr_info("Loading firmware\n", rtlpriv->cfg->fw_name);
+ 	err = request_firmware_nowait(THIS_MODULE, 1, rtlpriv->cfg->fw_name,
+ 				      rtlpriv->io.dev, GFP_KERNEL, hw,
+ 				      rtl_fw_cb);
+@@ -222,7 +222,7 @@
+ 		return 1;
+ 	}
+ 	/*load wowlan firmware*/
+-	pr_info("Using firmware %s\n", rtlpriv->cfg->wowlan_fw_name);
++	pr_info("Loading firmware\n", rtlpriv->cfg->wowlan_fw_name);
+ 	err = request_firmware_nowait(THIS_MODULE, 1,
+ 				      rtlpriv->cfg->wowlan_fw_name,
+ 				      rtlpriv->io.dev, GFP_KERNEL, hw,
