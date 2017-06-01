@@ -88,6 +88,8 @@ cp debian.master/config/i386/config.flavour.lowlatency debian.master/config/amd6
 # Disable using udev as a fallback for firmware loading
 replace "CONFIG_FW_LOADER_USER_HELPER=y" "CONFIG_FW_LOADER_USER_HELPER=n" debian.master/config
 
+cp debian.master/config debian.hwe -a
+
 changelog "Removed non-free bits"
 
 cp debian/changelog debian.master/changelog
