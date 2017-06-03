@@ -17,12 +17,12 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 . ./config
 
 rm ./debian/control.d/signed-generic
 
-sed 's/16.04/7.0/' -i debian/control
+sed 's/16.04/7.0/g' -i debian/control debian/rules
 sed 's/, linux-firmware//' -i debian/control ./debian/control.d/generic
 sed 's/Ubuntu/upstream/' -i debian/control
 sed 's/Linux/Linux-libre/g' -i debian/control ./debian/control.d/generic
