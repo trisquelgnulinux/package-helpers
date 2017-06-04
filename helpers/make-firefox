@@ -70,7 +70,7 @@ sed 's%https://www.mozilla.org/legal/privacy/%https://trisquel.info/legal%' -i .
 #sed 's%https://www.mozilla.org/firefox/central/%https://trisquel.info/browser%' -i browser/base/content/browser-appmenu.inc
 
 # Remove Google API key
-sed '/Google API/,$ d' debian/config/mozconfig.in -i
+sed '/Google API/,/google-api-keyfile/ d' debian/config/mozconfig.in -i
 
 # Org branding
 sed 's/com.ubuntu/org.trisquel/' -i debian/config/mozconfig.in
