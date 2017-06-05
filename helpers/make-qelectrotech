@@ -23,8 +23,6 @@ REPOKEY="BC9F825E1D4FB6C1"
 
 . ./config
 
-sed -i 's/libqt5sql5-sqlite/libqt5sql5-sqlite, libqt5printsupport5/g' debian/control
-
 changelog "Qelectrotech imported into Trisquel"
 
 compile
