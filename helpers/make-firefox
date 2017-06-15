@@ -163,7 +163,7 @@ EOF
 # Replace about:home
 rm browser/base/content/abouthome -rf
 cp $DATA/abouthome -a browser/base/content
-sed '/mozilla.*png/d' -i ./browser/base/jar.mn
+sed '/mozilla.*svg/d' -i ./browser/base/jar.mn
 sed '/abouthome/s/*/ /' -i ./browser/base/jar.mn
 
 # Delete stuff we don't use and that may contain trademaked logos
