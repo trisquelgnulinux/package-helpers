@@ -228,6 +228,7 @@ replace "Trisquel Corporation" "Mozilla Corporation" .
 replace "abrowser.com" "firefox.com" .
 #sed -i 's/iceweasel, abrowser, icecat,/iceweasel, firefox, icecat,/g' debian/control.in
 sed '/Provides/s/abrowser-locale/firefox-locale/' -i debian/control.langpacks
+sed 's/Abrowser/Firefox/' -i third_party/rust/idna/src/lib.rs
 
 # Restore useragent to Firefox
 sed '/MOZILLA_UAVERSION/ s:Abrowser/:Firefox/:' -i netwerk/protocol/http/nsHttpHandler.cpp
