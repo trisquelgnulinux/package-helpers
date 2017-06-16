@@ -17,10 +17,27 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu yakkety-updates main'
 
 . ./config
+
+#https://www.redhat.com/archives/libvir-list/2016-August/msg00749.html
+patch -p1 << EOF
+diff --git a/tools/virsh-secret.c b/tools/virsh-secret.c
+index 8588f4c..537bdd7 100644
+--- a/tools/virsh-secret.c
++++ b/tools/virsh-secret.c
+@@ -253,7 +253,7 @@ static bool
+ cmdSecretGetValue(vshControl *ctl, const vshCmd *cmd)
+ {
+     virSecretPtr secret;
+-    char *base64;
++    char *base64 = NULL;
+     unsigned char *value;
+     size_t value_size;
+     bool ret = false;
+EOF
 
 sed '/zfsutils/d' -i debian/control
 sed 's/with-storage-zfs/without-storage-zfs/' -i debian/rules
