@@ -1,9 +1,9 @@
 [View]
 # the views will be tried in this order, if one fails to import, the next
 # is tried
-View=DistUpgradeViewGtk3,DistUpgradeViewKDE,DistUpgradeViewText
+View=DistUpgradeViewGtk3,DistUpgradeViewGtk,DistUpgradeViewKDE,DistUpgradeViewText
 #View=DistUpgradeViewNonInteractive
-Depends= apt (>= 1.0.10.2ubuntu2)
+#Depends= python-apt (>= 0.6.0), apt (>= 0.6)
 # the views below support upgrades over ssh connection
 SupportSSH=DistUpgradeViewText,DistUpgradeViewNonInteractive
 
@@ -13,35 +13,30 @@ SupportSSH=DistUpgradeViewText,DistUpgradeViewNonInteractive
 MetaPkgs=trisquel-recommended, trisquel-mini-recommended, triskel-recommended, trisquel-sugar-recommended
 BaseMetaPkgs=trisquel-minimal, trisquel-base-recommended
 Demotions=demoted.cfg
-#RemoveEssentialOk=sysvinit, sysvutils, belocs-locales-bin
+RemoveEssentialOk=sysvinit, sysvutils, belocs-locales-bin
 RemovalBlacklistFile=removal_blacklist.cfg
 # if those packages were installed, make sure to keep them installed
-KeepInstalledPkgs=xserver-xorg-video-all
+KeepInstalledPkgs=gnumeric, hpijs, xserver-xorg-video-all
 KeepInstalledSection=translations
 RemoveObsoletes=yes
-#ForcedObsoletes=ksplash-engine-moodin, powernowd, laptop-mode-tools
-# hints for for stuff that should be done right after the cache calculated
-# the dist-upgrade (not to be confused with the PostUpgrade hooks in the
-# quirks handling)
-#PostUpgradePurge=linux-restricted-modules-common
-#PostUpgradeRemove=xsettings-kde
-#PostUpgradeUpgrade=brasero,edubuntu-desktop
+ForcedObsoletes=ksplash-engine-moodin, powernowd, laptop-mode-tools, gnome-session-flashback
+# hints for for stuff that should be done early
+PostUpgradePurge=ltsp-client, ltspfsd
+PostUpgradeRemove=libflashsupport, kvm-source, gtk-qt-engine, libparted1.8-12, usplash, printconf, foomatic-db-gutenprint, ebox-printers, kbluetooth, kde-plasmoid-cwp, kdm, xsettings-kde
+PostUpgradeUpgrade=brasero,edubuntu-desktop
 #PostUpgradeInstall=apt
-PostInstallScripts=./xorg_fix_proprietary.py
+PostInstallScripts=./trisquel-postinstall.sh
 EnableApport=yes
 # this supported blacklisting certain versions to ensure we do not upgrade
 #  - blcr-dkms fails to build on kernel 2.6.35
-#BadVersions=blcr-dkms_0.8.2-13
+BadVersions=blcr-dkms_0.8.2-13
 # ubiquity slideshow
 #SlideshowUrl=http://people.canonical.com/~mvo/ubiquity-slideshow-upgrade/slides/
 
 [KernelRemoval]
-Version=4.2.0
-BaseNames=linux-image,linux-headers,linux-image-debug,linux-backport-modules,
-  linux-header-lbm,linux-signed-image,linux-tools,linux-cloud-tools,
-  linux-image-extra
-Types=386,ec2,generic,generic-lpae,lowlatency,powerpc-e500mc,powerpc-smp,
-  powerpc64-emb,powerpc64-smp,rt,server,virtual
+Version=3.2.0
+BaseNames=linux-image,linux-headers,linux-image-debug,linux-backport-modules,linux-header-lbm
+Types=386,ec2,generic,rt,server,virtual
 
 # information about the individual meta-pkgs
 [trisquel]
@@ -52,7 +47,8 @@ ForcedObsoletes=desktop-effects, cups-pdf, policykit-gnome, gnome-mount, gdm, no
 
 [trisquel-mini]
 KeyDependencies=trisquel-mini-data unity-greeter
-PostUpgradeRemove=casper
+#Remove previous gnome component from ltrisquel to avoid pulling gnome depends on upgrade (LP: #945215)
+PostUpgradeRemove=casper, gnome-bluetooth, gnome-power-manager
 
 [Files]
 BackupExt=distUpgrade
@@ -60,11 +56,11 @@ LogDir=/var/log/dist-upgrade/
 
 [Sources]
 From=belenos
-To=flidas
+To=fridas
 ValidOrigin=Trisquel
 ValidMirrors = mirrors.cfg
 Components=main
-Pockets=security,updates,proposed,backports
+Pockets=security,updates,backports
 ;AllowThirdParty=False
 
 ;[PreRequists]

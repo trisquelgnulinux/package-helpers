@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2008-2010  Rubén Rodríguez <ruben@trisquel.info>
+#    Copyright (C) 2008-2017  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C)      2014  Santiago Rodriguez <santi@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
 # Also, don't forget to update the meta-release files at archive and packages.t.i
 # The "obsoletes" list from ubuntu has been removed
 
-VERSION=12
+VERSION=1
 
 . ./config
 
@@ -31,10 +31,7 @@ VERSION=12
 rm ./DistUpgrade/xorg_fix_proprietary.py
 rm ./DistUpgrade/NvidiaDetector
 sed s/self.checkForNvidia/#self.checkForNvidia/ DistUpgrade/DistUpgradeCache.py -i
-#sed s/self._test_and_warn_on_old_nvidia/#self._test_and_warn_on_old_nvidia/  -i DistUpgrade/DistUpgradeQuirks.py
-#sed s/self._test_and_warn_on_nvidia_and_no_sse/#self._test_and_warn_on_nvidia_and_no_sse/  -i DistUpgrade/DistUpgradeQuirks.py
-sed s/self._test_and_warn_on_dropped_fglrx_support/#self._test_and_warn_on_dropped_fglrx_support/  -i DistUpgrade/DistUpgradeQuirks.py
-sed 's/self._add_extras_repository()/#self._add_extras_repository()/' -i DistUpgrade/DistUpgradeQuirks.py
+sed '/_add_extras_repository/,/adding extras.ubuntu.com/d' -i DistUpgrade/DistUpgradeQuirks.py
 sed 's/01ubuntu/01backports/' -i DistUpgrade/DistUpgradeController.py
 sed '/nvidia/d' DistUpgrade/build-tarball.sh -i
 rm tests/test-data/xorg.conf.fglrx
@@ -275,6 +272,9 @@ rpl 12\.04 6\.0 po/* -R
 rpl 14\.04 7\.0 po/* -R
 rpl 14\.04 7\.0 DistUpgrade/*.ui -R
 replace '14.04' '7.0' . -R
+rpl 16\.04 8\.0 po/* -R
+rpl 16\.04 8\.0 DistUpgrade/*.ui -R
+replace '16.04' '8.0' . -R
 rpl $UPSTREAM $CODENAME . -R
 rpl oneiric brigantia . -R
 rpl natty dagda . -R
@@ -285,12 +285,9 @@ rpl jaunty dwyn . -R
 rpl hardy robur . -R
 rpl lucid taranis . -R
 rpl precise toutatis . -R
+rpl trusty belenos . -R
 
-rm ./data/demoted.cfg ./DistUpgrade/demoted.cfg.hardy ./DistUpgrade/demoted.cfg.lucid
-#cp ./utils/demoted.cfg.precise data/demoted.cfg
-#cp ./utils/demoted.cfg.precise utils/demoted.cfg
-rm utils/demoted.cfg.lucid utils/demoted.cfg.hardy utils/demoted.cfg.dapper utils/demoted.cfg.precise
-
+rm ./data/demoted.cfg ./DistUpgrade/demoted.cfg.trusty utils/demoted.cfg.trusty data/demoted.cfg.trusty
 echo "notification-daemon" > data/demoted.cfg
 echo "notification-daemon" $DATA/demoted utils/demoted.cfg
 
@@ -317,7 +314,10 @@ rpl archive.ubuntu.com/ubuntu es.archive.trisquel.info/trisquel . -R
 rpl security.ubuntu.com/ubuntu archive.trisquel.info/trisquel . -R
 rpl archive.ubuntu.com es.archive.trisquel.info . -R
 rpl security.ubuntu.com archive.trisquel.info . -R
-sed 's/main restricted" %/main\\n" %/g' DistUpgrade/DistUpgradeController.py -i
+
+sed 's/"main", "restricted", "universe", "multiverse"/"main"/g' DistUpgrade/DistUpgradeController.py -i utils/demotions.py
+sed '/restricted/d' -i utils/demotions.py
+sed 's/"main", "restricted"/"main"/g' DistUpgrade/DistUpgradeController.py -i
 rpl "main restricted" "main" DistUpgrade -R
 sed 's/,"restricted"//g' DistUpgrade/DistUpgradeController.py -i
 #sed 's/","restricted"/\\n"/g' DistUpgrade/DistUpgradeController.py -i
