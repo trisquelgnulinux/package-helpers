@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2008-2010  Rubén Rodríguez <ruben@trisquel.info>
+#    Copyright (C) 2008-2017  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -24,15 +24,6 @@ COMPONENT=main
 
 sed -i "s:<default>'auto'</default>:<default>'file'</default>:" data/org.gnome.DejaDup.gschema.xml.in
 sed -i 's/Categories.*/Categories=Application;System;Settings;/g' deja-dup/deja-dup.desktop.in
-
-#echo "" > ./tests/shell
-#echo "" > ./debian/tests/autopilot
-#echo "" > ./deja-dup/tests/test.sh
-
-#export BUILD_TESTING=false
-
-mv /usr/bin/dbus-launch /usr/bin/dbus-launch.real
-cp /bin/true /usr/bin/dbus-launch
 
 changelog "Compiled for Trisquel"
 
