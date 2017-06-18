@@ -5,7 +5,7 @@ diff -ru source.bak/ubiquity/plugins/ubi-partman.py source/ubiquity/plugins/ubi-
                  opt_desc.show()
                  opt_widget.set_label(options[option].title)
                  opt_desc.set_markup(fmt % options[option].desc)
-+                if name = "use_crypto":
++                if name == "use_crypto":
 +                    opt_widget.set_active(True)
                  if not ticked and opt_widget.get_sensitive():
                      opt_widget.set_active(True)
