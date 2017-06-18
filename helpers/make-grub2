@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2011-2016  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2011-2017  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,13 +17,20 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 COMPONENT=main
 
 . ./config
 
-apt-get remove -y --force-yes dosfstools
-sed '/dosfstools/d' -i debian/control
+# http://grub.johnlane.ie/
+for i in $DATA/*.patch; do
+echo Applying patch $i
+patch -p1 < $i
+done
+
+#apt-get remove -y --force-yes dosfstools
+#sed '/dosfstools/d' -i debian/control
+sed '/mkfs.minix/s/-B $BLKSIZE//g' -i tests/util/grub-fs-tester.in
 
 for i in install_efi_ubuntu_flavours.patch mkconfig_ubuntu_distributor.patch; do
     rm debian/patches/$i
@@ -40,21 +47,15 @@ replace Ubuntu Trisquel .
 replace ubuntu trisquel .
 find |grep ubuntu|xargs rename s/ubuntu/trisquel/
 
-cat << EOF >> debian/default/grub
-
-# Trisquel comes without kernel recovery entries to improve security.
-GRUB_DISABLE_RECOVERY=true
-EOF
-
 GRUBVERSION=$(head -n1 debian/changelog |/bin/sed 's/.*(//;s/).*//; s/[~+-].*//')
 
 echo /bin/sed "/GNU GRUB  version/ s/PACKAGE_VERSION/\"$GRUBVERSION\"/" -i grub-core/normal/main.c
 /bin/sed "/GNU GRUB  version/ s/PACKAGE_VERSION/\"$GRUBVERSION\"/" -i grub-core/normal/main.c
 
-changelog "Disable rescue mode by default, branding"
-
 # Allow Windows and MacOX entries to boot without a password
 sed 's/class osx/class osx --unrestricted/; s/class windows/class osx --unrestricted/;' -i ./util/grub.d/30_os-prober.in
+
+changelog "rebranded and adapted for trisquel"
 
 compile
 
