@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2011-2016  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2011-2017  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,9 +17,11 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
+VERSION=4
 
 . ./config
+
+patch -p1 < $DATA/encrypt_by_default.patch
 
 cp $DATA/trisquel_installed.png pixmaps
 rm pixmaps/ubuntu_installed.png
@@ -219,22 +221,6 @@ then
 
     chown root:admin /target/etc/italc/keys/private/*/key
 fi
-
-cat << EOF > /target/etc/grub.d/01_PASSWORD
-#! /bin/sh -e
-# As a security measure Trisquel sets a password for GRUB during install.
-# It prevents unauthorized users from gaining root through the boot manager.
-# You can still edit GRUB entries by entering "grub" as user and the password
-# set below in this file. This file should only be readable by root.
-#
-# To disable the password, Comment or remove this file and run this command:
-# sudo update-grub2
-
-echo set superusers=grub
-echo password grub \$(bash -c 'echo \$RANDOM')
-EOF
-
-chmod 700 /target/etc/grub.d/01_PASSWORD
 
 # Hacks for accessibility
 if pgrep orca > /dev/null
