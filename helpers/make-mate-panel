@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2016  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2016-2017  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=4
+VERSION=5
 
 . ./config
 
@@ -41,7 +41,7 @@ object-type=menu
 [Object files]
 locked=true
 position=20
-launcher-location=/usr/share/applications/caja.desktop
+launcher-location=/usr/share/applications/caja-home.desktop
 toplevel-id=bottom
 object-type=launcher
 menu-path=applications:/
@@ -49,7 +49,7 @@ menu-path=applications:/
 [Object browser]
 locked=true
 position=30
-launcher-location=/usr/share/applications/abrowser.desktop
+launcher-location=/usr/share/applications/browser.desktop
 toplevel-id=bottom
 object-type=launcher
 menu-path=applications:/
