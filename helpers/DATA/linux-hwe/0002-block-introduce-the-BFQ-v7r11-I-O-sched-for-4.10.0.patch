@@ -1,8 +1,7 @@
-From d9af6fcc4167cbb8433b10bbf3663c8297487f52 Mon Sep 17 00:00:00 2001
+From 2f56e91506b329ffc29d0f184924ad0123c9ba9e Mon Sep 17 00:00:00 2001
 From: Paolo Valente <paolo.valente@unimore.it>
 Date: Thu, 9 May 2013 19:10:02 +0200
-Subject: [PATCH 2/4] block: introduce the BFQ-v7r11 I/O sched, to be ported to
- 4.8.0
+Subject: [PATCH 2/4] block: introduce the BFQ-v7r11 I/O sched for 4.10.0
 
 The general structure is borrowed from CFQ, as much of the code for
 handling I/O contexts. Over time, several useful features have been
@@ -7106,5 +7105,5 @@ index 0000000..2bf54ae
 +
 +#endif /* _BFQ_H */
 -- 
-2.7.4 (Apple Git-66)
+2.10.0
 

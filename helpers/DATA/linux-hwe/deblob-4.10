@@ -1,6 +1,6 @@
 #! /bin/sh
 
-#    Copyright (C) 2008-2016 Alexandre Oliva <lxoliva@fsfla.org>
+#    Copyright (C) 2008-2017 Alexandre Oliva <lxoliva@fsfla.org>
 #    Copyright (C) 2008 Jeff Moe
 #    Copyright (C) 2009 Rubén Rodríguez <ruben@gnu.org>
 #
@@ -48,7 +48,7 @@
 
 # For each kver release, start extra with an empty string, then count
 # from 1 if changes are needed that require rebuilding the tarball.
-kver=4.8 extra=
+kver=4.10 extra=
 
 case $1 in
 --force)
@@ -339,11 +339,31 @@ clean_sed "/^EXTRAVERSION *=/ { s,=$,& ,; s,$,&-gnu$extra,; }
 
 grep -q Linux-libre README ||
 clean_sed '
+1 s,^Linux kernel$,GNU Linux-libre,
+2 s,^============$,===============,
+' README 'renamed to GNU Linux-libre'
+
+grep -q Linux-libre Documentation/admin-guide/README.rst ||
+clean_sed '
 1,3 s,Linux kernel release.*kernel\.org.*,GNU Linux-libre <http://linux-libre.fsfla.org>,
+2 s,=$,&&,
+' Documentation/admin-guide/README.rst 'renamed to GNU Linux-libre'
+
+grep -q 'release notes for GNU Linux-libre' Documentation/admin-guide/README.rst ||
+clean_sed '
 2,5 s,Linux version [0-9.]*[0-9],GNU Linux-libre,
+' Documentation/admin-guide/README.rst 'dropped partial Linux version'
+
+grep -q 'Unix kernel' Documentation/admin-guide/README.rst ||
+clean_sed '
 1,20 s,\(operating system \)\?Unix,Unix kernel,
-/WHAT IS LINUX/i\
-WHAT IS GNU Linux-libre?\
+' Documentation/admin-guide/README.rst 'Linux is a kernel'
+
+grep -q 'What is GNU Linux-libre' Documentation/admin-guide/README.rst ||
+clean_sed '
+/What is Linux/i\
+What is GNU Linux-libre?\
+------------------------\
 \
   GNU Linux-libre is a Free version of the kernel Linux (see below),\
   suitable for use with the GNU Operating System in 100% Free\
@@ -374,7 +394,7 @@ WHAT IS GNU Linux-libre?\
   promotion.  See our web page for their images.\
   http://linux-libre.fsfla.org/\
 
-' README 'added blurb about GNU Linux-libre'
+' Documentation/admin-guide/README.rst 'added blurb about GNU Linux-libre'
 
 # Add reject_firmware and maybe_reject_firmware
 grep -q _LINUX_LIBRE_FIRMWARE_H include/linux/firmware.h ||
@@ -471,7 +491,7 @@ maybe_reject_firmware_nowait(struct module *module, int uevent,\
 #endif /* _LINUX_LIBRE_FIRMWARE_H */\
 ' include/linux/firmware.h 'added non-Free firmware notification support'
 
-grep -q _LINUX_LIBRE_IHEX_FIRMWARE_H include/linux/ihex.h ||
+grep -q _LINUX_LIBRE_IHEX_H include/linux/ihex.h ||
 clean_sed '$i\
 #ifndef _LINUX_LIBRE_IHEX_H\
 #define _LINUX_LIBRE_IHEX_H\
@@ -532,6 +552,15 @@ clean_blob arch/arm/mach-netx/xc.c
 clean_blob drivers/net/ethernet/netx-eth.c
 clean_kconfig arch/arm/Kconfig ARCH_NETX
 clean_mk CONFIG_ARCH_NETX arch/arm/Makefile
+
+announce MACH_SUN8I - "Allwinner sun8i Family SoCs support"
+clean_blob arch/arm/boot/dts/sun8i-a23-gt90h-v4.dts
+clean_blob arch/arm/boot/dts/sun8i-a23-inet86dz.dts
+clean_blob arch/arm/boot/dts/sun8i-a23-polaroid-mid2407pxe03.dts
+clean_blob arch/arm/boot/dts/sun8i-a23-polaroid-mid2809pxe04.dts
+clean_blob arch/arm/boot/dts/sun8i-a33-ga10h-v1.1.dts
+clean_kconfig arch/arm/mach-sunxi/Kconfig MACH_SUN8I
+clean_mk CONFIG_MACH_SUN8I arch/arm/boot/dts/Makefile
 
 # mips
 
@@ -626,18 +655,14 @@ reject_firmware drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
 clean_blob drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
 reject_firmware drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c
 clean_blob drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c
-reject_firmware drivers/gpu/drm/amd/amdgpu/iceland_dpm.c
-clean_blob drivers/gpu/drm/amd/amdgpu/iceland_dpm.c
 reject_firmware drivers/gpu/drm/amd/amdgpu/sdma_v2_4.c
 clean_blob drivers/gpu/drm/amd/amdgpu/sdma_v2_4.c
 reject_firmware drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c
 clean_blob drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c
-reject_firmware drivers/gpu/drm/amd/amdgpu/fiji_dpm.c
-clean_blob drivers/gpu/drm/amd/amdgpu/fiji_dpm.c
 reject_firmware drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
 clean_blob drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
-reject_firmware drivers/gpu/drm/amd/amdgpu/tonga_dpm.c
-clean_blob drivers/gpu/drm/amd/amdgpu/tonga_dpm.c
+reject_firmware drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+clean_blob drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
 clean_blob drivers/gpu/drm/amd/amdgpu/vi.c
 clean_kconfig drivers/gpu/drm/Kconfig DRM_AMDGPU
 clean_mk CONFIG_DRM_AMDGPU drivers/gpu/drm/amd/amdgpu/Makefile
@@ -654,6 +679,16 @@ clean_blob drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c
 clean_kconfig drivers/gpu/drm/amd/amdgpu/Kconfig DRM_AMDGPU_CIK
 clean_mk CONFIG_DRM_AMDGPU_CIK drivers/gpu/drm/amd/amdgpu/Makefile
 
+announce DRM_AMDGPU_SI - "Enable amdgpu support for CIK parts"
+reject_firmware drivers/gpu/drm/amd/amdgpu/si_dpm.c
+clean_blob drivers/gpu/drm/amd/amdgpu/si_dpm.c
+reject_firmware drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c
+clean_blob drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c
+reject_firmware drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c
+clean_blob drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c
+clean_kconfig drivers/gpu/drm/amd/amdgpu/Kconfig DRM_AMDGPU_SI
+clean_mk CONFIG_DRM_AMDGPU_SI drivers/gpu/drm/amd/amdgpu/Makefile
+
 announce DRM_AST - "AST server chips"
 reject_firmware drivers/gpu/drm/ast/ast_dp501.c
 clean_blob drivers/gpu/drm/ast/ast_dp501.c
@@ -667,6 +702,11 @@ clean_blob drivers/gpu/drm/i915/intel_csr.c
 clean_blob drivers/gpu/drm/i915/intel_guc_loader.c
 clean_kconfig drivers/gpu/drm/i915/Kconfig DRM_I915
 clean_mk CONFIG_DRM_I915 drivers/gpu/drm/i915/Makefile
+
+announce DRM_I915_GVT - "Enable Intel GVT-g graphics virtualization host support"
+reject_firmware drivers/gpu/drm/i915/gvt/firmware.c
+clean_kconfig drivers/gpu/drm/i915/Kconfig DRM_I915_GVT
+clean_mk CONFIG_DRM_I915_GVT drivers/gpu/drm/i915/Makefile
 
 announce DRM_NOUVEAU - "Nouveau (nVidia) cards"
 reject_firmware drivers/gpu/drm/nouveau/nvkm/core/firmware.c
@@ -691,6 +731,7 @@ clean_mk CONFIG_DRM_MGA drivers/gpu/drm/Makefile
 
 announce DRM_MSM - "MSM DRM"
 reject_firmware drivers/gpu/drm/msm/adreno/adreno_gpu.c
+reject_firmware drivers/gpu/drm/msm/adreno/a5xx_power.c
 clean_blob drivers/gpu/drm/msm/adreno/adreno_device.c
 clean_kconfig drivers/gpu/drm/msm/Kconfig DRM_MSM
 clean_mk CONFIG_DRM_MSM drivers/gpu/drm/msm/Makefile
@@ -744,6 +785,9 @@ clean_sed '
 clean_sed '
 /r = r600_init_microcode(rdev);/,/}/ s,return r;,/*(DEBLOBBED)*/,
 ' drivers/gpu/drm/radeon/evergreen.c 'enable blobless activation'
+clean_sed '
+/r = r600_init_microcode(rdev);/,/}/ s,return r;,/*(DEBLOBBED)*/,
+' drivers/gpu/drm/radeon/rv770.c 'enable blobless activation'
 reject_firmware drivers/gpu/drm/radeon/ni.c
 clean_blob drivers/gpu/drm/radeon/ni.c
 reject_firmware drivers/gpu/drm/radeon/si.c
@@ -780,9 +824,15 @@ clean_blob arch/arm/boot/dts/imx6qdl.dtsi
 clean_blob arch/arm/boot/dts/imx6sl.dtsi
 clean_blob arch/arm/boot/dts/imx6sx.dtsi
 clean_blob arch/arm/boot/dts/imx6ul.dtsi
+clean_blob arch/arm/boot/dts/imx7s.dtsi
 clean_blob Documentation/devicetree/bindings/dma/fsl-imx-sdma.txt
 clean_kconfig drivers/dma/Kconfig IMX_SDMA
 clean_mk CONFIG_IMX_SDMA drivers/dma/Makefile
+
+announce ST_FDMA - "ST FDMA dmaengine support"
+clean_blob drivers/dma/st_fdma.c
+clean_kconfig drivers/dma/Kconfig ST_FDMA
+clean_mk CONFIG_ST_FDMA drivers/dma/Makefile
 
 #########
 # Media #
@@ -1541,10 +1591,11 @@ clean_kconfig drivers/net/ethernet/realtek/Kconfig R8169
 clean_mk CONFIG_R8169 drivers/net/ethernet/realtek/Makefile
 
 announce SLICOSS - "Alacritech Gigabit IS-NIC cards"
-reject_firmware drivers/staging/slicoss/slicoss.c
-clean_blob drivers/staging/slicoss/slicoss.c
-clean_kconfig drivers/staging/slicoss/Kconfig SLICOSS
-clean_mk CONFIG_SLICOSS drivers/staging/slicoss/Makefile
+reject_firmware drivers/net/ethernet/alacritech/slicoss.c
+clean_blob drivers/net/ethernet/alacritech/slic.h
+clean_blob drivers/net/ethernet/alacritech/slicoss.c
+clean_kconfig drivers/net/ethernet/alacritech/Kconfig SLICOSS
+clean_mk CONFIG_SLICOSS drivers/net/ethernet/alacritech/Makefile
 
 announce SPIDER_NET - "Spider Gigabit Ethernet driver"
 reject_firmware drivers/net/ethernet/toshiba/spider_net.c
@@ -1739,14 +1790,20 @@ clean_sed '
 		goto error;\
 	}
 }' drivers/net/wireless/broadcom/b43/main.c 'double-check and reject non-Free firmware'
-# Major portions of firmware filenames not deblobbed.
+clean_sed '
+/^[\t]*filename = "\(ucode\|b0g0\(bs\)\?initvals\)5";$/! {
+	s,^\([\t]*filename = "\)\(ucode\|pcm\|[^ "]*initvals\)[0-9][^ ."]*";,\1/*(DEBLOBBED)*/";,g
+}' drivers/net/wireless/broadcom/b43/main.c 'cleaned up blob basenames'
 clean_blob drivers/net/wireless/broadcom/b43/main.c
 clean_kconfig drivers/net/wireless/broadcom/b43/Kconfig B43
 clean_mk CONFIG_B43 drivers/net/wireless/broadcom/b43/Makefile
 
 announce B43LEGACY - "Broadcom 43xx-legacy wireless support (mac80211 stack)"
 reject_firmware drivers/net/wireless/broadcom/b43legacy/main.c
-# Major portions of firwmare filenames not deblobbed.
+clean_sed '
+{
+	s,^\([\t]*filename = "\)\(ucode\|pcm\|[^ "]*initvals\)[0-9][^ ."]*";,\1/*(DEBLOBBED)*/";,g
+}' drivers/net/wireless/broadcom/b43legacy/main.c 'cleaned up blob basenames'
 clean_blob drivers/net/wireless/broadcom/b43legacy/main.c
 clean_kconfig drivers/net/wireless/broadcom/b43legacy/Kconfig B43LEGACY
 clean_mk CONFIG_B43LEGACY drivers/net/wireless/broadcom/b43legacy/Makefile
@@ -1888,6 +1945,7 @@ clean_mk CONFIG_MT7601U drivers/net/wireless/mediatek/mt7601u/Makefile
 announce MWIFIEX - "Marvell WiFi-Ex Driver"
 clean_blob drivers/net/wireless/marvell/mwifiex/README
 reject_firmware drivers/net/wireless/marvell/mwifiex/main.c
+clean_blob drivers/net/wireless/marvell/mwifiex/main.c
 clean_kconfig drivers/net/wireless/marvell/mwifiex/Kconfig MWIFIEX
 clean_mk CONFIG_MWIFIEX drivers/net/wireless/marvell/mwifiex/Makefile
 
@@ -2144,13 +2202,6 @@ clean_blob drivers/net/wireless/realtek/rtlwifi/rtl8723ae/sw.c
 clean_kconfig drivers/net/wireless/realtek/rtlwifi/Kconfig RTL8723AE
 clean_mk CONFIG_RTL8723AE drivers/net/wireless/realtek/rtlwifi/rtl8723ae/Makefile
 
-announce R8723AU - "RealTek RTL8723AU Wireless LAN NIC driver"
-reject_firmware drivers/staging/rtl8723au/hal/rtl8723a_hal_init.c
-clean_blob drivers/staging/rtl8723au/hal/rtl8723a_hal_init.c
-clean_blob drivers/staging/rtl8723au/os_dep/os_intfs.c
-clean_kconfig drivers/staging/rtl8723au/Kconfig R8723AU
-clean_mk CONFIG_R8723AU drivers/staging/rtl8723au/Makefile
-
 announce RTL8723BE - "Realtek RTL8723BE PCIe Wireless Network Adapter"
 reject_firmware drivers/net/wireless/realtek/rtlwifi/rtl8723be/sw.c
 clean_blob drivers/net/wireless/realtek/rtlwifi/rtl8723be/sw.c
@@ -2189,10 +2240,18 @@ clean_mk CONFIG_WL18XX drivers/net/wireless/ti/wl18xx/Makefile
 
 announce WLCORE - "TI wlcore support"
 reject_firmware drivers/net/wireless/ti/wlcore/main.c
-clean_blob drivers/net/wireless/ti/wlcore/main.c
-clean_blob drivers/net/wireless/ti/wlcore/wlcore_i.h
 clean_kconfig drivers/net/wireless/ti/wlcore/Kconfig WLCORE
 clean_mk CONFIG_WLCORE drivers/net/wireless/ti/wlcore/Makefile
+
+announce WLCORE_SDIO - "TI wlcore SDIO support"
+clean_blob drivers/net/wireless/ti/wlcore/sdio.c
+clean_kconfig drivers/net/wireless/ti/wlcore/Kconfig WLCORE_SDIO
+clean_mk CONFIG_WLCORE_SDIO drivers/net/wireless/ti/wlcore/Makefile
+
+announce WLCORE_SPI - "TI wlcore SPI support"
+clean_blob drivers/net/wireless/ti/wlcore/spi.c
+clean_kconfig drivers/net/wireless/ti/wlcore/Kconfig WLCORE_SPI
+clean_mk CONFIG_WLCORE_SPI drivers/net/wireless/ti/wlcore/Makefile
 
 announce USB_ZD1201 - "USB ZD1201 based Wireless device support"
 reject_firmware drivers/net/wireless/zydas/zd1201.c
@@ -2259,6 +2318,12 @@ announce BT_HCIUART_BCM - "Broadcom protocol support"
 reject_firmware drivers/bluetooth/hci_bcm.c
 clean_kconfig drivers/bluetooth/Kconfig BT_HCIUART_BCM
 clean_mk CONFIG_BT_HCIUART_BCM drivers/bluetooth/Makefile
+
+announce BT_HCIUART_MRVL - "Marvell protocol support"
+reject_firmware drivers/bluetooth/hci_mrvl.c
+clean_blob drivers/bluetooth/hci_mrvl.c
+clean_kconfig drivers/bluetooth/Kconfig BT_HCIUART_MRVL
+clean_mk CONFIG_BT_HCIUART_MRVL drivers/bluetooth/Makefile
 
 announce BT_HCIBFUSB - "HCI BlueFRITZ! USB driver"
 reject_firmware drivers/bluetooth/bfusb.c
@@ -2836,15 +2901,17 @@ clean_blob drivers/misc/lattice-ecp3-config.c
 clean_kconfig drivers/misc/Kconfig LATTICE_ECP3_CONFIG
 clean_mk CONFIG_LATTICE_ECP3_CONFIG drivers/misc/Makefile
 
-announce STE_MODEM_RPROC - "STE-Modem remoteproc support"
+announce REMOTEPROC - "Support for Remote Processor subsystem"
 maybe_reject_firmware drivers/remoteproc/remoteproc_core.c
-undefine_macro SPROC_MODEM_FIRMWARE "\"/*(DEBLOBBED)*/\"" \
-  "disabled non-Free firmware" drivers/remoteproc/ste_modem_rproc.c
+clean_kconfig drivers/remoteproc/Kconfig REMOTEPROC
+clean_mk CONFIG_REMOTEPROC drivers/remoteproc/Makefile
+
+announce WKUP_M3_RPROC - "AMx3xx Wakeup M3 remoteproc support"
 clean_blob Documentation/devicetree/bindings/remoteproc/wkup_m3_rproc.txt
 clean_blob arch/arm/boot/dts/am33xx.dtsi
 clean_blob arch/arm/boot/dts/am4372.dtsi
-clean_kconfig drivers/remoteproc/Kconfig STE_MODEM_RPROC
-clean_mk CONFIG_STE_MODEM_RPROC drivers/remoteproc/Makefile
+clean_kconfig drivers/remoteproc/Kconfig WKUP_M3_RPROC
+clean_mk CONFIG_WKUP_M3_RPROC drivers/remoteproc/Makefile
 
 announce QCOM_Q6V5_PIL - "Qualcomm Hexagon V5 Peripherial Image Loader"
 reject_firmware drivers/remoteproc/qcom_q6v5_pil.c
@@ -3234,6 +3301,35 @@ clean_blob sound/usb/6fire/firmware.c
 clean_kconfig sound/usb/Kconfig SND_USB_6FIRE
 clean_mk CONFIG_SND_USB_6FIRE sound/usb/6fire/Makefile
 
+############
+# Watchdog #
+############
+
+announce ZIIRAVE_WATCHDOG - "Zodiac RAVE Watchdog Timer"
+reject_firmware drivers/watchdog/ziirave_wdt.c
+clean_blob drivers/watchdog/ziirave_wdt.c
+clean_kconfig drivers/watchdog/Kconfig ZIIRAVE_WATCHDOG
+clean_mk CONFIG_ZIIRAVE_WATCHDOG drivers/watchdog/Makefile
+
+###########
+# Greybus #
+###########
+
+# I couldn't find any evidence of any Free Software firmware for
+# devices that use this bus type, so I'm tentatively disabling it all.
+announce GREYBUS_FIRMWARE - "Greybus Firmware Download Class driver"
+clean_blob drivers/staging/greybus/firmware.h
+reject_firmware drivers/staging/greybus/fw-download.c
+clean_blob drivers/staging/greybus/fw-download.c
+clean_kconfig drivers/staging/greybus/Kconfig GREYBUS_FIRMWARE
+clean_mk CONFIG_GREYBUS_FIRMWARE drivers/staging/greybus/Makefile
+
+announce GREYBUS_BOOTROM - "Greybus Bootrom Class driver"
+reject_firmware drivers/staging/greybus/bootrom.c
+clean_blob drivers/staging/greybus/bootrom.c
+clean_kconfig drivers/staging/greybus/Kconfig GREYBUS_BOOTROM
+clean_mk CONFIG_GREYBUS_BOOTROM drivers/staging/greybus/Makefile
+
 #######
 # SOC #
 #######
@@ -3258,7 +3354,8 @@ clean_mk CONFIG_KEYSTONE_NAVIGATOR_QMSS drivers/soc/ti/Makefile
 announce Documentation - "non-Free firmware scripts and documentation"
 clean_blob Documentation/media/dvb-drivers/avermedia.rst
 clean_blob Documentation/media/dvb-drivers/opera-firmware.rst
-clean_blob Documentation/sound/alsa/ALSA-Configuration.txt
+clean_blob Documentation/media/v4l-drivers/ivtv.rst
+clean_blob Documentation/sound/alsa-configuration.rst
 clean_blob Documentation/sound/oss/MultiSound
 clean_blob Documentation/sound/oss/PSS
 clean_blob Documentation/sound/oss/PSS-updates

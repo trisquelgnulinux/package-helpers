@@ -1,8 +1,8 @@
-diff -ru source.bak/drivers/base/firmware_class.c source/drivers/base/firmware_class.c
---- source.bak/drivers/base/firmware_class.c	2017-05-31 17:29:09.000000000 -0400
-+++ source/drivers/base/firmware_class.c	2017-05-31 17:32:41.346386778 -0400
-@@ -97,7 +97,7 @@
- 	FW_STATUS_ABORT,
+diff -ru source/drivers/base/firmware_class.c source/drivers/base/firmware_class.c
+--- source/drivers/base/firmware_class.c	2017-02-19 17:34:00.000000000 -0500
++++ source/drivers/base/firmware_class.c	2017-08-21 10:54:54.485544208 -0400
+@@ -99,7 +99,7 @@
+ 	FW_STATUS_ABORTED,
  };
  
 -static int loading_timeout = 60;	/* In seconds */
@@ -10,7 +10,7 @@ diff -ru source.bak/drivers/base/firmware_class.c source/drivers/base/firmware_c
  
  static inline long firmware_loading_timeout(void)
  {
-@@ -351,14 +351,14 @@
+@@ -419,14 +419,14 @@
  						id);
  		if (rc) {
  			if (rc == -ENOENT)
@@ -28,9 +28,9 @@ diff -ru source.bak/drivers/base/firmware_class.c source/drivers/base/firmware_c
 -		dev_dbg(device, "direct-loading %s\n", buf->fw_id);
 +		dev_dbg(device, "direct-loading\n", buf->fw_id);
  		buf->size = size;
- 		fw_finish_direct_load(device, buf);
+ 		fw_state_done(&buf->fw_st);
  		break;
-@@ -949,7 +949,7 @@
+@@ -1010,7 +1010,7 @@
  	if (opt_flags & FW_OPT_UEVENT) {
  		buf->need_uevent = true;
  		dev_set_uevent_suppress(f_dev, false);
@@ -39,7 +39,7 @@ diff -ru source.bak/drivers/base/firmware_class.c source/drivers/base/firmware_c
  		kobject_uevent(&fw_priv->dev.kobj, KOBJ_ADD);
  	} else {
  		timeout = MAX_JIFFY_OFFSET;
-@@ -1065,7 +1065,7 @@
+@@ -1099,7 +1099,7 @@
  	}
  
  	if (fw_get_builtin_firmware(firmware, name, dbuf, size)) {
@@ -48,7 +48,7 @@ diff -ru source.bak/drivers/base/firmware_class.c source/drivers/base/firmware_c
  		return 0; /* assigned */
  	}
  
-@@ -1152,11 +1152,11 @@
+@@ -1186,11 +1186,11 @@
  		goto out;
  
  	ret = 0;
@@ -62,7 +62,7 @@ diff -ru source.bak/drivers/base/firmware_class.c source/drivers/base/firmware_c
  				name);
  			ret = -EBUSY;
  			goto out;
-@@ -1164,7 +1164,7 @@
+@@ -1198,7 +1198,7 @@
  	} else {
  		ret = usermodehelper_read_trylock();
  		if (WARN_ON(ret)) {
@@ -71,7 +71,7 @@ diff -ru source.bak/drivers/base/firmware_class.c source/drivers/base/firmware_c
  				name);
  			goto out;
  		}
-@@ -1174,12 +1174,13 @@
+@@ -1208,12 +1208,13 @@
  	if (ret) {
  		if (!(opt_flags & FW_OPT_NO_WARN))
  			dev_warn(device,
@@ -87,10 +87,12 @@ diff -ru source.bak/drivers/base/firmware_class.c source/drivers/base/firmware_c
  		}
  	}
  
-diff -ru source.bak/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c source/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
---- source.bak/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c	2016-10-02 19:24:33.000000000 -0400
-+++ source/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c	2017-05-31 17:32:41.354386778 -0400
-@@ -786,7 +786,7 @@
+Only in source/drivers/base: firmware_class.c.orig
+Only in source/drivers/base: firmware_class.c.rej
+diff -ru source/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c source/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
+--- source/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c	2017-02-19 17:34:00.000000000 -0500
++++ source/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c	2017-08-21 10:54:54.485544208 -0400
+@@ -856,7 +856,7 @@
  
  			err = amdgpu_ucode_validate(adev->pm.fw);
  			if (err) {
@@ -99,10 +101,11 @@ diff -ru source.bak/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c source/drivers/gpu/d
  				release_firmware(adev->pm.fw);
  				adev->pm.fw = NULL;
  				return err;
-diff -ru source.bak/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c source/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c
---- source.bak/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c	2016-10-02 19:24:33.000000000 -0400
-+++ source/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c	2017-05-31 17:32:41.354386778 -0400
-@@ -155,7 +155,7 @@
+Only in source/drivers/gpu/drm/amd/amdgpu: amdgpu_cgs.c.rej
+diff -ru source/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c source/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c
+--- source/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c	2017-02-19 17:34:00.000000000 -0500
++++ source/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c	2017-08-21 10:54:54.485544208 -0400
+@@ -160,7 +160,7 @@
  
  	r = request_firmware(&adev->uvd.fw, fw_name, adev->dev);
  	if (r) {
@@ -111,10 +114,11 @@ diff -ru source.bak/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c source/drivers/gpu/d
  			fw_name);
  		return r;
  	}
-diff -ru source.bak/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c source/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c
---- source.bak/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c	2016-10-02 19:24:33.000000000 -0400
-+++ source/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c	2017-05-31 17:32:41.358386778 -0400
-@@ -128,7 +128,7 @@
+Only in source/drivers/gpu/drm/amd/amdgpu: amdgpu_uvd.c.orig
+diff -ru source/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c source/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c
+--- source/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c	2017-02-19 17:34:00.000000000 -0500
++++ source/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c	2017-08-21 10:54:54.485544208 -0400
+@@ -133,7 +133,7 @@
  
  	r = request_firmware(&adev->vce.fw, fw_name, adev->dev);
  	if (r) {
@@ -123,10 +127,11 @@ diff -ru source.bak/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c source/drivers/gpu/d
  			fw_name);
  		return r;
  	}
-diff -ru source.bak/drivers/gpu/drm/amd/amdgpu/ci_dpm.c source/drivers/gpu/drm/amd/amdgpu/ci_dpm.c
---- source.bak/drivers/gpu/drm/amd/amdgpu/ci_dpm.c	2016-10-02 19:24:33.000000000 -0400
-+++ source/drivers/gpu/drm/amd/amdgpu/ci_dpm.c	2017-05-31 17:32:41.358386778 -0400
-@@ -5792,7 +5792,7 @@
+Only in source/drivers/gpu/drm/amd/amdgpu: amdgpu_vce.c.orig
+diff -ru source/drivers/gpu/drm/amd/amdgpu/ci_dpm.c source/drivers/gpu/drm/amd/amdgpu/ci_dpm.c
+--- source/drivers/gpu/drm/amd/amdgpu/ci_dpm.c	2017-02-19 17:34:00.000000000 -0500
++++ source/drivers/gpu/drm/amd/amdgpu/ci_dpm.c	2017-08-21 10:54:54.485544208 -0400
+@@ -5806,7 +5806,7 @@
  out:
  	if (err) {
  		printk(KERN_ERR
@@ -135,9 +140,10 @@ diff -ru source.bak/drivers/gpu/drm/amd/amdgpu/ci_dpm.c source/drivers/gpu/drm/a
  		       fw_name);
  		release_firmware(adev->pm.fw);
  		adev->pm.fw = NULL;
-diff -ru source.bak/drivers/gpu/drm/amd/amdgpu/cik_sdma.c source/drivers/gpu/drm/amd/amdgpu/cik_sdma.c
---- source.bak/drivers/gpu/drm/amd/amdgpu/cik_sdma.c	2016-10-02 19:24:33.000000000 -0400
-+++ source/drivers/gpu/drm/amd/amdgpu/cik_sdma.c	2017-05-31 17:32:41.358386778 -0400
+Only in source/drivers/gpu/drm/amd/amdgpu: ci_dpm.c.orig
+diff -ru source/drivers/gpu/drm/amd/amdgpu/cik_sdma.c source/drivers/gpu/drm/amd/amdgpu/cik_sdma.c
+--- source/drivers/gpu/drm/amd/amdgpu/cik_sdma.c	2017-02-19 17:34:00.000000000 -0500
++++ source/drivers/gpu/drm/amd/amdgpu/cik_sdma.c	2017-08-21 10:54:54.485544208 -0400
 @@ -143,7 +143,7 @@
  out:
  	if (err) {
@@ -147,21 +153,9 @@ diff -ru source.bak/drivers/gpu/drm/amd/amdgpu/cik_sdma.c source/drivers/gpu/drm
  		       fw_name);
  		for (i = 0; i < adev->sdma.num_instances; i++) {
  			release_firmware(adev->sdma.instance[i].fw);
-diff -ru source.bak/drivers/gpu/drm/amd/amdgpu/fiji_dpm.c source/drivers/gpu/drm/amd/amdgpu/fiji_dpm.c
---- source.bak/drivers/gpu/drm/amd/amdgpu/fiji_dpm.c	2016-10-02 19:24:33.000000000 -0400
-+++ source/drivers/gpu/drm/amd/amdgpu/fiji_dpm.c	2017-05-31 17:32:41.358386778 -0400
-@@ -51,7 +51,7 @@
- 
- out:
- 	if (err) {
--		DRM_ERROR("Failed to load firmware \"%s\"", fw_name);
-+		DRM_ERROR("Failed to load firmware\n", fw_name);
- 		release_firmware(adev->pm.fw);
- 		adev->pm.fw = NULL;
- 	}
-diff -ru source.bak/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c source/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c
---- source.bak/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c	2016-10-02 19:24:33.000000000 -0400
-+++ source/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c	2017-05-31 17:32:41.358386778 -0400
+diff -ru source/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c source/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c
+--- source/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c	2017-02-19 17:34:00.000000000 -0500
++++ source/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c	2017-08-21 10:54:54.489544208 -0400
 @@ -973,7 +973,7 @@
  out:
  	if (err) {
@@ -171,10 +165,10 @@ diff -ru source.bak/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c source/drivers/gpu/drm
  		       fw_name);
  		release_firmware(adev->gfx.pfp_fw);
  		adev->gfx.pfp_fw = NULL;
-diff -ru source.bak/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c source/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
---- source.bak/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c	2017-05-31 17:29:09.000000000 -0400
-+++ source/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c	2017-05-31 17:32:41.358386778 -0400
-@@ -1069,7 +1069,7 @@
+diff -ru source/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c source/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
+--- source/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c	2017-02-19 17:34:00.000000000 -0500
++++ source/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c	2017-08-21 10:54:54.489544208 -0400
+@@ -1097,7 +1097,7 @@
  out:
  	if (err) {
  		dev_err(adev->dev,
@@ -183,9 +177,10 @@ diff -ru source.bak/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c source/drivers/gpu/drm
  			fw_name);
  		release_firmware(adev->gfx.pfp_fw);
  		adev->gfx.pfp_fw = NULL;
-diff -ru source.bak/drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c source/drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c
---- source.bak/drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c	2016-10-02 19:24:33.000000000 -0400
-+++ source/drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c	2017-05-31 17:32:41.358386778 -0400
+Only in source/drivers/gpu/drm/amd/amdgpu: gfx_v8_0.c.orig
+diff -ru source/drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c source/drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c
+--- source/drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c	2017-02-19 17:34:00.000000000 -0500
++++ source/drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c	2017-08-21 10:54:54.489544208 -0400
 @@ -162,7 +162,7 @@
  out:
  	if (err) {
@@ -195,10 +190,10 @@ diff -ru source.bak/drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c source/drivers/gpu/drm
  		       fw_name);
  		release_firmware(adev->mc.fw);
  		adev->mc.fw = NULL;
-diff -ru source.bak/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c source/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c
---- source.bak/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c	2016-10-02 19:24:33.000000000 -0400
-+++ source/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c	2017-05-31 17:32:41.358386778 -0400
-@@ -240,7 +240,7 @@
+diff -ru source/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c source/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c
+--- source/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c	2017-02-19 17:34:00.000000000 -0500
++++ source/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c	2017-08-21 10:54:54.489544208 -0400
+@@ -246,7 +246,7 @@
  out:
  	if (err) {
  		printk(KERN_ERR
@@ -207,21 +202,10 @@ diff -ru source.bak/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c source/drivers/gpu/drm
  		       fw_name);
  		release_firmware(adev->mc.fw);
  		adev->mc.fw = NULL;
-diff -ru source.bak/drivers/gpu/drm/amd/amdgpu/iceland_dpm.c source/drivers/gpu/drm/amd/amdgpu/iceland_dpm.c
---- source.bak/drivers/gpu/drm/amd/amdgpu/iceland_dpm.c	2016-10-02 19:24:33.000000000 -0400
-+++ source/drivers/gpu/drm/amd/amdgpu/iceland_dpm.c	2017-05-31 17:32:41.358386778 -0400
-@@ -51,7 +51,7 @@
- 
- out:
- 	if (err) {
--		DRM_ERROR("Failed to load firmware \"%s\"", fw_name);
-+		DRM_ERROR("Failed to load firmware\n", fw_name);
- 		release_firmware(adev->pm.fw);
- 		adev->pm.fw = NULL;
- 	}
-diff -ru source.bak/drivers/gpu/drm/amd/amdgpu/sdma_v2_4.c source/drivers/gpu/drm/amd/amdgpu/sdma_v2_4.c
---- source.bak/drivers/gpu/drm/amd/amdgpu/sdma_v2_4.c	2016-10-02 19:24:33.000000000 -0400
-+++ source/drivers/gpu/drm/amd/amdgpu/sdma_v2_4.c	2017-05-31 17:32:41.362386778 -0400
+Only in source/drivers/gpu/drm/amd/amdgpu: gmc_v8_0.c.orig
+diff -ru source/drivers/gpu/drm/amd/amdgpu/sdma_v2_4.c source/drivers/gpu/drm/amd/amdgpu/sdma_v2_4.c
+--- source/drivers/gpu/drm/amd/amdgpu/sdma_v2_4.c	2017-02-19 17:34:00.000000000 -0500
++++ source/drivers/gpu/drm/amd/amdgpu/sdma_v2_4.c	2017-08-21 10:54:54.489544208 -0400
 @@ -171,7 +171,7 @@
  out:
  	if (err) {
@@ -231,10 +215,10 @@ diff -ru source.bak/drivers/gpu/drm/amd/amdgpu/sdma_v2_4.c source/drivers/gpu/dr
  		       fw_name);
  		for (i = 0; i < adev->sdma.num_instances; i++) {
  			release_firmware(adev->sdma.instance[i].fw);
-diff -ru source.bak/drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c source/drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c
---- source.bak/drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c	2016-10-02 19:24:33.000000000 -0400
-+++ source/drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c	2017-05-31 17:32:41.362386778 -0400
-@@ -316,7 +316,7 @@
+diff -ru source/drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c source/drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c
+--- source/drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c	2017-02-19 17:34:00.000000000 -0500
++++ source/drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c	2017-08-21 10:54:54.489544208 -0400
+@@ -322,7 +322,7 @@
  out:
  	if (err) {
  		printk(KERN_ERR
@@ -243,21 +227,10 @@ diff -ru source.bak/drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c source/drivers/gpu/dr
  		       fw_name);
  		for (i = 0; i < adev->sdma.num_instances; i++) {
  			release_firmware(adev->sdma.instance[i].fw);
-diff -ru source.bak/drivers/gpu/drm/amd/amdgpu/tonga_dpm.c source/drivers/gpu/drm/amd/amdgpu/tonga_dpm.c
---- source.bak/drivers/gpu/drm/amd/amdgpu/tonga_dpm.c	2016-10-02 19:24:33.000000000 -0400
-+++ source/drivers/gpu/drm/amd/amdgpu/tonga_dpm.c	2017-05-31 17:32:41.362386778 -0400
-@@ -50,7 +50,7 @@
- 
- out:
- 	if (err) {
--		DRM_ERROR("Failed to load firmware \"%s\"", fw_name);
-+		DRM_ERROR("Failed to load firmware\n", fw_name);
- 		release_firmware(adev->pm.fw);
- 		adev->pm.fw = NULL;
- 	}
-diff -ru source.bak/drivers/gpu/drm/drm_edid_load.c source/drivers/gpu/drm/drm_edid_load.c
---- source.bak/drivers/gpu/drm/drm_edid_load.c	2016-10-02 19:24:33.000000000 -0400
-+++ source/drivers/gpu/drm/drm_edid_load.c	2017-05-31 17:32:41.362386778 -0400
+Only in source/drivers/gpu/drm/amd/amdgpu: sdma_v3_0.c.orig
+diff -ru source/drivers/gpu/drm/drm_edid_load.c source/drivers/gpu/drm/drm_edid_load.c
+--- source/drivers/gpu/drm/drm_edid_load.c	2017-02-19 17:34:00.000000000 -0500
++++ source/drivers/gpu/drm/drm_edid_load.c	2017-08-21 10:54:54.489544208 -0400
 @@ -188,8 +188,8 @@
  		err = request_firmware(&fw, name, &pdev->dev);
  		platform_device_unregister(pdev);
@@ -269,9 +242,9 @@ diff -ru source.bak/drivers/gpu/drm/drm_edid_load.c source/drivers/gpu/drm/drm_e
  			return ERR_PTR(err);
  		}
  
-diff -ru source.bak/drivers/gpu/drm/nouveau/nvkm/engine/xtensa.c source/drivers/gpu/drm/nouveau/nvkm/engine/xtensa.c
---- source.bak/drivers/gpu/drm/nouveau/nvkm/engine/xtensa.c	2016-10-02 19:24:33.000000000 -0400
-+++ source/drivers/gpu/drm/nouveau/nvkm/engine/xtensa.c	2017-05-31 17:32:41.362386778 -0400
+diff -ru source/drivers/gpu/drm/nouveau/nvkm/engine/xtensa.c source/drivers/gpu/drm/nouveau/nvkm/engine/xtensa.c
+--- source/drivers/gpu/drm/nouveau/nvkm/engine/xtensa.c	2017-02-19 17:34:00.000000000 -0500
++++ source/drivers/gpu/drm/nouveau/nvkm/engine/xtensa.c	2017-08-21 10:54:54.489544208 -0400
 @@ -109,7 +109,7 @@
  
  		ret = request_firmware(&fw, name, device->dev);
@@ -281,9 +254,9 @@ diff -ru source.bak/drivers/gpu/drm/nouveau/nvkm/engine/xtensa.c source/drivers/
  			return ret;
  		}
  
-diff -ru source.bak/drivers/gpu/drm/r128/r128_cce.c source/drivers/gpu/drm/r128/r128_cce.c
---- source.bak/drivers/gpu/drm/r128/r128_cce.c	2016-10-02 19:24:33.000000000 -0400
-+++ source/drivers/gpu/drm/r128/r128_cce.c	2017-05-31 17:32:41.362386778 -0400
+diff -ru source/drivers/gpu/drm/r128/r128_cce.c source/drivers/gpu/drm/r128/r128_cce.c
+--- source/drivers/gpu/drm/r128/r128_cce.c	2017-02-19 17:34:00.000000000 -0500
++++ source/drivers/gpu/drm/r128/r128_cce.c	2017-08-21 10:54:54.489544208 -0400
 @@ -155,14 +155,14 @@
  	rc = request_firmware(&fw, FIRMWARE_NAME, &pdev->dev);
  	platform_device_unregister(pdev);
@@ -301,10 +274,10 @@ diff -ru source.bak/drivers/gpu/drm/r128/r128_cce.c source/drivers/gpu/drm/r128/
  		       fw->size, FIRMWARE_NAME);
  		rc = -EINVAL;
  		goto out_release;
-diff -ru source.bak/drivers/gpu/drm/radeon/cik.c source/drivers/gpu/drm/radeon/cik.c
---- source.bak/drivers/gpu/drm/radeon/cik.c	2016-10-02 19:24:33.000000000 -0400
-+++ source/drivers/gpu/drm/radeon/cik.c	2017-05-31 17:32:41.362386778 -0400
-@@ -2078,7 +2078,7 @@
+diff -ru source/drivers/gpu/drm/radeon/cik.c source/drivers/gpu/drm/radeon/cik.c
+--- source/drivers/gpu/drm/radeon/cik.c	2017-02-19 17:34:00.000000000 -0500
++++ source/drivers/gpu/drm/radeon/cik.c	2017-08-21 10:54:54.489544208 -0400
+@@ -2070,7 +2070,7 @@
  			goto out;
  		if (rdev->pfp_fw->size != pfp_req_size) {
  			printk(KERN_ERR
@@ -313,7 +286,7 @@ diff -ru source.bak/drivers/gpu/drm/radeon/cik.c source/drivers/gpu/drm/radeon/c
  			       rdev->pfp_fw->size, fw_name);
  			err = -EINVAL;
  			goto out;
-@@ -2087,7 +2087,7 @@
+@@ -2079,7 +2079,7 @@
  		err = radeon_ucode_validate(rdev->pfp_fw);
  		if (err) {
  			printk(KERN_ERR
@@ -322,7 +295,7 @@ diff -ru source.bak/drivers/gpu/drm/radeon/cik.c source/drivers/gpu/drm/radeon/c
  			       fw_name);
  			goto out;
  		} else {
-@@ -2104,7 +2104,7 @@
+@@ -2096,7 +2096,7 @@
  			goto out;
  		if (rdev->me_fw->size != me_req_size) {
  			printk(KERN_ERR
@@ -331,7 +304,7 @@ diff -ru source.bak/drivers/gpu/drm/radeon/cik.c source/drivers/gpu/drm/radeon/c
  			       rdev->me_fw->size, fw_name);
  			err = -EINVAL;
  		}
-@@ -2112,7 +2112,7 @@
+@@ -2104,7 +2104,7 @@
  		err = radeon_ucode_validate(rdev->me_fw);
  		if (err) {
  			printk(KERN_ERR
@@ -340,7 +313,7 @@ diff -ru source.bak/drivers/gpu/drm/radeon/cik.c source/drivers/gpu/drm/radeon/c
  			       fw_name);
  			goto out;
  		} else {
-@@ -2129,7 +2129,7 @@
+@@ -2121,7 +2121,7 @@
  			goto out;
  		if (rdev->ce_fw->size != ce_req_size) {
  			printk(KERN_ERR
@@ -349,7 +322,7 @@ diff -ru source.bak/drivers/gpu/drm/radeon/cik.c source/drivers/gpu/drm/radeon/c
  			       rdev->ce_fw->size, fw_name);
  			err = -EINVAL;
  		}
-@@ -2137,7 +2137,7 @@
+@@ -2129,7 +2129,7 @@
  		err = radeon_ucode_validate(rdev->ce_fw);
  		if (err) {
  			printk(KERN_ERR
@@ -358,7 +331,7 @@ diff -ru source.bak/drivers/gpu/drm/radeon/cik.c source/drivers/gpu/drm/radeon/c
  			       fw_name);
  			goto out;
  		} else {
-@@ -2154,7 +2154,7 @@
+@@ -2146,7 +2146,7 @@
  			goto out;
  		if (rdev->mec_fw->size != mec_req_size) {
  			printk(KERN_ERR
@@ -367,7 +340,7 @@ diff -ru source.bak/drivers/gpu/drm/radeon/cik.c source/drivers/gpu/drm/radeon/c
  			       rdev->mec_fw->size, fw_name);
  			err = -EINVAL;
  		}
-@@ -2162,7 +2162,7 @@
+@@ -2154,7 +2154,7 @@
  		err = radeon_ucode_validate(rdev->mec_fw);
  		if (err) {
  			printk(KERN_ERR
@@ -376,7 +349,7 @@ diff -ru source.bak/drivers/gpu/drm/radeon/cik.c source/drivers/gpu/drm/radeon/c
  			       fw_name);
  			goto out;
  		} else {
-@@ -2194,7 +2194,7 @@
+@@ -2186,7 +2186,7 @@
  			goto out;
  		if (rdev->rlc_fw->size != rlc_req_size) {
  			printk(KERN_ERR
@@ -385,7 +358,7 @@ diff -ru source.bak/drivers/gpu/drm/radeon/cik.c source/drivers/gpu/drm/radeon/c
  			       rdev->rlc_fw->size, fw_name);
  			err = -EINVAL;
  		}
-@@ -2202,7 +2202,7 @@
+@@ -2194,7 +2194,7 @@
  		err = radeon_ucode_validate(rdev->rlc_fw);
  		if (err) {
  			printk(KERN_ERR
@@ -394,7 +367,7 @@ diff -ru source.bak/drivers/gpu/drm/radeon/cik.c source/drivers/gpu/drm/radeon/c
  			       fw_name);
  			goto out;
  		} else {
-@@ -2219,7 +2219,7 @@
+@@ -2211,7 +2211,7 @@
  			goto out;
  		if (rdev->sdma_fw->size != sdma_req_size) {
  			printk(KERN_ERR
@@ -403,7 +376,7 @@ diff -ru source.bak/drivers/gpu/drm/radeon/cik.c source/drivers/gpu/drm/radeon/c
  			       rdev->sdma_fw->size, fw_name);
  			err = -EINVAL;
  		}
-@@ -2227,7 +2227,7 @@
+@@ -2219,7 +2219,7 @@
  		err = radeon_ucode_validate(rdev->sdma_fw);
  		if (err) {
  			printk(KERN_ERR
@@ -412,7 +385,7 @@ diff -ru source.bak/drivers/gpu/drm/radeon/cik.c source/drivers/gpu/drm/radeon/c
  			       fw_name);
  			goto out;
  		} else {
-@@ -2251,7 +2251,7 @@
+@@ -2243,7 +2243,7 @@
  			if ((rdev->mc_fw->size != mc_req_size) &&
  			    (rdev->mc_fw->size != mc2_req_size)){
  				printk(KERN_ERR
@@ -421,7 +394,7 @@ diff -ru source.bak/drivers/gpu/drm/radeon/cik.c source/drivers/gpu/drm/radeon/c
  				       rdev->mc_fw->size, fw_name);
  				err = -EINVAL;
  			}
-@@ -2260,7 +2260,7 @@
+@@ -2252,7 +2252,7 @@
  			err = radeon_ucode_validate(rdev->mc_fw);
  			if (err) {
  				printk(KERN_ERR
@@ -430,7 +403,7 @@ diff -ru source.bak/drivers/gpu/drm/radeon/cik.c source/drivers/gpu/drm/radeon/c
  				       fw_name);
  				goto out;
  			} else {
-@@ -2278,14 +2278,14 @@
+@@ -2270,14 +2270,14 @@
  			err = request_firmware(&rdev->smc_fw, fw_name, rdev->dev);
  			if (err) {
  				printk(KERN_ERR
@@ -447,7 +420,7 @@ diff -ru source.bak/drivers/gpu/drm/radeon/cik.c source/drivers/gpu/drm/radeon/c
  				       rdev->smc_fw->size, fw_name);
  				err = -EINVAL;
  			}
-@@ -2293,7 +2293,7 @@
+@@ -2285,7 +2285,7 @@
  			err = radeon_ucode_validate(rdev->smc_fw);
  			if (err) {
  				printk(KERN_ERR
@@ -456,7 +429,7 @@ diff -ru source.bak/drivers/gpu/drm/radeon/cik.c source/drivers/gpu/drm/radeon/c
  				       fw_name);
  				goto out;
  			} else {
-@@ -2315,7 +2315,7 @@
+@@ -2307,7 +2307,7 @@
  	if (err) {
  		if (err != -EINVAL)
  			printk(KERN_ERR
@@ -465,9 +438,10 @@ diff -ru source.bak/drivers/gpu/drm/radeon/cik.c source/drivers/gpu/drm/radeon/c
  			       fw_name);
  		release_firmware(rdev->pfp_fw);
  		rdev->pfp_fw = NULL;
-diff -ru source.bak/drivers/gpu/drm/radeon/ni.c source/drivers/gpu/drm/radeon/ni.c
---- source.bak/drivers/gpu/drm/radeon/ni.c	2017-05-31 17:29:09.000000000 -0400
-+++ source/drivers/gpu/drm/radeon/ni.c	2017-05-31 17:32:41.362386778 -0400
+Only in source/drivers/gpu/drm/radeon: cik.c.orig
+diff -ru source/drivers/gpu/drm/radeon/ni.c source/drivers/gpu/drm/radeon/ni.c
+--- source/drivers/gpu/drm/radeon/ni.c	2017-02-19 17:34:00.000000000 -0500
++++ source/drivers/gpu/drm/radeon/ni.c	2017-08-21 10:54:54.489544208 -0400
 @@ -775,7 +775,7 @@
  		goto out;
  	if (rdev->pfp_fw->size != pfp_req_size) {
@@ -530,9 +504,9 @@ diff -ru source.bak/drivers/gpu/drm/radeon/ni.c source/drivers/gpu/drm/radeon/ni
  			       fw_name);
  		release_firmware(rdev->pfp_fw);
  		rdev->pfp_fw = NULL;
-diff -ru source.bak/drivers/gpu/drm/radeon/r100.c source/drivers/gpu/drm/radeon/r100.c
---- source.bak/drivers/gpu/drm/radeon/r100.c	2016-10-02 19:24:33.000000000 -0400
-+++ source/drivers/gpu/drm/radeon/r100.c	2017-05-31 17:32:41.362386778 -0400
+diff -ru source/drivers/gpu/drm/radeon/r100.c source/drivers/gpu/drm/radeon/r100.c
+--- source/drivers/gpu/drm/radeon/r100.c	2017-02-19 17:34:00.000000000 -0500
++++ source/drivers/gpu/drm/radeon/r100.c	2017-08-21 10:54:54.493544208 -0400
 @@ -1042,11 +1042,11 @@
  
  	err = request_firmware(&rdev->me_fw, fw_name, rdev->dev);
@@ -547,9 +521,9 @@ diff -ru source.bak/drivers/gpu/drm/radeon/r100.c source/drivers/gpu/drm/radeon/
  		       rdev->me_fw->size, fw_name);
  		err = -EINVAL;
  		release_firmware(rdev->me_fw);
-diff -ru source.bak/drivers/gpu/drm/radeon/r600.c source/drivers/gpu/drm/radeon/r600.c
---- source.bak/drivers/gpu/drm/radeon/r600.c	2016-10-02 19:24:33.000000000 -0400
-+++ source/drivers/gpu/drm/radeon/r600.c	2017-05-31 17:32:41.362386778 -0400
+diff -ru source/drivers/gpu/drm/radeon/r600.c source/drivers/gpu/drm/radeon/r600.c
+--- source/drivers/gpu/drm/radeon/r600.c	2017-02-19 17:34:00.000000000 -0500
++++ source/drivers/gpu/drm/radeon/r600.c	2017-08-21 10:54:54.493544208 -0400
 @@ -2551,7 +2551,7 @@
  		goto out;
  	if (rdev->pfp_fw->size != pfp_req_size) {
@@ -603,9 +577,9 @@ diff -ru source.bak/drivers/gpu/drm/radeon/r600.c source/drivers/gpu/drm/radeon/
  			       fw_name);
  		release_firmware(rdev->pfp_fw);
  		rdev->pfp_fw = NULL;
-diff -ru source.bak/drivers/gpu/drm/radeon/radeon_uvd.c source/drivers/gpu/drm/radeon/radeon_uvd.c
---- source.bak/drivers/gpu/drm/radeon/radeon_uvd.c	2016-10-02 19:24:33.000000000 -0400
-+++ source/drivers/gpu/drm/radeon/radeon_uvd.c	2017-05-31 17:32:41.366386778 -0400
+diff -ru source/drivers/gpu/drm/radeon/radeon_uvd.c source/drivers/gpu/drm/radeon/radeon_uvd.c
+--- source/drivers/gpu/drm/radeon/radeon_uvd.c	2017-02-19 17:34:00.000000000 -0500
++++ source/drivers/gpu/drm/radeon/radeon_uvd.c	2017-08-21 10:54:54.493544208 -0400
 @@ -140,7 +140,7 @@
  		/* Let's try to load the newer firmware first */
  		r = request_firmware(&rdev->uvd_fw, fw_name, rdev->dev);
@@ -624,9 +598,9 @@ diff -ru source.bak/drivers/gpu/drm/radeon/radeon_uvd.c source/drivers/gpu/drm/r
  				legacy_fw_name);
  			return r;
  		}
-diff -ru source.bak/drivers/gpu/drm/radeon/radeon_vce.c source/drivers/gpu/drm/radeon/radeon_vce.c
---- source.bak/drivers/gpu/drm/radeon/radeon_vce.c	2016-10-02 19:24:33.000000000 -0400
-+++ source/drivers/gpu/drm/radeon/radeon_vce.c	2017-05-31 17:32:41.366386778 -0400
+diff -ru source/drivers/gpu/drm/radeon/radeon_vce.c source/drivers/gpu/drm/radeon/radeon_vce.c
+--- source/drivers/gpu/drm/radeon/radeon_vce.c	2017-02-19 17:34:00.000000000 -0500
++++ source/drivers/gpu/drm/radeon/radeon_vce.c	2017-08-21 10:54:54.493544208 -0400
 @@ -87,7 +87,7 @@
  
  	r = request_firmware(&rdev->vce_fw, fw_name, rdev->dev);
@@ -636,10 +610,10 @@ diff -ru source.bak/drivers/gpu/drm/radeon/radeon_vce.c source/drivers/gpu/drm/r
  			fw_name);
  		return r;
  	}
-diff -ru source.bak/drivers/gpu/drm/radeon/si.c source/drivers/gpu/drm/radeon/si.c
---- source.bak/drivers/gpu/drm/radeon/si.c	2017-05-31 17:29:09.000000000 -0400
-+++ source/drivers/gpu/drm/radeon/si.c	2017-05-31 17:32:41.366386778 -0400
-@@ -1765,7 +1765,7 @@
+diff -ru source/drivers/gpu/drm/radeon/si.c source/drivers/gpu/drm/radeon/si.c
+--- source/drivers/gpu/drm/radeon/si.c	2017-02-19 17:34:00.000000000 -0500
++++ source/drivers/gpu/drm/radeon/si.c	2017-08-21 10:54:54.493544208 -0400
+@@ -1763,7 +1763,7 @@
  			goto out;
  		if (rdev->pfp_fw->size != pfp_req_size) {
  			printk(KERN_ERR
@@ -648,7 +622,7 @@ diff -ru source.bak/drivers/gpu/drm/radeon/si.c source/drivers/gpu/drm/radeon/si
  			       rdev->pfp_fw->size, fw_name);
  			err = -EINVAL;
  			goto out;
-@@ -1774,7 +1774,7 @@
+@@ -1772,7 +1772,7 @@
  		err = radeon_ucode_validate(rdev->pfp_fw);
  		if (err) {
  			printk(KERN_ERR
@@ -657,7 +631,7 @@ diff -ru source.bak/drivers/gpu/drm/radeon/si.c source/drivers/gpu/drm/radeon/si
  			       fw_name);
  			goto out;
  		} else {
-@@ -1791,7 +1791,7 @@
+@@ -1789,7 +1789,7 @@
  			goto out;
  		if (rdev->me_fw->size != me_req_size) {
  			printk(KERN_ERR
@@ -666,7 +640,7 @@ diff -ru source.bak/drivers/gpu/drm/radeon/si.c source/drivers/gpu/drm/radeon/si
  			       rdev->me_fw->size, fw_name);
  			err = -EINVAL;
  		}
-@@ -1799,7 +1799,7 @@
+@@ -1797,7 +1797,7 @@
  		err = radeon_ucode_validate(rdev->me_fw);
  		if (err) {
  			printk(KERN_ERR
@@ -675,7 +649,7 @@ diff -ru source.bak/drivers/gpu/drm/radeon/si.c source/drivers/gpu/drm/radeon/si
  			       fw_name);
  			goto out;
  		} else {
-@@ -1816,7 +1816,7 @@
+@@ -1814,7 +1814,7 @@
  			goto out;
  		if (rdev->ce_fw->size != ce_req_size) {
  			printk(KERN_ERR
@@ -684,7 +658,7 @@ diff -ru source.bak/drivers/gpu/drm/radeon/si.c source/drivers/gpu/drm/radeon/si
  			       rdev->ce_fw->size, fw_name);
  			err = -EINVAL;
  		}
-@@ -1824,7 +1824,7 @@
+@@ -1822,7 +1822,7 @@
  		err = radeon_ucode_validate(rdev->ce_fw);
  		if (err) {
  			printk(KERN_ERR
@@ -693,7 +667,7 @@ diff -ru source.bak/drivers/gpu/drm/radeon/si.c source/drivers/gpu/drm/radeon/si
  			       fw_name);
  			goto out;
  		} else {
-@@ -1841,7 +1841,7 @@
+@@ -1839,7 +1839,7 @@
  			goto out;
  		if (rdev->rlc_fw->size != rlc_req_size) {
  			printk(KERN_ERR
@@ -702,7 +676,7 @@ diff -ru source.bak/drivers/gpu/drm/radeon/si.c source/drivers/gpu/drm/radeon/si
  			       rdev->rlc_fw->size, fw_name);
  			err = -EINVAL;
  		}
-@@ -1849,7 +1849,7 @@
+@@ -1847,7 +1847,7 @@
  		err = radeon_ucode_validate(rdev->rlc_fw);
  		if (err) {
  			printk(KERN_ERR
@@ -711,7 +685,7 @@ diff -ru source.bak/drivers/gpu/drm/radeon/si.c source/drivers/gpu/drm/radeon/si
  			       fw_name);
  			goto out;
  		} else {
-@@ -1871,7 +1871,7 @@
+@@ -1872,7 +1872,7 @@
  		if ((rdev->mc_fw->size != mc_req_size) &&
  		    (rdev->mc_fw->size != mc2_req_size)) {
  			printk(KERN_ERR
@@ -720,7 +694,7 @@ diff -ru source.bak/drivers/gpu/drm/radeon/si.c source/drivers/gpu/drm/radeon/si
  			       rdev->mc_fw->size, fw_name);
  			err = -EINVAL;
  		}
-@@ -1880,7 +1880,7 @@
+@@ -1881,7 +1881,7 @@
  		err = radeon_ucode_validate(rdev->mc_fw);
  		if (err) {
  			printk(KERN_ERR
@@ -729,7 +703,7 @@ diff -ru source.bak/drivers/gpu/drm/radeon/si.c source/drivers/gpu/drm/radeon/si
  			       fw_name);
  			goto out;
  		} else {
-@@ -1898,14 +1898,14 @@
+@@ -1901,14 +1901,14 @@
  		err = request_firmware(&rdev->smc_fw, fw_name, rdev->dev);
  		if (err) {
  			printk(KERN_ERR
@@ -746,7 +720,7 @@ diff -ru source.bak/drivers/gpu/drm/radeon/si.c source/drivers/gpu/drm/radeon/si
  			       rdev->smc_fw->size, fw_name);
  			err = -EINVAL;
  		}
-@@ -1913,7 +1913,7 @@
+@@ -1916,7 +1916,7 @@
  		err = radeon_ucode_validate(rdev->smc_fw);
  		if (err) {
  			printk(KERN_ERR
@@ -755,7 +729,7 @@ diff -ru source.bak/drivers/gpu/drm/radeon/si.c source/drivers/gpu/drm/radeon/si
  			       fw_name);
  			goto out;
  		} else {
-@@ -1933,7 +1933,7 @@
+@@ -1936,7 +1936,7 @@
  	if (err) {
  		if (err != -EINVAL)
  			printk(KERN_ERR
@@ -764,9 +738,10 @@ diff -ru source.bak/drivers/gpu/drm/radeon/si.c source/drivers/gpu/drm/radeon/si
  			       fw_name);
  		release_firmware(rdev->pfp_fw);
  		rdev->pfp_fw = NULL;
-diff -ru source.bak/drivers/net/wireless/intel/ipw2x00/ipw2200.c source/drivers/net/wireless/intel/ipw2x00/ipw2200.c
---- source.bak/drivers/net/wireless/intel/ipw2x00/ipw2200.c	2016-10-02 19:24:33.000000000 -0400
-+++ source/drivers/net/wireless/intel/ipw2x00/ipw2200.c	2017-05-31 17:32:41.366386778 -0400
+Only in source/drivers/gpu/drm/radeon: si.c.orig
+diff -ru source/drivers/net/wireless/intel/ipw2x00/ipw2200.c source/drivers/net/wireless/intel/ipw2x00/ipw2200.c
+--- source/drivers/net/wireless/intel/ipw2x00/ipw2200.c	2017-02-19 17:34:00.000000000 -0500
++++ source/drivers/net/wireless/intel/ipw2x00/ipw2200.c	2017-08-21 10:54:54.493544208 -0400
 @@ -3419,12 +3419,12 @@
  	/* ask firmware_class module to get the boot firmware off disk */
  	rc = request_firmware(raw, name, &priv->pci_dev->dev);
@@ -826,9 +801,9 @@ diff -ru source.bak/drivers/net/wireless/intel/ipw2x00/ipw2200.c source/drivers/
  			return rc;
  		}
  
-diff -ru source.bak/drivers/net/wireless/intel/iwlegacy/3945-mac.c source/drivers/net/wireless/intel/iwlegacy/3945-mac.c
---- source.bak/drivers/net/wireless/intel/iwlegacy/3945-mac.c	2016-10-02 19:24:33.000000000 -0400
-+++ source/drivers/net/wireless/intel/iwlegacy/3945-mac.c	2017-05-31 17:32:41.366386778 -0400
+diff -ru source/drivers/net/wireless/intel/iwlegacy/3945-mac.c source/drivers/net/wireless/intel/iwlegacy/3945-mac.c
+--- source/drivers/net/wireless/intel/iwlegacy/3945-mac.c	2017-02-19 17:34:00.000000000 -0500
++++ source/drivers/net/wireless/intel/iwlegacy/3945-mac.c	2017-08-21 10:54:54.493544208 -0400
 @@ -1861,7 +1861,7 @@
  		sprintf(buf, "%s%u%s", name_pre, idx, ".ucode");
  		ret = request_firmware(&ucode_raw, buf, &il->pci_dev->dev);
@@ -866,9 +841,9 @@ diff -ru source.bak/drivers/net/wireless/intel/iwlegacy/3945-mac.c source/driver
  		       api_ver);
  
  	IL_INFO("loaded firmware version %u.%u.%u.%u\n",
-diff -ru source.bak/drivers/net/wireless/intel/iwlegacy/4965-mac.c source/drivers/net/wireless/intel/iwlegacy/4965-mac.c
---- source.bak/drivers/net/wireless/intel/iwlegacy/4965-mac.c	2016-10-02 19:24:33.000000000 -0400
-+++ source/drivers/net/wireless/intel/iwlegacy/4965-mac.c	2017-05-31 17:32:41.370386778 -0400
+diff -ru source/drivers/net/wireless/intel/iwlegacy/4965-mac.c source/drivers/net/wireless/intel/iwlegacy/4965-mac.c
+--- source/drivers/net/wireless/intel/iwlegacy/4965-mac.c	2017-02-19 17:34:00.000000000 -0500
++++ source/drivers/net/wireless/intel/iwlegacy/4965-mac.c	2017-08-21 10:54:54.497544208 -0400
 @@ -4706,7 +4706,7 @@
  
  	sprintf(il->firmware_name, "%s%s%s", name_pre, tag, ".ucode");
@@ -906,9 +881,9 @@ diff -ru source.bak/drivers/net/wireless/intel/iwlegacy/4965-mac.c source/driver
  		       api_ver);
  
  	IL_INFO("loaded firmware version %u.%u.%u.%u\n",
-diff -ru source.bak/drivers/net/wireless/intel/iwlwifi/iwl-drv.c source/drivers/net/wireless/intel/iwlwifi/iwl-drv.c
---- source.bak/drivers/net/wireless/intel/iwlwifi/iwl-drv.c	2016-10-02 19:24:33.000000000 -0400
-+++ source/drivers/net/wireless/intel/iwlwifi/iwl-drv.c	2017-05-31 17:32:41.370386778 -0400
+diff -ru source/drivers/net/wireless/intel/iwlwifi/iwl-drv.c source/drivers/net/wireless/intel/iwlwifi/iwl-drv.c
+--- source/drivers/net/wireless/intel/iwlwifi/iwl-drv.c	2017-02-19 17:34:00.000000000 -0500
++++ source/drivers/net/wireless/intel/iwlwifi/iwl-drv.c	2017-08-21 10:54:54.497544208 -0400
 @@ -232,7 +232,7 @@
  	snprintf(drv->firmware_name, sizeof(drv->firmware_name), "%s%s.ucode",
  		 name_pre, tag);
@@ -918,10 +893,10 @@ diff -ru source.bak/drivers/net/wireless/intel/iwlwifi/iwl-drv.c source/drivers/
  		       drv->firmware_name);
  
  	return request_firmware_nowait(THIS_MODULE, 1, drv->firmware_name,
-diff -ru source.bak/drivers/net/wireless/intel/iwlwifi/mvm/fw.c source/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
---- source.bak/drivers/net/wireless/intel/iwlwifi/mvm/fw.c	2017-05-31 17:29:09.000000000 -0400
-+++ source/drivers/net/wireless/intel/iwlwifi/mvm/fw.c	2017-05-31 17:32:41.370386778 -0400
-@@ -1279,7 +1279,7 @@
+diff -ru source/drivers/net/wireless/intel/iwlwifi/mvm/fw.c source/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
+--- source/drivers/net/wireless/intel/iwlwifi/mvm/fw.c	2017-08-21 12:06:22.000000000 -0400
++++ source/drivers/net/wireless/intel/iwlwifi/mvm/fw.c	2017-08-21 10:54:54.497544208 -0400
+@@ -1307,7 +1307,7 @@
  
  	ret = iwl_mvm_load_ucode_wait_alive(mvm, IWL_UCODE_WOWLAN);
  	if (ret) {
@@ -930,10 +905,11 @@ diff -ru source.bak/drivers/net/wireless/intel/iwlwifi/mvm/fw.c source/drivers/n
  		goto error;
  	}
  
-diff -ru source.bak/drivers/net/wireless/intel/iwlwifi/mvm/nvm.c source/drivers/net/wireless/intel/iwlwifi/mvm/nvm.c
---- source.bak/drivers/net/wireless/intel/iwlwifi/mvm/nvm.c	2016-10-02 19:24:33.000000000 -0400
-+++ source/drivers/net/wireless/intel/iwlwifi/mvm/nvm.c	2017-05-31 17:32:41.370386778 -0400
-@@ -415,7 +415,7 @@
+Only in source/drivers/net/wireless/intel/iwlwifi/mvm: fw.c.orig
+diff -ru source/drivers/net/wireless/intel/iwlwifi/mvm/nvm.c source/drivers/net/wireless/intel/iwlwifi/mvm/nvm.c
+--- source/drivers/net/wireless/intel/iwlwifi/mvm/nvm.c	2017-02-19 17:34:00.000000000 -0500
++++ source/drivers/net/wireless/intel/iwlwifi/mvm/nvm.c	2017-08-21 10:54:54.497544208 -0400
+@@ -414,7 +414,7 @@
  	ret = request_firmware(&fw_entry, mvm->nvm_file_name,
  			       mvm->trans->dev);
  	if (ret) {
@@ -942,9 +918,10 @@ diff -ru source.bak/drivers/net/wireless/intel/iwlwifi/mvm/nvm.c source/drivers/
  			mvm->nvm_file_name, ret);
  		return ret;
  	}
-diff -ru source.bak/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c source/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
---- source.bak/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c	2017-05-31 17:29:09.000000000 -0400
-+++ source/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c	2017-05-31 17:35:21.326386759 -0400
+Only in source/drivers/net/wireless/intel/iwlwifi/mvm: nvm.c.orig
+diff -ru source/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c source/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
+--- source/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c	2017-02-19 17:34:00.000000000 -0500
++++ source/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c	2017-08-21 10:54:54.497544208 -0400
 @@ -2074,9 +2074,9 @@
  	int ret = 0;
  	u16 signature;
@@ -957,147 +934,141 @@ diff -ru source.bak/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c source
  		ret = -EAGAIN;
  		goto exit;
  	}
-diff -ru source.bak/drivers/net/wireless/realtek/rtlwifi/core.c source/drivers/net/wireless/realtek/rtlwifi/core.c
---- source.bak/drivers/net/wireless/realtek/rtlwifi/core.c	2017-05-31 17:29:09.000000000 -0400
-+++ source/drivers/net/wireless/realtek/rtlwifi/core.c	2017-05-31 17:32:41.370386778 -0400
-@@ -106,12 +106,12 @@
+diff -ru source/drivers/net/wireless/realtek/rtlwifi/core.c source/drivers/net/wireless/realtek/rtlwifi/core.c
+--- source/drivers/net/wireless/realtek/rtlwifi/core.c	2017-02-19 17:34:00.000000000 -0500
++++ source/drivers/net/wireless/realtek/rtlwifi/core.c	2017-08-21 11:09:25.201544104 -0400
+@@ -106,7 +106,7 @@
  			err = request_firmware(&firmware,
  					       rtlpriv->cfg->alt_fw_name,
  					       rtlpriv->io.dev);
 -			pr_info("Loading alternative firmware %s\n",
-+			pr_info("Loading alternative firmware\n",
++			pr_info("Loading alternative firmware \n",
  				rtlpriv->cfg->alt_fw_name);
  			if (!err)
  				goto found_alt;
- 		}
--		pr_err("Firmware %s not available\n", rtlpriv->cfg->fw_name);
-+		pr_err("Firmware not available\n", rtlpriv->cfg->fw_name);
- 		rtlpriv->max_fw_size = 0;
- 		return;
- 	}
-diff -ru source.bak/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/sw.c source/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/sw.c
---- source.bak/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/sw.c	2016-10-02 19:24:33.000000000 -0400
-+++ source/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/sw.c	2017-05-31 17:32:41.370386778 -0400
-@@ -171,7 +171,7 @@
+diff -ru source/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/sw.c source/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/sw.c
+--- source/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/sw.c	2017-02-19 17:34:00.000000000 -0500
++++ source/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/sw.c	2017-08-21 11:07:03.713544121 -0400
+@@ -172,7 +172,7 @@
  
- 	rtlpriv->cfg->fw_name = "rtlwifi/rtl8188efw.bin";
+ 	fw_name = "rtlwifi/rtl8188efw.bin";
  	rtlpriv->max_fw_size = 0x8000;
--	pr_info("Using firmware %s\n", rtlpriv->cfg->fw_name);
-+	pr_info("Requesting firmware\n", rtlpriv->cfg->fw_name);
- 	err = request_firmware_nowait(THIS_MODULE, 1, rtlpriv->cfg->fw_name,
+-	pr_info("Using firmware %s\n", fw_name);
++	pr_info("Using firmware \n", fw_name);
+ 	err = request_firmware_nowait(THIS_MODULE, 1, fw_name,
  				      rtlpriv->io.dev, GFP_KERNEL, hw,
  				      rtl_fw_cb);
-diff -ru source.bak/drivers/net/wireless/realtek/rtlwifi/rtl8192ce/sw.c source/drivers/net/wireless/realtek/rtlwifi/rtl8192ce/sw.c
---- source.bak/drivers/net/wireless/realtek/rtlwifi/rtl8192ce/sw.c	2016-10-02 19:24:33.000000000 -0400
-+++ source/drivers/net/wireless/realtek/rtlwifi/rtl8192ce/sw.c	2017-05-31 17:32:41.370386778 -0400
-@@ -174,7 +174,7 @@
- 		rtlpriv->cfg->fw_name = "rtlwifi/rtl8192cfwU_B.bin";
+diff -ru source/drivers/net/wireless/realtek/rtlwifi/rtl8192ce/sw.c source/drivers/net/wireless/realtek/rtlwifi/rtl8192ce/sw.c
+--- source/drivers/net/wireless/realtek/rtlwifi/rtl8192ce/sw.c	2017-02-19 17:34:00.000000000 -0500
++++ source/drivers/net/wireless/realtek/rtlwifi/rtl8192ce/sw.c	2017-08-21 11:07:03.737544121 -0400
+@@ -173,7 +173,7 @@
+ 		fw_name = "rtlwifi/rtl8192cfw.bin";
  
  	rtlpriv->max_fw_size = 0x4000;
--	pr_info("Using firmware %s\n", rtlpriv->cfg->fw_name);
-+	pr_info("Requesting firmware\n", rtlpriv->cfg->fw_name);
- 	err = request_firmware_nowait(THIS_MODULE, 1, rtlpriv->cfg->fw_name,
+-	pr_info("Using firmware %s\n", fw_name);
++	pr_info("Using firmware \n", fw_name);
+ 	err = request_firmware_nowait(THIS_MODULE, 1, fw_name,
  				      rtlpriv->io.dev, GFP_KERNEL, hw,
  				      rtl_fw_cb);
-diff -ru source.bak/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/sw.c source/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/sw.c
---- source.bak/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/sw.c	2016-10-02 19:24:33.000000000 -0400
-+++ source/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/sw.c	2017-05-31 17:32:41.370386778 -0400
-@@ -85,7 +85,7 @@
+diff -ru source/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/sw.c source/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/sw.c
+--- source/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/sw.c	2017-02-19 17:34:00.000000000 -0500
++++ source/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/sw.c	2017-08-21 11:07:03.737544121 -0400
+@@ -82,7 +82,7 @@
  	}
  	/* provide name of alternative file */
  	rtlpriv->cfg->alt_fw_name = "rtlwifi/rtl8192cufw.bin";
--	pr_info("Loading firmware %s\n", rtlpriv->cfg->fw_name);
-+	pr_info("Requesting firmware\n", rtlpriv->cfg->fw_name);
+-	pr_info("Loading firmware %s\n", fw_name);
++	pr_info("Loading firmware \n", fw_name);
  	rtlpriv->max_fw_size = 0x4000;
  	err = request_firmware_nowait(THIS_MODULE, 1,
- 				      rtlpriv->cfg->fw_name, rtlpriv->io.dev,
-diff -ru source.bak/drivers/net/wireless/realtek/rtlwifi/rtl8192de/sw.c source/drivers/net/wireless/realtek/rtlwifi/rtl8192de/sw.c
---- source.bak/drivers/net/wireless/realtek/rtlwifi/rtl8192de/sw.c	2016-10-02 19:24:33.000000000 -0400
-+++ source/drivers/net/wireless/realtek/rtlwifi/rtl8192de/sw.c	2017-05-31 17:32:41.370386778 -0400
-@@ -181,7 +181,7 @@
+ 				      fw_name, rtlpriv->io.dev,
+diff -ru source/drivers/net/wireless/realtek/rtlwifi/rtl8192de/sw.c source/drivers/net/wireless/realtek/rtlwifi/rtl8192de/sw.c
+--- source/drivers/net/wireless/realtek/rtlwifi/rtl8192de/sw.c	2017-02-19 17:34:00.000000000 -0500
++++ source/drivers/net/wireless/realtek/rtlwifi/rtl8192de/sw.c	2017-08-21 11:09:58.965544100 -0400
+@@ -178,7 +178,7 @@
  
  	rtlpriv->max_fw_size = 0x8000;
  	pr_info("Driver for Realtek RTL8192DE WLAN interface\n");
--	pr_info("Loading firmware file %s\n", rtlpriv->cfg->fw_name);
-+	pr_info("Loading firmware file\n", rtlpriv->cfg->fw_name);
+-	pr_info("Loading firmware file %s\n", fw_name);
++	pr_info("Loading firmware file\n", fw_name);
  
  	/* request fw */
- 	err = request_firmware_nowait(THIS_MODULE, 1, rtlpriv->cfg->fw_name,
-diff -ru source.bak/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/sw.c source/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/sw.c
---- source.bak/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/sw.c	2016-10-02 19:24:33.000000000 -0400
-+++ source/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/sw.c	2017-05-31 17:34:08.242386768 -0400
-@@ -173,7 +173,7 @@
- 	rtlpriv->cfg->fw_name = "rtlwifi/rtl8192eefw.bin";
+ 	err = request_firmware_nowait(THIS_MODULE, 1, fw_name,
+diff -ru source/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/sw.c source/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/sw.c
+--- source/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/sw.c	2017-02-19 17:34:00.000000000 -0500
++++ source/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/sw.c	2017-08-21 11:07:03.741544121 -0400
+@@ -174,7 +174,7 @@
+ 	fw_name = "rtlwifi/rtl8192eefw.bin";
  
  	rtlpriv->max_fw_size = 0x8000;
--	pr_info("Using firmware %s\n", rtlpriv->cfg->fw_name);
-+	pr_info("Loading firmware\n", rtlpriv->cfg->fw_name);
- 	err = request_firmware_nowait(THIS_MODULE, 1, rtlpriv->cfg->fw_name,
+-	pr_info("Using firmware %s\n", fw_name);
++	pr_info("Using firmware \n", fw_name);
+ 	err = request_firmware_nowait(THIS_MODULE, 1, fw_name,
  				      rtlpriv->io.dev, GFP_KERNEL, hw,
  				      rtl_fw_cb);
-diff -ru source.bak/drivers/net/wireless/realtek/rtlwifi/rtl8192se/sw.c source/drivers/net/wireless/realtek/rtlwifi/rtl8192se/sw.c
---- source.bak/drivers/net/wireless/realtek/rtlwifi/rtl8192se/sw.c	2016-10-02 19:24:33.000000000 -0400
-+++ source/drivers/net/wireless/realtek/rtlwifi/rtl8192se/sw.c	2017-05-31 17:32:41.370386778 -0400
-@@ -94,7 +94,7 @@
+diff -ru source/drivers/net/wireless/realtek/rtlwifi/rtl8192se/sw.c source/drivers/net/wireless/realtek/rtlwifi/rtl8192se/sw.c
+--- source/drivers/net/wireless/realtek/rtlwifi/rtl8192se/sw.c	2017-02-19 17:34:00.000000000 -0500
++++ source/drivers/net/wireless/realtek/rtlwifi/rtl8192se/sw.c	2017-08-21 11:08:21.829544111 -0400
+@@ -91,7 +91,7 @@
  			 "Firmware callback routine entered!\n");
  	complete(&rtlpriv->firmware_loading_complete);
  	if (!firmware) {
--		pr_err("Firmware %s not available\n", rtlpriv->cfg->fw_name);
-+		pr_err("Firmware not available\n", rtlpriv->cfg->fw_name);
+-		pr_err("Firmware %s not available\n", fw_name);
++		pr_err("Firmware not available\n", fw_name);
  		rtlpriv->max_fw_size = 0;
  		return;
  	}
-@@ -214,7 +214,7 @@
+@@ -212,7 +212,7 @@
  	rtlpriv->max_fw_size = RTL8190_MAX_FIRMWARE_CODE_SIZE*2 +
  			       sizeof(struct fw_hdr);
  	pr_info("Driver for Realtek RTL8192SE/RTL8191SE\n"
--		"Loading firmware %s\n", rtlpriv->cfg->fw_name);
-+		"Loading firmware\n", rtlpriv->cfg->fw_name);
+-		"Loading firmware %s\n", fw_name);
++		"Loading firmware \n", fw_name);
  	/* request fw */
- 	err = request_firmware_nowait(THIS_MODULE, 1, rtlpriv->cfg->fw_name,
+ 	err = request_firmware_nowait(THIS_MODULE, 1, fw_name,
  				      rtlpriv->io.dev, GFP_KERNEL, hw,
-diff -ru source.bak/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/sw.c source/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/sw.c
---- source.bak/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/sw.c	2016-10-02 19:24:33.000000000 -0400
-+++ source/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/sw.c	2017-05-31 17:32:41.370386778 -0400
-@@ -182,7 +182,7 @@
- 		rtlpriv->cfg->fw_name = "rtlwifi/rtl8723fw_B.bin";
+diff -ru source/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/sw.c source/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/sw.c
+--- source/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/sw.c	2017-02-19 17:34:00.000000000 -0500
++++ source/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/sw.c	2017-08-21 11:07:03.741544121 -0400
+@@ -181,7 +181,7 @@
+ 		fw_name = "rtlwifi/rtl8723fw_B.bin";
  
  	rtlpriv->max_fw_size = 0x6000;
--	pr_info("Using firmware %s\n", rtlpriv->cfg->fw_name);
-+	pr_info("Requesting firmware\n", rtlpriv->cfg->fw_name);
- 	err = request_firmware_nowait(THIS_MODULE, 1, rtlpriv->cfg->fw_name,
+-	pr_info("Using firmware %s\n", fw_name);
++	pr_info("Using firmware \n", fw_name);
+ 	err = request_firmware_nowait(THIS_MODULE, 1, fw_name,
  				      rtlpriv->io.dev, GFP_KERNEL, hw,
  				      rtl_fw_cb);
-diff -ru source.bak/drivers/net/wireless/realtek/rtlwifi/rtl8723be/sw.c source/drivers/net/wireless/realtek/rtlwifi/rtl8723be/sw.c
---- source.bak/drivers/net/wireless/realtek/rtlwifi/rtl8723be/sw.c	2016-10-02 19:24:33.000000000 -0400
-+++ source/drivers/net/wireless/realtek/rtlwifi/rtl8723be/sw.c	2017-05-31 17:33:46.026386770 -0400
-@@ -184,7 +184,7 @@
+diff -ru source/drivers/net/wireless/realtek/rtlwifi/rtl8723be/sw.c source/drivers/net/wireless/realtek/rtlwifi/rtl8723be/sw.c
+--- source/drivers/net/wireless/realtek/rtlwifi/rtl8723be/sw.c	2017-02-19 17:34:00.000000000 -0500
++++ source/drivers/net/wireless/realtek/rtlwifi/rtl8723be/sw.c	2017-08-21 11:07:03.741544121 -0400
+@@ -185,7 +185,7 @@
  	}
  
  	rtlpriv->max_fw_size = 0x8000;
--	pr_info("Using firmware %s\n", rtlpriv->cfg->fw_name);
-+	pr_info("Loading firmware\n", rtlpriv->cfg->fw_name);
- 	err = request_firmware_nowait(THIS_MODULE, 1, rtlpriv->cfg->fw_name,
+-	pr_info("Using firmware %s\n", fw_name);
++	pr_info("Using firmware \n", fw_name);
+ 	err = request_firmware_nowait(THIS_MODULE, 1, fw_name,
  				      rtlpriv->io.dev, GFP_KERNEL, hw,
  				      rtl_fw_cb);
-diff -ru source.bak/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/sw.c source/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/sw.c
---- source.bak/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/sw.c	2016-10-02 19:24:33.000000000 -0400
-+++ source/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/sw.c	2017-05-31 17:34:40.466386764 -0400
-@@ -212,7 +212,7 @@
+diff -ru source/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/sw.c source/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/sw.c
+--- source/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/sw.c	2017-02-19 17:34:00.000000000 -0500
++++ source/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/sw.c	2017-08-21 11:07:03.741544121 -0400
+@@ -213,7 +213,7 @@
  
  	rtlpriv->max_fw_size = 0x8000;
  	/*load normal firmware*/
--	pr_info("Using firmware %s\n", rtlpriv->cfg->fw_name);
-+	pr_info("Loading firmware\n", rtlpriv->cfg->fw_name);
- 	err = request_firmware_nowait(THIS_MODULE, 1, rtlpriv->cfg->fw_name,
+-	pr_info("Using firmware %s\n", fw_name);
++	pr_info("Using firmware \n", fw_name);
+ 	err = request_firmware_nowait(THIS_MODULE, 1, fw_name,
  				      rtlpriv->io.dev, GFP_KERNEL, hw,
  				      rtl_fw_cb);
-@@ -222,7 +222,7 @@
+@@ -223,7 +223,7 @@
  		return 1;
  	}
  	/*load wowlan firmware*/
--	pr_info("Using firmware %s\n", rtlpriv->cfg->wowlan_fw_name);
-+	pr_info("Loading firmware\n", rtlpriv->cfg->wowlan_fw_name);
+-	pr_info("Using firmware %s\n", wowlan_fw_name);
++	pr_info("Using firmware \n", wowlan_fw_name);
  	err = request_firmware_nowait(THIS_MODULE, 1,
- 				      rtlpriv->cfg->wowlan_fw_name,
+ 				      wowlan_fw_name,
  				      rtlpriv->io.dev, GFP_KERNEL, hw,
