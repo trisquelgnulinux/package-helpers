@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 EXTERNAL='deb-src http://devel.trisquel.info/repos/packages/icecat/ GNU main'
 SIGNKEY="D7E04784"
 REPOKEY="3C76EED7D7E04784"
@@ -54,9 +54,6 @@ app.partner.ubuntu = "trisquel"
 EOF
 
 cp $DATA/searchplugins/* debian/searchplugins
-cp $DATA/aboutIceCat.xhtml extensions/gnu/abouticecat@gnu.org/chrome/content/aboutIceCat/aboutIceCat.xhtml
-cp $DATA/bookmarks.html.in browser/locales/generic/profile/bookmarks.html.in
-cp $DATA/aboutHome.xhtml browser/base/content/abouthome/aboutHome.xhtml
 
 mv browser/locales/searchplugins/google-nocodes.xml browser/locales/searchplugins/google.xml
 
