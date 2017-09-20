@@ -77,6 +77,7 @@ cat << EOF >> debian.master/config/config.common.trisquel
 CONFIG_IOSCHED_BFQ=y
 CONFIG_CGROUP_BFQIO=y
 CONFIG_BFQ_GROUP_IOSCHED=y
+CONFIG_DEFAULT_BFQ=n
 EOF
 cat << EOF >> debian.master/config/i386/config.flavour.lowlatency
 CONFIG_DEFAULT_BFQ=y
