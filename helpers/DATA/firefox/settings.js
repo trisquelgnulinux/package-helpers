@@ -191,3 +191,6 @@ pref("extensions.pocket.enabled", false);
 
 // disable xpi signing verification
 pref("xpinstall.signatures.required", false);
+
+// disable screenshots extension
+pref("extensions.screenshots.disabled", true);
