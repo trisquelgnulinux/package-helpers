@@ -123,7 +123,7 @@ pref("browser.newtabpage.directory.source", "");
 pref("browser.newtabpage.directory.ping", "");
 pref("browser.newtabpage.introShown", true);
 // Disable home snippets
-pref("browser.aboutHomeSnippets.updateUrl", "data:text/html");
+pref("browser.aboutHomeSnippets.updateUrl", "");
 
 // Services
 pref("gecko.handlerService.schemes.mailto.0.name", "");

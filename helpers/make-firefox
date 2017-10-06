@@ -176,9 +176,11 @@ cp $DATA/bookmarks.html.in browser/locales/generic/profile/bookmarks.html.in
 cp $DATA/searchplugins/*.xml debian/searchplugins/en-US/
 cp $DATA/searchplugins/searchplugins.conf debian/config/
 
-# install aboutabrowser extension
-cp $DATA/aboutabrowser@trisquel.info -r debian
-echo "debian/aboutabrowser@trisquel.info @MOZ_ADDONDIR@/extensions/" >> debian/abrowser.install.in
+# install extensions
+for extension in $(ls -1 $DATA/extensions/); do
+  cp $DATA/extensions/$extension -r debian
+  echo "debian/$extension @MOZ_ADDONDIR@/extensions/" >> debian/abrowser.install.in
+done
 
 # Disable newtab "What is this" popup and config button
 cat << EOF >> browser/themes/linux/newtab/newTab.css
