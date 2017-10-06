@@ -24,126 +24,41 @@
     <link rel="icon" type="image/png" id="favicon"
           href="chrome://branding/content/icon32.png"/>
     <link rel="stylesheet" type="text/css" media="all"
+          href="chrome://browser/content/contentSearchUI.css"/>
+    <link rel="stylesheet" type="text/css" media="all" defer="defer"
           href="chrome://browser/content/abouthome/aboutHome.css"/>
 
-<style>
-
-body{
- margin:0;
- background-color:#f2f2f2;
-}
-#box{   
- display: flex;
- flex-flow: column;
- justify-content: space-between;
- align-items: center;
- align-content: center;
- height: 100vh;
-}
-
-#topSection, #box3, #block-horizontal-margin{
- flex: 0 1 auto;
- align-self: auto;
-}
-#topSection {
- margin-top:10vh;
- order:1;
-}
-#block-horizontal-margin{
- order:2;
-}
-#box3{
- order:3;
- width:100vw;
-}
-
-
-label{
-position:relative;
-bottom:2px;
-left:2px;
-}
-
-em {
-color:#600
-}
-
-a{
-color:#004998
-}
-
-.block-side-margin {
-  min-width: 16px;
-  -moz-box-flex: 1;
-}
-
-#block-horizontal-margin {
-  display: -moz-box;
-  -moz-box-flex: 1;
-}
-
-ul li {
-list-style:none;
-background:#ddd;
-border-radius:3px;
-padding:3px 5px 3px 5px;
-margin:5px;
-box-shadow: 0px 2px 0 #ccc ;
-float:left;
-}
-
-ul li a{
-font-weight:bold;
-color:#666;
-text-shadow:0px 1px 0px #fff;
-}
-
-.titlelink {
-font-weight:bold;
-color:#56728C;
-text-shadow:0px 1px 0px #fff;
-}
-
-#footer{
-min-height:100px;
-}
-
-</style>
-
+    <script type="text/javascript"
+            src="chrome://browser/content/abouthome/aboutHome.js"/>
+    <script type="text/javascript"
+            src="chrome://browser/content/contentSearchUI.js"/>
   </head>
 
   <body dir="&locale.dir;">
-
-  <div id="box">
-   <div id="box1">
+    <div class="spacer"/>
     <div id="topSection">
-      <img src="chrome://branding/content/about-logo.png"/>
+      <div id="brandLogo"></div>
 
-      <div id="searchContainer">
-        <form name="searchForm" id="searchForm" action="https://duckduckgo.com/">
-          <input type="hidden" name="t" value="trisquel"/>
-          <input type="text" name="q" value="" id="searchText" maxlength="256"
-                 autofocus="autofocus"/>
-          <input id="searchSubmit" type="submit" value="Search"/>
-        </form>
+      <div id="searchIconAndTextContainer">
+        <div id="searchIcon"/>
+        <input type="text" name="q" value="" id="searchText" maxlength="256"
+               aria-label="&contentSearchInput.label;" autofocus="autofocus"/>
+        <input id="searchSubmit" type="button" onclick="onSearchSubmit(event)"
+               title="&contentSearchSubmit.tooltip;"/>
       </div>
-
     </div>
-   </div>
+    <div class="spacer"/>
 
-   <div id="box2">
-<div id="footer" style="  display: -moz-box;   -moz-box-align: center;   -moz-box-pack: center;   width: 100%;   background-color: hsla(0,0%,0%,.03);   border-top: 1px solid hsla(0,0%,0%,.03);   box-shadow: 0 2px 5px hsla(0,0%,0%,.1) inset,              0 -1px 0 hsla(0,0%,100%,.25);">
-<p ><a class="titlelink" href="https://trisquel.info">Trisquel GNU/Linux</a>:</p>
-<ul style="font-size:0.8em">
-<li><a href="https://trisquel.info/forum">Forum</a></li>
-<li><a href="https://trisquel.info/wiki">Wiki</a></li>
-<li><a href="http://store.trisquel.info/">Store</a></li>
-<li><a href="https://trisquel.info/donate">Donate</a></li>
-</ul>
-</div>
-</div>
-</div>
+    <div id="launcher">
+      <button class="launchButton" id="downloads">&abouthome.downloadsButton.label;</button>
+      <button class="launchButton" id="bookmarks">&abouthome.bookmarksButton.label;</button>
+      <button class="launchButton" id="history">&abouthome.historyButton.label;</button>
+      <button class="launchButton" id="addons">&abouthome.addonsButton.label;</button>
+      <button class="launchButton" id="sync">&abouthome.syncButton.label;</button>
+      <button class="launchButton" id="settings">&abouthome.preferencesButtonUnix.label;</button>
+      <div id="restorePreviousSessionSeparator"/>
+      <button class="launchButton" id="restorePreviousSession">&historyRestoreLastSession.label;</button>
+    </div>
 
   </body>
 </html>
-
