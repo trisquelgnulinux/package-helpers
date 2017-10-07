@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=49
+VERSION=50
 
 . ./config
 
@@ -231,7 +231,7 @@ replace "abrowser.com" "firefox.com" .
 #sed -i 's/iceweasel, abrowser, icecat,/iceweasel, firefox, icecat,/g' debian/control.in
 sed '/Provides/s/abrowser-locale/firefox-locale/' -i debian/control.langpacks
 sed 's/Abrowser/Firefox/' -i third_party/rust/idna/src/lib.rs
-sed 's/Trisquel/Mozilla/' -i third_party/rust/encoding_rs/src/lib.rs
+sed 's/Trisquel/Mozilla/' -i third_party/rust/encoding_rs/src/lib.rs browser/components/uitour/UITour-lib.js
 
 # Restore useragent to Firefox
 sed '/MOZILLA_UAVERSION/ s:Abrowser/:Firefox/:' -i netwerk/protocol/http/nsHttpHandler.cpp
