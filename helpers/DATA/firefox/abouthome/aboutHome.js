@@ -247,7 +247,6 @@ function loadCompleted() {
  * showSnippets.
  */
 function loadSnippets() {
-  return();
   if (!gSnippetsMap)
     throw new Error("Snippets map has not properly been initialized");
 
