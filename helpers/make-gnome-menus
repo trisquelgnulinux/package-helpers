@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2012  Rubén Rodríguez <ruben@trisquel.info>
+#    Copyright (C) 2012-2017  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,12 +17,12 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=8
+VERSION=1
 COMPONENT=main
 
 . ./config
 
-for i in 09_app_install_entry.patch 09_games-menu.patch 11_science-menu.patch 08_settings-menus.patch fix-menus-in-gnome-flashback-session.patch
+for i in 09_app_install_entry.patch 09_games-menu.patch 11_science-menu.patch 08_settings-menus.patch 12_alacarte.patch
 do
   rm debian/patches/$i
   sed /$i/d -i debian/patches/series
