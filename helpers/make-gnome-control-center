@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2012  Rubén Rodríguez <ruben@trisquel.info>
+#    Copyright (C) 2012-2017  Rubén Rodríguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=6
+VERSION=1
 COMPONENT=main
 
 . ./config
@@ -25,21 +25,14 @@ COMPONENT=main
 # Remove recommendeds as it points to ubuntu-docs
 sed '/ubuntu-docs/d' -i debian/control*
 
-# make the sound daemon compatible with trisquel custom session
-replace gnome-fallback gnome-classic .
-
-# Hide misleading "Experience" label in graphics tab.
-sed '/label19/,+1 s/True/False/' -i panels/info/info.ui
-
 # Replace logo
 replace UbuntuLogo.png TrisquelLogo.png
 rm debian/UbuntuLogoBlank.png
 cp $DATA/TrisquelLogo.png debian/TrisquelLogoBlank.png
 sed 's/ubuntu/trisquel/g; s/Ubuntu/Trisquel/g; s/14.04 LTS/7.0 LTS/' -i debian/rules
 
-# disable ubuntu custom help
-
-for patch in 53_use_ubuntu_help.patch 56_use_ubuntu_info_branding.patch 58_ubuntu_icon_views_redesign.patch; do
+# disable ubuntu branding
+for patch in 56_use_ubuntu_info_branding.patch; do
     rm ./debian/patches/$patch
     sed /$patch/d -i debian/patches/series
 done
@@ -47,12 +40,9 @@ done
 # Edit menu selections
 cp $DATA/gnomecc.menu.in shell/gnomecc.menu.in
 
-#Remove top menu
-sed '/G_ACTION/,/Quit/d' -i shell/control-center.c
-
 replace "Trisquel-Gettext" "Ubuntu-Gettext" .
 
-changelog "Replaced references to gnome-fallback with gnome-classic"
+changelog "Rebranded for Trisquel"
 
 compile
 
