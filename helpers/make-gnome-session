@@ -23,11 +23,6 @@ QUILT=skip
 
 . ./config
 
-for i in 50_ubuntu_sessions.patch 52_xdg_current_desktop.patch; do
-    rm debian/patches/$i
-    sed "/$i/d" -i debian/patches/series
-done
-
 export QUILT_PATCHES=debian/patches
 quilt push -a
 
