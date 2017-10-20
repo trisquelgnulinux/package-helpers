@@ -23,7 +23,7 @@ COMPONENT=main
 . ./config
 
 # Remove recommendeds as it points to ubuntu-docs
-sed '/ubuntu-docs/d' -i debian/control*
+sed 's/ | ubuntu-docs//' -i debian/control*
 
 # Replace logo
 replace UbuntuLogo.png TrisquelLogo.png
