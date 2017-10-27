@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 . ./config
 
 # Note, this doesn't appear to be necessary for emacs25
@@ -25,6 +25,7 @@ VERSION=1
 rename 's/$/.dfsg/' etc/*
 sed 's/THE-GNU-PROJECT/THE-GNU-PROJECT.dfsg/' -i debian/rules
 sed 's/COPYING/COPYING.dfsg/' -i debian/rules
+sed 's/24.4/24.5/' -i debian/rules
 
 changelog "Corrected file paths"
 compile
