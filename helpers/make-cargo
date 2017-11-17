@@ -24,6 +24,7 @@ REPOKEY="A6DCF7707EBC211F"
 . ./config
 
 sed 's/:native//g' -i debian/control
+sed 's/!enabled/enabled/' -i tests/death.rs
 
 changelog "Backported from http://ppa.launchpad.net/ubuntu-mozilla-security/ppa/ubuntu"
 
