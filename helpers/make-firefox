@@ -264,9 +264,6 @@ debian/rules debian/control
 touch -d "yesterday" debian/control
 debian/rules debian/control
 
-# Regenerate addon-sdk/moz.build
-./mach generate-addon-sdk-moz-build
-
 changelog  "Rebranded for Trisquel"
 
 compile
