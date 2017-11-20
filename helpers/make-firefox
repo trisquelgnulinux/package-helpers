@@ -160,10 +160,11 @@ MOZILLA_REPO = http://hg.mozilla.org/releases/mozilla-release
 L10N_REPO = http://hg.mozilla.org/releases/l10n/mozilla-release
 EOF
 
+cp $DATA/branding/content/identity-icons-brand.svg ./browser/extensions/onboarding/content/img/watermark.svg
+
 # Replace about:home
 rm browser/base/content/abouthome -rf
 cp $DATA/abouthome -a browser/base/content
-sed '/mozilla.*svg/d' -i ./browser/base/jar.mn
 sed '/abouthome/s/*/ /' -i ./browser/base/jar.mn
 
 # Delete stuff we don't use and that may contain trademaked logos
@@ -230,7 +231,7 @@ replace "Trisquel Corporation" "Mozilla Corporation" .
 replace "abrowser.com" "firefox.com" .
 #sed -i 's/iceweasel, abrowser, icecat,/iceweasel, firefox, icecat,/g' debian/control.in
 sed '/Provides/s/abrowser-locale/firefox-locale/' -i debian/control.langpacks
-sed 's/Abrowser/Firefox/' -i third_party/rust/idna/src/lib.rs
+sed 's/Abrowser/Firefox/' -i third_party/rust/idna/src/lib.rs third_party/rust/encoding_rs/.travis.yml third_party/rust/encoding_rs/README.md
 sed 's/Trisquel/Mozilla/' -i third_party/rust/encoding_rs/src/lib.rs browser/components/uitour/UITour-lib.js
 
 # Restore useragent to Firefox
