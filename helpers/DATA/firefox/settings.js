@@ -1,11 +1,12 @@
 
 // Release notes and vendor URLs
-pref("app.releaseNotesURL", "http://trisquel.info/browser");
-pref("app.vendorURL", "http://trisquel.info/browser");
+pref("app.releaseNotesURL", "https://trisquel.info/en/wiki/abrowser-help");
+pref("app.vendorURL", "https://trisquel.info/en/wiki/abrowser-help");
+pref("privacy.trackingprotection.introURL", "https://trisquel.info/en/wiki/abrowser-help");
 
 // PFS url
-pref("pfs.datasource.url", "http://trisquel.info/sites/pfs.php?mime=%PLUGIN_MIMETYPE%");
-pref("pfs.filehint.url", "http://trisquel.info/sites/pfs.php?mime=%PLUGIN_MIMETYPE%");
+pref("pfs.datasource.url", "https://trisquel.info/sites/pfs.php?mime=%PLUGIN_MIMETYPE%");
+pref("pfs.filehint.url", "https://trisquel.info/sites/pfs.php?mime=%PLUGIN_MIMETYPE%");
 
 // I'm feeling Ducky.
 pref("keyword.URL", "https://duckduckgo.com/?t=trisquel&q=!+");
@@ -58,22 +59,22 @@ pref("general.useragent.compatMode.firefox",true);
 
 // Startup pages
 //pref ("browser.startup.page" , 3);
-//pref ("browser.startup.homepage" , "http://trisquel.info");
-//pref ("startup.homepage_welcome_url", "http://trisquel.info/welcome");
-//pref ("startup.homepage_override_url" , "http://trisquel.info/newbrowser");
+//pref ("browser.startup.homepage" , "https://trisquel.info");
+//pref ("startup.homepage_welcome_url", "https://trisquel.info/welcome");
+//pref ("startup.homepage_override_url" , "https://trisquel.info/newbrowser");
 pref ("browser.startup.homepage_override.mstone", "ignore");
 
 // Preferences for the Get Add-ons panel
 pref ("extensions.webservice.discoverURL", "https://trisquel.info/browser-plain");
-pref ("extensions.getAddons.search.url", "http://trisquel.info");
+pref ("extensions.getAddons.search.url", "https://trisquel.info");
 
 // Help URL
-pref ("app.support.baseURL", "http://trisquel.info/wiki/");
+pref ("app.support.baseURL", "https://trisquel.info/wiki/");
 pref ("app.support.inputURL", "https://trisquel.info/contact");
 pref ("app.feedback.baseURL", "https://trisquel.info/contact");
-pref ("browser.uitour.url", "http://trisquel.info/browser");
-pref ("plugins.update.url", "http://trisquel.info/browser");
-pref ("browser.customizemode.tip0.learnMoreUrl", "http://trisquel.info/browser");
+pref ("browser.uitour.url", "https://trisquel.info/en/wiki/abrowser-help");
+pref ("plugins.update.url", "https://trisquel.info/en/wiki/abrowser-help");
+pref ("browser.customizemode.tip0.learnMoreUrl", "https://trisquel.info/en/wiki/abrowser-help");
 
 // Dictionary download preference
 pref("browser.dictionaries.download.url", "http://dictionaries.mozdev.org/");
@@ -98,7 +99,7 @@ pref("privacy.donottrackheader.value", 1);
 pref("dom.ipc.plugins.flash.subprocess.crashreporter.enabled", false);
 pref("browser.safebrowsing.enabled", false);
 pref("browser.safebrowsing.malware.enabled", false);
-pref("services.sync.privacyURL", "http://trisquel.info/en/legal");
+pref("services.sync.privacyURL", "https://trisquel.info/en/legal");
 pref("social.enabled", false);
 pref("social.remote-install.enabled", false);
 pref("datareporting.policy.dataSubmissionEnabled", false);
@@ -194,3 +195,18 @@ pref("xpinstall.signatures.required", false);
 
 // disable screenshots extension
 pref("extensions.screenshots.disabled", true);
+pref("browser.onboarding.newtour", "performance,private,addons,customize,default");
+pref("browser.onboarding.updatetour", "performance,library,singlesearch,customize");
+
+// Disable rating bar
+pref("browser.onboarding.enabled", false);
+
+// New tab settings
+pref("browser.newtabpage.activity-stream.default.sites", "https://www.trisquel.info/,https://www.gnu.org/,https://www.fsf.org/,https://libreplanet.org/,https://www.wikipedia.org/,https://www.wikinews.org/"):
+pref("browser.newtabpage.activity-stream.showTopSites",false);
+pref("browser.newtabpage.activity-stream.feeds.section.topstories",false);
+pref("browser.newtabpage.activity-stream.feeds.snippets",false);
+
+// Enable xrender
+pref("gfx.xrender.enabled",true);
+
