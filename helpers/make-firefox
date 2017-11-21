@@ -161,7 +161,7 @@ MOZILLA_REPO = http://hg.mozilla.org/releases/mozilla-release
 L10N_REPO = http://hg.mozilla.org/releases/l10n/mozilla-release
 EOF
 
-cp $DATA/branding/content/identity-icons-brand.svg ./browser/extensions/onboarding/content/img/watermark.svg
+cp $DATA/watermark.svg ./browser/extensions/onboarding/content/img/watermark.svg
 
 # Replace about:home
 rm browser/base/content/abouthome -rf
