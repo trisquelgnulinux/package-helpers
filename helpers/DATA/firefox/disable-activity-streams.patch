@@ -1,0 +1,71 @@
+diff -ru firefox-57.0+build4.orig/browser/extensions/activity-stream/lib/ActivityStream.jsm firefox-57.0+build4/browser/extensions/activity-stream/lib/ActivityStream.jsm
+--- firefox-57.0+build4.orig/browser/extensions/activity-stream/lib/ActivityStream.jsm	2017-11-13 05:15:36.000000000 -0500
++++ firefox-57.0+build4/browser/extensions/activity-stream/lib/ActivityStream.jsm	2017-11-22 15:28:45.835676239 -0500
+@@ -26,14 +26,7 @@
+ 
+ const DEFAULT_SITES = new Map([
+   // This first item is the global list fallback for any unexpected geos
+-  ["", "https://www.youtube.com/,https://www.facebook.com/,https://www.wikipedia.org/,https://www.reddit.com/,https://www.amazon.com/,https://twitter.com/"],
+-  ["US", "https://www.youtube.com/,https://www.facebook.com/,https://www.amazon.com/,https://www.reddit.com/,https://www.wikipedia.org/,https://twitter.com/"],
+-  ["CA", "https://www.youtube.com/,https://www.facebook.com/,https://www.reddit.com/,https://www.wikipedia.org/,https://www.amazon.ca/,https://twitter.com/"],
+-  ["DE", "https://www.youtube.com/,https://www.facebook.com/,https://www.amazon.de/,https://www.ebay.de/,https://www.wikipedia.org/,https://www.reddit.com/"],
+-  ["PL", "https://www.youtube.com/,https://www.facebook.com/,https://allegro.pl/,https://www.wikipedia.org/,https://www.olx.pl/,https://www.wykop.pl/"],
+-  ["RU", "https://vk.com/,https://www.youtube.com/,https://ok.ru/,https://www.avito.ru/,https://www.aliexpress.com/,https://www.wikipedia.org/"],
+-  ["GB", "https://www.youtube.com/,https://www.facebook.com/,https://www.reddit.com/,https://www.amazon.co.uk/,https://www.bbc.co.uk/,https://www.ebay.co.uk/"],
+-  ["FR", "https://www.youtube.com/,https://www.facebook.com/,https://www.wikipedia.org/,https://www.amazon.fr/,https://www.leboncoin.fr/,https://twitter.com/"]
++  ["", "https://www.trisquel.info/,https://www.gnu.org/,https://www.fsf.org/,https://libreplanet.org/,https://www.wikipedia.org/,https://www.wikinews.org/"]
+ ]);
+ const GEO_PREF = "browser.search.region";
+ const REASON_ADDON_UNINSTALL = 6;
+@@ -60,11 +53,11 @@
+       provider_description: "pocket_description",
+       provider_icon: "pocket",
+       provider_name: "Pocket",
+-      read_more_endpoint: "https://getpocket.cdn.mozilla.net/explore/trending?src=fx_new_tab",
+-      stories_endpoint: `https://getpocket.cdn.mozilla.net/v3/firefox/global-recs?version=2&consumer_key=$apiKey&locale_lang=${args.locale}`,
+-      stories_referrer: "https://getpocket.com/recommendations",
+-      info_link: "https://www.mozilla.org/privacy/firefox/#pocketstories",
+-      topics_endpoint: `https://getpocket.cdn.mozilla.net/v3/firefox/trending-topics?version=2&consumer_key=$apiKey&locale_lang=${args.locale}`,
++      read_more_endpoint: "http://127.0.0.1/",
++      stories_endpoint: `http://127.0.0.1/`,
++      stories_referrer: "http://127.0.0.1/",
++      info_link: "http://127.0.0.1/",
++      topics_endpoint: `http://127.0.0.1}`,
+       show_spocs: false,
+       personalized: false
+     })
+@@ -95,7 +88,7 @@
+   }],
+   ["disableSnippets", {
+     title: "Disable snippets on activity stream",
+-    value: false
++    value: true
+   }],
+   ["showTopSites", {
+     title: "Show the Top Sites section on the New Tab page",
+@@ -183,14 +176,14 @@
+         "CA": ["en-US", "en-GB", "en-ZA"],
+         "DE": ["de", "de-DE", "de-AT", "de-CH"]
+       })[geo];
+-      return !!locales && locales.includes(locale);
++      return false;
+     }
+   },
+   {
+     name: "snippets",
+     factory: () => new SnippetsFeed(),
+     title: "Gets snippets data",
+-    value: true
++    value: false
+   },
+   {
+     name: "systemtick",
+@@ -202,7 +195,7 @@
+     name: "telemetry",
+     factory: () => new TelemetryFeed(),
+     title: "Relays telemetry-related actions to PingCentre",
+-    value: true
++    value: false
+   },
+   {
+     name: "topsites",

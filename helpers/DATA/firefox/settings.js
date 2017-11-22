@@ -203,9 +203,12 @@ pref("browser.onboarding.enabled", false);
 
 // New tab settings
 pref("browser.newtabpage.activity-stream.default.sites", "https://www.trisquel.info/,https://www.gnu.org/,https://www.fsf.org/,https://libreplanet.org/,https://www.wikipedia.org/,https://www.wikinews.org/"):
-pref("browser.newtabpage.activity-stream.showTopSites",false);
+pref("browser.newtabpage.activity-stream.showTopSites",true);
 pref("browser.newtabpage.activity-stream.feeds.section.topstories",false);
 pref("browser.newtabpage.activity-stream.feeds.snippets",false);
+pref("browser.newtabpage.activity-stream.disableSnippets", true);
+
+
 
 // Enable xrender
 pref("gfx.xrender.enabled",true);
