@@ -17,13 +17,19 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 
 . ./config
 
+patch -p1 < $DATA/bleachbit-FSDG.patch
+
+for CLEANER in adobe_reader amsn chromium flash google_chrome google_earth google_toolbar internet_explorer microsoft_office opera paint realplayer safari secondlife_viewer silverlight skype teamviewer winamp windows_defender windows_explorer windows_media_player winrar winzip wordpad yahoo_messenger
+do
+	rm -v cleaners/$CLEANER.xml
+done
+
 replace Firefox Abrowser .
 replace firefox abrowser .
-
 mv debian/patches/firefox_profiles.patch debian/patches/abrowser_profiles.patch
 
 #Icecat.xml based on
@@ -31,6 +37,10 @@ mv debian/patches/firefox_profiles.patch debian/patches/abrowser_profiles.patch
 
 cp $DATA/icecat.xml cleaners/icecat.xml
 
-changelog "Updates for Trisquel"
+changelog "Rename firefox to abrowser"
+
+changelog "Add icecat cleaner"
+
+changelog "Remove cleaners for non-free programs and stop advertising them"
 
 compile
