@@ -15,18 +15,18 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
-#
+#	
 
 VERSION=1
 EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu $UPSTREAM multiverse'
 
 . ./config
 
-sed "/^exit 0/d" -i geoip-database-contrib_update
-cat $DATA/geoip-database-contrib_update.shim >> geoip-database-contrib_update
+sed "/^exit 0/d" -i update-geoip-database
+cat $DATA/update-geoip-database.shim >> update-geoip-database
 cat $DATA/copyright.shim >> debian/copyright 
 
-sed '/rm -f \/usr\/share\/GeoIP\/GeoLiteCityv6\.dat/a\
+sed '/rm -f \/var\/lib\/geoip-database-contrib\/GeoLiteCityv6\.dat/a\
         rm -f /usr/share/doc/geoip-database-contrib/csv/GeoIPCountryCSV.zip\
         rm -f /usr/share/doc/geoip-database-contrib/csv/GeoIPv6.csv.gz\
         rm -f /usr/share/doc/geoip-database-contrib/csv/GeoLiteCity-latest.tar.xz\
@@ -35,7 +35,7 @@ sed '/rm -f \/usr\/share\/GeoIP\/GeoLiteCityv6\.dat/a\
         rm -f /usr/share/doc/geoip-database-contrib/csv/GeoIPASNum2v6.zip
 ' -i debian/postrm
 
-changelog 'Handle CSV source in geoip-database-contrib_update and postrm #13927'
+changelog 'Handle CSV source in update-geoip-database and postrm #13927'
 
 compile
 
