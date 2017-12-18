@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #	
 
-VERSION=1
+VERSION=2
 EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu $UPSTREAM multiverse'
 
 . ./config
@@ -26,13 +26,15 @@ sed "/^exit 0/d" -i update-geoip-database
 cat $DATA/update-geoip-database.shim >> update-geoip-database
 cat $DATA/copyright.shim >> debian/copyright 
 
-sed '/rm -f \/var\/lib\/geoip-database-contrib\/GeoLiteCityv6\.dat/a\
+sed '\|rm -f /var/lib/geoip-database-contrib/GeoLiteCityv6\.dat|a\
         rm -f /usr/share/doc/geoip-database-contrib/csv/GeoIPCountryCSV.zip\
         rm -f /usr/share/doc/geoip-database-contrib/csv/GeoIPv6.csv.gz\
         rm -f /usr/share/doc/geoip-database-contrib/csv/GeoLiteCity-latest.tar.xz\
         rm -f /usr/share/doc/geoip-database-contrib/csv/GeoLiteCityv6.csv.gz\
         rm -f /usr/share/doc/geoip-database-contrib/csv/GeoIPASNum2.zip\
-        rm -f /usr/share/doc/geoip-database-contrib/csv/GeoIPASNum2v6.zip
+        rm -f /usr/share/doc/geoip-database-contrib/csv/GeoIPASNum2v6.zip\
+		rmdir --ignore-fail-on-non-empty /usr/share/doc/geoip-database-contrib/csv &&\\\
+		rmdir --ignore-fail-on-non-empty /usr/share/doc/geoip-database-contrib
 ' -i debian/postrm
 
 changelog 'Handle CSV source in update-geoip-database and postrm #13927'
