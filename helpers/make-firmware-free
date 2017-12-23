@@ -23,6 +23,10 @@ REPOKEY=7638D0442B90D010
 
 . ./config
 
+sed '/Build-Depends/s/$/, python-configparser/' -i debian/control debian/templates/control.source.in
+
 changelog "Imported into Trisquel"
+
+md5sum debian/bin/gencontrol.py defines linux-free/defines linux-free/LICENSE debian/changelog debian/templates/control.binary.udeb.in debian/templates/control.binary.in debian/templates/control.source.in > debian/control.md5sum
 
 compile
