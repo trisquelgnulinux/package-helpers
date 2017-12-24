@@ -1,0 +1,86 @@
+#!/bin/sh
+#
+#    Copyright (C) 2017 Ruben Rodriguez <ruben@trisquel.info>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=1
+
+. ./config
+
+cat << EOF > usr/share/applications/mate-mimeapps.list
+[Default Applications]
+x-scheme-handler/apt=apturl.desktop;
+x-scheme-handler/http=abrowser.desktop;
+x-scheme-handler/https=abrowser.desktop;
+x-scheme-handler/about=abrowser.desktop;
+x-scheme-handler/mailto=thunderbird.desktop;
+application/x-deb=gdebi.desktop;
+application/x-debian-package=gdebi.desktop;
+application/x-extension-eml=thunderbird.desktop;
+message/rfc822=thunderbird.desktop;
+inode/directory=caja-folder-handler.desktop;
+text/plain=pluma.desktop;
+audio/mpeg=rhythmbox.desktop;
+audio/x-mpegurl=rhythmbox.desktop;
+audio/x-scpls=rhythmbox.desktop;
+audio/x-vorbis+ogg=rhythmbox.desktop;
+audio/x-wav=rhythmbox.desktop;
+x-content/audio-cdda=rhythmbox-device.desktop;
+x-content/audio-player=rhythmbox-device.desktop;
+video/mp4=vlc.desktop;
+video/mpeg=vlc.desktop;
+video/mp2t=vlc.desktop;
+video/msvideo=vlc.desktop;
+video/quicktime=vlc.desktop;
+video/webm=vlc.desktop;
+video/x-avi=vlc.desktop;
+video/x-flv=vlc.desktop;
+video/x-matroska=vlc.desktop;
+video/x-mpeg=vlc.desktop;
+video/x-ogm+ogg=vlc.desktop;
+x-content/video-bluray=vlc.desktop;
+x-content/video-dvd=vlc.desktop;
+x-content/video-hddvd=vlc.desktop;
+x-content/video-vcd=vlc.desktop;
+x-content/video-svcd=vlc.desktop;
+application/pdf=atril.desktop;
+image/jpeg=viewnior.desktop;gimp.desktop;
+image/x-pcx=viewnior.desktop;gimp.desktop;
+image/gif=viewnior.desktop;gimp.desktop;
+image/png=viewnior.desktop;gimp.desktop;
+image/jpg=viewnior.desktop;gimp.desktop;
+image/tiff=viewnior.desktop;gimp.desktop;
+image/x-portable-bitmap=viewnior.desktop;gimp.desktop;
+image/vnd.wap.wbmp=viewnior.desktop;
+image/x-xpixmap=viewnior.desktop;gimp.desktop;
+image/x-bmp=viewnior.desktop;gimp.desktop;
+image/bmp=viewnior.desktop;gimp.desktop;
+image/x-icb=viewnior.desktop;
+image/x-portable-graymap=viewnior.desktop;gimp.desktop;
+image/x-ico=viewnior.desktop;gimp.desktop;
+image/x-xbitmap=viewnior.desktop;gimp.desktop;
+image/x-portable-pixmap=viewnior.desktop;gimp.desktop;
+image/pjpeg=viewnior.desktop;gimp.desktop;
+image/x-portable-anymap=viewnior.desktop;gimp.desktop;
+image/x-png=viewnior.desktop;gimp.desktop;
+image/x-gray=viewnior.desktop;gimp.desktop;
+image/svg+xml=viewnior.desktop;
+EOF
+
+changelog "Customized for Trisquel"
+
+compile
