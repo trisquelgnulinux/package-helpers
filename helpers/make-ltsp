@@ -1,6 +1,7 @@
 #!/bin/sh
 #
 #    Copyright (C) 2011  Rubén Rodríguez <ruben@trisquel.info>
+#    Copyright (C) 2017  Pablo Correa
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 
 . ./config
 
@@ -27,14 +28,14 @@ cp -a server/share/ltsp/plugins/ltsp-build-client/Ubuntu server/share/ltsp/plugi
 /bin/sed 's/main restricted universe multiverse/main/g;
 s:archive.ubuntu.com/ubuntu:archive.trisquel.info/trisquel:g;
 s:security.ubuntu.com/ubuntu:archive.trisquel.info/trisquel:g;
-s/ubuntu-desktop/trisquel/g;
+s/ubuntu-desktop/trisquel-desktop/g;
+s/\.\*buntu-desktop/trisquel-desktop/g;
 s/ubuntu-theme/trisquel-theme/g;
 s/ubuntu-standard/trisquel-recommended/g;
 s/ubuntu/trisquel/g;' server/share/ltsp/plugins/ltsp-build-client/Trisquel/* -i
 
 sed 's/theme-ubuntu/theme-trisquel/g;' debian/control -i
 sed '/ubuntu-font/d' debian/control -i
-#sed 's/DESKTOP_SESSION=ubuntu/DESKTOP_SESSION=gnome-classic/' debian/40-ltsp -i
 
 replace edubuntu trisquel .
 replace Edubuntu Trisquel .
