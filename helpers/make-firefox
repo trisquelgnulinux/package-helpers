@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#    Copyright (C) 2008-2017  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2008-2018  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C) 2015       Santiago Rodriguez <santi@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=52
+VERSION=53
 
 . ./config
 
@@ -99,7 +99,6 @@ find debian/searchplugins |grep amazon| xargs -i /bin/sed '/canoniccom/d;' -i {}
 
 #Replace canonical referer with our own for duckduckgo
 find debian/searchplugins |grep duck| xargs -i /bin/sed 's/canonical/trisquel/' -i {}
-replace "mozilla.com/plugincheck" "trisquel.info/browser" .
 
 # contact link
 #sed 's_https://input.mozilla.org/feedback_https://trisquel.info/contact_' -i browser/base/content/utilityOverlay.js
@@ -130,21 +129,35 @@ find -type d | grep firefox | xargs rename s/firefox/abrowser/
 find -type f | grep firefox | xargs rename s/firefox/abrowser/
 find -type f | grep Firefox | xargs rename s/Firefox/Abrowser/
 
-replace "Mozilla Firefox" "Abrowser" .
-replace firefox abrowser .
-replace Firefox Abrowser .
-replace FIREFOX ABROWSER .
-replace " Mozilla " " Trisquel " .
+SEDSCRIPT="
+s/Mozilla Firefox/Abrowser/g;
+s/firefox/abrowser/g;
+s/Firefox/Abrowser/g;
+s/FIREFOX/ABROWSER/g;
+s/ Mozilla / Trisquel /g;
+s|PACKAGES/abrowser|PACKAGES/firefox|g;
+s/iceweasel, abrowser/iceweasel, firefox/g;
+s/Replaces: abrowser/Replaces: firefox/g;
+s/Adobe Flash/Flash/g;
+s|www.mozilla.com/abrowser/central|trisquel.info/browser|g;
+s|mozilla.com/plugincheck|trisquel.info/browser|g;
+s|www.mozilla.com/legal/privacy|trisquel.info/legal|g;
+
+s/Trisquel Public/Mozilla Public/g;
+s/Trisquel Foundation/Mozilla Foundation/g;
+s/Trisquel Corporation/Mozilla Corporation/g;
+s/abrowser.com/firefox.com/g;
+"
+
+echo "Running batch replace operation"
+find . -type f -not -iregex '.*changelog.*' -not -iregex '.*copyright.*' -execdir /bin/sed --follow-symlinks -i "$SEDSCRIPT" '{}' ';'
+
 sed -i '2s/^Source:.*/Source: firefox/' debian/control.in
-replace PACKAGES/abrowser PACKAGES/firefox .
 sed s/Trisquel/Mozilla/ l10n/compare-locales/scripts/compare-locales -i
 sed s/Trisquel/Mozilla/ l10n/compare-locales/setup.py -i
-replace "iceweasel, abrowser" "iceweasel, firefox" .
-replace "Replaces: abrowser" "Replaces: firefox" .
-#sed s/Ubuntu/Trisquel/g debian/rules -i
 sed s/ubuntu/trisquel/g debian/distribution.ini -i
 sed 's/ubuntu_version/trisquel_version/; s/Ubuntu 10.10/Trisquel 4.0/; s/1010/40/' -i debian/abrowser.postinst.in
-replace "Adobe Flash" "Flash" .
+
 
 # abrowser should provide firefox
 sed '/Package: @MOZ_PKG_NAME@-dev/,/Description:/ s/Architecture: any/Architecture: any\nProvides: firefox-dev /' debian/control.in -i
@@ -222,16 +235,10 @@ do
  find -name aboutRights.dtd | xargs sed -i "s/ENTITY $STRING.*/ENTITY $STRING \"\">/"
 done
 
-replace www.mozilla.com/abrowser/central trisquel.info/browser
-replace www.mozilla.com/legal/privacy trisquel.info/legal
 
 sed -i 's/<a\ href\=\"http\:\/\/www.mozilla.org\/\">Mozilla\ Project<\/a>/<a\ href\=\"http\:\/\/www.trisquel.info\/\"\>Trisquel\ Project<\/a>/g' browser/base/content/overrides/app-license.html
 
 # We went too far...
-replace "Trisquel Public" "Mozilla Public" .
-replace "Trisquel Foundation" "Mozilla Foundation" .
-replace "Trisquel Corporation" "Mozilla Corporation" .
-replace "abrowser.com" "firefox.com" .
 #sed -i 's/iceweasel, abrowser, icecat,/iceweasel, firefox, icecat,/g' debian/control.in
 sed '/Provides/s/abrowser-locale/firefox-locale/' -i debian/control.langpacks
 sed 's/Abrowser/Firefox/' -i third_party/rust/idna/src/lib.rs third_party/rust/encoding_rs/.travis.yml third_party/rust/encoding_rs/README.md
