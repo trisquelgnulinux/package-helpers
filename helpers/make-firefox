@@ -26,6 +26,8 @@ rm debian/control
 
 patch -p1 < $DATA/disable-activity-streams.patch
 
+cp debian/usr.bin.abrowser.apparmor.14.10 debian/usr.bin.abrowser.in
+
 # Disabled until the patches work on v57 with moz1382323.patch
 ## KDE integration patches from https://www.rosenauer.org/hg/mozilla
 ## Use firefox$MAJORVERSION branch if available, otherwise use default
