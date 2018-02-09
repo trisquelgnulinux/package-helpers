@@ -34,10 +34,11 @@ for FILE in $PRESERVE; do
   cp $FILE /tmp/preserve --parents -a
 done
 
-sh $DATA/deblob-4.10 --force
+sh $DATA/deblob-4.13 --force
 sed 's/bnx2.*fw/$(DEBLOBBED)/' -i firmware/Makefile
 
-cp /tmp/preserve/* . -a
+echo "Reverting deblobbing for files patched by silent-accept-firmware"
+cp /tmp/preserve/* . -av
 
 # Remove ZFS
 rm zfs spl debian/scripts/misc/update-zfs.sh -rf

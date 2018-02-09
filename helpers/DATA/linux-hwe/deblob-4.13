@@ -48,7 +48,7 @@
 
 # For each kver release, start extra with an empty string, then count
 # from 1 if changes are needed that require rebuilding the tarball.
-kver=4.10 extra=
+kver=4.13 extra=
 
 case $1 in
 --force)
@@ -601,6 +601,24 @@ clean_mk CONFIG_ATM_SOLOS drivers/atm/Makefile
 # Crypto #
 ##########
 
+announce CAVIUM_CPT - "Cavium Cryptographic Accelerator driver"
+reject_firmware drivers/crypto/cavium/cpt/cptpf_main.c
+clean_blob drivers/crypto/cavium/cpt/cptpf_main.c
+clean_kconfig drivers/crypto/cavium/cpt/Kconfig CAVIUM_CPT
+clean_mk CONFIG_CAVIUM_CPT drivers/crypto/cavium/cpt/Makefile
+
+announce CRYPTO_DEV_NITROX_CNN55XX - "Support for Cavium CNN55XX driver"
+reject_firmware drivers/crypto/cavium/nitrox/nitrox_main.c
+clean_blob drivers/crypto/cavium/nitrox/nitrox_main.c
+clean_kconfig drivers/crypto/cavium/nitrox/Kconfig CRYPTO_DEV_NITROX_CNN55XX
+clean_mk CONFIG_CRYPTO_DEV_NITROX_CNN55XX drivers/crypto/cavium/nitrox/Makefile
+
+announce CRYPTO_DEV_SAFEXCEL - "Inside Secure's SafeXcel cryptographic engine driver"
+reject_firmware drivers/crypto/inside-secure/safexcel.c
+clean_blob drivers/crypto/inside-secure/safexcel.c
+clean_kconfig drivers/crypto/Kconfig CRYPTO_DEV_SAFEXCEL
+clean_mk CONFIG_CRYPTO_DEV_SAFEXCEL drivers/crypto/inside-secure/Makefile
+
 announce CRYPTO_DEV_QAT_DH895xCC - "Support for Intel(R) DH895xCC"
 clean_blob drivers/crypto/qat/qat_dh895xcc/adf_dh895xcc_hw_data.h
 clean_blob drivers/crypto/qat/qat_dh895xcc/adf_drv.c
@@ -651,19 +669,28 @@ reject_firmware drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c
 clean_blob drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c
 reject_firmware drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c
 clean_blob drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c
+reject_firmware drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c
+clean_blob drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c
 reject_firmware drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
 clean_blob drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
+reject_firmware drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
+clean_blob drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
 reject_firmware drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c
 clean_blob drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c
+reject_firmware drivers/gpu/drm/amd/amdgpu/psp_v3_1.c
+clean_blob drivers/gpu/drm/amd/amdgpu/psp_v3_1.c
 reject_firmware drivers/gpu/drm/amd/amdgpu/sdma_v2_4.c
 clean_blob drivers/gpu/drm/amd/amdgpu/sdma_v2_4.c
 reject_firmware drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c
 clean_blob drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c
+reject_firmware drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c
+clean_blob drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c
 reject_firmware drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
 clean_blob drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
+clean_blob drivers/gpu/drm/amd/amdgpu/soc15.c
 reject_firmware drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
 clean_blob drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-clean_blob drivers/gpu/drm/amd/amdgpu/vi.c
+clean_blob drivers/gpu/drm/amd/powerplay/smumgr/smumgr.c
 clean_kconfig drivers/gpu/drm/Kconfig DRM_AMDGPU
 clean_mk CONFIG_DRM_AMDGPU drivers/gpu/drm/amd/amdgpu/Makefile
 
@@ -697,9 +724,10 @@ clean_mk CONFIG_DRM_AST drivers/gpu/drm/ast/Makefile
 
 announce DRM_I915 - "Intel 8xx/9xx/G3x/G4x/HD Graphics"
 reject_firmware drivers/gpu/drm/i915/intel_csr.c
-reject_firmware drivers/gpu/drm/i915/intel_guc_loader.c
 clean_blob drivers/gpu/drm/i915/intel_csr.c
+reject_firmware drivers/gpu/drm/i915/intel_uc.c
 clean_blob drivers/gpu/drm/i915/intel_guc_loader.c
+clean_blob drivers/gpu/drm/i915/intel_huc.c
 clean_kconfig drivers/gpu/drm/i915/Kconfig DRM_I915
 clean_mk CONFIG_DRM_I915 drivers/gpu/drm/i915/Makefile
 
@@ -716,6 +744,8 @@ clean_blob drivers/gpu/drm/nouveau/nvkm/engine/falcon.c
 reject_firmware drivers/gpu/drm/nouveau/nvkm/engine/xtensa.c
 clean_blob drivers/gpu/drm/nouveau/nvkm/engine/xtensa.c
 clean_blob drivers/gpu/drm/nouveau/nouveau_platform.c
+clean_blob drivers/gpu/drm/nouveau/nvkm/subdev/secboot/gp102.c
+clean_blob drivers/gpu/drm/nouveau/nvkm/subdev/secboot/gp10b.c
 clean_blob drivers/gpu/drm/nouveau/nvkm/subdev/secboot/gm200.c
 clean_blob drivers/gpu/drm/nouveau/nvkm/subdev/secboot/gm20b.c
 clean_kconfig drivers/gpu/drm/nouveau/Kconfig DRM_NOUVEAU
@@ -731,6 +761,7 @@ clean_mk CONFIG_DRM_MGA drivers/gpu/drm/Makefile
 
 announce DRM_MSM - "MSM DRM"
 reject_firmware drivers/gpu/drm/msm/adreno/adreno_gpu.c
+reject_firmware drivers/gpu/drm/msm/adreno/a5xx_gpu.c
 reject_firmware drivers/gpu/drm/msm/adreno/a5xx_power.c
 clean_blob drivers/gpu/drm/msm/adreno/adreno_device.c
 clean_kconfig drivers/gpu/drm/msm/Kconfig DRM_MSM
@@ -801,11 +832,23 @@ clean_blob drivers/gpu/drm/radeon/radeon_vce.c
 clean_kconfig drivers/gpu/drm/Kconfig DRM_RADEON
 clean_mk CONFIG_DRM_RADEON drivers/gpu/drm/Makefile
 
+announce ROCKCHIP_CDN_DP - "Rockchip cdn DP"
+reject_firmware drivers/gpu/drm/rockchip/cdn-dp-core.c
+clean_blob drivers/gpu/drm/rockchip/cdn-dp-core.c
+clean_kconfig drivers/gpu/drm/rockchip/Kconfig ROCKCHIP_CDN_DP
+clean_mk CONFIG_ROCKCHIP_CDN_DP drivers/gpu/drm/rockchip/Makefile
+
 announce DRM_STI - "DRM Support for STMicroelectronics SoC stiH41x Series"
 reject_firmware drivers/gpu/drm/sti/sti_hqvdp.c
 clean_blob drivers/gpu/drm/sti/sti_hqvdp.c
 clean_kconfig drivers/gpu/drm/sti/Kconfig DRM_STI
 clean_mk CONFIG_DRM_STI drivers/gpu/drm/sti/Makefile
+
+announce DRM_TEGRA - "NVIDIA Tegra DRM"
+reject_firmware drivers/gpu/drm/tegra/falcon.c
+clean_blob drivers/gpu/drm/tegra/vic.c
+clean_kconfig drivers/gpu/drm/tegra/Kconfig DRM_TEGRA
+clean_mk CONFIG_DRM_TEGRA drivers/gpu/drm/tegra/Makefile
 
 #######
 # dma #
@@ -1259,6 +1302,24 @@ clean_mk CONFIG_DVB_TTUSB_DEC drivers/media/usb/ttusb-dec/Makefile
 
 # video
 
+announce VIDEO_AP1302 - "AP1302 external ISP support"
+reject_firmware drivers/staging/media/atomisp/i2c/ap1302.c
+clean_blob drivers/staging/media/atomisp/i2c/ap1302.c
+clean_kconfig drivers/staging/media/atomisp/i2c/Kconfig VIDEO_AP1302
+clean_mk CONFIG_VIDEO_AP1302 drivers/staging/media/atomisp/i2c/Makefile
+
+announce VIDEO_MSRLIST_HELPER - "Helper library to load, parse and apply large register lists."
+reject_firmware drivers/staging/media/atomisp/i2c/libmsrlisthelper.c
+clean_kconfig drivers/staging/media/atomisp/i2c/Kconfig VIDEO_MSRLIST_HELPER
+clean_mk CONFIG_VIDEO_MSRLIST_HELPER drivers/staging/media/atomisp/i2c/Makefile
+
+announce VIDEO_ATOMISP - "Intel Atom Image Signal Processor Driver"
+reject_firmware drivers/staging/media/atomisp/pci/atomisp2/atomisp_v4l2.c
+clean_blob drivers/staging/media/atomisp/pci/atomisp2/atomisp_v4l2.c
+clean_blob drivers/staging/media/atomisp/TODO
+clean_kconfig drivers/staging/media/atomisp/pci/Kconfig VIDEO_ATOMISP
+clean_mk CONFIG_VIDEO_ATOMISP drivers/staging/media/atomisp/pci/Makefile
+
 announce VIDEO_BT848 - "BT848 Video For Linux"
 reject_firmware drivers/media/pci/bt8xx/bttv-cards.c
 clean_blob drivers/media/pci/bt8xx/bttv-cards.c
@@ -1416,6 +1477,12 @@ clean_blob drivers/media/usb/gspca/vicam.c
 clean_kconfig drivers/media/usb/gspca/Kconfig USB_GSPCA_VICAM
 clean_mk CONFIG_USB_GSPCA_VICAM drivers/media/usb/gspca/Makefile
 
+announce VIDEO_QCOM_VENUS - "Qualcomm Venus V4L2 encoder/decoder driver"
+reject_firmware drivers/media/platform/qcom/venus/firmware.c
+clean_blob drivers/media/platform/qcom/venus/core.c
+clean_kconfig drivers/media/platform/Kconfig VIDEO_QCOM_VENUS
+clean_mk CONFIG_VIDEO_QCOM_VENUS drivers/media/platform/qcom/venus/Makefile
+
 announce VIDEO_TI_VPE - "TI VPE (Video Processing Engine) driver"
 reject_firmware drivers/media/platform/ti-vpe/vpdma.c
 clean_blob drivers/media/platform/ti-vpe/vpdma.c
@@ -1553,6 +1620,14 @@ clean_blob drivers/net/ethernet/cavium/liquidio/lio_main.c
 clean_kconfig drivers/net/ethernet/cavium/Kconfig LIQUIDIO
 clean_mk CONFIG_LIQUIDIO drivers/net/ethernet/cavium/liquidio/Makefile
 
+announce MLXSW_SPECTRUM - "Mellanox Technologies Spectrum support"
+reject_firmware drivers/net/ethernet/mellanox/mlxsw/spectrum.c '
+/request_firmware_direct.*MLXSW_SP_FW_FILENAME/!{p;d;};
+'
+clean_blob drivers/net/ethernet/mellanox/mlxsw/spectrum.c
+clean_kconfig drivers/net/ethernet/mellanox/mlxsw/Kconfig MLXSW_SPECTRUM
+clean_mk CONFIG_MLXSW_SPECTRUM drivers/net/ethernet/mellanox/mlxsw/Makefile
+
 announce MYRI_SBUS - "MyriCOM Gigabit Ethernet"
 drop_fw_file firmware/myricom/lanai.bin.ihex firmware/myricom/lanai.bin
 
@@ -1561,6 +1636,12 @@ reject_firmware drivers/net/ethernet/myricom/myri10ge/myri10ge.c
 clean_blob drivers/net/ethernet/myricom/myri10ge/myri10ge.c
 clean_kconfig drivers/net/ethernet/myricom/Kconfig MYRI10GE
 clean_mk CONFIG_MYRI10GE drivers/net/ethernet/myricom/myri10ge/Makefile
+
+announce NFP - "Netronome(R) NFP4000/NFP6000 NIC driver"
+reject_firmware drivers/net/ethernet/netronome/nfp/nfp_main.c
+clean_blob drivers/net/ethernet/netronome/nfp/nfp_main.c
+clean_kconfig drivers/net/ethernet/netronome/Kconfig NFP
+clean_mk CONFIG_NFP drivers/net/ethernet/netronome/nfp/Makefile
 
 announce NETXEN_NIC - "NetXen Multi port (1/10) Gigabit Ethernet NIC"
 reject_firmware drivers/net/ethernet/qlogic/netxen/netxen_nic_init.c
@@ -1699,12 +1780,6 @@ announce NFC_NXP_NCI - "NXP-NCI NFC driver"
 reject_firmware drivers/nfc/nxp-nci/firmware.c
 clean_kconfig drivers/nfc/nxp-nci/Kconfig NFC_NXP_NCI
 clean_mk CONFIG_NFC_NXP_NCI drivers/nfc/nxp-nci/Makefile
-
-announce NFC_WILINK - "Texas Instruments NFC WiLink driver"
-reject_firmware drivers/nfc/nfcwilink.c
-clean_blob drivers/nfc/nfcwilink.c
-clean_kconfig drivers/nfc/Kconfig NFC_WILINK
-clean_mk CONFIG_NFC_WILINK drivers/nfc/Makefile
 
 announce NFC_PN544_I2C - "NFC PN544 i2c support"
 reject_firmware drivers/nfc/pn544/i2c.c
@@ -1880,19 +1955,19 @@ clean_kconfig drivers/net/wireless/intel/iwlwifi/Kconfig IWLWIFI
 clean_mk CONFIG_IWLWIFI drivers/net/wireless/intel/iwlwifi/Makefile
 
 announce IWLDVM - "Intel Wireless WiFi DVM Firmware support"
-clean_blob drivers/net/wireless/intel/iwlwifi/iwl-1000.c
-clean_blob drivers/net/wireless/intel/iwlwifi/iwl-2000.c
-clean_blob drivers/net/wireless/intel/iwlwifi/iwl-5000.c
-clean_blob drivers/net/wireless/intel/iwlwifi/iwl-6000.c
+clean_blob drivers/net/wireless/intel/iwlwifi/cfg/1000.c
+clean_blob drivers/net/wireless/intel/iwlwifi/cfg/2000.c
+clean_blob drivers/net/wireless/intel/iwlwifi/cfg/5000.c
+clean_blob drivers/net/wireless/intel/iwlwifi/cfg/6000.c
 clean_kconfig drivers/net/wireless/intel/iwlwifi/Kconfig IWLDVM
 clean_mk CONFIG_IWLMVM drivers/net/wireless/intel/iwlwifi/Makefile
 
 announce IWLMVM - "Intel Wireless WiFi MVM Firmware support"
 reject_firmware drivers/net/wireless/intel/iwlwifi/mvm/nvm.c
-clean_blob drivers/net/wireless/intel/iwlwifi/iwl-7000.c
-clean_blob drivers/net/wireless/intel/iwlwifi/iwl-8000.c
-clean_blob drivers/net/wireless/intel/iwlwifi/iwl-9000.c
-clean_blob drivers/net/wireless/intel/iwlwifi/iwl-a000.c
+clean_blob drivers/net/wireless/intel/iwlwifi/cfg/7000.c
+clean_blob drivers/net/wireless/intel/iwlwifi/cfg/8000.c
+clean_blob drivers/net/wireless/intel/iwlwifi/cfg/9000.c
+clean_blob drivers/net/wireless/intel/iwlwifi/cfg/a000.c
 clean_kconfig drivers/net/wireless/intel/iwlwifi/Kconfig IWLMVM
 clean_mk CONFIG_IWLMVM drivers/net/wireless/intel/iwlwifi/Makefile
 
@@ -2073,21 +2148,27 @@ clean_blob drivers/net/wireless/intersil/prism54/islpci_dev.c
 clean_kconfig drivers/net/wireless/intersil/Kconfig PRISM54
 clean_mk CONFIG_PRISM54 drivers/net/wireless/intersil/prism54/Makefile
 
+announce QTNFMAC_PEARL_PCIE - "Quantenna QSR10g PCIe support"
+reject_firmware drivers/net/wireless/quantenna/qtnfmac/pearl/pcie.c
+clean_blob drivers/net/wireless/quantenna/qtnfmac/qtn_hw_ids.h
+clean_kconfig drivers/net/wireless/quantenna/qtnfmac/Kconfig QTNFMAC_PEARL_PCIE
+clean_mk CONFIG_QTNFMAC_PEARL_PCIE drivers/net/wireless/quantenna/qtnfmac/Makefile
+
 announce RSI_91X - "Redpine Signals Inc 91x WLAN driver support"
+reject_firmware drivers/net/wireless/rsi/rsi_91x_hal.c
 clean_blob drivers/net/wireless/rsi/rsi_common.h
+clean_blob drivers/net/wireless/rsi/rsi_91x_hal.c
 clean_kconfig drivers/net/wireless/rsi/Kconfig RSI_91X
 clean_mk CONFIG_RSI_91X drivers/net/wireless/rsi/Makefile
 
 announce RSI_SDIO - "Redpine Signals SDIO bus support"
-reject_firmware drivers/net/wireless/rsi/rsi_91x_sdio_ops.c
 clean_blob drivers/net/wireless/rsi/rsi_91x_sdio.c
 clean_kconfig drivers/net/wireless/rsi/Kconfig RSI_SDIO
-clean_mk CONFIG_RSI_SDIO drivers/net/wireless/rsi/Makefile
+clean_mk CONFIG_RSI_USB drivers/net/wireless/rsi/Makefile
 
 announce RSI_USB - "Redpine Signals USB bus support"
-reject_firmware drivers/net/wireless/rsi/rsi_91x_usb_ops.c
 clean_blob drivers/net/wireless/rsi/rsi_91x_usb.c
-clean_kconfig drivers/net/wireless/rsi/Kconfig RSI_USB
+clean_kconfig drivers/net/wireless/rsi/Kconfig RSI_SDIO
 clean_mk CONFIG_RSI_USB drivers/net/wireless/rsi/Makefile
 
 announce RT2X00_LIB_FIRMWARE - "Ralink driver firmware support"
@@ -2208,6 +2289,13 @@ clean_blob drivers/net/wireless/realtek/rtlwifi/rtl8723be/sw.c
 clean_kconfig drivers/net/wireless/realtek/rtlwifi/Kconfig RTL8723BE
 clean_mk CONFIG_RTL8723BE drivers/net/wireless/realtek/rtlwifi/rtl8723be/Makefile
 
+announce RTL8723BS - "Realtek RTL8723BS SDIO Wireless LAN NIC driver"
+reject_firmware drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
+clean_blob drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
+clean_blob drivers/staging/rtl8723bs/include/rtl8723b_hal.h
+clean_kconfig drivers/staging/rtl8723bs/Kconfig RTL8723BS
+clean_mk CONFIG_RTL8723BS drivers/staging/rtl8723bs/Makefile
+
 announce RTL8821AE - "Realtek RTL8821AE/RTL8812AE Wireless LAN NIC driver"
 reject_firmware drivers/net/wireless/realtek/rtlwifi/rtl8821ae/sw.c
 clean_blob drivers/net/wireless/realtek/rtlwifi/rtl8821ae/sw.c
@@ -2319,11 +2407,23 @@ reject_firmware drivers/bluetooth/hci_bcm.c
 clean_kconfig drivers/bluetooth/Kconfig BT_HCIUART_BCM
 clean_mk CONFIG_BT_HCIUART_BCM drivers/bluetooth/Makefile
 
+announce BT_HCIUART_LL - "HCILL protocol support"
+reject_firmware drivers/bluetooth/hci_ll.c
+clean_blob drivers/bluetooth/hci_ll.c
+clean_kconfig drivers/bluetooth/Kconfig BT_HCIUART_LL
+clean_mk CONFIG_BT_HCIUART_LL drivers/bluetooth/Makefile
+
 announce BT_HCIUART_MRVL - "Marvell protocol support"
 reject_firmware drivers/bluetooth/hci_mrvl.c
 clean_blob drivers/bluetooth/hci_mrvl.c
 clean_kconfig drivers/bluetooth/Kconfig BT_HCIUART_MRVL
 clean_mk CONFIG_BT_HCIUART_MRVL drivers/bluetooth/Makefile
+
+announce BT_HCIUART_NOKIA - "UART Nokia H4+ protocol support"
+reject_firmware drivers/bluetooth/hci_nokia.c
+clean_blob drivers/bluetooth/hci_nokia.c
+clean_kconfig drivers/bluetooth/Kconfig BT_HCIUART_NOKIA
+clean_mk CONFIG_BT_HCIUART_NOKIA drivers/bluetooth/Makefile
 
 announce BT_HCIBFUSB - "HCI BlueFRITZ! USB driver"
 reject_firmware drivers/bluetooth/bfusb.c
@@ -2527,6 +2627,9 @@ clean_mk CONFIG_TOUCHSCREEN_ELAN drivers/input/touchscreen/Makefile
 announce TOUCHSCREEN_ATMEL_MXT - "Atmel mXT I2C Touchscreen"
 reject_firmware drivers/input/touchscreen/atmel_mxt_ts.c
 clean_blob drivers/input/touchscreen/atmel_mxt_ts.c
+clean_sed '
+/^[/][*]$/,/^ [*][/]$/ s,/lib/firmware/[^\n]*\.fw,*(DEBLOBBED)*,
+' arch/arm/boot/dts/omap4-droid4-xt894.dts 'removed blob name'
 clean_kconfig drivers/input/touchscreen/Kconfig TOUCHSCREEN_ATMEL_MXT
 clean_mk CONFIG_TOUCHSCREEN_ATMEL_MXT drivers/input/touchscreen/Makefile
 
@@ -2559,6 +2662,11 @@ reject_firmware drivers/input/touchscreen/silead.c
 clean_blob drivers/input/touchscreen/silead.c
 clean_kconfig drivers/input/touchscreen/Kconfig TOUCHSCREEN_SILEAD
 clean_mk CONFIG_TOUCHSCREEN_SILEAD drivers/input/touchscreen/Makefile
+
+announce SILEAD_DMI - "Tablets with Silead touchscreens"
+clean_blob drivers/platform/x86/silead_dmi.c
+clean_kconfig drivers/platform/x86/Kconfig SILEAD_DMI
+clean_mk CONFIG_SILEAD_DMI drivers/platform/x86/Makefile
 
 announce TOUCHSCREEN_WDT87XX_I2C - "Weida HiTech I2C touchscreen"
 reject_firmware drivers/input/touchscreen/wdt87xx_i2c.c
@@ -2913,16 +3021,21 @@ clean_blob arch/arm/boot/dts/am4372.dtsi
 clean_kconfig drivers/remoteproc/Kconfig WKUP_M3_RPROC
 clean_mk CONFIG_WKUP_M3_RPROC drivers/remoteproc/Makefile
 
+announce QCOM_ADSP_PIL - "Qualcomm ADSP Peripherial Image Loader"
+clean_blob drivers/remoteproc/qcom_adsp_pil.c
+clean_kconfig drivers/remoteproc/Kconfig QCOM_ADSP_PIL
+clean_mk CONFIG_QCOM_ADSP_PIL drivers/remoteproc/Makefile
+
 announce QCOM_Q6V5_PIL - "Qualcomm Hexagon V5 Peripherial Image Loader"
 reject_firmware drivers/remoteproc/qcom_q6v5_pil.c
 clean_blob drivers/remoteproc/qcom_q6v5_pil.c
 clean_kconfig drivers/remoteproc/Kconfig QCOM_Q6V5_PIL
 clean_mk CONFIG_QCOM_Q6V5_PIL drivers/remoteproc/Makefile
 
-announce QCOM_MDT_LOADER - "Qualcomm Peripheral Image Loader"
-reject_firmware drivers/remoteproc/qcom_mdt_loader.c
-clean_kconfig drivers/remoteproc/Kconfig QCOM_MDT_LOADER
-clean_mk CONFIG_QCOM_MDT_LOADER drivers/remoteproc/Makefile
+announce QCOM_WCNSS_PIL - "Qualcomm WCNSS Peripherial Image Loader"
+clean_blob drivers/remoteproc/qcom_wcnss.c
+clean_kconfig drivers/remoteproc/Kconfig QCOM_WCNSS_PIL
+clean_mk CONFIG_QCOM_WCNSS_PIL drivers/remoteproc/Makefile
 
 
 #########
@@ -3203,6 +3316,7 @@ clean_mk CONFIG_SND_SOC_INTEL_HASWELL sound/soc/intel/haswell/Makefile
 
 announce SND_SOC_INTEL_SKYLAKE - undocumented
 reject_firmware sound/soc/intel/skylake/skl-sst.c
+reject_firmware sound/soc/intel/skylake/skl-sst-utils.c
 reject_firmware sound/soc/intel/skylake/skl-topology.c
 reject_firmware sound/soc/intel/skylake/bxt-sst.c
 clean_blob sound/soc/intel/skylake/skl.c
@@ -3333,6 +3447,11 @@ clean_mk CONFIG_GREYBUS_BOOTROM drivers/staging/greybus/Makefile
 #######
 # SOC #
 #######
+
+announce QCOM_MDT_LOADER - "Qualcomm Peripheral Image Loader"
+reject_firmware drivers/soc/qcom/mdt_loader.c
+clean_kconfig drivers/soc/qcom/Kconfig QCOM_MDT_LOADER
+clean_mk CONFIG_QCOM_MDT_LOADER drivers/soc/qcom/Makefile
 
 announce QCOM_WCNSS_CTRL - "Qualcomm WCNSS control driver"
 reject_firmware drivers/soc/qcom/wcnss_ctrl.c
