@@ -20,7 +20,7 @@
  def get_ubuntu_flavor_name(cache=None):
      """ try to guess the flavor name based on the running desktop """
      pkg = get_ubuntu_flavor_package(cache=cache)
--    lookup = {'ubuntustudio-desktop': 'Trisquel Studio'}
+-    lookup = {'ubuntustudio-desktop': 'Ubuntu Studio'}
 +    lookup = {'trisquel-mini': 'Trisquel Mini', 'trisquel-sugar': 'Trisquel Sugar' }
      if pkg in lookup:
          return lookup[pkg]

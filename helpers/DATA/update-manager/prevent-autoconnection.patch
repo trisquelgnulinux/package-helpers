@@ -1,0 +1,53 @@
+diff -ru source.orig/UpdateManager/Dialogs.py source/UpdateManager/Dialogs.py
+--- source.orig/UpdateManager/Dialogs.py	2018-02-12 20:44:33.321329066 -0500
++++ source/UpdateManager/Dialogs.py	2018-02-12 20:45:28.141249480 -0500
+@@ -161,7 +162,20 @@
+         self.add_settings_button()
+         self.focus_button = self.add_button(Gtk.STOCK_OK,
+                                             self.window_main.close)
++class ShouldUpdateDialog(InternalDialog):
++    def __init__(self, window_main):
+ 
++        InternalDialog.__init__(self, window_main)
++        self.set_header(_("Include latest updates from the Internet?"))
++        self.set_desc(_('''To prevent unwanted connections to the Internet
++Trisquel will not automatically check for updates
++unless you say so in the Settings panel.'''))
++        self.add_settings_button()
++        self.add_button(_("Check for Updates"),self.check)
++        self.add_button(_("Ask Me Later"), self.window_main.close)
++
++    def check(self):
++        self.window_main.check_update()
+ 
+ class DistUpgradeDialog(InternalDialog):
+     def __init__(self, window_main, meta_release):
+diff -ru source.orig/UpdateManager/UpdateManager.py source/UpdateManager/UpdateManager.py
+--- source.orig/UpdateManager/UpdateManager.py	2018-02-12 20:44:33.317329071 -0500
++++ source/UpdateManager/UpdateManager.py	2018-02-12 20:45:28.133249491 -0500
+@@ -50,6 +50,7 @@
+                       ErrorDialog,
+                       NeedRestartDialog,
+                       NoUpdatesDialog,
++                      ShouldUpdateDialog,
+                       StoppedUpdatesDialog,
+                       PartialUpgradeDialog,
+                       UnsupportedDialog,
+@@ -205,6 +206,17 @@
+             self.start_available()
+ 
+     def start_update(self):
++        if apt_pkg.config.find_i("APT::Periodic::Update-Package-Lists") == 0:
++            self._start_pane(ShouldUpdateDialog(self))
++            return
++        if self.options.no_update:
++            self.start_available()
++            return
++
++        update_backend = get_backend(self, InstallBackend.ACTION_UPDATE)
++        self._start_pane(update_backend)
++
++    def check_update(self):
+         if self.options.no_update:
+             self.start_available()
+             return

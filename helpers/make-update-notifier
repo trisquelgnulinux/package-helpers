@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2012 Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2012-2018 Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,13 +17,16 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 COMPONENT=main
 
 . ./config
  
 rm debian/update-notifier-hp-firmware.conf
 sed '/hp-firmware/d' -i debian/update-notifier.install
+
+# Prevent automated connections
+sed '/Update-Package-Lists/s/1/0/' -i debian/10periodic
 
 changelog "Disabled hp-firmware handling"
 
