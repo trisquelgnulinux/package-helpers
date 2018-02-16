@@ -22,7 +22,7 @@ VERSION=1
 . ./config
 
 
-sed -i 's/Support for non-free technologies such//g;/as Nvidia CUDA can be added/d' debian/control
+sed -i '/can be added through extensions/,/^ \.$/d;s/Support for the non-free technologies//g' debian/control
 changelog "Description changed"
 
 #Closes http://trisquel.info/es/issues/4330
