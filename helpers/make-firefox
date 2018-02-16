@@ -18,13 +18,23 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=54
+VERSION=55
 
 . ./config
 
 rm debian/control
 
 patch -p1 < $DATA/disable-activity-streams.patch
+sed 's/.Ubuntu., //' -i ./browser/extensions/activity-stream/css/activity-stream*.css
+
+cp $DATA/onboarding/bootstrap.js browser/extensions/onboarding
+cp $DATA/onboarding/onboarding.js browser/extensions/onboarding/content
+
+sed '/captivedetect.canonicalURL/s/http.*success.txt//' -i modules/libpref/init/all.js
+
+# do not alter useragent/platform/oscpu/etc with fingerprinting countermeasure, it makes things worse
+sed '/ShouldResistFingerprinting/,/}/s/^/\/\//' -i ./netwerk/protocol/http/nsHttpHandler.cpp
+sed '/If fingerprinting resistance is on/,/}/s/^/\/\//' -i ./dom/base/Navigator.cpp
 
 # Disabled until the patches work on v57 with moz1382323.patch
 ## KDE integration patches from https://www.rosenauer.org/hg/mozilla
@@ -53,9 +63,6 @@ patch -p1 < $DATA/disable-activity-streams.patch
 ## A line is added to widget/gtk/moz.build by unity-menubar.patch, so we have to fix mozilla-kde.patch
 #sed -i "/widget\/gtk\/moz\.build/,/widget\/gtk\/nsFilePicker\.cpp/{ /chromium/d; /generic/a\ \ \ \ \ '/layout/style',
 #; }" debian/patches/mozilla-kde.patch
-
-# js settings
-cat $DATA/settings.js >> debian/vendor-firefox.js
 
 # Replace ubufox recommendation
 sed 's/xul-ext-ubufox/xul-ext-youtube-html5-video-player/' -i debian/control.in
@@ -252,6 +259,9 @@ sed 's/Abrowser/Firefox/g; s/abrowser/firefox/g' -i browser/components/migration
 sed s/ChromeProfileMigrator/_temp_/ -i browser/components/migration/moz.build
 sed s/AbrowserProfileMigrator/ChromeProfileMigrator/ -i browser/components/migration/moz.build
 sed s/_temp_/AbrowserProfileMigrator/ -i browser/components/migration/moz.build
+
+# js settings
+cat $DATA/settings.js >> debian/vendor-abrowser.js
 
 # Postinst script to manage profile migration and system links
 echo '

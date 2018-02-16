@@ -13,7 +13,7 @@ diff -ru firefox-58.0+build6.orig/browser/extensions/activity-stream/lib/Activit
 -  ["RU", "https://vk.com/,https://www.youtube.com/,https://ok.ru/,https://www.avito.ru/,https://www.aliexpress.com/,https://www.wikipedia.org/"],
 -  ["GB", "https://www.youtube.com/,https://www.facebook.com/,https://www.reddit.com/,https://www.amazon.co.uk/,https://www.bbc.co.uk/,https://www.ebay.co.uk/"],
 -  ["FR", "https://www.youtube.com/,https://www.facebook.com/,https://www.wikipedia.org/,https://www.amazon.fr/,https://www.leboncoin.fr/,https://twitter.com/"]
-+  ["", "https://www.trisquel.info/,https://www.gnu.org/,https://www.fsf.org/,https://libreplanet.org/,https://www.wikipedia.org/,https://www.wikinews.org/"]
++  [""]
  ]);
  const GEO_PREF = "browser.search.region";
  const REASON_ADDON_UNINSTALL = 6;
@@ -73,7 +73,7 @@ diff -ru firefox-58.0+build6.orig/browser/extensions/activity-stream/lib/Activit
    ["tippyTop.service.endpoint", {
      title: "Tippy Top service manifest url",
 -    value: "https://activity-stream-icons.services.mozilla.com/v1/icons.json.br"
-+    value: "https://127.0.0.1"
++    value: ""
    }]
  ]);
  

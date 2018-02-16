@@ -2,7 +2,6 @@
 // Release notes and vendor URLs
 pref("app.releaseNotesURL", "https://trisquel.info/en/wiki/abrowser-help");
 pref("app.vendorURL", "https://trisquel.info/en/wiki/abrowser-help");
-pref("privacy.trackingprotection.introURL", "https://trisquel.info/en/wiki/abrowser-help");
 
 // PFS url
 pref("pfs.datasource.url", "https://trisquel.info/sites/pfs.php?mime=%PLUGIN_MIMETYPE%");
@@ -37,8 +36,8 @@ pref("nglayout.initialpaint.delay", 0);
 // Disable third party cookies
 pref("network.cookie.cookieBehavior", 1);
 
-// Extensions can be updated
-pref("extensions.update.enabled", true);
+// Extensions cannot be updated without permission
+pref("extensions.update.enabled", false);
 // Use LANG environment variable to choose locale
 pref("intl.locale.matchOS", true);
 // Disable default browser checking.
@@ -52,9 +51,9 @@ pref ("distribution.id", "trisquel");
 pref ("distribution.version", "1.0");
 
 // Set useragent to Firefox compatible
-pref("general.useragent.compatMode.firefox",true);
+pref("general.useragent.compatMode.abrowser",true);
 // Spoof the useragent to a generic one
-//pref("general.useragent.override", "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:24.0) Gecko/20100101 Firefox/24.0");
+//pref("general.useragent.override", "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:24.0) Gecko/20100101 Firefox/58.0");
 
 
 // Startup pages
@@ -98,6 +97,7 @@ pref("privacy.donottrackheader.enabled", true);
 pref("privacy.donottrackheader.value", 1);
 pref("dom.ipc.plugins.flash.subprocess.crashreporter.enabled", false);
 pref("browser.safebrowsing.enabled", false);
+pref("browser.safebrowsing.downloads.remote.enabled", false);
 pref("browser.safebrowsing.malware.enabled", false);
 pref("services.sync.privacyURL", "https://trisquel.info/en/legal");
 pref("social.enabled", false);
@@ -125,6 +125,27 @@ pref("browser.newtabpage.directory.ping", "");
 pref("browser.newtabpage.introShown", true);
 // Disable home snippets
 pref("browser.aboutHomeSnippets.updateUrl", "");
+// Always ask before restoring the browsing session
+pref("browser.sessionstore.max_resumed_crashes", 0);
+// Disable tracking protection by default, as it makes automated connections to fetch lists
+pref("browser.safebrowsing.provider.mozilla.updateURL", "");
+pref("privacy.trackingprotection.enabled", false);
+pref("privacy.trackingprotection.pbmode.enabled", false);
+pref("privacy.trackingprotection.introURL", "https://www.mozilla.org/%LOCALE%/firefox/%VERSION%/tracking-protection/start/");
+// Disable geolocation
+pref("geo.enabled", false);
+pref("browser.search.geoip.url", "");
+// Disable captive portal detection
+pref("captivedetect.canonicalURL", "");
+pref("network.captive-portal-service.enabled", false);
+// Disable shield/heartbeat
+pref("extensions.shield-recipe-client.enabled", false);
+// Canvas fingerprint protection
+pref("privacy.resistFingerprinting", true);
+// Webgl can be used for fingerprinting
+pref("webgl.disabled", true);"
+// Don't reveal your internal IP when WebRTC is enabled
+pref("media.peerconnection.ice.no_host", true);
 
 // Services
 pref("gecko.handlerService.schemes.mailto.0.name", "");
@@ -159,7 +180,7 @@ pref("extensions.blocklist.enabled", false);
 pref("font.default.x-western", "sans-serif");
 
 // Disable Gecko media plugins: https://wiki.mozilla.org/GeckoMediaPlugins
-pref("media.gmp-manager.url", "http://127.0.0.1/");
+pref("media.gmp-manager.url", "");
 pref("media.gmp-provider.enabled", false);
 // Don't install openh264 codec
 pref("media.gmp-gmpopenh264.enabled", false);
@@ -195,20 +216,18 @@ pref("xpinstall.signatures.required", false);
 
 // disable screenshots extension
 pref("extensions.screenshots.disabled", true);
+// disable onboarding
 pref("browser.onboarding.newtour", "performance,private,addons,customize,default");
 pref("browser.onboarding.updatetour", "performance,library,singlesearch,customize");
-
-// Disable rating bar
 pref("browser.onboarding.enabled", false);
 
 // New tab settings
-pref("browser.newtabpage.activity-stream.default.sites", "https://www.trisquel.info/,https://www.gnu.org/,https://www.fsf.org/,https://libreplanet.org/,https://www.wikipedia.org/,https://www.wikinews.org/"):
+pref("browser.newtabpage.activity-stream.default.sites", "https://www.trisquel.info/,https://www.gnu.org/,https://www.fsf.org/,https://libreplanet.org/,https://www.wikipedia.org/,https://www.wikinews.org/");
 pref("browser.newtabpage.activity-stream.showTopSites",true);
 pref("browser.newtabpage.activity-stream.feeds.section.topstories",false);
 pref("browser.newtabpage.activity-stream.feeds.snippets",false);
 pref("browser.newtabpage.activity-stream.disableSnippets", true);
-
-
+user_pref("browser.newtabpage.activity-stream.tippyTop.service.endpoint", "");
 
 // Enable xrender
 pref("gfx.xrender.enabled",true);
