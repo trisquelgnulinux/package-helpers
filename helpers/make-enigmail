@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2017  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2017-2018  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -18,10 +18,14 @@
 #
 
 VERSION=1
-EXTERNAL='deb-src http://security.debian.org/debian-security wheezy/updates main'
-SIGNKEY="D21739E9"
 
 . ./config
+
+sed 's/ and Debian Icedove//' -i debian/control
+sed 's/${xpi:Depends}/icedove/' -i debian/control
+sed 's/Recommends:.*/Recommends: pinentry-x11/' -i debian/control
+sed 's/Thunderbird/Icedove/' -i debian/control
+sed '/Enhances/d' -i debian/control
 
 changelog "Imported into Trisquel"
 
