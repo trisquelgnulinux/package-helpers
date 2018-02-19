@@ -1,6 +1,6 @@
-#!/bin/sh
+#!/bin/bash
 #
-#    Copyright (C) 2014-2018  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2018  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -21,9 +21,14 @@ VERSION=1
 
 . ./config
 
+cp $DATA/branding/* mail/branding/nightly/ -r
+
 cat << EOF >> debian/vendor.js
 
 // Trisquel settings
+pref("mail.provider.enabled", false);
+pref("mail.provider.providerList", "");
+pref("mail.provider.suggestFromName", "");
 pref("mail.shell.checkDefaultClient", false);
 pref("spellchecker.dictionaries.download.url", "http://dictionaries.mozdev.org/installation.html");
 pref("extensions.webservice.discoverURL", "https://directory.fsf.org/wiki/Icedove");
@@ -31,8 +36,81 @@ pref("extensions.blocklist.enabled", false);
 pref("mail.rights.version", 1);
 pref("toolkit.telemetry.prompted", 2);
 pref("toolkit.telemetry.rejected", true);
+pref("mailnews.start_page.enabled", false);
+pref("mailnews.start_page.url", "");
+pref("mailnews.start_page.override_url", "");
+pref("app.update.auto", false);
+pref("app.update.enabled", false);
+pref("browser.search.update", false);
+pref("extensions.update.enabled", false);
+pref("network.cookie.cookieBehavior", 2);
+pref("app.releaseNotesURL", "http://trisquel.info/mailclient");
+pref("pfs.datasource.url", "https://trisquel.info/sites/pfs.php?mime=%PLUGIN_MIMETYPE%");
+pref("pfs.filehint.url", "https://trisquel.info/sites/pfs.php?mime=%PLUGIN_MIMETYPE%");
+pref("keyword.URL", "https://duckduckgo.com/?t=trisquel&q=!+");
+pref("browser.search.defaultenginename", "Wikipedia (en)");
+pref("browser.search.order.1", "Wikipedia (en)");
+pref("browser.search.defaultenginename", "Wikipedia (en)");  
+pref("browser.search.showOneOffButtons", false);
+pref("browser.search.suggest.enabled",false);
 EOF
 
-changelog "Custom settings for Trisquel"
+sed '/enable-tests/d' -i debian/config/mozconfig.in
+
+
+sed '/^MOZ_PKG_NAME/s/.*/MOZ_PKG_NAME=icedove/' -i debian/build/config.mk
+
+cat << EOF >> debian/build/config.mk
+
+# Trisquel settings
+MOZ_FORCE_UNOFFICIAL_BRANDING = 1
+MOZ_WANT_UNIT_TESTS = 0
+MOZ_ENABLE_BREAKPAD = 0
+EOF
+
+# Replace Thunderbird branding
+find -type d | grep thunderbird | xargs rename s/thunderbird/icedove/
+find -type d | grep thunderbird | xargs rename s/thunderbird/icedove/
+find -type f | grep thunderbird | xargs rename s/thunderbird/icedove/
+find -type f | grep Thunderbird | xargs rename s/Thunderbird/Icedove/
+
+SEDSCRIPT="
+s/Mozilla Thunderbird/Icedove/g;
+s/thunderbird/icedove/g;
+s/Thunderbird/Icedove/g;
+s/THUNDERBIRD/ICEDOVE/g;
+s/ Mozilla / Trisquel /g;
+s|PACKAGES/icedove|PACKAGES/thunderbird|g;
+s/iceweasel, icedove/iceweasel, thunderbird/g;
+s/Replaces: icedove/Replaces: thunderbird/g;
+s|www.mozilla.com/icedove/central|trisquel.info/browser|g;
+s|mozilla.com/plugincheck|trisquel.info/browser|g;
+s|www.mozilla.com/legal/privacy|trisquel.info/legal|g;
+
+s/Trisquel Public/Mozilla Public/g;
+s/Trisquel Foundation/Mozilla Foundation/g;
+s/Trisquel Corporation/Mozilla Corporation/g;
+"
+echo "Running batch replace operation"
+find . -type f -not -iregex '.*changelog.*' -not -iregex '.*copyright.*' -execdir /bin/sed --follow-symlinks -i "$SEDSCRIPT" '{}' ';'
+
+replace Daily Icedove mail/branding/
+sed '/.*<description.*communityExperimentalDesc/,/\/description/d' -i ./mail/base/content/aboutDialog.xul
+sed '/.*<description.*communityDesc/,/\/description/d' -i ./mail/base/content/aboutDialog.xul
+sed '/.*<description.*contributeDesc/,/\/description/d' -i ./mail/base/content/aboutDialog.xul
+
+# We went too far...
+sed s/Trisquel/Mozilla/ l10n/compare-locales/scripts/compare-locales -i
+sed s/Trisquel/Mozilla/ l10n/compare-locales/setup.py -i
+
+sed '/^Source/s/.*/Source: thunderbird/' -i debian/control.in
+sed 's/Provides: mail-reader,/Provides: mail-reader, thunderbird,/' -i debian/control.in
+sed "s/Provides.*/Provides: icedove-locale-@LANGCODE@/" -i debian/control.langpacks
+
+debian/rules debian/control
+touch -d "yesterday" debian/control
+debian/rules debian/control
+
+changelog  "Rebranded for Trisquel"
 
 compile
