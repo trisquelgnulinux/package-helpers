@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2008-2014  Rubén Rodríguez <ruben@trisquel.info>
+#    Copyright (C) 2008-2018  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=12
+VERSION=1
 
 . ./config
 
@@ -25,87 +25,10 @@ VERSION=12
 sed 's/"tooltip", tooltip,/"tooltip", "Trisquel",/; s/"has-arrow", TRUE,/"has-arrow", FALSE,/' -i gnome-panel/panel-menu-button.c
 
 # Disable patches related to the gnome sessions
-for patch in 41_classic_layout.patch 01_gnome-wm.patch 50_ubuntu_sessions.patch 49_no_screensaver.patch; do
+for patch in 41_classic_layout.patch; do
   rm debian/patches/$patch
   sed /$patch/d -i debian/patches/series
 done
-
-# Profile handling
-cat << EOF > data/trisquel-panel-profile.desktop
-[Desktop Entry]
-Type=Application
-Name=Trisquel panel profile updater
-Exec=trisquel-panel-profile
-NoDisplay=true
-X-GNOME-AutoRestart=false
-X-GNOME-Autostart-Phase=Initialization
-OnlyShowIn=GNOME;
-EOF
-
-cat << EOF > data/trisquel-panel-profile
-#!/bin/sh
-VERSION=\$(lsb_release -rs)
-if ! grep "^\$VERSION$" \$HOME/.config/profilemigrated -q 2>/dev/null; then
-  GS=\$(gsettings get org.gnome.gnome-panel.layout object-id-list | sed "s/, 'clock'//")
-  gsettings set org.gnome.gnome-panel.layout object-id-list "\$GS"
-  echo \$VERSION > \$HOME/.config/profilemigrated
-fi
-EOF
-
-chmod 755 data/trisquel-panel-profile
-
-# Custom xsession
-cat << EOF > data/trisquel-session.desktop
-[Desktop Entry]
-Name=Trisquel
-Comment=This session logs you into GNOME with the traditional panel
-Exec=gnome-session --session=gnome-flashback
-TryExec=gnome-session
-Icon=
-Type=Application
-X-LightDM-DesktopName=GNOME
-EOF
-
-cat << EOF > data/50-trisquel-session.conf
-[SeatDefaults]
-user-session=trisquel-session
-EOF
-
-cat <<EOF > debian/trisquel-session.install
-data/50-trisquel-session.conf /usr/share/lightdm/lightdm.conf.d/
-data/trisquel-session.desktop /usr/share/xsessions
-debian/gnome-wm.desktop /usr/share/applications
-debian/gnome-flashback-services.desktop /usr/share/applications
-debian/scripts/gnome-wm /usr/bin
-usr/share/gnome-session/sessions
-data/trisquel-panel-profile.desktop /etc/xdg/autostart
-data/trisquel-panel-profile /usr/sbin
-EOF
-
-# Custom package
-sed '/Package: gnome-session/,/^$/d' -i debian/control.in
-cat << EOF >> debian/control.in
-
-Package: trisquel-session
-Architecture: all
-Depends: ${misc:Depends},
-         gnome-panel (>= 3.0),
-         gnome-session-bin,
-         gnome-session-common,
-         metacity (>= 2.30),
-         nautilus (>= 3.8),
-         policykit-1-gnome,
-Provides: x-session-manager, gnome-session-flashback
-Replaces: gnome-session-flashback
-Conflicts: gnome-session-flashback
-Description: GNOME Session Manager - Trisquel session
- The GNOME Session Manager is in charge of starting the core components
- of the GNOME desktop, and applications that should be launched at
- login time. It also features a way to save and restore currently
- running applications.
- .
- This package contains the required components for the Trisquel session.
-EOF
 
 # Custom layout
 cat << EOF > data/panel-default-layout.layout
