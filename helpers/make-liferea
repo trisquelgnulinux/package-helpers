@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2011  Rubén Rodríguez <ruben@trisquel.info>
+#    Copyright (C) 2011-2018  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,9 +17,11 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
+VERSION=4
 
 . ./config
+
+sed 's/^_Name=Liferea/_Name=Liferea Feed Reader/' -i liferea.desktop.in
 
 #remove references to Opera and Mozilla
 sed '/opera/ s/^.*$/<description>Selects which browser to use to open external links.<\/description>/' -i net.sf.liferea.gschema.xml*
