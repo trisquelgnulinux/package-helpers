@@ -25,7 +25,7 @@ COMPONENT=main
 
 . ./config
 
-sed 's/debhelper.*,/debhelper ,/; /mate-common/d' -i debian/control
+sed 's/debhelper.*,/debhelper ,/; s/mate-common.*,/mate-common,/' -i debian/control
 
 changelog "Backport from artful"
 
