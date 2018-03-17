@@ -1,6 +1,7 @@
 #!/bin/sh
 #
 #    Copyright (C) 2011  Santiago Rodríguez <aklis@trisquel.info>
+#    Copyright (C) 2018  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,12 +18,13 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 COMPONENT=main
 
 . ./config
 
-
+# Show full name on menu
+sed 's/^_Name=Rhythmbox/^_Name=Rhythmbox Music Player/' -i data/rhythmbox.desktop.in.in
 
 for i in 03_magnatune_partner.patch
 do
