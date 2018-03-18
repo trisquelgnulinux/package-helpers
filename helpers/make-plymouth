@@ -1,6 +1,6 @@
 #/bin/sh
 #
-#    Copyright (C) 2008-2017  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2008-2018  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
+VERSION=4
 QUILT=skip
 . ./config
 
@@ -71,7 +71,8 @@ EOF
 rm themes/trisquel-logo -rf
 cp themes/script -a themes/trisquel-logo
 cp $DATA/background.png themes/trisquel-logo/
-cp $DATA/trisquel_logo16.png themes/trisquel-logo/trisquel-logo.png
+cp $DATA/trisquel_logo.png themes/trisquel-logo/trisquel-logo.png
+cp $DATA/trisquel_logo16.png themes/trisquel-logo/trisquel-logo16.png
 sed -i 's/progress_bar.png/progress_bar.png\\\n\t\tbackground.png\\\n\t\ttrisquel_logo16.png/' themes/trisquel-logo/Makefile*
 sed s:/script:/trisquel-logo:g -i themes/trisquel-logo/script.plymouth.in
 sed 's:=Script:=Trisquel-logo:g' -i themes/trisquel-logo/script.plymouth.in
