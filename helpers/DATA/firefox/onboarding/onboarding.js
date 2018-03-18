@@ -64,6 +64,15 @@ class Onboarding {
     onvalue: "https://shavar.services.mozilla.com/downloads?client=SAFEBROWSING_ID&appver=%MAJOR_VERSION%&pver=2.2",
     offvalue: "",
     },
+  "privacy.firstparty.isolate": {
+    type: "boolean",
+    name: "privacy.firstparty.isolate",
+    label: "Isolate requests to First Party domains",
+    description: "This <a href=\"https://www.torproject.org/projects/torbrowser/design/#identifier-linkability\">improves privacy</a>, but it may interfere with login into some sites.",
+    defaultvalue: false,
+    onvalue: true,
+    offvalue: false,
+    },
   "extensions.update.enabled": {
     type: "boolean",
     name: "extensions.update.enabled",

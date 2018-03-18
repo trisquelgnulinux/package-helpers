@@ -1,6 +1,5 @@
-diff -ru firefox-58.0+build6.orig/browser/extensions/activity-stream/lib/ActivityStream.jsm firefox-58.0+build6/browser/extensions/activity-stream/lib/ActivityStream.jsm
---- firefox-58.0+build6.orig/browser/extensions/activity-stream/lib/ActivityStream.jsm	2018-01-22 17:33:33.000000000 +0000
-+++ firefox-58.0+build6/browser/extensions/activity-stream/lib/ActivityStream.jsm	2018-01-24 23:19:12.842155717 +0000
+--- a/browser/extensions/activity-stream/lib/ActivityStream.jsm	2018-03-15 21:41:38.000000000 -0400
++++ b/browser/extensions/activity-stream/lib/ActivityStream.jsm	2018-03-17 01:26:49.040525184 -0400
 @@ -26,14 +26,7 @@
  
  const DEFAULT_SITES = new Map([
@@ -13,11 +12,11 @@ diff -ru firefox-58.0+build6.orig/browser/extensions/activity-stream/lib/Activit
 -  ["RU", "https://vk.com/,https://www.youtube.com/,https://ok.ru/,https://www.avito.ru/,https://www.aliexpress.com/,https://www.wikipedia.org/"],
 -  ["GB", "https://www.youtube.com/,https://www.facebook.com/,https://www.reddit.com/,https://www.amazon.co.uk/,https://www.bbc.co.uk/,https://www.ebay.co.uk/"],
 -  ["FR", "https://www.youtube.com/,https://www.facebook.com/,https://www.wikipedia.org/,https://www.amazon.fr/,https://www.leboncoin.fr/,https://twitter.com/"]
-+  [""]
++  [""],
  ]);
  const GEO_PREF = "browser.search.region";
  const REASON_ADDON_UNINSTALL = 6;
-@@ -60,19 +53,19 @@
+@@ -56,19 +49,19 @@
        provider_description: "pocket_description",
        provider_icon: "pocket",
        provider_name: "Pocket",
@@ -25,7 +24,7 @@ diff -ru firefox-58.0+build6.orig/browser/extensions/activity-stream/lib/Activit
 -      stories_endpoint: `https://getpocket.cdn.mozilla.net/v3/firefox/global-recs?version=2&consumer_key=$apiKey&locale_lang=${args.locale}`,
 -      stories_referrer: "http://getpocket.com/recommendations",
 -      info_link: "https://www.mozilla.org/privacy/firefox/#pocketstories",
--      disclaimer_link: "https://getpocket.cdn.mozilla.net/firefox/new_tab_learn_more",
+-      disclaimer_link: "https://getpocket.com/firefox/new_tab_learn_more.php",
 -      topics_endpoint: `https://getpocket.cdn.mozilla.net/v3/firefox/trending-topics?version=2&consumer_key=$apiKey&locale_lang=${args.locale}`,
 +      read_more_endpoint: "http://127.0.0.1/",
 +      stories_endpoint: `http://127.0.0.1/`,
@@ -44,7 +43,7 @@ diff -ru firefox-58.0+build6.orig/browser/extensions/activity-stream/lib/Activit
    }],
    ["filterAdult", {
      title: "Remove adult pages from sites, highlights, etc.",
-@@ -100,7 +93,7 @@
+@@ -96,7 +89,7 @@
    }],
    ["disableSnippets", {
      title: "Disable snippets on activity stream",
@@ -53,7 +52,7 @@ diff -ru firefox-58.0+build6.orig/browser/extensions/activity-stream/lib/Activit
    }],
    ["showTopSites", {
      title: "Show the Top Sites section",
-@@ -116,12 +109,12 @@
+@@ -112,12 +105,12 @@
    }],
    ["telemetry", {
      title: "Enable system error and usage data collection",
@@ -68,7 +67,7 @@ diff -ru firefox-58.0+build6.orig/browser/extensions/activity-stream/lib/Activit
    }],
    ["section.highlights.collapsed", {
      title: "Collapse the Highlights section",
-@@ -137,7 +130,7 @@
+@@ -133,7 +126,7 @@
    }],
    ["tippyTop.service.endpoint", {
      title: "Tippy Top service manifest url",
@@ -77,7 +76,7 @@ diff -ru firefox-58.0+build6.orig/browser/extensions/activity-stream/lib/Activit
    }]
  ]);
  
-@@ -190,14 +183,14 @@
+@@ -186,14 +179,14 @@
          "CA": ["en-US", "en-GB", "en-ZA"],
          "DE": ["de", "de-DE", "de-AT", "de-CH"]
        })[geo];
@@ -94,7 +93,7 @@ diff -ru firefox-58.0+build6.orig/browser/extensions/activity-stream/lib/Activit
    },
    {
      name: "systemtick",
-@@ -209,7 +202,7 @@
+@@ -205,7 +198,7 @@
      name: "telemetry",
      factory: () => new TelemetryFeed(),
      title: "Relays telemetry-related actions to PingCentre",
