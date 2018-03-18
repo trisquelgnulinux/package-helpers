@@ -51,11 +51,26 @@ rm ubuntu/vbox* -rf
 sed /vbox/d -i debian.master/info/RECONCILE debian.master/control.d/generic.inclusion-list ubuntu/Makefile 
 sed '/vbox/d' -i debian.master/reconstruct
 
-# Compile with less modules and avoid abi check
-echo 'skipmodule = true' >> debian.master/rules.d/0-common-vars.mk
-echo 'skipabi = true' >> debian.master/rules.d/0-common-vars.mk
-echo 'skipmodule = true' >> debian/rules.d/0-common-vars.mk
-echo 'skipabi = true' >> debian/rules.d/0-common-vars.mk
+# The upstream release number for abi is on line 7 of the trisquel changelog, not 1.
+#sed '/^release :=/s/1s/7s/' debian/rules.d/0-common-vars.mk -i
+# For abi calculation, start counting from the previous release (upstream)
+sed '/^revisions :=/ s/tac/tail -n +3 | tac/' debian/rules.d/0-common-vars.mk -i
+# But keep the trisquel version number for $revision
+rpl 'revision ?= $(word $(words $(revisions)),$(revisions))' 'revision := $(shell sed -n "1 s/^$(src_pkg_name)\ .*($(release)-\(.*\)).*$$/\1/p" $(DEBIAN)/changelog)' debian/rules.d/0-common-vars.mk
+
+# Ignore the missing modules we remove
+cat << EOF > debian.master/abi/$(ls debian.master/abi/ -1)/modules.ignore
+spl
+splat
+vboxguest
+vboxsf
+vboxvideo
+zavl
+zcommon
+znvpair
+zpios
+zunicode
+EOF
 
 line=$(grep -n ')-Ubuntu' debian/rules.d/0-common-vars.mk|cut -d: -f1)
 sed $(expr $line - 1 ),$(expr $line + 1 )d debian/rules.d/0-common-vars.mk -i
