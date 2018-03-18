@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2008-2016  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2008-2018  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,14 +17,15 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 NETINST=true
 
 . ./config
 
+rm scripts/*
 cp -a $DATA/* scripts/
 
-changelog "Added Trisquel's scripts"
+changelog "Only include trisquel origins"
 
 compile
 
