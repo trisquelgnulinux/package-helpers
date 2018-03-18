@@ -160,11 +160,8 @@ echo "Running batch replace operation"
 find . -type f -not -iregex '.*changelog.*' -not -iregex '.*copyright.*' -execdir /bin/sed --follow-symlinks -i "$SEDSCRIPT" '{}' ';'
 
 sed -i '2s/^Source:.*/Source: firefox/' debian/control.in
-sed s/Trisquel/Mozilla/ l10n/compare-locales/scripts/compare-locales -i
-sed s/Trisquel/Mozilla/ l10n/compare-locales/setup.py -i
 sed s/ubuntu/trisquel/g debian/distribution.ini -i
 sed 's/ubuntu_version/trisquel_version/; s/Ubuntu 10.10/Trisquel 4.0/; s/1010/40/' -i debian/abrowser.postinst.in
-
 
 # abrowser should provide firefox
 sed '/Package: @MOZ_PKG_NAME@-dev/,/Description:/ s/Architecture: any/Architecture: any\nProvides: firefox-dev /' debian/control.in -i
