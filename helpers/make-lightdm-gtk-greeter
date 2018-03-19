@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2014-2016  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2014-2018  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 COMPONENT=main
 
 . ./config
@@ -43,7 +43,7 @@ cat << EOF > debian/01_trisquel.conf
 # screensaver-timeout = Timeout (in seconds) until the screen blanks when the greeter is called as lockscreen
 #
 [greeter]
-background=/usr/share/backgrounds/belenos.png
+background=/usr/share/backgrounds/flidas.jpg
 theme-name=Trisquel
 icon-theme-name=Trisquel
 font-name=Sans 10
