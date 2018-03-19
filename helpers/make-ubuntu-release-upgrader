@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2008-2017  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2008-2018  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C)      2014  Santiago Rodriguez <santi@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
 # Also, don't forget to update the meta-release files at archive and packages.t.i
 # The "obsoletes" list from ubuntu has been removed
 
-VERSION=1
+VERSION=2
 
 . ./config
 
@@ -202,7 +202,6 @@ cat <<EOF > data/removal_blacklist.cfg
 trisquel-base
 trisquel-minimal
 trisquel-desktop-common
-trisquel
 trisquel-mini
 triskel
 trisquel-sugar

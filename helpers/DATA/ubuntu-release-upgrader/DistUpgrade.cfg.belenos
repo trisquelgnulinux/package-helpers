@@ -40,10 +40,10 @@ Types=386,ec2,generic,rt,server,virtual
 
 # information about the individual meta-pkgs
 [trisquel]
-KeyDependencies=trisquel-desktop-common-data, unity-greeter, trisquel-session
+KeyDependencies=trisquel-desktop-common-data, unity-greeter
 # those pkgs will be marked remove right after the distUpgrade in the cache
 PostUpgradeRemove=casper, xscreensaver, gnome-cups-manager, powermanagement-interface, deskbar-applet, nautilus-cd-burner, compiz-core, gdm, gnome-ppp, gwibber, remmina-common
-ForcedObsoletes=desktop-effects, cups-pdf, policykit-gnome, gnome-mount, gdm, notification-daemon
+ForcedObsoletes=desktop-effects, cups-pdf, policykit-gnome, gnome-mount, notification-daemon, trisquel-session, libcogl15, libcogl-pango15
 
 [trisquel-mini]
 KeyDependencies=trisquel-mini-data unity-greeter
