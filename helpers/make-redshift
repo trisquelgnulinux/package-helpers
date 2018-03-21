@@ -24,6 +24,15 @@ VERSION=1
 sed 's/enable-geoclue2/disable-geoclue2/' -i debian/rules
 sed '/geoclue/d' -i debian/control
 
+if [ -f debian/example-redshift.conf ] 
+then
+  cp debian/example-redshift.conf debian/redshift.conf
+  echo "debian/redshift.conf /etc" >> debian/redshift.install
+else
+  echo "Error, example configuration file not found"
+  exit
+fi
+
 changelog "Disabled geoclue"
 
 compile
