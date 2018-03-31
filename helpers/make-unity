@@ -58,7 +58,7 @@ cp $DATA/bfb.png tests/data
 sed -i '
 s/firefox/abrowser/g
 /ubuntu-amazon-default/d
-s/ubuntu-software-center/gnome-app-install/' com.canonical.Unity.gschema.xml
+s/ubuntu-software-center/gnome-app-install/' data/com.canonical.Unity.gschema.xml
 
 # remove Skype preview
 rm dash/previews/Skype.png
