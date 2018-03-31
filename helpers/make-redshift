@@ -1,6 +1,7 @@
 #!/bin/sh
 #
 #    Copyright (C) 2018 Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2018 Pablo Correa Gómez <p.correag@member.fsf.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,22 +18,40 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 
 . ./config
 
-sed 's/enable-geoclue2/disable-geoclue2/' -i debian/rules
-sed '/geoclue/d' -i debian/control
+sed 's|can optionally be|is installed in /etc and can optionally be|1' -i debian/redshift.5
 
-if [ -f debian/example-redshift.conf ] 
-then
-  cp debian/example-redshift.conf debian/redshift.conf
-  echo "debian/redshift.conf /etc" >> debian/redshift.install
-else
-  echo "Error, example configuration file not found"
-  exit
-fi
+cat << EOF > debian/redshift.conf
+; Global settings
+[redshift]
+temp-day=5700
+temp-night=3500
+transition=1
+gamma=1:1:1
 
-changelog "Disabled geoclue"
+; WARNING: Changing provider to geoclue2 will set lat and lon
+; automatically, but it will trigger background internet connections
+location-provider=manual
+; location-provider=geoclue2
+adjustment-method=vidmode
+
+; The location provider and adjustment method settings
+; are in their own sections.
+[manual]
+lat=55.7
+lon=13.2
+
+; Numbering starts from 0, and refers to screen number,
+; so this is actually the first screen.
+[vidmode]
+screen=0
+ 
+EOF
+echo "debian/redshift.conf /etc" >> debian/redshift.install
+
+changelog "Added default manual configuration"
 
 compile
