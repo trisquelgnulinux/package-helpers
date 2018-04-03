@@ -17,14 +17,42 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=4
+VERSION=5
 QUILT=skip
 . ./config
 
 export QUILT_PATCHES=debian/patches
 quilt push -a
 
+cat << EOF >> debian/control
+
+Package: plymouth-theme-sugar
+Architecture: linux-any
+Depends:
+ \${misc:Depends},
+ \${shlibs:Depends},
+ plymouth (= \${binary:Version}),
+ plymouth-label (= \${binary:Version}),
+Provides: plymouth-theme,
+Description: boot animation, logger and I/O multiplexer - sugar theme
+ Plymouth provides a boot-time I/O multiplexing framework - the most obvious
+ use for which is to provide an attractive graphical animation in place of
+ the text messages that normally get shown during boot. (The messages are
+ instead redirected to a logfile for later viewing.) However, in event-driven
+ boot systems Plymouth can also usefully handle user interaction such as
+ password prompts for encrypted file systems.
+ .
+ This package contains the sugar theme.
+EOF
+
+
 cp $DATA/plymouth-theme-trisquel-logo* debian
+cp $DATA/plymouth-theme-trisquel-logo.postinst debian/plymouth-theme-sugar.postinst
+cp $DATA/plymouth-theme-trisquel-logo.prerm debian/plymouth-theme-sugar.prerm
+
+echo usr/share/plymouth/themes/sugar/ > debian/plymouth-theme-sugar.install
+
+/bin/sed 's/trisquel-logo/sugar/g' debian/plymouth-theme-sugar* -i
 
 sed '/ttf-ubuntu-font-family/d' -i debian/control
 
@@ -32,8 +60,11 @@ cat << EOF >> debian/copyright
 
 == Additions made by Trisquel ==
 
-themes/script/taranis.png Copyright (C) 2010 Rubén Rodríguez, GPL-3 license
-themes/script/trisquel_logo16.png Copyright (C) 2004-2011 Rubén Rodríguez, GPL-3 license
+themes/trisquel-logo/taranis.png Copyright (C) 2010 Rubén Rodríguez, GPL-3 license
+themes/trisquel-logo/trisquel_logo16.png Copyright (C) 2004-2011 Rubén Rodríguez, GPL-3 license
+themes/sugar/sugar.png Copyright (C) 2008 Dongyun Lee CC Attribution 3.0 Unported license
+themes/sugar/trisquel_logo16.png Copyright (C) 2004-2011 Rubén Rodríguez, GPL-3 license
+themes/sugar/trisquel_logo-sugar.png Copyright (C) 2004-2011 Rubén Rodríguez, GPL-3 license
 EOF
 
 find -type d |xargs rename s/kubuntu/trisquel-mini/g
@@ -66,9 +97,12 @@ cp $DATA/script.script themes/script/script.script
 cat << EOF > debian/source/include-binaries
 themes/script/background.png
 themes/script/trisquel_logo16.png
+themes/glow/sugar.png
+themes/glow/trisquel_logo16.png
+themes/glow/trisquel_logo-sugar.png
 EOF
 
-rm themes/trisquel-logo -rf
+rm themes/trisquel-logo themes/glow -rf
 cp themes/script -a themes/trisquel-logo
 cp $DATA/background.png themes/trisquel-logo/
 cp $DATA/trisquel_logo.png themes/trisquel-logo/trisquel-logo.png
@@ -81,6 +115,25 @@ sed 's/script/trisquel-logo/g' -i themes/trisquel-logo/Make*
 sed 's/rtoken/script/g' -i themes/trisquel-logo/Make*
 rename s/script.script/trisquel-logo.script/g themes/trisquel-logo/*
 rename s/script.plymouth.in/trisquel-logo.plymouth.in/g themes/trisquel-logo/*
+
+cp themes/script -a themes/glow
+sed s:/script:/glow:g -i themes/glow/script.plymouth.in
+sed 's:=Script:=Glow:g' -i themes/glow/script.plymouth.in
+sed 's/script\.script/glow\.rtoken/g' -i themes/glow/Make*
+sed 's/script/glow/g' -i themes/glow/Make*
+sed 's/rtoken/script/g' -i themes/glow/Make*
+cp $DATA/sugar.png $DATA/trisquel_logo16.png $DATA/trisquel_logo-sugar.png themes/glow/
+/bin/sed -i s/background/sugar/g themes/glow/*
+sed -i 's_special://logo_trisquel\_logo-sugar.png_g; s/0.3/0.8/' themes/glow/*.script
+rename s/script.script/glow.script/g themes/glow/*
+rename s/script.plymouth.in/glow.plymouth.in/g themes/glow/*
+sed -i 's/progress_bar.png/progress_bar.png\\\n\t\tsugar.png\\\n\t\ttrisquel_logo16.png\\\n\t\ttrisquel_logo-sugar.png/' themes/glow/Makefile*
+
+find -type d |xargs rename s/glow/sugar/g
+find -type f |xargs rename s/glow/sugar/g
+
+replace glow sugar .
+replace Glow Sugar .
 
 sed s/Ubuntu/Trisquel/ -i debian/plymouth-theme-trisquel-text.postinst
 
