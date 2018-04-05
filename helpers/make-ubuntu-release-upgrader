@@ -23,7 +23,7 @@
 # Also, don't forget to update the meta-release files at archive and packages.t.i
 # The "obsoletes" list from ubuntu has been removed
 
-VERSION=2
+VERSION=3
 
 . ./config
 
@@ -56,7 +56,7 @@ ChangelogURI: http://packages.trisquel.info/changelogs/pool/%s/%s/%s/%s_%s/%s
 
 Suite: $CODENAME
 RepositoryType: deb
-BaseURI: http://archive.trisquel.info/trisquel/
+BaseURI: https://archive.trisquel.info/trisquel/
 Description: Trisquel $CODENAME
 Component: main
 Enabled: 1
@@ -64,7 +64,7 @@ CompDescription: Trisquel GNU/linux packages
 
 Suite: $CODENAME-security
 RepositoryType: deb
-BaseURI: http://archive.trisquel.info/trisquel/
+BaseURI: https://archive.trisquel.info/trisquel/
 Description: Trisquel $CODENAME Security Updates
 Component: main
 Enabled: 1
@@ -72,7 +72,7 @@ CompDescription: Trisquel GNU/linux packages
 
 Suite: $CODENAME-updates
 RepositoryType: deb
-BaseURI: http://archive.trisquel.info/trisquel/
+BaseURI: https://archive.trisquel.info/trisquel/
 Description: Trisquel $CODENAME Updates
 Component: main
 Enabled: 1
@@ -80,10 +80,10 @@ CompDescription: Trisquel GNU/linux packages
 
 Suite: $CODENAME-backports
 RepositoryType: deb
-BaseURI: http://archive.trisquel.info/trisquel/
+BaseURI: https://archive.trisquel.info/trisquel/
 Description: Trisquel $CODENAME Backports
 Component: main
-Enabled: 1
+Enabled: 0
 CompDescription: Trisquel GNU/linux packages
 EOF
 
@@ -212,23 +212,17 @@ EOF
 
 rm data/mirrors.cfg
 cat << EOF > data/mirrors.cfg
-http://archive.trisquel.info/trisquel/
-ftp://archive.trisquel.info/trisquel/
-http://es.archive.trisquel.info/trisquel/
-ftp://es.archive.trisquel.info/trisquel/
-http://fr.archive.trisquel.info/trisquel/
-ftp://fr.archive.trisquel.info/trisquel/
-http://nl.archive.trisquel.info/trisquel/
-ftp://nl.archive.trisquel.info/trisquel/
-http://us.archive.trisquel.info/trisquel/
+https://archive.trisquel.info/trisquel/
+https://mirror.fsf.org/trisquel/
+http://mirrors.knoesis.org/trisquel/packages
+https://mirrors.ocf.berkeley.edu/trisquel/
 http://in.archive.trisquel.info/trisquel/
-ftp://in.archive.trisquel.info/trisquel/
-http://mirror.cedia.org.ec/trisquel.packages/
-http://mirrors.serverhost.ro/trisquel/packages/
-http://cn.archive.trisquel.info/trisquel/
-http://ftp.caliu.cat/pub/distribucions/trisquel/packages
-http://mirrors.knoesis.org/trisquel/packages/
-http://mirrors.ukfast.co.uk/sites/trisquel.info/
+https://mirror.cedia.org.ec/trisquel.packages
+http://mirrors.serverhost.ro/trisquel/packages
+https://mirrors.ustc.edu.cn/trisquel
+https://ftp.caliu.cat/pub/distribucions/trisquel/packages
+https://ftp.yzu.edu.tw/Linux/trisquel.packages/
+https://ftp.acc.umu.se/mirror/trisquel/packages/
 EOF
 
 rm data/DistUpgrade.cfg*

@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=6
+VERSION=7
 
 . ./config
 
@@ -41,7 +41,7 @@ sed 's/, ubuntu-artwork//' debian/control -i
 
 export DEB_BUILD_OPTIONS=nocheck
 
-# Fix update issues on clean installations: http://trisquel.info/es/forum/update-issues-clean-install
+# Fix update issues on clean installations: https://trisquel.info/es/forum/update-issues-clean-install
 sed 's:\(targetdb)\):\1\n        os.system("sudo chmod 644 /target/var/cache/debconf/config.dat"):' bin/ubiquity -i
 
 # Fix https://bugs.launchpad.net/ubuntu/+source/ubiquity/+bug/1080701
@@ -64,7 +64,7 @@ set -e
 
 file="\$1"
 
-FASTEST=http://es.archive.trisquel.info/trisquel/
+FASTEST=https://archive.trisquel.info/trisquel/
 SPEED=1000000000000
 
 for i in \$(grep 'tp:' /usr/share/python-apt/templates/Trisquel.mirrors)
@@ -105,7 +105,7 @@ sed 's/ports.ubuntu.com/archive.trisquel.info/g; s/ubuntu-ports/trisquel/g; s/ub
 sed 's/CC.ports.ubuntu.com/archive.trisquel.info/g; s/.ports.ubuntu.com/archive.trisquel.info/g' -i ./d-i/source/choose-mirror/choose-mirror.c ./d-i/source/choose-mirror/debian/choose-mirror-bin.templates.ftp.sel-in ./d-i/source/choose-mirror/debian/choose-mirror-bin.templates.http-in
 
 # Set Mirrors.masterlist
-wget http://archive.trisquel.info/trisquel/Mirrors.masterlist -O ./d-i/source/choose-mirror/Mirrors.masterlist
+wget https://archive.trisquel.info/trisquel/Mirrors.masterlist -O ./d-i/source/choose-mirror/Mirrors.masterlist
 sed '/Location/d; /Comment/d;' -i ./d-i/source/choose-mirror/Mirrors.masterlist
 cp ./d-i/source/choose-mirror/Mirrors.masterlist ./d-i/source/choose-mirror/Mirrors.masterlist.trisquel
 rm ./d-i/source/choose-mirror/Mirrors.masterlist.ubuntu
@@ -199,8 +199,8 @@ for DIST in $CODENAME $CODENAME-security $CODENAME-updates $CODENAME-backports
 do
     WD=d-i/source/apt-setup/release-files/archive.trisquel.info/$DIST
     mkdir $WD -p
-    wget -r -l1 -np http://archive.trisquel.info/trisquel/dists/$DIST/Release -O $WD/Release
-    wget -r -l1 -np http://archive.trisquel.info/trisquel/dists/$DIST/Release.gpg -O $WD/Release.gpg
+    wget -r -l1 -np https://archive.trisquel.info/trisquel/dists/$DIST/Release -O $WD/Release
+    wget -r -l1 -np https://archive.trisquel.info/trisquel/dists/$DIST/Release.gpg -O $WD/Release.gpg
 done
 
 # Postinstall hacks
