@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2008-2016  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2008-2018  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 #
 
 
-VERSION=1
+VERSION=2
 
 . ./config
 
@@ -34,7 +34,7 @@ for FILE in $PRESERVE; do
   cp $FILE /tmp/preserve --parents -a
 done
 
-sh $DATA/deblob-4.4 --force
+#sh $DATA/deblob-4.4 --force
 sed 's/bnx2.*fw/$(DEBLOBBED)/' -i firmware/Makefile
 
 cp /tmp/preserve/* . -a
@@ -43,8 +43,9 @@ cp /tmp/preserve/* . -a
 rm zfs spl debian/scripts/misc/update-zfs.sh -rf
 #sed '/zfs/d; /spl/d' -i debian.master/reconstruct
 /bin/sed 's/spl-dkms, zfs-dkms//' -i debian/control debian.master/control.d/vars.generic debian.master/control.d/vars.*
-/bin/sed  '/zfs/d' -i debian.master/rules.d/* debian.master/d-i/modules/fs-core-modules debian.master/control.d/generic.inclusion-list debian.master/abi/*/*/*.modules debian/rules debian.master/control.d/vars.*
 /bin/sed '/^define build_zfs/,/^endef/d; /^define install_zfs/,/^endef/d; /zfs/d' -i debian/rules.d/2-binary-arch.mk
+/bin/sed '/ifeq ($(do_zfs),false)/,/endif/d' -i debian/rules
+/bin/sed  '/zfs/d' -i debian.master/rules.d/* debian.master/d-i/modules/fs-core-modules debian.master/control.d/generic.inclusion-list debian.master/abi/*/*/*.modules debian/rules debian.master/control.d/vars.*
 
 # Remove VBox
 rm ubuntu/vbox* -rf
