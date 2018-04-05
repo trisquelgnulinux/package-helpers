@@ -34,7 +34,7 @@ for FILE in $PRESERVE; do
   cp $FILE /tmp/preserve --parents -a
 done
 
-#sh $DATA/deblob-4.4 --force
+sh $DATA/deblob-4.4 --force
 sed 's/bnx2.*fw/$(DEBLOBBED)/' -i firmware/Makefile
 
 cp /tmp/preserve/* . -a
