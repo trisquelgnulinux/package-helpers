@@ -29,6 +29,10 @@ sed 's/.Ubuntu., //' -i ./browser/extensions/activity-stream/css/activity-stream
 
 cp $DATA/onboarding/bootstrap.js browser/extensions/onboarding
 cp $DATA/onboarding/onboarding.js browser/extensions/onboarding/content
+cp $DATA/onboarding/onboarding.properties browser/extensions/onboarding/locales/en-US
+for locale in $(ls -1 $DATA/onboarding/locales/); do
+    cp $DATA/onboarding/locales/$locale/onboarding.properties l10n/$locale/browser/extensions/onboarding
+done
 
 sed '/captivedetect.canonicalURL/s/http.*success.txt//' -i modules/libpref/init/all.js
 
