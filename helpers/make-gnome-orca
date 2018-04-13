@@ -18,7 +18,7 @@
 #
 
 VERSION=2
-EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu artful universe'
+EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu artful main'
 
 . ./config
 
@@ -39,7 +39,7 @@ cat << EOF | patch -p1
  
 EOF
 
-changelog "Backported from zesty, added support for mate"
+changelog "Backported from artful, added support for mate"
 
 compile
 
