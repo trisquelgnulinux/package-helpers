@@ -22,6 +22,8 @@ EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu artful main'
 
 . ./config
 
+sed '/debhelper/s/10/9/' -i debian/control debian/control.in
+
 cat << EOF | patch -p1
 --- a/src/orca/orca.py     2015-11-09 09:07:53.000000000 -0500
 +++ b/src/orca/orca.py  2018-04-01 00:57:01.426307608 -0400
