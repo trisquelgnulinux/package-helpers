@@ -12,7 +12,6 @@
 const {classes: Cc, interfaces: Ci, utils: Cu} = Components;
 Cu.import("resource://gre/modules/Services.jsm");
 
-
 const ABOUT_HOME_URL = "about:home";
 const ABOUT_NEWTAB_URL = "about:newtab";
 
@@ -35,13 +34,14 @@ class Onboarding {
   constructor(contentWindow) {
     this.init(contentWindow);
 
+this._bundle = Services.strings.createBundle("chrome://onboarding/locale/onboarding.properties");
 
  this.keylist = {
   "javascript.enabled": {
     type: "boolean",
     name: "javascript.enabled",
-    label: bundle.GetStringFromName("onboarding.disable-javascript.title"),
-    description: bundle.GetStringFromName("onboarding.disable-javascript.description"),
+    label: this._bundle.GetStringFromName("onboarding.disable-javascript.title"),
+    description: this._bundle.GetStringFromName("onboarding.disable-javascript.description"),
     defaultvalue: true,
     onvalue: false,
     offvalue: true,
@@ -49,8 +49,8 @@ class Onboarding {
   "browser.display.use_document_fonts": {
     type: "integer",
     name: "browser.display.use_document_fonts",
-    label: bundle.GetStringFromName("onboarding.custom-fonts.title"),
-    description: bundle.GetStringFromName("onboarding.custom-fonts.description"),
+    label: this._bundle.GetStringFromName("onboarding.custom-fonts.title"),
+    description: this._bundle.GetStringFromName("onboarding.custom-fonts.description"),
     defaultvalue: 1,
     onvalue: 0,
     offvalue: 1,
@@ -58,8 +58,8 @@ class Onboarding {
   "browser.safebrowsing.provider.mozilla.updateURL": {
     type: "string",
     name: "browser.safebrowsing.provider.mozilla.updateURL",
-    label: bundle.GetStringFromName("onboarding.tracking-protection.title"),
-    description: bundle.GetStringFromName("onboarding.tracking-protection.description"),
+    label: this._bundle.GetStringFromName("onboarding.tracking-protection.title"),
+    description: this._bundle.GetStringFromName("onboarding.tracking-protection.description"),
     defaultvalue: "",
     onvalue: "https://shavar.services.mozilla.com/downloads?client=SAFEBROWSING_ID&appver=%MAJOR_VERSION%&pver=2.2",
     offvalue: "",
@@ -67,8 +67,8 @@ class Onboarding {
   "privacy.firstparty.isolate": {
     type: "boolean",
     name: "privacy.firstparty.isolate",
-    label: bundle.GetStringFromName("onboarding.isolate-request-first-party.title"),
-    description: bundle.GetStringFromName("onboarding.isolate-request-first-party.description"),
+    label: this._bundle.GetStringFromName("onboarding.isolate-request-first-party.title"),
+    description: this._bundle.GetStringFromName("onboarding.isolate-request-first-party.description"),
     defaultvalue: false,
     onvalue: true,
     offvalue: false,
@@ -76,8 +76,8 @@ class Onboarding {
   "extensions.update.enabled": {
     type: "boolean",
     name: "extensions.update.enabled",
-    label: bundle.GetStringFromName("onboarding.auto-update-extensions.title"),
-    description: bundle.GetStringFromName("onboarding.auto-update-extensions.description"),
+    label: this._bundle.GetStringFromName("onboarding.auto-update-extensions.title"),
+    description: this._bundle.GetStringFromName("onboarding.auto-update-extensions.description"),
     defaultvalue: false,
     onvalue: true,
     offvalue: false,
@@ -85,8 +85,8 @@ class Onboarding {
   "network.http.referer.spoofSource": {
     type: "boolean",
     name: "network.http.referer.spoofSource",
-    label: bundle.GetStringFromName("onboarding.spoof-referers.title"),
-    description: bundle.GetStringFromName("onboarding.spoof-referers.description"),
+    label: this._bundle.GetStringFromName("onboarding.spoof-referers.title"),
+    description: this._bundle.GetStringFromName("onboarding.spoof-referers.description"),
     defaultvalue: true,
     onvalue: true,
     offvalue: false,
@@ -94,8 +94,8 @@ class Onboarding {
   "captivedetect.canonicalURL": {
     type: "string",
     name: "captivedetect.canonicalURL",
-    label: bundle.GetStringFromName("onboarding.detect-captative-portal.title"),
-    description: bundle.GetStringFromName("onboarding.detect-captative-portal.description"),
+    label: this._bundle.GetStringFromName("onboarding.detect-captative-portal.title"),
+    description: this._bundle.GetStringFromName("onboarding.detect-captative-portal.description"),
     defaultvalue: "",
     onvalue: "http://detectportal.firefox.com/success.txt",
     offvalue: "",
@@ -103,8 +103,8 @@ class Onboarding {
   "browser.search.geoip.url": {
     type: "string",
     name: "browser.search.geoip.url",
-    label: bundle.GetStringFromName("onboarding.geolocation.title"),
-    description: bundle.GetStringFromName("onboarding.geolocation.description"),
+    label: this._bundle.GetStringFromName("onboarding.geolocation.title"),
+    description: this._bundle.GetStringFromName("onboarding.geolocation.description"),
     defaultvalue: "",
     onvalue: "https://location.services.mozilla.com/v1/country?key=%MOZILLA_API_KEY%",
     offvalue: ""
@@ -113,8 +113,8 @@ class Onboarding {
   "webgl.disabled": {  
     type: "boolean",  
     name: "webgl.disabled",  
-    label: bundle.GetStringFromName("onboarding.webgl.title"),
-    description: bundle.GetStringFromName("onboarding.webgl.description"),
+    label: this._bundle.GetStringFromName("onboarding.webgl.title"),
+    description: this._bundle.GetStringFromName("onboarding.webgl.description"),
     defaultvalue: true,
     onvalue: false,  
     offvalue: true  
@@ -199,9 +199,7 @@ class Onboarding {
                          color:#4A4A4F;
                         `;
     let title = this._window.document.createElement("div");
-      title.innerHTML=`<h2 style="margin:10px 0 5px; font-size:20px">bundle.GetStringFromName("onboarding.privacy-settings.title")</h2>
-          <p style="font-size:14px">bundle.GetStringFromName("These options allow you to tune important aspects of the browser's behavior so you can choose the balance between practicality and privacy that fits your needs. Changes to these settings apply to all existing tabs and windows (but you may need to reload them for the changes to show on them).")</p>
-                    `;
+      title.innerHTML=`<h2 style="margin:10px 0 5px; font-size:20px">` + this._bundle.GetStringFromName("onboarding.privacy-settings.title") + `</h2> <p style="font-size:14px">` + this._bundle.GetStringFromName("onboarding.privacy-settings.description") + `</p>`;
     main.insertBefore(settingsblock, main.childNodes[0]);
     settingsblock.appendChild(title);
 
