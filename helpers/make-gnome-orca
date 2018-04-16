@@ -17,8 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
-EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu artful main'
+VERSION=4
 COMPONENT=main
 
 . ./config
@@ -40,7 +39,7 @@ cat << EOF | patch -p1
  
 EOF
 
-changelog "Backported from artful, added support for mate"
+changelog "Added support for mate"
 
 compile
 
