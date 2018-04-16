@@ -153,7 +153,7 @@ this._bundle = Services.strings.createBundle("chrome://onboarding/locale/onboard
 
   newcheckbox(kind, type, name, label, description, defaultvalue, onvalue, offvalue){
     let content = this._window.document.createElement("div");
-    content.style="border-top: 1px solid #DDDDDD; padding-top:10px";
+    content.style="border-top: 1px solid #DDDDDD; padding-top:10px; width:50%; float:left;";
     if (kind == "addon")
      sendMessageToChrome("check-addon", [{
         name: name,
@@ -209,6 +209,9 @@ this._bundle = Services.strings.createBundle("chrome://onboarding/locale/onboard
     }
     settingsblock.appendChild(this.newcheckbox("addon", null, "uBlock0@raymondhill.net", "uBlock Origin", "Block ads and other intrusing trackers."));
     settingsblock.appendChild(this.newcheckbox("addon", null, "jid1-KtlZuoiikVfFew@jetpack", "GNU LibreJs", "Block nonfree <a href=\"https://www.gnu.org/software/librejs/\">JavaScript</a>."));
+    let closer=this._window.document.createElement("div");
+    closer.style="clear:both";
+    settingsblock.appendChild(closer);
 
   }
 
