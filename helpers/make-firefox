@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=55
+VERSION=56
 
 . ./config
 
@@ -124,6 +124,7 @@ about=Abrowser for Trisquel GNU/Linux
 app.distributor = "trisquel"
 app.distributor.channel = "trisquel"
 app.partner.ubuntu = "trisquel"
+intl.locale.requested=""
 EOF
 
 sed  "s/^MOZ_APP_NAME\t.*/MOZ_APP_NAME\t\t:= abrowser/;" debian/build/config.mk -i
@@ -174,14 +175,12 @@ sed '/Package: @MOZ_PKG_NAME@$/,/Description:/ s/Provides:/Provides: firefox, /'
 # Branding files
 rm browser/branding/{official,aurora,nightly,unofficial} -rf
 cp -a $DATA/branding/ browser/branding/official
-cat << EOF > debian/config/branch.mk
+cat << EOF >> debian/config/branch.mk
 CHANNEL                 = release
 MOZ_WANT_UNIT_TESTS     = 0
-# MOZ_BUILD_OFFICIAL    = 1
+MOZ_BUILD_OFFICIAL      = 0
 MOZ_ENABLE_BREAKPAD     = 0
-
-MOZILLA_REPO = http://hg.mozilla.org/releases/mozilla-release
-L10N_REPO = http://hg.mozilla.org/releases/l10n/mozilla-release
+MOZ_ENABLE_TELEMETRY    = 0
 EOF
 
 cp $DATA/watermark.svg ./browser/extensions/onboarding/content/img/watermark.svg
