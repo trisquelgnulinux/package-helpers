@@ -12,7 +12,6 @@
 const {classes: Cc, interfaces: Ci, utils: Cu} = Components;
 Cu.import("resource://gre/modules/Services.jsm");
 
-
 const ABOUT_HOME_URL = "about:home";
 const ABOUT_NEWTAB_URL = "about:newtab";
 
@@ -35,13 +34,14 @@ class Onboarding {
   constructor(contentWindow) {
     this.init(contentWindow);
 
+this._bundle = Services.strings.createBundle("chrome://onboarding/locale/onboarding.properties");
 
  this.keylist = {
   "javascript.enabled": {
     type: "boolean",
     name: "javascript.enabled",
-    label: "Disable JavaScript",
-    description: "Disabling Javascript greatly improves privacy, security and <a href=\"https://www.gnu.org/philosophy/javascript-trap.html\">freedom</a>, but it will break many sites.",
+    label: this._bundle.GetStringFromName("onboarding.disable-javascript.title"),
+    description: this._bundle.GetStringFromName("onboarding.disable-javascript.description"),
     defaultvalue: true,
     onvalue: false,
     offvalue: true,
@@ -49,8 +49,8 @@ class Onboarding {
   "browser.display.use_document_fonts": {
     type: "integer",
     name: "browser.display.use_document_fonts",
-    label: "Do not load custom fonts",
-    description: "Custom fonts can be used for <a href=\"https://en.wikipedia.org/wiki/Device_fingerprint\">fingerprinting</a>. Disabling them improves privacy but may make some sites look wrong.",
+    label: this._bundle.GetStringFromName("onboarding.custom-fonts.title"),
+    description: this._bundle.GetStringFromName("onboarding.custom-fonts.description"),
     defaultvalue: 1,
     onvalue: 0,
     offvalue: 1,
@@ -58,8 +58,8 @@ class Onboarding {
   "browser.safebrowsing.provider.mozilla.updateURL": {
     type: "string",
     name: "browser.safebrowsing.provider.mozilla.updateURL",
-    label: "Tracking protection",
-    description: "Tracking is the collection of your browsing data across multiple websites. Enabling this feature improves privacy, but will regullarly connect to the Internet to fetch updates to the filters.",
+    label: this._bundle.GetStringFromName("onboarding.tracking-protection.title"),
+    description: this._bundle.GetStringFromName("onboarding.tracking-protection.description"),
     defaultvalue: "",
     onvalue: "https://shavar.services.mozilla.com/downloads?client=SAFEBROWSING_ID&appver=%MAJOR_VERSION%&pver=2.2",
     offvalue: "",
@@ -67,8 +67,8 @@ class Onboarding {
   "privacy.firstparty.isolate": {
     type: "boolean",
     name: "privacy.firstparty.isolate",
-    label: "Isolate requests to First Party domains",
-    description: "This <a href=\"https://www.torproject.org/projects/torbrowser/design/#identifier-linkability\">improves privacy</a>, but it may interfere with login into some sites.",
+    label: this._bundle.GetStringFromName("onboarding.isolate-request-first-party.title"),
+    description: this._bundle.GetStringFromName("onboarding.isolate-request-first-party.description"),
     defaultvalue: false,
     onvalue: true,
     offvalue: false,
@@ -76,8 +76,8 @@ class Onboarding {
   "extensions.update.enabled": {
     type: "boolean",
     name: "extensions.update.enabled",
-    label: "Automatically update extensions",
-    description: "Enabling automated updates is good for security, but would start Internet connections in the background.",
+    label: this._bundle.GetStringFromName("onboarding.auto-update-extensions.title"),
+    description: this._bundle.GetStringFromName("onboarding.auto-update-extensions.description"),
     defaultvalue: false,
     onvalue: true,
     offvalue: false,
@@ -85,8 +85,8 @@ class Onboarding {
   "network.http.referer.spoofSource": {
     type: "boolean",
     name: "network.http.referer.spoofSource",
-    label: "Spoof Referers",
-    description: "<a href=\"https://en.wikipedia.org/wiki/HTTP_referer\">Referers</a> tell sites what link brought you there. This feature greatly improves your privacy, but it may break functionality on some sites.",
+    label: this._bundle.GetStringFromName("onboarding.spoof-referers.title"),
+    description: this._bundle.GetStringFromName("onboarding.spoof-referers.description"),
     defaultvalue: true,
     onvalue: true,
     offvalue: false,
@@ -94,8 +94,8 @@ class Onboarding {
   "captivedetect.canonicalURL": {
     type: "string",
     name: "captivedetect.canonicalURL",
-    label: "Detect captive portal",
-    description: "<a href=\"https://en.wikipedia.org/wiki/Captive_portal\">Captive portals</a> are the sites that control access to public wireless networks in hotels, airports, cafes, etc. The detection service is useful if you connect to such netwoks, but it will start connections automatically.",
+    label: this._bundle.GetStringFromName("onboarding.detect-captative-portal.title"),
+    description: this._bundle.GetStringFromName("onboarding.detect-captative-portal.description"),
     defaultvalue: "",
     onvalue: "http://detectportal.firefox.com/success.txt",
     offvalue: "",
@@ -103,8 +103,8 @@ class Onboarding {
   "browser.search.geoip.url": {
     type: "string",
     name: "browser.search.geoip.url",
-    label: "Enable Geolocation",
-    description: "This is commonly used for maps, weather sites, and some stores. It is better to keep it off unless you really need it.",
+    label: this._bundle.GetStringFromName("onboarding.geolocation.title"),
+    description: this._bundle.GetStringFromName("onboarding.geolocation.description"),
     defaultvalue: "",
     onvalue: "https://location.services.mozilla.com/v1/country?key=%MOZILLA_API_KEY%",
     offvalue: ""
@@ -113,8 +113,8 @@ class Onboarding {
   "webgl.disabled": {  
     type: "boolean",  
     name: "webgl.disabled",  
-    label: "Enable WebGL",  
-    description: "Needed to visualize 3D graphics, but it may expose you to security threats. Enable it only if you really use it.",  
+    label: this._bundle.GetStringFromName("onboarding.webgl.title"),
+    description: this._bundle.GetStringFromName("onboarding.webgl.description"),
     defaultvalue: true,
     onvalue: false,  
     offvalue: true  
@@ -153,7 +153,7 @@ class Onboarding {
 
   newcheckbox(kind, type, name, label, description, defaultvalue, onvalue, offvalue){
     let content = this._window.document.createElement("div");
-    content.style="border-top: 1px solid #DDDDDD; padding-top:10px";
+    content.style="border-top: 1px solid #DDDDDD; padding-top:10px; width:50%; float:left;";
     if (kind == "addon")
      sendMessageToChrome("check-addon", [{
         name: name,
@@ -199,9 +199,7 @@ class Onboarding {
                          color:#4A4A4F;
                         `;
     let title = this._window.document.createElement("div");
-    title.innerHTML=`<h2 style="margin:10px 0 5px; font-size:20px">Privacy settings</h2>
-                        <p style="font-size:14px">These options allow you to tune important aspects of the browser's behavior so you can choose the balance between practicality and privacy that fits your needs. Changes to these settings apply to all existing tabs and windows (but you may need to reload them for the changes to show on them).</p>
-                    `;
+      title.innerHTML=`<h2 style="margin:10px 0 5px; font-size:20px">` + this._bundle.GetStringFromName("onboarding.privacy-settings.title") + `</h2> <p style="font-size:14px">` + this._bundle.GetStringFromName("onboarding.privacy-settings.description") + `</p>`;
     main.insertBefore(settingsblock, main.childNodes[0]);
     settingsblock.appendChild(title);
 
@@ -211,6 +209,9 @@ class Onboarding {
     }
     settingsblock.appendChild(this.newcheckbox("addon", null, "uBlock0@raymondhill.net", "uBlock Origin", "Block ads and other intrusing trackers."));
     settingsblock.appendChild(this.newcheckbox("addon", null, "jid1-KtlZuoiikVfFew@jetpack", "GNU LibreJs", "Block nonfree <a href=\"https://www.gnu.org/software/librejs/\">JavaScript</a>."));
+    let closer=this._window.document.createElement("div");
+    closer.style="clear:both";
+    settingsblock.appendChild(closer);
 
   }
 
