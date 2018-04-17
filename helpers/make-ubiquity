@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=7
+VERSION=8
 
 . ./config
 
@@ -237,6 +237,12 @@ startup=true
 
 [org.mate.interface]
 accessibility=true
+
+[org.gnome.desktop.a11y.applications]
+screen-reader-enabled=true
+
+[org.gnome.desktop.interface]
+toolkit-accessibility=true
 
 [com.canonical.unity-greeter]
 screen-reader=true
