@@ -21,8 +21,10 @@ VERSION=1
 
 . ./config
 
-sed -i 's/Firefox/Abrowser/g' bleachbit/Cleaner.py
-sed -i 's/firefox/abrowser/g' bleachbit/Cleaner.py
+replace Firefox Abrowser .
+replace firefox abrowser .
+
+mv debian/patches/firefox_profiles.patch debian/patches/abrowser_profiles.patch
 
 #Icecat.xml based on
 # https://gist.githubusercontent.com/BrunoReX/5286414/raw/82100ae69a7a896f3626e8011bf4c2abf6323ab2/firefox.xml
