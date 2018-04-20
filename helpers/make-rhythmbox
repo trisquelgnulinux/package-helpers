@@ -18,13 +18,10 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 COMPONENT=main
 
 . ./config
-
-# Show full name on menu
-sed 's/^_Name=Rhythmbox/^_Name=Rhythmbox Music Player/' -i data/rhythmbox.desktop.in.in
 
 for i in 03_magnatune_partner.patch
 do
