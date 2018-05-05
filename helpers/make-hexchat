@@ -18,9 +18,13 @@ VERSION=1
 
 . ./config
 
-rm debian/patches/ubuntu_defaults.patch
-sed -i 's/#hexchat/#trisquel/' src/fe-gtk/joind.c
+rm debian/patches/debian_defaults.patch
+sed '/debian_defaults/d' -i debian/patches/series
+
+# Suggest #trisquel IRC channel
+sed 's/#ubuntu/#trisquel/' -i debian/patches/ubuntu_defaults.patch
 
 changelog "Compiled for Trisquel"
 
 compile
+
