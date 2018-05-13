@@ -151,9 +151,9 @@ this._bundle = Services.strings.createBundle("chrome://onboarding/locale/onboard
     this._window.document.getElementById(id).checked= (val==this.keylist[id].onvalue);
   }
 
-  newcheckbox(kind, type, name, label, description, defaultvalue, onvalue, offvalue){
+  newcheckbox(kind, type, name, label, description, defaultvalue, onvalue, offvalue, clear="none"){
     let content = this._window.document.createElement("div");
-    content.style="border-top: 1px solid #DDDDDD; padding-top:10px; width:50%; float:left;";
+    content.style="border-top: 1px solid #DDDDDD; padding-top:10px; width:33%; float:left; clear:"+clear;
     if (kind == "addon")
      sendMessageToChrome("check-addon", [{
         name: name,
@@ -203,16 +203,23 @@ this._bundle = Services.strings.createBundle("chrome://onboarding/locale/onboard
     main.insertBefore(settingsblock, main.childNodes[0]);
     settingsblock.appendChild(title);
 
+    var counter=0;
+    var clear="none";
     for ( var key in this.keylist){
+      clear="none";
+      if ( counter % 3 == 0 ){
+          counter=0;
+          clear="both";
+      }
+      counter++;
       key = this.keylist[key];
-      settingsblock.appendChild(this.newcheckbox("key", key.type, key.name, key.label, key.description, key.defaultvalue, key.onvalue, key.offvalue));
+      settingsblock.appendChild(this.newcheckbox("key", key.type, key.name, key.label, key.description, key.defaultvalue, key.onvalue, key.offvalue, clear));
     }
+    settingsblock.appendChild(this._window.document.createElement("div").style="clear:both");
+    settingsblock.appendChild(this.newcheckbox("addon", null, "jid1-KtlZuoiikVfFew@jetpack", "GNU LibreJs", "Block nonfree <a href=\"https://www.gnu.org/software/librejs/\">JavaScript</a>. <span style=\"color:red\">(Experimental)</span>"));
+    settingsblock.appendChild(this.newcheckbox("addon", null, "https-everywhere-eff@eff.org", "HTTPS Everywhere", "Extension that encrypts your communications with many major websites, making your browsing more secure."));
     settingsblock.appendChild(this.newcheckbox("addon", null, "uBlock0@raymondhill.net", "uBlock Origin", "Block ads and other intrusing trackers."));
-    settingsblock.appendChild(this.newcheckbox("addon", null, "jid1-KtlZuoiikVfFew@jetpack", "GNU LibreJs", "Block nonfree <a href=\"https://www.gnu.org/software/librejs/\">JavaScript</a>."));
-    let closer=this._window.document.createElement("div");
-    closer.style="clear:both";
-    settingsblock.appendChild(closer);
-
+    settingsblock.appendChild(this._window.document.createElement("div").style="clear:both");
   }
 
   _clearPrefObserver() {
