@@ -9,23 +9,25 @@
 # BrandFullNameInternal is used for some registry and file system values
 # instead of BrandFullName and typically should not be modified.
 !define BrandFullNameInternal "Abrowser"
+!define BrandFullName         "Abrowser"
 !define CompanyName           "Trisquel"
 !define URLInfoAbout          "http://trisquel.info/browser"
 !define URLUpdateInfo         "http://trisquel.info/wiki"
 !define HelpLink              "https://trisquel.info/en/wiki/abrowser-help"
 
-!define URLStubDownload "http://trisquel.info/browser"
-!define URLManualDownload "http://trisquel.info/browser"
-
 ; The OFFICIAL define is a workaround to support different urls for Release and
 ; Beta since they share the same branding when building with other branches that
 ; set the update channel to beta.
 !define OFFICIAL
+!define URLStubDownload32 "http://trisquel.info/browser"
+!define URLStubDownload64 "http://trisquel.info/browser"
+!define URLManualDownload "http://trisquel.info/browser"
+!define URLSystemRequirements "http://trisquel.info/browser"
 !define Channel "release"
 
 # The installer's certificate name and issuer expected by the stub installer
 !define CertNameDownload   "Mozilla Corporation"
-!define CertIssuerDownload "DigiCert Assured ID Code Signing CA-1"
+!define CertIssuerDownload "DigiCert SHA2 Assured ID Code Signing CA"
 
 # Dialog units are used so the UI displays correctly with the system's DPI
 # settings.

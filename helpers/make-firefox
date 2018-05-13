@@ -18,13 +18,30 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=56
+VERSION=57
 
 . ./config
 
 rm debian/control
 
-patch -p1 < $DATA/disable-activity-streams.patch
+# Disable activity-stream antifeatures.
+# These are not condensed into a single sed script to make it fail on individual commands that didn't change the source
+sed '/^const DEFAULT_SITES/,/^])\;/c const DEFAULT_SITES = new Map\([[""]]\);' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
+sed '/\["showSponsored/,/value/s/value: true/value: false/' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
+sed '/\["disableSnippets/,/value/s/value: false/value: true/' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
+sed '/\["telemetry"/,/value/s/value: true/value: false/' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
+sed '/\["section.highlights.includePocket"/,/value/s/value: true/value: false/' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
+sed '/\["telemetry.ping.endpoint"/,/value/s/value: .*/value: ""/' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
+sed '/\["tippyTop.service.endpoint"/,/value/s/value: .*/value: ""/' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
+sed 's/\(read_more_endpoint:\) .http.*/\1 "",/' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
+sed 's/\(stories_endpoint:\) .http.*/\1 "",/' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
+sed 's/\(stories_referrer:\) .http.*/\1 "",/' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
+sed 's/\(privacy_notice_link:\) .http.*/\1 "https:\/\/trisquel.info\/legal",/' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
+sed 's/\(disclaimer_link:\) .http.*/\1 "",/' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
+sed 's/\(topics_endpoint:\) .http.*/\1 "",/' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
+sed '/name: "snippets"/,/value/s/value: true/value: false/' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
+sed '/name: "telemetry"/,/value/s/value: true/value: false/' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
+sed '/name: "section.topstories"/,/return/s/return.*/return false;/' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
 sed 's/.Ubuntu., //' -i ./browser/extensions/activity-stream/css/activity-stream*.css
 
 cp $DATA/onboarding/bootstrap.js browser/extensions/onboarding
@@ -39,34 +56,6 @@ sed '/captivedetect.canonicalURL/s/http.*success.txt//' -i modules/libpref/init/
 # do not alter useragent/platform/oscpu/etc with fingerprinting countermeasure, it makes things worse
 sed '/ShouldResistFingerprinting/,/}/s/^/\/\//' -i ./netwerk/protocol/http/nsHttpHandler.cpp
 sed '/If fingerprinting resistance is on/,/}/s/^/\/\//' -i ./dom/base/Navigator.cpp
-
-# Disabled until the patches work on v57 with moz1382323.patch
-## KDE integration patches from https://www.rosenauer.org/hg/mozilla
-## Use firefox$MAJORVERSION branch if available, otherwise use default
-#MAJORVERSION=$(echo `pkgversion` | /bin/sed 's/\([0-9]\+\).*/\1/')
-#BRANCH=firefox$MAJORVERSION
-#if ! wget --spider https://rosenauer.org/hg/mozilla/log/$BRANCH; then
-#	BRANCH=default
-#fi
-#wget https://rosenauer.org/hg/mozilla/raw-file/$BRANCH/mozilla-kde.patch -O debian/patches/mozilla-kde.patch
-#wget https://rosenauer.org/hg/mozilla/raw-file/$BRANCH/firefox-kde.patch -O debian/patches/abrowser-kde.patch
-#
-## Add to series
-#cat << EOF >> debian/patches/series
-#mozilla-kde.patch
-#abrowser-kde.patch
-#EOF
-#
-## Add kde.js file
-#echo 'pref("browser.preferences.instantApply", false);' > debian/kde.js
-#sed -i '/pre-build/r /dev/stdin' debian/rules << 'EOF'
-#	mkdir -p $(MOZ_DISTDIR)/bin/defaults/pref
-#	cp $(CURDIR)/debian/kde.js $(MOZ_DISTDIR)/bin/defaults/pref/kde.js
-#EOF
-#
-## A line is added to widget/gtk/moz.build by unity-menubar.patch, so we have to fix mozilla-kde.patch
-#sed -i "/widget\/gtk\/moz\.build/,/widget\/gtk\/nsFilePicker\.cpp/{ /chromium/d; /generic/a\ \ \ \ \ '/layout/style',
-#; }" debian/patches/mozilla-kde.patch
 
 # Replace ubufox recommendation
 sed 's/xul-ext-ubufox/xul-ext-youtube-html5-video-player/' -i debian/control.in
@@ -162,7 +151,7 @@ s/abrowser.com/firefox.com/g;
 "
 
 echo "Running batch replace operation"
-find . -type f -not -iregex '.*changelog.*' -not -iregex '.*copyright.*' -execdir /bin/sed --follow-symlinks -i "$SEDSCRIPT" '{}' ';'
+find . -type f -not -iregex '.*changelog.*' -not -iregex '.*copyright.*' -not -iregex '.*third_party/rust.*' -execdir /bin/sed --follow-symlinks -i "$SEDSCRIPT" '{}' ';'
 
 sed -i '2s/^Source:.*/Source: firefox/' debian/control.in
 sed s/ubuntu/trisquel/g debian/distribution.ini -i
@@ -175,6 +164,8 @@ sed '/Package: @MOZ_PKG_NAME@$/,/Description:/ s/Provides:/Provides: firefox, /'
 # Branding files
 rm browser/branding/{official,aurora,nightly,unofficial} -rf
 cp -a $DATA/branding/ browser/branding/official
+# Disable preprocessor
+sed 's/_PP//' -i browser/branding/branding-common.mozbuild
 cat << EOF >> debian/config/branch.mk
 CHANNEL                 = release
 MOZ_WANT_UNIT_TESTS     = 0
@@ -205,13 +196,6 @@ for extension in $(ls -1 $DATA/extensions/); do
   cp $DATA/extensions/$extension -r debian
   echo "debian/$extension @MOZ_ADDONDIR@/extensions/" >> debian/abrowser.install.in
 done
-
-# Disable newtab "What is this" popup and config button
-cat << EOF >> browser/themes/linux/newtab/newTab.css
-#newtab-customize-button, #newtab-intro-what{
-display:none
-}
-EOF
 
 # Disable search field at extensions panel
 #sed  '/header-search/d; /search.placeholder/d' -i toolkit/mozapps/extensions/content/extensions.xul
@@ -248,8 +232,6 @@ sed -i 's/<a\ href\=\"http\:\/\/www.mozilla.org\/\">Mozilla\ Project<\/a>/<a\ hr
 # We went too far...
 #sed -i 's/iceweasel, abrowser, icecat,/iceweasel, firefox, icecat,/g' debian/control.in
 sed '/Provides/s/abrowser-locale/firefox-locale/' -i debian/control.langpacks
-sed 's/Abrowser/Firefox/' -i third_party/rust/idna/src/lib.rs third_party/rust/encoding_rs/.travis.yml third_party/rust/encoding_rs/README.md
-sed 's/Trisquel/Mozilla/' -i third_party/rust/encoding_rs/src/lib.rs browser/components/uitour/UITour-lib.js third_party/rust/mio/README.md
 
 # Restore useragent to Firefox
 sed '/MOZILLA_UAVERSION/ s:Abrowser/:Firefox/:' -i netwerk/protocol/http/nsHttpHandler.cpp
