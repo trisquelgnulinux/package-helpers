@@ -143,7 +143,7 @@ pref("extensions.shield-recipe-client.enabled", false);
 // Canvas fingerprint protection
 pref("privacy.resistFingerprinting", true);
 // Webgl can be used for fingerprinting
-pref("webgl.disabled", true);"
+pref("webgl.disabled", true);
 // Don't reveal your internal IP when WebRTC is enabled
 pref("media.peerconnection.ice.no_host", true);
 
