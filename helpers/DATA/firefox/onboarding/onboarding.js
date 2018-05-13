@@ -215,11 +215,15 @@ this._bundle = Services.strings.createBundle("chrome://onboarding/locale/onboard
       key = this.keylist[key];
       settingsblock.appendChild(this.newcheckbox("key", key.type, key.name, key.label, key.description, key.defaultvalue, key.onvalue, key.offvalue, clear));
     }
-    settingsblock.appendChild(this._window.document.createElement("div").style="clear:both");
+    let closer=this._window.document.createElement("div");
+    closer.style="clear:both";
+    settingsblock.appendChild(closer);
     settingsblock.appendChild(this.newcheckbox("addon", null, "jid1-KtlZuoiikVfFew@jetpack", "GNU LibreJs", "Block nonfree <a href=\"https://www.gnu.org/software/librejs/\">JavaScript</a>. <span style=\"color:red\">(Experimental)</span>"));
     settingsblock.appendChild(this.newcheckbox("addon", null, "https-everywhere-eff@eff.org", "HTTPS Everywhere", "Extension that encrypts your communications with many major websites, making your browsing more secure."));
     settingsblock.appendChild(this.newcheckbox("addon", null, "uBlock0@raymondhill.net", "uBlock Origin", "Block ads and other intrusing trackers."));
-    settingsblock.appendChild(this._window.document.createElement("div").style="clear:both");
+    let closer2=this._window.document.createElement("div");
+    closer2.style="clear:both";
+    settingsblock.appendChild(closer2);
   }
 
   _clearPrefObserver() {
