@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 #    Copyright (C) 2014  Salman Mohammadi <salman@ubuntu.ir>
-#    Copyright (C) 2015  Francisco Javier Parra <franparpe@openmailbox.org>
+#    Copyright (C) 2015  Francisco Javier Parra <franparpe@firemail.cc>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 
 . ./config
 
@@ -32,12 +32,12 @@ EOF
 cat << EOF > ubuntu.session
 [GNOME Session]
 Name=Ubuntu
-RequiredComponents=unity-settings-daemon;compiz;
+RequiredComponents=unity-settings-daemon;
 DesktopName=Unity
 EOF
 
 # this creates the desktop file for the session to exists
-cat <<EOF > ubuntu.desktop
+cat << EOF > ubuntu.desktop
 [Desktop Entry]
 Name=Unity
 Comment=This session logs you into Unity
@@ -45,7 +45,7 @@ Exec=gnome-session --session=ubuntu
 TryExec=unity
 Icon=
 Type=Application
-X-LightDM-DesktopName=Unity
+DesktopNames=Unity
 X-Ubuntu-Gettext-Domain=gnome-session-3.0
 EOF
 
