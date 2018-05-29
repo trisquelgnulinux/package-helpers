@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2013  Rubén Rodríguez <ruben@trisquel.info>
+#    Copyright (C) 2013-2018  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,17 +17,17 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 . ./config
 
 
 rm ./debian/control.d/signed-generic
 
-sed 's/, linux-firmware//' -i debian/control ./debian/control.d/generic
-sed 's/Linux/Linux-libre/g' -i debian/control ./debian/control.d/generic
+sed 's/linux-firmware/firmware-linux-free/' -i debian/control ./debian/control.d/generic debian/control.d/lowlatency
+sed 's/Linux/Linux-libre/g' -i debian/control ./debian/control.d/generic debian/control.d/lowlatency
 sed '/signed/,/^$/ d' -i debian/control
+sed 's/, intel-microcode \[amd64 i386\]//; s/, amd64-microcode \[amd64 i386\]//;' debian/control debian/control.d/generic debian/control.d/lowlatency -i
 
 changelog "Removed linux-firmware dependency, renamed release for Trisquel"
 
 compile
-
