@@ -94,6 +94,7 @@ apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver keyserver.ubuntu.
 # Debian gpg keys
 apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver keyserver.ubuntu.com --recv-keys 9D6D8F6BC857C906 > /dev/null
 apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver keyserver.ubuntu.com --recv-keys 8B48AD6246925553 > /dev/null
+apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver keyserver.ubuntu.com --recv-keys 7638D0442B90D010 > /dev/null
 fi
 
 # Also import the repository key optionally listed in the helper
