@@ -18,12 +18,11 @@
 #
 
 VERSION=1
-
 . ./config
 
 sed 's/ and Debian Icedove//' -i debian/control
 sed 's/${xpi:Depends}/icedove/' -i debian/control
-sed 's/Recommends:.*/Recommends: pinentry-x11/' -i debian/control
+sed '/xpi:Recommends/d' -i debian/control
 sed 's/Thunderbird/Icedove/' -i debian/control
 sed '/Enhances/d' -i debian/control
 
