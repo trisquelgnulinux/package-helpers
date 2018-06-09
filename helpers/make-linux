@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2008-2015  Rubén Rodríguez <ruben@trisquel.info>
+#    Copyright (C) 2008-2018  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 #
 
 
-VERSION=2
+VERSION=3
 
 . ./config
 
@@ -31,11 +31,10 @@ sh $DATA/deblob-3.13 --force
 rm firmware -rf
 cp -a $DATA/firmware .
 
-# Compile with less modules and avoid abi check
-echo 'skipmodule = true' >> debian.master/rules.d/0-common-vars.mk
-echo 'skipabi = true' >> debian.master/rules.d/0-common-vars.mk
-echo 'skipmodule = true' >> debian/rules.d/0-common-vars.mk
-echo 'skipabi = true' >> debian/rules.d/0-common-vars.mk
+# For abi calculation, start counting from the previous release (upstream)
+sed '/^revisions :=/ s/tac/tail -n +3 | tac/' debian/rules.d/0-common-vars.mk -i
+# But keep the trisquel version number for $revision
+rpl 'revision ?= $(word $(words $(revisions)),$(revisions))' 'revision := $(shell sed -n "1 s/^$(src_pkg_name)\ .*($(release)-\(.*\)).*$$/\1/p" $(DEBIAN)/changelog)' debian/rules.d/0-common-vars.mk
 
 line=$(grep -n ')-Ubuntu' debian/rules.d/0-common-vars.mk|cut -d: -f1)
 sed $(expr $line - 1 ),$(expr $line + 1 )d debian/rules.d/0-common-vars.mk -i

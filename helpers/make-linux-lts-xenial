@@ -18,7 +18,7 @@
 #
 
 
-VERSION=1
+VERSION=2
 
 . ./config
 
@@ -52,13 +52,26 @@ rm ubuntu/vbox* -rf
 sed /vbox/d -i debian.master/info/RECONCILE debian.master/control.d/generic.inclusion-list ubuntu/Makefile debian.xenial/control.d/generic.inclusion-list
 sed '/vbox/d' -i debian.master/reconstruct
 
-# Compile with less modules and avoid abi check
-echo 'skipmodule = true' >> debian.master/rules.d/0-common-vars.mk
-echo 'skipabi = true' >> debian.master/rules.d/0-common-vars.mk
-echo 'skipmodule = true' >> debian.xenial/rules.d/0-common-vars.mk
-echo 'skipabi = true' >> debian.xenial/rules.d/0-common-vars.mk
-echo 'skipmodule = true' >> debian/rules.d/0-common-vars.mk
-echo 'skipabi = true' >> debian/rules.d/0-common-vars.mk
+# The upstream release number for abi is on line 7 of the trisquel changelog, not 1.
+#sed '/^release :=/s/1s/7s/' debian/rules.d/0-common-vars.mk -i
+# For abi calculation, start counting from the previous release (upstream)
+sed '/^revisions :=/ s/tac/tail -n +3 | tac/' debian/rules.d/0-common-vars.mk -i
+# But keep the trisquel version number for $revision
+rpl 'revision ?= $(word $(words $(revisions)),$(revisions))' 'revision := $(shell sed -n "1 s/^$(src_pkg_name)\ .*($(release)-\(.*\)).*$$/\1/p" $(DEBIAN)/changelog)' debian/rules.d/0-common-vars.mk
+
+# Ignore the missing modules we remove
+cat << EOF > debian.master/abi/$(ls debian.master/abi/ -1)/modules.ignore
+spl
+splat
+vboxguest
+vboxsf
+vboxvideo
+zavl
+zcommon
+znvpair
+zpios
+zunicode
+EOF
 
 line=$(grep -n ')-Ubuntu' debian/rules.d/0-common-vars.mk|cut -d: -f1)
 sed $(expr $line - 1 ),$(expr $line + 1 )d debian/rules.d/0-common-vars.mk -i
@@ -82,11 +95,15 @@ tee -a debian.xenial/config/config.common.trisquel << EOF >> debian.master/confi
 CONFIG_IOSCHED_BFQ=y
 CONFIG_CGROUP_BFQIO=y
 CONFIG_BFQ_GROUP_IOSCHED=y
-# CONFIG_DEFAULT_BFQ is not set
+CONFIG_DEFAULT_BFQ=n
 EOF
 cat << EOF >> debian.master/config/i386/config.flavour.lowlatency
 CONFIG_DEFAULT_BFQ=y
-CONFIG_DEFAULT_IOSCHED="BFQ"
+CONFIG_DEFAULT_IOSCHED="bfq"
+EOF
+cat << EOF >> debian.master/config/amd64/config.flavour.lowlatency
+CONFIG_DEFAULT_BFQ=y
+CONFIG_DEFAULT_IOSCHED="bfq"
 EOF
 cp debian.master/config/i386/config.flavour.lowlatency debian.master/config/amd64/config.flavour.lowlatency
 cp debian.master/config/i386/config.flavour.lowlatency debian.xenial/config/i386/config.flavour.lowlatency
