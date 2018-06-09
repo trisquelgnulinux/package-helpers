@@ -40,6 +40,11 @@ line=$(grep -n ')-Ubuntu' debian/rules.d/0-common-vars.mk|cut -d: -f1)
 sed $(expr $line - 1 ),$(expr $line + 1 )d debian/rules.d/0-common-vars.mk -i
 sed s/family=ubuntu/family=trisquel/ -i debian/rules.d/0-common-vars.mk
 
+# Ignore the missing modules we remove
+cat << EOF > debian.master/abi/$(ls debian.master/abi/ -1)/modules.ignore
+tcm_qla2xxx
+EOF
+
 rename s/ubuntu/trisquel/ debian.*/config/config.common.ubuntu 
 
 #sed 's/Linux/Linux-libre/g' debian/control debian/control.stub -i
