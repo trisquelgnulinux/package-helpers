@@ -106,7 +106,7 @@ CONFIG_DEFAULT_BFQ=y
 CONFIG_DEFAULT_IOSCHED="bfq"
 EOF
 cp debian.master/config/i386/config.flavour.lowlatency debian.xenial/config/i386/config.flavour.lowlatency
-cp debian.xenial/config/amd64/config.flavour.lowlatency debian.xenial/config/amd64/config.flavour.lowlatency
+cp debian.master/config/amd64/config.flavour.lowlatency debian.xenial/config/amd64/config.flavour.lowlatency
 
 # Disable using udev as a fallback for firmware loading
 replace "CONFIG_FW_LOADER_USER_HELPER=y" "CONFIG_FW_LOADER_USER_HELPER=n" debian.master/config
