@@ -23,6 +23,7 @@ VERSION=1
 rm ./debian/control.d/signed-generic ./debian/control.d/signed-lowlatency ./debian/control.d/powerpc*
 
 sed 's/, linux-firmware//' -i debian/control ./debian/control.d/generic
+sed 's/, \(intel\|amd64\)-microcode \[amd64 i386\]//g' -i debian/control ./debian/control.d/generic
 sed 's/Ubuntu/upstream/' -i debian/control
 sed 's/Linux/Linux-libre/g' -i debian/control ./debian/control.d/generic
 sed '/signed/,/^$/ d' -i debian/control
