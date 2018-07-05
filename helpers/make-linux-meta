@@ -17,13 +17,13 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
+VERSION=4
 . ./config
 
 
 rm ./debian/control.d/signed-generic
 
-sed 's/linux-firmware/firmware-linux-free/' -i debian/control ./debian/control.d/generic debian/control.d/lowlatency
+sed 's/, linux-firmware//' -i debian/control ./debian/control.d/generic
 sed 's/Linux/Linux-libre/g' -i debian/control ./debian/control.d/generic debian/control.d/lowlatency
 sed '/signed/,/^$/ d' -i debian/control
 sed 's/, intel-microcode \[amd64 i386\]//; s/, amd64-microcode \[amd64 i386\]//;' debian/control debian/control.d/generic debian/control.d/lowlatency -i
