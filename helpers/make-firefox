@@ -22,6 +22,7 @@ VERSION=58
 
 . ./config
 
+
 rm debian/control
 
 # Disable activity-stream antifeatures.
@@ -36,8 +37,6 @@ sed '/\["tippyTop.service.endpoint"/,/value/s/value: .*/value: ""/' -i browser/e
 sed 's/\(read_more_endpoint:\) .http.*/\1 "",/' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
 sed 's/\(stories_endpoint:\) .http.*/\1 "",/' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
 sed 's/\(stories_referrer:\) .http.*/\1 "",/' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
-sed 's/\(privacy_notice_link:\) .http.*/\1 "https:\/\/trisquel.info\/legal",/' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
-sed 's/\(disclaimer_link:\) .http.*/\1 "",/' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
 sed 's/\(topics_endpoint:\) .http.*/\1 "",/' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
 sed '/name: "snippets"/,/value/s/value: true/value: false/' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
 sed '/name: "telemetry"/,/value/s/value: true/value: false/' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
@@ -68,7 +67,7 @@ pref("datareporting.healthreport.infoURL", "https://trisquel.info/legal");
 EOF
 cp toolkit/components/telemetry/healthreport-prefs.js mobile/android/chrome/content/healthreport-prefs.js
 
-sed 's%https://www.mozilla.org/legal/privacy/%https://trisquel.info/legal%' -i ./modules/libpref/init/all.js ./browser/app/profile/firefox.js ./toolkit/content/aboutRights.xhtml
+sed 's%https://www.mozilla.org/legal/privacy/%https://trisquel.info/legal%' -i ./browser/app/profile/firefox.js ./toolkit/content/aboutRights.xhtml
 
 #sed 's%https://www.mozilla.org/firefox/central/%https://trisquel.info/browser%' -i browser/base/content/browser-appmenu.inc
 
