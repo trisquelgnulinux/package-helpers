@@ -16,6 +16,12 @@ XPCOMUtils.defineLazyModuleGetters(this, {
   AddonManager: "resource://gre/modules/AddonManager.jsm",
 });
 
+XPCOMUtils.defineLazyServiceGetter(this, "resProto",
+                                   "@mozilla.org/network/protocol;1?name=resource",
+                                   "nsISubstitutingProtocolHandler");
+
+const RESOURCE_HOST = "onboarding";
+
 const {PREF_STRING, PREF_BOOL, PREF_INT} = Ci.nsIPrefBranch;
 
 const BROWSER_READY_NOTIFICATION = "browser-delayed-startup-finished";
@@ -50,24 +56,9 @@ function setPrefs(type, name, value) {
   }
 }
 
+async function flip(id){
+  var addonObj = await AddonManager.getAddonByID(id);
 
-/**
- * Listen and process events from content.
- */
-function initContentMessageListener() {
-  Services.mm.addMessageListener("Onboarding:OnContentMessage", msg => {
-    setPrefs(type, name, value);
-  });
-}
-
-function flip(id){
-  var addonObj=-1;
-  AddonManager.getAddonByID(id, function(addon) {
-    addonObj=addon;
-  });
-  var thread = Components.classes["@mozilla.org/thread-manager;1"].getService().currentThread;
-  while (addonObj == null || addonObj == -1)
-  thread.processNextEvent(true);
   addonObj.userDisabled = addonObj.isActive;
   if ( addonObj.operationsRequiringRestart != 0)
       Services.mm.broadcastAsyncMessage("Onboarding:needsrestart");
@@ -78,14 +69,9 @@ function flip(id){
   });
 }
 
-function checkaddon(id){
-  var addonObj=-1;
-  AddonManager.getAddonByID(id, function(addon) {
-    addonObj=addon;
-  });
-  var thread = Components.classes["@mozilla.org/thread-manager;1"].getService().currentThread;
-  while (addonObj == -1)
-    thread.processNextEvent(true);
+async function checkaddon(id){
+  var addonObj = await AddonManager.getAddonByID(id);
+
   if (addonObj != null)
     Services.mm.broadcastAsyncMessage("Onboarding:message-from-chrome", {
       id : id,
@@ -156,6 +142,10 @@ function install(aData, aReason) {}
 function uninstall(aData, aReason) {}
 
 function startup(aData, aReason) {
+  resProto.setSubstitutionWithFlags(RESOURCE_HOST,
+                                    Services.io.newURI("chrome/content/", null, aData.resourceURI),
+                                    resProto.ALLOW_CONTENT_ACCESS);
+
   // Cache startup data which contains stuff like the version number, etc.
   // so we can use it when we init the telemetry
   startupData = aData;
