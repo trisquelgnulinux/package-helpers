@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 
 . ./config
 
@@ -33,8 +33,7 @@ for FILE in $PRESERVE; do
   cp $FILE /tmp/preserve --parents -a
 done
 
-sh $DATA/deblob-4.13 --force
-sed 's/bnx2.*fw/$(DEBLOBBED)/' -i firmware/Makefile
+sh $DATA/deblob-4.15 --force
 
 echo "Reverting deblobbing for files patched by silent-accept-firmware"
 cp /tmp/preserve/* . -av
