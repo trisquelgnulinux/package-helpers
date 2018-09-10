@@ -25,5 +25,9 @@ patch -p1 < $DATA/screensaver-nounredir.patch
 
 changelog "Customize marco-compton settings"
 
+patch -p1 < $DATA/trisquel-panel-layout.patch
+
+changelog "Add trisquel panel layout"
+
 compile
 

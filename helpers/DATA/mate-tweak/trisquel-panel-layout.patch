@@ -1,0 +1,12 @@
+--- a/mate-tweak	2018-09-10 14:05:02.386301650 -0700
++++ b/mate-tweak	2018-09-10 14:06:22.477112303 -0700
+@@ -874,6 +874,9 @@
+             current_layout = layout.replace('.layout', '').replace('/usr/share/mate-panel/layouts/', '');
+             panels.append([_('Custom: ') + current_layout, current_layout])
+ 
++        if self.panel_layout_exists('trisquel'):
++            panels.append([_("Trisquel"), "trisquel"])
++
+         if self.dock is not None:
+             if self.panel_layout_exists('eleven'):
+                 panels.append([_("Cupertino"), "eleven"])
