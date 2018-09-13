@@ -24,6 +24,21 @@ VERSION=4
 #Remove game subcategories
 cp $DATA/applications.menu menu-data/applications.menu
 
+# Rebrand Firefox and Thunderbird
+cp $DATA/menu-data/icons/* menu-data/icons
+
+cp menu-data/firefox\:firefox.desktop menu-data/abrowser\:abrowser.desktop
+sed 's/firefox/abrowser/g' -i menu-data/abrowser\:abrowser.desktop
+sed 's/Firefox/Abrowser/g' -i menu-data/abrowser\:abrowser.desktop
+
+cp menu-data/firefox\:firefox.desktop menu-data/icecat\:icecat.desktop
+sed 's/firefox/icecat/g' -i menu-data/icecat\:icecat.desktop
+sed 's/Firefox/Icecat/g' -i menu-data/icecat\:icecat.desktop
+
+cp menu-data/thunderbird\:thunderbird.desktop menu-data/icedove\:icedove.desktop
+sed 's/thunderbird/icedove/g' -i menu-data/icedove\:icedove.desktop
+sed 's/Thunderbird/Icedove/g' -i menu-data/icedove\:icedove.desktop
+
 # We remove any info about non-free packages
 egrep -lr 'X-AppInstall-Section=(multiverse|restricted)' . | xargs -r rm
 for i in firefox jockey ndisgtk chromium-browser bughugger testdrive menueditor lp-review-list groundcontrol gstreamer nvidia dell-recovery ubufox thunderbird
@@ -39,6 +54,7 @@ find -name *.desktop -exec sed -i 's/X-AppInstall-Section=universe/X-AppInstall-
 find -name *buntu*desktop -exec rm {} \;
 #rm menu-data/uck.desktop
 sed -i '/buntu/d' debian/install
+
 changelog "Removed references to non-free apps"
 
 compile
