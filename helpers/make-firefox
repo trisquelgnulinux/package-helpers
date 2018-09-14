@@ -88,10 +88,6 @@ sed "s/Provides.*/Provides: firefox-locale-@LANGCODE@/" -i debian/control.langpa
 sed -i /ubuntu-bookmarks/d debian/patches/series
 rm debian/patches/ubuntu-bookmarks*
 
-# Remove Ubuntu l10n search preferences
-sed -i /ubuntu-search-defaults/d debian/patches/series
-rm debian/patches/ubuntu-search-defaults*
-
 #Unbrand url codes for google and amazon
 find debian/searchplugins |grep google| xargs -i /bin/sed '/ubuntu/d; /channel/d' -i {}
 find debian/searchplugins |grep amazon| xargs -i /bin/sed '/canoniccom/d;' -i {}
@@ -175,11 +171,6 @@ EOF
 
 cp $DATA/watermark.svg ./browser/extensions/onboarding/content/img/watermark.svg
 
-# Replace about:home
-rm browser/base/content/abouthome -rf
-cp $DATA/abouthome -a browser/base/content
-sed '/abouthome/s/*/ /' -i ./browser/base/jar.mn
-
 # Delete stuff we don't use and that may contain trademaked logos
 rm -rf ./browser/metro ./addon-sdk/source/doc/static-files/media ./browser/themes/windows ./browser/themes/osx ./b2g
 
@@ -187,7 +178,7 @@ rm -rf ./browser/metro ./addon-sdk/source/doc/static-files/media ./browser/theme
 cp $DATA/bookmarks.html.in browser/locales/generic/profile/bookmarks.html.in
 
 #Trisquel custom search engines
-cp $DATA/searchplugins/*.xml debian/searchplugins/en-US/
+cp $DATA/searchplugins/*.xml debian/searchplugins/
 cp $DATA/searchplugins/searchplugins.conf debian/config/
 
 # install extensions
