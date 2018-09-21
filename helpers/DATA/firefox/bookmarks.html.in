@@ -1,20 +1,17 @@
 #filter substitution
-#include @BOOKMARKS_INCLUDE_DIR@/bookmarks.inc
-#define ja_jp_mac ja-JP-mac
-#if AB_CD == ja_jp_mac
-#define AB_CD ja
-#endif
-<!DOCTYPE NETSCAPE-Bookmark-file-1>
-<!-- This is an automatically generated file.
-     It will be read and overwritten.
-     DO NOT EDIT! -->
-<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
-<TITLE>Bookmarks</TITLE>
-<H1>Bookmarks Menu</H1>
+#include @BOOKMARKS_INCLUDE_PATH@
 
-<DL><p>
-    <DT><H3 ADD_DATE="1245542278" LAST_MODIFIED="1245543070" PERSONAL_TOOLBAR_FOLDER="true">@bookmarks_toolbarfolder@</H3>
-<DD>@bookmarks_toolbarfolder_description@
-    <DL><p>
-    </DL><p>
-</DL><p>
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+<!DOCTYPE NETSCAPE-Bookmark-file-1>
+<meta charset="UTF-8">
+<title>@bookmarks_title@</title>
+<h1>@bookmarks_heading@</h1>
+
+<dl><p>
+    <dt><h3 personal_toolbar_folder="true">@bookmarks_toolbarfolder@</h3></dt>
+    <dd>@bookmarks_toolbarfolder_description@
+        <dl>
+        </dl>
+</dl>
