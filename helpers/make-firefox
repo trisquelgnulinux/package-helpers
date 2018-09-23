@@ -179,7 +179,7 @@ cp $DATA/bookmarks.html.in browser/locales/generic/profile/bookmarks.html.in
 
 #Trisquel custom search engines
 cp $DATA/searchplugins/*.xml debian/searchplugins/
-sed '/additions/,$d' debian/config/searchplugins.conf
+sed '/additions/,$d' debian/config/searchplugins.conf -i
 cat << EOF >> debian/config/searchplugins.conf
   "additions": [
     {
