@@ -185,14 +185,12 @@ cat << EOF >> debian/config/searchplugins.conf
     {
       "name": "Trisquel",
       "include_locales": [ "*" ],
-      "exclude_locales": [],
-      "source": "en-US/trisquel.xml"
+      "engine": "trisquel"
     },
     {
       "name": "Trisquel packages",
       "include_locales": [ "*" ],
-      "exclude_locales": [],
-      "source": "en-US/trisquel-packages.xml"
+      "engine": "trisquel-packages"
     }
   ]
 }
