@@ -4210,7 +4210,7 @@ set_except () {
     # been reviewed by the FSF.  So let's keep on assuming it's
     # non-Free, until we get a definitive answer.
     blobname 'am335x-pm-firmware\.elf' Documentation/devicetree/bindings/remoteproc/wkup_m3_rproc.txt
-    blobname 'rtl_bt[/]rtl\(8723[ab]\|8821a\|8761a\)_fw\.bin' drivers/bluetooth/btrtl.c
+    blobname 'rtl_bt[/]rtl\(8723[abd]\|8821a\|8761a\|8821c\)_\(config\|fw\)\.bin' drivers/bluetooth/btrtl.c
     blobname 'radeon[/]\(bonaire\|kabini\|kaveri\|hawaii\|mullins\)_uvd\.bin' drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c
     blobname 'amdgpu[/]\(tonga\|carrizo\)_uvd\.bin' drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c
     blobname 'radeon[/]\(bonaire\|kabini\|kaveri\|hawaii\|mullins\)_vce\.bin' drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c
