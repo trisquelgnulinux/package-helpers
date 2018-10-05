@@ -250,6 +250,52 @@ sed s/_temp_/AbrowserProfileMigrator/ -i browser/components/migration/moz.build
 # js settings
 cat $DATA/settings.js >> debian/vendor-abrowser.js
 
+#################
+# Android stuff #
+#################
+
+# Settings
+cat << EOF >> mobile/android/confvars.sh
+# Abrowser settings
+MOZ_APP_BASENAME=Abrowser
+MOZ_APP_VENDOR=Trisquel
+MOZ_PAY=0
+MOZ_SERVICES_HEALTHREPORT=0
+MOZ_SERVICES_HEALTHREPORTER=0
+MOZ_SERVICES_METRICS=0
+MOZ_DATA_REPORTING=0
+MOZ_DEVICES=0
+MOZ_ANDROID_GOOGLE_PLAY_SERVICES=0
+MOZ_TELEMETRY_REPORTING=0
+MOZ_ADDON_SIGNING=0
+EOF
+
+sed '/SENDERID/d' -i mobile/android/app/mobile.js
+
+# Fix locale
+cat << EOF >> mobile/locales/en-US/chrome/region.properties
+browser.search.defaultenginename=DuckDuckGo
+browser.search.order.1=DuckDuckGo
+browser.search.order.2=Google
+browser.search.order.3=Yahoo
+browser.suggestedsites.restricted_mozilla.url=https://www.trisquel.info
+browser.suggestedsites.webmaker.title=GNU Project
+browser.suggestedsites.webmaker.url=https://www.gnu.org
+EOF
+
+sed -i '/aboutPage.logoTrademark/d' \
+mobile/android/locales/en-US/chrome/about.dtd
+echo -e '\n<!ENTITY aboutPage.logoTrademark                "Abrowser and the Abrowser logos are trademarks of the Free Software Foundation.">' >> \
+mobile/android/locales/en-US/chrome/about.dtd
+
+# Branding
+rm mobile/android/branding/{official,unofficial,beta,nightly} -rf
+cp -r $DATA/android/branding/ mobile/android/branding/official
+cp $DATA/android/mobile.ico mobile/android/app/
+cp $DATA/android/images/* mobile/android/themes/core/images/
+cp -r $DATA/android/res/main/* mobile/android/app/src/main/res/
+cp -r $DATA/android/res/photon/* mobile/android/app/src/photon/res/
+
 # Postinst script to manage profile migration and system links
 echo '
 
