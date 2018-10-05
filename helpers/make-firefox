@@ -290,11 +290,11 @@ mobile/android/locales/en-US/chrome/about.dtd
 
 # Branding
 rm mobile/android/branding/{official,unofficial,beta,nightly} -rf
-cp -r $DATA/android/branding/ mobile/android/branding/official
+cp -a $DATA/android/branding/ mobile/android/branding/official
 cp $DATA/android/mobile.ico mobile/android/app/
 cp $DATA/android/images/* mobile/android/themes/core/images/
-cp -r $DATA/android/res/main/* mobile/android/app/src/main/res/
-cp -r $DATA/android/res/photon/* mobile/android/app/src/photon/res/
+cp -a $DATA/android/res/main/* mobile/android/app/src/main/res/
+cp -a $DATA/android/res/photon/* mobile/android/app/src/photon/res/
 
 # Postinst script to manage profile migration and system links
 echo '
