@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 
 . ./config
 
@@ -55,6 +55,10 @@ echo 'skipmodule = true' >> debian.master/rules.d/0-common-vars.mk
 echo 'skipabi = true' >> debian.master/rules.d/0-common-vars.mk
 echo 'skipmodule = true' >> debian/rules.d/0-common-vars.mk
 echo 'skipabi = true' >> debian/rules.d/0-common-vars.mk
+
+# Do not label packages as unsigned
+sed '/bin_pkg_name_unsigned/s/linux-image-unsigned/linux-image/' -i debian/rules.d/0-common-vars.mk
+sed 's/.unsigned//' -i debian/scripts/control-create
 
 line=$(grep -n ')-Ubuntu' debian/rules.d/0-common-vars.mk|cut -d: -f1)
 sed $(expr $line - 1 ),$(expr $line + 1 )d debian/rules.d/0-common-vars.mk -i
