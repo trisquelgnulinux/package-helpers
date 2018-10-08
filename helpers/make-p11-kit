@@ -17,25 +17,12 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-# build-dep tree:
-#
-# ring
-#  restbed libsecp256k1
-#  ffmpeg
-#   libmysofa libopenmpt
-#  opendht
-#   msgpack argon2
-#  gnutls28
-#   libtasn1-6
-#   unbound
-#   libunistring
-#   p11-kit
-
 VERSION=1
-EXTERNAL='deb-src http://ftp.us.debian.org/debian testing main'
+EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu bionic main universe'
+REPOKEY=7638D0442B90D010
 
 . ./config
 
-changelog "Backported from debian testing"
+changelog "Backported from bionic"
 
 compile
