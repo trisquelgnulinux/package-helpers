@@ -23,6 +23,8 @@ REPOKEY=7638D0442B90D010
 
 . ./config
 
+sed '/googletest/d' -i debian/control
+
 changelog "Backported from bionic"
 
 compile
