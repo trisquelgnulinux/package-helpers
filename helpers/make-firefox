@@ -285,7 +285,7 @@ EOF
 
 sed -i '/aboutPage.logoTrademark/d' \
 mobile/android/locales/en-US/chrome/about.dtd
-echo -e '\n<!ENTITY aboutPage.logoTrademark                "Abrowser and the Abrowser logos are trademarks of the Free Software Foundation.">' >> \
+echo -e '\n<!ENTITY aboutPage.logoTrademark "">' >> \
 mobile/android/locales/en-US/chrome/about.dtd
 
 # Branding
