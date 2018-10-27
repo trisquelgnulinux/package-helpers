@@ -232,3 +232,7 @@ user_pref("browser.newtabpage.activity-stream.tippyTop.service.endpoint", "");
 // Enable xrender
 pref("gfx.xrender.enabled",true);
 
+// Disable push notifications
+pref("dom.webnotifications.enabled",false);
+pref("dom.webnotifications.serviceworker.enabled",false);
+pref("dom.push.enabled",false);
