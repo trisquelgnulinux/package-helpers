@@ -27,21 +27,22 @@ rm debian/control
 
 # Disable activity-stream antifeatures.
 # These are not condensed into a single sed script to make it fail on individual commands that didn't change the source
-sed '/^const DEFAULT_SITES/,/^])\;/c const DEFAULT_SITES = new Map\([[""]]\);' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
-sed '/\["showSponsored/,/value/s/value: true/value: false/' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
-sed '/\["disableSnippets/,/value/s/value: false/value: true/' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
-sed '/\["telemetry"/,/value/s/value: true/value: false/' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
-sed '/\["section.highlights.includePocket"/,/value/s/value: true/value: false/' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
-sed '/\["telemetry.ping.endpoint"/,/value/s/value: .*/value: ""/' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
-sed '/\["tippyTop.service.endpoint"/,/value/s/value: .*/value: ""/' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
-sed 's/\(read_more_endpoint:\) .http.*/\1 "",/' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
-sed 's/\(stories_endpoint:\) .http.*/\1 "",/' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
-sed 's/\(stories_referrer:\) .http.*/\1 "",/' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
-sed 's/\(topics_endpoint:\) .http.*/\1 "",/' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
-sed '/name: "snippets"/,/value/s/value: true/value: false/' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
-sed '/name: "telemetry"/,/value/s/value: true/value: false/' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
-sed '/name: "section.topstories"/,/return/s/return.*/return false;/' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
-sed 's/.Ubuntu., //' -i ./browser/extensions/activity-stream/css/activity-stream*.css
+ActivityStream=browser/components/newtab/lib/ActivityStream.jsm
+sed '/^const DEFAULT_SITES/,/^])\;/c const DEFAULT_SITES = new Map\([[""]]\);' -i $ActivityStream
+sed '/\["showSponsored/,/value/s/value: true/value: false/' -i $ActivityStream
+sed '/\["disableSnippets/,/value/s/value: false/value: true/' -i $ActivityStream
+sed '/\["telemetry"/,/value/s/value: true/value: false/' -i $ActivityStream
+sed '/\["section.highlights.includePocket"/,/value/s/value: true/value: false/' -i $ActivityStream
+sed '/\["telemetry.ping.endpoint"/,/value/s/value: .*/value: ""/' -i $ActivityStream
+sed 's_https://snippets.cdn.*json__' -i $ActivityStream
+sed 's/\(read_more_endpoint:\) .http.*/\1 "",/' -i $ActivityStream
+sed 's/\(stories_endpoint:\) .http.*/\1 "",/' -i $ActivityStream
+sed 's/\(stories_referrer:\) .http.*/\1 "",/' -i $ActivityStream
+sed 's/\(topics_endpoint:\) .http.*/\1 "",/' -i $ActivityStream
+sed '/name: "snippets"/,/value/s/value: true/value: false/' -i $ActivityStream
+sed '/name: "telemetry"/,/value/s/value: true/value: false/' -i $ActivityStream
+sed '/name: "section.topstories"/,/return/s/return.*/return false;/' -i $ActivityStream
+sed 's/.Ubuntu., //' -i browser/components/newtab/css/activity-stream*.css
 
 cp $DATA/onboarding/bootstrap.js browser/extensions/onboarding
 cp $DATA/onboarding/onboarding.js browser/extensions/onboarding/content
@@ -93,7 +94,15 @@ find debian/searchplugins |grep google| xargs -i /bin/sed '/ubuntu/d; /channel/d
 find debian/searchplugins |grep amazon| xargs -i /bin/sed '/canoniccom/d;' -i {}
 
 #Replace canonical referer with our own for duckduckgo
-find debian/searchplugins |grep duck| xargs -i /bin/sed 's/canonical/trisquel/' -i {}
+find |grep -e duckduckgo.xml -e ddg.xml | xargs -i /bin/sed 's/canonical/trisquel/' -i {}
+
+# Make DuckDuckGo the default engine
+rm debian/patches/no-region-overrides-for-google-search.patch
+sed /no-region-overrides-for-google-search/d -i debian/patches/series
+sed '/searchDefault/s/"Google",/"DuckDuckGo",/g' -i browser/components/search/searchplugins/list.json
+sed 's/google/tempgoogletemp/g' -i browser/components/search/searchplugins/list.json
+sed 's/ddg/google/g' -i browser/components/search/searchplugins/list.json
+sed 's/tempgoogletemp/ddg/g' -i browser/components/search/searchplugins/list.json
 
 # contact link
 #sed 's_https://input.mozilla.org/feedback_https://trisquel.info/contact_' -i browser/base/content/utilityOverlay.js
