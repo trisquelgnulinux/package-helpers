@@ -38,6 +38,8 @@ pref("network.cookie.cookieBehavior", 1);
 
 // Extensions cannot be updated without permission
 pref("extensions.update.enabled", false);
+pref("extensions.systemAddon.update.enabled", false);
+pref("lightweightThemes.update.enabled", false);
 // Use LANG environment variable to choose locale
 pref("intl.locale.matchOS", true);
 // Disable default browser checking.
@@ -236,3 +238,8 @@ pref("gfx.xrender.enabled",true);
 pref("dom.webnotifications.enabled",false);
 pref("dom.webnotifications.serviceworker.enabled",false);
 pref("dom.push.enabled",false);
+
+// Disable services server
+pref("services.settings.server", "");
+pref("extensions.blocklist.url", "");
+
