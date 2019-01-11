@@ -18,8 +18,13 @@
 #
 
 VERSION=1
+EXTERNAL='deb-src http://ftp.us.debian.org/debian testing main'
+REPOKEY=7638D0442B90D010
 
 . ./config
+
+echo 9 > debian/compat
+sed 's/debhelper\ (>= 11/debhelper\ (>=9/' -i debian/control
 
 # https://trisquel.info/en/issues/7753
 echo "NoDisplay=true" >> data/midori-private.desktop.in
@@ -40,10 +45,10 @@ show-menubar=true
 libtoolbar-editor.so=true
 EOF
 
-cat << EOF > debian/config/Trisquel.h
-#define DEBIAN_DISTRO_DEFAULT_HOMEPAGE "http://trisquel.info/welcome"
-#define DEBIAN_WWW_ALTERNATIVES_PRIORITY 39
-EOF
+#cat << EOF > debian/config/Trisquel.h
+##define DEBIAN_DISTRO_DEFAULT_HOMEPAGE "http://trisquel.info/welcome"
+##define DEBIAN_WWW_ALTERNATIVES_PRIORITY 39
+#EOF
 
 cat << EOF > data/search
 
