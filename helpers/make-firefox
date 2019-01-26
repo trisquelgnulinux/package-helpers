@@ -34,7 +34,6 @@ sed '/\["disableSnippets/,/value/s/value: false/value: true/' -i $ActivityStream
 sed '/\["telemetry"/,/value/s/value: true/value: false/' -i $ActivityStream
 sed '/\["section.highlights.includePocket"/,/value/s/value: true/value: false/' -i $ActivityStream
 sed '/\["telemetry.ping.endpoint"/,/value/s/value: .*/value: ""/' -i $ActivityStream
-sed 's_https://snippets.cdn.*json__' -i $ActivityStream
 sed 's/\(read_more_endpoint:\) .http.*/\1 "",/' -i $ActivityStream
 sed 's/\(stories_endpoint:\) .http.*/\1 "",/' -i $ActivityStream
 sed 's/\(stories_referrer:\) .http.*/\1 "",/' -i $ActivityStream
@@ -44,12 +43,13 @@ sed '/name: "telemetry"/,/value/s/value: true/value: false/' -i $ActivityStream
 sed '/name: "section.topstories"/,/return/s/return.*/return false;/' -i $ActivityStream
 sed 's/.Ubuntu., //' -i browser/components/newtab/css/activity-stream*.css
 
-cp $DATA/onboarding/bootstrap.js browser/extensions/onboarding
-cp $DATA/onboarding/onboarding.js browser/extensions/onboarding/content
-cp $DATA/onboarding/onboarding.properties browser/extensions/onboarding/locales/en-US
-for locale in $(ls -1 $DATA/onboarding/locales/); do
-    cp $DATA/onboarding/locales/$locale/onboarding.properties l10n/$locale/browser/extensions/onboarding
-done
+#cp $DATA/watermark.svg ./browser/extensions/onboarding/content/img/watermark.svg
+#cp $DATA/onboarding/bootstrap.js browser/extensions/onboarding
+#cp $DATA/onboarding/onboarding.js browser/extensions/onboarding/content
+#cp $DATA/onboarding/onboarding.properties browser/extensions/onboarding/locales/en-US
+#for locale in $(ls -1 $DATA/onboarding/locales/); do
+#    cp $DATA/onboarding/locales/$locale/onboarding.properties l10n/$locale/browser/extensions/onboarding
+#done
 
 sed '/captivedetect.canonicalURL/s/http.*success.txt//' -i modules/libpref/init/all.js
 
@@ -177,8 +177,6 @@ MOZ_BUILD_OFFICIAL      = 0
 MOZ_ENABLE_BREAKPAD     = 0
 MOZ_ENABLE_TELEMETRY    = 0
 EOF
-
-cp $DATA/watermark.svg ./browser/extensions/onboarding/content/img/watermark.svg
 
 # Delete stuff we don't use and that may contain trademaked logos
 rm -rf ./browser/metro ./addon-sdk/source/doc/static-files/media ./browser/themes/windows ./browser/themes/osx ./b2g

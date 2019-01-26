@@ -129,10 +129,12 @@ pref("browser.newtabpage.introShown", true);
 pref("browser.aboutHomeSnippets.updateUrl", "");
 // Always ask before restoring the browsing session
 pref("browser.sessionstore.max_resumed_crashes", 0);
-// Disable tracking protection by default, as it makes automated connections to fetch lists
-pref("browser.safebrowsing.provider.mozilla.updateURL", "");
-pref("privacy.trackingprotection.enabled", false);
-pref("privacy.trackingprotection.pbmode.enabled", false);
+ // Disable tracking protection by default, as it makes automated connections to fetch lists (not doing this until the newtab privacy block is reimplemented)
+ //pref("browser.safebrowsing.provider.mozilla.updateURL", "");
+pref("privacy.trackingprotection.enabled", true);
+pref("privacy.trackingprotection.pbmode.enabled", true);
+pref("urlclassifier.trackingTable", "test-track-simple,base-track-digest256,content-track-digest256");
+pref("browser.privacy.trackingprotection.menu", "always");
 pref("privacy.trackingprotection.introURL", "https://www.mozilla.org/%LOCALE%/firefox/%VERSION%/tracking-protection/start/");
 // Disable geolocation
 pref("geo.enabled", false);
