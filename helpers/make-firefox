@@ -22,6 +22,8 @@ VERSION=60
 
 . ./config
 
+patch -p1 < debian/patches/partially-revert-google-search-update.patch
+patch -p1 < debian/patches/no-region-overrides-for-google-search.patch
 
 rm debian/control
 
@@ -97,12 +99,10 @@ find debian/searchplugins |grep amazon| xargs -i /bin/sed '/canoniccom/d;' -i {}
 find |grep -e duckduckgo.xml -e ddg.xml | xargs -i /bin/sed 's/canonical/trisquel/' -i {}
 
 # Make DuckDuckGo the default engine
-rm debian/patches/no-region-overrides-for-google-search.patch
-sed /no-region-overrides-for-google-search/d -i debian/patches/series
-sed '/searchDefault/s/"Google",/"DuckDuckGo",/g' -i browser/components/search/searchplugins/list.json
-sed 's/google/tempgoogletemp/g' -i browser/components/search/searchplugins/list.json
-sed 's/ddg/google/g' -i browser/components/search/searchplugins/list.json
-sed 's/tempgoogletemp/ddg/g' -i browser/components/search/searchplugins/list.json
+rm debian/patches/no-region-overrides-for-google-search.patch debian/patches/partially-revert-google-search-update.patch
+sed '/no-region-overrides-for-google-search/d; /partially-revert-google-search-update/d' -i debian/patches/series
+sed '/searchDefault/s/: \".*\"/: "DuckDuckGo"/g' -i browser/components/search/searchplugins/list.json
+sed '/visibleDefaultEngines/{n; s/"ddg",//; s/\"/"ddg", "/}'  -i browser/components/search/searchplugins/list.json 
 
 # contact link
 #sed 's_https://input.mozilla.org/feedback_https://trisquel.info/contact_' -i browser/base/content/utilityOverlay.js
@@ -224,7 +224,7 @@ echo "#plugindeprecation-notice {  display: none !important; }" >> toolkit/mozap
 # Hide warnings on unsigned extensions
 echo ".warning{display: none!important; } .addon[notification=warning]{background-image: none!important;}" >> toolkit/mozapps/extensions/content/extensions.css
 # Hide extra links in about box
-sed '/releaseNotes.link/d; /helpus/d' -i ./browser/base/content/aboutDialog.xul
+sed '/releaseNotes.link/d; /label.helpus/d' -i ./browser/base/content/aboutDialog.xul
 
 find -wholename '*/brand.dtd' |xargs /bin/sed 's/trademarkInfo.part1.*/trademarkInfo.part1 "">/' -i
 
@@ -301,7 +301,6 @@ cp -a $DATA/android/branding/ mobile/android/branding/official
 cp $DATA/android/mobile.ico mobile/android/app/
 cp $DATA/android/images/* mobile/android/themes/core/images/
 cp -a $DATA/android/res/main/* mobile/android/app/src/main/res/
-cp -a $DATA/android/res/photon/* mobile/android/app/src/photon/res/
 
 # Postinst script to manage profile migration and system links
 echo '

@@ -246,3 +246,5 @@ pref("dom.push.enabled",false);
 pref("services.settings.server", "");
 pref("extensions.blocklist.url", "");
 
+// Disable recommended extensions
+pref("browser.newtabpage.activity-stream.asrouter.userprefs.cfr", false);
