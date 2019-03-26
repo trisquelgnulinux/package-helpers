@@ -192,9 +192,9 @@ EOF
 
 rm DistUpgrade/EOLReleaseAnnouncement.html DistUpgrade/ReleaseAnnouncement.html
 
-parsewiki DistUpgrade/EOLReleaseAnnouncement > DistUpgrade/EOLReleaseAnnouncement.html
-parsewiki DistUpgrade/ReleaseAnnouncement > DistUpgrade/ReleaseAnnouncement.html
-parsewiki DistUpgrade/DevelReleaseAnnouncement > DistUpgrade/DevelReleaseAnnouncement.html
+perl $DATA/parsewiki DistUpgrade/EOLReleaseAnnouncement > DistUpgrade/EOLReleaseAnnouncement.html
+perl $DATA/parsewiki DistUpgrade/ReleaseAnnouncement > DistUpgrade/ReleaseAnnouncement.html
+perl $DATA/parsewiki DistUpgrade/DevelReleaseAnnouncement > DistUpgrade/DevelReleaseAnnouncement.html
 
 rm data/removal_blacklist.cfg
 cat <<EOF > data/removal_blacklist.cfg
