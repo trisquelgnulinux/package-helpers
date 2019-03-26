@@ -84,6 +84,9 @@ sed 's/com.ubuntu/org.trisquel/' -i debian/config/mozconfig.in
 echo ac_add_options --disable-eme >> debian/config/mozconfig.in
 sed '/gmp-clearkey/d' -i ./debian/firefox.install.in
 
+# Correct build error
+echo ac_add_options --enable-stdcxx-compat >> debian/config/mozconfig.in
+
 # Locale packages should provide firefox-locale-$LANG
 sed "s/Provides.*/Provides: firefox-locale-@LANGCODE@/" -i debian/control.langpacks
 
@@ -224,20 +227,25 @@ echo "#plugindeprecation-notice {  display: none !important; }" >> toolkit/mozap
 # Hide warnings on unsigned extensions
 echo ".warning{display: none!important; } .addon[notification=warning]{background-image: none!important;}" >> toolkit/mozapps/extensions/content/extensions.css
 # Hide extra links in about box
-sed '/releaseNotes.link/d; /label.helpus/d' -i ./browser/base/content/aboutDialog.xul
+sed '/releaseNotes.link/d' -i ./browser/base/content/aboutDialog.xul
+sed '/description.*helpus/,/description/d' -i ./browser/base/content/aboutDialog.xul
 
 find -wholename '*/brand.dtd' |xargs /bin/sed 's/trademarkInfo.part1.*/trademarkInfo.part1 "">/' -i
 
-for STRING in community.end3 community.exp.end community.start2 community.mozillaLink community.middle2 community.creditsLink community.end2 contribute.start contribute.getInvolvedLink contribute.end channel.description.start channel.description.end
-do
- find -name aboutDialog.dtd | xargs sed -i "s/ENTITY $STRING.*/ENTITY $STRING \"\">/"
-done
-
 for STRING in rights.intro-point3-unbranded rights.intro-point4a-unbranded rights.intro-point4b-unbranded rights.intro-point4c-unbranded
-do
+ do
  find -name aboutRights.dtd | xargs sed -i "s/ENTITY $STRING.*/ENTITY $STRING \"\">/"
 done
 
+for STRING in rights-intro-point-2 rights-intro-point-3 rights-intro-point-4 rights-intro-point-5 rights-intro-point-6 rights-webservices rights-safebrowsing
+do
+ find -name aboutRights.ftl | xargs sed -i "s/^$STRING.*/$STRING = \"\">/"
+done
+
+for STRING in helpus community-2 community-exp
+do
+ find -name aboutDialog.ftl | xargs sed -i "s/^$STRING.*/$STRING = \"\">/"
+done
 
 sed -i 's/<a\ href\=\"http\:\/\/www.mozilla.org\/\">Mozilla\ Project<\/a>/<a\ href\=\"http\:\/\/www.trisquel.info\/\"\>Trisquel\ Project<\/a>/g' browser/base/content/overrides/app-license.html
 
