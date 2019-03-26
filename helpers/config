@@ -72,7 +72,7 @@ mkdir -p ${LOCAL_APT}/etc/
 mkdir -p ${LOCAL_APT}/var/lib/dpkg
 touch ${LOCAL_APT}/var/lib/dpkg/status
 touch ${LOCAL_APT}/etc/trusted.gpg
-id _apt > /dev/null 2>&1 && chown _apt ${LOCAL_APT}  -R
+[ $UID = 0 ] && id _apt > /dev/null 2>&1 && chown _apt ${LOCAL_APT}  -R
 
 cat << EOF > ${LOCAL_APT}/etc/apt.conf
 Dir::State "${LOCAL_APT}/var/lib/apt";
@@ -115,7 +115,7 @@ EOF
 rm -rf PACKAGES/$PACKAGE
 mkdir PACKAGES/$PACKAGE
 cd PACKAGES/$PACKAGE
-id _apt > /dev/null 2>&1 && chown _apt .
+[ $UID = 0 ] && id _apt > /dev/null 2>&1 && chown _apt .
 
 #Get package and uncompress it
 apt-get update -c $LOCAL_APT/etc/apt.conf
