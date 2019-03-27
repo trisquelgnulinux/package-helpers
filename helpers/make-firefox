@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#    Copyright (C) 2008-2018  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2008-2019  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C) 2015       Santiago Rodriguez <santi@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=60
+VERSION=61
 
 . ./config
 
@@ -239,12 +239,12 @@ done
 
 for STRING in rights-intro-point-2 rights-intro-point-3 rights-intro-point-4 rights-intro-point-5 rights-intro-point-6 rights-webservices rights-safebrowsing
 do
- find -name aboutRights.ftl | xargs sed -i "s/^$STRING.*/$STRING = \"\">/"
+ find -name aboutRights.ftl | xargs sed -i "s/^$STRING.*/$STRING = /"
 done
 
 for STRING in helpus community-2 community-exp
 do
- find -name aboutDialog.ftl | xargs sed -i "s/^$STRING.*/$STRING = \"\">/"
+ find -name aboutDialog.ftl | xargs sed -i "s/^$STRING.*/$STRING = /"
 done
 
 sed -i 's/<a\ href\=\"http\:\/\/www.mozilla.org\/\">Mozilla\ Project<\/a>/<a\ href\=\"http\:\/\/www.trisquel.info\/\"\>Trisquel\ Project<\/a>/g' browser/base/content/overrides/app-license.html
