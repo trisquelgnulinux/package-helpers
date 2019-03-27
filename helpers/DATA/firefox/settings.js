@@ -101,6 +101,8 @@ pref("dom.ipc.plugins.flash.subprocess.crashreporter.enabled", false);
 pref("browser.safebrowsing.enabled", false);
 pref("browser.safebrowsing.downloads.remote.enabled", false);
 pref("browser.safebrowsing.malware.enabled", false);
+pref("browser.safebrowsing.provider.mozilla.gethashURL", "");
+pref("browser.safebrowsing.provider.mozilla.updateURL", "");
 pref("services.sync.privacyURL", "https://trisquel.info/en/legal");
 pref("social.enabled", false);
 pref("social.remote-install.enabled", false);
