@@ -25,6 +25,9 @@ DEPENDS=libarchive-cpio-perl
 
 . ./config
 
+sed '/debhelper/s/10/9/' -i debian/control
+echo 9 > debian/compat
+
 changelog "Backported from bionic"
 
 compile
