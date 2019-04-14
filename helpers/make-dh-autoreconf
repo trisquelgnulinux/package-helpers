@@ -21,11 +21,11 @@ VERSION=1
 EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu bionic main'
 REPOKEY=7638D0442B90D010
 BACKPORTS=true
-DEPENDS=dh-autoreconf,dh-strip-nondeterminism
 
 . ./config
 
-sed '/dpkg/s/1.19.0.5~/1.18.4/' -i debian/control
+sed '/debhelper/s/(>= 11)//' -i debian/control
+echo 10 > debian/compat
 
 changelog "Backported from bionic"
 
