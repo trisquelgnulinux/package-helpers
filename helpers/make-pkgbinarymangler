@@ -17,14 +17,14 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu bionic main'
 REPOKEY=7638D0442B90D010
 BACKPORTS=true
 
 . ./config
 
-sed 's/xz/gz/g; s/xOJ/xOz/g' -i test/run
+sed 's/xz/gz/g; s/xOJ/xOz/g; s/test_ppa_oem_main(/disabled_ppa_oem_main(/' -i test/run
 
 changelog "Backported from bionic"
 
