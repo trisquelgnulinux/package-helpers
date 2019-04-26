@@ -23,7 +23,7 @@ VERSION=1
 
 CODENAMECAPS=$(echo $CODENAME | /bin/sed -e "s/\b\(.\)/\u\1/g")
 
-cat << EOF > debian/update-motd.d/01-banner
+cat << EOF > update-motd.d/01-banner
 #!/bin/sh
 echo "\
    ___        ___               ___        ___       ___        ___        ___
@@ -40,13 +40,13 @@ echo "\
 "
 EOF
 
-cat << EOF > debian/update-motd.d/10-help-text
+cat << EOF > update-motd.d/10-help-text
 #!/bin/sh
 echo "Welcome to Trisquel GNU/Linux"
 echo "Documentation: http://trisquel.info/wiki/"
 EOF
 
-chmod 755 debian/update-motd.d/*
+chmod 755 update-motd.d/*
 
 cat << EOF > etc/legal
 
