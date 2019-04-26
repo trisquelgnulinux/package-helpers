@@ -25,11 +25,12 @@ VERSION=1
 cat << EOF | patch -p1
 --- source.orig/softwareproperties/SoftwareProperties.py        2014-04-14 17:10:58.000000000 +0200
 +++ source/softwareproperties/SoftwareProperties.py     2014-05-18 03:02:05.309290804 +0200
-@@ -725,8 +725,16 @@
+@@ -725,8 +725,17 @@
      site is in whitelist or the shortcut implementer adds it.
      """
  
 +    codenames = {}
++    codenames["etiona"] = "bionic" 
 +    codenames["flidas"] = "xenial" 
 +    codenames["belenos"] = "trusty" 
 +    codenames["toutatis"] = "precise" 
