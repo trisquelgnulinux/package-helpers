@@ -31,8 +31,8 @@ replace "http://archive.ubuntu.com/ubuntu/project/ubuntu-archive-keyring.gpg" "h
 replace ubuntu-keyring trisquel-keyring .
 replace ubuntu-archive-keyring trisquel-archive-keyring .
 
-# hack, use special words to avoid duplicates in the test
-sed 's/contrib/uncomon/g; s/non-free/rare/g' -i test/libapt/cdromfindpackages_test.cc
+# hack, preserve this test untouched
+cp test/libapt/cdromfindpackages_test.cc /tmp
 # remove non-free examples https://trisquel.info/en/issues/5518
 sed '/non-free/d' -i ./test/integration/Packages-ubuntu-bug-614993 ./test/integration/status-ubuntu-bug-614993
 replace "contrib main non-free" main .
@@ -46,6 +46,8 @@ sed "s/'main', 'contrib', 'non-free'/'main'/" -i ./dselect/setup
 replace contrib universe doc
 replace contrib universe po
 replace non-free main .
+
+cp /tmp/cdromfindpackages_test.cc test/libapt
 
 # Ubuntu link to changelogs https://trisquel.info/en/issues/9967 
 replace "http://changelogs.ubuntu.com/changelogs" "http://packages.trisquel.info/changelogs" .
