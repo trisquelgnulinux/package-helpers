@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=1
 COMPONENT=main
 
 . ./config
@@ -31,6 +31,8 @@ replace "http://archive.ubuntu.com/ubuntu/project/ubuntu-archive-keyring.gpg" "h
 replace ubuntu-keyring trisquel-keyring .
 replace ubuntu-archive-keyring trisquel-archive-keyring .
 
+# hack, use special words to avoid duplicates in the test
+sed 's/contrib/uncomon/g; s/non-free/rare/g' -i test/libapt/cdromfindpackages_test.cc
 # remove non-free examples https://trisquel.info/en/issues/5518
 sed '/non-free/d' -i ./test/integration/Packages-ubuntu-bug-614993 ./test/integration/status-ubuntu-bug-614993
 replace "contrib main non-free" main .
