@@ -129,7 +129,8 @@ if [ "1$SIGNKEY" != "1" ] ; then
   gpgv --keyring ${LOCAL_APT}/etc/trusted.gpg *.dsc
 else
   if grep -q "BEGIN PGP SIGNATURE" *.dsc; then
-    KEY=$(gpgv --keyring ${LOCAL_APT}/etc/trusted.gpg *.dsc 2>&1 | grep "RSA key" | sed 's/.*RSA key //' || true)
+    KEY=$(gpgv --keyring ${LOCAL_APT}/etc/trusted.gpg *.dsc 2>&1 | grep "key ID" | sed 's/.*key ID //' || true)
+    [ $KEY -z ] && KEY=$(gpgv --keyring ${LOCAL_APT}/etc/trusted.gpg *.dsc 2>&1 | grep "RSA key" | sed 's/.*RSA key //' || true)
     apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --recv-keys --keyserver keyserver.ubuntu.com $KEY > /dev/null
     gpgv --keyring ${LOCAL_APT}/etc/trusted.gpg *.dsc
   else
