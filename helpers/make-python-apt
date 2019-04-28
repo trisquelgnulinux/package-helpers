@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2008-2018 Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2008-2019 Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -23,6 +23,8 @@ COMPONENT=main
 . ./config
 
 cat << EOF > data/templates/Trisquel.mirrors
+#LOC:CA
+https://mirror.freemirror.org/trisquel-packages/
 #LOC:FR
 https://archive.trisquel.info/trisquel/
 #LOC:US
@@ -39,10 +41,14 @@ http://mirrors.serverhost.ro/trisquel/packages
 https://mirrors.ustc.edu.cn/trisquel
 #LOC:ES
 https://ftp.caliu.cat/pub/distribucions/trisquel/packages
+https://mirror.librelabucm.org/trisquel/
 #LOC:TW
 https://ftp.yzu.edu.tw/Linux/trisquel.packages/
 #LOC:SE
+https://mirror.linux.pizza/trisquel/packages/
 https://ftp.acc.umu.se/mirror/trisquel/packages/
+#LOC:HU
+https://quantum-mirror.hu/mirrors/pub/trisquel/packages/
 EOF
 
 cat << EOF > data/templates/Trisquel.info.in
