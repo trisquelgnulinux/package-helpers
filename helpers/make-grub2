@@ -47,11 +47,6 @@ replace Ubuntu Trisquel .
 replace ubuntu trisquel .
 find |grep ubuntu|xargs rename s/ubuntu/trisquel/
 
-GRUBVERSION=$(head -n1 debian/changelog |/bin/sed 's/.*(//;s/).*//; s/[~+-].*//')
-
-echo /bin/sed "/GNU GRUB  version/ s/PACKAGE_VERSION/\"$GRUBVERSION\"/" -i grub-core/normal/main.c
-/bin/sed "/GNU GRUB  version/ s/PACKAGE_VERSION/\"$GRUBVERSION\"/" -i grub-core/normal/main.c
-
 # Allow Windows and MacOX entries to boot without a password
 sed 's/class osx/class osx --unrestricted/; s/class windows/class osx --unrestricted/;' -i ./util/grub.d/30_os-prober.in
 
