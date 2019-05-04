@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2008-2019  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2017-2018  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,18 +17,19 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=5
 . ./config
 
 rm ./debian/control.d/signed-generic
 
+sed 's/18.04/9.0/g; s/16.04 to 16.10/8.0/; s/16.04/8.0/; s/Xenial/Flidas/; s/Bionic/Etiona/' -i debian/control
 sed 's/linux-firmware/firmware-linux-free/' -i debian/control ./debian/control.d/generic debian/control.d/lowlatency
 sed 's/Ubuntu/upstream/' -i debian/control
 sed 's/Linux/Linux-libre/g' -i debian/control ./debian/control.d/generic debian/control.d/lowlatency
-sed '/Package.*signed/,/^$/ d' -i debian/control
-sed '/Package.*powerpc/,/^$/ d' -i debian/control
+sed '/signed/,/^$/ d' -i debian/control
 sed 's/, intel-microcode \[amd64 i386\]//; s/, amd64-microcode \[amd64 i386\]//;' debian/control debian/control.d/generic debian/control.d/lowlatency -i
 
-changelog "Removed non-free dependencies, renamed release for Trisquel"
+
+changelog "Removed linux-firmware dependency, renamed release for Trisquel"
 
 compile
