@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=61
+VERSION=62
 
 . ./config
 
@@ -88,7 +88,7 @@ sed '/gmp-clearkey/d' -i ./debian/firefox.install.in
 echo ac_add_options --enable-stdcxx-compat >> debian/config/mozconfig.in
 
 # Locale packages should provide firefox-locale-$LANG
-sed "s/Provides.*/Provides: firefox-locale-@LANGCODE@/" -i debian/control.langpacks
+sed "s/Provides.*/Provides: abrowser-locale-@LANGCODE@/" -i debian/control.langpacks
 
 # Remove Ubuntu bookmarks
 sed -i /ubuntu-bookmarks/d debian/patches/series
@@ -131,46 +131,30 @@ sed  "s/^MOZ_PKG_NAME\t.*/MOZ_PKG_NAME\t\t:= abrowser/;" debian/build/config.mk 
 ############################################################################3
 sed "s_^Maintainer.*_Maintainer: $DEBFULLNAME <$DEBEMAIL>_g" -i debian/control.in
 
-# Replace Firefox branding
-find -type d | grep firefox | xargs rename s/firefox/abrowser/
-find -type d | grep firefox | xargs rename s/firefox/abrowser/
-find -type f | grep firefox | xargs rename s/firefox/abrowser/
-find -type f | grep Firefox | xargs rename s/Firefox/Abrowser/
-
 SEDSCRIPT="
-s/Mozilla Firefox/Abrowser/g;
-s/firefox/abrowser/g;
-s/Firefox/Abrowser/g;
-s/FIREFOX/ABROWSER/g;
-s/ Mozilla / Trisquel /g;
-s|PACKAGES/abrowser|PACKAGES/firefox|g;
-s/iceweasel, abrowser/iceweasel, firefox/g;
-s/Replaces: abrowser/Replaces: firefox/g;
+s/Try Firefox/Try Abrowser/g;
+s/Firefox Home/Abrowser Home/g;
+s/Firefox Account/Sync Account/g;
+s/Updates from Mozilla and Firefox/Updates from Mozilla/g;
 s/Adobe Flash/Flash/g;
-s|www.mozilla.com/abrowser/central|trisquel.info/browser|g;
+s|www.mozilla.com/firefox/central|trisquel.info/browser|g;
 s|mozilla.com/plugincheck|trisquel.info/browser|g;
 s|www.mozilla.com/legal/privacy|trisquel.info/legal|g;
-
-s/Trisquel Public/Mozilla Public/g;
-s/Trisquel Foundation/Mozilla Foundation/g;
-s/Trisquel Corporation/Mozilla Corporation/g;
-s/abrowser.com/firefox.com/g;
 "
 
 echo "Running batch replace operation"
 find . -type f -not -iregex '.*changelog.*' -not -iregex '.*copyright.*' -not -iregex '.*third_party/rust.*' -execdir /bin/sed --follow-symlinks -i "$SEDSCRIPT" '{}' ';'
 
-sed -i '2s/^Source:.*/Source: firefox/' debian/control.in
-sed s/ubuntu/trisquel/g debian/distribution.ini -i
-sed 's/ubuntu_version/trisquel_version/; s/Ubuntu 10.10/Trisquel 4.0/; s/1010/40/' -i debian/abrowser.postinst.in
+echo "Replacing Firefox with Abrowser on ./l10n"
+find l10n -type f  -not -iregex '.*changelog.*' -not -iregex '.*copyright.*' -execdir /bin/sed --follow-symlinks -i "s/Firefox/Abrowser/" '{}' ';'
 
-# abrowser should provide firefox
-sed '/Package: @MOZ_PKG_NAME@-dev/,/Description:/ s/Architecture: any/Architecture: any\nProvides: firefox-dev /' debian/control.in -i
-sed '/Package: @MOZ_PKG_NAME@$/,/Description:/ s/Provides:/Provides: firefox, /' debian/control.in -i
+sed s/ubuntu/trisquel/g debian/distribution.ini -i
+sed "s/ubuntu_version/trisquel_version/; s/Ubuntu 10.10/Trisquel $REVISION/; s/1010/40/" -i debian/firefox.postinst.in
 
 # Branding files
 rm browser/branding/{official,aurora,nightly,unofficial} -rf
 cp -a $DATA/branding/ browser/branding/official
+cp -a $DATA/branding/ browser/branding/unofficial
 # Disable preprocessor
 sed 's/_PP//' -i browser/branding/branding-common.mozbuild
 cat << EOF >> debian/config/branch.mk
@@ -252,18 +236,19 @@ sed -i 's/<a\ href\=\"http\:\/\/www.mozilla.org\/\">Mozilla\ Project<\/a>/<a\ hr
 # We went too far...
 #sed -i 's/iceweasel, abrowser, icecat,/iceweasel, firefox, icecat,/g' debian/control.in
 sed '/Provides/s/abrowser-locale/firefox-locale/' -i debian/control.langpacks
+/bin/sed '/intro-point2-a/s/Abrowser/Firefox/' -i l10n/*/toolkit/chrome/global/aboutRights.dtd
+/bin/sed '/trademarkInfo/s/Abrowser/Firefox/' -i l10n/*/browser/branding/official/brand.ftl
 
-# Restore useragent to Firefox
-sed '/MOZILLA_UAVERSION/ s:Abrowser/:Firefox/:' -i netwerk/protocol/http/nsHttpHandler.cpp
+/bin/sed 's/prefs_snippets_description=.*/prefs_snippets_description=Mozilla snippets/' -i l10n/*/browser/chrome/browser/activity-stream/newtab.properties
 
 # Set migrator scripts
-sed 's/Abrowser/Firefox/g; s/abrowser/firefox/g' -i browser/components/migration/AbrowserProfileMigrator.js
-sed s/ChromeProfileMigrator/_temp_/ -i browser/components/migration/moz.build
-sed s/AbrowserProfileMigrator/ChromeProfileMigrator/ -i browser/components/migration/moz.build
-sed s/_temp_/AbrowserProfileMigrator/ -i browser/components/migration/moz.build
+#sed 's/Abrowser/Firefox/g; s/abrowser/firefox/g' -i browser/components/migration/FirefoxProfileMigrator.js
+#sed s/ChromeProfileMigrator/_temp_/ -i browser/components/migration/moz.build
+#sed s/AbrowserProfileMigrator/ChromeProfileMigrator/ -i browser/components/migration/moz.build
+#sed s/_temp_/AbrowserProfileMigrator/ -i browser/components/migration/moz.build
 
 # js settings
-cat $DATA/settings.js >> debian/vendor-abrowser.js
+cat $DATA/settings.js >> debian/vendor-firefox.js
 
 #################
 # Android stuff #
@@ -328,6 +313,8 @@ fi
 exit 0 ' >> debian/abrowser.postinst.in
 
 sed 's/1410/65/; s/1310/60/' -i debian/rules
+
+sed 's/^Source:.*/Source: firefox/' -i debian/control.in
 
 debian/rules debian/control
 touch -d "yesterday" debian/control
