@@ -1,0 +1,81 @@
+#!/bin/sh
+#
+#    Copyright (C) 2019 Mason Hock <mason@masonhock.com>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=1
+EXTERNAL='deb-src http://ppa.launchpad.net/ubuntustudio-ppa/backports/ubuntu bionic main '
+REPOKEY=F596CF7036BBAA6D
+BACKPORTS=true
+
+. ./config
+
+# doesn't work without gir1.2-gtk-3.0
+sed -i '/Depends: a2jmidid,/a \ \ \ \ \ \ \ \ \ gir1.2-gtk-3.0,' debian/control
+
+# rebrand
+sed 's/Package: ubuntustudio-controls/Package: trisquelstudio-controls/g' -i debian/control
+sed 's/Ubuntu Studio Controls/Trisquel Studio Controls/g' -i debian/control
+
+sed 's/Ubuntu Studio/Trisquel Studio/g' -i usr/share/ubuntustudio-controls/ubuntustudio-controls.glade
+sed 's/Ubuntu Studio/Trisquel Studio/g' -i usr/share/polkit-1/actions/com.ubuntustudio.pkexec.ubuntustudio-controls.policy
+sed 's/Ubuntu Studio/Trisquel Studio/g' -i usr/share/applications/ubuntustudio-controls.desktop
+sed 's/Ubuntu Studio/Trisquel Studio/g' -i usr/share/man/man1/ubuntustudio-controls.1
+
+sed 's/ubuntustudio/trisquelstudio/g' -i lib/systemd/ubuntustudio
+sed 's/ubuntustudio/trisquelstudio/g' -i lib/systemd/system/ondemand.service.d/ubuntustudio.conf
+sed 's/ubuntustudio/trisquelstudio/g' -i usr/share/applications/ubuntustudio-controls.desktop
+sed 's/ubuntustudio/trisquelstudio/g' -i usr/share/man/man1/ubuntustudio-controls.1
+sed 's/ubuntustudio/trisquelstudio/g' -i usr/share/man/man2/autojack.2
+sed 's/ubuntustudio/trisquelstudio/g' -i usr/share/man/man2/ubuntustudio-system.2
+sed 's/ubuntustudio/trisquelstudio/g' -i usr/bin/autojack
+sed 's/ubuntustudio/trisquelstudio/g' -i usr/bin/ubuntustudio-controls
+sed 's/ubuntustudio/trisquelstudio/g' -i usr/sbin/ubuntustudio-system
+
+sed 's/Ubuntustudio/Trisquelstudio/g' -i lib/systemd/ubuntustudio
+sed 's/Ubuntustudio/Trisquelstudio/g' -i usr/share/man/man1/ubuntustudio-controls.1
+sed 's/Ubuntustudio/Trisquelstudio/g' -i usr/share/man/man2/ubuntustudio-system.2
+
+sed 's/UbuntuStudio/TrisquelStudio/g' -i README
+sed 's/UbuntuStudio/TrisquelStudio/g' -i usr/bin/ubuntustudio-controls
+
+sed 's/trisquelstudio\.org/ubuntustudio\.org/g' -i usr/share/man/man1/ubuntustudio-controls.1
+sed 's/trisquelstudio\.org/ubuntustudio\.org/g' -i usr/share/man/man2/autojack.2
+sed 's/trisquelstudio\.org/ubuntustudio\.org/g' -i usr/share/man/man2/ubuntustudio-system.2
+
+mv lib/systemd/ubuntustudio lib/systemd/trisquelstudio
+mv lib/systemd/system/ondemand.service.d/ubuntustudio.conf lib/systemd/system/ondemand.service.d/trisquelstudio.conf
+mv debian/ubuntustudio-controls.install debian/trisquelstudio-controls.install
+mv usr/share/ubuntustudio-controls usr/share/trisquelstudio-controls
+mv usr/share/trisquelstudio-controls/ubuntustudio-controls.glade usr/share/trisquelstudio-controls/trisquelstudio-controls.glade
+mv usr/share/polkit-1/actions/com.ubuntustudio.pkexec.ubuntustudio-controls.policy usr/share/polkit-1/actions/com.trisquelstudio.pkexec.trisquelstudio-controls.policy
+mv usr/share/applications/ubuntustudio-controls.desktop usr/share/applications/trisquelstudio-controls.desktop
+mv usr/share/icons/hicolor/22x22/apps/ubuntustudio-controls.png usr/share/icons/hicolor/22x22/apps/trisquelstudio-controls.png
+mv usr/share/icons/hicolor/256x256/apps/ubuntustudio-controls.png usr/share/icons/hicolor/256x256/apps/trisquelstudio-controls.png
+mv usr/share/icons/hicolor/128x128/apps/ubuntustudio-controls.png usr/share/icons/hicolor/128x128/apps/trisquelstudio-controls.png
+mv usr/share/icons/hicolor/48x48/apps/ubuntustudio-controls.png usr/share/icons/hicolor/48x48/apps/trisquelstudio-controls.png
+mv usr/share/icons/hicolor/16x16/apps/ubuntustudio-controls.png usr/share/icons/hicolor/16x16/apps/trisquelstudio-controls.png
+mv usr/share/icons/hicolor/64x64/apps/ubuntustudio-controls.png usr/share/icons/hicolor/64x64/apps/trisquelstudio-controls.png
+mv usr/share/icons/hicolor/24x24/apps/ubuntustudio-controls.png usr/share/icons/hicolor/24x24/apps/trisquelstudio-controls.png
+mv usr/share/man/man1/ubuntustudio-controls.1 usr/share/man/man1/trisquelstudio-controls.1
+mv usr/share/man/man2/ubuntustudio-system.2 usr/share/man/man2/trisquelstudio-system.2
+mv usr/bin/ubuntustudio-controls usr/bin/trisquelstudio-controls
+mv usr/sbin/ubuntustudio-system usr/sbin/trisquelstudio-system
+
+changelog "Compiled for Trisquel"
+
+compile
