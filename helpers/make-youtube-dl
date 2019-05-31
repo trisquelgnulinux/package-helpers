@@ -18,11 +18,11 @@
 #
 
 VERSION=1
-EXTERNAL='deb-src http://ppa.launchpad.net/nilarimogard/webupd8/ubuntu $UPSTREAM main'
-REPOKEY="531EE72F4C9D234C"
+EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu eoan main universe'
+REPOKEY=7638D0442B90D010
 
 . ./config
 
-changelog "Imported into Trisquel"
+changelog "Backported from eoan"
 
 compile
