@@ -21,7 +21,7 @@ VERSION=1
 . ./config
 
 sed '/ShellShowsAppMenu/s/True/False/' -i ./gtweak/utils.py
-sed '/ApplicationMenuTweak()/d' -i gtweak/tweaks/tweak_group_shell.py
+sed '/ApplicationMenuTweak()/d' -i gtweak/tweaks/tweak_group_top_bar.py
 
 changelog "Disable ShellShowsAppMenu"
 compile
