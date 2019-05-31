@@ -16,11 +16,11 @@
 #    along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 VERSION=1
-EXTERNAL='deb-src http://ppa.launchpad.net/i2p.packages/i2p/ubuntu $UPSTREAM main'
-REPOKEY="D1386E5F3FC3365C"
+EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu disco main universe'
+REPOKEY=7638D0442B90D010
 
 . ./config
 
-changelog "Bring Tox to Trisquel from PPA"
+changelog "Bring Tox to Trisquel from disco"
 
 compile
