@@ -152,6 +152,8 @@ pref("privacy.resistFingerprinting", true);
 pref("webgl.disabled", true);
 // Don't reveal your internal IP when WebRTC is enabled
 pref("media.peerconnection.ice.no_host", true);
+pref("privacy.trackingprotection.cryptomining.enabled, true);
+pref("privacy.trackingprotection.fingerprinting.enabled, true);
 
 // Services
 pref("gecko.handlerService.schemes.mailto.0.name", "");
@@ -220,6 +222,8 @@ pref("extensions.pocket.enabled", false);
 
 // disable xpi signing verification
 pref("xpinstall.signatures.required", false);
+// enable extensions by default in private mode
+pref("extensions.allowPrivateBrowsingByDefault",true);
 
 // disable screenshots extension
 pref("extensions.screenshots.disabled", true);
