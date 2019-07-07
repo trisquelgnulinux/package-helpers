@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 
 . ./config
 
@@ -28,6 +28,9 @@ replace ubuntu-logo trisquel-logo .
 
 # Make the banner be Trisquel GNU/Linux instead of just Trisquel
 sed '/^LSB_RELEASE/s/$/_GNU\/Linux/'  -i debian/rules
+
+# Modify the postrm so it picks up the new index.html md5sum as valid
+sed '/grep -q "$MD5" <<- EOF/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 4dd1085714a2189c372be3e34b7d6c48' -i debian/apache2.postrm
 
 changelog "Compiled for Trisquel"
 
