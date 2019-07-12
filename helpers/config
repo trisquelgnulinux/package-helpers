@@ -81,6 +81,7 @@ cat << EOF > ${LOCAL_APT}/etc/apt.conf
 Dir::State "${LOCAL_APT}/var/lib/apt";
 Dir::State::status "${LOCAL_APT}/var/lib/dpkg/status";
 Dir::Etc::SourceList "${LOCAL_APT}/etc/apt.sources.list";
+Dir::Etc::SourceParts "";
 Dir::Cache "${LOCAL_APT}/var/cache/apt";
 pkgCacheGen::Essential "none";
 Dir::Etc::Trusted "${LOCAL_APT}/etc/trusted.gpg";
