@@ -17,15 +17,15 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 COMPONENT=main
 
 . ./config
 
 #% Change default channel
 
-rm -f debian/patches/kubuntu_01_default_network_channel.patch
-sed -i '/kubuntu_01_default_network_channel.patch/d' debian/patches/series
+rm -f debian/patches/lubuntu_01_default_network_channel.patch
+sed -i '/lubuntu_01_default_network_channel.patch/d' debian/patches/series
 sed -i 's/#quassel/#trisquel/g' data/networks.ini
 changelog "Change default channel" 
 
