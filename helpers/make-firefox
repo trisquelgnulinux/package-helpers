@@ -32,7 +32,6 @@ rm debian/control
 ActivityStream=browser/components/newtab/lib/ActivityStream.jsm
 sed '/^const DEFAULT_SITES/,/^])\;/c const DEFAULT_SITES = new Map\([[""]]\);' -i $ActivityStream
 sed '/\["showSponsored/,/value/s/value: true/value: false/' -i $ActivityStream
-sed '/\["disableSnippets/,/value/s/value: false/value: true/' -i $ActivityStream
 sed '/\["telemetry"/,/value/s/value: true/value: false/' -i $ActivityStream
 sed '/\["section.highlights.includePocket"/,/value/s/value: true/value: false/' -i $ActivityStream
 sed '/\["telemetry.ping.endpoint"/,/value/s/value: .*/value: ""/' -i $ActivityStream
@@ -40,7 +39,6 @@ sed 's/\(read_more_endpoint:\) .http.*/\1 "",/' -i $ActivityStream
 sed 's/\(stories_endpoint:\) .http.*/\1 "",/' -i $ActivityStream
 sed 's/\(stories_referrer:\) .http.*/\1 "",/' -i $ActivityStream
 sed 's/\(topics_endpoint:\) .http.*/\1 "",/' -i $ActivityStream
-sed '/name: "snippets"/,/value/s/value: true/value: false/' -i $ActivityStream
 sed '/name: "telemetry"/,/value/s/value: true/value: false/' -i $ActivityStream
 sed '/name: "section.topstories"/,/return/s/return.*/return false;/' -i $ActivityStream
 sed 's/.Ubuntu., //' -i browser/components/newtab/css/activity-stream*.css
@@ -104,8 +102,8 @@ find |grep -e duckduckgo.xml -e ddg.xml | xargs -i /bin/sed 's/canonical/trisque
 # Make DuckDuckGo the default engine
 rm debian/patches/no-region-overrides-for-google-search.patch debian/patches/partially-revert-google-search-update.patch
 sed '/no-region-overrides-for-google-search/d; /partially-revert-google-search-update/d' -i debian/patches/series
-sed '/searchDefault/s/: \".*\"/: "DuckDuckGo"/g' -i browser/components/search/searchplugins/list.json
-sed '/visibleDefaultEngines/{n; s/"ddg",//; s/\"/"ddg", "/}'  -i browser/components/search/searchplugins/list.json 
+sed '/searchDefault/s/: \".*\"/: "DuckDuckGo"/g' -i browser/components/search/extensions/list.json
+sed '/visibleDefaultEngines/{n; s/"ddg",//; s/\"/"ddg", "/}'  -i browser/components/search/extensions/list.json
 
 # contact link
 #sed 's_https://input.mozilla.org/feedback_https://trisquel.info/contact_' -i browser/base/content/utilityOverlay.js
