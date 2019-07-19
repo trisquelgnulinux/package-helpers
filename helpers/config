@@ -2,6 +2,7 @@
 #
 #    Copyright (C) 2008-2010  Rubén Rodríguez <ruben@trisquel.info>
 #    Copyright (C)      2014  Santiago Rodriguez <santi@trisquel.info>
+#    Copyright (C)      2019  David Trudgian <dave@trudgian.net>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -94,17 +95,17 @@ then
 cp trusted.local.gpg "${LOCAL_APT}/etc/trusted.gpg"
 else
 # Trisquel key
-apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver keyserver.ubuntu.com --recv-keys B4EFB9F38D8AEBF1 > /dev/null
+apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys B4EFB9F38D8AEBF1 > /dev/null
 # Ubuntu gpg keys
-apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver keyserver.ubuntu.com --recv-keys 40976EAF437D05B5 > /dev/null
-apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver keyserver.ubuntu.com --recv-keys 3B4FE6ACC0B21F32 > /dev/null
+apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys 40976EAF437D05B5 > /dev/null
+apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys 3B4FE6ACC0B21F32 > /dev/null
 # Debian gpg keys
-apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver keyserver.ubuntu.com --recv-keys 9D6D8F6BC857C906 > /dev/null
-apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver keyserver.ubuntu.com --recv-keys 8B48AD6246925553 > /dev/null
+apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys 9D6D8F6BC857C906 > /dev/null
+apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys 8B48AD6246925553 > /dev/null
 fi
 
 # Also import the repository key optionally listed in the helper
-[ "1$REPOKEY" != "1" ] && apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --recv-keys --keyserver keyserver.ubuntu.com $REPOKEY
+[ "1$REPOKEY" != "1" ] && apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --recv-keys --keyserver hkps://keyserver.ubuntu.com:443 $REPOKEY
 
 cat << EOF > ${LOCAL_APT}/etc/apt.sources.list
 deb-src $MIRROR $UPSTREAM main universe
@@ -128,13 +129,13 @@ apt-get source $PACKAGE --download-only -c ${LOCAL_APT}/etc/apt.conf
 #   Import the key for the package uploader
 #   Use the one listed in the helper if available, otherwise download the one listed in the dsc
 if [ "1$SIGNKEY" != "1" ] ; then
-  apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --recv-keys --keyserver keyserver.ubuntu.com $SIGNKEY > /dev/null
+  apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --recv-keys --keyserver hkps://keyserver.ubuntu.com:443 $SIGNKEY > /dev/null
   gpgv --keyring ${LOCAL_APT}/etc/trusted.gpg *.dsc
 else
   if grep -q "BEGIN PGP SIGNATURE" *.dsc; then
     KEY=$(gpgv --keyring ${LOCAL_APT}/etc/trusted.gpg *.dsc 2>&1 | grep "key ID" | sed 's/.*key ID //' || true)
     [ -z "$KEY" ] && KEY=$(gpgv --keyring ${LOCAL_APT}/etc/trusted.gpg *.dsc 2>&1 | egrep ".SA key" | sed 's/.*.SA key //' || true)
-    apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --recv-keys --keyserver keyserver.ubuntu.com $KEY > /dev/null
+    apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --recv-keys --keyserver hkps://keyserver.ubuntu.com:443 $KEY > /dev/null
     gpgv --keyring ${LOCAL_APT}/etc/trusted.gpg *.dsc
   else
     echo WARNING! The dsc file is not gpg signed!
