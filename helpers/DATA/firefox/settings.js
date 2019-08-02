@@ -254,3 +254,5 @@ pref("extensions.blocklist.url", "");
 
 // Disable recommended extensions
 pref("browser.newtabpage.activity-stream.asrouter.userprefs.cfr", false);
+pref("extensions.htmlaboutaddons.discover.enabled", false);
+pref("extensions.htmlaboutaddons.recommendations.enabled", false);
