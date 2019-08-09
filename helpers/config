@@ -86,6 +86,7 @@ Dir::Etc::SourceParts "";
 Dir::Cache "${LOCAL_APT}/var/cache/apt";
 pkgCacheGen::Essential "none";
 Dir::Etc::Trusted "${LOCAL_APT}/etc/trusted.gpg";
+Acquire::ForceIPv4 "true";
 EOF
 
 export TRUSTEDFILE=${LOCAL_APT}/etc/trusted.gpg
