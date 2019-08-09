@@ -17,10 +17,10 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 . ./config
 
-for patch in 15_use-ubuntu-help.patch 16_unity_new_documents.patch; do
+for patch in 16_unity_new_documents.patch; do
   rm debian/patches/$patch
   sed "/$patch/d" -i debian/patches/series
 done
