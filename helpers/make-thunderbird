@@ -1,6 +1,7 @@
 #!/bin/bash
 #
 #    Copyright (C) 2018  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2019  David Trudgian <dave@trudgian.net>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -16,12 +17,13 @@
 #    along with this program; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
+set -x
 
-VERSION=1
+VERSION=2
 
 . ./config
 
-cp $DATA/branding/* mail/branding/nightly/ -r
+cp $DATA/branding/* comm/mail/branding/nightly/ -r
 
 cat << EOF >> debian/vendor.js
 
@@ -48,14 +50,12 @@ pref("app.releaseNotesURL", "http://trisquel.info/mailclient");
 pref("pfs.datasource.url", "https://trisquel.info/sites/pfs.php?mime=%PLUGIN_MIMETYPE%");
 pref("pfs.filehint.url", "https://trisquel.info/sites/pfs.php?mime=%PLUGIN_MIMETYPE%");
 pref("keyword.URL", "https://duckduckgo.com/?t=trisquel&q=!+");
-pref("browser.search.defaultenginename", "Wikipedia (en)");
-pref("browser.search.order.1", "Wikipedia (en)");
-pref("browser.search.defaultenginename", "Wikipedia (en)");  
+pref("browser.search.defaultenginename", "DuckDuckGo");
+pref("browser.search.order.1", "DuckDuckGo");
+pref("browser.search.defaultenginename", "DuckDuckGo");
 pref("browser.search.showOneOffButtons", false);
 pref("browser.search.suggest.enabled",false);
 EOF
-
-sed '/enable-tests/d' -i debian/config/mozconfig.in
 
 
 sed '/^MOZ_PKG_NAME/s/.*/MOZ_PKG_NAME=icedove/' -i debian/build/config.mk
@@ -69,10 +69,8 @@ MOZ_ENABLE_BREAKPAD = 0
 EOF
 
 # Replace Thunderbird branding
-find -type d | grep thunderbird | xargs rename s/thunderbird/icedove/
-find -type d | grep thunderbird | xargs rename s/thunderbird/icedove/
-find -type f | grep thunderbird | xargs rename s/thunderbird/icedove/
-find -type f | grep Thunderbird | xargs rename s/Thunderbird/Icedove/
+find -type d -name '*thunderbird*' | xargs rename s/thunderbird/icedove/
+find -type f -name '*thunderbird*' | xargs rename s/thunderbird/icedove/
 
 SEDSCRIPT="
 s/Mozilla Thunderbird/Icedove/g;
@@ -92,16 +90,13 @@ s/Trisquel Foundation/Mozilla Foundation/g;
 s/Trisquel Corporation/Mozilla Corporation/g;
 "
 echo "Running batch replace operation"
-find . -type f -not -iregex '.*changelog.*' -not -iregex '.*copyright.*' -execdir /bin/sed --follow-symlinks -i "$SEDSCRIPT" '{}' ';'
+find . -type f -not -iregex '.*changelog.*' -not -iregex '.*copyright.*' -not -iregex '.*third_party/rust.*' -execdir /bin/sed --follow-symlinks -i "$SEDSCRIPT" '{}' ';'
 
-replace Daily Icedove mail/branding/
-sed '/.*<description.*communityExperimentalDesc/,/\/description/d' -i ./mail/base/content/aboutDialog.xul
-sed '/.*<description.*communityDesc/,/\/description/d' -i ./mail/base/content/aboutDialog.xul
-sed '/.*<description.*contributeDesc/,/\/description/d' -i ./mail/base/content/aboutDialog.xul
+replace Daily Trisquel comm/mail/branding/
+sed '/.*<description.*communityExperimentalDesc/,/\/description/d' -i ./comm/mail/base/content/aboutDialog.xul
+sed '/.*<description.*communityDesc/,/\/description/d' -i ./comm/mail/base/content/aboutDialog.xul
+sed '/.*<description.*contributeDesc/,/\/description/d' -i ./comm/mail/base/content/aboutDialog.xul
 
-# We went too far...
-sed s/Trisquel/Mozilla/ l10n/compare-locales/scripts/compare-locales -i
-sed s/Trisquel/Mozilla/ l10n/compare-locales/setup.py -i
 
 sed '/^Source/s/.*/Source: thunderbird/' -i debian/control.in
 sed 's/Provides: mail-reader,/Provides: mail-reader, thunderbird,/' -i debian/control.in
