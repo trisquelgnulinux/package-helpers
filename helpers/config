@@ -55,6 +55,7 @@ find $3 -type f -not -iregex '.*changelog.*' -not -iregex '.*copyright.*' -execd
 }
 changelog(){
 head -n 1 debian/changelog | grep -q $UPSTREAM-security && REPO=$CODENAME-security || REPO=$CODENAME
+[ "$BACKPORT" = true ] || [ "$BACKPORTS" = true ] && REPO=${CODENAME}-backports
 echo | dch -D $REPO -v `pkgversion`+${REVISION}trisquel${VERSION} "$1"
 
 # Make sure the changelog file is identical between archs
@@ -72,7 +73,7 @@ mkdir -p ${LOCAL_APT}/etc/
 mkdir -p ${LOCAL_APT}/var/lib/dpkg
 touch ${LOCAL_APT}/var/lib/dpkg/status
 touch ${LOCAL_APT}/etc/trusted.gpg
-id _apt > /dev/null 2>&1 && chown _apt ${LOCAL_APT}  -R
+[ $UID = 0 ] && id _apt > /dev/null 2>&1 && chown _apt ${LOCAL_APT}  -R
 
 cat << EOF > ${LOCAL_APT}/etc/apt.conf
 Dir::State "${LOCAL_APT}/var/lib/apt";
@@ -81,6 +82,7 @@ Dir::Etc::SourceList "${LOCAL_APT}/etc/apt.sources.list";
 Dir::Cache "${LOCAL_APT}/var/cache/apt";
 pkgCacheGen::Essential "none";
 Dir::Etc::Trusted "${LOCAL_APT}/etc/trusted.gpg";
+Acquire::ForceIPv4 "true";
 EOF
 
 export TRUSTEDFILE=${LOCAL_APT}/etc/trusted.gpg
@@ -115,7 +117,7 @@ EOF
 rm -rf PACKAGES/$PACKAGE
 mkdir PACKAGES/$PACKAGE
 cd PACKAGES/$PACKAGE
-id _apt > /dev/null 2>&1 && chown _apt .
+[ $UID = 0 ] && id _apt > /dev/null 2>&1 && chown _apt .
 
 #Get package and uncompress it
 apt-get update -c $LOCAL_APT/etc/apt.conf

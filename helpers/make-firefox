@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#    Copyright (C) 2008-2018  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2008-2019  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C) 2015       Santiago Rodriguez <santi@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
@@ -18,37 +18,38 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=59
+VERSION=65
 
 . ./config
 
+patch -p1 < debian/patches/partially-revert-google-search-update.patch
+patch -p1 < debian/patches/no-region-overrides-for-google-search.patch
 
 rm debian/control
 
 # Disable activity-stream antifeatures.
 # These are not condensed into a single sed script to make it fail on individual commands that didn't change the source
-sed '/^const DEFAULT_SITES/,/^])\;/c const DEFAULT_SITES = new Map\([[""]]\);' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
-sed '/\["showSponsored/,/value/s/value: true/value: false/' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
-sed '/\["disableSnippets/,/value/s/value: false/value: true/' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
-sed '/\["telemetry"/,/value/s/value: true/value: false/' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
-sed '/\["section.highlights.includePocket"/,/value/s/value: true/value: false/' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
-sed '/\["telemetry.ping.endpoint"/,/value/s/value: .*/value: ""/' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
-sed '/\["tippyTop.service.endpoint"/,/value/s/value: .*/value: ""/' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
-sed 's/\(read_more_endpoint:\) .http.*/\1 "",/' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
-sed 's/\(stories_endpoint:\) .http.*/\1 "",/' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
-sed 's/\(stories_referrer:\) .http.*/\1 "",/' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
-sed 's/\(topics_endpoint:\) .http.*/\1 "",/' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
-sed '/name: "snippets"/,/value/s/value: true/value: false/' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
-sed '/name: "telemetry"/,/value/s/value: true/value: false/' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
-sed '/name: "section.topstories"/,/return/s/return.*/return false;/' -i browser/extensions/activity-stream/lib/ActivityStream.jsm
-sed 's/.Ubuntu., //' -i ./browser/extensions/activity-stream/css/activity-stream*.css
+ActivityStream=browser/components/newtab/lib/ActivityStream.jsm
+sed '/^const DEFAULT_SITES/,/^])\;/c const DEFAULT_SITES = new Map\([[""]]\);' -i $ActivityStream
+sed '/\["showSponsored/,/value/s/value: true/value: false/' -i $ActivityStream
+sed '/\["telemetry"/,/value/s/value: true/value: false/' -i $ActivityStream
+sed '/\["section.highlights.includePocket"/,/value/s/value: true/value: false/' -i $ActivityStream
+sed '/\["telemetry.ping.endpoint"/,/value/s/value: .*/value: ""/' -i $ActivityStream
+sed 's/\(read_more_endpoint:\) .http.*/\1 "",/' -i $ActivityStream
+sed 's/\(stories_endpoint:\) .http.*/\1 "",/' -i $ActivityStream
+sed 's/\(stories_referrer:\) .http.*/\1 "",/' -i $ActivityStream
+sed 's/\(topics_endpoint:\) .http.*/\1 "",/' -i $ActivityStream
+sed '/name: "telemetry"/,/value/s/value: true/value: false/' -i $ActivityStream
+sed '/name: "section.topstories"/,/return/s/return.*/return false;/' -i $ActivityStream
+sed 's/.Ubuntu., //' -i browser/components/newtab/css/activity-stream*.css
 
-cp $DATA/onboarding/bootstrap.js browser/extensions/onboarding
-cp $DATA/onboarding/onboarding.js browser/extensions/onboarding/content
-cp $DATA/onboarding/onboarding.properties browser/extensions/onboarding/locales/en-US
-for locale in $(ls -1 $DATA/onboarding/locales/); do
-    cp $DATA/onboarding/locales/$locale/onboarding.properties l10n/$locale/browser/extensions/onboarding
-done
+#cp $DATA/watermark.svg ./browser/extensions/onboarding/content/img/watermark.svg
+#cp $DATA/onboarding/bootstrap.js browser/extensions/onboarding
+#cp $DATA/onboarding/onboarding.js browser/extensions/onboarding/content
+#cp $DATA/onboarding/onboarding.properties browser/extensions/onboarding/locales/en-US
+#for locale in $(ls -1 $DATA/onboarding/locales/); do
+#    cp $DATA/onboarding/locales/$locale/onboarding.properties l10n/$locale/browser/extensions/onboarding
+#done
 
 sed '/captivedetect.canonicalURL/s/http.*success.txt//' -i modules/libpref/init/all.js
 
@@ -81,23 +82,28 @@ sed 's/com.ubuntu/org.trisquel/' -i debian/config/mozconfig.in
 echo ac_add_options --disable-eme >> debian/config/mozconfig.in
 sed '/gmp-clearkey/d' -i ./debian/firefox.install.in
 
+# Correct build error
+echo ac_add_options --enable-stdcxx-compat >> debian/config/mozconfig.in
+
 # Locale packages should provide firefox-locale-$LANG
-sed "s/Provides.*/Provides: firefox-locale-@LANGCODE@/" -i debian/control.langpacks
+sed "s/Provides.*/Provides: abrowser-locale-@LANGCODE@/" -i debian/control.langpacks
 
 # Remove Ubuntu bookmarks
 sed -i /ubuntu-bookmarks/d debian/patches/series
 rm debian/patches/ubuntu-bookmarks*
-
-# Remove Ubuntu l10n search preferences
-sed -i /ubuntu-search-defaults/d debian/patches/series
-rm debian/patches/ubuntu-search-defaults*
 
 #Unbrand url codes for google and amazon
 find debian/searchplugins |grep google| xargs -i /bin/sed '/ubuntu/d; /channel/d' -i {}
 find debian/searchplugins |grep amazon| xargs -i /bin/sed '/canoniccom/d;' -i {}
 
 #Replace canonical referer with our own for duckduckgo
-find debian/searchplugins |grep duck| xargs -i /bin/sed 's/canonical/trisquel/' -i {}
+find |grep -e duckduckgo.xml -e ddg.xml | xargs -i /bin/sed 's/canonical/trisquel/' -i {}
+
+# Make DuckDuckGo the default engine
+rm debian/patches/no-region-overrides-for-google-search.patch debian/patches/partially-revert-google-search-update.patch
+sed '/no-region-overrides-for-google-search/d; /partially-revert-google-search-update/d' -i debian/patches/series
+sed '/searchDefault/s/: \".*\"/: "DuckDuckGo"/g' -i browser/components/search/extensions/list.json
+sed '/visibleDefaultEngines/{n; s/"ddg",//; s/\"/"ddg", "/}'  -i browser/components/search/extensions/list.json
 
 # contact link
 #sed 's_https://input.mozilla.org/feedback_https://trisquel.info/contact_' -i browser/base/content/utilityOverlay.js
@@ -123,46 +129,30 @@ sed  "s/^MOZ_PKG_NAME\t.*/MOZ_PKG_NAME\t\t:= abrowser/;" debian/build/config.mk 
 ############################################################################3
 sed "s_^Maintainer.*_Maintainer: $DEBFULLNAME <$DEBEMAIL>_g" -i debian/control.in
 
-# Replace Firefox branding
-find -type d | grep firefox | xargs rename s/firefox/abrowser/
-find -type d | grep firefox | xargs rename s/firefox/abrowser/
-find -type f | grep firefox | xargs rename s/firefox/abrowser/
-find -type f | grep Firefox | xargs rename s/Firefox/Abrowser/
-
 SEDSCRIPT="
-s/Mozilla Firefox/Abrowser/g;
-s/firefox/abrowser/g;
-s/Firefox/Abrowser/g;
-s/FIREFOX/ABROWSER/g;
-s/ Mozilla / Trisquel /g;
-s|PACKAGES/abrowser|PACKAGES/firefox|g;
-s/iceweasel, abrowser/iceweasel, firefox/g;
-s/Replaces: abrowser/Replaces: firefox/g;
+s/Try Firefox/Try Abrowser/g;
+s/Firefox Home/Abrowser Home/g;
+s/Firefox Account/Sync Account/g;
+s/Updates from Mozilla and Firefox/Updates from Mozilla/g;
 s/Adobe Flash/Flash/g;
-s|www.mozilla.com/abrowser/central|trisquel.info/browser|g;
+s|www.mozilla.com/firefox/central|trisquel.info/browser|g;
 s|mozilla.com/plugincheck|trisquel.info/browser|g;
 s|www.mozilla.com/legal/privacy|trisquel.info/legal|g;
-
-s/Trisquel Public/Mozilla Public/g;
-s/Trisquel Foundation/Mozilla Foundation/g;
-s/Trisquel Corporation/Mozilla Corporation/g;
-s/abrowser.com/firefox.com/g;
 "
 
 echo "Running batch replace operation"
 find . -type f -not -iregex '.*changelog.*' -not -iregex '.*copyright.*' -not -iregex '.*third_party/rust.*' -execdir /bin/sed --follow-symlinks -i "$SEDSCRIPT" '{}' ';'
 
-sed -i '2s/^Source:.*/Source: firefox/' debian/control.in
-sed s/ubuntu/trisquel/g debian/distribution.ini -i
-sed 's/ubuntu_version/trisquel_version/; s/Ubuntu 10.10/Trisquel 4.0/; s/1010/40/' -i debian/abrowser.postinst.in
+echo "Replacing Firefox with Abrowser on ./l10n"
+find l10n -type f  -not -iregex '.*changelog.*' -not -iregex '.*copyright.*' -execdir /bin/sed --follow-symlinks -i "s/Firefox/Abrowser/" '{}' ';'
 
-# abrowser should provide firefox
-sed '/Package: @MOZ_PKG_NAME@-dev/,/Description:/ s/Architecture: any/Architecture: any\nProvides: firefox-dev /' debian/control.in -i
-sed '/Package: @MOZ_PKG_NAME@$/,/Description:/ s/Provides:/Provides: firefox, /' debian/control.in -i
+sed s/ubuntu/trisquel/g debian/distribution.ini -i
+sed "s/ubuntu_version/trisquel_version/; s/Ubuntu 10.10/Trisquel $REVISION/; s/1010/40/" -i debian/firefox.postinst.in
 
 # Branding files
 rm browser/branding/{official,aurora,nightly,unofficial} -rf
 cp -a $DATA/branding/ browser/branding/official
+cp -a $DATA/branding/ browser/branding/unofficial
 # Disable preprocessor
 sed 's/_PP//' -i browser/branding/branding-common.mozbuild
 cat << EOF >> debian/config/branch.mk
@@ -173,13 +163,6 @@ MOZ_ENABLE_BREAKPAD     = 0
 MOZ_ENABLE_TELEMETRY    = 0
 EOF
 
-cp $DATA/watermark.svg ./browser/extensions/onboarding/content/img/watermark.svg
-
-# Replace about:home
-rm browser/base/content/abouthome -rf
-cp $DATA/abouthome -a browser/base/content
-sed '/abouthome/s/*/ /' -i ./browser/base/jar.mn
-
 # Delete stuff we don't use and that may contain trademaked logos
 rm -rf ./browser/metro ./addon-sdk/source/doc/static-files/media ./browser/themes/windows ./browser/themes/osx ./b2g
 
@@ -187,8 +170,23 @@ rm -rf ./browser/metro ./addon-sdk/source/doc/static-files/media ./browser/theme
 cp $DATA/bookmarks.html.in browser/locales/generic/profile/bookmarks.html.in
 
 #Trisquel custom search engines
-cp $DATA/searchplugins/*.xml debian/searchplugins/en-US/
-cp $DATA/searchplugins/searchplugins.conf debian/config/
+cp $DATA/searchplugins/*.xml debian/searchplugins/
+sed '/additions/,$d' debian/config/searchplugins.conf -i
+cat << EOF >> debian/config/searchplugins.conf
+  "additions": [
+    {
+      "name": "Trisquel",
+      "include_locales": [ "*" ],
+      "engine": "trisquel"
+    },
+    {
+      "name": "Trisquel packages",
+      "include_locales": [ "*" ],
+      "engine": "trisquel-packages"
+    }
+  ]
+}
+EOF
 
 # install extensions
 for extension in $(ls -1 $DATA/extensions/); do
@@ -211,38 +209,89 @@ echo "#plugindeprecation-notice {  display: none !important; }" >> toolkit/mozap
 # Hide warnings on unsigned extensions
 echo ".warning{display: none!important; } .addon[notification=warning]{background-image: none!important;}" >> toolkit/mozapps/extensions/content/extensions.css
 # Hide extra links in about box
-sed '/releaseNotes.link/d; /helpus/d' -i ./browser/base/content/aboutDialog.xul
+sed '/releaseNotes.link/d' -i ./browser/base/content/aboutDialog.xul
+sed '/description.*helpus/,/description/d' -i ./browser/base/content/aboutDialog.xul
 
 find -wholename '*/brand.dtd' |xargs /bin/sed 's/trademarkInfo.part1.*/trademarkInfo.part1 "">/' -i
 
-for STRING in community.end3 community.exp.end community.start2 community.mozillaLink community.middle2 community.creditsLink community.end2 contribute.start contribute.getInvolvedLink contribute.end channel.description.start channel.description.end
-do
- find -name aboutDialog.dtd | xargs sed -i "s/ENTITY $STRING.*/ENTITY $STRING \"\">/"
-done
-
 for STRING in rights.intro-point3-unbranded rights.intro-point4a-unbranded rights.intro-point4b-unbranded rights.intro-point4c-unbranded
-do
+ do
  find -name aboutRights.dtd | xargs sed -i "s/ENTITY $STRING.*/ENTITY $STRING \"\">/"
 done
 
+for STRING in rights-intro-point-2 rights-intro-point-3 rights-intro-point-4 rights-intro-point-5 rights-intro-point-6 rights-webservices rights-safebrowsing
+do
+ find -name aboutRights.ftl | xargs sed -i "s/^$STRING.*/$STRING = /"
+done
+
+for STRING in helpus community-2 community-exp
+do
+ find -name aboutDialog.ftl | xargs sed -i "s/^$STRING.*/$STRING = /"
+done
 
 sed -i 's/<a\ href\=\"http\:\/\/www.mozilla.org\/\">Mozilla\ Project<\/a>/<a\ href\=\"http\:\/\/www.trisquel.info\/\"\>Trisquel\ Project<\/a>/g' browser/base/content/overrides/app-license.html
 
 # We went too far...
 #sed -i 's/iceweasel, abrowser, icecat,/iceweasel, firefox, icecat,/g' debian/control.in
 sed '/Provides/s/abrowser-locale/firefox-locale/' -i debian/control.langpacks
+/bin/sed '/intro-point2-a/s/Abrowser/Firefox/' -i l10n/*/toolkit/chrome/global/aboutRights.dtd
+/bin/sed '/trademarkInfo/s/Abrowser/Firefox/' -i l10n/*/browser/branding/official/brand.ftl
 
-# Restore useragent to Firefox
-sed '/MOZILLA_UAVERSION/ s:Abrowser/:Firefox/:' -i netwerk/protocol/http/nsHttpHandler.cpp
+/bin/sed 's/prefs_snippets_description=.*/prefs_snippets_description=Mozilla snippets/' -i l10n/*/browser/chrome/browser/activity-stream/newtab.properties
 
 # Set migrator scripts
-sed 's/Abrowser/Firefox/g; s/abrowser/firefox/g' -i browser/components/migration/AbrowserProfileMigrator.js
-sed s/ChromeProfileMigrator/_temp_/ -i browser/components/migration/moz.build
-sed s/AbrowserProfileMigrator/ChromeProfileMigrator/ -i browser/components/migration/moz.build
-sed s/_temp_/AbrowserProfileMigrator/ -i browser/components/migration/moz.build
+#sed 's/Abrowser/Firefox/g; s/abrowser/firefox/g' -i browser/components/migration/FirefoxProfileMigrator.js
+#sed s/ChromeProfileMigrator/_temp_/ -i browser/components/migration/moz.build
+#sed s/AbrowserProfileMigrator/ChromeProfileMigrator/ -i browser/components/migration/moz.build
+#sed s/_temp_/AbrowserProfileMigrator/ -i browser/components/migration/moz.build
 
 # js settings
-cat $DATA/settings.js >> debian/vendor-abrowser.js
+cat $DATA/settings.js >> debian/vendor-firefox.js
+
+#################
+# Android stuff #
+#################
+
+# Settings
+cat << EOF >> mobile/android/confvars.sh
+# Abrowser settings
+MOZ_APP_BASENAME=Abrowser
+MOZ_APP_VENDOR=Trisquel
+MOZ_PAY=0
+MOZ_SERVICES_HEALTHREPORT=0
+MOZ_SERVICES_HEALTHREPORTER=0
+MOZ_SERVICES_METRICS=0
+MOZ_DATA_REPORTING=0
+MOZ_DEVICES=0
+MOZ_ANDROID_GOOGLE_PLAY_SERVICES=0
+MOZ_TELEMETRY_REPORTING=0
+MOZ_ADDON_SIGNING=0
+EOF
+
+sed '/SENDERID/d' -i mobile/android/app/mobile.js
+
+# Fix locale
+cat << EOF >> mobile/locales/en-US/chrome/region.properties
+browser.search.defaultenginename=DuckDuckGo
+browser.search.order.1=DuckDuckGo
+browser.search.order.2=Google
+browser.search.order.3=Yahoo
+browser.suggestedsites.restricted_mozilla.url=https://www.trisquel.info
+browser.suggestedsites.webmaker.title=GNU Project
+browser.suggestedsites.webmaker.url=https://www.gnu.org
+EOF
+
+sed -i '/aboutPage.logoTrademark/d' \
+mobile/android/locales/en-US/chrome/about.dtd
+echo -e '\n<!ENTITY aboutPage.logoTrademark "">' >> \
+mobile/android/locales/en-US/chrome/about.dtd
+
+# Branding
+rm mobile/android/branding/{official,unofficial,beta,nightly} -rf
+cp -a $DATA/android/branding/ mobile/android/branding/official
+cp $DATA/android/mobile.ico mobile/android/app/
+cp $DATA/android/images/* mobile/android/themes/core/images/
+cp -a $DATA/android/res/main/* mobile/android/app/src/main/res/
 
 # Postinst script to manage profile migration and system links
 echo '
@@ -262,6 +311,8 @@ fi
 exit 0 ' >> debian/abrowser.postinst.in
 
 sed 's/1410/65/; s/1310/60/' -i debian/rules
+
+sed 's/^Source:.*/Source: firefox/' -i debian/control.in
 
 debian/rules debian/control
 touch -d "yesterday" debian/control

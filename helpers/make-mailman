@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2014  Rubén Rodríguez <ruben@trisquel.info>
+#    Copyright (C) 2014-2018  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -18,6 +18,9 @@
 #
 
 VERSION=1
+
+EXTERNAL='deb-src http://ftp.us.debian.org/debian stable main'
+REPOKEY=EF0F382A1A7B6500
 
 . ./config
 

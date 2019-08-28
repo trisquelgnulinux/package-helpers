@@ -1,0 +1,1017 @@
+#!/usr/bin/perl
+# $Id: parsewiki,v 1.29 2002/10/08 17:23:05 villate Exp $
+
+# parsewiki - Parses a text file, with formatting such as that used in a Wiki
+
+sub Copying
+{
+print <<'EndTerms';
+ Copyright (C) 2002 Jaime Villate <villate@gnu.org>
+
+ This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU General Public License
+ as published by the Free Software Foundation; either version 2
+ of the License, or (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+ Some of the subroutines used are based on the Use Mod Wiki script
+ <http://www.usemod.com/cgi-bin/wiki.pl>, version 0.92 (April 21, 2001)
+ by Clifford A. Adams
+
+EndTerms
+exit;
+}
+sub Usage
+{
+    print STDERR <<"EndUsage";
+Usage: $0 [OPTION]... [FILE]
+
+Options:
+    -f, --format=FORMAT  Output format; one of html, xhtml, docbook, latex.
+                         (default html)
+    -T, --title=TITLE    Title.
+    -t, --template=FILE  File with a template to use instead of thestandard.
+    -c, --copyright      Display copyright and copying permission statement.
+    -h, --help           Show this usage summary.
+
+FILE is a simple text file with wiki formating syntax. The result will be
+sent to the Standard Output. If FILE is not given, input will be taken from
+the Standard Input. 
+
+Examples:
+       $0 myfile.wiki
+       cat file.txt | $0 -fdocbook --title="An Example" >file.xml
+ 
+Report bugs to <villate\@gnu.org>.
+EndUsage
+    exit 1;
+}
+
+use strict;
+use vars qw($SaveUrlIndex $UrlProtocols $UrlPattern $authorcount $figcount
+	    $UrlProtocols2 $UrlPattern2 $ImageExtensions $FS $frontmatter
+	    $FreeLinkPattern $IndentLimit $language $Format $Template
+            $title  $lang $babel $LT $GT $BL $BR $firstheading $Languages
+	    $Titles $Authors $Orgs $Addresses $Dates $Versions $Abstracts
+	    $Figures @Title @Author @Org @Address @Date @Version @Abstract
+	    @Figure @Language @BabelLang @Tag %SaveUrl %OpenTag %CloseTag
+	    %OpenItem %CloseItem %Meta %LangCode $Revision $LF);
+
+# Configuration variables and Default options
+%SaveUrl = ();
+$SaveUrlIndex = 0;
+$authorcount = 0;
+@Tag = qw(ul ol dl pre em strong code img a p dt);
+%OpenItem  = qw(ol <li> ul <li> dl <dd>);
+%CloseItem = qw(ol </li> ul </li> dl </dd>);
+$Format = 'html';
+$Revision = q($Revision: 1.29 $);
+
+my $file = &GetOpts(); # Process command line options
+
+# Set up output format
+$_ = $Format;
+FORMAT:
+{
+    if (/^html$/i)    { &SetUpHTML;  last FORMAT}
+    if (/^xhtml$/i)   { &SetUpXHTML; last FORMAT}
+    if (/^docbook$/i) { &SetUpDB;    last FORMAT}
+    if (/^latex$/i)   { &SetUpLatex; last FORMAT}
+    die "$0: Unknown format \"$Format\"\n\n";
+}
+
+# Get input file
+open (IN,"<$file") or die "$0: Cannot read file $file\n\n" ;
+undef $/;
+my $page = <IN>;
+close IN;
+
+&InitLinkPatterns();
+&InitLangTables();
+$page =~ s/([^\\])\\\\\r?\n/$1$FS$FS/go;  # Encode paragraph breaks
+$page =~ s/([^\\])\\\r?\n/$1 /g;  # Join (text) lines ending in backslash
+($firstheading) = ($page =~ /=\s+([^=]*)\s+=/); 
+if ($Format =~ /latex/i)
+{
+    $page = &QuoteLatex1($page);
+}
+else
+{
+    $page = &QuoteHtml($page);
+}
+$page = &CommonMarkup($page, 1, 0);     # Multi-line markup
+$page = &WikiLinesToHtml($page);        # Line-oriented markup
+
+# Get the title, if not defined by a command-line option
+$title = $Meta{'title'} if ($Meta{'title'} && !$title); 
+$title = $firstheading unless $title; 
+$babel = $BabelLang[$language];
+$lang  = ' lang="' . $Meta{language} . '"' if ($Meta{language});
+
+$_ = $Format;
+FORMAT:
+{
+    if (/^html$/i)    { &SetHTMLFront;  last FORMAT }
+    if (/^xhtml$/i)   { &SetXHTMLFront; last FORMAT }
+    if (/^docbook$/i) { &SetDBFront;    last FORMAT }
+    if (/^latex$/i)   { &SetLatexFront }
+}
+
+$page =~ s/$FS$FS/\\\\$LF/g;  # Decode \\ which are not paragraph breaks
+$page =~ s/$FS(\d+)$FS/$SaveUrl{$1}/ge;   # Restore saved text
+$page =~ s/$FS(\d+)$FS/$SaveUrl{$1}/ge;   # Restore nested saved text
+
+# The following statement will fail if $Template has unmatched parentheses
+# and will silently fail if the referred variables are undefined.
+print eval("qq($Template)");
+exit 0;
+
+sub WikiLinesToHtml
+{
+  my ($pageText) = @_;
+  my ($pageHtml, @htmlStack, $code, $depth, $oldCode, $oldDepth);
+  my ($hDepth, $oldhDepth, $index, $flag, $line);
+
+  @htmlStack = ();
+  $depth  = 0;
+  $hDepth = 0;
+  $pageHtml = "";
+  $flag = 1;
+  $IndentLimit = 6 if ( $IndentLimit < 1);
+
+  # Process lines one-at-a-time
+  foreach $line (split(/\n/, $pageText))
+  {
+    # Search for meta-info lines
+    if ($flag > 0)
+    {
+	next if ($line =~ /^\s*$/);
+	if ($line =~ s/\s*(?:$BL)([^\s:]+):\s*(.+)(?:$BR)\s*$//o)
+	{
+	    &StoreMeta($1, $2);
+	    next;
+	}
+	else
+	{
+	    $flag = 0;
+	}
+    }
+
+    # Process main text lines
+    $line .= "\n" unless ($line =~ /^\s*$/);
+    $oldDepth = $depth;
+    $depth = 0;
+    $oldhDepth = $hDepth;
+    $_ = $line;
+
+    # Process lines with special characters on the first column
+  CODE:
+    {
+        # Descriptive lists
+	if (s/^(\;+)\s*([^:]+\:?)\: */$OpenTag{dt}$2$CloseTag{dt}\n$OpenItem{dl}/)
+	{
+	    $code = "dl";
+	    $depth = length $1;
+	    last CODE;
+	}
+	if (s/^(\:+) */$OpenTag{dt}$CloseTag{dt}\n<$OpenItem{dl}/)
+	{
+	    $code = "dl";
+	    $depth = length $1;
+	    last CODE;
+	}
+        # Itemized lists
+	if (s/^(\*+) */$OpenItem{ul}/)
+	{
+	    $code = "ul";
+	    $depth = length $1;
+	    last CODE;
+	}
+        # Ordered lists
+	if (s/^(\#+) */$OpenItem{ol}/)
+	{
+	    $code = "ol";
+	    $depth = length $1;
+	    last CODE;
+	}
+        # Verbatim environment
+	if (/^[ \t].*\S/)
+	{
+	    $code = "pre";
+	    $depth = 1;
+	    last CODE;
+	}
+        # Text line
+	if (/^[^\s\=]/)
+	{
+	    $code = "p";
+	    $depth = 1;
+	    last CODE;
+	}
+        # Section headings
+	if (s/^(\=+)\s*([^\=]+)\s*\=+/&WikiHeading($1, $2)/e)
+	{
+	    $hDepth = length $1;
+	    $code = "h$depth";
+	    last CODE;
+	}
+        # New paragraph
+	if (/^\s*$/)
+	{
+	    $code = '';
+	}
+    }
+    # Close elements as needed
+    while (@htmlStack > $depth)
+    {
+        $oldCode = pop(@htmlStack);
+	if ($oldCode =~ /^[dou]l$/)
+	{
+	    $pageHtml =~ s/\n$/$CloseItem{$oldCode}\n/;
+	}
+	$pageHtml .=  $CloseTag{$oldCode} . "\n";
+    }
+
+    # Open or close new sections as needed
+    if ($hDepth > $oldhDepth)
+    {
+	while ($hDepth > $oldhDepth )
+	{
+	    $oldhDepth++;
+	    $pageHtml .=  $OpenTag{'h'.$oldhDepth} . "\n";
+	    $pageHtml .=  $OpenItem{'h'.$oldhDepth} .
+		$CloseItem{'h'.$oldhDepth} . "\n"
+		    unless ($hDepth == $oldhDepth );
+	}
+    }
+    elsif ($hDepth < $oldhDepth)
+    {
+	while ($hDepth <= $oldhDepth )
+	{
+	    $pageHtml .=  $CloseTag{'h'.$oldhDepth} . "\n";
+	    $oldhDepth--;
+	}
+	$pageHtml .=  $OpenTag{'h'.$hDepth};
+    }
+    elsif ($code =~ /h\d/)
+    {
+	$pageHtml .=  $CloseTag{'h'.$hDepth} . "\n" . $OpenTag{'h'.$hDepth};
+    }
+
+    # Parse paragraphs and lists
+    if ($depth > 0)
+    {
+      $depth = $IndentLimit  if ($depth > $IndentLimit);
+      if (@htmlStack)
+      {  
+        # Non-empty stack
+        $oldCode = pop(@htmlStack);
+	if ($depth > $oldDepth)
+	{
+	    # Start a nested list
+	    push(@htmlStack, $oldCode);
+	    $pageHtml .= "$OpenTag{$code}\n";
+	    if (($depth - $oldDepth) > 1)
+	    {
+		$pageHtml .= $OpenItem{$code} . "\n";
+	    }
+	}
+	else
+	{
+	    if ($oldCode =~ /^[dou]l$/)
+	    {
+		$pageHtml =~ s/\n$/$CloseItem{$oldCode}\n/;
+	    }
+	    if ($oldCode ne $code)
+	    {
+		$pageHtml .= "$CloseTag{$oldCode}\n$OpenTag{$code}\n";
+	    }
+	}
+        push(@htmlStack, $code);
+      }
+
+      # Fill up stack as needed
+      while (@htmlStack < $depth)
+      {
+        push(@htmlStack, $code);
+        $pageHtml .= $OpenTag{$code} . "\n";
+	if ($code =~ /^[dou]l$/ && $depth > @htmlStack)
+	{
+	    $pageHtml .= $OpenItem{$code} . "\n";
+	}
+      }
+    }
+
+    # Parse line-oriented common markup
+    unless (/^\s*$/)
+    {
+	$line = &CommonMarkup($_, 1, 2);
+	$line = &QuoteLatex2($line) if ($Format =~ /latex/i && $code !~ /pre/);
+	if ($code =~ /^[dou]l$/)
+	{
+	    $line =~ s/$FS$FS/$CloseTag{p}\n$OpenTag{p}\n/go;  # par. breaks
+	}
+	$pageHtml .= $line;
+    }
+  }
+
+  while (@htmlStack > 0)
+  {
+      # Clear stack
+      $oldCode = pop(@htmlStack);
+      if ($oldCode =~ /^[dou]l$/)
+      {
+	  $pageHtml =~ s/\n$/$CloseItem{$oldCode}\n/;
+      }
+      $pageHtml .=  $CloseTag{$oldCode} . "\n";
+  }
+
+  # Close open sections
+  while ($hDepth > 0)
+  {
+      $pageHtml .=  $CloseTag{'h'.$hDepth} . "\n";
+      $hDepth--;
+  }
+  return $pageHtml;
+}
+
+sub CommonMarkup
+{
+    my ($text, $useImage, $doLines) = @_;
+    local $_ = $text;
+    
+    if ($doLines < 2)
+    { # HTML tags that should be replaced before other tags are
+      # inserted into the text, to avoid mixing them up.
+	s/(?:$LT)pre$GT((.|\n)*?)$LT\/pre$GT/&StorePre($1, "pre")/igeo;
+	s/(?:$LT)code$GT((.|\n)*?)$LT\/code$GT/&StorePre($1, "code")/igeo;
+      # Note that these tags are restricted to a single line
+	s/(?:$LT)b$GT(.*?)$LT\/b$GT/$OpenTag{strong}$1$CloseTag{strong}/gio;
+	s/(?:$LT)i$GT(.*?)$LT\/i$GT/$OpenTag{em}$1$CloseTag{em}/gio;
+	s/(?:$LT)strong$GT(.*?)$LT\/strong$GT/$OpenTag{strong}$1$CloseTag{strong}/gio;
+	s/(?:$LT)em$GT(.*?)$LT\/em$GT/$OpenTag{em}$1$CloseTag{em}/gio;
+	s/(?:$LT)tt$GT(.*?)$LT\/tt$GT/$OpenTag{code}$1$CloseTag{code}/gio;
+	s/\[$UrlPattern\s+([^\]]+?)\]/&StoreBracketUrl($1, $2)/geos;
+	s/\[$UrlPattern\]/&StoreBracketUrl($1, "")/geo;
+	if ($Format =~ /^html$/i)
+	{
+	    s/$UrlPattern2/&StoreUrl($1, $useImage)/geo;
+	} else {
+	    s/$UrlPattern2/&StoreUrl($1, 0)/geo;
+        }
+	s/\[\[$FreeLinkPattern\s+([^\]]+?)\]\]/&StoreBracketUrl($1, $2)/geo;
+	s/\[\[$FreeLinkPattern\]\]/&StoreUrl($1, $useImage)/geo;
+    }
+    if ($doLines)
+# TO DO: these substitutions should not be made inside the "pre" environment
+
+    { # 0 = before other tags are inserted, 1 or 2 = after that
+      # TO DO: The quote markup patterns avoid overlapping tags (with 5 quotes)
+      # by matching the inner quotes for the strong pattern.
+#       s/(\'*)\'\'\'(.*?)\'\'\'/$1$OpenTag{strong}$2$CloseTag{strong}/go;
+	s/\'\'\'(.*?)\'\'\'/&TagText($1,'strong')/ge;
+	s/''(.*?)''/&TagText($1,'em')/ge;
+	s/,,(.*?),,/&TagText($1,'code')/ge;
+    }
+    return $_;
+}
+
+sub WikiHeading
+{
+  my ($depth, $text) = @_;
+  $depth = length($depth);
+  $depth = 5  if ($depth > 5);
+  return $OpenItem{'h'.$depth} . $text . $CloseItem{'h'.$depth} . "\n";
+}
+
+sub QuoteLatex1
+{
+  my ($html) = @_;
+  my $text = '';
+  $BL = '\\\{';
+  $BR = '\\\}';
+  foreach (split(/\n/, $html))
+  {
+      if (/^\S/)
+      {
+	  s/\\/\\ensuremath$FS\\backslash$FS/go;
+	  s/\{/\\{/g;
+	  s/\}/\\}/g;
+	  s/$FS(\\backslash)$FS/\{$1\}/go;
+      }
+      $text .= $_ . "\n";
+  }
+  return $text;
+}
+
+sub QuoteLatex2
+{
+  my ($html) = @_;
+  $_ = $html;
+  s/&/\\&/g;
+  s/#/\\#/g;
+  s/%/\\%/g;
+  s/_/\\_/g;
+  s/\$/\\\$/g;
+  s/\^/\\^{}/g;
+  s/~/\\~{}/g;
+  s/>/\\ensuremath{>}/g;
+  s/</\\ensuremath{<}/g;
+  return $_;
+}
+
+sub QuoteHtml
+{
+  my ($html) = @_;
+  $html =~ s/&/&amp;/g;
+  $html =~ s/</&lt;/g;
+  $html =~ s/>/&gt;/g;
+#  $html =~ s/&amp;([\#a-zA-Z0-9]+);/&$1;/g;  # Allow character references
+  $LT = '&lt;';
+  $GT = 'gt;';
+  return $html;
+}
+
+sub InitLinkPatterns
+{
+  # Field separators are used in the URL-style patterns below.
+  $FS  = "\xb3";      # The FS character is a superscript "3"
+  $LT = '<';
+  $GT = '>';
+  $BL = '{';
+  $BR = '}';
+  $LF = "\n";
+
+  # Url-style links are delimited by one of:
+  #   1.  Whitespace                           (kept in output)
+  #   2.  Left or right angle-bracket (< or >) (kept in output)
+  #   3.  Right square-bracket (])             (kept in output)
+  #   4.  A single double-quote (")            (kept in output)
+  #   5.  A $FS (field separator) character    (kept in output)
+
+  $UrlProtocols = "http|https|ftp|afs|news|nntp|mid|cid|mailto|wais|"
+                  . "prospero|telnet|gopher";
+  $UrlPattern = "((?:(?:$UrlProtocols):[^\\]\\s\"$FS]+))";
+  $UrlProtocols2 = "http|https|ftp";
+  $UrlPattern2 = "((?:(?:$UrlProtocols2):[^\\]\\s\"$FS]+))";
+  $ImageExtensions = "(gif|jpg|png|bmp|jpeg|ico)";
+  $FreeLinkPattern = "([-,.()\/'_0-9A-Za-z\xc0-\xff]+)";
+}
+
+sub InitLangTables
+{
+    $language  = 0;
+    $babel     = 'english';
+    @BabelLang = qw(english spanish portuges);
+    %LangCode  = qw(en 0 es 1 pt 2);
+    $Languages = 'language idioma língua';
+    $Titles    = 'title título título';
+    $Authors   = 'author autor autor';
+    $Orgs      = 'organization organización organização';
+    $Addresses = 'address dirección endereço';
+    $Dates     = 'date fecha data';
+    $Versions  = 'version versión versão';
+    $Abstracts = 'abstract resumen resumo';
+    $Figures   = 'Figure Figura Figura';
+    @Language  = split(/ /,$Languages);
+    @Title     = split(/ /,$Titles);
+    @Author    = split(/ /,$Authors);
+    @Org       = split(/ /,$Orgs);
+    @Address   = split(/ /,$Addresses);
+    @Date      = split(/ /,$Dates);
+    @Version   = split(/ /,$Versions);
+    @Abstract  = split(/ /,$Abstracts);
+    @Figure    = split(/ /,$Figures);
+}
+
+sub StoreMeta
+{
+  my ($name, $content) = @_;
+  if ($Languages =~ /$name/i)
+  {
+      $language = $LangCode{$content} if ($LangCode{$content});
+      $Meta{language} = $content;
+  }
+  $content = &CommonMarkup($content, 1, 2);
+  $content = &QuoteLatex2($content) if ($Format =~ /latex/i);
+  $content =~ s/$FS(\d+)$FS/$SaveUrl{$1}/ge;   # Restore saved text
+  $content =~ s/$FS(\d+)$FS/$SaveUrl{$1}/ge;   # Restore nested saved text
+ META:
+  {
+      if ($Titles =~ /$name/i)
+      {
+	  $Meta{title} = $content;
+	  next META;
+      }
+      if ($Authors =~ /$name/i)
+      {
+	  $Meta{author}[$authorcount] = $content;
+	  $Meta{organization}[$authorcount] = '';
+	  $Meta{address}[$authorcount] = '';
+	  $authorcount++;
+	  next META;
+      }
+      if ($Orgs =~ /$name/i)
+      {
+	  $authorcount = 1 if ($authorcount < 1);
+	  $Meta{organization}[$authorcount-1] = $content;
+	  next META;
+      }
+      if ($Addresses =~ /$name/i)
+      {
+	  $authorcount = 1 if ($authorcount < 1);
+	  $Meta{address}[$authorcount-1] = $content;
+	  next META;
+      }
+      if ($Dates =~ /$name/i)
+      {
+	  $Meta{date} = $content;
+	  next META;
+      }
+      if ($Versions =~ /$name/i)
+      {
+	  $Meta{version} = $content;
+	  next META;
+      }
+      if ($Abstracts =~ /$name/i)
+      {
+	  $content =~ s/$FS$FS/$CloseTag{p}\n$OpenTag{p}\n/go;  # par. breaks
+	  $Meta{abstract} = $content;
+	  next META;
+      }
+      $Meta{lc($name)} = $content;
+  }
+  return '';
+}
+
+sub TagText
+{
+  my ($text, $element) = @_;
+  my $result;
+  if ($Format =~ /latex/i)
+  {
+      $_ = $text;
+    LOOP:
+      {
+	  if (/\G([^$FS]+)/goc)
+	  {
+	      $result .= "$OpenTag{$element}$1$CloseTag{$element}";
+	      redo LOOP;
+	  }
+	  if (/\G$FS(\d+)$FS/goc)
+	  {
+	      $result .= "$FS$1$FS";
+	      &TagURL($1,$element);
+	      redo LOOP;
+	  }
+	  return $result;
+      }
+  }
+  else
+  {
+      $result = $OpenTag{$element} . $text . $CloseTag{$element};
+      return $result;
+  }
+}
+
+sub TagURL
+{
+  my ($index, $element) = @_;
+  $SaveUrl{$index} =~ s/(\\href\{[^\}]*\})\{([^\}]*)\}/$1\{$OpenTag{$element}$2$CloseTag{$element}\}/;
+  return $FS . $index . $FS;
+}
+
+sub StoreRaw
+{
+  my ($html) = @_;
+
+  $SaveUrl{$SaveUrlIndex} = $html;
+  return $FS . $SaveUrlIndex++ . $FS;
+}
+
+sub StoreUrl
+{
+  my ($name, $useImage) = @_;
+  my ($link, $extra);
+
+  ($link, $extra) = &UrlLink($name, $useImage);
+  # Next line ensures no empty links are stored
+  $link = &StoreRaw($link)  if ($link ne "");
+  return $link . $extra;
+}
+
+sub UrlLink
+{
+  my ($rawname, $useImage) = @_;
+  my ($name, $punct, $format, $text);
+  ($name, $punct) = &SplitUrlPunct($rawname);
+  $text = $name;
+  $text = &QuoteLatex2($text) if ($Format =~ /latex/i);
+  if ($useImage && ($name =~ /\.$ImageExtensions$/))
+  {
+    $name =~ /\.([^\.]+)$/;
+    $format = uc($1);
+    $name =~ s/\.[^\.]+$// if ($Format =~ /latex/i);
+    return (eval("qq($OpenTag{img})"), $punct);
+  }
+  return (eval("qq($OpenTag{a})") . $text . $CloseTag{'a'}, $punct);
+}
+
+sub StoreBracketUrl
+{
+  my ($name, $text) = @_;
+  $text = $name if ($text eq "");
+  $text = &QuoteLatex2($text) if ($Format =~ /latex/i);
+  return &StoreRaw(eval("qq($OpenTag{a})") . $text . $CloseTag{'a'});
+}
+
+sub SplitUrlPunct
+{
+  my ($url) = @_;
+  my ($punct);
+  $url =~ s/\&lt;/</g;
+  $url =~ s/\&gt;/>/g;
+  $url =~ s/\&amp;/&/g;
+  $punct = "";
+  ($punct) = ($url =~ /([^a-zA-Z0-9\/\xc0-\xff\%\#\?\&\+\_\~]+)$/);
+  $url =~ s/([^a-zA-Z0-9\/\xc0-\xff\%\#\?\&\+\_\~]+)$//;
+  unless ($Format =~ /latex/i)
+  {
+      $url =~ s/\&/&amp;/g;
+      $punct =~ s/</&lt;/g;
+      $punct =~ s/>/&gt;/g;
+  }
+  return ($url, $punct);
+}
+
+sub SetUpHTML
+{
+    my $index;
+    my @htmltag = @Tag;
+    foreach $index (0..$#Tag)
+    {
+	$OpenTag{$Tag[$index]}  = '<' . $htmltag[$index] . '>';
+	$CloseTag{$Tag[$index]} = '</' . $htmltag[$index] . '>';
+    }
+    $OpenTag{img} = '<img src="$name" alt="$name">';
+    $OpenTag{a} = '<a href="$name">';
+    %OpenItem  = qw(ol <li><p> ul <li><p> dl <dd><p>);
+    %CloseItem = qw(ol </p></li> ul </p></li> dl </p></dd>);
+    foreach $index (1..5)
+    {
+	$OpenTag{'h'.$index}   = '';
+	$CloseTag{'h'.$index}  = '';
+	$OpenItem{'h'.$index}  = '<h' . ($index+1) . '>';
+	$CloseItem{'h'.$index} = '</h' . ($index+1) . '>';
+    }
+    unless ($Template)
+    {
+	$Template = <<'        EndHTML';
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+               "http://www.w3.org/TR/html4/strict.dtd">
+<html$lang>
+<head>
+<!-- Created by parsewiki $Revision -->
+<title>$title</title>
+</head>
+<body>
+$frontmatter
+$page
+</body>
+</html>
+        EndHTML
+    }
+}
+
+sub SetUpXHTML
+{
+    my $index;
+    my @xhtmltag = @Tag;
+    foreach $index (0..$#Tag)
+    {
+	$OpenTag{$Tag[$index]}  = '<' . $xhtmltag[$index] . '>';
+	$CloseTag{$Tag[$index]} = '</' . $xhtmltag[$index] . '>';
+    }
+    $OpenTag{img} = '<img src="$name" alt="$name" />';
+    $OpenTag{a} = '<a href="$name">';
+    %OpenItem  = qw(ol <li><p> ul <li><p> dl <dd><p>);
+    %CloseItem = qw(ol </p></li> ul </p></li> dl </p></dd>);
+    foreach $index (1..5)
+    {
+	$OpenTag{'h'.$index}   = '';
+	$CloseTag{'h'.$index}  = '';
+	$OpenItem{'h'.$index}  = '<h' . ($index+1) . '>';
+	$CloseItem{'h'.$index} = '</h' . ($index+1) . '>';
+    }
+    unless ($Template)
+    {
+	$Template = <<'        EndXHTML';
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html$lang>
+<head>
+<!-- Created by parsewiki $Revision -->
+<title>$title</title>
+</head>
+<body>
+$frontmatter
+$page
+</body>
+</html>
+        EndXHTML
+    }
+}
+
+sub SetUpDB
+{
+    my $index;
+    my @dbtag = qw(itemizedlist orderedlist variablelist programlisting
+	       emphasis emphasis literal inlinegraphic ulink para term);
+    foreach $index (0..$#Tag)
+    {
+	$OpenTag{$Tag[$index]}  = '<' . $dbtag[$index] . '>';
+	$CloseTag{$Tag[$index]} = '</' . $dbtag[$index] . '>';
+    }
+    $OpenTag{dt} = '<varlistentry><term>';
+    $OpenTag{strong} = '<emphasis role="bold">';
+    $OpenTag{img} = '<inlinegraphic fileref="$name" format="$format" />';
+    $OpenTag{a} = '<ulink url="$name">';
+    %OpenItem  = qw(ol <listitem><para> ul <listitem><para>
+		    dl <listitem><para>);
+    %CloseItem = qw(ol </para></listitem> ul </para></listitem>
+		    dl </para></listitem></varlistentry>);
+    foreach $index (1..5)
+    {
+	$OpenTag{'h'.$index}   = '<sect' . $index . '>';
+	$CloseTag{'h'.$index}  = '</sect' . $index . '>';
+	$OpenItem{'h'.$index}  = '<title>';
+	$CloseItem{'h'.$index} = '</title>';
+    }
+    unless ($Template)
+    {
+        $Template = <<'        EndDB';
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+            "http://www.oasis-open.org/docbook/xml/4.0/docbookx.dtd" >
+<!-- Created by parsewiki $Revision -->
+<article$lang>
+<articleinfo>
+$frontmatter
+</articleinfo>
+$page
+</article>
+        EndDB
+    }
+}
+
+sub SetUpLatex
+{
+    my $index;
+@Tag = qw(ul ol dl pre em strong code img a p dt);
+    my @latextag = qw(itemize enumerate description verbatim emph textbf
+		      texttt);
+    foreach $index (0..2)
+    {
+	$OpenTag{$Tag[$index]}  = "\\begin\{" . $latextag[$index] . '}';
+	$CloseTag{$Tag[$index]} = "\\end\{" . $latextag[$index] . '}';
+    }
+    foreach $index (4..8)
+    {
+	$OpenTag{$Tag[$index]}  = "\\$latextag[$index]\{";
+	$CloseTag{$Tag[$index]} = "\}";
+    }
+    $OpenTag{p}   = '';
+    $CloseTag{p}  = '';
+    $OpenTag{dt}  = '\item[';
+    $CloseTag{dt} = ']';
+    $OpenTag{pre}  = '\begin{small}\begin{verbatim}';
+    $CloseTag{pre} = '\end{verbatim}\end{small}';
+    $OpenTag{img} = '\\\\includegraphics\{$name\}';
+    $OpenTag{a}   = '\\\\href\{$name\}\{';
+    $CloseTag{a}  = '}';
+    %OpenItem  = ('ol', '\item ', 'ul', '\item ', 'dl', '');
+    %CloseItem = ('ol', '', 'ul', '', 'dl', '');
+    $OpenItem{h1} = '\section{';
+    $OpenItem{h2} = '\subsection{';
+    $OpenItem{h3} = '\subsubsection{';
+    $OpenItem{h4} = '\paragraph{';
+    $OpenItem{h5} = '\subparagraph{';
+    foreach $index (1..5)
+    {
+	$OpenTag{'h'.$index}   = '';
+	$CloseTag{'h'.$index}  = '';
+	$CloseItem{'h'.$index} = '}';
+    }
+    unless ($Template)
+    {
+        $Template = <<'        EndLatex';
+% Created by parsewiki $Revision
+\\documentclass\[12pt,a4paper\]\{article\}
+\\usepackage\[latin1\]\{inputenc\}
+\\usepackage\[$babel\]\{babel\}
+\\usepackage\{graphicx\}
+\\usepackage\[colorlinks=true,urlcolor=blue\]\{hyperref\}
+\\setlength\{\\oddsidemargin\}\{9pt\}
+\\setlength\{\\textwidth\}\{425pt\}
+\\setlength\{\\evensidemargin\}\{23pt\}
+\\setlength\{\\topmargin\}\{28pt\}
+\\setlength\{\\headheight\}\{17pt\}
+\\setlength\{\\headsep\}\{14pt\}
+\\setlength\{\\textheight\}\{45\\baselineskip\}
+\\setlength\{\\footskip\}\{26pt\}
+
+\\begin\{document\}
+$frontmatter
+$page
+\\end\{document\}
+        EndLatex
+    }
+}
+
+sub SetHTMLFront
+{
+    $frontmatter  .= "<h1>$title</h1>\n"
+	if ($title && ($title ne $firstheading));
+    if ($authorcount > 0)
+    {
+	for my $index (1..$authorcount)
+	{
+	    $frontmatter .= "$Meta{author}[$index-1]<br>\n";
+	    $frontmatter .= "<em>$Meta{organization}[$index-1]</em><br>\n"
+		if ($Meta{organization}[$index-1]);
+	    $frontmatter .= "$Meta{address}[$index-1]<br>\n"
+		if ($Meta{address}[$index-1]);
+	}
+    }
+    $frontmatter .= "<br>$Version[$language] $Meta{version}<br>\n"
+	if ($Meta{version});
+    $frontmatter .= "<br><em>$Meta{date}</em><br>\n" if ($Meta{date});
+    $frontmatter  = "<div align=\"center\">$frontmatter</div>\n"
+	if ($frontmatter);
+    if ($Meta{abstract})
+    {
+	$Meta{abstract} =~ s/$FS$FS/<\/p>\n<p>/g;
+	$frontmatter .="<blockquote>\n<p>$Meta{abstract}</p>\n</blockquote>\n";
+    }
+    $frontmatter .= "<br><p>$Meta{copyright}</p>\n"
+	if ($Meta{copyright});
+}
+
+sub SetXHTMLFront
+{
+    $frontmatter  = "<h1>$title</h1>\n"
+	if ($title && ($title ne $firstheading));
+    if ($authorcount > 0)
+    {
+	for my $index (1..$authorcount)
+	{
+	    $frontmatter .= "$Meta{author}[$index-1]<br />\n";
+	    $frontmatter .= "<em>$Meta{organization}[$index-1]</em><br />\n"
+		if ($Meta{organization}[$index-1]);
+	    $frontmatter .= "$Meta{address}[$index-1]<br />\n"
+		if ($Meta{address}[$index-1]);
+	}
+    }
+    $frontmatter .= "<br />$Version[$language] $Meta{version}<br />\n"
+	if ($Meta{version});
+    $frontmatter .= "<br /><em>$Meta{date}</em><br />\n" if ($Meta{date});
+    $frontmatter  = "<div align=\"center\">$frontmatter</div>\n"
+	if ($frontmatter);
+    if ($Meta{abstract})
+    {
+	$Meta{abstract} =~ s/$FS$FS/<\/p>\n<p>/g;
+	$frontmatter .="<blockquote>\n<p>$Meta{abstract}</p>\n</blockquote>\n";
+    }
+    $frontmatter .= "<br /><p>$Meta{copyright}</p>\n"
+	if ($Meta{copyright});
+}
+
+sub SetDBFront
+{
+    $frontmatter  = "<title>$title</title>\n";
+    if ($authorcount > 0)
+    {
+	for my $index (1..$authorcount)
+	{
+	    my $affil;
+	    $frontmatter .= "<author>\n";
+	    $Meta{author}[$index-1] =~ /^(.*)\s(\S+)\s*$/;
+	    $frontmatter .= "<firstname>$1</firstname>\n";
+	    $frontmatter .= "<surname>$2</surname>\n";
+	    $affil .= "<orgname>$Meta{organization}[$index-1]" . 
+		"</orgname>\n" if ($Meta{organization}[$index-1]);
+	    $affil .= "<address><street>$Meta{address}[$index-1]</street></address>\n"
+		if ($Meta{address}[$index-1]);
+	    $frontmatter .= "<affiliation>\n$affil\n</affiliation>\n"
+		if ($affil);
+	    $frontmatter .= "</author>\n";
+	}
+    }
+    if ($Meta{version})
+    {
+	$frontmatter .= "<revhistory>\n<revision><revnumber>$Meta{version}"
+	    . "</revnumber>";
+	$frontmatter .= "<date>$Meta{date}</date>" if ($Meta{date});
+	$frontmatter .= "</revision>\n</revhistory>\n";
+    }
+    else
+    {
+	$frontmatter .= "<date>$Meta{date}</date>\n" if ($Meta{date});
+    }
+    if ($Meta{abstract})
+    {
+	$Meta{abstract} =~ s/$FS$FS/<\/para>\n<para>/g;
+	$frontmatter .= "<abstract>\n<para>$Meta{abstract}</para>\n</abstract>\n";
+    }
+    $frontmatter .= "<legalnotice>\n<para>$Meta{copyright}\n</para>"
+	. "</legalnotice>\n" if ($Meta{copyright});
+}
+
+sub SetLatexFront
+{
+    my $copyright = 0;
+    if ($title && ($title ne $firstheading))
+    {
+	$frontmatter  = "\\title\{$title";
+	if ($Meta{copyright})
+	{
+	    $frontmatter .= "\n\\footnote\{$Meta{copyright}\}";
+	    $copyright = 1;
+	}
+	$frontmatter .= "\}\n";
+    }
+    if ($authorcount > 0)
+    {
+	$frontmatter .= '\author{';
+	for my $index (1..$authorcount)
+	{
+	    $frontmatter .= "\\\\\n" if ($index > 1);
+	    $frontmatter .= "$Meta{author}[$index-1]";
+	    $frontmatter .= "\\\\\n\\emph\{$Meta{organization}[$index-1]\}"
+		if ($Meta{organization}[$index-1]);
+	    $frontmatter .= "\\\\\n$Meta{address}[$index-1]"
+		if ($Meta{address}[$index-1]);
+	}
+	$frontmatter .= "\}\n";
+    }
+    if ($Meta{date})
+    {
+	$frontmatter .= "\\date\{";
+	$frontmatter .= "$Version[$language] $Meta{version}, "
+	    if ($Meta{version});
+	$frontmatter .= "$Meta{date}" ;
+	$frontmatter .= "\}\n";
+    }
+    $frontmatter .= "\\maketitle\n" if ($frontmatter);
+    if ($Meta{abstract})
+    {
+	$Meta{abstract} =~ s/$FS$FS/\n\n/g;
+	$frontmatter .= "\\begin\{abstract\}\n$Meta{abstract}\n";
+	$frontmatter .= "\\end\{abstract\}\n";
+    }
+    $frontmatter .= "\n$Meta{copyright}\n\n"
+	if ($Meta{copyright} && $copyright == 0);
+
+}
+
+sub ReadTemplate
+{
+    my $file = pop;
+    open (IN,"<$file") or die "$0: Cannot read template file $file\n\n" ;
+    undef $/;
+    $Template = <IN>;
+    close IN;
+}
+
+sub GetOpts
+{
+    my $file;
+    while ($_ = $ARGV[0], /^-/)
+    {
+	shift(@ARGV);
+	if (/^-f$/) { $Format = shift(@ARGV); next }
+	if (/^-f(.*)$/) { $Format = $1; next }
+	if (/^--format\=(.*)$/) { $Format = $1; next }
+	if (/^-T$/) { $title = shift(@ARGV); next }
+	if (/^-T(.*)$/) { $title = $1; next }
+	if (/^--title\=(.*)$/) { $title = $1; next }
+	if (/^-t$/) { &ReadTemplate(shift(@ARGV)); next }
+	if (/^-t(.*)$/) { &ReadTemplate($1); next }
+	if (/^--template\=(.*)$/) { &ReadTemplate($1); next }
+	if (/^(-c|--copyright)/) { &Copying; next }
+	if (/^(-h|--help)/) { &Usage }
+    }
+    unshift(@ARGV, '-') unless @ARGV;
+    &Usage if (@ARGV > 1);
+    $file = shift(@ARGV);
+    return $file;
+}

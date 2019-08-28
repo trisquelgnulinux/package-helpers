@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2017  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2017-2018  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -18,13 +18,14 @@
 #
 
 VERSION=1
-EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu zesty universe'
+EXTERNAL='deb-src http://deb.debian.org/debian-security/ stretch/updates main'
+REPOKEY=7638D0442B90D010
 
 . ./config
 
-sed '/debhelper/s/10/9/; s/default-libmysqlclient-dev/libmysqlclient-dev/' -i debian/control
+sed 's/default-libmysqlclient-dev/libmysqlclient-dev/' -i debian/control
 
-changelog "Backported from zesty"
+changelog "Backported from debian-security stretch//updates"
 
 compile
 

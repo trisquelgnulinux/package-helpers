@@ -17,12 +17,12 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
-EXTERNAL='deb-src http://ppa.launchpad.net/nilarimogard/webupd8/ubuntu $UPSTREAM main'
-REPOKEY="531EE72F4C9D234C"
+VERSION=2
+EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu eoan main universe'
+REPOKEY=5001E1B09AA3744B
 
 . ./config
 
-changelog "Imported into Trisquel"
+changelog "Backport from Eoan"
 
 compile
