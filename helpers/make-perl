@@ -1,0 +1,54 @@
+#!/bin/sh
+#
+#    Copyright (C) 2019 Mason Hock <mason@masonhock.com>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+# Applies
+# https://salsa.debian.org/perl-team/interpreter/perl/tree/debian-5.22/debian/patches/debian/CVE-2016-1238
+# and
+# https://salsa.debian.org/perl-team/interpreter/perl/tree/debian-5.22/debian/patches/fixes/CVE-2016-1238
+#
+# in order to fix
+# https://trisquel.info/en/issues/26072
+#
+# This helper is only necessary for Flidas.
+
+
+VERSION=1
+
+. ./config
+
+cp -a $DATA/patches/debian/CVE-2016-1238/ debian/patches/debian/
+cp -a $DATA/patches/fixes/CVE-2016-1238/ debian/patches/fixes/
+
+cat << EOF >> debian/patches/series
+fixes/CVE-2016-1238/remove-dot-when-loading.diff
+fixes/CVE-2016-1238/remove-dot-in-padwalker.diff
+fixes/CVE-2016-1238/remove-dot-in-dist.diff
+fixes/CVE-2016-1238/remove-dot-in-cpan.diff
+debian/CVE-2016-1238/test-suite-without-dot.diff
+debian/CVE-2016-1238/eumm-without-dot.diff
+debian/CVE-2016-1238/cpan-without-dot.diff
+debian/CVE-2016-1238/sitecustomize-in-etc.diff
+debian/CVE-2016-1238/customized.diff
+debian/CVE-2016-1238/remove-inc-test.diff
+EOF
+
+changelog "Applied patch for CVE-2016-1238"
+
+compile
+
