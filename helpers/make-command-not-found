@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 
 . ./config
 
@@ -27,8 +27,6 @@ rm -rf CommandNotFound/db/dists/$UPSTREAM*/restricted
 for word in restricted nonfree multiverse aee afio app-install-data-commercial app-install-data-partner b43-fwcutter bcm43xx-fwcutter chromium-codecs-ffmpeg chromium-browser d4x easycrypt gdecrypt envyng-core envyng-gtk envyng-qt fglrx-installer freesci gfxboot-theme-ubuntu pitfdll helix-player isdnactivecards isdnutils ivman jockey mame mesademos moon ndisgtk ndiswrapper nikto nvidia-common nvidia-graphics-drivers nvidia-graphics-drivers-173 nvidia-graphics-drivers-180 nvidia-graphics-drivers-71 nvidia-graphics-drivers-96 nvidia-settings nvidia-xconfig ophcrack rman simutrans-pak128.britain simutrans simutrans-pak64 scribus-ng-doc software-center starfighter tatan testdrive unetbootin ubuntuone-client ubuntu-restricted-extras rhythmbox-ubuntuone-music-store seamonkey ubuntuone-dev-tools libubuntuone ubuntuone-storage-protocol user-mode-linux user-mode-linux-doc vrms 9wm 9menu w9wm acetoneiso a2ps-perl-ja bibletime bibledit bible-kjv winetricks ; do
   /bin/sed "/name: .*$word.*/,+3d" -i CommandNotFound/db/dists/$UPSTREAM*/*/cnf/Commands-*
 done
-
-#sed 's/|universe|/|main|/' -i ./UnifiedDataExtractor/scan.data
 
 changelog "Removed references to non-free software"
 
