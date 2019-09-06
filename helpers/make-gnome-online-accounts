@@ -1,0 +1,41 @@
+#!/bin/sh
+#
+#    Copyright (C) 2019 Mason Hock <mason@masonhock.com>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=1
+
+. ./config
+
+# revert ubuntu/snap customizations
+sed '/libsnapd-glib-dev/d' -i debian/control
+sed '/libsnapd-glib-dev/d' -i debian/control.in
+sed '/python3-macaroonbakery/d' -i debian/control
+sed '/python3-macaroonbakery/d' -i debian/control.in
+sed '/lpa_helper.py/d' -i debian/gnome-online-accounts.install
+sed '/ubuntu_sso_provider/d' -i debian/libgoa-backend-1.0-1.symbols
+rm debian/patches/0001-ubuntu-sso-provider.patch debian/patches/0002-livepatch-auth.patch
+sed '/0001-ubuntu-sso-provider.patch/d' -i debian/patches/series
+sed '/0002-livepatch-auth.patch/d' -i debian/patches/series
+sed '/--enable-ubuntu-sso/d' -i debian/rules
+sed 's/--enable-foursquare \\/--enable-foursquare/' -i debian/rules
+sed '/0001-ubuntu-sso-provider.patch/d' -i debian/source/include-binaries
+
+changelog "Remove Snap build dependency"
+
+compile
+
