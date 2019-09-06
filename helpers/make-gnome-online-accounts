@@ -35,7 +35,7 @@ sed '/--enable-ubuntu-sso/d' -i debian/rules
 sed 's/--enable-foursquare \\/--enable-foursquare/' -i debian/rules
 sed '/0001-ubuntu-sso-provider.patch/d' -i debian/source/include-binaries
 
-changelog "Compiled for Trisquel"
+changelog "Remove Snap build dependency"
 
 compile
 
