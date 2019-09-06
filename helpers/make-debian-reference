@@ -1,6 +1,7 @@
 #!/bin/bash
 #
 #    Copyright (C) 2015 Andrew M. Lindley <andrew@andrewlindley.co.uk>
+#    Copyright (C) 2019 Mason Hock <mason@masonhock.com>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -18,13 +19,15 @@
 #
 
 # One release to rule them all :)
-VERSION=1
+VERSION=2
 
 . ./config
 
 # Drop languages Trisquel modifications haven't been translated for yet
 sed '/^LANGALL/s/en ja fr it pt de/en/' -i debian/rules 
-sed '/Recommends: debian-reference-fr,/,/debian-reference-pt$/d;/Recommends:" are installed./d;/Package: debian-reference-de/,$d' -i debian/control
+sed '/^\Package: debian-reference-de/,$ d' debian/control -i
+sed '/debian-reference-fr/,/Description: metapackage/{//p;d;}' debian/control -i
+sed '/debian-reference-fr/d' debian/control -i
 
 # English ASCIIDOC source
 # remove references to the non-GNU FSDG contrib and non-free repos
