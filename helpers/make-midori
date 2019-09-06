@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2011-2016  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2019 Mason Hock <mason@masonhock.com>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,87 +17,16 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
+EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu disco main universe'
+REPOKEY=7638D0442B90D010
 
 . ./config
 
-# https://trisquel.info/en/issues/7753
-echo "NoDisplay=true" >> data/midori-private.desktop.in
-#sed '/midori-private/d' -i ./po/POTFILES.in
-#sed '/Private Shortcut/,1000d' -i data/midori.desktop.in 
+sed 's|"about:search"|"https://trisquel.info/en/welcome"|' -i core/settings.vala
+sed 's|t=midori|t=trisquel|' -i core/settings.vala
 
-rm debian/patches -rf
-
-cat << EOF > debian/Trisquel-config
-[settings]
-toolbar-style=MIDORI_TOOLBAR_SMALL_ICONS
-toolbar-items=TabNew,Back,Forward,ReloadStop,Separator,Homepage,Location,Separator,Search,
-homepage=http://trisquel.info/welcome
-location-entry-search=https://duckduckgo.com/?t=trisquel&q=!+%s
-show-menubar=true
-
-[extensions]
-libtoolbar-editor.so=true
-EOF
-
-cat << EOF > debian/config/Trisquel.h
-#define DEBIAN_DISTRO_DEFAULT_HOMEPAGE "http://trisquel.info/welcome"
-#define DEBIAN_WWW_ALTERNATIVES_PRIORITY 39
-EOF
-
-cat << EOF > data/search
-
-[Duck Duck GO SSL]
-name=Duck Duck GO SSL
-text=DDG Web Search
-uri=https://duckduckgo.com/?t=trisquel&q=%s
-icon=
-token=d
-
-[Duck Duck GO]
-name=Duck Duck GO
-text=DDG Web Search
-uri=http://duckduckgo.com/?t=trisquel&q=%s
-icon=
-token=
-
-[Google]
-name=Google
-text=Web Search
-uri=http://www.google.com/search?q=%s
-icon=
-token=g
-
-[Trisquel]
-name=Trisquel 
-text=Search Trisquel Site
-uri=http://trisquel.info/search/node/%s
-icon=
-token=t
-
-[Trisquel Packages]
-name=Trisquel Packages
-text=Search Trisquel Packages
-uri=http://packages.trisquel.info/%s
-icon=
-token=tp
-
-[Wikipedia]
-name=Wikipedia
-text=The free encyclopedia
-uri=http://en.wikipedia.org/wiki/Special:Search/%s
-icon=
-token=wp
-
-[The Free Dictionary]
-name=The Free Dictionary
-text=Dictionary, Encyclopedia and Thesaurus
-uri=http://www.thefreedictionary.com/%s
-icon=
-token=fd
-EOF
-
-changelog "Search engines configured for Trisquel"
+changelog "Compiled for Trisquel"
 
 compile
 
