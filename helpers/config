@@ -50,7 +50,10 @@ DEVELMIRROR=http://devel.trisquel.info/trisquel/$CODENAME
 LOCALMIRROR=http://archive.trisquel.info/trisquel
 LOCAL_APT=`mktemp -d` 
 
-alias rpl=$PWD/DATA/rpl
+export RPL=$PWD/DATA/rpl
+rpl(){
+$RPL $@
+}
 
 pkgversion(){
 	dpkg-parsechangelog --show-field Version
