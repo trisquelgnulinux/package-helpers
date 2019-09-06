@@ -54,8 +54,6 @@ echo usr/share/plymouth/themes/sugar/ > debian/plymouth-theme-sugar.install
 
 /bin/sed 's/trisquel-logo/sugar/g' debian/plymouth-theme-sugar* -i
 
-sed '/ttf-ubuntu-font-family/d' -i debian/control
-
 cat << EOF >> debian/copyright
 
 == Additions made by Trisquel ==
