@@ -18,13 +18,15 @@
 #
 
 # One release to rule them all :)
-VERSION=1
+VERSION=2
 
 . ./config
 
 # Drop languages Trisquel modifications haven't been translated for yet
 sed '/^LANGALL/s/en ja fr it pt de/en/' -i debian/rules 
-sed '/Recommends: debian-reference-fr,/,/debian-reference-pt$/d;/Recommends:" are installed./d;/Package: debian-reference-de/,$d' -i debian/control
+sed '/^\Package: debian-reference-de/,$ d' debian/control -i
+sed '/debian-reference-fr/,/Description: metapackage/{//p;d;}' debian/control -i
+sed '/debian-reference-fr/d' debian/control -i
 
 # English ASCIIDOC source
 # remove references to the non-GNU FSDG contrib and non-free repos
