@@ -22,8 +22,8 @@ COMPONENT=main
 
 . ./config
 
-sed -i "s:<default>'auto'</default>:<default>'file'</default>:" data/org.gnome.DejaDup.gschema.xml.in
-sed -i 's/Categories.*/Categories=Application;System;Settings;/g' deja-dup/deja-dup.desktop.in
+sed -i "s:<default>'auto'</default>:<default>'file'</default>:" data/org.gnome.DejaDup.gschema.xml
+sed -i 's/Categories.*/Categories=Application;System;Settings;/g' data/org.gnome.DejaDup.desktop
 
 changelog "Compiled for Trisquel"
 
