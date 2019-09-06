@@ -19,22 +19,57 @@
 #
 set -x
 
-VERSION=2
+VERSION=3
 
 . ./config
 
+# Copy in our local Trisquel branding files
 cp $DATA/branding/* comm/mail/branding/nightly/ -r
 
+# Privacy and branding via prefs
 cat << EOF >> debian/vendor.js
 
 // Trisquel settings
+pref("app.releaseNotesURL", "http://trisquel.info/mailclient");
+pref("app.vendorURL", "http://trisquel.info/mailclient");
+
+// PFS url
+pref("pfs.datasource.url", "https://trisquel.info/sites/pfs.php?mime=%PLUGIN_MIMETYPE%");
+pref("pfs.filehint.url", "https://trisquel.info/sites/pfs.php?mime=%PLUGIN_MIMETYPE%");
+
+// DuckDuckGo
+pref("keyword.URL", "https://duckduckgo.com/?t=trisquel&q=!+");
+pref("browser.search.defaultenginename", "DuckDuckGo");
+pref("browser.search.order.1", "DuckDuckGo");
+pref("browser.search.defaultenginename", "DuckDuckGo");
+pref("browser.search.showOneOffButtons", false);
+pref("browser.search.suggest.enabled",false);
+
+// Disable third party cookies
+pref("network.cookie.cookieBehavior", 1);
+
+// Extensions cannot be updated without permission
+pref("extensions.update.enabled", false);
+pref("extensions.systemAddon.update.enabled", false);
+pref("lightweightThemes.update.enabled", false);
+
+// Don't show suggested provider list
 pref("mail.provider.enabled", false);
 pref("mail.provider.providerList", "");
 pref("mail.provider.suggestFromName", "");
+
+// Don't prompt if not default mail client
 pref("mail.shell.checkDefaultClient", false);
-pref("spellchecker.dictionaries.download.url", "http://dictionaries.mozdev.org/installation.html");
+
+// Preferences for the Get Add-ons panel
 pref("extensions.webservice.discoverURL", "https://directory.fsf.org/wiki/Icedove");
+pref("extensions.getAddons.search.url", "https://trisquel.info"
 pref("extensions.blocklist.enabled", false);
+
+// Dictionary download preference
+pref("spellchecker.dictionaries.download.url", "http://dictionaries.mozdev.org/installation.html");
+
+// Privacy protections
 pref("mail.rights.version", 1);
 pref("toolkit.telemetry.prompted", 2);
 pref("toolkit.telemetry.rejected", true);
@@ -44,19 +79,30 @@ pref("mailnews.start_page.override_url", "");
 pref("app.update.auto", false);
 pref("app.update.enabled", false);
 pref("browser.search.update", false);
-pref("extensions.update.enabled", false);
-pref("network.cookie.cookieBehavior", 2);
-pref("app.releaseNotesURL", "http://trisquel.info/mailclient");
-pref("pfs.datasource.url", "https://trisquel.info/sites/pfs.php?mime=%PLUGIN_MIMETYPE%");
-pref("pfs.filehint.url", "https://trisquel.info/sites/pfs.php?mime=%PLUGIN_MIMETYPE%");
-pref("keyword.URL", "https://duckduckgo.com/?t=trisquel&q=!+");
-pref("browser.search.defaultenginename", "DuckDuckGo");
-pref("browser.search.order.1", "DuckDuckGo");
-pref("browser.search.defaultenginename", "DuckDuckGo");
-pref("browser.search.showOneOffButtons", false);
-pref("browser.search.suggest.enabled",false);
 EOF
 
+# ####################################################
+# Privacy / branding brought in from abrowser for 60.x
+#
+# captive portal page
+sed '/captivedetect.canonicalURL/s/http.*success.txt//' -i modules/libpref/init/all.js
+# do not alter useragent/platform/oscpu/etc with fingerprinting countermeasure, it makes things worse
+sed '/ShouldResistFingerprinting/,/}/s/^/\/\//' -i ./netwerk/protocol/http/nsHttpHandler.cpp
+sed '/If fingerprinting resistance is on/,/}/s/^/\/\//' -i ./dom/base/Navigator.cpp
+# Disable healtreport
+cat << EOF > toolkit/components/telemetry/healthreport-prefs.js
+pref("datareporting.healthreport.uploadEnabled", false);
+pref("datareporting.healthreport.about.reportUrl", "https://trisquel.info/legal");
+pref("datareporting.healthreport.infoURL", "https://trisquel.info/legal");
+EOF
+cp toolkit/components/telemetry/healthreport-prefs.js mobile/android/chrome/content/healthreport-prefs.js
+# Browser legal page
+sed 's%https://www.mozilla.org/legal/privacy/%https://trisquel.info/legal%' -i ./browser/app/profile/firefox.js ./toolkit/content/aboutRights.xhtml
+# Org branding
+sed 's/com.ubuntu/org.trisquel/' -i debian/config/mozconfig.in
+# Disable DRM support
+echo ac_add_options --disable-eme >> debian/config/mozconfig.in
+########################################################
 
 sed '/^MOZ_PKG_NAME/s/.*/MOZ_PKG_NAME=icedove/' -i debian/build/config.mk
 
@@ -96,7 +142,6 @@ replace Daily Trisquel comm/mail/branding/
 sed '/.*<description.*communityExperimentalDesc/,/\/description/d' -i ./comm/mail/base/content/aboutDialog.xul
 sed '/.*<description.*communityDesc/,/\/description/d' -i ./comm/mail/base/content/aboutDialog.xul
 sed '/.*<description.*contributeDesc/,/\/description/d' -i ./comm/mail/base/content/aboutDialog.xul
-
 
 sed '/^Source/s/.*/Source: thunderbird/' -i debian/control.in
 sed 's/Provides: mail-reader,/Provides: mail-reader, thunderbird,/' -i debian/control.in
