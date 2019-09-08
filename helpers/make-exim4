@@ -17,8 +17,8 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
-EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu bionic main universe'
+VERSION=2
+EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu bionic-security universe'
 REPOKEY=7638D0442B90D010
 BACKPORTS=true
 
@@ -26,7 +26,6 @@ BACKPORTS=true
 
 cp $DATA/EDITME.exim4-heavy.diff debian/
 sed 's/Build-Depends:/Build-Depends: libopendmarc-dev, libspf2-dev, /;/Package: exim4-daemon-heavy/,/Depends/s/Depends: /Depends: libopendmarc2, libspf2-2,/' -i debian/control
-sed 's/default-libmysql/libmysql/' -i debian/control
 
 changelog "Backported from bionic, enabled DMARC and SPF"
 
