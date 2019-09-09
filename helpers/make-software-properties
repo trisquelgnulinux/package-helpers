@@ -72,6 +72,7 @@ rm -rf tests
 sed '/gir1.2-snapd-1/d' -i debian/control
 sed '/self.init_livepatch/d' -i softwareproperties/gtk/SoftwarePropertiesGtk.py
 patch -p0 < $DATA/remove_livepatch_from_gtk_ui.patch
+sed 's/status = self.get_status()/status = Snapd.SnapStatus.UNKNOWN/' -i softwareproperties/LivepatchSnap.py
 
 changelog "Removed Ubuntu-specifc tests, Livepatch, Snap"
 
