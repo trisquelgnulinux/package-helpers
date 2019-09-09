@@ -68,6 +68,11 @@ echo 'skipabi = true' >> debian.master/rules.d/0-common-vars.mk
 echo 'skipmodule = true' >> debian/rules.d/0-common-vars.mk
 echo 'skipabi = true' >> debian/rules.d/0-common-vars.mk
 
+# Skip the retpoline check as there is no last release to chaeck against
+echo 'skipretpoline = true' >> debian.master/rules.d/0-common-vars.mk
+echo 'skipretpoline = true' >> debian/rules.d/0-common-vars.mk
+
+
 # Do not label packages as unsigned
 sed '/bin_pkg_name_unsigned/s/linux-image-unsigned/linux-image/' -i debian/rules.d/0-common-vars.mk
 sed 's/.unsigned//' -i debian/scripts/control-create
