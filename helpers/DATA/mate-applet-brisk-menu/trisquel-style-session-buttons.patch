@@ -1,0 +1,101 @@
+diff --git a/src/frontend/classic/classic-window.c b/src/frontend/classic/classic-window.c
+index 9fd6b2b..3c316c0 100644
+--- a/src/frontend/classic/classic-window.c
++++ b/src/frontend/classic/classic-window.c
+@@ -640,52 +640,63 @@ static void brisk_classic_window_setup_session_controls(BriskClassicWindow *self
+ {
+         GtkWidget *widget = NULL;
+         GtkWidget *box = NULL;
+-        GtkStyleContext *style = NULL;
++        GtkWidget *button = NULL;
++        GtkWidget *image = NULL;
++        GtkWidget *label = NULL;
+ 
+-        box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
++        box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+         gtk_widget_set_margin_bottom(box, 4);
+ 
+-        gtk_box_pack_end(GTK_BOX(self->sidebar_wrap), box, FALSE, FALSE, 0);
+-        gtk_widget_set_halign(box, GTK_ALIGN_CENTER);
++        gtk_box_pack_end(GTK_BOX(self->sidebar_wrap), box, TRUE, TRUE, 0);
+ 
+         /* Add a separator for visual consistency */
+         widget = gtk_separator_new(GTK_ORIENTATION_HORIZONTAL);
+         gtk_box_pack_end(GTK_BOX(self->sidebar_wrap), widget, FALSE, FALSE, 3);
+ 
+-        /* Logout */
+-        widget = gtk_button_new_from_icon_name("brisk_system-log-out-symbolic", GTK_ICON_SIZE_MENU);
+-        self->button_logout = widget;
+-        g_signal_connect_swapped(widget, "clicked", G_CALLBACK(brisk_menu_window_logout), self);
+-        gtk_widget_set_tooltip_text(widget, _("End the current session"));
+-        gtk_widget_set_can_focus(widget, FALSE);
+-        gtk_container_add(GTK_CONTAINER(box), widget);
+-        style = gtk_widget_get_style_context(widget);
+-        gtk_style_context_add_class(style, GTK_STYLE_CLASS_FLAT);
+-        gtk_style_context_add_class (style, "session-button");
+-
+         /* Lock */
+-        widget = gtk_button_new_from_icon_name("system-lock-screen-symbolic",
+-                                               GTK_ICON_SIZE_SMALL_TOOLBAR);
+-        self->button_lock = widget;
+-        g_signal_connect_swapped(widget, "clicked", G_CALLBACK(brisk_menu_window_lock), self);
++	button = gtk_button_new();
++	widget = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
++	image = gtk_image_new_from_icon_name("system-lock-screen", GTK_ICON_SIZE_MENU);
++	gtk_box_pack_start(GTK_BOX(widget), image, FALSE, FALSE, 0);
++	label = gtk_label_new("Log Out");
++	gtk_box_pack_start(GTK_BOX(widget), label, FALSE, FALSE, 0);
++        gtk_container_add(GTK_CONTAINER(button), widget);
++        self->button_logout = button;
++        g_signal_connect_swapped(button, "clicked", G_CALLBACK(brisk_menu_window_lock), self);
+         gtk_widget_set_tooltip_text(widget, _("Lock the screen"));
+-        gtk_widget_set_can_focus(widget, FALSE);
+-        gtk_container_add(GTK_CONTAINER(box), widget);
+-        style = gtk_widget_get_style_context(widget);
+-        gtk_style_context_add_class(style, GTK_STYLE_CLASS_FLAT);
+-        gtk_style_context_add_class (style, "session-button");
++        gtk_container_add(GTK_CONTAINER(box), button);
++	gtk_button_set_relief(button, GTK_RELIEF_NONE);
++	gtk_widget_set_margin_end(image, 7);
++
++        /* Logout */
++	button = gtk_button_new();
++	widget = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
++	image = gtk_image_new_from_icon_name("application-exit", GTK_ICON_SIZE_MENU);
++	gtk_box_pack_start(GTK_BOX(widget), image, FALSE, FALSE, 0);
++	label = gtk_label_new("Lock Screen");
++	gtk_box_pack_start(GTK_BOX(widget), label, FALSE, FALSE, 0);
++        gtk_container_add(GTK_CONTAINER(button), widget);
++        self->button_logout = button;
++        g_signal_connect_swapped(button, "clicked", G_CALLBACK(brisk_menu_window_logout), self);
++        gtk_widget_set_tooltip_text(widget, _("End the current session"));
++        gtk_container_add(GTK_CONTAINER(box), button);
++	gtk_button_set_relief(button, GTK_RELIEF_NONE);
++	gtk_widget_set_margin_end(image, 7);
+ 
+         /* Shutdown */
+-        widget =
+-            gtk_button_new_from_icon_name("system-shutdown-symbolic", GTK_ICON_SIZE_SMALL_TOOLBAR);
+-        self->button_shutdown = widget;
+-        g_signal_connect_swapped(widget, "clicked", G_CALLBACK(brisk_menu_window_shutdown), self);
++	button = gtk_button_new();
++	widget = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
++	image = gtk_image_new_from_icon_name("system-shutdown", GTK_ICON_SIZE_MENU);
++	gtk_box_pack_start(GTK_BOX(widget), image, FALSE, FALSE, 0);
++	label = gtk_label_new("Power Off");
++	gtk_box_pack_start(GTK_BOX(widget), label, FALSE, FALSE, 0);
++        gtk_container_add(GTK_CONTAINER(button), widget);
++        self->button_logout = button;
++        g_signal_connect_swapped(button, "clicked", G_CALLBACK(brisk_menu_window_shutdown), self);
+         gtk_widget_set_tooltip_text(widget, _("Turn off the device"));
+-        gtk_widget_set_can_focus(widget, FALSE);
+-        gtk_container_add(GTK_CONTAINER(box), widget);
+-        style = gtk_widget_get_style_context(widget);
+-        gtk_style_context_add_class(style, GTK_STYLE_CLASS_FLAT);
+-        gtk_style_context_add_class (style, "session-button");
++        gtk_container_add(GTK_CONTAINER(box), button);
++	gtk_button_set_relief(button, GTK_RELIEF_NONE);
++	gtk_widget_set_margin_end(image, 7);
+ }
+ 
+ /**
