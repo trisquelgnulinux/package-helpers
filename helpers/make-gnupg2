@@ -46,7 +46,7 @@ patch -p1 << EOF
    oDisableApplication,
    oEnablePinpadVarlen,
 +  oSharedAccess,
-   oDebugDisableTicker
+   oListenBacklog
  };
  
 @@ -157,6 +158,8 @@ static ARGPARSE_OPTS opts[] = {
