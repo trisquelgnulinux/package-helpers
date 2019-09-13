@@ -53,7 +53,7 @@ sed 's/class osx/class osx --unrestricted/; s/class windows/class osx --unrestri
 
 changelog "rebranded and adapted for trisquel"
 
-sed -i '/set -e/aexit77' tests/grub_cmd_set_date.in
+sed -i '/set -e/aexit 77' tests/grub_cmd_set_date.in
 
 changelog "skip test grub_cmd_set_date.in"
 
