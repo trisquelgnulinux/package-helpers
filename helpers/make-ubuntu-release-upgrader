@@ -333,6 +333,8 @@ for i in core gtk qt; do
   sed "/Package: trisquel-release-upgrader-$i/ s/$/\nProvides: ubuntu-release-upgrader-$i/" -i debian/control
 done
 
+sed 's/ubuntu-release-upgrader-core/ubuntu-release-upgrader-core (= ${source:Version})/' -i debian/control
+
 changelog "Compiled for Trisquel"
 
 PARALLEL=false compile
