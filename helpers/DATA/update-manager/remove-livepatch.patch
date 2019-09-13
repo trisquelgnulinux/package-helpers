@@ -1,0 +1,66 @@
+diff --git a/UpdateManager/Dialogs.py b/UpdateManager/Dialogs.py
+index b100c3a..d604f54 100644
+--- a/UpdateManager/Dialogs.py
++++ b/UpdateManager/Dialogs.py
+@@ -149,61 +149,6 @@ class InternalDialog(BuilderDialog):
+             self.main_container.add(content_widget)
+         self.main_container.set_visible(bool(content_widget))
+ 
+-    def _is_livepatch_supported(self):
+-        di = distro_info.UbuntuDistroInfo()
+-        codename = get_dist()
+-        return di.is_lts(codename)
+-
+-    def on_livepatch_status_ready(self, active, cs, ps, fixes):
+-        self.set_desc(None)
+-
+-        if not active:
+-            if self._is_livepatch_supported() and \
+-               self.settings_button and \
+-               self.settings.get_int('launch-count') >= 4:
+-                self.set_desc(_("<b>Tip:</b> You can use Livepatch to "
+-                                "keep your computer more secure between "
+-                                "restarts."))
+-                self.settings_button.set_label(_("Settings & Livepatch…"))
+-            return
+-
+-        needs_reschedule = False
+-
+-        if cs == "needs-check":
+-            needs_reschedule = True
+-        elif cs == "check-failed":
+-            pass
+-        elif cs == "checked":
+-            if ps == "unapplied" or ps == "applying":
+-                needs_reschedule = True
+-            elif ps == "applied":
+-                fixes = [fix for fix in fixes if fix.patched]
+-                d = ngettext("%d Livepatch update applied since the last "
+-                             "restart.",
+-                             "%d Livepatch updates applied since the last "
+-                             "restart.",
+-                             len(fixes)) % len(fixes)
+-                self.set_desc(d)
+-            elif ps == "applied-with-bug" or ps == "apply-failed":
+-                fixes = [fix for fix in fixes if fix.patched]
+-                d = ngettext("%d Livepatch update failed to apply since the "
+-                             "last restart.",
+-                             "%d Livepatch updates failed to apply since the "
+-                             "last restart.",
+-                             len(fixes)) % len(fixes)
+-                self.set_desc(d)
+-            elif ps == "nothing-to-apply":
+-                pass
+-            elif ps == "unknown":
+-                pass
+-
+-        if needs_reschedule:
+-            self.lp_socket.get_status(self.on_livepatch_status_ready)
+-
+-    def check_livepatch_status(self):
+-        self.lp_socket = LivePatchSocket()
+-        self.lp_socket.get_status(self.on_livepatch_status_ready)
+-
+ 
+ class StoppedUpdatesDialog(InternalDialog):
+     def __init__(self, window_main):
