@@ -51,8 +51,6 @@ find |grep ubuntu|xargs rename s/ubuntu/trisquel/
 # Allow Windows and MacOX entries to boot without a password
 sed 's/class osx/class osx --unrestricted/; s/class windows/class osx --unrestricted/;' -i ./util/grub.d/30_os-prober.in
 
-changelog "rebranded and adapted for trisquel"
-
 sed -i '/set -e/aexit 77' tests/grub_cmd_set_date.in
 
 changelog "skip test grub_cmd_set_date.in"
