@@ -17,9 +17,15 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=8
+VERSION=9
 
 . ./config
+
+rm UpdateManager/Core/LivePatchSocket.py
+rm tests/test_livepatch_socket.py
+patch -p1 < $DATA/remove-livepatch.patch
+sed -i '/import LivePatchSocket/d' UpdateManager/Dialogs.py
+sed -i '/self.check_livepatch_status/d' UpdateManager/Dialogs.py
 
 #Closes #12545
 patch -p0 < $DATA/trisquel-versions.patch
@@ -50,7 +56,7 @@ replace xubuntu-desktop trisquel-mini .
 replace edubuntu-desktop toast .
 
 sed '/%s base/ s/name.*/name = "Trisquel base"/' -i ./UpdateManager/Core/UpdateList.py
-sed 's_http://changelogs.ubuntu.com/changelogs/pool/_http://packages.trisquel.info/changelogs/pool/_' -i UpdateManager/Core/MyCache.py
+sed 's_https://changelogs.ubuntu.com/changelogs/pool/_https://packages.trisquel.info/changelogs/pool/_' -i UpdateManager/Core/MyCache.py
 sed '/len(changelog) == 0/,/"later."/d' -i UpdateManager/Core/MyCache.py
 
 changelog "Compiled for Trisquel"
