@@ -59,8 +59,6 @@ sed '/vbox/d' -i debian.master/reconstruct
 rm -rf debian/scripts/debian/scripts/dkms-build--nvidia-N
 /bin/sed '/ifeq ($(do_dkms_nvidia),true)/,/endif/d' -i debian/rules.d/2-binary-arch.mk
 /bin/sed  '/do_dkms_nvidia = true/d' -i debian.master/abi/*/*/*.modules debian/rules debian.master/control.d/vars.*
-/bin/sed  '/nvidiafb/d' -i debian.master/abi/*/*/*.modules debian/rules debian.master/control.d/vars.*
-
 
 # Compile with less modules and avoid abi check
 echo 'skipmodule = true' >> debian.master/rules.d/0-common-vars.mk
