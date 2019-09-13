@@ -25,14 +25,14 @@ diff -ru source.orig/UpdateManager/Dialogs.py source/UpdateManager/Dialogs.py
 diff -ru source.orig/UpdateManager/UpdateManager.py source/UpdateManager/UpdateManager.py
 --- source.orig/UpdateManager/UpdateManager.py	2018-02-12 20:44:33.317329071 -0500
 +++ source/UpdateManager/UpdateManager.py	2018-02-12 20:45:28.133249491 -0500
-@@ -50,6 +50,7 @@
+@@ -52,6 +52,7 @@
                        ErrorDialog,
+                       HWEUpgradeDialog,
                        NeedRestartDialog,
-                       NoUpdatesDialog,
 +                      ShouldUpdateDialog,
-                       StoppedUpdatesDialog,
+                       NoUpdatesDialog,
                        PartialUpgradeDialog,
-                       UnsupportedDialog,
+                       StoppedUpdatesDialog,
 @@ -205,6 +206,17 @@
              self.start_available()
  
