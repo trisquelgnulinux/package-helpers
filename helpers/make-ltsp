@@ -2,6 +2,7 @@
 #
 #    Copyright (C) 2011  Rubén Rodríguez <ruben@trisquel.info>
 #    Copyright (C) 2017  Pablo Correa
+#    Copyright (C) 2019  Mason Hock <mason@masonhock.com> 
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -18,12 +19,13 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 
 . ./config
 
 
 cp -a server/share/ltsp/plugins/ltsp-build-client/Ubuntu server/share/ltsp/plugins/ltsp-build-client/Trisquel
+cp -a client/Ubuntu client/Trisquel
 
 /bin/sed 's/main restricted universe multiverse/main/g;
 s:archive.ubuntu.com/ubuntu:archive.trisquel.info/trisquel:g;
