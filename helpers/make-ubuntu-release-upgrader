@@ -268,6 +268,9 @@ replace '14.04' '7.0' . -R
 rpl 16\.04 8\.0 po/* -R
 rpl 16\.04 8\.0 DistUpgrade/*.ui -R
 replace '16.04' '8.0' . -R
+rpl 18\.04 9\.0 po/* -R
+rpl 18\.04 9\.0 DistUpgrade/*.ui -R
+replace '18.04' '9.0' . -R
 rpl $UPSTREAM $CODENAME . -R
 rpl oneiric brigantia . -R
 rpl natty dagda . -R
@@ -279,6 +282,8 @@ rpl hardy robur . -R
 rpl lucid taranis . -R
 rpl precise toutatis . -R
 rpl trusty belenos . -R
+rpl xenial flidas . -R
+rpl bionic etiona . -R
 
 rm ./data/demoted.cfg ./DistUpgrade/demoted.cfg.trusty utils/demoted.cfg.trusty data/demoted.cfg.trusty
 echo "notification-daemon" > data/demoted.cfg
