@@ -2,6 +2,7 @@
 #
 #    Copyright (C) 2008-2018  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C)      2014  Santiago Rodriguez <santi@trisquel.info>
+#    Copyright (C)      2019  Mason Hock <mason@masonhock.com>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -23,7 +24,7 @@
 # Also, don't forget to update the meta-release files at archive and packages.t.i
 # The "obsoletes" list from ubuntu has been removed
 
-VERSION=3
+VERSION=4
 
 . ./config
 
@@ -33,7 +34,6 @@ rm ./DistUpgrade/NvidiaDetector
 sed s/self.checkForNvidia/#self.checkForNvidia/ DistUpgrade/DistUpgradeCache.py -i
 sed '/_add_extras_repository/,/adding extras.ubuntu.com/d' -i DistUpgrade/DistUpgradeQuirks.py
 sed 's/01ubuntu/01backports/' -i DistUpgrade/DistUpgradeController.py
-sed '/nvidia/d' DistUpgrade/build-tarball.sh -i
 rm tests/test-data/xorg.conf.fglrx
 
 #https://bugs.launchpad.net/ubuntu/+source/python-defaults/+bug/990740
@@ -268,6 +268,9 @@ replace '14.04' '7.0' . -R
 rpl 16\.04 8\.0 po/* -R
 rpl 16\.04 8\.0 DistUpgrade/*.ui -R
 replace '16.04' '8.0' . -R
+rpl 18\.04 9\.0 po/* -R
+rpl 18\.04 9\.0 DistUpgrade/*.ui -R
+replace '18.04' '9.0' . -R
 rpl $UPSTREAM $CODENAME . -R
 rpl oneiric brigantia . -R
 rpl natty dagda . -R
@@ -279,6 +282,8 @@ rpl hardy robur . -R
 rpl lucid taranis . -R
 rpl precise toutatis . -R
 rpl trusty belenos . -R
+rpl xenial flidas . -R
+rpl bionic etiona . -R
 
 rm ./data/demoted.cfg ./DistUpgrade/demoted.cfg.trusty utils/demoted.cfg.trusty data/demoted.cfg.trusty
 echo "notification-daemon" > data/demoted.cfg
@@ -333,9 +338,7 @@ for i in core gtk qt; do
   sed "/Package: trisquel-release-upgrader-$i/ s/$/\nProvides: ubuntu-release-upgrader-$i/" -i debian/control
 done
 
-#ubuntu-drivers-common is not a build-dep, nor avaliable in trisquel.
-sed -i 's/cp \/usr\/share\/ubuntu-drivers-common\/obsolete/touch/g' DistUpgrade/build-tarball.sh
-
+sed 's/ubuntu-release-upgrader-core/ubuntu-release-upgrader-core (= ${source:Version})/' -i debian/control
 
 changelog "Compiled for Trisquel"
 
