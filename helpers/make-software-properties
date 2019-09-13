@@ -75,6 +75,7 @@ patch -p0 < $DATA/remove_livepatch_from_gtk_ui.patch
 sed 's/status = self.get_status()/status = Snapd.SnapStatus.UNKNOWN/' -i softwareproperties/LivepatchSnap.py
 
 rm data/software-properties-drivers.desktop.in
+sed -i '/software-properties-drivers/d' po/POTFILES.in
 
 changelog "Removed Ubuntu-specifc tests, Livepatch, Snap"
 
