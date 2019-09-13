@@ -51,6 +51,9 @@ replace internet Internet .
 replace Ubuntu Trisquel .
 replace "Trisquel-Gettext" "Ubuntu-Gettext" .
 
+sed -i 's/Trisquel 16.04 LTS to Trisquel 18.04 LTS/Trisquel 8.0 LTS to Trisquel 9.0 LTS/' HweSupportStatus/consts.py
+sed -i 's/TrisquelDistroInfo/UbuntuDistroInfo/' UpdateManager/UpdateManager.py
+
 replace ubuntu-desktop trisquel .
 replace kubuntu-desktop triskel .
 replace xubuntu-desktop trisquel-mini .
