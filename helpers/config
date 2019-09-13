@@ -27,7 +27,7 @@ PACKAGE=$(echo $0 |/bin/sed s/make-//g)
 
 export DATE=$(date +'%a, %d %b %Y %T %z')
 
-export DATA=$PWD/DATA/$PACKAGE
+export DATA="$PWD/DATA/$PACKAGE"
 if ! [ 1$COMPONENT = "1main" ]
 then
     COMPONENT=${COMPONENT:-universe}
@@ -50,9 +50,9 @@ DEVELMIRROR=http://devel.trisquel.info/trisquel/$CODENAME
 LOCALMIRROR=http://archive.trisquel.info/trisquel
 LOCAL_APT=`mktemp -d` 
 
-export RPL=$PWD/DATA/rpl
+export RPL="$PWD/DATA/rpl"
 rpl(){
-$RPL $@
+$RPL "$@"
 }
 
 pkgversion(){
