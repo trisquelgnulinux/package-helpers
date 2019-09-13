@@ -1,6 +1,7 @@
 #!/bin/sh
 #
 #    Copyright (C) 2012  Santiago Rodríguez  <santi@trisquel.info>
+#    Copyright (C) 2019 Mason Hock <mason@masonhock.com>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,13 +18,22 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 
 . ./config
 
 cp $DATA/Trisquel-mirror.list debian/
 
 changelog "Added config for Trisquel GNU/Linux"
+
+sed 's/Debian or Ubuntu/Trisquel/' -i apt-mirror
+sed 's/Debian/Trisquel/g' -i apt-mirror
+sed 's/debian/trisquel/g' -i apt-mirror
+sed "s/stable/$CODENAME/g" -i apt-mirror
+sed 's/ contrib//g' -i apt-mirror
+sed 's/ non-free//g' -i apt-mirror
+
+changelog "Update manpage for Trisquel"
 
 compile
 
