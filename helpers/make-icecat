@@ -17,12 +17,28 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
+VERSION=4
 EXTERNAL='deb-src http://devel.trisquel.info/repos/packages/icecat/ GNU main'
 SIGNKEY="D7E04784"
 REPOKEY="3C76EED7D7E04784"
 
 . ./config
+
+# use DEB_BUILD_MAINT_OPTIONS instead of deprecated hardening-wrapper
+sed -i '/hardening-wrapper/d' debian/control
+sed -i '/hardening-wrapper/d' debian/control.in
+sed -i 's/DEB_BUILD_HARDENING=1/DEB_BUILD_MAINT_OPTIONS=hardening=+bindnow,+pie/' debian/build/rules.mk
+
+# update build dependency versions
+sed -i 's/clang-4.0/clang-6.0/' debian/control
+sed -i 's/clang-4.0/clang-6.0/' debian/control.in
+sed -i 's/llvm-4.0/llvm-6.0/' debian/control
+sed -i 's/llvm-4.0/llvm-6.0/' debian/control.in
+
+# fix "missing documentation for macro" error
+sed -i '/macro_export/i\/\/\/ A macro.' servo/components/style/gecko/generated/atom_macro.rs
+sed -i '/macro_export/i\/\/\/ A macro.' servo/components/style/gecko/regen_atoms.py
+sed -i '/macro_export/i\/\/\/ A macro.' servo/components/style/properties/properties.mako.rs
 
 cat << EOF >> browser/app/profile/icecat.js
 // Preferences for the Get Add-ons panel
