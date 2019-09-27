@@ -24,7 +24,6 @@ VERSION=9
 
 # Enable full disk encryption by default
 patch -p1 < $DATA/encrypt_by_default.patch
-# Disable ecryptfs, it is confusing to offer both and full disk encryption is safer
 
 cp $DATA/trisquel_installed.png pixmaps
 rm pixmaps/ubuntu_installed.png
