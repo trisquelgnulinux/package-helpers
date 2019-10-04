@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
+VERSION=4
 NETINST=true
 . ./config
 
@@ -59,9 +59,8 @@ rpl "Trisquel Ltd, and Rosetta" "Canonical Ltd, and Rosetta" . -R
 rpl ubuntu-keyring trisquel-keyring . -R
 rpl ubuntu-archive-keyring trisquel-archive-keyring . -R
 
-/bin/sed -i '/KERNELNAME_ALT_SUFFIX/d' build/config/*.cfg
-/bin/sed -i '/KERNELNAME_ALT_SUFFIX/d' build/config/*/*.cfg
-/bin/sed -i '/efi.img/d' build/config/*.cfg
+sed -i 's/.*SIGNED_IMAGE="$(KERNELNAME_ALT_SUFFIX)".*/'$'\t''efi-image $(TEMP_GRUB_EFI) x86_64-efi x64/' build/config/x86.cfg build/config/arm64.cfg
+/bin/sed -i '/KERNELNAME_ALT_SUFFIX = -$(KERNELVERSION)/d' build/config/*.cfg build/config/*/*.cfg
 
 changelog "Rebranded and adapted for Trisquel"
 compile
