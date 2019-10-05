@@ -1,6 +1,7 @@
 #!/bin/sh
 #
 #    Copyright (C) 2016-2017  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C)      2017  Mason Hock <mason@masonhock.com>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=5
+VERSION=6
 
 . ./config
 
@@ -26,23 +27,25 @@ sed 's/"tooltip", tooltip,/"tooltip", "Trisquel",/; s/"has-arrow", TRUE,/"has-ar
 
 # Custom layout
 cat << EOF > data/panel-default-layout.layout
-[Toplevel bottom]
-expand=true
+[Toplevel top]
 orientation=bottom
-size=42
+expand=true
+size=44
 
-[Object mate-menu]
+[Object briskmenu]
 locked=true
 position=0
-toplevel-id=bottom
-object-type=menu
-
+panel-right-stick=false
+toplevel-id=top
+applet-iid=BriskMenuFactory::BriskMenu
+object-type=applet
 
 [Object files]
 locked=true
 position=20
-launcher-location=/usr/share/applications/caja-home.desktop
-toplevel-id=bottom
+launcher-location=caja.desktop
+panel-right-stick=false
+toplevel-id=top
 object-type=launcher
 menu-path=applications:/
 
@@ -50,49 +53,34 @@ menu-path=applications:/
 locked=true
 position=30
 launcher-location=/usr/share/applications/browser.desktop
-toplevel-id=bottom
+panel-right-stick=false
+toplevel-id=top
 object-type=launcher
 menu-path=applications:/
 
-[Object window-list]
-object-type=applet
-applet-iid=WnckletFactory::WindowListApplet
-toplevel-id=bottom
+[Object windowlistapplet]
+locked=true
 position=40
-locked=true
-
-[Object notification-area]
+panel-right-stick=false
+toplevel-id=top
+applet-iid=WnckletFactory::WindowListApplet
 object-type=applet
-applet-iid=NotificationAreaAppletFactory::NotificationArea
-toplevel-id=bottom
-position=30
-panel-right-stick=true
-locked=true
 
 [Object indicatorappletcomplete]
-object-type=applet
-applet-iid=IndicatorAppletCompleteFactory::IndicatorAppletComplete
-toplevel-id=bottom
+locked=true
 position=20
 panel-right-stick=true
-locked=true
-
-[Object clock]
+toplevel-id=top
+applet-iid=IndicatorAppletCompleteFactory::IndicatorAppletComplete
 object-type=applet
-applet-iid=ClockAppletFactory::ClockApplet
-toplevel-id=bottom
-position=10
-panel-right-stick=true
-locked=true
 
 [Object showdesktopapplet]
 locked=true
 position=0
 panel-right-stick=true
-toplevel-id=bottom
+toplevel-id=top
 applet-iid=WnckletFactory::ShowDesktopApplet
 object-type=applet
-
 EOF
 
 cp data/panel-default-layout.layout data/ubuntu.layout
