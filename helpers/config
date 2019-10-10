@@ -108,6 +108,8 @@ apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver hkps://keyserver.
 # Debian gpg keys
 apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys 9D6D8F6BC857C906 > /dev/null
 apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys 8B48AD6246925553 > /dev/null
+# Tor gpg key
+apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --import DATA/tor/A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89.asc
 fi
 
 # Also import the repository key optionally listed in the helper
