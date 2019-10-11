@@ -21,6 +21,8 @@ VERSION=1
 
 . ./config
 
+### prevent sending hostname
+
 sed -i '/add_hostname4 (str, hostname, use_fqdn)/d' src/dhcp/nm-dhcp-dhclient-utils.c
 
 sed -i '/fqdn_expected =/,/send fqdn.server-update/{/send fqdn.fqdn/,/send fqdn.server-update/d;}' src/dhcp/tests/test-dhcp-dhclient.c
@@ -28,6 +30,11 @@ sed -i '/fqdn_expected =/,/send fqdn.server-update/{/send fqdn.fqdn/,/send fqdn.
 sed -i '/fqdn_options_override_expected =/,/send fqdn.server-update/{/send fqdn.fqdn/,/send fqdn.server-update/d;}' src/dhcp/tests/test-dhcp-dhclient.c
 
 sed -i '/override_hostname_expected/,/send host-name/{/send host-name/d;}' src/dhcp/tests/test-dhcp-dhclient.c
+
+### i'm not sure why this example is removed, but it prevents network-manager
+### remove building it, so i'm reverting it
+
+sed -i '\|rm debian/tmp/usr/share/doc/NetworkManager/examples/server.conf|d' debian/rules
 
 changelog "Never send hostname in DHCP requests"
 
