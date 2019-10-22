@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu bionic main'
 REPOKEY=7638D0442B90D010
 BACKPORTS=true
@@ -35,19 +35,25 @@ sed '/nm_setting_ip_config_get_dhcp_send_hostname/s/NULL/"yes"/' -i src/settings
 
 # Randomize mac addresses
 cat << EOF > debian/NetworkManager.conf
+# Note: to enable sending the hostname on DHCP requests, see /etc/dhcp/dhclient.conf
+
 [main]
-plugins=ifupdown,keyfile
+plugins=ifupdown,keyfile,ofono
+dns=dnsmasq
+# Use 'dns=none' to disable automated management of /etc/resolv.conf
 
 [ifupdown]
 managed=false
 
 [device]
-wifi.scan-rand-mac-address=yes
+# Enable this feature if your hardware supports it
+wifi.scan-rand-mac-address=no
 
-[connection]
-wifi.cloned-mac-address=stable
-ethernet.cloned-mac-address=stable
-connection.stable-id=\${CONNECTION}/\$(BOOT)
+# Uncomment the next 4 lines to enable random mac addresses
+#[connection]
+#wifi.cloned-mac-address=stable
+#ethernet.cloned-mac-address=stable
+#connection.stable-id=\${CONNECTION}/\$(BOOT)
 EOF
 
 changelog "Backported from bionic, added privacy features"
