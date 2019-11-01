@@ -128,20 +128,16 @@ cd PACKAGES/$PACKAGE
 apt-get update -c $LOCAL_APT/etc/apt.conf
 apt-get source $PACKAGE --download-only -c ${LOCAL_APT}/etc/apt.conf
 # Verify it first
-#   Import the key for the package uploader
-#   Use the one listed in the helper if available, otherwise download the one listed in the dsc
-if [ "1$SIGNKEY" != "1" ] ; then
-  apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --recv-keys --keyserver keyserver.ubuntu.com $SIGNKEY > /dev/null
-  gpgv --keyring ${LOCAL_APT}/etc/trusted.gpg *.dsc
+if grep -q "BEGIN PGP SIGNATURE" *.dsc; then
+  KEY=$(gpg2 --keyid-format 0xlong --verify  *.dsc  2>&1 | grep 0x | sed 's/.*0x//' || true)
+  [ -z "$KEY" ] && KEY=$(gpgv --keyring ${LOCAL_APT}/etc/trusted.gpg *.dsc 2>&1 | egrep ".SA key" | sed 's/.*.SA key //' || true)
+  apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --recv-keys --keyserver hkps://keyserver.ubuntu.com:443 $KEY > /dev/null
+  touch ${LOCAL_APT}/keyring.gpg
+  gpg2 --keyring ${LOCAL_APT}/keyring.gpg --import ${LOCAL_APT}/etc/trusted.gpg
+  gpg2 --verify --keyring ${LOCAL_APT}/etc/trusted.gpg *.dsc
 else
-  if grep -q "BEGIN PGP SIGNATURE" *.dsc; then
-    KEY=$(gpgv --keyring ${LOCAL_APT}/etc/trusted.gpg *.dsc 2>&1 | grep "key ID" | sed 's/.*key ID //' || true)
-    apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --recv-keys --keyserver keyserver.ubuntu.com $KEY > /dev/null
-    gpgv --keyring ${LOCAL_APT}/etc/trusted.gpg *.dsc
-  else
-    echo WARNING! The dsc file is not gpg signed!
-    [ -z "$EXTERNAL" ] && exit 1
-  fi
+  echo WARNING! The dsc file is not gpg signed!
+  [ -z "$EXTERNAL" ] && exit 1
 fi
 
 dpkg-source --no-check -x --skip-patches *.dsc source
