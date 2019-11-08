@@ -21,9 +21,6 @@ VERSION=1
 
 . ./config
 
-cp $DATA/trisquel-style-session-buttons.patch debian/patches/
-echo "trisquel-style-session-buttons.patch" >> debian/patches/series
-
 sed '/dark-theme/{N;s/false/true/}' -i data/com.solus-project.brisk-menu.gschema.xml
 sed '/label-visible/{N;s/true/false/}' -i data/com.solus-project.brisk-menu.gschema.xml
 sed "/pinned-shortcuts/{N;s/'matecc.desktop'/'gnome-app-install.desktop', 'matecc.desktop'/}" -i data/com.solus-project.brisk-menu.gschema.xml
