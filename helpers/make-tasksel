@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 COMPONENT=main
 
 . ./config
@@ -27,10 +27,8 @@ sed 's/Install-Recommends=true/Install-Recommends=false/g' -i tasksel.pl
 
 mkdir trisquel-tasks
 cp $DATA/* trisquel-tasks
-sed s/mythbuntu/trisquel-pro/g Makefile -i
 sed s/lubuntu/trisquel-sugar/g Makefile -i
 sed s/xubuntu/trisquel-mini/g Makefile -i
-sed s/edubuntu/trisquel-edu/g Makefile -i
 sed s/kubuntu/triskel/g Makefile -i
 sed s/ubuntu/trisquel/g Makefile -i
 sed "/USUITE/s/.*/USUITE=$CODENAME/" Makefile -i
