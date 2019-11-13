@@ -30,7 +30,7 @@ Those are the steps done by the helpers:
 
 * You don't need to use sudo in order to run those scripts, but some extra packages are needed:
 
-     `sudo apt-get install dpkg-dev sed git rpl devscripts quilt patch cdbs`
+     `sudo apt-get install dpkg-dev sed git gnupg-curl rpl devscripts quilt patch cdbs`
 
 * Take care to use the right sourcePackageName, many source packages produce
 several binary packages. `apt-cache showsrc binary-package` can help you.
