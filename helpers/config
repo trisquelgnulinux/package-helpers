@@ -131,7 +131,7 @@ apt-get source $PACKAGE --download-only -c ${LOCAL_APT}/etc/apt.conf
 if grep -q "BEGIN PGP SIGNATURE" *.dsc; then
   KEY=$(gpg2 --keyid-format 0xlong --verify  *.dsc  2>&1 | grep 0x | sed 's/.*0x//' || true)
   [ -z "$KEY" ] && KEY=$(gpgv --keyring ${LOCAL_APT}/etc/trusted.gpg *.dsc 2>&1 | egrep ".SA key" | sed 's/.*.SA key //' || true)
-  apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --recv-keys --keyserver hkps://keyserver.ubuntu.com:443 $KEY > /dev/null
+  apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --recv-keys --keyserver pool.sks-keyservers.net $KEY > /dev/null
   touch ${LOCAL_APT}/keyring.gpg
   gpg2 --keyring ${LOCAL_APT}/keyring.gpg --import ${LOCAL_APT}/etc/trusted.gpg
   gpg2 --verify --keyring ${LOCAL_APT}/etc/trusted.gpg *.dsc
