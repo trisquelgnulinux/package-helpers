@@ -14,13 +14,13 @@ sudo apt-get install dpkg-dev devscripts git quilt patch sed rpl parsewiki
 git clone https://devel.trisquel.info/trisquel/trisquel-builder.git
 ```
 
-Follow the instructions in the [README.md](https://devel.trisquel.info/trisquel/trisquel-builder/blob/master/README.md) file of the repository just cloned.
+ 1. Follow the instructions in the [README.md](https://devel.trisquel.info/trisquel/trisquel-builder/blob/master/README.md) file of the repository just cloned.
 
 ## 2. Get the latest code from GitLab
 
 You'll need to understand a little bit about how git and GitLab work before this step (GitHub works the same way, but we like free software). In simple terms, log in [our GitLab instance](https://devel.trisquel.info/users/sign_in?redirect_to_referer=yes), visit the [trisquel/package-helpers project page there](https://devel.trisquel.info/trisquel/package-helpers), and click the "Fork" button to create your own copy of the repo. You will push your changes to this new repo under your own GitLab account, and we will pull changes into the main repo from there.
 
-For the sake of the rest of the examples in this guide, we're going to assume your GitLab account is "**richardtorvalds**" and you will be working with the "**hello**" package, and use those in our examples.
+For the sake of the rest of the examples in this guide, we're going to assume your GitLab account is "**richardtorvalds**".
 
 Now, we want to grab the latest from this newly created repository and pull it down to your local machine. Getting the latest code from your repository is simple, just clone it and go inside:
 
@@ -51,7 +51,37 @@ git merge upstream/master
 
 You can also use *git pull upstream master* if you want it all in one step.
 
-## 4. Making a branch for your changes
+## 4. Running package helpers
+
+Change to and view the contents of the `helpers`directory.
+
+```
+cd helpers
+ls
+```
+
+The files beginning with `make-` are package helpers.  A package helper is a script which downloads and unpacks an Ubuntu source package, makes modifications to the source code, and builds a new source package from the modified code.  To confirm that you are set up correctly, test `make-apache2`.
+
+```
+bash make apache
+```
+
+This should create the directory `PACKAGES/apache2`, containing a source package for apache2 with Trisquel modifications.
+
+## 5. Compiling source packages
+
+To produce binaries from the modified source package, compile with sbuild.  Double check that you completed all of the steps in Section 1 of this guide.  Then, change directories to `PACKAGES/apache2`, and as described in the [README.md](https://devel.trisquel.info/trisquel/trisquel-builder/blob/master/README.md) of the trisquel-builder repository, compile the package with sbuild:
+
+```
+cd PACKAGES/apache2
+sbuild -v --dist $CODENAME --arch $ARCH $PACKAGE_DSC_FILE
+```
+
+where `$CODENAME` is the version of Trisquel you are compiling for, `$ARCH` is the architecture you are compiling for, and `$PACKAGE_DSC_FILE` is the file in the current working directory beginning with `apache2_` and ending with `.dsc`.  This should create binary packages ending with `.deb` in the current working directory.
+
+## 6. Making changes
+
+For the sake of the rest of the examples in this guide, we're going to assume that and you will be working with the "**hello**" package.
 
 When adding features or bug fixes, please create a separate branch for each set/subject of changes you want us to pull in, either with the issue number in the branch name or with an indication of what the feature is (example: feature, bug fix).
 
@@ -65,7 +95,7 @@ Now, as an example, to make a branch for a bug fix called `bugfix-hello`, do:
 git checkout -b bugfix-hello
 ```
 
-## 5. Building the source package
+## 7. Building the source package
 
 If you want to create a new help for, say, the `hello` package, the `make-apache2` file is a good starting point, so:
 ```bash
@@ -84,7 +114,7 @@ bash make-hello
 
 If everything goes fine, you will have your new `.DSC` source package ready at `PACKAGES/hello`.
 
-## 6. Build and test the binary package
+## 8. Build and test the binary package
 
 The last step generated a source package file, so we need to build the binary one.
 
@@ -93,24 +123,17 @@ First switch to the `PACKAGES/hello` directory.
 cd PACKAGES/hello
 ```
 
-Then, as is pointed out in the [README.md](https://devel.trisquel.info/trisquel/trisquel-builder/blob/master/README.md) of the trisquel-builder repository, you can do so by doing the following:
+Then, as described above, compile the package with
 ```bash
 sbuild -v --dist $CODENAME --arch $ARCH $PACKAGE_DSC_FILE
 ```
-Or as follows if you also want to build the architecture-independent packages:
-```bash
-sbuild -v --dist $CODENAME --arch $ARCH --arch-all $PACKAGE_DSC_FILE
 ```
-
-Keep in mind that in both the last command suggestions, `$CODENAME` and `$ARCH` must be replaced by you since they are the codename of the Trisquel release and the architecture that you want to test against (to see the host architecture, that is the one your system is on, you can use `dpkg --print-architecture`), and for this to work, a `schroot` matching both `$CODENAME` and `$ARCH` must be available - which should be all set if all went well when following the [README.md](https://devel.trisquel.info/trisquel/trisquel-builder/blob/master/README.md) of trisquel-builder (see `schroot --list`). Besides this, `$PACKAGE_DSC_FILE` must be manually replaced with the name of a `.DSC` file that was created by `sbuild` in the previous section.
-
-Having said that, both the alternative commands above should put all the `.DEB` packages in the same directory, including or excluding the architecture-independent ones, respectively to which of the previous command alternatives were used.
 
 From now on you can either install the packages in the Trisquel installation you're using or, if there is an issue with the result, use a testing session as optionally advised in the next session.
 
 After testing, considering that all went well, you can jump to the last section.
 
-## 7. Installing the packages in a testing session
+## 9. Installing the packages in a testing session
 
 Sometimes the issues with a given package vary depending on the environment, and in such cases it's a good idea to test it inside a `schroot` session.
 
@@ -157,7 +180,7 @@ Considering that the job is done and being aware that all changes will be lost, 
 schroot -e -c $TEST_SCHROOT_SESSION
 ```
 
-## 8. Commit/register the changes, push your code and make a pull request
+## 10. Commit/register the changes, push your code and make a pull request
 
 When you have finished making your changes, you'll need to push up your changes to your fork so we can grab them.
 
