@@ -127,7 +127,6 @@ Then, as described above, compile the package with
 ```bash
 sbuild -v --dist $CODENAME --arch $ARCH $PACKAGE_DSC_FILE
 ```
-```
 
 From now on you can either install the packages in the Trisquel installation you're using or, if there is an issue with the result, use a testing session as optionally advised in the next session.
 
