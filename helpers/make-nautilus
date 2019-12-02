@@ -25,8 +25,19 @@ for patch in 16_unity_new_documents.patch; do
   sed "/$patch/d" -i debian/patches/series
 done
 
-sed -i '/^AUTHORS/d' debian/docs
-sed -i '/^THANKS/d' debian/docs
+check_file() {
+if [ ! -f $1 ]; then
+    echo " $1 doesn't exist removing from debian/docs"
+    sed -i "/^$1/d" debian/docs
+fi
+}
+
+echo "Checking for necessary files to install by debian/docs."
+while read i
+do
+    check_file $i
+done < debian/docs
+
 
 changelog "Revert from using ubuntu-help to default gnome-help"
 compile
