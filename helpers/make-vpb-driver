@@ -17,7 +17,8 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
+EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu cosmic universe'
 
 . ./config
 
@@ -34,6 +35,7 @@ echo >> debian/README.Debian
 
 sed -i '/fetch-openline-firmware/d' debian/rules
 
-changelog "Remove references to nonfree blob, fixes #10980"
+changelog "Move to a supported version for Linux kernel 4.15 trisquel2 ||
+Remove references to nonfree blob, fixes #10980 trisquel1"
 
 compile
