@@ -17,13 +17,24 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 . ./config
 
 for patch in 16_unity_new_documents.patch; do
   rm debian/patches/$patch
   sed "/$patch/d" -i debian/patches/series
 done
+
+echo "Checking for necessary files to install by debian/docs."
+while read i
+do
+   if [ -f $i ]; then
+       echo  $i >> debian/docs.new
+   fi
+done < debian/docs
+
+mv debian/docs.new debian/docs
+cat debian/docs
 
 changelog "Revert from using ubuntu-help to default gnome-help"
 compile
