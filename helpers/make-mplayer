@@ -32,6 +32,9 @@ sed -i 's/\(--disable-arts \\\)/\1\n\t--disable-qtx \\/' debian/rules
 sed -i 's/\(--disable-arts \\\)/\1\n\t--disable-xanim \\/' debian/rules 
 sed -i 's/\(--disable-arts \\\)/\1\n\t--disable-real \\/' debian/rules 
 
+# fix https://trac.mplayerhq.hu/ticket/2343
+sed -i 's/.*\#include.*/\#define _GNU_SOURCE\n\n&/' cpudetect.c
+
 changelog "Removed references to non-free stuff"
 
 compile
