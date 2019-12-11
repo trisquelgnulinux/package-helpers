@@ -1,6 +1,6 @@
-diff -ruN asunder-2.9.2-acc/src/callbacks.c src//callbacks.c
+diff -ruN asunder-2.9.2-acc/src/callbacks.c src/callbacks.c
 --- asunder-2.9.2-acc/src/callbacks.c	2019-12-11 03:47:37.748518768 -0600
-+++ src//callbacks.c	2019-12-11 11:37:59.433406734 -0600
++++ src/callbacks.c	2019-12-11 11:37:59.433406734 -0600
 @@ -694,31 +694,6 @@
  }
  
@@ -33,9 +33,9 @@ diff -ruN asunder-2.9.2-acc/src/callbacks.c src//callbacks.c
  on_rip_musepack_toggled                  (GtkToggleButton *togglebutton,
                                            gpointer         user_data)
  {
-diff -ruN asunder-2.9.2-acc/src/callbacks.h src//callbacks.h
+diff -ruN asunder-2.9.2-acc/src/callbacks.h src/callbacks.h
 --- asunder-2.9.2-acc/src/callbacks.h	2019-12-11 03:47:37.776519106 -0600
-+++ src//callbacks.h	2019-12-11 11:37:59.433406734 -0600
++++ src/callbacks.h	2019-12-11 11:37:59.433406734 -0600
 @@ -157,9 +157,6 @@
  on_rip_wavpack_toggled                 (GtkToggleButton *togglebutton,
                                          gpointer         user_data);
@@ -46,9 +46,9 @@ diff -ruN asunder-2.9.2-acc/src/callbacks.h src//callbacks.h
  on_rip_musepack_toggled                  (GtkToggleButton *togglebutton,
                                            gpointer         user_data);
  void
-diff -ruN asunder-2.9.2-acc/src/interface.c src//interface.c
+diff -ruN asunder-2.9.2-acc/src/interface.c src/interface.c
 --- asunder-2.9.2-acc/src/interface.c	2019-12-11 03:47:37.784519202 -0600
-+++ src//interface.c	2019-12-11 11:37:59.441406834 -0600
++++ src/interface.c	2019-12-11 11:37:59.441406834 -0600
 @@ -895,54 +895,6 @@
      GLADE_HOOKUP_OBJECT (prefs, rip_musepack, "rip_musepack");
      /* END MUSEPACK */
@@ -132,9 +132,9 @@ diff -ruN asunder-2.9.2-acc/src/interface.c src//interface.c
  
  static const char* 
  GBLcopyright = 
-diff -ruN asunder-2.9.2-acc/src/interface.h src//interface.h
+diff -ruN asunder-2.9.2-acc/src/interface.h src/interface.h
 --- asunder-2.9.2-acc/src/interface.h	2019-12-11 03:47:37.788519251 -0600
-+++ src//interface.h	2019-12-11 11:37:59.441406834 -0600
++++ src/interface.h	2019-12-11 11:37:59.441406834 -0600
 @@ -15,8 +15,6 @@
  void enable_opus_widgets(void);
  void disable_wavpack_widgets(void);
@@ -144,9 +144,9 @@ diff -ruN asunder-2.9.2-acc/src/interface.h src//interface.h
  void disable_musepack_widgets(void);
  void enable_musepack_widgets(void);
  void show_aboutbox (void);
-diff -ruN asunder-2.9.2-acc/src/prefs.c src//prefs.c
+diff -ruN asunder-2.9.2-acc/src/prefs.c src/prefs.c
 --- asunder-2.9.2-acc/src/prefs.c	2019-12-11 03:47:37.788519251 -0600
-+++ src//prefs.c	2019-12-11 11:37:59.441406834 -0600
++++ src/prefs.c	2019-12-11 11:37:59.441406834 -0600
 @@ -125,8 +125,6 @@
      p->wavpack_compression = 1;
      p->wavpack_hybrid = 1;
@@ -205,9 +205,9 @@ diff -ruN asunder-2.9.2-acc/src/prefs.c src//prefs.c
          p->rip_musepack = read_line_num(fd);
          
          // this one can be 0
-diff -ruN asunder-2.9.2-acc/src/prefs.h src//prefs.h
+diff -ruN asunder-2.9.2-acc/src/prefs.h src/prefs.h
 --- asunder-2.9.2-acc/src/prefs.h	2019-12-11 03:47:37.788519251 -0600
-+++ src//prefs.h	2019-12-11 11:37:59.441406834 -0600
++++ src/prefs.h	2019-12-11 11:37:59.441406834 -0600
 @@ -32,8 +32,6 @@
      int do_log;
      char* cddb_server_name;
@@ -217,9 +217,9 @@ diff -ruN asunder-2.9.2-acc/src/prefs.h src//prefs.h
      int rip_musepack;
      int musepack_bitrate;
      int more_formats_expanded;
-diff -ruN asunder-2.9.2-acc/src/threads.c src//threads.c
+diff -ruN asunder-2.9.2-acc/src/threads.c src/threads.c
 --- asunder-2.9.2-acc/src/threads.c	2019-12-11 10:11:03.183303965 -0600
-+++ src//threads.c	2019-12-11 15:13:18.736462595 -0600
++++ src/threads.c	2019-12-11 15:13:18.736462595 -0600
 @@ -39,7 +39,6 @@
  static FILE * playlist_opus = NULL;
  static FILE * playlist_flac = NULL;
@@ -445,9 +445,9 @@ diff -ruN asunder-2.9.2-acc/src/threads.c src//threads.c
                       prip*100, pencode*100);
              debugLog(logStr);
          }
-diff -ruN asunder-2.9.2-acc/src/wrappers.c src//wrappers.c
+diff -ruN asunder-2.9.2-acc/src/wrappers.c src/wrappers.c
 --- asunder-2.9.2-acc/src/wrappers.c	2019-12-11 11:11:22.457016117 -0600
-+++ src//wrappers.c	2019-12-11 11:37:59.441406834 -0600
++++ src/wrappers.c	2019-12-11 11:37:59.441406834 -0600
 @@ -35,7 +35,6 @@
  pid_t opusenc_pid;
  pid_t flac_pid;
@@ -562,9 +562,9 @@ diff -ruN asunder-2.9.2-acc/src/wrappers.c src//wrappers.c
  // uses mpcenc to encode a WAV file into a .mpc and tag it
  //
  // tracknum - the track number
-diff -ruN asunder-2.9.2-acc/src/wrappers.h src//wrappers.h
+diff -ruN asunder-2.9.2-acc/src/wrappers.h src/wrappers.h
 --- asunder-2.9.2-acc/src/wrappers.h	2019-12-11 03:47:37.856520071 -0600
-+++ src//wrappers.h	2019-12-11 11:37:59.441406834 -0600
++++ src/wrappers.h	2019-12-11 11:37:59.441406834 -0600
 @@ -7,7 +7,6 @@
  extern pid_t opusenc_pid;
  extern pid_t flac_pid;
