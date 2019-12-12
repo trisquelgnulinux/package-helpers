@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=5
+VERSION=6
 QUILT=skip
 . ./config
 
@@ -82,12 +82,11 @@ replace ubuntu_text trisquel_text .
 replace ubuntu_details trisquel_details .
 replace "Name=Kubuntu" "Name=Trisquel-mini" .
 replace "Name=Ubuntu" "Name=Trisquel" .
-replace "Ubuntu 11.04" "Trisquel $REVISION" .
-replace "Ubuntu 10.04" "Trisquel $REVISION" .
-replace "Ubuntu 10.10" "Trisquel $REVISION" .
-replace "Kubuntu 10.10" "Trisquel mini $REVISION" .
 replace 2c001e 000000 .
 replace ff4012 0051FF .
+replace "Ubuntu $UPSTREAMRELEASE" "Trisquel $REVISION" .
+replace "Kubuntu $UPSTREAMRELEASE" "Trisquel mini $REVISION" .
+replace "Ubuntu $UPSTREAMRELEASE LTS" "Trisquel $REVISION" .
 
 
 cp $DATA/*.png themes/script
