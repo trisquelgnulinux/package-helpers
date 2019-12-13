@@ -64,7 +64,10 @@ find $3 -type f -not -iregex '.*changelog.*' -not -iregex '.*copyright.*' -execd
 changelog(){
 head -n 1 debian/changelog | grep -q $UPSTREAM-security && REPO=$CODENAME-security || REPO=$CODENAME
 [ "$BACKPORT" = true ] || [ "$BACKPORTS" = true ] && REPO=${CODENAME}-backports
-echo | dch -D $REPO -v `pkgversion`+${REVISION}trisquel${VERSION} "$1"
+echo | dch -v `pkgversion`+${REVISION}trisquel${VERSION} "$1"
+shift
+for comment in "$@"; do echo | dch $comment; done
+dch -r --distribution $REPO ignored
 
 # Make sure the changelog file is identical between archs
 /bin/sed "/-- Trisquel/s/.*/ -- Trisquel GNU\/Linux developers <trisquel-devel@listas.trisquel.info>  $DATE/" -i debian/changelog
