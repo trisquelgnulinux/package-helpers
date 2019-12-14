@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2017-2018  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2017-2019  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,14 +17,13 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
+
 . ./config
 
 sed 's/ and Debian Icedove//' -i debian/control
-sed 's/${xpi:Depends}/icedove/' -i debian/control
-sed '/xpi:Recommends/d' -i debian/control
 sed 's/Thunderbird/Icedove/' -i debian/control
-sed '/Enhances/d' -i debian/control
+sed 's/thunderbird/icedove/' -i debian/control
 
 changelog "Imported into Trisquel"
 
