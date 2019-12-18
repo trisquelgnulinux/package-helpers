@@ -19,7 +19,7 @@
 #
 set -x
 
-VERSION=3
+VERSION=4
 
 . ./config
 
@@ -124,6 +124,7 @@ s/thunderbird/icedove/g;
 s/Thunderbird/Icedove/g;
 s/THUNDERBIRD/ICEDOVE/g;
 s/ Mozilla / Trisquel /g;
+s/Firefox/Abrowser/g;
 s|PACKAGES/icedove|PACKAGES/thunderbird|g;
 s/iceweasel, icedove/iceweasel, thunderbird/g;
 s/Replaces: icedove/Replaces: thunderbird/g;
@@ -146,6 +147,13 @@ sed '/.*<description.*contributeDesc/,/\/description/d' -i ./comm/mail/base/cont
 sed '/^Source/s/.*/Source: thunderbird/' -i debian/control.in
 sed 's/Provides: mail-reader,/Provides: mail-reader, thunderbird,/' -i debian/control.in
 sed "s/Provides.*/Provides: icedove-locale-@LANGCODE@/" -i debian/control.langpacks
+
+cat << EOF > comm/mail/branding/nightly/locales/en-US/brand.properties
+brandShortName=Icedove
+brandShorterName=Icedove
+brandFullName=Icedove Mail
+vendorShortName=Trisquel
+EOF
 
 debian/rules debian/control
 touch -d "yesterday" debian/control
