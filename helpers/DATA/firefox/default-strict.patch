@@ -1,0 +1,22 @@
+--- a/browser/components/BrowserGlue.jsm	2019-12-19 12:45:18.535559096 -0500
++++ b/browser/components/BrowserGlue.jsm	2019-12-19 12:45:08.935572729 -0500
+@@ -1580,6 +1580,19 @@
+ 
+     this._trackSlowStartup();
+ 
++    // Trisquel hack: if no user settings for tracking, default to strict instead of standard.
++    if (!
++      (Services.prefs.prefHasUserValue("browser.contentblocking.category")
++      || Services.prefs.prefHasUserValue("network.cookie.cookieBehavior")
++      || Services.prefs.prefHasUserValue("privacy.trackingprotection.enabled")
++      || Services.prefs.prefHasUserValue("privacy.trackingprotection.socialtracking.enabled")
++      || Services.prefs.prefHasUserValue("privacy.trackingprotection.cryptomining.enabled")
++      || Services.prefs.prefHasUserValue("privacy.trackingprotection.fingerprinting.enabled")
++      || Services.prefs.prefHasUserValue("privacy.trackingprotection.pbmode.enabled"))
++    ) {
++      Services.prefs.setStringPref("browser.contentblocking.category", "strict"); this._updateCBCategory;
++    }
++
+     // Offer to reset a user's profile if it hasn't been used for 60 days.
+     const OFFER_PROFILE_RESET_INTERVAL_MS = 60 * 24 * 60 * 60 * 1000;
+     let lastUse = Services.appinfo.replacedLockTime;
