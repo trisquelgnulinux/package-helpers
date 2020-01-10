@@ -24,7 +24,7 @@ QUILT=skip
 export QUILT_PATCHES=debian/patches
 quilt push -a
 
-sed -i "s|Office;|Graphics;|" data/pdfshuffler.desktop
+sed -i "s|Office;|Utility;|" data/pdfshuffler.desktop
 cp $DATA/images/* data/
 
 changelog "Small customization for etiona"
