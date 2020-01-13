@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#    Copyright (C) 2008-2019  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2008-2020  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C) 2015       Santiago Rodriguez <santi@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=66
+VERSION=67
 
 . ./config
 
@@ -38,7 +38,7 @@ sed '/^const DEFAULT_SITES/,/^])\;/c const DEFAULT_SITES = new Map\([[""]]\);' -
 sed '/"showSponsored"/,/value/s/value: true/value: false/' -i $ActivityStream
 sed '/"telemetry"/,/value/s/value: true/value: false/' -i $ActivityStream
 sed '/"section.highlights.includePocket"/,/value/s/value: true/value: false/' -i $ActivityStream
-sed '/"telemetry.ping.endpoint"/,/value/s/value: .*/value: ""/' -i $ActivityStream
+sed '/"telemetry.structuredIngestion.endpoint"/,/value/s/value: .*/value: ""/' -i $ActivityStream
 sed '/read_more_endpoint/,+1s/http.*/",/' -i $ActivityStream
 sed '/stories_endpoint/s/getpocket.cdn.mozilla.net/127.0.0.1/' -i $ActivityStream
 sed '/stories_referrer/s/http.*/",/' -i $ActivityStream
@@ -62,7 +62,6 @@ pref("datareporting.healthreport.uploadEnabled", false);
 pref("datareporting.healthreport.about.reportUrl", "https://trisquel.info/legal");
 pref("datareporting.healthreport.infoURL", "https://trisquel.info/legal");
 EOF
-cp toolkit/components/telemetry/healthreport-prefs.js mobile/android/chrome/content/healthreport-prefs.js
 
 sed 's%https://www.mozilla.org/legal/privacy/%https://trisquel.info/legal%' -i ./browser/app/profile/firefox.js ./toolkit/content/aboutRights.xhtml
 
