@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2011-2016  Rubén Rodríguez <ruben@trisquel.info>
+#    Copyright (C) 2011-2020  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C) 2011  Carlos Pais <freemind@lavabit.com>
 #    Copyright (C) 2019 Mason Hock <mason@masonhock.com>
 #
@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 
 . ./config
 
@@ -69,6 +69,7 @@ rm -rf tests
 sed '/gir1.2-snapd-1/d' -i debian/control
 sed '/self.init_livepatch/d' -i softwareproperties/gtk/SoftwarePropertiesGtk.py
 patch -p0 < $DATA/remove_livepatch_from_gtk_ui.patch
+patch -p1 < $DATA/disable-livepatch.patch
 sed 's/status = self.get_status()/status = Snapd.SnapStatus.UNKNOWN/' -i softwareproperties/LivepatchSnap.py
 
 rm data/software-properties-drivers.desktop.in
