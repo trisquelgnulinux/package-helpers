@@ -17,12 +17,12 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 COMPONENT=main
 
 . ./config
 
-sed 's/ubuntu-docs.*)/yelp/' -i debian/control*
+sed '/ubuntu-docs/d' -i debian/control*
 touch AUTHORS
 
 changelog "Removed ubuntu-docs dependency"
