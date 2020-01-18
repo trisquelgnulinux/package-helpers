@@ -1,0 +1,44 @@
+#!/bin/sh
+#
+#    Copyright (C) 2020  Ruben Rodriguez <ruben@trisquel.info>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=1
+COMPONENT=main
+. ./config
+
+sed '/plymouth-theme-kubuntu-logo/,$d' -i debian/control
+sed 's/kubuntu-settings-desktop/triskel-settings-desktop/g; s/Kubuntu/Triskel/' -i debian/control
+rm debian/plymouth* plymouth -r
+rename s/kubuntu/triskel/ debian/*
+find -type d -name '*kubuntu*' | xargs rename s/kubuntu/triskel/
+find -type f -name '*kubuntu*' | xargs rename s/kubuntu/triskel/
+rm desktop/etc/skel/.face
+
+replace kubuntu.org trisquel.info .
+replace Kubuntu Triskel .
+replace kubuntu triskel .
+
+sed '1s/triskel/kubuntu/' -i debian/control
+
+cp $DATA/start.svgz desktop/theme/desktoptheme/triskel/icons/start.svgz
+cp $DATA/fullscreenpreview.jpg $DATA/preview.png desktop/theme/look-and-feel/org.triskel.desktop/contents/previews/
+
+changelog "Adapted for Triskel"
+
+compile
+
