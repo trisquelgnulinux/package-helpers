@@ -21,9 +21,42 @@ VERSION=3
 NETINST=true
 . ./config
 
+### get kernel version ###
+
+LOCAL_APT=`mktemp -d`
+mkdir -p ${LOCAL_APT}/var/lib/apt/partial
+mkdir -p ${LOCAL_APT}/var/cache/apt/archives/partial
+mkdir -p ${LOCAL_APT}/etc/
+mkdir -p ${LOCAL_APT}/var/lib/dpkg
+touch ${LOCAL_APT}/var/lib/dpkg/status
+touch ${LOCAL_APT}/etc/trusted.gpg
+[ $UID = 0 ] && id _apt > /dev/null 2>&1 && chown _apt ${LOCAL_APT}  -R
+
+cat << EOF > ${LOCAL_APT}/etc/apt.conf
+Dir::State "${LOCAL_APT}/var/lib/apt";
+Dir::State::status "${LOCAL_APT}/var/lib/dpkg/status";
+Dir::Etc::SourceList "${LOCAL_APT}/etc/apt.sources.list";
+Dir::Cache "${LOCAL_APT}/var/cache/apt";
+pkgCacheGen::Essential "none";
+Dir::Etc::Trusted "${LOCAL_APT}/etc/trusted.gpg";
+Acquire::ForceIPv4 "true";
+EOF
+
+cat << EOF > $LOCAL_APT/etc/apt.sources.list
+deb http://archive.trisquel.info/trisquel flidas main
+deb http://archive.trisquel.info/trisquel flidas-updates main
+deb http://archive.trisquel.info/trisquel flidas-security main
+EOF
+
+apt-key -c $LOCAL_APT/etc/apt.conf adv --keyserver keyserver.ubuntu.com --recv-keys B138CA450C05112F > /dev/null
+apt-get update -c $LOCAL_APT/etc/apt.conf
+LASTKERNEL=$(apt-cache -c $LOCAL_APT/etc/apt.conf show linux-libc-dev|grep ^Version |head -n1|cut -d" " -f2|cut -d. -f1,2,3)
+
+
+### modify package ###
+
 find build/pkg-lists -type f | xargs sed -i /media-retriever/d
 
-LASTKERNEL=$(apt-cache show linux-libc-dev|grep ^Version |head -n1|cut -d" " -f2|cut -d. -f1,2,3)
 /bin/sed -i "s/^BASEVERSION.*/BASEVERSION = $LASTKERNEL/g" ./build/config/i386.cfg ./build/config/amd64.cfg
 sed -i "s/^MEDIUM_SUPPORTED.*/MEDIUM_SUPPORTED = cdrom netboot/g" ./build/config/i386.cfg ./build/config/amd64.cfg
 sed -i "/signed/d" ./build/config/amd64.cfg
