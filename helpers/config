@@ -49,7 +49,7 @@ LOCAL_APT=`mktemp -d`
 
 export RPL=$PWD/DATA/rpl
 rpl(){
-$RPL $@
+$RPL "$@"
 }
 
 pkgversion(){
