@@ -20,7 +20,7 @@
 VERSION=1
 . ./config
 
-sed 's/firefox/abrowser/' -i debian/control*
+sed 's/firefox /abrowser /' -i debian/control*
 
 changelog "Replace firefox dependency with abrowser"
 compile
