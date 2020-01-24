@@ -17,13 +17,27 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
+VERSION=4
 NETINST=true
 . ./config
 
+### get kernel version ###
+
+cat << EOF > $LOCAL_APT/etc/apt.sources.list
+deb http://archive.trisquel.info/trisquel flidas main
+deb http://archive.trisquel.info/trisquel flidas-updates main
+deb http://archive.trisquel.info/trisquel flidas-security main
+EOF
+
+apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver keyserver.ubuntu.com --recv-keys B138CA450C05112F
+apt-get update -c $LOCAL_APT/etc/apt.conf
+LASTKERNEL=$(apt-cache -c $LOCAL_APT/etc/apt.conf show linux-libc-dev|grep ^Version |head -n1|cut -d" " -f2|cut -d. -f1,2,3)
+
+
+### modify package ###
+
 find build/pkg-lists -type f | xargs sed -i /media-retriever/d
 
-LASTKERNEL=$(apt-cache show linux-libc-dev|grep ^Version |head -n1|cut -d" " -f2|cut -d. -f1,2,3)
 /bin/sed -i "s/^BASEVERSION.*/BASEVERSION = $LASTKERNEL/g" ./build/config/i386.cfg ./build/config/amd64.cfg
 sed -i "s/^MEDIUM_SUPPORTED.*/MEDIUM_SUPPORTED = cdrom netboot/g" ./build/config/i386.cfg ./build/config/amd64.cfg
 sed -i "/signed/d" ./build/config/amd64.cfg
@@ -58,10 +72,9 @@ rpl TRISQUEL-PT UBUNTU-PT . -R
 rpl Canonical Trisquel . -R
 rpl Ltd\. GNU/Linux . -R 
 rpl Trisquel-l10n ubuntu-l10n . -R
-rpl "Trisquel Ltd, and Rosetta" "Canonical Ltd, and Rosetta" . -R
+rpl 'Trisquel Ltd, and Rosetta' 'Canonical Ltd, and Rosetta' . -R
 rpl ubuntu-keyring trisquel-keyring . -R
 rpl ubuntu-archive-keyring trisquel-archive-keyring . -R
 
 changelog "Rebranded and adapted for Trisquel"
 compile
-
