@@ -22,6 +22,7 @@
 set -e
 set -o pipefail
 
+GPG_VER="$(gpg --version | grep GnuPG | awk '{print$3}')"
 export LANG=C LC_TIME=C
 PACKAGE=$(echo $0 |/bin/sed s/make-//g)
 
@@ -141,8 +142,14 @@ if grep -q "BEGIN PGP SIGNATURE" *.dsc; then
   [ -z "$KEY" ] && KEY=$(gpgv --keyring ${LOCAL_APT}/etc/trusted.gpg *.dsc 2>&1 | egrep ".SA key" | sed 's/.*.SA key //' || true)
   apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --recv-keys --keyserver hkps://keyserver.ubuntu.com:443 $KEY > /dev/null
   touch ${LOCAL_APT}/keyring.gpg
-  gpg2 --keyring ${LOCAL_APT}/keyring.gpg --import ${LOCAL_APT}/etc/trusted.gpg
-  gpg2 --verify --keyring ${LOCAL_APT}/etc/trusted.gpg *.dsc
+    dpkg --compare-versions "$GPG_VER" "gt" "2.0"
+    if [ $? = 0 ]; then
+      gpg --keyring ${LOCAL_APT}/keyring.gpg --import ${LOCAL_APT}/etc/trusted.gpg
+      gpg --verify --keyring ${LOCAL_APT}/etc/trusted.gpg *.dsc
+    else
+      gpg2 --keyring ${LOCAL_APT}/keyring.gpg --import ${LOCAL_APT}/etc/trusted.gpg
+      gpg2 --verify --keyring ${LOCAL_APT}/etc/trusted.gpg *.dsc
+    fi
   [ -n SCHROOT_COMMAND ] && gpgconf --kill gpg-agent
 else
   echo WARNING! The dsc file is not gpg signed!
