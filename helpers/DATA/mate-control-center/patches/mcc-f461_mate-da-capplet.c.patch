@@ -1,0 +1,43 @@
+diff -Naur mate-control-center-1.20.2/capplets/default-applications/mate-da-capplet.c mate-control-center-1.20.2-c/capplets/default-applications/mate-da-capplet.c
+--- mate-control-center-1.20.2/capplets/default-applications/mate-da-capplet.c	2018-03-27 06:15:26.000000000 -0600
++++ mate-control-center-1.20.2-c/capplets/default-applications/mate-da-capplet.c	2020-01-26 17:18:15.047144000 -0600
+@@ -587,7 +587,13 @@
+ 	capplet->spreadsheet_editors = g_app_info_get_all_for_type("application/vnd.ms-excel");
+ 
+ 	capplet->visual_ats = NULL;
+-	capplet->visual_ats = fill_list_from_desktop_file (capplet->visual_ats, APPLICATIONSDIR "/orca.desktop");
++        const gchar *const *sys_config_dirs = g_get_system_config_dirs();
++	for (const gchar* c = *sys_config_dirs; c; c=*++sys_config_dirs)
++        {
++		gchar* path = g_strconcat (c, "/autostart/orca-autostart.desktop", NULL);
++		capplet->visual_ats = fill_list_from_desktop_file (capplet->visual_ats, path);
++		g_free (path);
++	}
+ 	capplet->visual_ats = g_list_reverse (capplet->visual_ats);
+ 
+ 	capplet->mobility_ats = NULL;
+@@ -642,7 +648,7 @@
+ 	g_signal_connect(capplet->spreadsheet_combo_box, "changed", G_CALLBACK(spreadsheet_combo_changed_cb), capplet);
+ 
+ 	g_settings_bind (capplet->mobility_settings, MOBILITY_STARTUP_KEY, capplet->mobility_startup_checkbutton, "active", G_SETTINGS_BIND_DEFAULT);
+-	g_settings_bind (capplet->visual_settings, VISUAL_STARTUP_KEY, capplet->visual_startup_checkbutton, "active", G_SETTINGS_BIND_DEFAULT);
++	g_settings_bind (capplet->visual_startup_settings, VISUAL_STARTUP_KEY, capplet->visual_startup_checkbutton, "active", G_SETTINGS_BIND_DEFAULT);
+ 
+ 	gtk_window_set_icon_name(GTK_WINDOW (capplet->window), "preferences-desktop-default-applications");
+ 
+@@ -706,6 +712,7 @@
+ 	capplet->terminal_settings = g_settings_new (TERMINAL_SCHEMA);
+ 	capplet->mobility_settings = g_settings_new (MOBILITY_SCHEMA);
+ 	capplet->visual_settings = g_settings_new (VISUAL_SCHEMA);
++	capplet->visual_startup_settings = g_settings_new (VISUAL_STARTUP_SCHEMA);
+ 
+ 	show_dialog(capplet, start_page);
+ 	g_free(start_page);
+@@ -715,6 +722,7 @@
+ 	g_object_unref (capplet->terminal_settings);
+ 	g_object_unref (capplet->mobility_settings);
+ 	g_object_unref (capplet->visual_settings);
++	g_object_unref (capplet->visual_startup_settings);
+ 
+ 	return 0;
+ }
