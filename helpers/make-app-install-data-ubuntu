@@ -63,15 +63,20 @@ sed -i "/^thunderbird /a$(grep '^thunderbird ' /tmp/popcon-data | /bin/sed 's/th
 # create menu data
 rm menu-data/*.desktop
 for line in $(cat /tmp/desktop-files.list); do
-    package=$(echo line | /bin/sed 's/:.*//')
-    desktop=$(echo line | /bin/sed 's/^.*://')
-    if [ -f $DATA/usr/share/applications/$desktop ]; then
-        cp $DATA/usr/share/applications/$desktop menu-data/$package:$desktop
-	vote="$(grep "$package [0-9]" /tmp/popcon-data | head -n1 | awk '{print$2}')"
-        sed -i $'1 a \n' menu-data/$package:$desktop
-        sed -i "2i X-AppInstall-Section=main" menu-data/$package:$desktop
-        sed -i "2i X-AppInstall-Popcon=${vote}" menu-data/$package:$desktop
-        sed -i "2i X-AppInstall-Package=${package}" menu-data/$package:$desktop
+    package=$(echo $line | /bin/sed 's/:.*//')
+    desktop=$(echo $line | /bin/sed 's/.*://')
+    echo $package:$desktop
+    echo $DATA/debs/usr/share/applications/$desktop
+    if [ -f $DATA/debs/usr/share/applications/$desktop ]; then
+        popcon=1
+	vote="$(grep "$package [0-9]" /tmp/popcon-data | head -n1 | awk '{print$2}')" || popcon=0
+	if [ $popcon == 1 ]; then
+            cp $DATA/debs/usr/share/applications/$desktop menu-data/$package:$(echo $desktop | /bin/sed 's|.*/||g')
+            /bin/sed -i $'1 a \n' menu-data/$package:$(echo $desktop | /bin/sed 's|.*/||g')
+            /bin/sed -i "2i X-AppInstall-Section=main" menu-data/$package:$(echo $desktop | /bin/sed 's|.*/||g')
+            /bin/sed -i "2i X-AppInstall-Popcon=${vote}" menu-data/$package:$(echo $desktop | /bin/sed 's|.*/||g')
+            /bin/sed -i "2i X-AppInstall-Package=${package}" menu-data/$package:$(echo $desktop | /bin/sed 's|.*/||g')
+        fi
     fi
 done
 
