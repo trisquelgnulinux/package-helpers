@@ -1,6 +1,8 @@
 #!/bin/sh
 #
 #    Copyright (C) 2008-2011  Rubén Rodríguez <ruben@trisquel.info>
+#    Copyright (C) 2019       Luis Guzman <ark@switnet.org>
+#    Copyright (C) 2020       Mason Hock <mason@masonhock.com>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,29 +19,84 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=4
+VERSION=5
 
 . ./config
 
-#Remove game subcategories
-cp $DATA/applications.menu menu-data/applications.menu
+# setup local apt
+cat << EOF > $LOCAL_APT/etc/apt.sources.list
+deb http://archive.trisquel.info/trisquel etiona main
+deb http://archive.trisquel.info/trisquel etiona-updates main
+deb http://archive.trisquel.info/trisquel etiona-security main
+EOF
+apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver keyserver.ubuntu.com --recv-keys B138CA450C05112F
+apt-file update -c $LOCAL_APT/etc/apt.conf
 
-# We remove any info about non-free packages
-egrep -lr 'X-AppInstall-Section=(multiverse|restricted)' . | xargs -r rm
-for i in firefox jockey ndisgtk chromium-browser bughugger testdrive menueditor lp-review-list groundcontrol gstreamer nvidia dell-recovery ubufox thunderbird
-do
-    find -name *$i*xpm -exec rm {} \;
-    find -name *$i*png -exec rm {} \;
-    find -name *$i*desktop -exec rm {} \;
+# get list of desktop files
+apt-file -c $LOCAL_APT/etc/apt.conf search "/usr/share/applications" | /bin/sed 's| /usr/share/applications/||' > /tmp/desktop-files.list
+
+# get debs
+mkdir -p $DATA/debs
+for package in $(cat /tmp/desktop-files.list | /bin/sed 's/:.*//'); do
+    (
+        cd $DATA/debs
+        if [ ! -f ${package}_*.deb ]; then
+	    apt -c $LOCAL_APT/etc/apt.conf download $package
+        fi
+    )
 done
 
-sed '/menu-data-codecs/d' -i debian/install
+# extract desktop files
+(
+    cd $DATA/debs
+    for deb in `ls -1 *.deb | /bin/sed 's/\(.*\)\..*/\1/'`; do
+	dpkg-deb --fsys-tarfile $deb.deb | tar -xvf - --wildcards ./usr/share/applications/\*.desktop || echo no .desktop files found for $(echo $deb | sed 's/_.*//')
+    done
+)
 
+# add renamed packages to popcon-data
+cp $DATA/popcon-data /tmp/popcon-data
+sed -i "/^firefox /a$(grep '^firefox ' /tmp/popcon-data | /bin/sed 's/firefox/abrowser/')" /tmp/popcon-data
+sed -i "/^firefox /a$(grep '^firefox ' /tmp/popcon-data | /bin/sed 's/firefox/icecat/')" /tmp/popcon-data
+sed -i "/^thunderbird /a$(grep '^thunderbird ' /tmp/popcon-data | /bin/sed 's/thunderbird/icedove/')" /tmp/popcon-data
+
+# create menu data
+rm menu-data/*.desktop
+for line in $(cat /tmp/desktop-files.list); do
+    package=$(echo line | /bin/sed 's/:.*//')
+    desktop=$(echo line | /bin/sed 's/^.*://')
+    if [ -f $DATA/usr/share/applications/$desktop ]; then
+        cp $DATA/usr/share/applications/$desktop menu-data/$package:$desktop
+	vote="$(grep "$package [0-9]" /tmp/popcon-data | head -n1 | awk '{print$2}')"
+        sed -i $'1 a \n' menu-data/$package:$desktop
+        sed -i "2i X-AppInstall-Section=main" menu-data/$package:$desktop
+        sed -i "2i X-AppInstall-Popcon=${vote}" menu-data/$package:$desktop
+        sed -i "2i X-AppInstall-Package=${package}" menu-data/$package:$desktop
+    fi
+done
+
+# remove unwanted menu data
+(
+    cd menu-data
+    # only shown in some desktop environments
+    rm -rf $(grep -r OnlyShowIn ./usr | awk -F':' '{print $1}' | awk '!NF || !seen[$0]++')
+    # no icon defined
+    rm -rf $(grep -Lr Icon ./usr | awk -F':' '{print $1}' | awk '!NF || !seen[$0]++')
+)
+
+# cleanup
+rm -rf $DATA/debs/usr
+
+# remove game subcategories
+cp $DATA/applications.menu menu-data/applications.menu
+
+# remove non-free references
+sed '/menu-data-codecs/d' -i debian/install
 find -name *.desktop -exec sed -i 's/X-AppInstall-Section=universe/X-AppInstall-Section=main/g' {} \;
 find -name *buntu*desktop -exec rm {} \;
-#rm menu-data/uck.desktop
 sed -i '/buntu/d' debian/install
-changelog "Removed references to non-free apps"
+
+changelog "Replace Ubuntu's application data with Trisquel's"
 
 compile
 
