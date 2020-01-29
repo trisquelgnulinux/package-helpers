@@ -93,6 +93,7 @@ rm -rf $DATA/debs/usr
 cp $DATA/applications.menu menu-data/applications.menu
 
 # remove non-free references
+egrep -lr 'X-AppInstall-Section=(multiverse|restricted)' . | xargs -r rm
 sed '/menu-data-codecs/d' -i debian/install
 find -name *.desktop -exec sed -i 's/X-AppInstall-Section=universe/X-AppInstall-Section=main/g' {} \;
 find -name *buntu*desktop -exec rm {} \;
