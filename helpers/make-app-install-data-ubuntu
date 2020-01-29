@@ -94,6 +94,8 @@ cp $DATA/applications.menu menu-data/applications.menu
 
 # remove non-free references
 sed '/menu-data-codecs/d' -i debian/install
+sed '/menu-data-additional/d' -i debian/install
+sed '/menu-data-sul-extensions/d' -i debian/install
 find -name *.desktop -exec sed -i 's/X-AppInstall-Section=universe/X-AppInstall-Section=main/g' {} \;
 find -name *buntu*desktop -exec rm {} \;
 sed -i '/buntu/d' debian/install
