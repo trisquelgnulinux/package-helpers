@@ -81,9 +81,12 @@ done
 (
     cd menu-data
     # only shown in some desktop environments
-    rm -rf $(grep -r OnlyShowIn ./usr | awk -F':' '{print $1}' | awk '!NF || !seen[$0]++')
+    rm -rf $(grep -lr OnlyShowIn .)
+    rm -rf $(grep -lr NotShowIn .)
+    # not shown in any desktop environments
+    rm -rf $(grep -lr NoDisplay=true .)
     # no icon defined
-    rm -rf $(grep -Lr Icon ./usr | awk -F':' '{print $1}' | awk '!NF || !seen[$0]++')
+    rm -rf $(grep -Lr Icon .)
 )
 
 # cleanup
