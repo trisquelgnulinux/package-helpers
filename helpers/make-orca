@@ -23,6 +23,8 @@ REPOKEY="3B4FE6ACC0B21F32"
 
 . ./config
 
+sed '/speech-dispatcher/s/$/ speech-dispatcher-espeak-ng,/' -i debian/control*
+
 changelog "Backported from Focal"
 
 compile
