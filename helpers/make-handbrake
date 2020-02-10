@@ -1,0 +1,85 @@
+#!/bin/sh
+#
+#    Copyright (C) 2019  Luis Guzmán <ark@switnet.org>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=1
+EXTERNAL="deb-src http://ppa.launchpad.net/stebbins/handbrake-releases/ubuntu bionic main "
+REPOKEY="8771ADB0816950D8"
+BACKPORT=true
+#DEPENDS=libcmis,mdds,libixion,liborcus,libnumbertext
+#export DEB_BUILD_OPTIONS=nocheck
+. ./config
+
+#sed -i "s|BUILD_TEST_PACKAGES=y|BUILD_TEST_PACKAGES=n|" debian/rules
+
+#Set last package
+#sed -i "s|zlib1g-dev|zlib1g-dev,|" debian/control
+
+#Add backport deps
+# Disco
+# libcmis
+#sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ libcmis-dev (>= 0.5.2)" debian/control
+# libixion
+#sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ libixion-dev (>= 0.14.0)," debian/control
+# mdds
+#sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ libmdds-dev (>= 1.4.1)," debian/control
+# liborcus
+#sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ liborcus-dev (>= 0.14.0)," debian/control
+
+# Cosmic
+# libnumbertext
+#sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ libnumbertext-dev," debian/control
+
+#Add required deps missing on debian/control for building
+#sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ libzmf-dev," debian/control
+#sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ libxmlsec1-dev (>= 1.2.24)," debian/control
+#sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ libxml-java," debian/control
+#sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ libwps-dev," debian/control
+#sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ libwpg-dev," debian/control
+#sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ libwpd-dev," debian/control
+#sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ libvisio-dev," debian/control
+#sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ libstaroffice-dev," debian/control
+#sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ libserializer-java," debian/control
+#sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ libsac-java," debian/control
+#sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ librepository-java," debian/control
+#sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ libqxp-dev (>= 0.0.1)," debian/control
+#sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ libpentaho-reporting-flow-engine-java," debian/control
+#sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ libpagemaker-dev," debian/control
+#sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ libodfgen-dev," debian/control
+#sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ libmwaw-dev," debian/control
+#sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ libmspub-dev," debian/control
+#sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ libloader-java," debian/control
+#sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ liblayout-java," debian/control
+#sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ libfreehand-dev," debian/control
+#sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ libformula-java," debian/control
+#sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ libfonts-java," debian/control
+#sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ libflute-java," debian/control
+#sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ libetonyek-dev," debian/control
+#sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ libepubgen-dev (>= 0.1.0)," debian/control
+#sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ libeot-dev (>= 0.01)," debian/control
+#sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ libe-book-dev," debian/control
+#sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ libcppunit-dev," debian/control
+#sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ libcdr-dev," debian/control
+#sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ libabw-dev," debian/control
+#sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ coinor-libcoinutils-dev," debian/control
+#sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ coinor-libcoinmp-dev," debian/control
+
+
+changelog "Imported into Trisquel"
+
+compile
