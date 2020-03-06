@@ -24,7 +24,7 @@ VERSION=1
 sed -i '$d' debian/apparmor-profile
 cat  << FIX >> debian/apparmor-profile
 
-  # Add apparmon rule for mate's caja - LP#1798091
+  # Add apparmor rule for mate's caja - LP#1798091
   owner /tmp/.mate_desktop_thumbnail* w,
   owner /tmp/mate-desktop-thumbnailer* w
 
