@@ -21,7 +21,15 @@ VERSION=1
 
 . ./config
 
-sed -i "/owner \/tmp\/evince-thumbnailer/d" debian/apparmor-profile
+sed -i '$d' debian/apparmor-profile
+cat  << FIX >> debian/apparmor-profile
+
+  # Add apparmon rule for mate's caja - LP#1798091
+  owner /tmp/.mate_desktop_thumbnail* w,
+  owner /tmp/mate-desktop-thumbnailer* w
+
+}
+FIX
 
 changelog "Fix LP #1798091 - no pdf thumbnails"
 
