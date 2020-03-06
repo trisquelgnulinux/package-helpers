@@ -26,7 +26,7 @@ cat  << FIX >> debian/apparmor-profile
 
   # Add apparmor rule for mate's caja - LP#1798091
   owner /tmp/.mate_desktop_thumbnail* w,
-  owner /tmp/mate-desktop-thumbnailer* w
+  owner /tmp/mate-desktop-thumbnailer* w,
 
 }
 FIX
