@@ -17,17 +17,25 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 EXTERNAL='deb-src http://ftp.us.debian.org/debian testing main'
 REPOKEY=7638D0442B90D010
 
 . ./config
 
-sed '/Build-Depends/s/$/, python-configparser/' -i debian/control debian/templates/control.source.in
-sed '/Suggests/s/$/\nProvides: linux-firmware/' -i debian/control debian/templates/control.binary.in
+sed '/Build-Depends/s/$/, python-configparser/' -i 	debian/control \
+							debian/templates/control.source.in
+sed '/Suggests/s/$/\nProvides: linux-firmware/' -i 	debian/control \
+							debian/templates/control.binary.in
 
 changelog "Imported into Trisquel"
 
-md5sum debian/bin/gencontrol.py defines linux-free/defines linux-free/LICENSE debian/changelog debian/templates/control.binary.udeb.in debian/templates/control.binary.in debian/templates/control.source.in > debian/control.md5sum
+md5sum  debian/bin/gencontrol.py \
+        debian/config/defines \
+        debian/config/linux-free/defines \
+	debian/changelog \
+        debian/templates/control.binary.udeb.in \
+        debian/templates/control.binary.in \
+        debian/templates/control.source.in > debian/control.md5sum
 
 compile
