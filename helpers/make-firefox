@@ -151,6 +151,7 @@ s|Firefox Nightly|Abrowser|;
 s|Nightly|Abrowser|g;
 s|brandProductName=Firefox|brandProductName=Abrowser|;
 s|Sign in to Firefox|Sign in to Sync|;
+s|Search addons.mozilla.org|Search|g;
 "
 
 echo "Running batch replace operation"
@@ -203,13 +204,11 @@ EOF
 
 # Hide mobile promo
 echo ".fxaMobilePromo {  display: none !important; }" >> browser/themes/shared/incontentprefs/preferences.inc.css
-# Hide plugindeprecation-notice
-echo "#plugindeprecation-notice {  display: none !important; }" >> toolkit/mozapps/extensions/content/extensions.css
+# Hide unwanted elements on about:addons
+echo ".discopane-notice, .privacy-policy-link, #main header, #plugindeprecation-notice {  display: none !important; }" >> toolkit/mozapps/extensions/content/aboutaddons.css
 # Hide warnings on unsigned extensions
 echo ".warning{display: none!important; } .addon[notification=warning]{background-image: none!important;}" >> toolkit/mozapps/extensions/content/extensions.css
 # Hide extra links in about box
-sed '/releaseNotes.link/d' -i ./browser/base/content/aboutDialog.xul
-sed '/description.*helpus/,/description/d' -i ./browser/base/content/aboutDialog.xul
 
 find -wholename '*/brand.dtd' |xargs /bin/sed 's/trademarkInfo.part1.*/trademarkInfo.part1 "">/' -i
 
@@ -258,8 +257,6 @@ MOZ_ANDROID_GOOGLE_PLAY_SERVICES=0
 MOZ_TELEMETRY_REPORTING=0
 MOZ_ADDON_SIGNING=0
 EOF
-
-sed '/SENDERID/d' -i mobile/android/app/mobile.js
 
 # Fix locale
 cat << EOF >> mobile/locales/en-US/chrome/region.properties
