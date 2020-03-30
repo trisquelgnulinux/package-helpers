@@ -252,6 +252,8 @@ pref("extensions.blocklist.url", "");
 
 // Disable recommended extensions
 pref("browser.newtabpage.activity-stream.asrouter.userprefs.cfr", false);
+pref("browser.newtabpage.activity-stream.asrouter.userprefs.cfr.addons", false);
+pref("browser.newtabpage.activity-stream.asrouter.userprefs.cfr.features", false);
 pref("extensions.htmlaboutaddons.discover.enabled", false);
 pref("extensions.htmlaboutaddons.recommendations.enabled", false);
 //pref("browser.newtabpage.activity-stream.asrouterExperimentEnabled", false);
