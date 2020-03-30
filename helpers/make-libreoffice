@@ -17,11 +17,11 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 EXTERNAL='deb-src http://ppa.launchpad.net/libreoffice/ppa/ubuntu bionic main'
 REPOKEY="83FBA1751378B444"
 BACKPORT=true
-DEPENDS=libcmis,mdds,libixion,liborcus,libnumbertext
+DEPENDS=libcmis,mdds,libixion,liborcus,libnumbertext,xmlsec1,qr-code-generator,nss
 
 . ./config
 
@@ -29,15 +29,21 @@ DEPENDS=libcmis,mdds,libixion,liborcus,libnumbertext
 sed -i "s|zlib1g-dev|zlib1g-dev,|" debian/control
 
 #Add backport deps
-# Disco
+# Focal
 # libcmis
 sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ libcmis-dev (>= 0.5.2)" debian/control
 # libixion
-sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ libixion-dev (>= 0.14.0)," debian/control
+sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ libixion-dev (>= 0.15)," debian/control
 # mdds
-sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ libmdds-dev (>= 1.4.1)," debian/control
+sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ libmdds-dev (>= 1.5)," debian/control
 # liborcus
-sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ liborcus-dev (>= 0.14.0)," debian/control
+sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ liborcus-dev (>= 0.15)," debian/control
+# libnss
+sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ libnss3-dev (>= 3.42)," debian/control
+# qr-code-generator
+sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ libqrcodegencpp-dev," debian/control
+# xmlsec1
+sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ libxmlsec1-dev (>= 1.2.28)," debian/control
 
 # Cosmic
 # libnumbertext
@@ -45,7 +51,6 @@ sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ libnumbertext-dev," debian/c
 
 #Add required deps missing on debian/control for building
 sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ libzmf-dev," debian/control
-sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ libxmlsec1-dev (>= 1.2.24)," debian/control
 sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ libxml-java," debian/control
 sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ libwps-dev," debian/control
 sed -i "/zlib1g-dev/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ libwpg-dev," debian/control
