@@ -1,9 +1,0 @@
-#!/bin/sh
-
-[ $DESKTOP_SESSION = "trisquel-session" ] || exit 0
-[ -f $HOME/.config/disable-compton ] && exit 0
-
-FILE=/etc/compton.conf
-[ -f $HOME/.config/compton.conf ] && FILE="$HOME/.config/compton.conf"
-
-[ 0 != $(glxinfo |grep "renderer string:" |grep -v llvmpipe | wc -c) ]  && exec compton --config $FILE &
