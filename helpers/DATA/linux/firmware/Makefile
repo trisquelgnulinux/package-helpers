@@ -61,7 +61,6 @@ fw-shipped-$(CONFIG_DRM_RADEON) += $(DEBLOBBED) $(DEBLOBBED) \
 				   $(DEBLOBBED) $(DEBLOBBED) \
 				   $(DEBLOBBED) $(DEBLOBBED) \
 				   $(DEBLOBBED) $(DEBLOBBED)
-fw-shipped-$(CONFIG_DVB_AV7110) += av7110/bootcode.bin
 fw-shipped-$(CONFIG_DVB_TTUSB_BUDGET) += $(DEBLOBBED)
 fw-shipped-$(CONFIG_E100) += $(DEBLOBBED) $(DEBLOBBED) \
 			     $(DEBLOBBED)
@@ -130,8 +129,6 @@ fw-shipped-$(CONFIG_USB_SERIAL_EDGEPORT) += $(DEBLOBBED) $(DEBLOBBED) \
 fw-shipped-$(CONFIG_USB_SERIAL_EDGEPORT_TI) += $(DEBLOBBED)
 fw-shipped-$(CONFIG_USB_SERIAL_WHITEHEAT) += $(DEBLOBBED) $(DEBLOBBED) \
 					   # $(DEBLOBBED)
-fw-shipped-$(CONFIG_USB_SERIAL_KEYSPAN_PDA) += keyspan_pda/keyspan_pda.fw
-fw-shipped-$(CONFIG_USB_SERIAL_XIRCOM) += keyspan_pda/xircom_pgs.fw
 fw-shipped-$(CONFIG_USB_VICAM) += $(DEBLOBBED)
 fw-shipped-$(CONFIG_VIDEO_CPIA2) += $(DEBLOBBED)
 fw-shipped-$(CONFIG_YAM) += $(DEBLOBBED) $(DEBLOBBED)
