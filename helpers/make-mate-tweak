@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 
 . ./config
 
@@ -25,7 +25,7 @@ sed -i 's/manjaro/trisquel/g' mate-tweak
 sed -i 's/Manjaro/Trisquel/g' mate-tweak
 
 # Disable composition on llvm
-sed '2a # Do not run without 3D acceleration\nglxinfo | grep "renderer string:" | grep -q llvmpipe && exit 0\n' -i marco-compton
+sed 's/Software Rasterizer/Accelerated: no/' -i mate-tweak
 
 # Allow loading global compton config file
 sed '/config \/dev\/null/d' -i marco-compton
