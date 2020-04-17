@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2016-2017  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2016-2020  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C)      2017  Mason Hock <mason@masonhock.com>
 #
 #    This program is free software; you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=6
+VERSION=7
 
 . ./config
 
@@ -85,6 +85,36 @@ EOF
 cp data/panel-default-layout.layout data/ubuntu.layout
 mv data/ubuntu.layout data/trisquel.layout
 sed 's/ubuntu/trisquel/' -i data/Makefile.am
+
+cat << EOF > debian/mate-panel-layout-update.desktop
+[Desktop Entry]
+Name=Update MATE panel layout
+Comment=Resets the MATE panel layout after a Trisquel release upgrade
+Exec=/usr/share/mate-panel/layout-reset
+Terminal=false
+Type=Application
+NoDisplay=true
+OnlyShowIn=MATE;
+Keywords=MATE;panel;
+EOF
+
+cat << EOF > debian/layout-reset
+#!/bin/sh
+
+RELEASE=\$(lsb_release -rs)
+
+if ! [ -f \$HOME/.config/mate/panel2.d/trisquel\$RELEASE ]; then
+  gsettings reset-recursively org.mate.panel
+  [ -d \$HOME/.config/mate/panel2.d ] || mkdir -p \$HOME/.config/mate/panel2.d
+  touch \$HOME/.config/mate/panel2.d/trisquel\$RELEASE
+fi
+EOF
+chmod 755 debian/layout-reset
+
+cat << EOF >> debian/mate-panel.install
+debian/mate-panel-layout-update.desktop etc/xdg/autostart
+debian/layout-reset usr/share/mate-panel
+EOF
 
 changelog "Changed default layout"
 
