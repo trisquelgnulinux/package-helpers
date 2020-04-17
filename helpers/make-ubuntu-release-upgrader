@@ -24,7 +24,7 @@
 # Also, don't forget to update the meta-release files at archive and packages.t.i
 # The "obsoletes" list from ubuntu has been removed
 
-VERSION=4
+VERSION=5
 
 . ./config
 
@@ -234,21 +234,12 @@ cat << EOF1 > DistUpgrade/trisquel-postinstall.sh
 # Making sure this is gone
 apt-get remove --force-yes -y notification-daemon
 
-if ! [ -f /etc/grub.d/01_PASSWORD ]; then
-cat << EOF > /etc/grub.d/01_PASSWORD
-#! /bin/sh -e
-# Trisquel enables a random password to grub during install
-# Comment this file to remove the password.
-# This file should only be readable by root.
-
-echo set superusers=grub
-echo password grub \$(bash -c 'echo \$RANDOM')
-EOF
+# Default to systemd-resolved
+if [ "\$(readlink /etc/resolv.conf)" != "/run/systemd/resolve/stub-resolv.conf" ]; then
+  mv /etc/resolv.conf /etc/resolv.conf.flidas.bak
+  ln -s /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
 fi
 
-# Just in case
-update-initramfs -u
-update-grub
 EOF1
 chmod 755 DistUpgrade/trisquel-postinstall.sh
 
