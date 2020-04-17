@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2017 Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2017.2020 Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 
 . ./config
 
@@ -80,6 +80,10 @@ image/x-png=viewnior.desktop;gimp.desktop;
 image/x-gray=viewnior.desktop;gimp.desktop;
 image/svg+xml=viewnior.desktop;
 EOF
+
+# indicator-session is only needed for lightdm
+rm debian/indicator-session.desktop.in
+sed '/indicator-session.desktop/d' -i usr/lib/ubuntu-mate/ubuntu-mate-settings-overlay debian/ubuntu-mate-default-settings.install debian/rules
 
 changelog "Customized for Trisquel"
 
