@@ -24,7 +24,7 @@
 # Also, don't forget to update the meta-release files at archive and packages.t.i
 # The "obsoletes" list from ubuntu has been removed
 
-VERSION=6
+VERSION=7
 
 . ./config
 
@@ -35,6 +35,9 @@ sed s/self.checkForNvidia/#self.checkForNvidia/ DistUpgrade/DistUpgradeCache.py 
 sed '/_add_extras_repository/,/adding extras.ubuntu.com/d' -i DistUpgrade/DistUpgradeQuirks.py
 sed 's/01ubuntu/01backports/' -i DistUpgrade/DistUpgradeController.py
 rm tests/test-data/xorg.conf.fglrx
+
+# Fix mirror checker
+sed '/security.ubuntu.com" in entry.uri or/d' -i DistUpgrade/DistUpgradeController.py
 
 #https://bugs.launchpad.net/ubuntu/+source/python-defaults/+bug/990740
 cat << EOF >> DistUpgrade/DistUpgradeQuirks.py
@@ -228,9 +231,6 @@ https://ftp.yzu.edu.tw/Linux/trisquel.packages/
 https://mirrors.ocf.berkeley.edu/trisquel/
 EOF
 
-rm data/DistUpgrade.cfg*
-cp $DATA/DistUpgrade.cfg* data/
-
 cat << EOF1 > DistUpgrade/trisquel-postinstall.sh
 #!/bin/sh
 
@@ -278,6 +278,9 @@ rpl precise toutatis . -R
 rpl trusty belenos . -R
 rpl xenial flidas . -R
 rpl bionic etiona . -R
+
+rm data/DistUpgrade.cfg*
+cp $DATA/DistUpgrade.cfg* data/
 
 rm ./data/demoted.cfg ./DistUpgrade/demoted.cfg.trusty utils/demoted.cfg.trusty data/demoted.cfg.trusty
 echo "notification-daemon" > data/demoted.cfg
