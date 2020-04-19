@@ -286,7 +286,6 @@ notification-daemon
 resolvconf
 eom
 EOF
-cp data/demoted.cfg utils/demoted.cfg
 
 sed 's|.ubuntu-bug ubuntu-release-upgrader-core. in a terminal|https://trisquel.info/en/project/issues in a browser.|' DistUpgrade/DistUpgradeCache.py -i
 replace "https*://launchpad.net/ubuntu/+source/ubuntu-release-upgrader/+filebug" "https://trisquel.info/project/issues" .
