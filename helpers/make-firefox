@@ -18,18 +18,22 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=68
+VERSION=69
 
 . ./config
 
 patch -p1 < debian/patches/partially-revert-google-search-update.patch
 patch -p1 < debian/patches/no-region-overrides-for-google-search.patch
 
-sed 's/clang-9 |//' -i debian/control.in
-sed 's/libclang-9-dev |//' -i debian/control.in
-sed 's/llvm-9-dev |//' -i debian/control.in
+sed 's/clang-10 |//' -i debian/control.in
+sed 's/libclang-10-dev |//' -i debian/control.in
+sed 's/llvm-10-dev |//' -i debian/control.in
 
 rm debian/control
+
+# Disable remote settings antifeature.
+sed '/async fetchLatestChanges.*/areturn;' -i services/settings/Utils.jsm
+sed '/async download.*/areturn;' -i services/settings/RemoteSettingsClient.jsm services/settings/Attachments.jsm
 
 # Disable activity-stream antifeatures.
 # These are not condensed into a single sed script to make it fail on individual commands that didn't change the source
@@ -43,7 +47,7 @@ sed '/read_more_endpoint/,+1s/http.*/",/' -i $ActivityStream
 sed '/stories_endpoint/s/getpocket.cdn.mozilla.net/127.0.0.1/' -i $ActivityStream
 sed '/stories_referrer/s/http.*/",/' -i $ActivityStream
 sed '/topics_endpoint/s/getpocket.cdn.mozilla.net/127.0.0.1/' -i $ActivityStream
-sed '/name: "section.topstories"/,/return/s/return.*/return false;/' -i $ActivityStream
+sed 's/preffedRegions.includes.geo. .. ..locales .. locales.includes.locale./false/' -i $ActivityStream
 sed 's/.Ubuntu., //' -i browser/components/newtab/css/activity-stream*.css
 echo "#header-asrouter-container{display: none!important;}" >> browser/components/newtab/css/activity-stream-linux.css
 
@@ -152,6 +156,7 @@ s|Nightly|Abrowser|g;
 s|brandProductName=Firefox|brandProductName=Abrowser|;
 s|Sign in to Firefox|Sign in to Sync|;
 s|Search addons.mozilla.org|Search|g;
+s|firefox.settings.services.mozilla.com|127.0.0.1|g;
 "
 
 echo "Running batch replace operation"

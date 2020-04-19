@@ -130,13 +130,12 @@ pref("browser.newtabpage.introShown", true);
 pref("browser.aboutHomeSnippets.updateUrl", "");
 // Always ask before restoring the browsing session
 pref("browser.sessionstore.max_resumed_crashes", 0);
- // Disable tracking protection by default, as it makes automated connections to fetch lists (not doing this until the newtab privacy block is reimplemented)
- //pref("browser.safebrowsing.provider.mozilla.updateURL", "");
-//pref("urlclassifier.trackingTable", "test-track-simple,base-track-digest256,content-track-digest256");
 pref("privacy.trackingprotection.introURL", "https://www.mozilla.org/%LOCALE%/firefox/%VERSION%/tracking-protection/start/");
 // Disable geolocation
 pref("geo.enabled", false);
 pref("browser.search.geoip.url", "");
+pref("geo.provider-country.network.url", "");
+pref("browser.search.geoSpecificDefaults.url", "");
 // Disable captive portal detection
 pref("captivedetect.canonicalURL", "");
 pref("network.captive-portal-service.enabled", false);
@@ -177,6 +176,7 @@ pref("browser.search.update", false);
 
 // Disable channel updates
 pref("app.update.enabled", false);
+pref("app.update.url", "");
 pref("app.update.auto", false);
 pref("toolkit.telemetry.enabled", false);
 
@@ -268,3 +268,7 @@ pref("extensions.getAddons.search.browseURL", "https://trisquel.info/en/browser-
 // Disable pingback on first run
 pref("browser.newtabpage.activity-stream.fxaccounts.endpoint", "");
 
+
+// Disable Normandy (remote settings changer for AB testing)
+pref("app.normandy.enabled", false);
+pref("app.normandy.api_url", "");
