@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2008-2018  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2008-2020  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C)      2014  Santiago Rodriguez <santi@trisquel.info>
 #    Copyright (C)      2019  Mason Hock <mason@masonhock.com>
 #
@@ -24,7 +24,7 @@
 # Also, don't forget to update the meta-release files at archive and packages.t.i
 # The "obsoletes" list from ubuntu has been removed
 
-VERSION=7
+VERSION=8
 
 . ./config
 
@@ -234,21 +234,20 @@ EOF
 cat << EOF1 > DistUpgrade/trisquel-postinstall.sh
 #!/bin/sh
 
-# Making sure this is gone
-apt-get remove --force-yes -y notification-daemon
+# Make sure these are gone
+export DEBIAN_FRONTEND=noninteractive
+apt-get remove --force-yes -y notification-daemon resolvconf
 
 # Default to systemd-resolved
 if [ "\$(readlink /etc/resolv.conf)" != "/run/systemd/resolve/stub-resolv.conf" ]; then
   mv /etc/resolv.conf /etc/resolv.conf.flidas.bak
   ln -s /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
 fi
-
 EOF1
 chmod 755 DistUpgrade/trisquel-postinstall.sh
-
+sed '/self._view.getTerminal/s|\[script\]|["/bin/sh",script]|' -i ./DistUpgrade/DistUpgradeController.py
 
 replace changelogs.ubuntu.com packages.trisquel.info .
-
 
 rpl 11\.04 5\.0 DistUpgrade/*.ui
 rpl 11\.04 5\.0 po/* -R
@@ -282,9 +281,12 @@ rpl bionic etiona . -R
 rm data/DistUpgrade.cfg*
 cp $DATA/DistUpgrade.cfg* data/
 
-rm ./data/demoted.cfg ./DistUpgrade/demoted.cfg.trusty utils/demoted.cfg.trusty data/demoted.cfg.trusty
-echo "notification-daemon" > data/demoted.cfg
-echo "notification-daemon" $DATA/demoted utils/demoted.cfg
+cat << EOF >> data/demoted.cfg
+notification-daemon
+resolvconf
+eom
+EOF
+cp data/demoted.cfg utils/demoted.cfg
 
 sed 's|.ubuntu-bug ubuntu-release-upgrader-core. in a terminal|https://trisquel.info/en/project/issues in a browser.|' DistUpgrade/DistUpgradeCache.py -i
 replace "https*://launchpad.net/ubuntu/+source/ubuntu-release-upgrader/+filebug" "https://trisquel.info/project/issues" .
