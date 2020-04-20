@@ -24,7 +24,7 @@
 # Also, don't forget to update the meta-release files at archive and packages.t.i
 # The "obsoletes" list from ubuntu has been removed
 
-VERSION=8
+VERSION=9
 
 . ./config
 
@@ -230,22 +230,6 @@ https://ftp.acc.umu.se/mirror/trisquel/packages/
 https://ftp.yzu.edu.tw/Linux/trisquel.packages/
 https://mirrors.ocf.berkeley.edu/trisquel/
 EOF
-
-cat << EOF1 > DistUpgrade/trisquel-postinstall.sh
-#!/bin/sh
-
-# Make sure these are gone
-export DEBIAN_FRONTEND=noninteractive
-apt-get remove --force-yes -y notification-daemon resolvconf
-
-# Default to systemd-resolved
-if [ "\$(readlink /etc/resolv.conf)" != "/run/systemd/resolve/stub-resolv.conf" ]; then
-  mv /etc/resolv.conf /etc/resolv.conf.flidas.bak
-  ln -s /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
-fi
-EOF1
-chmod 755 DistUpgrade/trisquel-postinstall.sh
-sed '/self._view.getTerminal/s|\[script\]|["/bin/sh",script]|' -i ./DistUpgrade/DistUpgradeController.py
 
 replace changelogs.ubuntu.com packages.trisquel.info .
 

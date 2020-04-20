@@ -25,10 +25,10 @@ PurgeObsoletes=yes
 # the dist-upgrade (not to be confused with the PostUpgrade hooks in the
 # quirks handling)
 #PostUpgradePurge=linux-restricted-modules-common
-#PostUpgradeRemove=xsettings-kde
+PostUpgradeRemove=resolvconf,notification-daemon
 #PostUpgradeUpgrade=brasero,edubuntu-desktop
 #PostUpgradeInstall=apt
-PostInstallScripts=./trisquel-postinstall.sh
+#PostInstallScripts=./trisquel-postinstall.sh
 EnableApport=yes
 # this supported blacklisting certain versions to ensure we do not upgrade
 #  - blcr-dkms fails to build on kernel 2.6.35
