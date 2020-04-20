@@ -1,7 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2017  Ruben Rodriguez <ruben@trisquel.info>
-#    Copyright (C) 2019 Mason Hock <mason@masonhock.com>
+#    Copyright (C) 2020  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -18,30 +17,14 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=1
+COMPONENT=main
 
 . ./config
 
-cat << EOF >> profiles/blindness/profile.gsettings
+sed 's/OnlyShowIn=Unity;/OnlyShowIn=Unity;MATE;/' -i a11y-profile-manager-indicator-autostart.desktop.in
 
-[com.canonical.unity-greeter]
-screen-reader=true
-EOF
-
-cat << EOF >> profiles/onscreen-keyboard/profile.gsettings
-
-[com.canonical.unity-greeter]
-onscreen-keyboard=true
-EOF
-
-cat << EOF >> profiles/high-contrast/profile.gsettings
-
-[com.canonical.unity-greeter]
-high-contrast=true
-EOF
-
-
-changelog "Added unity-greeter gsettings"
+changelog "Enable on MATE"
 
 compile
 
