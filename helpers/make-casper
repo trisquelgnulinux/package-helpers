@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2012-2018  Ruben Rodriguuez <ruben@trisquel.info>
+#    Copyright (C) 2012-2020  Ruben Rodriguuez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=6
+VERSION=7
 
 . ./config
 
@@ -26,12 +26,6 @@ sed 's/keep-existing/keep-existing $LANG/' -i scripts/casper-bottom/14locales
 
 # Make sure we disable ureadahead
 sed 's/readahead-list/ureadahead/' -i scripts/casper-bottom/25configure_init
-
-# Adapt 30accessibility to mate desktop
-for profile in blindness braille high-contrast onscreen-keyboard; do
-  sed "s/setup_profile $profile/setup_profile mate-$profile/" -i scripts/casper-bottom/30accessibility
-done
-sed "s/setup_profile keyboard-modifiers/setup_profile mate-motor-difficulties/" -i scripts/casper-bottom/30accessibility
 
 # Install gsettings for the lightdm user as well
 cat << EOF | patch -p0
