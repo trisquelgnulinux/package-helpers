@@ -21,10 +21,11 @@ VERSION=1
 
 . ./config
 
-rm debian/patches/0450-modules-add-snappy-policy-module.patch debian/patches/0451-enable-snap-policy-module.patch
+rm debian/patches/0701-enable-snap-policy-module.patch debian/patches/0700-modules-add-snappy-policy-module.patch
 sed '/snappy/d; /enable-snap/d' -i debian/patches/series
 sed '/libsnap/d' -i debian/control
 sed '/snap/d' -i debian/pulseaudio.install
+sed 's/--enable-snap//' -i debian/rules
 
 changelog "Removed snap dependency"
 
