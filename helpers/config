@@ -101,21 +101,21 @@ then
 cp trusted.local.gpg "${LOCAL_APT}/etc/trusted.gpg"
 else
 # Trisquel key
-apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys B4EFB9F38D8AEBF1 > /dev/null
+apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --no-use-agent --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys B4EFB9F38D8AEBF1 > /dev/null
 # Ubuntu gpg keys
-apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys 40976EAF437D05B5 > /dev/null
-apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys 3B4FE6ACC0B21F32 > /dev/null
+apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --no-use-agent --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys 40976EAF437D05B5 > /dev/null
+apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --no-use-agent --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys 3B4FE6ACC0B21F32 > /dev/null
 # Debian gpg keys
-apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys 9D6D8F6BC857C906 > /dev/null
-apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys 8B48AD6246925553 > /dev/null
-apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys DCC9EFBF77E11517 > /dev/null
-apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys 648ACFD622F3D138 > /dev/null
+apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --no-use-agent --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys 9D6D8F6BC857C906 > /dev/null
+apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --no-use-agent --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys 8B48AD6246925553 > /dev/null
+apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --no-use-agent --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys DCC9EFBF77E11517 > /dev/null
+apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --no-use-agent --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys 648ACFD622F3D138 > /dev/null
 # Tor gpg key
-apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --import DATA/tor/A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89.asc
+apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --no-use-agent --import DATA/tor/A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89.asc
 fi
 
 # Also import the repository key optionally listed in the helper
-[ "1$REPOKEY" != "1" ] && apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --recv-keys --keyserver hkps://keyserver.ubuntu.com:443 $REPOKEY
+[ "1$REPOKEY" != "1" ] && apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --no-use-agent --recv-keys --keyserver hkps://keyserver.ubuntu.com:443 $REPOKEY
 
 cat << EOF > ${LOCAL_APT}/etc/apt.sources.list
 deb-src $MIRROR $UPSTREAM main universe
@@ -137,12 +137,12 @@ apt-get update -c $LOCAL_APT/etc/apt.conf
 apt-get source $PACKAGE --download-only -c ${LOCAL_APT}/etc/apt.conf
 # Verify it first
 if grep -q "BEGIN PGP SIGNATURE" *.dsc; then
-  KEY=$(gpg2 --keyid-format 0xlong --verify  *.dsc  2>&1 | grep 0x | sed 's/.*0x//' || true)
+  KEY=$(gpg2 --no-use-agent --keyid-format 0xlong --verify  *.dsc  2>&1 | grep 0x | sed 's/.*0x//' || true)
   [ -z "$KEY" ] && KEY=$(gpgv --keyring ${LOCAL_APT}/etc/trusted.gpg *.dsc 2>&1 | egrep ".SA key" | sed 's/.*.SA key //' || true)
-  apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --recv-keys --keyserver hkps://keyserver.ubuntu.com:443 $KEY > /dev/null
+  apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --no-use-agent --recv-keys --keyserver hkps://keyserver.ubuntu.com:443 $KEY > /dev/null
   touch ${LOCAL_APT}/keyring.gpg
-  gpg2 --keyring ${LOCAL_APT}/keyring.gpg --import ${LOCAL_APT}/etc/trusted.gpg
-  gpg2 --verify --keyring ${LOCAL_APT}/etc/trusted.gpg *.dsc
+  gpg2 --no-use-agent --keyring ${LOCAL_APT}/keyring.gpg --import ${LOCAL_APT}/etc/trusted.gpg
+  gpg2 --no-use-agent --verify --keyring ${LOCAL_APT}/etc/trusted.gpg *.dsc
   [ -n SCHROOT_COMMAND ] && gpgconf --kill gpg-agent
 else
   echo WARNING! The dsc file is not gpg signed!
