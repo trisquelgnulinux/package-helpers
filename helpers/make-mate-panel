@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=7
+VERSION=8
 
 . ./config
 
@@ -103,10 +103,13 @@ cat << EOF > debian/layout-reset
 
 RELEASE=\$(lsb_release -rs)
 
-if ! [ -f \$HOME/.config/mate/panel2.d/trisquel\$RELEASE ]; then
+if [ ! -f \$HOME/.config/mate/panel2.d/trisquel\$RELEASE ] || \
+     ! grep -q $VERSION \$HOME/.config/mate/panel2.d/trisquel\$RELEASE; then
   gsettings reset-recursively org.mate.panel
+  sleep 1
+  dconf write /org/mate/panel/toplevels/top/background/color "'rgba(0,0,0,0.5)'"
   [ -d \$HOME/.config/mate/panel2.d ] || mkdir -p \$HOME/.config/mate/panel2.d
-  touch \$HOME/.config/mate/panel2.d/trisquel\$RELEASE
+  echo $VERSION > \$HOME/.config/mate/panel2.d/trisquel\$RELEASE
 fi
 EOF
 chmod 755 debian/layout-reset
