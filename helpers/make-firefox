@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=69
+VERSION=70
 
 . ./config
 
@@ -131,6 +131,7 @@ cp -a $DATA/branding/* browser/branding/official
 cp -a $DATA/branding/* browser/branding/unofficial
 cp -a $DATA/branding/* browser/branding/nightly
 sed '/about-wordmark.svg/d' -i browser/base/content/aboutDialog.css
+echo '#warningDesc, #communityExperimentalDesc, #communityDesc, #contributeDesc {display:none!important}' >> browser/base/content/aboutDialog.css
 # Disable preprocessor
 sed 's/_PP//' -i browser/branding/branding-common.mozbuild
 cat << EOF >> debian/config/branch.mk
@@ -220,11 +221,6 @@ find -wholename '*/brand.dtd' |xargs /bin/sed 's/trademarkInfo.part1.*/trademark
 for STRING in rights-intro-point-2 rights-intro-point-3 rights-intro-point-4 rights-intro-point-5 rights-intro-point-6 rights-webservices rights-safebrowsing
 do
  find -name aboutRights.ftl | xargs sed -i "s/^$STRING.*/$STRING = /"
-done
-
-for STRING in helpus community-2 community-exp
-do
- find -name aboutDialog.ftl | xargs sed -i "s/^$STRING.*/$STRING = /"
 done
 
 sed -i 's/<a\ href\=\"http\:\/\/www.mozilla.org\/\">Mozilla\ Project<\/a>/<a\ href\=\"http\:\/\/www.trisquel.info\/\"\>Trisquel\ Project<\/a>/g' browser/base/content/overrides/app-license.html
