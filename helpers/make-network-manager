@@ -1,0 +1,53 @@
+#!/bin/sh
+#
+#    Copyright (C) 2020  Ruben Rodriguez <ruben@trisquel.info>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=1
+COMPONENT=main
+
+. ./config
+
+# Do not send hostname to dhcp servers by default
+sed 's/send host-name/#send host-name/' -i src/dhcp/nm-dhcp-dhclient-utils.c src/dhcp/tests/test-dhcp-dhclient.c
+sed 's/send fqdn/#send fqdn/' -i src/dhcp/nm-dhcp-dhclient-utils.c src/dhcp/tests/test-dhcp-dhclient.c
+sed '/send host-name/s|added by NetworkManager|Enable at /etc/dhcp/dhclient.conf|' -i src/dhcp/tests/test-dhcp-dhclient.c
+sed '/send fqdn/s|added by NetworkManager|Enable at /etc/dhcp/dhclient.conf|' -i src/dhcp/tests/test-dhcp-dhclient.c
+sed '/HOSTNAME4_TAG/s|added by NetworkManager|Enable at /etc/dhcp/dhclient.conf|' -i src/dhcp/nm-dhcp-dhclient-utils.c
+sed '/FQDN_TAG/s|added by NetworkManager|Enable at /etc/dhcp/dhclient.conf|' -i src/dhcp/nm-dhcp-dhclient-utils.c
+
+# This breaks builds
+rm debian/network-manager.examples
+
+# Commented out extra features on config file
+cat << EOF >> debian/NetworkManager.conf
+
+# Note: to enable sending the hostname to your local router during DHCP requests, see /etc/dhcp/dhclient.conf
+
+# Enable scanning wifi networks using random mac addresses if your hardware supports it
+# wifi.scan-rand-mac-address=no
+
+# Uncomment the next 4 lines to enable random (but permanent per-network) mac addresses
+# [connection]
+# wifi.cloned-mac-address=stable
+# ethernet.cloned-mac-address=stable
+# connection.stable-id=\${CONNECTION}/\$(BOOT)
+EOF
+
+changelog "Do not send hostname on dhcp, plus other features"
+compile
+
