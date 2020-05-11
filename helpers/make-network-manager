@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 COMPONENT=main
 
 . ./config
@@ -32,21 +32,6 @@ sed '/FQDN_TAG/s|added by NetworkManager|Enable at /etc/dhcp/dhclient.conf|' -i 
 
 # This breaks builds
 rm debian/network-manager.examples
-
-# Commented out extra features on config file
-cat << EOF >> debian/NetworkManager.conf
-
-# Note: to enable sending the hostname to your local router during DHCP requests, see /etc/dhcp/dhclient.conf
-
-# Enable scanning wifi networks using random mac addresses if your hardware supports it
-# wifi.scan-rand-mac-address=no
-
-# Uncomment the next 4 lines to enable random (but permanent per-network) mac addresses
-# [connection]
-# wifi.cloned-mac-address=stable
-# ethernet.cloned-mac-address=stable
-# connection.stable-id=\${CONNECTION}/\$(BOOT)
-EOF
 
 changelog "Do not send hostname on dhcp, plus other features"
 compile
