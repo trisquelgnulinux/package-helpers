@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=8
+VERSION=9
 
 . ./config
 
@@ -105,8 +105,10 @@ RELEASE=\$(lsb_release -rs)
 
 if [ ! -f \$HOME/.config/mate/panel2.d/trisquel\$RELEASE ] || \
      ! grep -q $VERSION \$HOME/.config/mate/panel2.d/trisquel\$RELEASE; then
-  gsettings reset-recursively org.mate.panel
-  sleep 1
+  if dconf dump /org/mate/panel/ |grep -q Clock; then
+    gsettings reset-recursively org.mate.panel
+    sleep 1
+  fi
   dconf write /org/mate/panel/toplevels/top/background/color "'rgba(0,0,0,0.5)'"
   [ -d \$HOME/.config/mate/panel2.d ] || mkdir -p \$HOME/.config/mate/panel2.d
   echo $VERSION > \$HOME/.config/mate/panel2.d/trisquel\$RELEASE
