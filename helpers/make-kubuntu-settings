@@ -17,11 +17,11 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 COMPONENT=main
 . ./config
 
-sed '/plymouth-theme-kubuntu-logo/,$d' -i debian/control
+sed '/plymouth-theme-kubuntu-logo/,$d; /ttf-ubuntu/d' -i debian/control
 sed 's/kubuntu-settings-desktop/triskel-settings-desktop/g; s/Kubuntu/Triskel/' -i debian/control
 rm debian/plymouth* plymouth -r
 rename s/kubuntu/triskel/ debian/*
@@ -29,9 +29,53 @@ find -type d -name '*kubuntu*' | xargs rename s/kubuntu/triskel/
 find -type f -name '*kubuntu*' | xargs rename s/kubuntu/triskel/
 rm desktop/etc/skel/.face
 
+sed '/showAppsByName/s/true/false/' -i desktop/theme/layout-templates/org.triskel.desktop.defaultPanel/contents/layout.js
+sed '/showAppsByName/akickoff.writeConfig("icon", "/usr/share/pixmaps/trisquel.svg")' -i desktop/theme/layout-templates/org.triskel.desktop.defaultPanel/contents/layout.js
+sed 's|/usr/share/wallpapers/Next/contents/images/3200x2000.png|/usr/share/backgrounds/etiona.jpg|' -i ./debian/triskel-settings-desktop.postinst
+
 replace kubuntu.org trisquel.info .
 replace Kubuntu Triskel .
 replace kubuntu triskel .
+
+cat << EOF > desktop/theme/desktoptheme/triskel/metadata.desktop
+[Desktop Entry]
+Name=Triskel
+Comment=Default Triskel theme
+
+X-KDE-PluginInfo-Author=KDE Visual Design Group
+X-KDE-PluginInfo-Email=kde-artists@kde.org
+X-KDE-PluginInfo-Name=triskel
+X-KDE-PluginInfo-Version=5.30
+X-KDE-PluginInfo-Website=http://plasma.kde.org
+X-KDE-PluginInfo-Category=
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=LGPLv2+
+X-KDE-PluginInfo-EnabledByDefault=true 
+X-Plasma-API=5.0
+ 
+[Wallpaper]
+defaultWallpaperTheme=Etiona
+defaultFileSuffix=.jpg
+defaultWidth=4935
+defaultHeight=3296
+
+[ContrastEffect]
+enabled=true
+contrast=0.2
+intensity=0.4
+saturation=1.7
+EOF
+
+cp -a $DATA/wallpaper wallpaper
+echo 'wallpaper/*	usr/share/wallpapers/' >> debian/triskel-settings-desktop.install
+
+sed 's/gtk-fallback-icon-theme=gnome/gtk-fallback-icon-theme=trisquel/' -i desktop/usr-share/settings.ini
+
+cat << EOF >> desktop/theme/look-and-feel/org.triskel.desktop/contents/defaults
+[ksplashrc][KSplash]
+Engine=none
+Theme=none
+EOF
 
 sed '1s/triskel/kubuntu/' -i debian/control
 
