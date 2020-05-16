@@ -203,7 +203,6 @@ do
     wget -r -l1 -np https://archive.trisquel.info/trisquel/dists/$DIST/Release.gpg -O $WD/Release.gpg
 done
 
-sed 's/RELEASE/Triskel/' -i data/ubiquity-kdeui.desktop.in
 cp $DATA/branding.svgz gui/qt/images/branding.svgz
 
 # Postinstall hacks
