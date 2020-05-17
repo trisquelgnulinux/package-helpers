@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#    Copyright (C) 2018  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2020  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C) 2019  David Trudgian <dave@trudgian.net>
 #
 #    This program is free software; you can redistribute it and/or modify
@@ -17,9 +17,8 @@
 #    along with this program; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
-set -x
 
-VERSION=4
+VERSION=5
 
 . ./config
 
@@ -79,7 +78,23 @@ pref("mailnews.start_page.override_url", "");
 pref("app.update.auto", false);
 pref("app.update.enabled", false);
 pref("browser.search.update", false);
+
+pref("app.update.url.manual", "https://trisquel.info/wiki/icedove");
+pref("mail.cloud_files.inserted_urls.footer.link", "https://trisquel.info/wiki/icedove");
+pref("mail.cloud_files.learn_more_url", "https://trisquel.info/wiki/icedove");
+pref("mail.ignore_thread.learn_more_url", "https://trisquel.info/wiki/icedove");
+pref("mail.pgpmime.addon_url", "https://enigmail.net/");
+pref("app.support.baseURL", "https://trisquel.info/wiki/icedove");
+pref("app.update.url.manual", "https://trisquel.info/wiki/icedove");
+pref("extensions.getAddons.link.url", "https://trisquel.info/en/browser-plain");
+pref("extensions.getAddons.search.browseURL", "https://trisquel.info/en/browser-plain?keys=%TERMS%&tid=All");
+pref("extensions.getAddons.search.url", "https://trisquel.info/en/browser-plain?keys=%TERMS%&tid=All");
 EOF
+
+# DDG as default search engine
+sed 's/?q=/?t=trisquel&q=/' -i comm/mail/components/search/extensions/ddg/manifest.json
+sed '/searchDefault/s/: \".*\"/: "DuckDuckGo"/g' -i comm/mail/components/search/extensions/list.json
+sed '/visibleDefaultEngines/{n; s/"ddg",//; s/\"/"ddg", "/}'  -i comm/mail/components/search/extensions/list.json
 
 # ####################################################
 # Privacy / branding brought in from abrowser for 60.x
@@ -119,6 +134,7 @@ find -type d -name '*thunderbird*' | xargs rename s/thunderbird/icedove/
 find -type f -name '*thunderbird*' | xargs rename s/thunderbird/icedove/
 
 SEDSCRIPT="
+s|Search addons.mozilla.org|Search|g;
 s/Mozilla Thunderbird/Icedove/g;
 s/thunderbird/icedove/g;
 s/Thunderbird/Icedove/g;
@@ -139,6 +155,10 @@ s/Trisquel Corporation/Mozilla Corporation/g;
 echo "Running batch replace operation"
 find . -type f -not -iregex '.*changelog.*' -not -iregex '.*copyright.*' -not -iregex '.*third_party/rust.*' -execdir /bin/sed --follow-symlinks -i "$SEDSCRIPT" '{}' ';'
 
+sed 's|https://www.icedove.net/features/|https://trisquel.info/wiki/icedove|' -i comm/mail/base/content/utilityOverlay.js
+sed 's|https://www.icedove.net/get-involved/|https://trisquel.info/wiki/|' -i comm/mail/base/content/utilityOverlay.js
+sed 's|https://donate.mozilla.org/.*help-menu|https://trisquel.info/donate/|' -i comm/mail/base/content/utilityOverlay.js
+
 replace Daily Trisquel comm/mail/branding/
 sed '/.*<description.*communityExperimentalDesc/,/\/description/d' -i ./comm/mail/base/content/aboutDialog.xul
 sed '/.*<description.*communityDesc/,/\/description/d' -i ./comm/mail/base/content/aboutDialog.xul
@@ -152,7 +172,23 @@ cat << EOF > comm/mail/branding/nightly/locales/en-US/brand.properties
 brandShortName=Icedove
 brandShorterName=Icedove
 brandFullName=Icedove Mail
-vendorShortName=Trisquel
+vendorShortName=Icedove
+EOF
+
+cat << EOF > comm/mail/branding/nightly/locales/en-US/brand.dtd
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+
+<!ENTITY  brandShortName        "Icedove">
+<!ENTITY  brandShorterName      "Icedove">
+<!ENTITY  brandFullName         "Icedove Mail">
+<!-- LOCALIZATION NOTE (brandProductName):
+   This brand name can be used in messages where the product name needs to
+   remain unchanged across different versions (Trisquel, Beta, etc.). -->
+<!ENTITY  brandProductName      "Icedove">
+<!ENTITY  vendorShortName       "mozilla.org">
+<!ENTITY  trademarkInfo.part1   " ">
 EOF
 
 debian/rules debian/control
