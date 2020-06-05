@@ -18,17 +18,11 @@
 #
 
 VERSION=1
-#EXTERNAL=""
-#REPOKEY=""
-#BACKPORT="false"
-#DEPENDS=""
 
 . ./config
 
 #Remove upstream distros feeds
 rm debian/patches/series
-#rm debian/patches/debianize_akregator_default.diff
-#rm debian/patches/kubuntu_debianize_akregator_default.diff
 patch src/akregator_part.cpp < $DATA/trisquel_feeds.patch
 
 changelog "Patched feeds for Trisquel"
