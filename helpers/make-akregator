@@ -20,7 +20,7 @@
 VERSION=1
 
 . ./config
-set -x
+
 #Remove upstream distros feeds
 sed -i "/debianize_akregator_default.diff/d" debian/patches/series
 rm debian/patches/debianize_akregator_default.diff debian/patches/kubuntu_debianize_akregator_default.diff
