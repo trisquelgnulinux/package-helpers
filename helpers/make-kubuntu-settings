@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 COMPONENT=main
 . ./config
 
@@ -64,6 +64,25 @@ enabled=true
 contrast=0.2
 intensity=0.4
 saturation=1.7
+EOF
+
+cat << EOF > desktop/kf5-settings/kdeglobals
+[General]
+fixed=Monospace,9,-1,0,50,0,0,0,0,0,Regular
+font=Roboto,10,-1,0,50,0,0,0,0,0,Regular
+menuFont=Roboto,10,-1,0,50,0,0,0,0,0,Regular
+smallestReadableFont=Roboto,8,-1,0,50,0,0,0,0,0,Regular
+toolBarFont=Roboto,10,-1,0,50,0,0,0,0,0,Regular
+XftAntialias=true
+XftHintStyle=hintslight
+XftSubPixel=rgb
+
+[WM]
+activeFont=Roboto,10,-1,0,57,0,0,0,0,0,Medium
+
+[KDE]
+LookAndFeelPackage=org.triskel.desktop
+SingleClick=false
 EOF
 
 cp -a $DATA/wallpaper wallpaper
