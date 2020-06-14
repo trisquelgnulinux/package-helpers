@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=70
+VERSION=71
 
 . ./config
 
@@ -209,7 +209,7 @@ cat << EOF >> toolkit/mozapps/extensions/content/extensions.css
 EOF
 
 # Hide mobile promo
-echo ".fxaMobilePromo {  display: none !important; }" >> browser/themes/shared/incontentprefs/preferences.inc.css
+echo ".fxaMobilePromo {  display: none !important; }" >> browser/themes/shared/preferences/preferences.inc.css
 # Hide unwanted elements on about:addons
 echo ".discopane-notice, .privacy-policy-link, #main header, #plugindeprecation-notice {  display: none !important; }" >> toolkit/mozapps/extensions/content/aboutaddons.css
 # Hide warnings on unsigned extensions
