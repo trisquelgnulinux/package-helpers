@@ -18,12 +18,15 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=5
+VERSION=6
 
 . ./config
 
 # Copy in our local Trisquel branding files
 cp $DATA/branding/* comm/mail/branding/nightly/ -r
+for i in aurora nightly official unofficial; do
+  cp $DATA/branding/* browser/branding/$i/ -r
+done
 
 # Privacy and branding via prefs
 cat << EOF >> debian/vendor.js
