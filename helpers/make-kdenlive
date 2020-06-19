@@ -18,15 +18,11 @@
 #
 
 VERSION=1
-#EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu focal main universe'
-#REPOKEY=7638D0442B90D010
-
 EXTERNAL='deb-src http://ftp.debian.org/debian testing main'
 REPOKEY=648ACFD622F3D138
 
 . ./config
 
-#changelog "Backported from focal"
-changelog "Backported from buster"
+changelog "Backported from debian testing"
 
 compile
