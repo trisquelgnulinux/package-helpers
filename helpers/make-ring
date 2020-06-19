@@ -32,13 +32,13 @@
 #   softhsm2
 
 VERSION=1
-EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu cosmic main universe'
+EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu focal main universe'
 REPOKEY=7638D0442B90D010
 
 . ./config
 
 sed 's/--disable-downloads/--disable-downloads --disable-nettle/' -i debian/rules
 
-changelog "Backported from cosmic"
+changelog "Backported from focal"
 
 compile

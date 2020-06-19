@@ -18,14 +18,14 @@
 #
 
 VERSION=1
-EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu cosmic universe'
+EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu focal universe'
 
 . ./config
 
 sed 's/debhelper.*/debhelper,/' -i debian/control
 echo 9 > debian/compat
 
-changelog "Backported from cosmic"
+changelog "Backported from focal"
 
 compile
 
