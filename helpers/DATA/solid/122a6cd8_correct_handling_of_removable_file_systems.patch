@@ -1,0 +1,18 @@
+diff -ruN solid-5.44.0/src/solid/devices/backends/udisks2/udisksstorageaccess.cpp solid-5.44.0-fix-url-format/src/solid/devices/backends/udisks2/udisksstorageaccess.cpp
+--- solid-5.44.0/src/solid/devices/backends/udisks2/udisksstorageaccess.cpp	2020-06-26 14:03:41.000000000 -0500
++++ solid-5.44.0-fix-url-format/src/solid/devices/backends/udisks2/udisksstorageaccess.cpp	2020-06-26 14:10:13.708453200 -0500
+@@ -122,10 +122,10 @@
+ 
+     const QString path = filePath();
+ 
+-    return !path.isEmpty()
+-               && !path.startsWith(QLatin1String("/media/"))
+-               && !path.startsWith(QLatin1String("/run/media/"))
+-               && !path.startsWith(QDir::homePath());
++    bool inUserPath = path.startsWith(QLatin1String("/media/")) ||
++                      path.startsWith(QLatin1String("/run/media/")) ||
++                      path.startsWith(QDir::homePath());
++    return !inUserPath;
+ }
+ 
+ bool StorageAccess::setup()
