@@ -18,10 +18,6 @@
 #
 
 VERSION=1
-#EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu focal main universe'
-#REPOKEY="3B4FE6ACC0B21F32"
-#BACKPORT=true
-#DEPENDS=nspr
 
 . ./config
 
@@ -29,7 +25,6 @@ patch -p1 < $DATA/122a6cd8_correct_handling_of_removable_file_systems.patch
 patch -p1 < $DATA/d735708f_update_mount_point_after_mount_operations.patch
 
 changelog "Correct handling of removable file systems KDE GIT#122a6cd8 & #d735708f"
-#changelog "Backport from focal"
 
 compile
 
