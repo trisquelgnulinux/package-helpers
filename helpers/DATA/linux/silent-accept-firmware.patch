@@ -1060,3 +1060,27 @@ index d71d277..f2c70e1 100644
  	err = request_firmware_nowait(THIS_MODULE, 1,
  				      wowlan_fw_name,
  				      rtlpriv->io.dev, GFP_KERNEL, hw,
+diff -ru linux.orig/source/arch/x86/kernel/cpu/microcode/amd.c linux/source/arch/x86/kernel/cpu/microcode/amd.c
+--- a/arch/x86/kernel/cpu/microcode/amd.c	2020-06-27 13:12:17.000000000 -0400
++++ b/arch/x86/kernel/cpu/microcode/amd.c	2020-06-27 13:21:09.792495638 -0400
+@@ -756,7 +756,7 @@
+ 		snprintf(fw_name, sizeof(fw_name), "amd-ucode/microcode_amd_fam%.2xh.bin", c->x86);
+ 
+ 	if (request_firmware_direct(&fw, (const char *)fw_name, device)) {
+-		pr_debug("failed to load file %s\n", fw_name);
++		pr_debug("failed to load file\n", fw_name);
+ 		goto out;
+ 	}
+ 
+diff -ru linux.orig/source/arch/x86/kernel/cpu/microcode/intel.c linux/source/arch/x86/kernel/cpu/microcode/intel.c
+--- a/arch/x86/kernel/cpu/microcode/intel.c	2020-06-27 13:12:17.000000000 -0400
++++ b/arch/x86/kernel/cpu/microcode/intel.c	2020-06-27 13:37:05.143739228 -0400
+@@ -989,7 +989,7 @@
+ 		c->x86, c->x86_model, c->x86_stepping);
+ 
+ 	if (request_firmware_direct(&firmware, name, device)) {
+-		pr_debug("data file %s load failed\n", name);
++		pr_debug("data file load failed\n", name);
+ 		return UCODE_NFOUND;
+ 	}
+ 
