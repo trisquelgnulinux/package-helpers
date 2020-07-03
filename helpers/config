@@ -124,7 +124,24 @@ deb-src $MIRROR $UPSTREAM-security main universe
 
 EOF
 
-[ "1$EXTERNAL" != "1" ] && eval echo "$EXTERNAL" >> ${LOCAL_APT}/etc/apt.sources.list
+# manage external repository sources. If origin is ubuntu or debian, add updates and security repositories too
+if [ "1$EXTERNAL" != "1" ]; then
+ if eval echo "$EXTERNAL" | grep "archive.ubuntu.com" | grep -qv -e updates -e security -e backports; then
+   RELNAME=$(eval echo "$EXTERNAL" | cut -d' ' -f 3)
+   COMPONENTS=$(eval echo "$EXTERNAL" | cut -d' ' -f 4-)
+   echo "deb-src http://archive.ubuntu.com/ubuntu/ $RELNAME $COMPONENTS" >> ${LOCAL_APT}/etc/apt.sources.list
+   echo "deb-src http://archive.ubuntu.com/ubuntu/ ${RELNAME}-updates $COMPONENTS" >> ${LOCAL_APT}/etc/apt.sources.list
+   echo "deb-src http://archive.ubuntu.com/ubuntu/ ${RELNAME}-security $COMPONENTS" >> ${LOCAL_APT}/etc/apt.sources.list
+ elif eval echo "$EXTERNAL" | grep "ftp.debian.org" |grep -qv -e updates -e security -e backports -e testing -e sid -e unstable -e experimental ; then
+   RELNAME=$(eval echo "$EXTERNAL" | cut -d' ' -f 3)
+   COMPONENTS=$(eval echo "$EXTERNAL" | cut -d' ' -f 4-)
+   echo "deb-src http://deb.debian.org/debian $RELNAME $COMPONENTS" >> ${LOCAL_APT}/etc/apt.sources.list
+   echo "deb-src http://deb.debian.org/debian ${RELNAME}-updates $COMPONENTS" >> ${LOCAL_APT}/etc/apt.sources.list
+   echo "deb-src http://deb.debian.org/debian ${RELNAME}-security $COMPONENTS" >> ${LOCAL_APT}/etc/apt.sources.list
+ else
+   eval echo "$EXTERNAL" >> ${LOCAL_APT}/etc/apt.sources.list
+ fi
+fi
 
 #Cleanup
 rm -rf PACKAGES/$PACKAGE
