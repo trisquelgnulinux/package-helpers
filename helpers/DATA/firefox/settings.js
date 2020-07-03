@@ -136,6 +136,7 @@ pref("geo.enabled", false);
 pref("browser.search.geoip.url", "");
 pref("geo.provider-country.network.url", "");
 pref("browser.search.geoSpecificDefaults.url", "");
+pref("browser.region.network.url","");
 // Disable captive portal detection
 pref("captivedetect.canonicalURL", "");
 pref("network.captive-portal-service.enabled", false);
