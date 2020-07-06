@@ -18,14 +18,34 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=5
+VERSION=6
 
 . ./config
 
 for PATCH in $DATA/*.patch ; do
   echo $PATCH
-  patch -p1 < $PATCH
+  patch --no-backup-if-mismatch -p1 < $PATCH
 done
+
+PRESERVEDIRS='
+drivers/gpu/drm/amd/amdgpu
+drivers/gpu/drm/r128
+drivers/gpu/drm/radeon
+drivers/net/wireless/intel/ipw2x00
+drivers/net/wireless/intel/iwlegacy
+drivers/net/wireless/intel/iwlwifi
+drivers/net/wireless/realtek/rtl8xxxu
+drivers/net/wireless/realtek/rtlwifi
+drivers/net/wireless/realtek/rtlwifi/rtl8188ee
+drivers/net/wireless/realtek/rtlwifi/rtl8192ce
+drivers/net/wireless/realtek/rtlwifi/rtl8192cu
+drivers/net/wireless/realtek/rtlwifi/rtl8192de
+drivers/net/wireless/realtek/rtlwifi/rtl8192ee
+drivers/net/wireless/realtek/rtlwifi/rtl8192se
+drivers/net/wireless/realtek/rtlwifi/rtl8723ae
+drivers/net/wireless/realtek/rtlwifi/rtl8723be
+drivers/net/wireless/realtek/rtlwifi/rtl8821ae
+'
 
 rm -rf /tmp/preserve
 mkdir /tmp/preserve
@@ -33,6 +53,10 @@ PRESERVE=$(grep '^+++' $DATA/silent-accept-firmware.patch | /bin/sed 's/+++ //; 
 for FILE in $PRESERVE; do
   cp $FILE /tmp/preserve --parents -a
 done
+for DIR in $PRESERVEDIRS; do
+  cp $DIR /tmp/preserve --parents -a
+done
+
 
 sh $DATA/deblob-4.15 --force
 
@@ -57,8 +81,13 @@ sed '/vbox/d' -i debian.master/reconstruct
 
 # Remove nvidia
 rm -rf debian/scripts/debian/scripts/dkms-build--nvidia-N
-/bin/sed '/ifeq ($(do_dkms_nvidia),true)/,/endif/d' -i debian/rules.d/2-binary-arch.mk
 /bin/sed  '/do_dkms_nvidia = true/d' -i debian.master/abi/*/*/*.modules debian/rules debian.master/control.d/vars.*
+sed '/do_dkms_nvidia/,/endif/d' -i debian/rules.d/2-binary-arch.mk
+/bin/sed '/do_dkms_nvidia/d' -i debian.master/rules.d/*
+
+# Remove wireguard
+sed '/do_dkms_wireguard/d' -i debian/rules.d/2-binary-arch.mk
+/bin/sed '/do_dkms_wireguard/d' -i debian.master/rules.d/*
 
 # Compile with less modules and avoid abi check
 echo 'skipmodule = true' >> debian.master/rules.d/0-common-vars.mk

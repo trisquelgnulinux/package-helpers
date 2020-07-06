@@ -228,19 +228,6 @@ index 1c0495a..0085e8e 100644
  			return ERR_PTR(err);
  		}
  
-diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/xtensa.c b/drivers/gpu/drm/nouveau/nvkm/engine/xtensa.c
-index 06bdb67..7eca739 100644
---- a/drivers/gpu/drm/nouveau/nvkm/engine/xtensa.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/engine/xtensa.c
-@@ -109,7 +109,7 @@ nvkm_xtensa_init(struct nvkm_engine *engine)
- 
- 		ret = request_firmware(&fw, name, device->dev);
- 		if (ret) {
--			nvkm_warn(subdev, "unable to load firmware %s\n", name);
-+			nvkm_warn(subdev, "unable to load firmware\n", name);
- 			return ret;
- 		}
- 
 diff --git a/drivers/gpu/drm/r128/r128_cce.c b/drivers/gpu/drm/r128/r128_cce.c
 index c9890af..cfe11ce 100644
 --- a/drivers/gpu/drm/r128/r128_cce.c
@@ -1084,3 +1071,133 @@ diff -ru linux.orig/source/arch/x86/kernel/cpu/microcode/intel.c linux/source/ar
  		return UCODE_NFOUND;
  	}
  
+diff -ru a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c	2020-07-06 14:31:51.000000000 -0400
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c	2020-07-06 15:04:47.318942996 -0400
+@@ -1499,14 +1499,14 @@
+ 	err = request_firmware(&adev->firmware.gpu_info_fw, fw_name, adev->dev);
+ 	if (err) {
+ 		dev_err(adev->dev,
+-			"Failed to load gpu_info firmware \"%s\"\n",
++			"Failed to load gpu_info firmware \n",
+ 			fw_name);
+ 		goto out;
+ 	}
+ 	err = amdgpu_ucode_validate(adev->firmware.gpu_info_fw);
+ 	if (err) {
+ 		dev_err(adev->dev,
+-			"Failed to validate gpu_info firmware \"%s\"\n",
++			"Failed to validate gpu_info firmware \n",
+ 			fw_name);
+ 		goto out;
+ 	}
+diff -ru a/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c	2020-07-06 14:31:51.000000000 -0400
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c	2020-07-06 15:07:45.178781957 -0400
+@@ -70,7 +70,7 @@
+ 
+ 	r = request_firmware(&adev->vcn.fw, fw_name, adev->dev);
+ 	if (r) {
+-		dev_err(adev->dev, "amdgpu_vcn: Can't load firmware \"%s\"\n",
++		dev_err(adev->dev, "amdgpu_vcn: Can't load firmware \n",
+ 			fw_name);
+ 		return r;
+ 	}
+diff -ru a/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c
+--- a/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c	2018-01-28 16:20:33.000000000 -0500
++++ b/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c	2020-07-06 15:02:53.419019182 -0400
+@@ -378,7 +378,7 @@
+ 
+ out:
+ 	if (err) {
+-		pr_err("gfx6: Failed to load firmware \"%s\"\n", fw_name);
++		pr_err("gfx6: Failed to load firmware \n", fw_name);
+ 		release_firmware(adev->gfx.pfp_fw);
+ 		adev->gfx.pfp_fw = NULL;
+ 		release_firmware(adev->gfx.me_fw);
+diff -ru a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
+--- a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c	2020-07-06 14:31:51.000000000 -0400
++++ b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c	2020-07-06 15:07:23.966802499 -0400
+@@ -609,7 +609,7 @@
+ out:
+ 	if (err) {
+ 		dev_err(adev->dev,
+-			"gfx9: Failed to load firmware \"%s\"\n",
++			"gfx9: Failed to load firmware \n",
+ 			fw_name);
+ 		release_firmware(adev->gfx.pfp_fw);
+ 		adev->gfx.pfp_fw = NULL;
+diff -ru a/drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c b/drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c
+--- a/drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c	2020-07-06 14:31:51.000000000 -0400
++++ b/drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c	2020-07-06 15:02:30.263034763 -0400
+@@ -145,7 +145,7 @@
+ out:
+ 	if (err) {
+ 		dev_err(adev->dev,
+-		       "si_mc: Failed to load firmware \"%s\"\n",
++		       "si_mc: Failed to load firmware \n",
+ 		       fw_name);
+ 		release_firmware(adev->mc.fw);
+ 		adev->mc.fw = NULL;
+diff -ru a/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c b/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c
+--- a/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c	2020-07-06 14:31:51.000000000 -0400
++++ b/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c	2020-07-06 15:06:58.862827119 -0400
+@@ -128,7 +128,7 @@
+ out:
+ 	if (err) {
+ 		dev_err(adev->dev,
+-			"psp v10.0: Failed to load firmware \"%s\"\n",
++			"psp v10.0: Failed to load firmware \n",
+ 			fw_name);
+ 		release_firmware(adev->psp.asd_fw);
+ 		adev->psp.asd_fw = NULL;
+diff -ru a/drivers/gpu/drm/amd/amdgpu/psp_v3_1.c b/drivers/gpu/drm/amd/amdgpu/psp_v3_1.c
+--- a/drivers/gpu/drm/amd/amdgpu/psp_v3_1.c	2018-01-28 16:20:33.000000000 -0500
++++ b/drivers/gpu/drm/amd/amdgpu/psp_v3_1.c	2020-07-06 15:07:11.678814507 -0400
+@@ -151,7 +151,7 @@
+ out:
+ 	if (err) {
+ 		dev_err(adev->dev,
+-			"psp v3.1: Failed to load firmware \"%s\"\n",
++			"psp v3.1: Failed to load firmware \n",
+ 			fw_name);
+ 		release_firmware(adev->psp.sos_fw);
+ 		adev->psp.sos_fw = NULL;
+diff -ru a/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c b/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c
+--- a/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c	2020-07-06 14:31:51.000000000 -0400
++++ b/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c	2020-07-06 15:06:45.466840398 -0400
+@@ -217,7 +217,7 @@
+ 	}
+ out:
+ 	if (err) {
+-		DRM_ERROR("sdma_v4_0: Failed to load firmware \"%s\"\n", fw_name);
++		DRM_ERROR("sdma_v4_0: Failed to load firmware \n", fw_name);
+ 		for (i = 0; i < adev->sdma.num_instances; i++) {
+ 			release_firmware(adev->sdma.instance[i].fw);
+ 			adev->sdma.instance[i].fw = NULL;
+diff -ru a/drivers/gpu/drm/amd/amdgpu/si_dpm.c b/drivers/gpu/drm/amd/amdgpu/si_dpm.c
+--- a/drivers/gpu/drm/amd/amdgpu/si_dpm.c	2020-07-06 14:31:51.000000000 -0400
++++ b/drivers/gpu/drm/amd/amdgpu/si_dpm.c	2020-07-06 15:03:44.522984911 -0400
+@@ -7673,8 +7673,8 @@
+ 
+ out:
+ 	if (err) {
+-		DRM_ERROR("si_smc: Failed to load firmware. err = %d\"%s\"\n",
+-			  err, fw_name);
++		DRM_ERROR("si_smc: Failed to load firmware. err = %d\n",
++			  err);
+ 		release_firmware(adev->pm.fw);
+ 		adev->pm.fw = NULL;
+ 	}
+diff -ru a/drivers/net/wireless/intel/ipw2x00/ipw2100.c b/drivers/net/wireless/intel/ipw2x00/ipw2100.c
+--- a/drivers/net/wireless/intel/ipw2x00/ipw2100.c	2020-07-06 14:31:51.000000000 -0400
++++ b/drivers/net/wireless/intel/ipw2x00/ipw2100.c	2020-07-06 15:09:35.178678896 -0400
+@@ -8420,7 +8420,7 @@
+ 
+ 	if (rc < 0) {
+ 		printk(KERN_ERR DRV_NAME ": "
+-		       "%s: Firmware '%s' not available or load failed.\n",
++		       "%s: Firmware not available or load failed.\n",
+ 		       priv->net_dev->name, fw_name);
+ 		return rc;
+ 	}
