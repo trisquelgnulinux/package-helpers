@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2008-2016  Rubén Rodríguez <ruben@trisquel.info>
+#    Copyright (C) 2008-2020  Rubén Rodríguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,11 +17,15 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 
 . ./config
 
 CODENAMECAPS=$(echo $CODENAME | /bin/sed -e "s/\b\(.\)/\u\1/g")
+
+# Disable dynamic motd
+find -name *motd-news* -delete
+sed '/motd-news/d' -i debian/rules
 
 cat << EOF > update-motd.d/01-banner
 #!/bin/sh
