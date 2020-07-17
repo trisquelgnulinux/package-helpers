@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2019 Mason Hock <mason@masonhock.com>
+#    Copyright (C) 2020 Luis Guzman <ark@switnet.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -18,13 +18,13 @@
 #
 
 VERSION=1
-EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu focal main universe'
-REPOKEY="3B4FE6ACC0B21F32"
-BACKPORTS=true
-DEPENDS=wine
+EXTERNAL='deb-src http://ftp.debian.org/debian oldstable-backports main'
+REPOKEY=04EE7237B7D453EC
+BACKPORT=true
+DEPENDS=khronos-api,unicode-data
 
 . ./config
 
-changelog "Backported from ppa"
+changelog "Backported from debian old stable backports"
 
 compile
