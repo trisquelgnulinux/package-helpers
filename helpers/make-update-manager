@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2008-2018  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2008-2020  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C)      2019  Mason Hock <mason@masonhock.com>
 #
 #    This program is free software; you can redistribute it and/or modify
@@ -18,13 +18,13 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=9
+VERSION=10
 
 . ./config
 
 rm UpdateManager/Core/LivePatchSocket.py
 rm tests/test_livepatch_socket.py
-patch -p1 < $DATA/remove-livepatch.patch
+patch --no-backup-if-mismatch -p1 < $DATA/remove-livepatch.patch
 sed -i '/import LivePatchSocket/d' UpdateManager/Dialogs.py
 sed -i '/self.check_livepatch_status/d' UpdateManager/Dialogs.py
 
@@ -49,10 +49,10 @@ EOF
 
 replace internet Internet .
 replace Ubuntu Trisquel .
+replace TrisquelDistroInfo UbuntuDistroInfo .
 replace "Trisquel-Gettext" "Ubuntu-Gettext" .
 
 sed -i 's/Trisquel 16.04 LTS to Trisquel 18.04 LTS/Trisquel 8.0 LTS to Trisquel 9.0 LTS/' HweSupportStatus/consts.py
-sed -i 's/TrisquelDistroInfo/UbuntuDistroInfo/' UpdateManager/UpdateManager.py
 
 replace ubuntu-desktop trisquel .
 replace kubuntu-desktop triskel .

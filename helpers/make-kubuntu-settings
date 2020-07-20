@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
+VERSION=4
 COMPONENT=main
 . ./config
 
@@ -95,6 +95,59 @@ cat << EOF >> desktop/theme/look-and-feel/org.triskel.desktop/contents/defaults
 Engine=none
 Theme=none
 EOF
+
+cat << EOF1 > debian/triskel-settings-desktop.preinst
+#!/bin/sh
+
+[ -d /etc/gtk-3.0 ] || mkdir /etc/gtk-3.0 && chmod 755 /etc/gtk-3.0
+[ -d /etc/gtk-2.0 ] || mkdir /etc/gtk-2.0 && chmod 755 /etc/gtk-2.0
+
+item="/etc/gtk-3.0/settings.ini"
+
+grep -qi Breeze \$item && exit 0 || true
+[ -f "\$item"".ubuntu" ] && exit 0 || true
+
+dpkg-divert --package trisquel-desktop-common-data --add --rename --divert "\$item"".ubuntu" "\$item"
+
+cat << EOF > \$item
+[Settings]
+gtk-theme-name = Breeze
+gtk-icon-theme-name = Breeze
+gtk-fallback-icon-theme = Trisquel
+gtk-sound-theme-name = Trisquel
+gtk-font-name=Sans Serif Regular 10
+gtk-menu-images=1
+gtk-button-images=1
+gtk-toolbar-style=GTK_TOOLBAR_BOTH_HORIZ
+gtk-icon-sizes = panel-menu-bar=24,24
+EOF
+
+item="/etc/gtk-2.0/gtkrc"
+
+grep -qi Breeze \$item && exit 0 || true
+
+dpkg-divert --package trisquel-desktop-common-data --add --rename --divert "\$item"".ubuntu" "\$item"
+
+cat << EOF > \$item
+include "/usr/share/themes/Breeze/gtk-2.0/gtkrc"
+style "user-font" 
+{
+        font_name="Sans Serif Regular"
+}
+widget_class "*" style "user-font"
+gtk-font-name="Sans Serif Regular 10"
+gtk-theme-name="Breeze"
+gtk-icon-theme-name="breeze"
+gtk-fallback-icon-theme="trisquel"
+gtk-cursor-theme-name="Breeze_Snow"
+gtk-toolbar-style=GTK_TOOLBAR_BOTH_HORIZ
+gtk-menu-images=1
+gtk-button-images=1
+gtk-primary-button-warps-slider=0
+EOF
+
+EOF1
+chmod 755 debian/triskel-settings-desktop.preinst
 
 sed '1s/triskel/kubuntu/' -i debian/control
 

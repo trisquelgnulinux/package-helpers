@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2020  Luis Guzmán <ark@switnet.org>
+#    Copyright (C) 2020 Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,14 +17,13 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
-EXTERNAL="deb-src http://ppa.launchpad.net/stebbins/handbrake-releases/ubuntu bionic main"
-REPOKEY="8771ADB0816950D8"
-BACKPORT=true
+VERSION=1
+EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu focal main universe'
+REPOKEY="3B4FE6ACC0B21F32"
 
 . ./config
 
-changelog "Imported into Trisquel from PPA"
+changelog "Backported from focal, fixes broken xdriinfo in bionic"
 
 compile
 
