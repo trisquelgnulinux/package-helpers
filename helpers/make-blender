@@ -22,10 +22,14 @@ VERSION=2
 EXTERNAL='deb-src http://ppa.launchpad.net/thomas-schiex/blender/ubuntu bionic main '
 REPOKEY=7281E3E842A98114
 BACKPORTS=true
-DEPENDS=alembic,openimageio,openshadinglanguage,openjpeg,opencollada,openimagedenoise,opensubdiv
+DEPENDS=openimageio,openshadinglanguage,openjpeg,opencollada,opensubdiv
 
 . ./config
 sed -i "s|debhelper (>= 7.0.50\~)|debhelper (<< 12\~)|" debian/control
+
+#By removing these libraries/features is possible to build other arch rather amd64-only
+sed -i "s|openimagedenoise,||" debian/control
+sed -i "s|libalembic-dev,||" debian/control
 
 changelog "Backported from ppa"
 
