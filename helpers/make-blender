@@ -31,6 +31,6 @@ sed -i "s|debhelper (>= 7.0.50\~)|debhelper (<< 12\~)|" debian/control
 sed -i "s|openimagedenoise,||" debian/control
 sed -i "s|libalembic-dev,||" debian/control
 
-changelog "Backported from ppa"
+changelog "Backported from ppa and remove 64bits-only dependencies"
 
 compile
