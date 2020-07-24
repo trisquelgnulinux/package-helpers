@@ -28,7 +28,7 @@ DEPENDS=alembic,openimageio,openshadinglanguage,openjpeg,opencollada,openimagede
 sed -i "s|debhelper (>= 7.0.50\~)|debhelper (<< 12\~)|" debian/control
 
 #By adjusting these libraries/features is possible to build other archs
-sed -i "s|openimagedenoise,|openimagedenoise [amd64],|" debian/control
+sed -i "s|openimagedenoise,||" debian/control
 sed -i "s|libalembic-dev,|libalembic-dev [amd64],|" debian/control
 
 changelog "Backported from ppa and adjust 64bits-only dependencies"
