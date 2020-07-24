@@ -1,4 +1,4 @@
-#/bin/sh
+#!/bin/sh
 #
 #    Copyright (C) 2008-2020  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C) 2019 Mason Hock <mason@masonhock.com>
@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=7
+VERSION=8
 QUILT=skip
 . ./config
 
@@ -46,6 +46,7 @@ Description: boot animation, logger and I/O multiplexer - sugar theme
  This package contains the sugar theme.
 EOF
 
+sed '/fonts-ubuntu/d' -i debian/control
 
 cp $DATA/plymouth-theme-trisquel-logo* debian
 cp $DATA/plymouth-theme-trisquel-logo.postinst debian/plymouth-theme-sugar.postinst
