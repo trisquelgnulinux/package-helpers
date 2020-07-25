@@ -17,9 +17,17 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 
 . ./config
+
+replace "Ubuntu MATE" "Trisquel" .
+sed '/font/s/Ubuntu/Sans/' -i \
+usr/share/ubuntu-mate/settings-overlay/config/Trolltech.conf \
+usr/share/ubuntu-mate/settings-overlay/config/tilda/config_0 \
+usr/share/ubuntu-mate/settings-overlay/config/smplayer/smplayer.ini
+
+sed 's/Ubuntu-MATE/Trisquel/; /font/s/Ubuntu/Sans/' -i usr/share/glib-2.0/schemas/30_ubuntu-mate.gschema.override
 
 cat << EOF > usr/share/applications/mate-mimeapps.list
 [Default Applications]
@@ -84,6 +92,8 @@ EOF
 # indicator-session is only needed for lightdm
 rm debian/indicator-session.desktop.in
 sed '/indicator-session.desktop/d' -i usr/lib/ubuntu-mate/ubuntu-mate-settings-overlay debian/ubuntu-mate-default-settings.install debian/rules
+
+sed '/fonts-ubuntu/d' -i debian/control
 
 changelog "Customized for Trisquel"
 
