@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=8
+VERSION=9
 QUILT=skip
 . ./config
 
@@ -46,7 +46,11 @@ Description: boot animation, logger and I/O multiplexer - sugar theme
  This package contains the sugar theme.
 EOF
 
-sed '/fonts-ubuntu/d' -i debian/control
+sed 's/fonts-ubuntu/fonts-freefont-ttf/' -i debian/control
+sed 's|ubuntu/Ubuntu-R.ttf|freefont/FreeSans.ttf|' -i debian/local/plymouth.hook
+sed 's|ubuntu/UbuntuMono-R.ttf|freefont/FreeMono.ttf|' -i debian/local/plymouth.hook
+sed 's|Ubuntu Mono|FreeMono|; s|Ubuntu|FreeSans|g' -i debian/local/plymouth.hook
+sed 's|fonts/truetype/ubuntu|fonts/truetype/freefont|' -i debian/local/plymouth.hook
 
 cp $DATA/plymouth-theme-trisquel-logo* debian
 cp $DATA/plymouth-theme-trisquel-logo.postinst debian/plymouth-theme-sugar.postinst
