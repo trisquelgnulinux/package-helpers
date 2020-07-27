@@ -8,7 +8,7 @@ pref("pfs.datasource.url", "https://trisquel.info/sites/pfs.php?mime=%PLUGIN_MIM
 pref("pfs.filehint.url", "https://trisquel.info/sites/pfs.php?mime=%PLUGIN_MIMETYPE%");
 
 // I'm feeling Ducky.
-pref("keyword.URL", "https://duckduckgo.com/?t=trisquel&q=!+");
+pref("keyword.URL", "https://duckduckgo.com/?q=!+");
 pref("browser.search.defaultenginename", "DuckDuckGo");
 pref("browser.search.order.1", "DuckDuckGo");
 pref("browser.search.defaultenginename", "DuckDuckGo");

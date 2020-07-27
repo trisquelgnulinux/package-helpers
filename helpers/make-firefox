@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=72
+VERSION=73
 
 . ./config
 
@@ -93,8 +93,8 @@ rm debian/patches/ubuntu-bookmarks*
 find debian/searchplugins |grep google| xargs -i /bin/sed '/ubuntu/d; /channel/d' -i {}
 find debian/searchplugins |grep amazon| xargs -i /bin/sed '/canoniccom/d;' -i {}
 
-#Replace canonical referer with our own for duckduckgo
-find |grep -e duckduckgo.xml -e ddg.xml | xargs -i /bin/sed 's/canonical/trisquel/' -i {}
+#Disable canonical referrer on DDG
+sed 's/&amp;t=canonical//' -i debian/searchplugins/ddg.xml
 
 # Make DuckDuckGo the default engine
 rm debian/patches/no-region-overrides-for-google-search.patch debian/patches/partially-revert-google-search-update.patch
