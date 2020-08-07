@@ -18,12 +18,9 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=73
+VERSION=74
 
 . ./config
-
-patch -p1 < debian/patches/partially-revert-google-search-update.patch
-patch -p1 < debian/patches/no-region-overrides-for-google-search.patch
 
 sed 's/clang-10 |//' -i debian/control.in
 sed 's/libclang-10-dev |//' -i debian/control.in
@@ -89,21 +86,22 @@ sed "s/iceweasel,/iceweasel, firefox,/" -i debian/control.in
 sed -i /ubuntu-bookmarks/d debian/patches/series
 rm debian/patches/ubuntu-bookmarks*
 
-#Unbrand url codes for google and amazon
-find debian/searchplugins |grep google| xargs -i /bin/sed '/ubuntu/d; /channel/d' -i {}
-find debian/searchplugins |grep amazon| xargs -i /bin/sed '/canoniccom/d;' -i {}
-
-#Disable canonical referrer on DDG
-sed 's/&amp;t=canonical//' -i debian/searchplugins/ddg.xml
-
 # Make DuckDuckGo the default engine
-rm debian/patches/no-region-overrides-for-google-search.patch debian/patches/partially-revert-google-search-update.patch
-sed '/no-region-overrides-for-google-search/d; /partially-revert-google-search-update/d' -i debian/patches/series
 sed '/searchDefault/s/: \".*\"/: "DuckDuckGo"/g' -i browser/components/search/extensions/list.json
 sed '/visibleDefaultEngines/{n; s/"ddg",//; s/\"/"ddg", "/}'  -i browser/components/search/extensions/list.json
+sed '/searchOrder/s/"Google", "Bing"/"DuckDuckGo", "Google"/' -i browser/components/search/extensions/list.json
 
-# contact link
-#sed 's_https://input.mozilla.org/feedback_https://trisquel.info/contact_' -i browser/base/content/utilityOverlay.js
+# Custom DDG
+sed '/"params"/,/],/d' -i browser/components/search/extensions/ddg/manifest.json
+cp browser/components/search/extensions/ddg browser/components/search/extensions/ddg-html -a
+sed 's|/duckduckgo.com/|/html.duckduckgo.com/html/|' -i browser/components/search/extensions/ddg-html/manifest.json
+sed 's|DuckDuckGo|DuckDuckGo (HTML)|' -i browser/components/search/extensions/ddg-html/manifest.json
+sed 's|ddg@|ddg-html@|' -i browser/components/search/extensions/ddg-html/manifest.json
+# disable ads, disable redirect
+#sed '/search/s|q=|k1=-1\&kd=-1\&ko=1\&q=|' -i browser/components/search/extensions/ddg/manifest.json
+
+# Reprocess search preconfiguration dump
+python $DATA/reprocess-search-config.py  ./services/settings/dumps/main/search-config.json
 
 cat << EOF > debian/distribution.ini
 [Global]
@@ -176,23 +174,7 @@ rm -rf ./browser/metro ./addon-sdk/source/doc/static-files/media ./browser/theme
 cp $DATA/bookmarks.html.in browser/locales/generic/profile/bookmarks.html.in
 
 #Trisquel custom search engines
-cp $DATA/searchplugins/*.xml debian/searchplugins/
-sed '/additions/,$d' debian/config/searchplugins.conf -i
-cat << EOF >> debian/config/searchplugins.conf
-  "additions": [
-    {
-      "name": "Trisquel",
-      "include_locales": [ "*" ],
-      "engine": "trisquel"
-    },
-    {
-      "name": "Trisquel packages",
-      "include_locales": [ "*" ],
-      "engine": "trisquel-packages"
-    }
-  ]
-}
-EOF
+cp -a $DATA/searchplugins/* browser/components/search/extensions/
 
 # install extensions
 for extension in $(ls -1 $DATA/extensions/); do
