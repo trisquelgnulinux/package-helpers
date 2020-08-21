@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=74
+VERSION=75
 
 . ./config
 
@@ -163,6 +163,7 @@ find . -type f -not -iregex '.*changelog.*' -not -iregex '.*copyright.*' -not -i
 
 echo "Replacing Firefox with Abrowser on ./l10n"
 find l10n -type f  -not -iregex '.*changelog.*' -not -iregex '.*copyright.*' -execdir /bin/sed --follow-symlinks -i "s/Firefox/Abrowser/" '{}' ';'
+sed 's/Firefox/Abrowser/' -i debian/control.in
 
 sed s/ubuntu/trisquel/g debian/distribution.ini -i
 sed "s/ubuntu_version/trisquel_version/; s/Ubuntu 10.10/Trisquel $REVISION/; s/1010/40/" -i debian/firefox.postinst.in
