@@ -35,7 +35,7 @@ sed '/async download.*/areturn;' -i services/settings/RemoteSettingsClient.jsm s
 # Disable activity-stream antifeatures.
 # These are not condensed into a single sed script to make it fail on individual commands that didn't change the source
 ActivityStream=browser/components/newtab/lib/ActivityStream.jsm
-sed '/^const DEFAULT_SITES/,/^])\;/c const DEFAULT_SITES = new Map\([[""]]\);' -i $ActivityStream
+sed '/^const DEFAULT_SITES/,/^])\;/c const DEFAULT_SITES = new Map\([[""]]\);' -i browser/components/newtab/lib/DefaultSites.jsm
 sed '/"showSponsored"/,/value/s/value: true/value: false/' -i $ActivityStream
 sed '/"telemetry"/,/value/s/value: true/value: false/' -i $ActivityStream
 sed '/"section.highlights.includePocket"/,/value/s/value: true/value: false/' -i $ActivityStream
@@ -85,6 +85,65 @@ sed "s/iceweasel,/iceweasel, firefox,/" -i debian/control.in
 # Remove Ubuntu bookmarks
 sed -i /ubuntu-bookmarks/d debian/patches/series
 rm debian/patches/ubuntu-bookmarks*
+
+# Custom newtab images
+sed '/^]$/d' -i browser/components/newtab/data/content/tippytop/top_sites.json
+sed 's/}$/},/' -i browser/components/newtab/data/content/tippytop/top_sites.json
+
+cat << EOF >> browser/components/newtab/data/content/tippytop/top_sites.json
+  {
+    "title": "Trisquel",
+    "url": "https://trisquel.info/",
+    "image_url": "images/trisquel.png",
+    "favicon_url": "favicons/trisquel.ico"
+  },
+  {
+    "title": "GNU",
+    "url": "https://www.gnu.org/",
+    "image_url": "images/gnu.png",
+    "favicon_url": "favicons/gnu.ico"
+  },
+  {
+    "title": "FSF",
+    "url": "https://www.fsf.org/",
+    "image_url": "images/fsf.png",
+    "favicon_url": "favicons/fsf.ico"
+  },
+  {
+    "title": "FSF Directory",
+    "url": "https://directory.fsf.org/",
+    "image_url": "images/fsf.png",
+    "favicon_url": "favicons/fsf.ico"
+  },
+  {
+    "title": "LibrePlanet",
+    "url": "https://libreplanet.org/",
+    "image_url": "images/libreplanet.png",
+    "favicon_url": "favicons/libreplanet.ico"
+  },
+  {
+    "title": "FSF Europe",
+    "url": "https://fsfe.org/",
+    "image_url": "images/fsfe.png",
+    "favicon_url": "favicons/fsfe.ico"
+  },
+  {
+    "title": "Wikipedia",
+    "url": "https://www.wikipedia.org/wiki/",
+    "image_url": "images/wikipedia.png",
+    "favicon_url": "favicons/wikipedia.ico"
+  },
+  {
+    "title": "Wikinews",
+    "url": "https://www.wikinews.org/wiki/",
+    "image_url": "images/wikinews.png",
+    "favicon_url": "favicons/wikinews.ico"
+  }
+]
+EOF
+
+cp $DATA/newtab/*.ico browser/components/newtab/data/content/tippytop/favicons/
+cp $DATA/newtab/*.png browser/components/newtab/data/content/tippytop/images/
 
 # Make DuckDuckGo the default engine
 sed '/searchDefault/s/: \".*\"/: "DuckDuckGo"/g' -i browser/components/search/extensions/list.json
@@ -213,8 +272,6 @@ sed -i 's/<a\ href\=\"http\:\/\/www.mozilla.org\/\">Mozilla\ Project<\/a>/<a\ hr
 sed '/Provides/s/abrowser-locale/firefox-locale/' -i debian/control.langpacks
 /bin/sed '/trademarkInfo/s/Abrowser/Firefox/' -i l10n/*/browser/branding/official/brand.ftl
 
-/bin/sed 's/prefs_snippets_description=.*/prefs_snippets_description=Mozilla snippets/' -i l10n/*/browser/chrome/browser/activity-stream/newtab.properties
-
 # js settings
 cat $DATA/settings.js >> debian/vendor-firefox.js
 
@@ -252,11 +309,6 @@ browser.suggestedsites.restricted_mozilla.url=https://www.trisquel.info
 browser.suggestedsites.webmaker.title=GNU Project
 browser.suggestedsites.webmaker.url=https://www.gnu.org
 EOF
-
-sed -i '/aboutPage.logoTrademark/d' \
-mobile/android/locales/en-US/chrome/about.dtd
-echo -e '\n<!ENTITY aboutPage.logoTrademark "">' >> \
-mobile/android/locales/en-US/chrome/about.dtd
 
 # Branding
 rm mobile/android/branding/{official,unofficial,beta,nightly} -rf
