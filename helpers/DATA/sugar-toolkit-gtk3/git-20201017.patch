@@ -1,0 +1,5017 @@
+diff --git b/.flake8 a/.flake8
+new file mode 100644
+index 0000000..0146a5f
+--- /dev/null
++++ a/.flake8
+@@ -0,0 +1,6 @@
++[flake8]
++
++# E402 module level import not at top of file
++# gi.require_version() is required before later imports
++
++ignore = E402
+diff --git b/MAINTAINERS a/MAINTAINERS
+new file mode 100644
+index 0000000..d9dcae7
+--- /dev/null
++++ a/MAINTAINERS
+@@ -0,0 +1,3 @@
++Daniel Drake dsd@laptop.org
++Simon Schampijer simon@laptop.org
++
+diff --git b/README.md a/README.md
+new file mode 100644
+index 0000000..c074e93
+--- /dev/null
++++ a/README.md
+@@ -0,0 +1,47 @@
++Sugar Toolkit
++=============
++
++Sugar Toolkit provides services and a set of GTK+ widgets to build
++activities and other Sugar components on Linux based computers.
++
++This is the GTK+ 3 binding of the Sugar Toolkit.
++
++https://www.sugarlabs.org/
++
++https://wiki.sugarlabs.org/
++
++Installing on Debian or Ubuntu
++------------------------------
++
++Automatically done when you install [Sugar
++desktop](https://github.com/sugarlabs/sugar).
++
++To install Sugar Toolkit alone without Sugar desktop,
++
++```
++sudo apt install python-sugar3
++```
++
++Installing on Fedora
++--------------------
++
++Automatically done when you install [Sugar
++desktop](https://github.com/sugarlabs/sugar).
++
++To install Sugar Toolkit alone without Sugar desktop,
++
++```
++sudo dnf install sugar-toolkit-gtk3
++```
++
++Building
++--------
++
++Sugar Toolkit follows the [GNU Coding
++Standards](https://www.gnu.org/prep/standards/).
++
++Install all dependencies, especially sugar-artwork and
++sugar-datastore.
++
++Clone the repository, run `autogen.sh`, then `make` and `make
++install`.
+diff --git b/autogen.sh a/autogen.sh
+new file mode 100755
+index 0000000..dac7bf4
+--- /dev/null
++++ a/autogen.sh
+@@ -0,0 +1,15 @@
++#!/bin/sh
++
++test -n "${srcdir}" || srcdir=`dirname "$0"`
++test -n "${srcdir}" || srcdir="$(pwd)"
++
++olddir="$(pwd)"
++cd "$srcdir"
++
++mkdir -p m4
++
++intltoolize
++autoreconf -i
++
++cd "$olddir"
++"$srcdir/configure" --enable-maintainer-mode "$@"
+diff --git b/bin/sugar-activity-web a/bin/sugar-activity-web
+index 8fd7a59..d1db3fd 100644
+--- b/bin/sugar-activity-web
++++ a/bin/sugar-activity-web
+@@ -17,8 +17,4 @@
+ # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ # Boston, MA 02111-1307, USA.
+ 
+-if [ "$SUGAR_USE_WEBKIT1" = "yes" ]; then
+-    exec sugar-activity3 sugar3.activity.webkit1.WebActivity $@
+-else
+-    exec sugar-activity3 sugar3.activity.webactivity.WebActivity $@
+-fi
++exec sugar-activity3 sugar3.activity.webactivity.WebActivity $@
+diff --git b/doc/Makefile a/doc/Makefile
+new file mode 100644
+index 0000000..60e9ad5
+--- /dev/null
++++ a/doc/Makefile
+@@ -0,0 +1,193 @@
++# Makefile for Sphinx documentation
++#
++
++# You can set these variables from the command line.
++SPHINXOPTS    =
++SPHINXBUILD   = sphinx-build
++PAPER         =
++BUILDDIR      = _build
++
++# User-friendly check for sphinx-build
++ifeq ($(shell which $(SPHINXBUILD) >/dev/null 2>&1; echo $$?), 1)
++$(error The '$(SPHINXBUILD)' command was not found. Make sure you have Sphinx installed, then set the SPHINXBUILD environment variable to point to the full path of the '$(SPHINXBUILD)' executable. Alternatively you can add the directory with the executable to your PATH. If you don't have Sphinx installed, grab it from http://sphinx-doc.org/)
++endif
++
++# Internal variables.
++PAPEROPT_a4     = -D latex_paper_size=a4
++PAPEROPT_letter = -D latex_paper_size=letter
++ALLSPHINXOPTS   = -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) .
++# the i18n builder cannot share the environment and doctrees with the others
++I18NSPHINXOPTS  = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) .
++
++.PHONY: help clean html dirhtml singlehtml pickle json htmlhelp qthelp devhelp epub latex latexpdf text man changes linkcheck doctest coverage gettext
++
++help:
++	@echo "Please use \`make <target>' where <target> is one of"
++	@echo "  html       to make standalone HTML files"
++	@echo "  dirhtml    to make HTML files named index.html in directories"
++	@echo "  singlehtml to make a single large HTML file"
++	@echo "  pickle     to make pickle files"
++	@echo "  json       to make JSON files"
++	@echo "  htmlhelp   to make HTML files and a HTML help project"
++	@echo "  qthelp     to make HTML files and a qthelp project"
++	@echo "  applehelp  to make an Apple Help Book"
++	@echo "  devhelp    to make HTML files and a Devhelp project"
++	@echo "  epub       to make an epub"
++	@echo "  latex      to make LaTeX files, you can set PAPER=a4 or PAPER=letter"
++	@echo "  latexpdf   to make LaTeX files and run them through pdflatex"
++	@echo "  latexpdfja to make LaTeX files and run them through platex/dvipdfmx"
++	@echo "  text       to make text files"
++	@echo "  man        to make manual pages"
++	@echo "  texinfo    to make Texinfo files"
++	@echo "  info       to make Texinfo files and run them through makeinfo"
++	@echo "  gettext    to make PO message catalogs"
++	@echo "  changes    to make an overview of all changed/added/deprecated items"
++	@echo "  xml        to make Docutils-native XML files"
++	@echo "  pseudoxml  to make pseudoxml-XML files for display purposes"
++	@echo "  linkcheck  to check all external links for integrity"
++	@echo "  doctest    to run all doctests embedded in the documentation (if enabled)"
++	@echo "  coverage   to run coverage check of the documentation (if enabled)"
++
++clean:
++	rm -rf $(BUILDDIR)/*
++
++html:
++	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
++	@echo
++	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
++
++dirhtml:
++	$(SPHINXBUILD) -b dirhtml $(ALLSPHINXOPTS) $(BUILDDIR)/dirhtml
++	@echo
++	@echo "Build finished. The HTML pages are in $(BUILDDIR)/dirhtml."
++
++singlehtml:
++	$(SPHINXBUILD) -b singlehtml $(ALLSPHINXOPTS) $(BUILDDIR)/singlehtml
++	@echo
++	@echo "Build finished. The HTML page is in $(BUILDDIR)/singlehtml."
++
++pickle:
++	$(SPHINXBUILD) -b pickle $(ALLSPHINXOPTS) $(BUILDDIR)/pickle
++	@echo
++	@echo "Build finished; now you can process the pickle files."
++
++json:
++	$(SPHINXBUILD) -b json $(ALLSPHINXOPTS) $(BUILDDIR)/json
++	@echo
++	@echo "Build finished; now you can process the JSON files."
++
++htmlhelp:
++	$(SPHINXBUILD) -b htmlhelp $(ALLSPHINXOPTS) $(BUILDDIR)/htmlhelp
++	@echo
++	@echo "Build finished; now you can run HTML Help Workshop with the" \
++	      ".hhp project file in $(BUILDDIR)/htmlhelp."
++
++qthelp:
++	$(SPHINXBUILD) -b qthelp $(ALLSPHINXOPTS) $(BUILDDIR)/qthelp
++	@echo
++	@echo "Build finished; now you can run "qcollectiongenerator" with the" \
++	      ".qhcp project file in $(BUILDDIR)/qthelp, like this:"
++	@echo "# qcollectiongenerator $(BUILDDIR)/qthelp/SugarToolkitGTK3.qhcp"
++	@echo "To view the help file:"
++	@echo "# assistant -collectionFile $(BUILDDIR)/qthelp/SugarToolkitGTK3.qhc"
++
++applehelp:
++	$(SPHINXBUILD) -b applehelp $(ALLSPHINXOPTS) $(BUILDDIR)/applehelp
++	@echo
++	@echo "Build finished. The help book is in $(BUILDDIR)/applehelp."
++	@echo "N.B. You won't be able to view it unless you put it in" \
++	      "~/Library/Documentation/Help or install it in your application" \
++	      "bundle."
++
++devhelp:
++	$(SPHINXBUILD) -b devhelp $(ALLSPHINXOPTS) $(BUILDDIR)/devhelp
++	@echo
++	@echo "Build finished."
++	@echo "To view the help file:"
++	@echo "# mkdir -p $$HOME/.local/share/devhelp/SugarToolkitGTK3"
++	@echo "# ln -s $(BUILDDIR)/devhelp $$HOME/.local/share/devhelp/SugarToolkitGTK3"
++	@echo "# devhelp"
++
++epub:
++	$(SPHINXBUILD) -b epub $(ALLSPHINXOPTS) $(BUILDDIR)/epub
++	@echo
++	@echo "Build finished. The epub file is in $(BUILDDIR)/epub."
++
++latex:
++	$(SPHINXBUILD) -b latex $(ALLSPHINXOPTS) $(BUILDDIR)/latex
++	@echo
++	@echo "Build finished; the LaTeX files are in $(BUILDDIR)/latex."
++	@echo "Run \`make' in that directory to run these through (pdf)latex" \
++	      "(use \`make latexpdf' here to do that automatically)."
++
++latexpdf:
++	$(SPHINXBUILD) -b latex $(ALLSPHINXOPTS) $(BUILDDIR)/latex
++	@echo "Running LaTeX files through pdflatex..."
++	$(MAKE) -C $(BUILDDIR)/latex all-pdf
++	@echo "pdflatex finished; the PDF files are in $(BUILDDIR)/latex."
++
++latexpdfja:
++	$(SPHINXBUILD) -b latex $(ALLSPHINXOPTS) $(BUILDDIR)/latex
++	@echo "Running LaTeX files through platex and dvipdfmx..."
++	$(MAKE) -C $(BUILDDIR)/latex all-pdf-ja
++	@echo "pdflatex finished; the PDF files are in $(BUILDDIR)/latex."
++
++text:
++	$(SPHINXBUILD) -b text $(ALLSPHINXOPTS) $(BUILDDIR)/text
++	@echo
++	@echo "Build finished. The text files are in $(BUILDDIR)/text."
++
++man:
++	$(SPHINXBUILD) -b man $(ALLSPHINXOPTS) $(BUILDDIR)/man
++	@echo
++	@echo "Build finished. The manual pages are in $(BUILDDIR)/man."
++
++texinfo:
++	$(SPHINXBUILD) -b texinfo $(ALLSPHINXOPTS) $(BUILDDIR)/texinfo
++	@echo
++	@echo "Build finished. The Texinfo files are in $(BUILDDIR)/texinfo."
++	@echo "Run \`make' in that directory to run these through makeinfo" \
++	      "(use \`make info' here to do that automatically)."
++
++info:
++	$(SPHINXBUILD) -b texinfo $(ALLSPHINXOPTS) $(BUILDDIR)/texinfo
++	@echo "Running Texinfo files through makeinfo..."
++	make -C $(BUILDDIR)/texinfo info
++	@echo "makeinfo finished; the Info files are in $(BUILDDIR)/texinfo."
++
++gettext:
++	$(SPHINXBUILD) -b gettext $(I18NSPHINXOPTS) $(BUILDDIR)/locale
++	@echo
++	@echo "Build finished. The message catalogs are in $(BUILDDIR)/locale."
++
++changes:
++	$(SPHINXBUILD) -b changes $(ALLSPHINXOPTS) $(BUILDDIR)/changes
++	@echo
++	@echo "The overview file is in $(BUILDDIR)/changes."
++
++linkcheck:
++	$(SPHINXBUILD) -b linkcheck $(ALLSPHINXOPTS) $(BUILDDIR)/linkcheck
++	@echo
++	@echo "Link check complete; look for any errors in the above output " \
++	      "or in $(BUILDDIR)/linkcheck/output.txt."
++
++doctest:
++	$(SPHINXBUILD) -b doctest $(ALLSPHINXOPTS) $(BUILDDIR)/doctest
++	@echo "Testing of doctests in the sources finished, look at the " \
++	      "results in $(BUILDDIR)/doctest/output.txt."
++
++coverage:
++	$(SPHINXBUILD) -b coverage $(ALLSPHINXOPTS) $(BUILDDIR)/coverage
++	@echo "Testing of coverage in the sources finished, look at the " \
++	      "results in $(BUILDDIR)/coverage/python.txt."
++
++xml:
++	$(SPHINXBUILD) -b xml $(ALLSPHINXOPTS) $(BUILDDIR)/xml
++	@echo
++	@echo "Build finished. The XML files are in $(BUILDDIR)/xml."
++
++pseudoxml:
++	$(SPHINXBUILD) -b pseudoxml $(ALLSPHINXOPTS) $(BUILDDIR)/pseudoxml
++	@echo
++	@echo "Build finished. The pseudo-XML files are in $(BUILDDIR)/pseudoxml."
++
+diff --git b/doc/conf.py a/doc/conf.py
+new file mode 100644
+index 0000000..26a811e
+--- /dev/null
++++ a/doc/conf.py
+@@ -0,0 +1,305 @@
++# -*- coding: utf-8 -*-
++#
++# Sugar Toolkit GTK3 documentation build configuration file, created by
++# sphinx-quickstart on Sat Aug  1 21:36:44 2015.
++#
++# This file is execfile()d with the current directory set to its
++# containing dir.
++#
++# Note that not all possible configuration values are present in this
++# autogenerated file.
++#
++# All configuration values have a default; values that are commented out
++# serve to show the default.
++
++import sys
++import os
++from sphinx import version_info
++
++major, minor, patch, label, label_number = version_info
++
++# If extensions (or modules to document with autodoc) are in another directory,
++# add these directories to sys.path here. If the directory is relative to the
++# documentation root, use os.path.abspath to make it absolute, like shown here.
++sys.path.insert(0, os.path.abspath('../src'))
++
++# -- General configuration ------------------------------------------------
++
++# If your documentation needs a minimal Sphinx version, state it here.
++#needs_sphinx = '1.0'
++
++# Add any Sphinx extension module names here, as strings. They can be
++# extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
++# ones.
++extensions = [
++    'sphinx.ext.autodoc',
++    'sphinx.ext.intersphinx'
++]
++if major >= 1 and minor >= 3:
++    # Included in Sphinx 1.3
++    extensions.append('sphinx.ext.napoleon')
++else:
++    extensions.append('sphinxcontrib.napoleon')
++
++intersphinx_mapping = {
++    'glib': ('http://lazka.github.io/pgi-docs/GLib-2.0', None),
++    'gobject': ('http://lazka.github.io/pgi-docs/GObject-2.0', None),
++    'gio': ('http://lazka.github.io/pgi-docs/Gio-2.0', None),
++    'gtk': ('http://lazka.github.io/pgi-docs/Gtk-3.0', None)
++}
++
++primary_domain = "py"
++
++# Add any paths that contain templates here, relative to this directory.
++templates_path = ['_templates']
++
++# The suffix(es) of source filenames.
++# You can specify multiple suffix as a list of string:
++# source_suffix = ['.rst', '.md']
++source_suffix = '.rst'
++
++# The encoding of source files.
++#source_encoding = 'utf-8-sig'
++
++# The master toctree document.
++master_doc = 'index'
++
++# General information about the project.
++project = u'Sugar Toolkit GTK3'
++copyright = u'2017, Sugar Labs'
++author = u'Sugar Labs'
++
++# The version info for the project you're documenting, acts as replacement for
++# |version| and |release|, also used in various other places throughout the
++# built documents.
++#
++# The short X.Y version.
++version = '0.117'
++# The full version, including alpha/beta/rc tags.
++release = '0.117'
++
++# The language for content autogenerated by Sphinx. Refer to documentation
++# for a list of supported languages.
++#
++# This is also used if you do content translation via gettext catalogs.
++# Usually you set "language" from the command line for these cases.
++language = None
++
++# There are two options for replacing |today|: either, you set today to some
++# non-false value, then it is used:
++#today = ''
++# Else, today_fmt is used as the format for a strftime call.
++#today_fmt = '%B %d, %Y'
++
++# List of patterns, relative to source directory, that match files and
++# directories to ignore when looking for source files.
++exclude_patterns = ['_build']
++
++# The reST default role (used for this markup: `text`) to use for all
++# documents.
++#default_role = None
++
++# If true, '()' will be appended to :func: etc. cross-reference text.
++#add_function_parentheses = True
++
++# If true, the current module name will be prepended to all description
++# unit titles (such as .. function::).
++#add_module_names = True
++
++# If true, sectionauthor and moduleauthor directives will be shown in the
++# output. They are ignored by default.
++#show_authors = False
++
++# The name of the Pygments (syntax highlighting) style to use.
++pygments_style = 'sphinx'
++
++# A list of ignored prefixes for module index sorting.
++#modindex_common_prefix = []
++
++# If true, keep warnings as "system message" paragraphs in the built documents.
++#keep_warnings = False
++
++# If true, `todo` and `todoList` produce output, else they produce nothing.
++todo_include_todos = False
++
++
++# -- Options for HTML output ----------------------------------------------
++
++# The theme to use for HTML and HTML Help pages.  See the documentation for
++# a list of builtin themes.
++if major >= 1 and minor >= 3:
++    # Added in Sphinx 1.3
++    html_theme = 'alabaster'
++
++# Theme options are theme-specific and customize the look and feel of a theme
++# further.  For a list of options available for each theme, see the
++# documentation.
++#html_theme_options = {}
++
++# Add any paths that contain custom themes here, relative to this directory.
++#html_theme_path = []
++
++# The name for this set of Sphinx documents.  If None, it defaults to
++# "<project> v<release> documentation".
++#html_title = None
++
++# A shorter title for the navigation bar.  Default is the same as html_title.
++#html_short_title = None
++
++# The name of an image file (relative to this directory) to place at the top
++# of the sidebar.
++#html_logo = None
++
++# The name of an image file (within the static path) to use as favicon of the
++# docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
++# pixels large.
++#html_favicon = None
++
++# Add any paths that contain custom static files (such as style sheets) here,
++# relative to this directory. They are copied after the builtin static files,
++# so a file named "default.css" will overwrite the builtin "default.css".
++html_static_path = ['_static']
++
++# Add any extra paths that contain custom files (such as robots.txt or
++# .htaccess) here, relative to this directory. These files are copied
++# directly to the root of the documentation.
++#html_extra_path = []
++
++# If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
++# using the given strftime format.
++#html_last_updated_fmt = '%b %d, %Y'
++
++# If true, SmartyPants will be used to convert quotes and dashes to
++# typographically correct entities.
++#html_use_smartypants = True
++
++# Custom sidebar templates, maps document names to template names.
++#html_sidebars = {}
++
++# Additional templates that should be rendered to pages, maps page names to
++# template names.
++#html_additional_pages = {}
++
++# If false, no module index is generated.
++#html_domain_indices = True
++
++# If false, no index is generated.
++#html_use_index = True
++
++# If true, the index is split into individual pages for each letter.
++#html_split_index = False
++
++# If true, links to the reST sources are added to the pages.
++#html_show_sourcelink = True
++
++# If true, "Created using Sphinx" is shown in the HTML footer. Default is True.
++#html_show_sphinx = True
++
++# If true, "(C) Copyright ..." is shown in the HTML footer. Default is True.
++#html_show_copyright = True
++
++# If true, an OpenSearch description file will be output, and all pages will
++# contain a <link> tag referring to it.  The value of this option must be the
++# base URL from which the finished HTML is served.
++#html_use_opensearch = ''
++
++# This is the file name suffix for HTML files (e.g. ".xhtml").
++#html_file_suffix = None
++
++# Language to be used for generating the HTML full-text search index.
++# Sphinx supports the following languages:
++#   'da', 'de', 'en', 'es', 'fi', 'fr', 'hu', 'it', 'ja'
++#   'nl', 'no', 'pt', 'ro', 'ru', 'sv', 'tr'
++#html_search_language = 'en'
++
++# A dictionary with options for the search language support, empty by default.
++# Now only 'ja' uses this config value
++#html_search_options = {'type': 'default'}
++
++# The name of a javascript file (relative to the configuration directory) that
++# implements a search results scorer. If empty, the default will be used.
++#html_search_scorer = 'scorer.js'
++
++# Output file base name for HTML help builder.
++htmlhelp_basename = 'SugarToolkitGTK3doc'
++
++# -- Options for LaTeX output ---------------------------------------------
++
++latex_elements = {
++    # The paper size ('letterpaper' or 'a4paper').
++    #'papersize': 'letterpaper',
++
++    # The font size ('10pt', '11pt' or '12pt').
++    #'pointsize': '10pt',
++
++    # Additional stuff for the LaTeX preamble.
++    #'preamble': '',
++
++    # Latex figure (float) alignment
++    #'figure_align': 'htbp',
++}
++
++# Grouping the document tree into LaTeX files. List of tuples
++# (source start file, target name, title,
++#  author, documentclass [howto, manual, or own class]).
++latex_documents = [
++    (master_doc, 'SugarToolkitGTK3.tex', u'Sugar Toolkit GTK3 Documentation',
++     u'Sugar Labs', 'manual'),
++]
++
++# The name of an image file (relative to this directory) to place at the top of
++# the title page.
++#latex_logo = None
++
++# For "manual" documents, if this is true, then toplevel headings are parts,
++# not chapters.
++#latex_use_parts = False
++
++# If true, show page references after internal links.
++#latex_show_pagerefs = False
++
++# If true, show URL addresses after external links.
++#latex_show_urls = False
++
++# Documents to append as an appendix to all manuals.
++#latex_appendices = []
++
++# If false, no module index is generated.
++#latex_domain_indices = True
++
++
++# -- Options for manual page output ---------------------------------------
++
++# One entry per manual page. List of tuples
++# (source start file, name, description, authors, manual section).
++man_pages = [
++    (master_doc, 'sugartoolkitgtk3', u'Sugar Toolkit GTK3 Documentation',
++     [author], 1)
++]
++
++# If true, show URL addresses after external links.
++#man_show_urls = False
++
++
++# -- Options for Texinfo output -------------------------------------------
++
++# Grouping the document tree into Texinfo files. List of tuples
++# (source start file, target name, title, author,
++#  dir menu entry, description, category)
++texinfo_documents = [
++    (master_doc, 'SugarToolkitGTK3', u'Sugar Toolkit GTK3 Documentation',
++     author, 'SugarToolkitGTK3', 'One line description of project.',
++     'Miscellaneous'),
++]
++
++# Documents to append as an appendix to all manuals.
++#texinfo_appendices = []
++
++# If false, no module index is generated.
++#texinfo_domain_indices = True
++
++# How to display URL addresses: 'footnote', 'no', or 'inline'.
++#texinfo_show_urls = 'footnote'
++
++# If true, do not generate a @detailmenu in the "Top" node's menu.
++#texinfo_no_detailmenu = False
+diff --git b/doc/index.rst a/doc/index.rst
+new file mode 100644
+index 0000000..ba28b9f
+--- /dev/null
++++ a/doc/index.rst
+@@ -0,0 +1,33 @@
++Sugar Toolkit GTK3
++==================
++
++Sugar Toolkit GTK3, or `sugar3`, is a toolkit for writing Sugar
++activities in Python:
++
++* write a `setup.py` which calls :class:`~sugar3.activity.bundlebuilder`,
++* write an `activity/activity.info` file with metadata, see :class:`~sugar3.bundle`,
++* write a class derived from :class:`~sugar3.activity.activity.Activity`,
++* use the :class:`~sugar3.graphics` module classes to build a user interface.
++
++Optional modules include:
++
++* use the :class:`~sugar3.profile` module to fetch user profile information,
++* use the :class:`~sugar3.presence` module classes to implement sharing,
++* use the :class:`~sugar3.logger` module for debug logging,
++* use the :class:`~sugar3.network` module for downloading data,
++* use the :class:`~sugar3.speech` module for speech synthesis.
++
++Indices and tables
++==================
++
++* :ref:`Functions and classes <genindex>`
++* :ref:`Modules <modindex>`
++* :ref:`search`
++
++Table of Contents
++=================
++
++.. toctree::
++   :maxdepth: 5
++
++   sugar3
+diff --git b/doc/modules.rst a/doc/modules.rst
+new file mode 100644
+index 0000000..126de53
+--- /dev/null
++++ a/doc/modules.rst
+@@ -0,0 +1,7 @@
++src
++===
++
++.. toctree::
++   :maxdepth: 4
++
++   sugar3
+diff --git b/examples/alert.py a/examples/alert.py
+new file mode 100644
+index 0000000..f0425cb
+--- /dev/null
++++ a/examples/alert.py
+@@ -0,0 +1,33 @@
++from gi.repository import Gtk
++from sugar3.graphics.alert import TimeoutAlert
++from common import set_theme
++
++
++set_theme()
++w = Gtk.Window()
++w.connect("delete-event", Gtk.main_quit)
++box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
++w.add(box)
++
++# Create a TimeoutAlert Object
++alert = TimeoutAlert(5)
++alert.props.title = '<Alert Title>'
++alert.props.msg = '<Alert Message>'
++
++# Add Timeout Object to the box
++box.pack_start(alert, False, False, 0)
++
++
++# Called when an alert object throws a response event.
++def __alert_response_cb(alert, response_id):
++    if response_id is Gtk.ResponseType.OK:
++        print('Continue Button was clicked.')
++    elif response_id is Gtk.ResponseType.CANCEL:
++        print('Cancel Button was clicked.')
++    elif response_id == -1:
++        print('Timeout occurred')
++
++
++alert.connect('response', __alert_response_cb)
++w.show_all()
++Gtk.main()
+diff --git b/examples/animator.py a/examples/animator.py
+new file mode 100644
+index 0000000..c6ede6f
+--- /dev/null
++++ a/examples/animator.py
+@@ -0,0 +1,46 @@
++from gi.repository import Gtk
++
++from sugar3.graphics import animator
++from sugar3.graphics.icon import Icon
++from sugar3.graphics import style
++
++from common import set_theme
++set_theme()
++
++
++class _Animation(animator.Animation):
++
++    def __init__(self, icon, start_size, end_size):
++        animator.Animation.__init__(self, 0.0, 1.0)
++
++        self._icon = icon
++        self.start_size = start_size
++        self.end_size = end_size
++
++    def next_frame(self, current):
++        d = (self.end_size - self.start_size) * current
++        self._icon.props.pixel_size = int(self.start_size + d)
++
++
++def __animation_completed_cb(anim):
++    print('Animation completed')
++
++
++w = Gtk.Window()
++w.connect('delete-event', Gtk.main_quit)
++
++box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
++w.add(box)
++
++anim = animator.Animator(5)
++anim.connect('completed', __animation_completed_cb)
++
++my_icon = Icon(icon_name='go-next')
++box.pack_start(my_icon, False, False, 0)
++
++anim.add(_Animation(my_icon, style.STANDARD_ICON_SIZE, style.XLARGE_ICON_SIZE))
++anim.start()
++
++w.show_all()
++
++Gtk.main()
+diff --git b/examples/buttons.py a/examples/buttons.py
+new file mode 100644
+index 0000000..5c679c2
+--- /dev/null
++++ a/examples/buttons.py
+@@ -0,0 +1,64 @@
++from gi.repository import Gtk
++
++import common
++
++
++test = common.Test()
++test.show()
++
++box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
++test.pack_start(box, True, True, 0)
++box.show()
++
++# test Gtk.SpinButton:
++
++adj = Gtk.Adjustment(0, 0, 10, 1, 32, 0)
++spin = Gtk.SpinButton()
++spin.set_adjustment(adj)
++box.pack_start(spin, False, False, 1)
++spin.show()
++
++# test Gtk.RadioButton:
++
++radio_1 = Gtk.RadioButton.new_with_label_from_widget(None, 'Radio 1')
++box.pack_start(radio_1, False, False, 1)
++radio_1.show()
++radio_2 = Gtk.RadioButton.new_with_label_from_widget(radio_1, 'Radio 2')
++box.pack_start(radio_2, False, False, 1)
++radio_2.show()
++radio_3 = Gtk.RadioButton.new_with_label_from_widget(radio_1, 'Radio 3')
++box.pack_start(radio_3, False, False, 1)
++radio_3.show()
++
++# test Gtk.CheckButton:
++
++check_1 = Gtk.CheckButton('Check 1')
++box.pack_start(check_1, False, False, 1)
++check_1.show()
++
++check_2 = Gtk.CheckButton('Check 2')
++box.pack_start(check_2, False, False, 1)
++check_2.show()
++
++# test Gtk.Button:
++
++button = Gtk.Button('Button')
++box.pack_start(button, False, False, 1)
++button.show()
++
++# test Gtk.Button insensitive:
++
++insensitive_button = Gtk.Button('Insensitive Button')
++box.pack_start(insensitive_button, False, False, 1)
++insensitive_button.props.sensitive = False
++insensitive_button.show()
++
++# test Gtk.ToggleButton:
++
++toggle_button = Gtk.ToggleButton('ToggleButton')
++box.pack_start(toggle_button, False, False, 1)
++toggle_button.show()
++
++
++if __name__ == '__main__':
++    common.main(test)
+diff --git b/examples/cellrenderericon.py a/examples/cellrenderericon.py
+new file mode 100644
+index 0000000..e280204
+--- /dev/null
++++ a/examples/cellrenderericon.py
+@@ -0,0 +1,37 @@
++from gi.repository import Gtk
++
++from sugar3.graphics import style
++from sugar3.graphics.icon import CellRendererIcon
++
++import common
++
++
++test = common.Test()
++test.show()
++
++model = Gtk.ListStore(str)
++for icon in ['one', 'two', 'three']:
++    model.append([icon])
++
++treeview = Gtk.TreeView()
++treeview.set_model(model)
++test.pack_start(treeview, True, True, 0)
++treeview.show()
++
++col = Gtk.TreeViewColumn()
++treeview.append_column(col)
++
++cell_icon = CellRendererIcon()
++cell_icon.props.width = style.GRID_CELL_SIZE
++cell_icon.props.height = style.GRID_CELL_SIZE
++cell_icon.props.size = style.SMALL_ICON_SIZE
++cell_icon.props.icon_name = 'emblem-favorite'
++col.pack_start(cell_icon, expand=False)
++
++cell_text = Gtk.CellRendererText()
++col.pack_start(cell_text, expand=True)
++col.add_attribute(cell_text, 'text', 0)
++
++
++if __name__ == '__main__':
++    common.main(test)
+diff --git b/examples/colorbutton.py a/examples/colorbutton.py
+new file mode 100644
+index 0000000..09db068
+--- /dev/null
++++ a/examples/colorbutton.py
+@@ -0,0 +1,37 @@
++from gi.repository import Gtk
++
++from sugar3.graphics.toolbarbox import ToolbarBox
++from sugar3.graphics.colorbutton import ColorToolButton
++
++
++import common
++
++
++test = common.Test()
++test.show()
++
++box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
++test.pack_start(box, True, True, 0)
++box.show()
++
++toolbar_box = ToolbarBox()
++box.pack_start(toolbar_box, False, False, 0)
++toolbar_box.show()
++
++separator = Gtk.SeparatorToolItem()
++toolbar_box.toolbar.insert(separator, -1)
++separator.show()
++
++
++def color_changed_cb(button, pspec):
++    print(button.get_color())
++
++
++color_button = ColorToolButton()
++color_button.connect("notify::color", color_changed_cb)
++toolbar_box.toolbar.insert(color_button, -1)
++color_button.show()
++
++
++if __name__ == '__main__':
++    common.main(test)
+diff --git b/examples/combobox.py a/examples/combobox.py
+new file mode 100644
+index 0000000..6d1c1a0
+--- /dev/null
++++ a/examples/combobox.py
+@@ -0,0 +1,25 @@
++from gi.repository import Gtk
++
++from sugar3.graphics.combobox import ComboBox
++from common import set_theme
++set_theme()
++
++
++def __combo_changed_cb(combo):
++    print('Combo changed to %r' % combo.get_value())
++
++
++w = Gtk.Window()
++w.connect("delete-event", Gtk.main_quit)
++
++combo = ComboBox()
++combo.append_item(True, 'one')
++combo.append_item(2, 'two', 'go-next')
++combo.append_item('3', 'three')
++# This will make 'two' active (zero indexed)
++combo.set_active(1)
++combo.connect('changed', __combo_changed_cb)
++w.add(combo)
++
++w.show_all()
++Gtk.main()
+diff --git b/examples/common.py a/examples/common.py
+new file mode 100644
+index 0000000..906eb50
+--- /dev/null
++++ a/examples/common.py
+@@ -0,0 +1,77 @@
++# Copyright (C) 2007, Red Hat, Inc.
++#
++# This library is free software; you can redistribute it and/or
++# modify it under the terms of the GNU Lesser General Public
++# License as published by the Free Software Foundation; either
++# version 2 of the License, or (at your option) any later version.
++#
++# This library is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++# Lesser General Public License for more details.
++#
++# You should have received a copy of the GNU Lesser General Public
++# License along with this library; if not, write to the
++# Free Software Foundation, Inc., 59 Temple Place - Suite 330,
++# Boston, MA 02111-1307, USA.
++
++from gi.repository import Gtk
++from gi.repository import GObject
++
++from sugar3.graphics.toolbutton import ToolButton
++
++import os
++
++
++def set_theme():
++    settings = Gtk.Settings.get_default()
++    sugar_theme = 'sugar-72'
++    if 'SUGAR_SCALING' in os.environ:
++        if os.environ['SUGAR_SCALING'] == '100':
++            sugar_theme = 'sugar-100'
++    settings.set_property('gtk-theme-name', sugar_theme)
++    settings.set_property('gtk-icon-theme-name', 'sugar')
++
++
++class Test(Gtk.Box):
++
++    def __init__(self):
++        GObject.GObject.__init__(self, orientation=Gtk.Orientation.VERTICAL)
++
++        set_theme()
++
++
++class TestPalette(Test):
++
++    def __init__(self):
++        Test.__init__(self)
++
++        toolbar = Gtk.Toolbar()
++
++        self._invoker = ToolButton('go-previous')
++        toolbar.insert(self._invoker, -1)
++        self._invoker.show()
++
++        self.pack_start(toolbar, False, False, 0)
++        toolbar.show()
++
++    def set_palette(self, palette):
++        self._invoker.set_palette(palette)
++
++
++class TestRunner(object):
++
++    def run(self, test):
++        window = Gtk.Window()
++        window.connect('delete-event', Gtk.main_quit)
++        window.add(test)
++        test.show()
++
++        window.show()
++
++
++def main(test):
++    runner = TestRunner()
++    runner.run(test)
++
++    Gtk.main()
+diff --git b/examples/customdestroy.py a/examples/customdestroy.py
+new file mode 100644
+index 0000000..fc33eb9
+--- /dev/null
++++ a/examples/customdestroy.py
+@@ -0,0 +1,47 @@
++from gi.repository import Gtk
++
++"""
++Since GTK+3 Gtk.CellRenderer doesn't have a destroy signal anymore.
++We can do the cleanup in the python destructor method instead.
++
++"""
++
++
++class MyCellRenderer(Gtk.CellRenderer):
++
++    def __init__(self):
++        Gtk.CellRenderer.__init__(self)
++
++    def __del__(self):
++        print("cellrenderer destroy")
++
++    def do_render(self, cairo_t, widget, background_area, cell_area, flags):
++        pass
++
++
++def window_destroy_cb(*kwargs):
++    print("window destroy")
++    Gtk.main_quit()
++
++
++window = Gtk.Window(Gtk.WindowType.TOPLEVEL)
++window.connect("destroy", window_destroy_cb)
++window.show()
++
++
++def treeview_destroy_cb(*kwargs):
++    print("treeview destroy")
++
++
++treeview = Gtk.TreeView()
++treeview.connect("destroy", treeview_destroy_cb)
++window.add(treeview)
++treeview.show()
++
++col = Gtk.TreeViewColumn()
++treeview.append_column(col)
++
++cel = MyCellRenderer()
++col.pack_start(cel, expand=True)
++
++Gtk.main()
+diff --git b/examples/gtktreesensitive.py a/examples/gtktreesensitive.py
+new file mode 100644
+index 0000000..58fea99
+--- /dev/null
++++ a/examples/gtktreesensitive.py
+@@ -0,0 +1,48 @@
++#!/usr/bin/python3
++from gi.repository import Gtk
++
++import common
++test = common.Test()
++test.show()
++
++
++class MyBox(Gtk.Box):
++
++    def __init__(self):
++        Gtk.Box.__init__(self, orientation=Gtk.Orientation.VERTICAL)
++
++        scrolled = Gtk.ScrolledWindow()
++        scrolled.set_policy(Gtk.PolicyType.AUTOMATIC,
++                            Gtk.PolicyType.AUTOMATIC)
++
++        store = Gtk.ListStore(str, str)
++        for i in range(5):
++            store.append([str(i), 'Item %s' % i])
++
++        treeview = Gtk.TreeView(store)
++        renderer_no_sens = Gtk.CellRendererText()
++        # set 'sensitive' property
++        renderer_no_sens.set_property('sensitive', False)
++
++        renderer = Gtk.CellRendererText()
++
++        column = Gtk.TreeViewColumn('\'sensitive\' False',
++                                    renderer_no_sens, text=0)
++        treeview.append_column(column)
++
++        column = Gtk.TreeViewColumn('\'sensitive\' True',
++                                    renderer, text=1)
++        treeview.append_column(column)
++
++        scrolled.add(treeview)
++        self.pack_start(scrolled, True, True, 0)
++
++        self.show_all()
++
++
++box = MyBox()
++test.pack_start(box, True, True, 0)
++box.show()
++
++if __name__ == '__main__':
++    common.main(test)
+diff --git b/examples/iconbadges.py a/examples/iconbadges.py
+new file mode 100644
+index 0000000..545f0d0
+--- /dev/null
++++ a/examples/iconbadges.py
+@@ -0,0 +1,42 @@
++from gi.repository import Gtk
++
++from sugar3.graphics.icon import EventIcon
++from sugar3.graphics.icon import Icon
++from sugar3.graphics import style
++from sugar3.graphics.xocolor import XoColor
++from sugar3.graphics.palette import Palette
++
++import common
++
++
++test = common.Test()
++test.show()
++
++box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
++test.pack_start(box, True, True, 0)
++box.show()
++
++# An XO Icon, normal size, setting the color via the XoColor object
++icon = Icon(icon_name='computer-xo',
++            pixel_size=style.STANDARD_ICON_SIZE,
++            xo_color=XoColor('#00BEFF,#FF7800'))
++box.pack_start(icon, False, False, 0)
++icon.show()
++
++# You can mix constructor keyword argument and setting
++# properties after creation
++icon = EventIcon(icon_name='network-wireless-080',
++                 pixel_size=style.STANDARD_ICON_SIZE)
++# Badges are little icons displayed
++icon.props.badge_name = 'emblem-favorite'
++# Instead of using the XoColor, you can use any SVG color specifier:
++icon.props.fill_color = 'rgb(230, 0, 10)'
++icon.props.stroke_color = '#78E600'
++# Unlike normal icons, EventIcons support palettes:
++icon.props.palette = Palette('Hello World')
++box.pack_start(icon, False, False, 0)
++icon.show()
++
++
++if __name__ == '__main__':
++    common.main(test)
+diff --git b/examples/iconcache.py a/examples/iconcache.py
+new file mode 100644
+index 0000000..a766a37
+--- /dev/null
++++ a/examples/iconcache.py
+@@ -0,0 +1,72 @@
++# Copyright (C) 2007, Red Hat, Inc.
++#
++# This library is free software; you can redistribute it and/or
++# modify it under the terms of the GNU Lesser General Public
++# License as published by the Free Software Foundation; either
++# version 2 of the License, or (at your option) any later version.
++#
++# This library is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++# Lesser General Public License for more details.
++#
++# You should have received a copy of the GNU Lesser General Public
++# License along with this library; if not, write to the
++# Free Software Foundation, Inc., 59 Temple Place - Suite 330,
++# Boston, MA 02111-1307, USA.
++
++"""
++Test the sugar3.graphics.icon.* cache.
++"""
++
++from gi.repository import Gtk
++
++from sugar3.graphics.icon import Icon
++from sugar3.graphics.xocolor import XoColor
++from sugar3.graphics import style
++
++import common
++
++test = common.Test()
++
++data = [
++    ['battery-000', '#FF8F00,#FF2B34'],
++    ['battery-010', '#D1A3FF,#00A0FF'],
++    ['battery-020', '#FF8F00,#FF2B34'],
++    ['battery-030', '#00A0FF,#D1A3FF'],
++    ['battery-040', '#AC32FF,#FF2B34'],
++    ['battery-050', '#D1A3FF,#00A0FF'],
++    ['battery-060', '#AC32FF,#FF2B34'],
++    ['battery-070', '#00A0FF,#D1A3FF'],
++    ['battery-080', '#FF8F00,#FF2B34'],
++    ['battery-090', '#D1A3FF,#00A0FF'],
++    ['battery-100', '#AC32FF,#FF2B34']]
++
++
++def _button_activated_cb(button):
++    import random
++
++    global data
++    random.shuffle(data)
++
++    for i in range(0, len(test.get_children()) - 1):
++        test.get_children()[i].props.icon_name = data[i][0]
++        test.get_children()[i].props.xo_color = XoColor(data[i][1])
++
++
++for d in data:
++    icon = Icon(icon_name=d[0],
++                pixel_size=style.STANDARD_ICON_SIZE,
++                xo_color=XoColor(d[1]))
++    test.pack_start(icon, True, True, 0)
++    icon.show()
++
++button = Gtk.Button('mec mac')
++test.pack_start(button, True, True, 0)
++button.connect('activate', _button_activated_cb)
++button.show()
++
++test.show()
++
++if __name__ == '__main__':
++    common.main(test)
+diff --git b/examples/iconentry.py a/examples/iconentry.py
+new file mode 100644
+index 0000000..e35c601
+--- /dev/null
++++ a/examples/iconentry.py
+@@ -0,0 +1,32 @@
++from gi.repository import Gtk
++
++from sugar3.graphics import iconentry
++from common import set_theme
++set_theme()
++
++
++def __go_next_cb(entry, icon_pos, data=None):
++    print('Go next')
++
++
++def __entry_activate_cb(widget, data=None):
++    print('Entry activate')
++
++
++w = Gtk.Window()
++w.connect("delete-event", Gtk.main_quit)
++
++box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
++w.add(box)
++
++entry = iconentry.IconEntry()
++entry.set_icon_from_name(iconentry.ICON_ENTRY_SECONDARY,
++                         'go-next')
++entry.connect('icon-press', __go_next_cb)
++entry.connect('activate', __entry_activate_cb)
++entry.set_progress_fraction(0.3)
++box.pack_start(entry, False, False, 0)
++
++w.show_all()
++
++Gtk.main()
+diff --git b/examples/iconwidget.py a/examples/iconwidget.py
+new file mode 100644
+index 0000000..2854b4c
+--- /dev/null
++++ a/examples/iconwidget.py
+@@ -0,0 +1,88 @@
++# Copyright (C) 2007, Red Hat, Inc.
++#
++# This library is free software; you can redistribute it and/or
++# modify it under the terms of the GNU Lesser General Public
++# License as published by the Free Software Foundation; either
++# version 2 of the License, or (at your option) any later version.
++#
++# This library is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++# Lesser General Public License for more details.
++#
++# You should have received a copy of the GNU Lesser General Public
++# License along with this library; if not, write to the
++# Free Software Foundation, Inc., 59 Temple Place - Suite 330,
++# Boston, MA 02111-1307, USA.
++
++"""
++Test the sugar3.graphics.icon.Icon widget.
++"""
++
++from gi.repository import Gtk
++
++from sugar3.graphics.icon import Icon
++from sugar3.graphics.xocolor import XoColor
++from sugar3.graphics import style
++
++import common
++
++test = common.Test()
++
++box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
++test.pack_start(box, True, True, 0)
++sensitive_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
++insensitive_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
++
++box.pack_start(sensitive_box, True, True, 0)
++box.pack_start(insensitive_box, True, True, 0)
++box.show_all()
++
++
++def create_icon_widgets(box, sensitive=True):
++    icon = Icon(icon_name='go-previous')
++    icon.props.pixel_size = style.STANDARD_ICON_SIZE
++    box.pack_start(icon, True, True, 0)
++    icon.set_sensitive(sensitive)
++    icon.show()
++
++    icon = Icon(icon_name='computer-xo',
++                pixel_size=style.STANDARD_ICON_SIZE,
++                xo_color=XoColor())
++    box.pack_start(icon, True, True, 0)
++    icon.set_sensitive(sensitive)
++    icon.show()
++
++    icon = Icon(icon_name='battery-000',
++                pixel_size=style.STANDARD_ICON_SIZE,
++                badge_name='emblem-busy')
++    box.pack_start(icon, True, True, 0)
++    icon.set_sensitive(sensitive)
++    icon.show()
++
++    icon = Icon(icon_name='gtk-new',
++                pixel_size=style.STANDARD_ICON_SIZE,
++                badge_name='gtk-cancel')
++    box.pack_start(icon, True, True, 0)
++    icon.set_sensitive(sensitive)
++    icon.show()
++
++
++create_icon_widgets(sensitive_box, True)
++create_icon_widgets(insensitive_box, False)
++
++test.show()
++
++# This can be used to test for leaks by setting the LRU cache size
++# in icon.py to 1.
++# def idle_cb():
++#     import gc
++#     gc.collect()
++#     test.queue_draw()
++#     return True
++#
++# from gi.repository import GLib
++# GLib.idle_add(idle_cb)
++
++if __name__ == '__main__':
++    common.main(test)
+diff --git b/examples/notebook.py a/examples/notebook.py
+new file mode 100644
+index 0000000..7462e0d
+--- /dev/null
++++ a/examples/notebook.py
+@@ -0,0 +1,32 @@
++from gi.repository import Gtk
++
++from sugar3.graphics.notebook import Notebook
++from common import set_theme
++set_theme()
++
++
++w = Gtk.Window()
++w.connect("delete-event", Gtk.main_quit)
++
++box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
++w.add(box)
++
++nb = Notebook(can_close_tabs=True)
++box.pack_start(nb, False, False, 0)
++
++for i in range(5):
++    bufferf = "Prepend Frame %d" % (i + 1)
++    bufferl = "PPage %d" % (i + 1)
++
++    frame = Gtk.Frame()
++    frame.set_border_width(10)
++    frame.set_size_request(100, 75)
++    label = Gtk.Label(bufferf)
++    frame.add(label)
++    label.show()
++    nb.add_page(bufferl, frame)
++    frame.show()
++
++w.show_all()
++
++Gtk.main()
+diff --git b/examples/progress.py a/examples/progress.py
+new file mode 100644
+index 0000000..62a9313
+--- /dev/null
++++ a/examples/progress.py
+@@ -0,0 +1,20 @@
++from gi.repository import Gtk
++
++import common
++
++
++test = common.Test()
++test.show()
++
++box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
++test.pack_start(box, True, False, 10)
++box.show()
++
++bar = Gtk.ProgressBar()
++bar.set_fraction(0.5)
++box.pack_start(bar, True, True, 10)
++bar.show()
++
++
++if __name__ == '__main__':
++    common.main(test)
+diff --git b/examples/progressicon.py a/examples/progressicon.py
+new file mode 100644
+index 0000000..4bf3d99
+--- /dev/null
++++ a/examples/progressicon.py
+@@ -0,0 +1,58 @@
++from gi.repository import Gtk
++from gi.repository import GLib
++
++from sugar3.graphics.toolbarbox import ToolbarBox
++from sugar3.graphics.progressicon import ProgressIcon
++from sugar3.graphics import style
++
++import common
++
++
++test = common.Test()
++
++box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
++test.pack_start(box, True, True, 0)
++
++toolbar_box = ToolbarBox()
++box.pack_start(toolbar_box, False, False, 0)
++
++separator = Gtk.SeparatorToolItem()
++toolbar_box.toolbar.insert(separator, -1)
++
++icon = ProgressIcon(
++    pixel_size=style.LARGE_ICON_SIZE,
++    icon_name='computer-xo',
++    stroke_color=style.COLOR_BUTTON_GREY.get_svg(),
++    fill_color=style.COLOR_WHITE.get_svg())
++test.pack_start(icon, True, True, 0)
++icon.show()
++
++icon2 = ProgressIcon(
++    pixel_size=style.LARGE_ICON_SIZE,
++    icon_name='computer-xo',
++    stroke_color=style.COLOR_BUTTON_GREY.get_svg(),
++    fill_color=style.COLOR_WHITE.get_svg(),
++    direction='horizontal')
++test.pack_start(icon2, True, True, 0)
++icon2.show()
++
++test.show_all()
++
++progress = 0
++
++
++def timeout_cb():
++    global progress
++    progress += 0.05
++    icon.update(progress)
++    icon2.update(progress)
++    if progress >= 1:
++        return False
++    return True
++
++
++GLib.timeout_add(50, timeout_cb)
++
++
++if __name__ == '__main__':
++    common.main(test)
+diff --git b/examples/radiopalette.py a/examples/radiopalette.py
+new file mode 100644
+index 0000000..8537144
+--- /dev/null
++++ a/examples/radiopalette.py
+@@ -0,0 +1,78 @@
++from gi.repository import Gtk
++
++from sugar3.graphics.radiopalette import RadioPalette, RadioMenuButton, \
++    RadioToolsButton
++from sugar3.graphics.radiotoolbutton import RadioToolButton
++from common import set_theme
++set_theme()
++
++
++window = Gtk.Window()
++
++box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
++window.add(box)
++
++toolbar = Gtk.Toolbar()
++box.pack_start(toolbar, False, False, 0)
++
++text_view = Gtk.TextView()
++box.pack_start(text_view, True, True, 0)
++
++
++def echo(button, label):
++    if not button.props.active:
++        return
++    text_view.props.buffer.props.text += '\n' + label
++
++
++# RadioMenuButton
++
++palette = RadioPalette()
++
++group = RadioToolButton(
++    icon_name='document-open')
++group.connect('clicked', lambda button: echo(button, 'document-open'))
++palette.append(group, 'menu.document-open')
++
++button = RadioToolButton(
++    icon_name='document-save',
++    group=group)
++button.connect('clicked', lambda button: echo(button, 'document-save'))
++palette.append(button, 'menu.document-save')
++
++button = RadioToolButton(
++    icon_name='document-send',
++    group=group)
++button.connect('clicked', lambda button: echo(button, 'document-send'))
++palette.append(button, 'menu.document-send')
++
++button = RadioMenuButton(palette=palette)
++toolbar.insert(button, -1)
++
++# RadioToolsButton
++
++palette = RadioPalette()
++
++group = RadioToolButton(
++    icon_name='document-open')
++group.connect('clicked', lambda button: echo(button, 'document-open'))
++palette.append(group, 'menu.document-open')
++
++button = RadioToolButton(
++    icon_name='document-save',
++    group=group)
++button.connect('clicked', lambda button: echo(button, 'document-save'))
++palette.append(button, 'menu.document-save')
++
++button = RadioToolButton(
++    icon_name='document-send',
++    group=group)
++button.connect('clicked', lambda button: echo(button, 'document-send'))
++palette.append(button, 'menu.document-send')
++
++button = RadioToolsButton(palette=palette)
++toolbar.insert(button, -1)
++
++window.connect('delete-event', Gtk.main_quit)
++window.show_all()
++Gtk.main()
+diff --git b/examples/radiotoolbutton.py a/examples/radiotoolbutton.py
+new file mode 100644
+index 0000000..5d0b547
+--- /dev/null
++++ a/examples/radiotoolbutton.py
+@@ -0,0 +1,48 @@
++from gi.repository import Gtk
++from sugar3.graphics.radiotoolbutton import RadioToolButton
++from sugar3.graphics.radiopalette import RadioPalette, RadioMenuButton
++from sugar3.graphics.xocolor import XoColor
++
++
++from common import set_theme
++set_theme()
++
++window = Gtk.Window()
++window.show()
++window.connect("delete-event", Gtk.main_quit)
++
++box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
++window.add(box)
++box.show()
++
++
++def echo(button, label):
++    if not button.props.active:
++        return
++    print(label)
++
++
++palette = RadioPalette()
++# Adding 3 RadioToolButtons to a palette
++
++button1 = RadioToolButton(icon_name='document-save', accelerator="<ctrl>S",
++                          xo_color=XoColor("white"))
++button1.connect('toggled', lambda button: echo(button, 'document-save'))
++palette.append(button1, 'menu.document-save')
++
++button2 = RadioToolButton(icon_name='document-open', accelerator="<ctrl>O",
++                          xo_color=XoColor("white"), group=button1)
++button2.connect('toggled', lambda button: echo(button, 'document-open'))
++palette.append(button2, 'menu.document-open')
++
++button3 = RadioToolButton(icon_name='document-send', accelerator="<ctrl>F",
++                          xo_color=XoColor("white"), group=button1)
++button3.connect('toggled', lambda button: echo(button, 'document-send'))
++palette.append(button3, 'menu.document-send')
++
++button = RadioMenuButton(palette=palette)
++box.pack_start(button, False, False, 1)
++button.show()
++
++if __name__ == '__main__':
++    Gtk.main()
+diff --git b/examples/scrollingdetector.py a/examples/scrollingdetector.py
+new file mode 100644
+index 0000000..df0c70a
+--- /dev/null
++++ a/examples/scrollingdetector.py
+@@ -0,0 +1,73 @@
++import os
++import time
++
++from gi.repository import Gtk
++
++from sugar3.graphics import style
++from sugar3.graphics.icon import CellRendererIcon
++from sugar3.graphics.xocolor import XoColor
++from sugar3.graphics.scrollingdetector import ScrollingDetector
++from sugar3.graphics.palettewindow import TreeViewInvoker
++import common
++
++
++def _scroll_start_cb(event, treeview, invoker):
++    print("Scroll starts")
++    invoker.detach()
++
++
++def _scroll_end_cb(event, treeview, invoker):
++    print("Scroll ends")
++    invoker.attach_treeview(treeview)
++
++
++test = common.Test()
++test.show()
++
++model = Gtk.ListStore(str)
++
++data_dir = os.getenv('GTK_DATA_PREFIX', '/usr/')
++
++iconlist = os.listdir(os.path.join(data_dir,
++                                   'share/icons/sugar/scalable/actions/'))
++print("Displaying %s icons" % len(iconlist))
++for icon in iconlist:
++    icon = os.path.basename(icon)
++    icon = icon[:icon.find('.')]
++    model.append([icon])
++
++scrolled = Gtk.ScrolledWindow()
++scrolled.set_size_request(800, 800)
++treeview = Gtk.TreeView()
++
++treeview.set_model(model)
++scrolled.add(treeview)
++test.pack_start(scrolled, True, True, 0)
++test.show_all()
++
++col = Gtk.TreeViewColumn()
++treeview.append_column(col)
++
++xo_color = XoColor('#FF0000,#00FF00')
++cell_icon = CellRendererIcon()
++cell_icon.props.width = style.GRID_CELL_SIZE
++cell_icon.props.height = style.GRID_CELL_SIZE
++cell_icon.props.size = style.STANDARD_ICON_SIZE
++cell_icon.props.xo_color = xo_color
++
++col.pack_start(cell_icon, expand=False)
++col.add_attribute(cell_icon, 'icon-name', 0)
++cell_text = Gtk.CellRendererText()
++col.pack_start(cell_text, expand=True)
++col.add_attribute(cell_text, 'text', 0)
++
++invoker = TreeViewInvoker()
++invoker.attach_treeview(treeview)
++
++detector = ScrollingDetector(scrolled)
++detector.connect('scroll-start', _scroll_start_cb, treeview, invoker)
++detector.connect('scroll-end', _scroll_end_cb, treeview, invoker)
++
++if __name__ == '__main__':
++    time_ini = time.time()
++    common.main(test)
+diff --git b/examples/tabs.py a/examples/tabs.py
+new file mode 100644
+index 0000000..7a8b52f
+--- /dev/null
++++ a/examples/tabs.py
+@@ -0,0 +1,46 @@
++#!/usr/bin/python3
++from gi.repository import Gtk
++
++from sugar3.graphics.icon import Icon
++
++import common
++test = common.Test()
++test.show()
++
++box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
++test.pack_start(box, True, True, 0)
++box.show()
++
++# notebook without button
++
++notebook = Gtk.Notebook()
++box.pack_start(notebook, True, True, 0)
++notebook.show()
++
++for i in range(3):
++    hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
++    notebook.append_page(hbox, Gtk.Label('Page %d' % (i + 1)))
++    hbox.show()
++
++# notebook with buttons
++
++notebook = Gtk.Notebook()
++box.pack_start(notebook, True, True, 0)
++notebook.show()
++
++add_icon = Icon(icon_name='add')
++button = Gtk.Button()
++button.props.focus_on_click = False
++button.add(add_icon)
++add_icon.show()
++
++notebook.set_action_widget(button, Gtk.PackType.END)
++button.show()
++
++for i in range(3):
++    hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
++    notebook.append_page(hbox, Gtk.Label('Page %d' % (i + 1)))
++    hbox.show()
++
++if __name__ == '__main__':
++    common.main(test)
+diff --git b/examples/ticket2855.py a/examples/ticket2855.py
+new file mode 100644
+index 0000000..59a2917
+--- /dev/null
++++ a/examples/ticket2855.py
+@@ -0,0 +1,60 @@
++# Copyright (C) 2007, Red Hat, Inc.
++#
++# This library is free software; you can redistribute it and/or
++# modify it under the terms of the GNU Lesser General Public
++# License as published by the Free Software Foundation; either
++# version 2 of the License, or (at your option) any later version.
++#
++# This library is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++# Lesser General Public License for more details.
++#
++# You should have received a copy of the GNU Lesser General Public
++# License along with this library; if not, write to the
++# Free Software Foundation, Inc., 59 Temple Place - Suite 330,
++# Boston, MA 02111-1307, USA.
++
++"""
++Test the style of toggle and radio buttons inside a palette. The buttons
++contains only an icon and should be rendered similarly to the toolbar
++controls. Ticket #2855.
++"""
++
++from gi.repository import Gtk
++
++from sugar3.graphics.palette import Palette
++from sugar3.graphics.icon import Icon
++from sugar3.graphics import style
++
++import common
++
++test = common.TestPalette()
++
++palette = Palette('Test radio and toggle')
++test.set_palette(palette)
++
++box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
++
++toggle = Gtk.ToggleButton()
++
++icon = Icon(icon_name='go-previous', pixel_size=style.STANDARD_ICON_SIZE)
++toggle.set_image(icon)
++
++box.pack_start(toggle, False, False, 0)
++toggle.show()
++
++radio = Gtk.RadioButton()
++
++icon = Icon(icon_name='go-next', pixel_size=style.STANDARD_ICON_SIZE)
++radio.set_image(icon)
++
++radio.set_mode(False)
++box.pack_start(radio, False, False, 0)
++radio.show()
++
++palette.set_content(box)
++box.show()
++
++if __name__ == '__main__':
++    common.main(test)
+diff --git b/bin/sugar-activity-web a/examples/ticket2999.py
+similarity index 66%
+copy from bin/sugar-activity-web
+copy to examples/ticket2999.py
+index 8fd7a59..0d42297 100644
+--- b/bin/sugar-activity-web
++++ a/examples/ticket2999.py
+@@ -1,6 +1,4 @@
+-#!/bin/sh
+-
+-# Copyright (C) 2013 Daniel Narvaez
++# Copyright (C) 2007, One Laptop Per Child
+ #
+ # This library is free software; you can redistribute it and/or
+ # modify it under the terms of the GNU Lesser General Public
+@@ -17,8 +15,21 @@
+ # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ # Boston, MA 02111-1307, USA.
+ 
+-if [ "$SUGAR_USE_WEBKIT1" = "yes" ]; then
+-    exec sugar-activity3 sugar3.activity.webkit1.WebActivity $@
+-else
+-    exec sugar-activity3 sugar3.activity.webactivity.WebActivity $@
+-fi
++"""
++Spec in ticket #2999.
++"""
++
++from gi.repository import Gtk
++
++import common
++
++test = common.Test()
++test.set_border_width(60)
++
++text_view = Gtk.TextView()
++text_view.props.buffer.props.text = 'Blah blah blah, blah blah blah.'
++test.pack_start(text_view, True, True, 0)
++text_view.show()
++
++if __name__ == '__main__':
++    common.main(test)
+diff --git b/bin/sugar-activity-web a/examples/ticket3000.py
+similarity index 56%
+copy from bin/sugar-activity-web
+copy to examples/ticket3000.py
+index 8fd7a59..488985e 100644
+--- b/bin/sugar-activity-web
++++ a/examples/ticket3000.py
+@@ -1,6 +1,4 @@
+-#!/bin/sh
+-
+-# Copyright (C) 2013 Daniel Narvaez
++# Copyright (C) 2007, One Laptop Per Child
+ #
+ # This library is free software; you can redistribute it and/or
+ # modify it under the terms of the GNU Lesser General Public
+@@ -17,8 +15,34 @@
+ # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ # Boston, MA 02111-1307, USA.
+ 
+-if [ "$SUGAR_USE_WEBKIT1" = "yes" ]; then
+-    exec sugar-activity3 sugar3.activity.webkit1.WebActivity $@
+-else
+-    exec sugar-activity3 sugar3.activity.webactivity.WebActivity $@
+-fi
++"""
++Spec in ticket #3000.
++"""
++
++from gi.repository import Gtk
++
++from sugar3.graphics.toolbutton import ToolButton
++
++import common
++
++test = common.Test()
++
++toolbar = Gtk.Toolbar()
++test.pack_start(toolbar, False, False, 0)
++toolbar.show()
++
++button = ToolButton('go-previous')
++toolbar.insert(button, -1)
++button.show()
++
++separator = Gtk.SeparatorToolItem()
++toolbar.add(separator)
++separator.show()
++
++button = ToolButton('go-next')
++toolbar.insert(button, -1)
++button.show()
++
++
++if __name__ == '__main__':
++    common.main(test)
+diff --git b/examples/toggletoolbutton.py a/examples/toggletoolbutton.py
+new file mode 100644
+index 0000000..bc37c17
+--- /dev/null
++++ a/examples/toggletoolbutton.py
+@@ -0,0 +1,33 @@
++from gi.repository import Gtk
++
++from sugar3.graphics.toolbarbox import ToolbarBox
++from sugar3.graphics.toggletoolbutton import ToggleToolButton
++
++import common
++
++
++test = common.Test()
++test.show()
++
++box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
++test.pack_start(box, True, True, 0)
++box.show()
++
++toolbar_box = ToolbarBox()
++box.pack_start(toolbar_box, False, False, 0)
++toolbar_box.show()
++
++favorite_button = ToggleToolButton('emblem-favorite')
++favorite_button.set_tooltip('Favorite')
++toolbar_box.toolbar.insert(favorite_button, -1)
++favorite_button.show()
++
++favorite_button2 = ToggleToolButton('emblem-favorite')
++favorite_button2.set_tooltip('Favorite')
++toolbar_box.toolbar.insert(favorite_button2, -1)
++favorite_button2.set_active(True)
++favorite_button2.show()
++
++
++if __name__ == '__main__':
++    common.main(test)
+diff --git b/examples/toolbar.py a/examples/toolbar.py
+new file mode 100644
+index 0000000..dc3cb41
+--- /dev/null
++++ a/examples/toolbar.py
+@@ -0,0 +1,56 @@
++from gi.repository import Gtk
++
++from sugar3.graphics.toolbutton import ToolButton
++from sugar3.graphics.toolbarbox import ToolbarBox, ToolbarButton
++from common import set_theme
++set_theme()
++
++
++window = Gtk.Window()
++
++box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
++window.add(box)
++
++toolbar = ToolbarBox()
++box.pack_start(toolbar, False, False, 0)
++
++tollbarbutton_1 = ToolbarButton(
++    page=Gtk.Button('sub-widget #1'),
++    icon_name='computer-xo')
++toolbar.toolbar.insert(tollbarbutton_1, -1)
++
++tollbarbutton_2 = ToolbarButton(
++    page=Gtk.Button('sub-widget #2'),
++    icon_name='button_cancel',
++    tooltip='with custom palette instead of sub-widget')
++toolbar.toolbar.insert(tollbarbutton_2, -1)
++
++toolbar.toolbar.insert(Gtk.SeparatorToolItem(), -1)
++
++
++def del_cb(widget):
++    toolbar.toolbar.remove(tollbarbutton_3)
++
++
++del_b = Gtk.Button('delete sub-widget #3')
++del_b.connect('clicked', del_cb)
++tollbarbutton_3 = ToolbarButton(
++    page=del_b,
++    icon_name='activity-journal')
++toolbar.toolbar.insert(tollbarbutton_3, -1)
++
++subbar = Gtk.Toolbar()
++subbutton = ToolButton(
++    icon_name='document-send',
++    tooltip='document-send')
++subbar.insert(subbutton, -1)
++subbar.show_all()
++
++tollbarbutton_4 = ToolbarButton(
++    page=subbar,
++    icon_name='document-save')
++toolbar.toolbar.insert(tollbarbutton_4, -1)
++
++window.connect('delete-event', Gtk.main_quit)
++window.show_all()
++Gtk.main()
+diff --git b/examples/toolbarpalettes.py a/examples/toolbarpalettes.py
+new file mode 100644
+index 0000000..5d9ee9a
+--- /dev/null
++++ a/examples/toolbarpalettes.py
+@@ -0,0 +1,65 @@
++# Copyright (C) 2007, Red Hat, Inc.
++#
++# This library is free software; you can redistribute it and/or
++# modify it under the terms of the GNU Lesser General Public
++# License as published by the Free Software Foundation; either
++# version 2 of the License, or (at your option) any later version.
++#
++# This library is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++# Lesser General Public License for more details.
++#
++# You should have received a copy of the GNU Lesser General Public
++# License along with this library; if not, write to the
++# Free Software Foundation, Inc., 59 Temple Place - Suite 330,
++# Boston, MA 02111-1307, USA.
++
++"""
++Test palette positioning for toolbar and tray.
++"""
++
++from gi.repository import Gtk
++
++from sugar3.graphics.tray import HTray, TrayButton
++from sugar3.graphics.toolbutton import ToolButton
++
++import common
++
++test = common.Test()
++
++box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
++
++theme_icons = Gtk.IconTheme.get_default().list_icons()
++
++toolbar = Gtk.Toolbar()
++box.pack_start(toolbar, False, False, 0)
++toolbar.show()
++
++for i in range(0, 5):
++    button = ToolButton(icon_name=theme_icons[i])
++    button.set_tooltip('Icon %d' % i)
++    toolbar.insert(button, -1)
++    button.show()
++
++content = Gtk.Label()
++box.pack_start(content, True, True, 0)
++content.show()
++
++tray = HTray()
++box.pack_start(tray, False, False, 0)
++tray.show()
++
++for i in range(0, 30):
++    button = TrayButton(icon_name=theme_icons[i])
++    button.set_tooltip('Icon %d' % i)
++    tray.add_item(button)
++    button.show()
++
++test.pack_start(box, True, True, 0)
++box.show()
++
++test.show()
++
++if __name__ == '__main__':
++    common.main(test)
+diff --git b/examples/toolbutton.py a/examples/toolbutton.py
+new file mode 100644
+index 0000000..c4a2649
+--- /dev/null
++++ a/examples/toolbutton.py
+@@ -0,0 +1,36 @@
++from gi.repository import Gtk
++
++from sugar3.graphics.toolbarbox import ToolbarBox
++from sugar3.graphics.toolbutton import ToolButton
++
++import common
++
++
++test = common.Test()
++
++box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
++test.pack_start(box, True, True, 0)
++
++toolbar_box = ToolbarBox()
++box.pack_start(toolbar_box, False, False, 0)
++
++separator = Gtk.SeparatorToolItem()
++toolbar_box.toolbar.insert(separator, -1)
++
++
++def __clicked_cb(button):
++    n = int(button.get_tooltip())
++    button.set_tooltip(str(n + 1))
++    print("tool button click count %d" % n)
++
++
++tool_button = ToolButton(icon_name='view-radial', tooltip='0')
++tool_button.connect('clicked', __clicked_cb)
++tool_button.set_hide_tooltip_on_click(False)
++tool_button.set_accelerator('<Space>')
++toolbar_box.toolbar.insert(tool_button, -1)
++
++test.show_all()
++
++if __name__ == '__main__':
++    common.main(test)
+diff --git b/examples/toolbuttons.py a/examples/toolbuttons.py
+new file mode 100644
+index 0000000..75e9e49
+--- /dev/null
++++ a/examples/toolbuttons.py
+@@ -0,0 +1,46 @@
++from gi.repository import Gtk
++
++from sugar3.graphics.toolbarbox import ToolbarBox
++from sugar3.graphics.colorbutton import ColorToolButton
++from sugar3.graphics.radiotoolbutton import RadioToolButton
++from sugar3.graphics.toggletoolbutton import ToggleToolButton
++
++import common
++
++
++test = common.Test()
++test.show()
++
++box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
++test.pack_start(box, True, True, 0)
++box.show()
++
++toolbar_box = ToolbarBox()
++box.pack_start(toolbar_box, False, False, 0)
++toolbar_box.show()
++
++radial_button = RadioToolButton(icon_name='view-radial')
++toolbar_box.toolbar.insert(radial_button, -1)
++radial_button.show()
++
++list_button = RadioToolButton(icon_name='view-list')
++list_button.props.group = radial_button
++toolbar_box.toolbar.insert(list_button, -1)
++list_button.show()
++
++separator = Gtk.SeparatorToolItem()
++toolbar_box.toolbar.insert(separator, -1)
++separator.show()
++
++color_button = ColorToolButton()
++toolbar_box.toolbar.insert(color_button, -1)
++color_button.show()
++
++favorite_button = ToggleToolButton('emblem-favorite')
++favorite_button.set_tooltip('Favorite')
++toolbar_box.toolbar.insert(favorite_button, -1)
++favorite_button.show()
++
++
++if __name__ == '__main__':
++    common.main(test)
+diff --git b/examples/tray.py a/examples/tray.py
+new file mode 100644
+index 0000000..b336a92
+--- /dev/null
++++ a/examples/tray.py
+@@ -0,0 +1,82 @@
++# Copyright (C) 2007, Red Hat, Inc.
++#
++# This library is free software; you can redistribute it and/or
++# modify it under the terms of the GNU Lesser General Public
++# License as published by the Free Software Foundation; either
++# version 2 of the License, or (at your option) any later version.
++#
++# This library is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++# Lesser General Public License for more details.
++#
++# You should have received a copy of the GNU Lesser General Public
++# License along with this library; if not, write to the
++# Free Software Foundation, Inc., 59 Temple Place - Suite 330,
++# Boston, MA 02111-1307, USA.
++
++"""
++Test the sugar3.graphics.icon.Icon widget.
++"""
++
++from gi.repository import Gtk
++
++from sugar3.graphics.tray import HTray, VTray
++from sugar3.graphics.tray import TrayButton, TrayIcon
++
++import common
++
++test = common.Test()
++
++vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
++
++tray = HTray()
++vbox.pack_start(tray, False, False, 0)
++tray.show()
++
++theme_icons = Gtk.IconTheme.get_default().list_icons(context=None)
++
++for i in range(0, 100):
++    button = TrayButton(icon_name=theme_icons[i])
++    tray.add_item(button)
++    button.show()
++
++tray = HTray()
++vbox.pack_start(tray, False, False, 0)
++tray.show()
++
++for i in range(0, 10):
++    icon = TrayIcon(icon_name=theme_icons[i])
++    tray.add_item(icon)
++    icon.show()
++
++hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
++
++tray = VTray()
++hbox.pack_start(tray, False, False, 0)
++tray.show()
++
++for i in range(0, 100):
++    button = TrayButton(icon_name=theme_icons[i])
++    tray.add_item(button)
++    button.show()
++
++tray = VTray()
++hbox.pack_start(tray, False, False, 0)
++tray.show()
++
++for i in range(0, 4):
++    button = TrayButton(icon_name=theme_icons[i])
++    tray.add_item(button)
++    button.show()
++
++vbox.pack_start(hbox, True, True, 0)
++hbox.show()
++
++test.pack_start(vbox, True, True, 0)
++vbox.show()
++
++test.show()
++
++if __name__ == '__main__':
++    common.main(test)
+diff --git b/m4/.gitignore a/m4/.gitignore
+new file mode 100644
+index 0000000..e08c7c8
+--- /dev/null
++++ a/m4/.gitignore
+@@ -0,0 +1,3 @@
++intltool.m4
++libtool.m4
++lt*.m4
+diff --git b/m4/python.m4 a/m4/python.m4
+new file mode 100644
+index 0000000..e1c5266
+--- /dev/null
++++ a/m4/python.m4
+@@ -0,0 +1,62 @@
++## this one is commonly used with AM_PATH_PYTHONDIR ...
++dnl AM_CHECK_PYMOD(MODNAME [,SYMBOL [,ACTION-IF-FOUND [,ACTION-IF-NOT-FOUND]]])
++dnl Check if a module containing a given symbol is visible to python.
++AC_DEFUN([AM_CHECK_PYMOD],
++[AC_REQUIRE([AM_PATH_PYTHON])
++py_mod_var=`echo $1['_']$2 | sed 'y%./+-%__p_%'`
++AC_MSG_CHECKING(for ifelse([$2],[],,[$2 in ])python module $1)
++AC_CACHE_VAL(py_cv_mod_$py_mod_var, [
++ifelse([$2],[], [prog="
++import sys
++try:
++        import $1
++except ImportError:
++        sys.exit(1)
++except:
++        sys.exit(0)
++sys.exit(0)"], [prog="
++import $1
++$1.$2"])
++if $PYTHON -c "$prog" 1>&AC_FD_CC 2>&AC_FD_CC
++  then
++    eval "py_cv_mod_$py_mod_var=yes"
++  else
++    eval "py_cv_mod_$py_mod_var=no"
++  fi
++])
++py_val=`eval "echo \`echo '$py_cv_mod_'$py_mod_var\`"`
++if test "x$py_val" != xno; then
++  AC_MSG_RESULT(yes)
++  ifelse([$3], [],, [$3
++])dnl
++else
++  AC_MSG_RESULT(no)
++  ifelse([$4], [],, [$4
++])dnl
++fi
++])
++
++dnl a macro to check for ability to create python extensions
++dnl  AM_CHECK_PYTHON_HEADERS([ACTION-IF-POSSIBLE], [ACTION-IF-NOT-POSSIBLE])
++dnl function also defines PYTHON_INCLUDES
++AC_DEFUN([AM_CHECK_PYTHON_HEADERS],
++[AC_REQUIRE([AM_PATH_PYTHON])
++AC_MSG_CHECKING(for headers required to compile python extensions)
++dnl deduce PYTHON_INCLUDES
++py_prefix=`$PYTHON -c "import sys; print sys.prefix"`
++py_exec_prefix=`$PYTHON -c "import sys; print sys.exec_prefix"`
++PYTHON_INCLUDES="-I${py_prefix}/include/python${PYTHON_VERSION}"
++if test "$py_prefix" != "$py_exec_prefix"; then
++  PYTHON_INCLUDES="$PYTHON_INCLUDES -I${py_exec_prefix}/include/python${PYTHON_VERSION}"
++fi
++AC_SUBST(PYTHON_INCLUDES)
++dnl check if the headers exist:
++save_CPPFLAGS="$CPPFLAGS"
++CPPFLAGS="$CPPFLAGS $PYTHON_INCLUDES"
++AC_TRY_CPP([#include <Python.h>],dnl
++[AC_MSG_RESULT(found)
++$1],dnl
++[AC_MSG_RESULT(not found)
++$2])
++CPPFLAGS="$save_CPPFLAGS"
++])
+diff --git b/make-doc.sh a/make-doc.sh
+new file mode 100755
+index 0000000..d8721d9
+--- /dev/null
++++ a/make-doc.sh
+@@ -0,0 +1,4 @@
++#!/bin/sh
++
++sphinx-apidoc --force --separate --output-dir=doc src
++make -C doc html
+diff --git b/po/.gitignore a/po/.gitignore
+new file mode 100644
+index 0000000..da9bbde
+--- /dev/null
++++ a/po/.gitignore
+@@ -0,0 +1,4 @@
++*.gmo
++Makefile.in.in
++POTFILES
++stamp-it
+diff --git b/po/ast.po a/po/ast.po
+new file mode 100644
+index 0000000..983872f
+--- /dev/null
++++ a/po/ast.po
+@@ -0,0 +1,559 @@
++# SOME DESCRIPTIVE TITLE.
++# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the PACKAGE package.
++# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
++msgid ""
++msgstr ""
++"Project-Id-Version: PACKAGE VERSION\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2017-10-16 18:58+1100\n"
++"PO-Revision-Date: 2016-10-05 03:47+0000\n"
++"Last-Translator: Chris <cjl@sugarlabs.org>\n"
++"Language-Team: LANGUAGE <LL@li.org>\n"
++"Language: ast\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=UTF-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++"Plural-Forms: nplurals=2; plural=(n != 1);\n"
++"X-Generator: Pootle 2.5.1.1\n"
++"X-POOTLE-MTIME: 1475639246.000000\n"
++
++#: ../src/sugar3/activity/activity.py:416 src/sugar3/activity/activity.py:467
++#, python-format
++msgid "%s Activity"
++msgstr ""
++
++#: ../src/sugar3/activity/activity.py:967 src/sugar3/activity/activity.py:1127
++msgid "Keep error"
++msgstr ""
++
++#: ../src/sugar3/activity/activity.py:968 src/sugar3/activity/activity.py:1128
++msgid "Keep error: all changes will be lost"
++msgstr ""
++
++#: ../src/sugar3/activity/activity.py:971 src/sugar3/activity/activity.py:1131
++msgid "Don't stop"
++msgstr ""
++
++#: ../src/sugar3/activity/activity.py:975 src/sugar3/activity/activity.py:1135
++msgid "Stop anyway"
++msgstr ""
++
++#: ../src/sugar3/activity/widgets.py:86 src/sugar3/activity/activity.py:1169
++#: src/sugar3/activity/widgets.py:86
++msgid "Stop"
++msgstr ""
++
++#: ../src/sugar3/activity/widgets.py:98 src/sugar3/activity/widgets.py:99
++msgid "Undo"
++msgstr ""
++
++#: ../src/sugar3/activity/widgets.py:106 src/sugar3/activity/widgets.py:107
++msgid "Redo"
++msgstr ""
++
++#: ../src/sugar3/activity/widgets.py:113 src/sugar3/activity/widgets.py:114
++msgid "Copy"
++msgstr ""
++
++#: ../src/sugar3/activity/widgets.py:121 src/sugar3/activity/widgets.py:122
++msgid "Paste"
++msgstr ""
++
++#: ../src/sugar3/activity/widgets.py:132 src/sugar3/activity/widgets.py:133
++msgid "Private"
++msgstr ""
++
++#: ../src/sugar3/activity/widgets.py:139 src/sugar3/activity/widgets.py:140
++msgid "My Neighborhood"
++msgstr ""
++
++#: ../src/sugar3/activity/widgets.py:233 src/sugar3/activity/widgets.py:234
++msgid "Description"
++msgstr ""
++
++#: ../src/sugar3/graphics/alert.py:287 ../src/sugar3/graphics/alert.py:429
++#: src/sugar3/activity/activity.py:1189 src/sugar3/graphics/alert.py:301
++#: src/sugar3/graphics/alert.py:467
++msgid "Cancel"
++msgstr ""
++
++#: ../src/sugar3/graphics/alert.py:291 ../src/sugar3/graphics/alert.py:337
++#: ../src/sugar3/graphics/alert.py:479 src/sugar3/graphics/alert.py:305
++#: src/sugar3/graphics/alert.py:346 src/sugar3/graphics/alert.py:393
++#: src/sugar3/graphics/alert.py:512
++msgid "Ok"
++msgstr ""
++
++#: ../src/sugar3/graphics/alert.py:434 src/sugar3/graphics/alert.py:464
++msgid "Continue"
++msgstr ""
++
++#: ../src/sugar3/graphics/colorbutton.py:54
++#: src/sugar3/graphics/colorbutton.py:55
++msgid "Choose a color"
++msgstr ""
++
++#: ../src/sugar3/graphics/colorbutton.py:279
++#: src/sugar3/graphics/colorbutton.py:300
++msgid "Red"
++msgstr ""
++
++#: ../src/sugar3/graphics/colorbutton.py:281
++#: src/sugar3/graphics/colorbutton.py:302
++#, fuzzy
++msgid "Green"
++msgstr "griegu"
++
++#: ../src/sugar3/graphics/colorbutton.py:283
++#: src/sugar3/graphics/colorbutton.py:304
++msgid "Blue"
++msgstr ""
++
++#: ../src/sugar3/util.py:217 src/sugar3/util.py:217
++msgid " and "
++msgstr ""
++
++#: ../src/sugar3/util.py:218 src/sugar3/util.py:218
++msgid ", "
++msgstr ""
++
++#. TRANS: Indicating something that just happened, eg. "just now", "moments ago"
++#: ../src/sugar3/util.py:221 src/sugar3/util.py:221
++msgid "Seconds ago"
++msgstr ""
++
++#. TRANS: Indicating time passed, eg. "[10 day, 5 hours] ago",
++#. "[2 minutes] in the past", or "[3 years, 1 month] earlier"
++#: ../src/sugar3/util.py:225 src/sugar3/util.py:225
++#, python-format
++msgid "%s ago"
++msgstr ""
++
++#. TRANS: Relative dates (eg. 1 month and 5 days).
++#: ../src/sugar3/util.py:240 src/sugar3/util.py:240
++#, python-format
++msgid "%d year"
++msgid_plural "%d years"
++msgstr[0] ""
++msgstr[1] ""
++
++#: ../src/sugar3/util.py:241 src/sugar3/util.py:241
++#, python-format
++msgid "%d month"
++msgid_plural "%d months"
++msgstr[0] ""
++msgstr[1] ""
++
++#: ../src/sugar3/util.py:242 src/sugar3/util.py:242
++#, python-format
++msgid "%d week"
++msgid_plural "%d weeks"
++msgstr[0] ""
++msgstr[1] ""
++
++#: ../src/sugar3/util.py:243 src/sugar3/util.py:243
++#, python-format
++msgid "%d day"
++msgid_plural "%d days"
++msgstr[0] ""
++msgstr[1] ""
++
++#: ../src/sugar3/util.py:244 src/sugar3/util.py:244
++#, python-format
++msgid "%d hour"
++msgid_plural "%d hours"
++msgstr[0] ""
++msgstr[1] ""
++
++#: ../src/sugar3/util.py:245 src/sugar3/util.py:245
++#, python-format
++msgid "%d minute"
++msgid_plural "%d minutes"
++msgstr[0] ""
++msgstr[1] ""
++
++#: ../src/sugar3/util.py:346 src/sugar3/util.py:346
++msgid "Empty"
++msgstr ""
++
++#: ../src/sugar3/util.py:348 src/sugar3/util.py:348
++#, python-format
++msgid "%d B"
++msgstr ""
++
++#: ../src/sugar3/util.py:350 src/sugar3/util.py:350
++#, python-format
++msgid "%d KB"
++msgstr ""
++
++#: ../src/sugar3/util.py:352 src/sugar3/util.py:352
++#, python-format
++msgid "%d MB"
++msgstr ""
++
++#: ../src/sugar3/util.py:354 src/sugar3/util.py:354
++#, python-format
++msgid "%d GB"
++msgstr ""
++
++#: ../src/sugar3/mime.py:56 src/sugar3/mime.py:59
++msgid "Text"
++msgstr "Testu"
++
++#: ../src/sugar3/mime.py:63 src/sugar3/mime.py:66
++msgid "Image"
++msgstr ""
++
++#: ../src/sugar3/mime.py:68 src/sugar3/mime.py:71
++msgid "Audio"
++msgstr ""
++
++#: ../src/sugar3/mime.py:75 src/sugar3/mime.py:78
++msgid "Video"
++msgstr ""
++
++#: ../src/sugar3/mime.py:86 src/sugar3/mime.py:89
++msgid "Link"
++msgstr ""
++
++#: ../src/sugar3/mime.py:91 src/sugar3/mime.py:94
++msgid "Bundle"
++msgstr ""
++
++#: ../src/sugar3/speech.py:48 src/sugar3/speech.py:56
++msgid "Afrikaans"
++msgstr "afrikaans"
++
++#: ../src/sugar3/speech.py:49 src/sugar3/speech.py:58
++msgid "Aragonese"
++msgstr "aragonés"
++
++#: ../src/sugar3/speech.py:50 src/sugar3/speech.py:60
++msgid "Bulgarian"
++msgstr "búlgaru"
++
++#: ../src/sugar3/speech.py:51 src/sugar3/speech.py:62
++msgid "Bosnian"
++msgstr "bosniu"
++
++#: ../src/sugar3/speech.py:52 src/sugar3/speech.py:64
++msgid "Catalan"
++msgstr "catalán"
++
++#: ../src/sugar3/speech.py:53 src/sugar3/speech.py:66
++msgid "Czech"
++msgstr "checu"
++
++#: ../src/sugar3/speech.py:54 src/sugar3/speech.py:68
++msgid "Welsh"
++msgstr "galés"
++
++#: ../src/sugar3/speech.py:55 src/sugar3/speech.py:70
++msgid "Danish"
++msgstr "danés"
++
++#: ../src/sugar3/speech.py:56 src/sugar3/speech.py:72
++msgid "German"
++msgstr "alemán"
++
++#: ../src/sugar3/speech.py:57 src/sugar3/speech.py:74
++msgid "Greek"
++msgstr "griegu"
++
++#: ../src/sugar3/speech.py:58
++msgid "Default"
++msgstr ""
++
++#: ../src/sugar3/speech.py:59 src/sugar3/speech.py:77
++msgid "English Britain"
++msgstr "inglés de Gran Bretaña"
++
++#: ../src/sugar3/speech.py:60 src/sugar3/speech.py:79
++#, fuzzy
++msgid "English scottish"
++msgstr "inglés"
++
++#: ../src/sugar3/speech.py:61 src/sugar3/speech.py:80
++#, fuzzy
++msgid "English-north"
++msgstr "inglés"
++
++#: ../src/sugar3/speech.py:62 src/sugar3/speech.py:82
++msgid "English_rp"
++msgstr "inglés"
++
++#: ../src/sugar3/speech.py:63 src/sugar3/speech.py:84
++#, fuzzy
++msgid "English_wmids"
++msgstr "inglés"
++
++#: ../src/sugar3/speech.py:64 src/sugar3/speech.py:86
++msgid "English USA"
++msgstr "Inglés (EE.XX.)"
++
++#: ../src/sugar3/speech.py:65
++#, fuzzy
++msgid "English west indies"
++msgstr "inglés"
++
++#: ../src/sugar3/speech.py:66 src/sugar3/speech.py:90
++msgid "Esperanto"
++msgstr "esperanto"
++
++#: ../src/sugar3/speech.py:67 src/sugar3/speech.py:92
++msgid "Spanish"
++msgstr "español"
++
++#: ../src/sugar3/speech.py:68 src/sugar3/speech.py:93
++#, fuzzy
++msgid "Spanish latin american"
++msgstr "español"
++
++#: ../src/sugar3/speech.py:69 src/sugar3/speech.py:95
++msgid "Estonian"
++msgstr "estoniu"
++
++#: ../src/sugar3/speech.py:70 src/sugar3/speech.py:97
++msgid "Farsi"
++msgstr "persa"
++
++#: ../src/sugar3/speech.py:71 src/sugar3/speech.py:99
++msgid "Farsi-pinglish"
++msgstr "persa-inglés"
++
++#: ../src/sugar3/speech.py:72 src/sugar3/speech.py:101
++msgid "Finnish"
++msgstr "finlandés"
++
++#: ../src/sugar3/speech.py:73 src/sugar3/speech.py:103
++msgid "French belgium"
++msgstr "Francés (Bélxica)"
++
++#: ../src/sugar3/speech.py:74 src/sugar3/speech.py:105
++msgid "French"
++msgstr "francés"
++
++#: ../src/sugar3/speech.py:75 src/sugar3/speech.py:107
++msgid "Irish-gaeilge"
++msgstr "irlandés"
++
++#: ../src/sugar3/speech.py:76 src/sugar3/speech.py:109
++msgid "Greek-ancient"
++msgstr "Griegu, Antiguu"
++
++#: ../src/sugar3/speech.py:77 src/sugar3/speech.py:111
++msgid "Hindi"
++msgstr "hindi"
++
++#: ../src/sugar3/speech.py:78 src/sugar3/speech.py:113
++msgid "Croatian"
++msgstr "croata"
++
++#: ../src/sugar3/speech.py:79 src/sugar3/speech.py:115
++msgid "Hungarian"
++msgstr "húngaru"
++
++#: ../src/sugar3/speech.py:80 src/sugar3/speech.py:117
++msgid "Armenian"
++msgstr "armeniu"
++
++#: ../src/sugar3/speech.py:81 src/sugar3/speech.py:119
++#, fuzzy
++msgid "Armenian (west)"
++msgstr "armeniu"
++
++#: ../src/sugar3/speech.py:82 src/sugar3/speech.py:121
++msgid "Indonesian"
++msgstr "indonesiu"
++
++#: ../src/sugar3/speech.py:83 src/sugar3/speech.py:123
++msgid "Icelandic"
++msgstr "islandés"
++
++#: ../src/sugar3/speech.py:84 src/sugar3/speech.py:125
++msgid "Italian"
++msgstr "italianu"
++
++#: ../src/sugar3/speech.py:85 src/sugar3/speech.py:127
++msgid "Lojban"
++msgstr "lojban"
++
++#: ../src/sugar3/speech.py:86 src/sugar3/speech.py:129
++msgid "Georgian"
++msgstr "xeorxanu"
++
++#: ../src/sugar3/speech.py:87 src/sugar3/speech.py:131
++msgid "Kannada"
++msgstr "canarés"
++
++#: ../src/sugar3/speech.py:88 src/sugar3/speech.py:133
++msgid "Kurdish"
++msgstr "curdu"
++
++#: ../src/sugar3/speech.py:89 src/sugar3/speech.py:135
++msgid "Latin"
++msgstr "llatín"
++
++#: ../src/sugar3/speech.py:90 src/sugar3/speech.py:137
++msgid "Lithuanian"
++msgstr "lituanu"
++
++#: ../src/sugar3/speech.py:91 src/sugar3/speech.py:139
++msgid "Latvian"
++msgstr "letón"
++
++#: ../src/sugar3/speech.py:92 src/sugar3/speech.py:141
++msgid "Macedonian"
++msgstr "macedoniu"
++
++#: ../src/sugar3/speech.py:93 src/sugar3/speech.py:143
++msgid "Malayalam"
++msgstr "malayalam"
++
++#: ../src/sugar3/speech.py:94 src/sugar3/speech.py:145
++msgid "Malay"
++msgstr "malayu"
++
++#: ../src/sugar3/speech.py:95 src/sugar3/speech.py:147
++msgid "Nepali"
++msgstr "nepalés"
++
++#: ../src/sugar3/speech.py:96 src/sugar3/speech.py:149
++msgid "Dutch"
++msgstr "neerlandés"
++
++#: ../src/sugar3/speech.py:97 src/sugar3/speech.py:151
++msgid "Norwegian"
++msgstr "noruegu"
++
++#: ../src/sugar3/speech.py:98 src/sugar3/speech.py:153
++msgid "Punjabi"
++msgstr "punyabí"
++
++#: ../src/sugar3/speech.py:99 src/sugar3/speech.py:155
++msgid "Polish"
++msgstr "polacu"
++
++#: ../src/sugar3/speech.py:100 src/sugar3/speech.py:157
++msgid "Portuguese (Brazil)"
++msgstr "Portugués (Brasil)"
++
++#: ../src/sugar3/speech.py:101 src/sugar3/speech.py:159
++msgid "Portuguese (Portugal)"
++msgstr "Portugués (Portugal)"
++
++#: ../src/sugar3/speech.py:102 src/sugar3/speech.py:161
++msgid "Romanian"
++msgstr "rumanu"
++
++#: ../src/sugar3/speech.py:103 src/sugar3/speech.py:163
++msgid "Russian"
++msgstr "rusu"
++
++#: ../src/sugar3/speech.py:104 src/sugar3/speech.py:165
++msgid "Slovak"
++msgstr "eslovacu"
++
++#: ../src/sugar3/speech.py:105 src/sugar3/speech.py:167
++msgid "Albanian"
++msgstr "albanu"
++
++#: ../src/sugar3/speech.py:106 src/sugar3/speech.py:169
++msgid "Serbian"
++msgstr "serbiu"
++
++#: ../src/sugar3/speech.py:107 src/sugar3/speech.py:171
++msgid "Swedish"
++msgstr "suecu"
++
++#: ../src/sugar3/speech.py:108
++msgid "Swahili-test"
++msgstr "suaḥili"
++
++#: ../src/sugar3/speech.py:109 src/sugar3/speech.py:175
++msgid "Tamil"
++msgstr "tamil"
++
++#: ../src/sugar3/speech.py:110 src/sugar3/speech.py:177
++msgid "Turkish"
++msgstr "turcu"
++
++#: ../src/sugar3/speech.py:111 src/sugar3/speech.py:179
++msgid "Vietnam"
++msgstr "vietnamín"
++
++#: ../src/sugar3/speech.py:112 src/sugar3/speech.py:180
++msgid "Vietnam_hue"
++msgstr "vietnamín_hue"
++
++#: ../src/sugar3/speech.py:113 src/sugar3/speech.py:181
++msgid "Vietnam_sgn"
++msgstr "vietnamín_sgn"
++
++#: ../src/sugar3/speech.py:114 src/sugar3/speech.py:183
++#, fuzzy
++msgid "Mandarin"
++msgstr "chinu"
++
++#: ../src/sugar3/speech.py:115 src/sugar3/speech.py:185
++#, fuzzy
++msgid "Cantonese"
++msgstr "chinu"
++
++#: src/sugar3/activity/activity.py:1170
++msgid "Stop: name your journal entry"
++msgstr ""
++
++#: src/sugar3/activity/activity.py:1193
++msgid "Cancel stop and continue the activity"
++msgstr ""
++
++#: src/sugar3/activity/activity.py:1230
++msgid "Save new"
++msgstr ""
++
++#: src/sugar3/activity/activity.py:1231
++msgid "Save a new journal entry"
++msgstr ""
++
++#: src/sugar3/activity/activity.py:1234
++msgid "Save"
++msgstr ""
++
++#: src/sugar3/activity/activity.py:1235
++msgid "Save into the old journal entry"
++msgstr ""
++
++#: src/sugar3/activity/activity.py:1241
++msgid "Erase changes"
++msgstr ""
++
++#: src/sugar3/activity/activity.py:1242
++msgid "Erase what you have done, and leave your old journal entry unchanged"
++msgstr ""
++
++#: src/sugar3/activity/activity.py:1245
++msgid "Erase"
++msgstr ""
++
++#: src/sugar3/activity/activity.py:1246
++msgid "Erase what you have done, and avoid making a journal entry"
++msgstr ""
++
++#: src/sugar3/graphics/popwindow.py:179
++msgid "Close"
++msgstr ""
++
++#: src/sugar3/speech.py:75
++msgid "English"
++msgstr ""
++
++#: src/sugar3/speech.py:88
++#, fuzzy
++msgid "English West Indies"
++msgstr "inglés"
++
++#: src/sugar3/speech.py:173
++msgid "Swahili"
++msgstr ""
+diff --git b/po/nah.po a/po/nah.po
+new file mode 100644
+index 0000000..17e8938
+--- /dev/null
++++ a/po/nah.po
+@@ -0,0 +1,552 @@
++# SOME DESCRIPTIVE TITLE.
++# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the PACKAGE package.
++# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
++msgid ""
++msgstr ""
++"Project-Id-Version: PACKAGE VERSION\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2017-10-16 18:58+1100\n"
++"PO-Revision-Date: 2013-08-30 17:49+0200\n"
++"Last-Translator: Chris <cjl@laptop.org>\n"
++"Language-Team: LANGUAGE <LL@li.org>\n"
++"Language: nah\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=UTF-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++"Plural-Forms: nplurals=2; plural=(n != 1);\n"
++"X-Generator: Pootle 2.0.5\n"
++
++#: ../src/sugar3/activity/activity.py:416 src/sugar3/activity/activity.py:467
++#, python-format
++#, python-format, fuzzy
++msgid "%s Activity"
++msgstr "tlen ti chiuas %s"
++
++#: ../src/sugar3/activity/activity.py:967 src/sugar3/activity/activity.py:1127
++#, fuzzy
++msgid "Keep error"
++msgstr "kuapolo"
++
++#: ../src/sugar3/activity/activity.py:968 src/sugar3/activity/activity.py:1128
++msgid "Keep error: all changes will be lost"
++msgstr "kuapolo kema ti ajukui katli ti chijki pulus"
++
++#: ../src/sugar3/activity/activity.py:971 src/sugar3/activity/activity.py:1131
++msgid "Don't stop"
++msgstr "inka moketsas"
++
++#: ../src/sugar3/activity/activity.py:975 src/sugar3/activity/activity.py:1135
++msgid "Stop anyway"
++msgstr "moketsas"
++
++#: ../src/sugar3/activity/widgets.py:86 src/sugar3/activity/activity.py:1169
++#: src/sugar3/activity/widgets.py:86
++#, fuzzy
++msgid "Stop"
++msgstr "Moketsas"
++
++#: ../src/sugar3/activity/widgets.py:98 src/sugar3/activity/widgets.py:99
++msgid "Undo"
++msgstr "patik"
++
++#: ../src/sugar3/activity/widgets.py:106 src/sugar3/activity/widgets.py:107
++msgid "Redo"
++msgstr "ompawi"
++
++#: ../src/sugar3/activity/widgets.py:113 src/sugar3/activity/widgets.py:114
++msgid "Copy"
++msgstr "ixcopina"
++
++#: ../src/sugar3/activity/widgets.py:121 src/sugar3/activity/widgets.py:122
++msgid "Paste"
++msgstr "tlatskis"
++
++#: ../src/sugar3/activity/widgets.py:132 src/sugar3/activity/widgets.py:133
++msgid "Private"
++msgstr "san iyaya"
++
++#: ../src/sugar3/activity/widgets.py:139 src/sugar3/activity/widgets.py:140
++msgid "My Neighborhood"
++msgstr "nechicokalime"
++
++#: ../src/sugar3/activity/widgets.py:233 src/sugar3/activity/widgets.py:234
++msgid "Description"
++msgstr "tlaixkuilolli"
++
++#: ../src/sugar3/graphics/alert.py:287 ../src/sugar3/graphics/alert.py:429
++#: src/sugar3/activity/activity.py:1189 src/sugar3/graphics/alert.py:301
++#: src/sugar3/graphics/alert.py:467
++#, fuzzy
++msgid "Cancel"
++msgstr "Tlamilti"
++
++#: ../src/sugar3/graphics/alert.py:291 ../src/sugar3/graphics/alert.py:337
++#: ../src/sugar3/graphics/alert.py:479 src/sugar3/graphics/alert.py:305
++#: src/sugar3/graphics/alert.py:346 src/sugar3/graphics/alert.py:393
++#: src/sugar3/graphics/alert.py:512
++msgid "Ok"
++msgstr "selis"
++
++#: ../src/sugar3/graphics/alert.py:434 src/sugar3/graphics/alert.py:464
++msgid "Continue"
++msgstr "mosentokilis"
++
++#: ../src/sugar3/graphics/colorbutton.py:54
++#: src/sugar3/graphics/colorbutton.py:55
++msgid "Choose a color"
++msgstr "xitlapejoeni se tlapalli"
++
++#: ../src/sugar3/graphics/colorbutton.py:279
++#: src/sugar3/graphics/colorbutton.py:300
++msgid "Red"
++msgstr "chichiltik"
++
++#: ../src/sugar3/graphics/colorbutton.py:281
++#: src/sugar3/graphics/colorbutton.py:302
++msgid "Green"
++msgstr "xoxowik"
++
++#: ../src/sugar3/graphics/colorbutton.py:283
++#: src/sugar3/graphics/colorbutton.py:304
++msgid "Blue"
++msgstr "axoxoltik"
++
++#: ../src/sugar3/util.py:217 src/sugar3/util.py:217
++msgid " and "
++msgstr " wan "
++
++#: ../src/sugar3/util.py:218 src/sugar3/util.py:218
++msgid ", "
++msgstr ", "
++
++#. TRANS: Indicating something that just happened, eg. "just now", "moments ago"
++#: ../src/sugar3/util.py:221 src/sugar3/util.py:221
++msgid "Seconds ago"
++msgstr "omekawiltsitsi ikatlaika"
++
++#. TRANS: Indicating time passed, eg. "[10 day, 5 hours] ago",
++#. "[2 minutes] in the past", or "[3 years, 1 month] earlier"
++#: ../src/sugar3/util.py:225 src/sugar3/util.py:225
++#, python-format
++msgid "%s ago"
++msgstr "%s katlaika"
++
++#. TRANS: Relative dates (eg. 1 month and 5 days).
++#: ../src/sugar3/util.py:240 src/sugar3/util.py:240
++#, python-format
++msgid "%d year"
++msgid_plural "%d years"
++msgstr[0] "%d xiwitl"
++msgstr[1] "%d xiwimej"
++
++#: ../src/sugar3/util.py:241 src/sugar3/util.py:241
++#, python-format
++msgid "%d month"
++msgid_plural "%d months"
++msgstr[0] "%d meestli"
++msgstr[1] "%d meestlimej"
++
++#: ../src/sugar3/util.py:242 src/sugar3/util.py:242
++#, python-format
++msgid "%d week"
++msgid_plural "%d weeks"
++msgstr[0] "%d chikontonal"
++msgstr[1] "%d chikontonalmej"
++
++#: ../src/sugar3/util.py:243 src/sugar3/util.py:243
++#, python-format
++msgid "%d day"
++msgid_plural "%d days"
++msgstr[0] "%d tonal"
++msgstr[1] "%d tonalmej"
++
++#: ../src/sugar3/util.py:244 src/sugar3/util.py:244
++#, python-format
++msgid "%d hour"
++msgid_plural "%d hours"
++msgstr[0] "%d kawitl"
++msgstr[1] "%d kawitlmej"
++
++#: ../src/sugar3/util.py:245 src/sugar3/util.py:245
++#, python-format
++msgid "%d minute"
++msgid_plural "%d minutes"
++msgstr[0] "%d kawiltsi"
++msgstr[1] "%d kawilmej"
++
++#: ../src/sugar3/util.py:346 src/sugar3/util.py:346
++msgid "Empty"
++msgstr "kaktok"
++
++#: ../src/sugar3/util.py:348 src/sugar3/util.py:348
++#, python-format
++msgid "%d B"
++msgstr "%d B"
++
++#: ../src/sugar3/util.py:350 src/sugar3/util.py:350
++#, python-format
++msgid "%d KB"
++msgstr "%de KB"
++
++#: ../src/sugar3/util.py:352 src/sugar3/util.py:352
++#, python-format
++msgid "%d MB"
++msgstr "%d MB"
++
++#: ../src/sugar3/util.py:354 src/sugar3/util.py:354
++#, python-format
++msgid "%d GB"
++msgstr "%d GB"
++
++#: ../src/sugar3/mime.py:56 src/sugar3/mime.py:59
++msgid "Text"
++msgstr "tlakuilolpa"
++
++#: ../src/sugar3/mime.py:63 src/sugar3/mime.py:66
++msgid "Image"
++msgstr "ixnextli"
++
++#: ../src/sugar3/mime.py:68 src/sugar3/mime.py:71
++msgid "Audio"
++msgstr "kakiilistli"
++
++#: ../src/sugar3/mime.py:75 src/sugar3/mime.py:78
++msgid "Video"
++msgstr "ixnextilli"
++
++#: ../src/sugar3/mime.py:86 src/sugar3/mime.py:89
++msgid "Link"
++msgstr "saloli"
++
++#: ../src/sugar3/mime.py:91 src/sugar3/mime.py:94
++msgid "Bundle"
++msgstr ""
++
++#: ../src/sugar3/speech.py:48 src/sugar3/speech.py:56
++msgid "Afrikaans"
++msgstr ""
++
++#: ../src/sugar3/speech.py:49 src/sugar3/speech.py:58
++msgid "Aragonese"
++msgstr ""
++
++#: ../src/sugar3/speech.py:50 src/sugar3/speech.py:60
++msgid "Bulgarian"
++msgstr ""
++
++#: ../src/sugar3/speech.py:51 src/sugar3/speech.py:62
++msgid "Bosnian"
++msgstr ""
++
++#: ../src/sugar3/speech.py:52 src/sugar3/speech.py:64
++msgid "Catalan"
++msgstr ""
++
++#: ../src/sugar3/speech.py:53 src/sugar3/speech.py:66
++msgid "Czech"
++msgstr ""
++
++#: ../src/sugar3/speech.py:54 src/sugar3/speech.py:68
++msgid "Welsh"
++msgstr ""
++
++#: ../src/sugar3/speech.py:55 src/sugar3/speech.py:70
++msgid "Danish"
++msgstr ""
++
++#: ../src/sugar3/speech.py:56 src/sugar3/speech.py:72
++msgid "German"
++msgstr ""
++
++#: ../src/sugar3/speech.py:57 src/sugar3/speech.py:74
++msgid "Greek"
++msgstr ""
++
++#: ../src/sugar3/speech.py:58
++msgid "Default"
++msgstr ""
++
++#: ../src/sugar3/speech.py:59 src/sugar3/speech.py:77
++msgid "English Britain"
++msgstr ""
++
++#: ../src/sugar3/speech.py:60 src/sugar3/speech.py:79
++msgid "English scottish"
++msgstr ""
++
++#: ../src/sugar3/speech.py:61 src/sugar3/speech.py:80
++msgid "English-north"
++msgstr ""
++
++#: ../src/sugar3/speech.py:62 src/sugar3/speech.py:82
++msgid "English_rp"
++msgstr ""
++
++#: ../src/sugar3/speech.py:63 src/sugar3/speech.py:84
++msgid "English_wmids"
++msgstr ""
++
++#: ../src/sugar3/speech.py:64 src/sugar3/speech.py:86
++msgid "English USA"
++msgstr ""
++
++#: ../src/sugar3/speech.py:65
++msgid "English west indies"
++msgstr ""
++
++#: ../src/sugar3/speech.py:66 src/sugar3/speech.py:90
++msgid "Esperanto"
++msgstr ""
++
++#: ../src/sugar3/speech.py:67 src/sugar3/speech.py:92
++msgid "Spanish"
++msgstr ""
++
++#: ../src/sugar3/speech.py:68 src/sugar3/speech.py:93
++msgid "Spanish latin american"
++msgstr ""
++
++#: ../src/sugar3/speech.py:69 src/sugar3/speech.py:95
++msgid "Estonian"
++msgstr ""
++
++#: ../src/sugar3/speech.py:70 src/sugar3/speech.py:97
++msgid "Farsi"
++msgstr ""
++
++#: ../src/sugar3/speech.py:71 src/sugar3/speech.py:99
++msgid "Farsi-pinglish"
++msgstr ""
++
++#: ../src/sugar3/speech.py:72 src/sugar3/speech.py:101
++msgid "Finnish"
++msgstr ""
++
++#: ../src/sugar3/speech.py:73 src/sugar3/speech.py:103
++msgid "French belgium"
++msgstr ""
++
++#: ../src/sugar3/speech.py:74 src/sugar3/speech.py:105
++msgid "French"
++msgstr ""
++
++#: ../src/sugar3/speech.py:75 src/sugar3/speech.py:107
++msgid "Irish-gaeilge"
++msgstr ""
++
++#: ../src/sugar3/speech.py:76 src/sugar3/speech.py:109
++msgid "Greek-ancient"
++msgstr ""
++
++#: ../src/sugar3/speech.py:77 src/sugar3/speech.py:111
++msgid "Hindi"
++msgstr ""
++
++#: ../src/sugar3/speech.py:78 src/sugar3/speech.py:113
++msgid "Croatian"
++msgstr ""
++
++#: ../src/sugar3/speech.py:79 src/sugar3/speech.py:115
++msgid "Hungarian"
++msgstr ""
++
++#: ../src/sugar3/speech.py:80 src/sugar3/speech.py:117
++msgid "Armenian"
++msgstr ""
++
++#: ../src/sugar3/speech.py:81 src/sugar3/speech.py:119
++msgid "Armenian (west)"
++msgstr ""
++
++#: ../src/sugar3/speech.py:82 src/sugar3/speech.py:121
++msgid "Indonesian"
++msgstr ""
++
++#: ../src/sugar3/speech.py:83 src/sugar3/speech.py:123
++msgid "Icelandic"
++msgstr ""
++
++#: ../src/sugar3/speech.py:84 src/sugar3/speech.py:125
++msgid "Italian"
++msgstr ""
++
++#: ../src/sugar3/speech.py:85 src/sugar3/speech.py:127
++msgid "Lojban"
++msgstr ""
++
++#: ../src/sugar3/speech.py:86 src/sugar3/speech.py:129
++msgid "Georgian"
++msgstr ""
++
++#: ../src/sugar3/speech.py:87 src/sugar3/speech.py:131
++msgid "Kannada"
++msgstr ""
++
++#: ../src/sugar3/speech.py:88 src/sugar3/speech.py:133
++msgid "Kurdish"
++msgstr ""
++
++#: ../src/sugar3/speech.py:89 src/sugar3/speech.py:135
++msgid "Latin"
++msgstr ""
++
++#: ../src/sugar3/speech.py:90 src/sugar3/speech.py:137
++msgid "Lithuanian"
++msgstr ""
++
++#: ../src/sugar3/speech.py:91 src/sugar3/speech.py:139
++msgid "Latvian"
++msgstr ""
++
++#: ../src/sugar3/speech.py:92 src/sugar3/speech.py:141
++msgid "Macedonian"
++msgstr ""
++
++#: ../src/sugar3/speech.py:93 src/sugar3/speech.py:143
++msgid "Malayalam"
++msgstr ""
++
++#: ../src/sugar3/speech.py:94 src/sugar3/speech.py:145
++msgid "Malay"
++msgstr ""
++
++#: ../src/sugar3/speech.py:95 src/sugar3/speech.py:147
++msgid "Nepali"
++msgstr ""
++
++#: ../src/sugar3/speech.py:96 src/sugar3/speech.py:149
++msgid "Dutch"
++msgstr ""
++
++#: ../src/sugar3/speech.py:97 src/sugar3/speech.py:151
++msgid "Norwegian"
++msgstr ""
++
++#: ../src/sugar3/speech.py:98 src/sugar3/speech.py:153
++msgid "Punjabi"
++msgstr ""
++
++#: ../src/sugar3/speech.py:99 src/sugar3/speech.py:155
++msgid "Polish"
++msgstr ""
++
++#: ../src/sugar3/speech.py:100 src/sugar3/speech.py:157
++msgid "Portuguese (Brazil)"
++msgstr ""
++
++#: ../src/sugar3/speech.py:101 src/sugar3/speech.py:159
++msgid "Portuguese (Portugal)"
++msgstr ""
++
++#: ../src/sugar3/speech.py:102 src/sugar3/speech.py:161
++msgid "Romanian"
++msgstr ""
++
++#: ../src/sugar3/speech.py:103 src/sugar3/speech.py:163
++msgid "Russian"
++msgstr ""
++
++#: ../src/sugar3/speech.py:104 src/sugar3/speech.py:165
++msgid "Slovak"
++msgstr ""
++
++#: ../src/sugar3/speech.py:105 src/sugar3/speech.py:167
++msgid "Albanian"
++msgstr ""
++
++#: ../src/sugar3/speech.py:106 src/sugar3/speech.py:169
++msgid "Serbian"
++msgstr ""
++
++#: ../src/sugar3/speech.py:107 src/sugar3/speech.py:171
++msgid "Swedish"
++msgstr ""
++
++#: ../src/sugar3/speech.py:108
++msgid "Swahili-test"
++msgstr ""
++
++#: ../src/sugar3/speech.py:109 src/sugar3/speech.py:175
++msgid "Tamil"
++msgstr ""
++
++#: ../src/sugar3/speech.py:110 src/sugar3/speech.py:177
++msgid "Turkish"
++msgstr ""
++
++#: ../src/sugar3/speech.py:111 src/sugar3/speech.py:179
++msgid "Vietnam"
++msgstr ""
++
++#: ../src/sugar3/speech.py:112 src/sugar3/speech.py:180
++msgid "Vietnam_hue"
++msgstr ""
++
++#: ../src/sugar3/speech.py:113 src/sugar3/speech.py:181
++msgid "Vietnam_sgn"
++msgstr ""
++
++#: ../src/sugar3/speech.py:114 src/sugar3/speech.py:183
++msgid "Mandarin"
++msgstr ""
++
++#: ../src/sugar3/speech.py:115 src/sugar3/speech.py:185
++msgid "Cantonese"
++msgstr ""
++
++#: src/sugar3/activity/activity.py:1170
++msgid "Stop: name your journal entry"
++msgstr ""
++
++#: src/sugar3/activity/activity.py:1193
++msgid "Cancel stop and continue the activity"
++msgstr ""
++
++#: src/sugar3/activity/activity.py:1230
++msgid "Save new"
++msgstr ""
++
++#: src/sugar3/activity/activity.py:1231
++msgid "Save a new journal entry"
++msgstr ""
++
++#: src/sugar3/activity/activity.py:1234
++msgid "Save"
++msgstr ""
++
++#: src/sugar3/activity/activity.py:1235
++msgid "Save into the old journal entry"
++msgstr ""
++
++#: src/sugar3/activity/activity.py:1241
++msgid "Erase changes"
++msgstr ""
++
++#: src/sugar3/activity/activity.py:1242
++msgid "Erase what you have done, and leave your old journal entry unchanged"
++msgstr ""
++
++#: src/sugar3/activity/activity.py:1245
++msgid "Erase"
++msgstr ""
++
++#: src/sugar3/activity/activity.py:1246
++msgid "Erase what you have done, and avoid making a journal entry"
++msgstr ""
++
++#: src/sugar3/graphics/popwindow.py:179
++msgid "Close"
++msgstr ""
++
++#: src/sugar3/speech.py:75
++msgid "English"
++msgstr ""
++
++#: src/sugar3/speech.py:88
++msgid "English West Indies"
++msgstr ""
++
++#: src/sugar3/speech.py:173
++msgid "Swahili"
++msgstr ""
+diff --git b/po/sugar-toolkit-gtk3.pot a/po/sugar-toolkit-gtk3.pot
+new file mode 100644
+index 0000000..adfc7a5
+--- /dev/null
++++ a/po/sugar-toolkit-gtk3.pot
+@@ -0,0 +1,569 @@
++# SOME DESCRIPTIVE TITLE.
++# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the PACKAGE package.
++# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
++#
++#, fuzzy
++msgid ""
++msgstr ""
++"Project-Id-Version: PACKAGE VERSION\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2019-03-13 14:50+1100\n"
++"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
++"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
++"Language-Team: LANGUAGE <LL@li.org>\n"
++"Language: \n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=CHARSET\n"
++"Content-Transfer-Encoding: 8bit\n"
++"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
++
++#: ../src/sugar3/activity/activity.py:416 src/sugar3/activity/activity.py:467
++#: src/sugar3/activity/activity.py:475
++#, python-format
++msgid "%s Activity"
++msgstr ""
++
++#: ../src/sugar3/activity/activity.py:967 src/sugar3/activity/activity.py:1127
++#: src/sugar3/activity/activity.py:1122
++msgid "Keep error"
++msgstr ""
++
++#: ../src/sugar3/activity/activity.py:968 src/sugar3/activity/activity.py:1128
++#: src/sugar3/activity/activity.py:1123
++msgid "Keep error: all changes will be lost"
++msgstr ""
++
++#: ../src/sugar3/activity/activity.py:971 src/sugar3/activity/activity.py:1131
++#: src/sugar3/activity/activity.py:1126
++msgid "Don't stop"
++msgstr ""
++
++#: ../src/sugar3/activity/activity.py:975 src/sugar3/activity/activity.py:1135
++#: src/sugar3/activity/activity.py:1130
++msgid "Stop anyway"
++msgstr ""
++
++#: ../src/sugar3/activity/widgets.py:86 src/sugar3/activity/activity.py:1169
++#: src/sugar3/activity/widgets.py:86 src/sugar3/activity/activity.py:1164
++#: src/sugar3/activity/widgets.py:88
++msgid "Stop"
++msgstr ""
++
++#: ../src/sugar3/activity/widgets.py:98 src/sugar3/activity/widgets.py:99
++#: src/sugar3/activity/widgets.py:101
++msgid "Undo"
++msgstr ""
++
++#: ../src/sugar3/activity/widgets.py:106 src/sugar3/activity/widgets.py:107
++#: src/sugar3/activity/widgets.py:109
++msgid "Redo"
++msgstr ""
++
++#: ../src/sugar3/activity/widgets.py:113 src/sugar3/activity/widgets.py:114
++#: src/sugar3/activity/widgets.py:116
++msgid "Copy"
++msgstr ""
++
++#: ../src/sugar3/activity/widgets.py:121 src/sugar3/activity/widgets.py:122
++#: src/sugar3/activity/widgets.py:124
++msgid "Paste"
++msgstr ""
++
++#: ../src/sugar3/activity/widgets.py:132 src/sugar3/activity/widgets.py:133
++#: src/sugar3/activity/widgets.py:135
++msgid "Private"
++msgstr ""
++
++#: ../src/sugar3/activity/widgets.py:139 src/sugar3/activity/widgets.py:140
++#: src/sugar3/activity/widgets.py:142
++msgid "My Neighborhood"
++msgstr ""
++
++#: ../src/sugar3/activity/widgets.py:233 src/sugar3/activity/widgets.py:234
++#: src/sugar3/activity/widgets.py:249
++msgid "Description"
++msgstr ""
++
++#: ../src/sugar3/graphics/alert.py:287 ../src/sugar3/graphics/alert.py:429
++#: src/sugar3/activity/activity.py:1189 src/sugar3/graphics/alert.py:301
++#: src/sugar3/graphics/alert.py:467 src/sugar3/activity/activity.py:1184
++#: src/sugar3/graphics/alert.py:308 src/sugar3/graphics/alert.py:476
++msgid "Cancel"
++msgstr ""
++
++#: ../src/sugar3/graphics/alert.py:291 ../src/sugar3/graphics/alert.py:337
++#: ../src/sugar3/graphics/alert.py:479 src/sugar3/graphics/alert.py:305
++#: src/sugar3/graphics/alert.py:346 src/sugar3/graphics/alert.py:393
++#: src/sugar3/graphics/alert.py:512 src/sugar3/graphics/alert.py:312
++#: src/sugar3/graphics/alert.py:353 src/sugar3/graphics/alert.py:402
++#: src/sugar3/graphics/alert.py:521
++msgid "Ok"
++msgstr ""
++
++#: ../src/sugar3/graphics/alert.py:434 src/sugar3/graphics/alert.py:464
++#: src/sugar3/graphics/alert.py:473
++msgid "Continue"
++msgstr ""
++
++#: ../src/sugar3/graphics/colorbutton.py:54
++#: src/sugar3/graphics/colorbutton.py:55 src/sugar3/graphics/colorbutton.py:60
++msgid "Choose a color"
++msgstr ""
++
++#: ../src/sugar3/graphics/colorbutton.py:279
++#: src/sugar3/graphics/colorbutton.py:300
++#: src/sugar3/graphics/colorbutton.py:305
++msgid "Red"
++msgstr ""
++
++#: ../src/sugar3/graphics/colorbutton.py:281
++#: src/sugar3/graphics/colorbutton.py:302
++#: src/sugar3/graphics/colorbutton.py:307
++msgid "Green"
++msgstr ""
++
++#: ../src/sugar3/graphics/colorbutton.py:283
++#: src/sugar3/graphics/colorbutton.py:304
++#: src/sugar3/graphics/colorbutton.py:309
++msgid "Blue"
++msgstr ""
++
++#: ../src/sugar3/util.py:217 src/sugar3/util.py:217 src/sugar3/util.py:224
++msgid " and "
++msgstr ""
++
++#: ../src/sugar3/util.py:218 src/sugar3/util.py:218 src/sugar3/util.py:225
++msgid ", "
++msgstr ""
++
++#. TRANS: Indicating something that just happened, eg. "just now", "moments ago"
++#: ../src/sugar3/util.py:221 src/sugar3/util.py:221 src/sugar3/util.py:228
++msgid "Seconds ago"
++msgstr ""
++
++#. TRANS: Indicating time passed, eg. "[10 day, 5 hours] ago",
++#. "[2 minutes] in the past", or "[3 years, 1 month] earlier"
++#: ../src/sugar3/util.py:225 src/sugar3/util.py:225 src/sugar3/util.py:232
++#, python-format
++msgid "%s ago"
++msgstr ""
++
++#. TRANS: Relative dates (eg. 1 month and 5 days).
++#: ../src/sugar3/util.py:240 src/sugar3/util.py:240 src/sugar3/util.py:247
++#, python-format
++msgid "%d year"
++msgid_plural "%d years"
++msgstr[0] ""
++msgstr[1] ""
++
++#: ../src/sugar3/util.py:241 src/sugar3/util.py:241 src/sugar3/util.py:248
++#, python-format
++msgid "%d month"
++msgid_plural "%d months"
++msgstr[0] ""
++msgstr[1] ""
++
++#: ../src/sugar3/util.py:242 src/sugar3/util.py:242 src/sugar3/util.py:249
++#, python-format
++msgid "%d week"
++msgid_plural "%d weeks"
++msgstr[0] ""
++msgstr[1] ""
++
++#: ../src/sugar3/util.py:243 src/sugar3/util.py:243 src/sugar3/util.py:250
++#, python-format
++msgid "%d day"
++msgid_plural "%d days"
++msgstr[0] ""
++msgstr[1] ""
++
++#: ../src/sugar3/util.py:244 src/sugar3/util.py:244 src/sugar3/util.py:251
++#, python-format
++msgid "%d hour"
++msgid_plural "%d hours"
++msgstr[0] ""
++msgstr[1] ""
++
++#: ../src/sugar3/util.py:245 src/sugar3/util.py:245 src/sugar3/util.py:252
++#, python-format
++msgid "%d minute"
++msgid_plural "%d minutes"
++msgstr[0] ""
++msgstr[1] ""
++
++#: ../src/sugar3/util.py:346 src/sugar3/util.py:346 src/sugar3/util.py:354
++msgid "Empty"
++msgstr ""
++
++#: ../src/sugar3/util.py:348 src/sugar3/util.py:348 src/sugar3/util.py:356
++#, python-format
++msgid "%d B"
++msgstr ""
++
++#: ../src/sugar3/util.py:350 src/sugar3/util.py:350 src/sugar3/util.py:358
++#, python-format
++msgid "%d KB"
++msgstr ""
++
++#: ../src/sugar3/util.py:352 src/sugar3/util.py:352 src/sugar3/util.py:360
++#, python-format
++msgid "%d MB"
++msgstr ""
++
++#: ../src/sugar3/util.py:354 src/sugar3/util.py:354 src/sugar3/util.py:362
++#, python-format
++msgid "%d GB"
++msgstr ""
++
++#: ../src/sugar3/mime.py:56 src/sugar3/mime.py:59 src/sugar3/mime.py:61
++msgid "Text"
++msgstr ""
++
++#: ../src/sugar3/mime.py:63 src/sugar3/mime.py:66 src/sugar3/mime.py:68
++msgid "Image"
++msgstr ""
++
++#: ../src/sugar3/mime.py:68 src/sugar3/mime.py:71 src/sugar3/mime.py:73
++msgid "Audio"
++msgstr ""
++
++#: ../src/sugar3/mime.py:75 src/sugar3/mime.py:78 src/sugar3/mime.py:80
++msgid "Video"
++msgstr ""
++
++#: ../src/sugar3/mime.py:86 src/sugar3/mime.py:89 src/sugar3/mime.py:91
++msgid "Link"
++msgstr ""
++
++#: ../src/sugar3/mime.py:91 src/sugar3/mime.py:94 src/sugar3/mime.py:96
++msgid "Bundle"
++msgstr ""
++
++#: ../src/sugar3/speech.py:48 src/sugar3/speech.py:56
++msgid "Afrikaans"
++msgstr ""
++
++#: ../src/sugar3/speech.py:49 src/sugar3/speech.py:58
++msgid "Aragonese"
++msgstr ""
++
++#: ../src/sugar3/speech.py:50 src/sugar3/speech.py:60
++msgid "Bulgarian"
++msgstr ""
++
++#: ../src/sugar3/speech.py:51 src/sugar3/speech.py:62
++msgid "Bosnian"
++msgstr ""
++
++#: ../src/sugar3/speech.py:52 src/sugar3/speech.py:64
++msgid "Catalan"
++msgstr ""
++
++#: ../src/sugar3/speech.py:53 src/sugar3/speech.py:66
++msgid "Czech"
++msgstr ""
++
++#: ../src/sugar3/speech.py:54 src/sugar3/speech.py:68
++msgid "Welsh"
++msgstr ""
++
++#: ../src/sugar3/speech.py:55 src/sugar3/speech.py:70
++msgid "Danish"
++msgstr ""
++
++#: ../src/sugar3/speech.py:56 src/sugar3/speech.py:72
++msgid "German"
++msgstr ""
++
++#: ../src/sugar3/speech.py:57 src/sugar3/speech.py:74
++msgid "Greek"
++msgstr ""
++
++#: ../src/sugar3/speech.py:58
++msgid "Default"
++msgstr ""
++
++#: ../src/sugar3/speech.py:59 src/sugar3/speech.py:77
++msgid "English Britain"
++msgstr ""
++
++#: ../src/sugar3/speech.py:60 src/sugar3/speech.py:79
++msgid "English scottish"
++msgstr ""
++
++#: ../src/sugar3/speech.py:61 src/sugar3/speech.py:80
++msgid "English-north"
++msgstr ""
++
++#: ../src/sugar3/speech.py:62 src/sugar3/speech.py:82
++msgid "English_rp"
++msgstr ""
++
++#: ../src/sugar3/speech.py:63 src/sugar3/speech.py:84
++msgid "English_wmids"
++msgstr ""
++
++#: ../src/sugar3/speech.py:64 src/sugar3/speech.py:86
++msgid "English USA"
++msgstr ""
++
++#: ../src/sugar3/speech.py:65
++msgid "English west indies"
++msgstr ""
++
++#: ../src/sugar3/speech.py:66 src/sugar3/speech.py:90
++msgid "Esperanto"
++msgstr ""
++
++#: ../src/sugar3/speech.py:67 src/sugar3/speech.py:92
++msgid "Spanish"
++msgstr ""
++
++#: ../src/sugar3/speech.py:68 src/sugar3/speech.py:93
++msgid "Spanish latin american"
++msgstr ""
++
++#: ../src/sugar3/speech.py:69 src/sugar3/speech.py:95
++msgid "Estonian"
++msgstr ""
++
++#: ../src/sugar3/speech.py:70 src/sugar3/speech.py:97
++msgid "Farsi"
++msgstr ""
++
++#: ../src/sugar3/speech.py:71 src/sugar3/speech.py:99
++msgid "Farsi-pinglish"
++msgstr ""
++
++#: ../src/sugar3/speech.py:72 src/sugar3/speech.py:101
++msgid "Finnish"
++msgstr ""
++
++#: ../src/sugar3/speech.py:73 src/sugar3/speech.py:103
++msgid "French belgium"
++msgstr ""
++
++#: ../src/sugar3/speech.py:74 src/sugar3/speech.py:105
++msgid "French"
++msgstr ""
++
++#: ../src/sugar3/speech.py:75 src/sugar3/speech.py:107
++msgid "Irish-gaeilge"
++msgstr ""
++
++#: ../src/sugar3/speech.py:76 src/sugar3/speech.py:109
++msgid "Greek-ancient"
++msgstr ""
++
++#: ../src/sugar3/speech.py:77 src/sugar3/speech.py:111
++msgid "Hindi"
++msgstr ""
++
++#: ../src/sugar3/speech.py:78 src/sugar3/speech.py:113
++msgid "Croatian"
++msgstr ""
++
++#: ../src/sugar3/speech.py:79 src/sugar3/speech.py:115
++msgid "Hungarian"
++msgstr ""
++
++#: ../src/sugar3/speech.py:80 src/sugar3/speech.py:117
++msgid "Armenian"
++msgstr ""
++
++#: ../src/sugar3/speech.py:81 src/sugar3/speech.py:119
++msgid "Armenian (west)"
++msgstr ""
++
++#: ../src/sugar3/speech.py:82 src/sugar3/speech.py:121
++msgid "Indonesian"
++msgstr ""
++
++#: ../src/sugar3/speech.py:83 src/sugar3/speech.py:123
++msgid "Icelandic"
++msgstr ""
++
++#: ../src/sugar3/speech.py:84 src/sugar3/speech.py:125
++msgid "Italian"
++msgstr ""
++
++#: ../src/sugar3/speech.py:85 src/sugar3/speech.py:127
++msgid "Lojban"
++msgstr ""
++
++#: ../src/sugar3/speech.py:86 src/sugar3/speech.py:129
++msgid "Georgian"
++msgstr ""
++
++#: ../src/sugar3/speech.py:87 src/sugar3/speech.py:131
++msgid "Kannada"
++msgstr ""
++
++#: ../src/sugar3/speech.py:88 src/sugar3/speech.py:133
++msgid "Kurdish"
++msgstr ""
++
++#: ../src/sugar3/speech.py:89 src/sugar3/speech.py:135
++msgid "Latin"
++msgstr ""
++
++#: ../src/sugar3/speech.py:90 src/sugar3/speech.py:137
++msgid "Lithuanian"
++msgstr ""
++
++#: ../src/sugar3/speech.py:91 src/sugar3/speech.py:139
++msgid "Latvian"
++msgstr ""
++
++#: ../src/sugar3/speech.py:92 src/sugar3/speech.py:141
++msgid "Macedonian"
++msgstr ""
++
++#: ../src/sugar3/speech.py:93 src/sugar3/speech.py:143
++msgid "Malayalam"
++msgstr ""
++
++#: ../src/sugar3/speech.py:94 src/sugar3/speech.py:145
++msgid "Malay"
++msgstr ""
++
++#: ../src/sugar3/speech.py:95 src/sugar3/speech.py:147
++msgid "Nepali"
++msgstr ""
++
++#: ../src/sugar3/speech.py:96 src/sugar3/speech.py:149
++msgid "Dutch"
++msgstr ""
++
++#: ../src/sugar3/speech.py:97 src/sugar3/speech.py:151
++msgid "Norwegian"
++msgstr ""
++
++#: ../src/sugar3/speech.py:98 src/sugar3/speech.py:153
++msgid "Punjabi"
++msgstr ""
++
++#: ../src/sugar3/speech.py:99 src/sugar3/speech.py:155
++msgid "Polish"
++msgstr ""
++
++#: ../src/sugar3/speech.py:100 src/sugar3/speech.py:157
++msgid "Portuguese (Brazil)"
++msgstr ""
++
++#: ../src/sugar3/speech.py:101 src/sugar3/speech.py:159
++msgid "Portuguese (Portugal)"
++msgstr ""
++
++#: ../src/sugar3/speech.py:102 src/sugar3/speech.py:161
++msgid "Romanian"
++msgstr ""
++
++#: ../src/sugar3/speech.py:103 src/sugar3/speech.py:163
++msgid "Russian"
++msgstr ""
++
++#: ../src/sugar3/speech.py:104 src/sugar3/speech.py:165
++msgid "Slovak"
++msgstr ""
++
++#: ../src/sugar3/speech.py:105 src/sugar3/speech.py:167
++msgid "Albanian"
++msgstr ""
++
++#: ../src/sugar3/speech.py:106 src/sugar3/speech.py:169
++msgid "Serbian"
++msgstr ""
++
++#: ../src/sugar3/speech.py:107 src/sugar3/speech.py:171
++msgid "Swedish"
++msgstr ""
++
++#: ../src/sugar3/speech.py:108
++msgid "Swahili-test"
++msgstr ""
++
++#: ../src/sugar3/speech.py:109 src/sugar3/speech.py:175
++msgid "Tamil"
++msgstr ""
++
++#: ../src/sugar3/speech.py:110 src/sugar3/speech.py:177
++msgid "Turkish"
++msgstr ""
++
++#: ../src/sugar3/speech.py:111 src/sugar3/speech.py:179
++msgid "Vietnam"
++msgstr ""
++
++#: ../src/sugar3/speech.py:112 src/sugar3/speech.py:180
++msgid "Vietnam_hue"
++msgstr ""
++
++#: ../src/sugar3/speech.py:113 src/sugar3/speech.py:181
++msgid "Vietnam_sgn"
++msgstr ""
++
++#: ../src/sugar3/speech.py:114 src/sugar3/speech.py:183
++msgid "Mandarin"
++msgstr ""
++
++#: ../src/sugar3/speech.py:115 src/sugar3/speech.py:185
++msgid "Cantonese"
++msgstr ""
++
++#: src/sugar3/activity/activity.py:1170 src/sugar3/activity/activity.py:1165
++msgid "Stop: name your journal entry"
++msgstr ""
++
++#: src/sugar3/activity/activity.py:1193 src/sugar3/activity/activity.py:1188
++msgid "Cancel stop and continue the activity"
++msgstr ""
++
++#: src/sugar3/activity/activity.py:1230 src/sugar3/activity/activity.py:1225
++msgid "Save new"
++msgstr ""
++
++#: src/sugar3/activity/activity.py:1231 src/sugar3/activity/activity.py:1226
++msgid "Save a new journal entry"
++msgstr ""
++
++#: src/sugar3/activity/activity.py:1234 src/sugar3/activity/activity.py:1229
++msgid "Save"
++msgstr ""
++
++#: src/sugar3/activity/activity.py:1235 src/sugar3/activity/activity.py:1230
++msgid "Save into the old journal entry"
++msgstr ""
++
++#: src/sugar3/activity/activity.py:1241 src/sugar3/activity/activity.py:1236
++msgid "Erase changes"
++msgstr ""
++
++#: src/sugar3/activity/activity.py:1242 src/sugar3/activity/activity.py:1237
++msgid "Erase what you have done, and leave your old journal entry unchanged"
++msgstr ""
++
++#: src/sugar3/activity/activity.py:1245 src/sugar3/activity/activity.py:1240
++msgid "Erase"
++msgstr ""
++
++#: src/sugar3/activity/activity.py:1246 src/sugar3/activity/activity.py:1241
++msgid "Erase what you have done, and avoid making a journal entry"
++msgstr ""
++
++#: src/sugar3/graphics/popwindow.py:179
++msgid "Close"
++msgstr ""
++
++#: src/sugar3/speech.py:75
++msgid "English"
++msgstr ""
++
++#: src/sugar3/speech.py:88
++msgid "English West Indies"
++msgstr ""
++
++#: src/sugar3/speech.py:173
++msgid "Swahili"
++msgstr ""
+diff --git b/src/sugar3/.gitignore a/src/sugar3/.gitignore
+new file mode 100644
+index 0000000..de24e35
+--- /dev/null
++++ a/src/sugar3/.gitignore
+@@ -0,0 +1,4 @@
++sugar-marshal.c
++sugar-marshal.h
++_sugarext.c
++_sugarext.c
+diff --git b/src/sugar3/.license a/src/sugar3/.license
+new file mode 100644
+index 0000000..6989ebe
+--- /dev/null
++++ a/src/sugar3/.license
+@@ -0,0 +1 @@
++LGPL
+diff --git b/src/sugar3/activity/Makefile.am a/src/sugar3/activity/Makefile.am
+index e3cf05b..1f7a433 100644
+--- b/src/sugar3/activity/Makefile.am
++++ a/src/sugar3/activity/Makefile.am
+@@ -7,7 +7,6 @@ sugar_PYTHON =              \
+ 	activityhandle.py       \
+ 	activityservice.py      \
+ 	bundlebuilder.py        \
+-	webkit1.py				\
+ 	webactivity.py         \
+ 	i18n.py			\
+ 	widgets.py
+diff --git b/src/sugar3/activity/activity.py a/src/sugar3/activity/activity.py
+index a459d64..4f7c9a2 100644
+--- b/src/sugar3/activity/activity.py
++++ a/src/sugar3/activity/activity.py
+@@ -854,7 +854,7 @@ class Activity(Window, Gtk.Container):
+         is seeing at the time.
+ 
+         Returns:
+-            str: image data in PNG format
++            bytes: image data in PNG format
+ 
+         Activities may override this method, and return a string with
+         image data in PNG format with a width and height of
+diff --git b/src/sugar3/activity/bundlebuilder.py a/src/sugar3/activity/bundlebuilder.py
+index 9fd3839..cc32d60 100644
+--- b/src/sugar3/activity/bundlebuilder.py
++++ a/src/sugar3/activity/bundlebuilder.py
+@@ -42,7 +42,7 @@ import logging
+ from glob import glob
+ from fnmatch import fnmatch
+ from six.moves.configparser import ConfigParser
+-import xml.etree.cElementTree as ET
++import xml.etree.ElementTree as ET
+ from six.moves.html_parser import HTMLParser
+ 
+ from sugar3 import env
+@@ -629,9 +629,9 @@ def start():
+     source_dir = os.path.abspath(os.path.dirname(sys.argv[0]))
+     config = Config(source_dir)
+ 
+-    try:
+-        globals()['cmd_' + options.command](config, options)
+-    except (KeyError, IndexError):
++    if 'cmd_' + (options.command or '') in globals():
++        globals()['cmd_' + (options.command or '')](config, options)
++    else:
+         parser.print_help()
+ 
+ 
+diff --git b/src/sugar3/graphics/style.py a/src/sugar3/graphics/style.py
+index 8dafd5b..4b34351 100644
+--- b/src/sugar3/graphics/style.py
++++ a/src/sugar3/graphics/style.py
+@@ -155,7 +155,7 @@ def zoom(units):
+     Returns size of units pixels at current zoom level
+ 
+     Args:
+-        units (int): size of item at full size
++        units (int or float): size of item at full size
+     '''
+     return int(ZOOM_FACTOR * units)
+ 
+diff --git b/src/sugar3/presence/test_presence.txt a/src/sugar3/presence/test_presence.txt
+new file mode 100644
+index 0000000..d0736a9
+--- /dev/null
++++ a/src/sugar3/presence/test_presence.txt
+@@ -0,0 +1,26 @@
++This is a test of presence.
++
++To test this service we will start up a mock dbus library:
++
++    >>> from sugar.testing import mockdbus
++    >>> import dbus
++    >>> pres_service = mockdbus.MockService(
++    ...     'org.laptop.Presence', '/org/laptop/Presence', name='pres')
++    >>> pres_service.install()
++    >>> pres_interface = dbus.Interface(pres_service, 'org.laptop.Presence')
++
++Then we import the library (second, to make sure it connects to our
++mocked system, though the lazy instantiation in get_instance() should
++handle it):
++
++    >>> from sugar.presence import PresenceService
++    >>> ps = PresenceService.get_instance()
++    >>> pres_interface.make_response('getServices', [])
++    >>> ps.get_services()
++    Called pres.org.laptop.Presence:getServices()
++    []
++    >>> pres_interface.make_response('getBuddies', [])
++    >>> ps.get_buddies()
++    Called pres.org.laptop.Presence:getBuddies()
++    []
++
+diff --git b/tests/data/mime.svg a/tests/data/mime.svg
+new file mode 100644
+index 0000000..d4e6db3
+--- /dev/null
++++ a/tests/data/mime.svg
+@@ -0,0 +1,3 @@
++<?xml version="1.0" encoding="UTF-8" standalone="no"?>
++<svg xmlns="http://www.w3.org/2000/svg" version="2.0">
++</svg>
+diff --git b/tests/data/sample.activity/activity.py a/tests/data/sample.activity/activity.py
+new file mode 100644
+index 0000000..ea4e983
+--- /dev/null
++++ a/tests/data/sample.activity/activity.py
+@@ -0,0 +1,9 @@
++from gettext import gettext as _
++
++from sugar3.activity import activity
++
++
++class SampleActivity(activity.Activity):
++    def __init__(self, handle):
++        activity.Activity.__init__(self, handle)
++        self._text = _("Text string")
+diff --git b/tests/data/sample.activity/activity/activity-sample.svg a/tests/data/sample.activity/activity/activity-sample.svg
+new file mode 100644
+index 0000000..8da7c63
+--- /dev/null
++++ a/tests/data/sample.activity/activity/activity-sample.svg
+@@ -0,0 +1,26 @@
++<?xml version="1.0" ?><!DOCTYPE svg  PUBLIC '-//W3C//DTD SVG 1.1//EN'  'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd' [
++	<!ENTITY stroke_color "#010101">
++	<!ENTITY fill_color "#FFFFFF">
++]>
++<svg enable-background="new 0 0 55 55" height="55px" version="1.1" viewBox="0 0 55 55" width="55px" x="0px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" y="0px">
++  <g display="block" id="activity-helloworld">
++    <path d="M9.263,48.396c0.682,1.152,6.027,0.059,8.246-1.463   c2.102-1.432,3.207-2.596,4.336-2.596c1.133,0,12.54,0.92,20.935-5.715c7.225-5.707,9.773-13.788,4.52-21.437   c-5.252-7.644-13.832-9.08-20.878-8.56C16.806,9.342,4.224,16.91,4.677,28.313c0.264,6.711,3.357,9.143,4.922,10.703   c1.562,1.566,4.545,1.566,2.992,5.588C11.981,46.183,8.753,47.522,9.263,48.396z" display="inline" fill="&fill_color;" stroke="&stroke_color;" stroke-width="3.5"/>
++  </g>
++  <circle cx="27.375" cy="27.5" r="19.903"
++     transform="matrix(0.6,0,0,0.6,10.95,11)"
++     id="circle4" fill="&fill_color;" stroke="&stroke_color;" stroke-width="3.5" display="inline" />
++  <g transform="matrix(0.6,0,0,0.6,10.95,11)" id="g6" style="display:inline">
++    <path d="m 27.376,7.598 c 0,0 -11.205,8.394 -11.205,19.976 0,11.583 11.205,19.829 11.205,19.829"
++       id="path8" fill="&fill_color;" stroke="&stroke_color;" stroke-width="3.5" />
++    <path d="m 27.376,7.598 c 0,0 11.066,9.141 11.066,19.976 0,10.839 -11.066,19.829 -11.066,19.829"
++       id="path10" fill="&fill_color;" stroke="&stroke_color;" stroke-width="3.5" />
++    <line x1="27.375999" x2="27.375999" y1="7.598" y2="47.402"
++       id="line12" fill="&fill_color;" stroke="&stroke_color;" stroke-width="3.5" />
++    <line x1="27.375999" x2="27.375999" y1="7.598" y2="47.402"
++       id="line14" fill="&fill_color;" stroke="&stroke_color;" stroke-width="3.5" />
++    <line x1="27.375999" x2="27.375999" y1="7.598" y2="47.402"
++       id="line16" fill="&fill_color;" stroke="&stroke_color;" stroke-width="3.5" />
++    <line x1="7.4720001" x2="47.278" y1="27.5" y2="27.5"
++       id="line18" fill="&fill_color;" stroke="&stroke_color;" stroke-width="3.5" />
++  </g>
++</svg>
+diff --git b/tests/data/sample.activity/activity/activity.info a/tests/data/sample.activity/activity/activity.info
+new file mode 100644
+index 0000000..820c07a
+--- /dev/null
++++ a/tests/data/sample.activity/activity/activity.info
+@@ -0,0 +1,7 @@
++[Activity]
++name = Sample
++activity_version = 1
++bundle_id = org.sugarlabs.Sample
++exec = sugar-activity3 activity.SampleActivity
++icon = activity-sample
++license = GPLv2+
+diff --git b/tests/data/sample.activity/po/Sample.pot a/tests/data/sample.activity/po/Sample.pot
+new file mode 100644
+index 0000000..0cee357
+--- /dev/null
++++ a/tests/data/sample.activity/po/Sample.pot
+@@ -0,0 +1,26 @@
++# SOME DESCRIPTIVE TITLE.
++# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the PACKAGE package.
++# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
++#
++#, fuzzy
++msgid ""
++msgstr ""
++"Project-Id-Version: PACKAGE VERSION\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2012-12-06 20:10+0100\n"
++"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
++"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
++"Language-Team: LANGUAGE <LL@li.org>\n"
++"Language: \n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=CHARSET\n"
++"Content-Transfer-Encoding: 8bit\n"
++
++#: activity/activity.info:2
++msgid "Sample"
++msgstr ""
++
++#: activity.py:8
++msgid "Text string"
++msgstr ""
+diff --git b/tests/data/sample.activity/po/es.po a/tests/data/sample.activity/po/es.po
+new file mode 100644
+index 0000000..a1a6adb
+--- /dev/null
++++ a/tests/data/sample.activity/po/es.po
+@@ -0,0 +1,26 @@
++# SOME DESCRIPTIVE TITLE.
++# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
++# This file is distributed under the same license as the PACKAGE package.
++# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
++#
++#, fuzzy
++msgid ""
++msgstr ""
++"Project-Id-Version: PACKAGE VERSION\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2012-12-06 20:10+0100\n"
++"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
++"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
++"Language-Team: LANGUAGE <LL@li.org>\n"
++"Language: \n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=UTF-8\n"
++"Content-Transfer-Encoding: 8bit\n"
++
++#: activity/activity.info:2
++msgid "Sample"
++msgstr ""
++
++#: activity.py:8
++msgid "Text string"
++msgstr ""
+diff --git b/tests/data/sample.activity/setup.py a/tests/data/sample.activity/setup.py
+new file mode 100755
+index 0000000..191204b
+--- /dev/null
++++ a/tests/data/sample.activity/setup.py
+@@ -0,0 +1,5 @@
++#!/usr/bin/env python3
++
++from sugar3.activity import bundlebuilder
++
++bundlebuilder.start()
+diff --git b/tests/data/sample.content/index.html a/tests/data/sample.content/index.html
+new file mode 100644
+index 0000000..e69de29
+diff --git b/tests/data/sample.content/library/library.info a/tests/data/sample.content/library/library.info
+new file mode 100644
+index 0000000..fb372df
+--- /dev/null
++++ a/tests/data/sample.content/library/library.info
+@@ -0,0 +1,10 @@
++[Library]
++name = sample
++long_name = sample
++global_name = org.sugarlabs.samplecontent
++library_version = 1
++host_version = 1
++l10n = false
++locale = en
++license = CC-BY 2.0
++category = media
+diff --git b/tests/graphics/cellrendererprogress.py a/tests/graphics/cellrendererprogress.py
+new file mode 100644
+index 0000000..94c1b9a
+--- /dev/null
++++ a/tests/graphics/cellrendererprogress.py
+@@ -0,0 +1,46 @@
++"""
++
++http://developer.gnome.org/gtk3/stable/GtkCellRendererProgress.html
++
++"""
++
++from gi.repository import Gtk
++
++from sugar3.graphics import style
++
++import common
++
++
++test = common.Test()
++test.show()
++
++model = Gtk.ListStore(str, int, int)
++for item in [('one', 72, -1),
++             ('two', 50, -1),
++             ('three', 35, -1),
++             ('four', 0, 5)]:
++    model.append(item)
++
++treeview = Gtk.TreeView()
++treeview.set_model(model)
++treeview.set_headers_visible(False)
++test.pack_start(treeview, True, True, 0)
++treeview.show()
++
++col = Gtk.TreeViewColumn()
++treeview.append_column(col)
++
++cell_text = Gtk.CellRendererText()
++cell_text.props.height = style.GRID_CELL_SIZE
++col.pack_start(cell_text, expand=False)
++col.add_attribute(cell_text, 'text', 0)
++
++cell_progress = Gtk.CellRendererProgress()
++cell_progress.props.ypad = style.GRID_CELL_SIZE / 4
++col.pack_start(cell_progress, expand=True)
++col.add_attribute(cell_progress, 'value', 1)
++col.add_attribute(cell_progress, 'pulse', 2)
++
++
++if __name__ == '__main__':
++    common.main(test)
+diff --git b/tests/graphics/combobox.py a/tests/graphics/combobox.py
+new file mode 100644
+index 0000000..0c329a0
+--- /dev/null
++++ a/tests/graphics/combobox.py
+@@ -0,0 +1,24 @@
++from gi.repository import Gtk
++
++import common
++
++
++test = common.Test()
++test.show()
++
++# test Gtk.ComboBox:
++
++store = Gtk.ListStore(int, str)
++for i in range(100):
++    description = "combo test entry %d" % i
++    store.append([i, description])
++
++combobox = Gtk.ComboBox(model=store)
++cell = Gtk.CellRendererText()
++combobox.pack_start(cell, True)
++combobox.add_attribute(cell, 'text', 1)
++test.pack_start(combobox, True, True, 0)
++combobox.show()
++
++if __name__ == '__main__':
++    common.main(test)
+diff --git b/tests/graphics/progressicon.py a/tests/graphics/progressicon.py
+new file mode 100644
+index 0000000..b756d2f
+--- /dev/null
++++ a/tests/graphics/progressicon.py
+@@ -0,0 +1,66 @@
++# Copyright (C) 2013, One Laptop Per Child
++#
++# This library is free software; you can redistribute it and/or
++# modify it under the terms of the GNU Lesser General Public
++# License as published by the Free Software Foundation; either
++# version 2 of the License, or (at your option) any later version.
++#
++# This library is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++# Lesser General Public License for more details.
++#
++# You should have received a copy of the GNU Lesser General Public
++# License along with this library; if not, write to the
++# Free Software Foundation, Inc., 59 Temple Place - Suite 330,
++# Boston, MA 02111-1307, USA.
++
++"""
++Test the sugar3.graphics.progressicon.ProgressIcon widget.
++"""
++
++
++from gi.repository import GLib
++
++from sugar3.graphics.progressicon import ProgressIcon
++from sugar3.graphics import style
++
++import common
++
++test = common.Test()
++test.show()
++
++icon = ProgressIcon(
++    pixel_size=style.LARGE_ICON_SIZE,
++    icon_name='computer-xo',
++    stroke_color=style.COLOR_BUTTON_GREY.get_svg(),
++    fill_color=style.COLOR_WHITE.get_svg())
++test.pack_start(icon, True, True, 0)
++icon.show()
++
++icon2 = ProgressIcon(
++    pixel_size=style.LARGE_ICON_SIZE,
++    icon_name='computer-xo',
++    stroke_color=style.COLOR_BUTTON_GREY.get_svg(),
++    fill_color=style.COLOR_WHITE.get_svg(),
++    direction='horizontal')
++test.pack_start(icon2, True, True, 0)
++icon2.show()
++
++progress = 0
++
++
++def timeout_cb():
++    global progress
++    progress += 0.05
++    icon.update(progress)
++    icon2.update(progress)
++    if progress >= 1:
++        return False
++    return True
++
++
++GLib.timeout_add(50, timeout_cb)
++
++if __name__ == '__main__':
++    common.main(test)
+diff --git b/tests/test_bundle.py a/tests/test_bundle.py
+new file mode 100644
+index 0000000..9d343d2
+--- /dev/null
++++ a/tests/test_bundle.py
+@@ -0,0 +1,49 @@
++# Copyright (C) 2013, One Laptop per Child
++#
++# This program is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation; either version 2 of the License, or
++# (at your option) any later version.
++#
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++#
++# You should have received a copy of the GNU General Public License
++# along with this program; if not, write to the Free Software
++# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
++
++import os
++import unittest
++import subprocess
++
++from sugar3.bundle.helpers import bundle_from_dir, bundle_from_archive
++from sugar3.bundle.activitybundle import ActivityBundle
++from sugar3.bundle.contentbundle import ContentBundle
++
++tests_dir = os.path.dirname(__file__)
++data_dir = os.path.join(tests_dir, "data")
++SAMPLE_ACTIVITY_PATH = os.path.join(data_dir, 'sample.activity')
++SAMPLE_CONTENT_PATH = os.path.join(data_dir, 'sample.content')
++
++
++class TestBundle(unittest.TestCase):
++    def test_bundle_from_dir(self):
++        bundle = bundle_from_dir(SAMPLE_ACTIVITY_PATH)
++        self.assertIsInstance(bundle, ActivityBundle)
++        bundle = bundle_from_dir(SAMPLE_CONTENT_PATH)
++        self.assertIsInstance(bundle, ContentBundle)
++
++    def test_activity_bundle_from_archive(self):
++        os.chdir(SAMPLE_ACTIVITY_PATH)
++        subprocess.check_call(["./setup.py", "dist_xo"])
++        xo_path = os.path.join(".", "dist", "Sample-1.xo")
++        bundle = bundle_from_archive(xo_path)
++        self.assertIsInstance(bundle, ActivityBundle)
++
++    def test_content_bundle_from_archive(self):
++        os.chdir(data_dir)
++        subprocess.check_call(["zip", "-r", "sample-1.xol", "sample.content"])
++        bundle = bundle_from_archive("./sample-1.xol")
++        self.assertIsInstance(bundle, ContentBundle)
+diff --git b/tests/test_bundlebuilder.py a/tests/test_bundlebuilder.py
+new file mode 100644
+index 0000000..bda1af6
+--- /dev/null
++++ a/tests/test_bundlebuilder.py
+@@ -0,0 +1,245 @@
++# Copyright (C) 2012, Daniel Narvaez
++#
++# This program is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation; either version 2 of the License, or
++# (at your option) any later version.
++#
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++#
++# You should have received a copy of the GNU General Public License
++# along with this program; if not, write to the Free Software
++# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
++
++import os
++import unittest
++import shutil
++import subprocess
++import tempfile
++import tarfile
++import zipfile
++
++tests_dir = os.path.dirname(__file__)
++data_dir = os.path.join(tests_dir, "data")
++
++
++class TestGit(unittest.TestCase):
++    _source_files = ["activity.py",
++                     "setup.py",
++                     "po/Sample.pot",
++                     "po/es.po",
++                     "activity/activity.info",
++                     "activity/activity-sample.svg"]
++
++    _activity_locale_files = ["locale/es/activity.linfo"]
++
++    _share_locale_files = ["locale/es/LC_MESSAGES/org.sugarlabs.Sample.mo"]
++
++    def _get_all_locale_files(self):
++        expected = self._share_locale_files[:]
++        expected.extend(self._activity_locale_files)
++        return expected
++
++    def _create_repo(self):
++        cwd = os.getcwd()
++        path = tempfile.mkdtemp()
++        os.chdir(path)
++
++        subprocess.check_call(["git", "init"])
++        subprocess.check_call(["git", "config", "user.name", "Test Test"])
++        subprocess.check_call(["git", "config", "user.email", "test@test.org"])
++
++        for source in self._source_files:
++            source_path = os.path.join(data_dir, "sample.activity", source)
++            dest_path = os.path.join(path, source)
++
++            try:
++                os.makedirs(os.path.dirname(dest_path))
++            except OSError:
++                pass
++
++            shutil.copyfile(source_path, dest_path)
++            shutil.copymode(source_path, dest_path)
++
++            subprocess.check_call(["git", "add", source])
++
++        subprocess.check_call(["git", "commit", "-m", "Initial commit", "-a"])
++
++        os.chdir(cwd)
++
++        return path
++
++    def _strip_root_dir(self, paths):
++        return [path[path.find("/") + 1:] for path in paths]
++
++    def _test_dist_xo(self, source_path, build_path):
++        cwd = os.getcwd()
++        os.chdir(build_path)
++
++        setup_path = os.path.join(source_path, "setup.py")
++        subprocess.call([setup_path, "dist_xo"])
++
++        xo_path = os.path.join(build_path, "dist", "Sample-1.xo")
++        filenames = zipfile.ZipFile(xo_path).namelist()
++
++        stripped_filenames = self._strip_root_dir(filenames)
++        expected = self._source_files[:]
++        expected.extend(self._get_all_locale_files())
++        self.assertItemsEqual(stripped_filenames, expected)
++
++        os.chdir(cwd)
++
++    def _test_dist_source(self, source_path, build_path):
++        cwd = os.getcwd()
++        os.chdir(build_path)
++
++        setup_path = os.path.join(source_path, "setup.py")
++        subprocess.call([setup_path, "dist_source"])
++
++        xo_path = os.path.join(build_path, "dist", "Sample-1.tar.bz2")
++        filenames = tarfile.open(name=xo_path, mode="r:bz2").getnames()
++
++        stripped_filenames = self._strip_root_dir(filenames)
++        self.assertItemsEqual(stripped_filenames, self._source_files)
++
++        os.chdir(cwd)
++
++    def _test_build(self, source_path, build_path):
++        cwd = os.getcwd()
++        os.chdir(build_path)
++
++        setup_path = os.path.join(source_path, "setup.py")
++        subprocess.call([setup_path, "build"])
++
++        locale_path = os.path.join(build_path, "locale")
++
++        filenames = []
++        for root, dirs, files in os.walk(locale_path):
++            rel_root = root[len(build_path) + 1:]
++            filenames.extend([os.path.join(rel_root, name) for name in files])
++
++        self.assertItemsEqual(filenames, self._get_all_locale_files())
++
++        os.chdir(cwd)
++
++    def _test_dev(self, source_path, build_path):
++        activities_path = tempfile.mkdtemp()
++
++        cwd = os.getcwd()
++        os.chdir(build_path)
++
++        os.environ["SUGAR_ACTIVITIES_PATH"] = activities_path
++
++        setup_path = os.path.join(source_path, "setup.py")
++        subprocess.call([setup_path, "dev"])
++
++        activity_py_path = os.path.join(activities_path, "Sample.activity",
++                                        "activity.py")
++        self.assertTrue(os.path.exists(activity_py_path))
++
++        os.chdir(cwd)
++
++    def _test_genpot(self, source_path, build_path):
++        cwd = os.getcwd()
++        os.chdir(build_path)
++
++        pot_path = os.path.join(source_path, "po", "Sample.pot")
++        os.unlink(pot_path)
++
++        setup_path = os.path.join(source_path, "setup.py")
++        subprocess.call([setup_path, "genpot"])
++
++        self.assertTrue(os.path.exists(pot_path))
++
++        os.chdir(cwd)
++
++    def _test_install(self, source_path, build_path):
++        install_path = tempfile.mkdtemp()
++
++        cwd = os.getcwd()
++        os.chdir(build_path)
++
++        setup_path = os.path.join(source_path, "setup.py")
++        subprocess.call([setup_path, "install", "--prefix", install_path])
++
++        filenames = []
++        activity_dir = os.path.join(install_path, "share",
++                                    "sugar", "activities", "Sample.activity")
++        for root, dirs, files in os.walk(activity_dir):
++            rel_root = root[len(activity_dir) + 1:]
++            filenames.extend([os.path.join(rel_root, name) for name in files])
++
++        expected = self._source_files[:]
++        expected.extend(self._activity_locale_files)
++
++        self.assertItemsEqual(filenames, expected)
++
++        filenames = []
++        share_dir = os.path.join(install_path, "share")
++        locale_dir = os.path.join(share_dir, "locale")
++        for root, dirs, files in os.walk(locale_dir):
++            rel_root = root[len(share_dir) + 1:]
++            for name in files:
++                if "org.sugarlabs.Sample" in name:
++                    filenames.append(os.path.join(rel_root, name))
++
++        self.assertItemsEqual(filenames, self._share_locale_files)
++
++        os.chdir(cwd)
++
++    def test_dist_xo_in_source(self):
++        repo_path = self._create_repo()
++        self._test_dist_xo(repo_path, repo_path)
++
++    def test_dist_xo_out_of_source(self):
++        repo_path = self._create_repo()
++        build_path = tempfile.mkdtemp()
++        self._test_dist_xo(repo_path, build_path)
++
++    def test_dist_source_in_source(self):
++        repo_path = self._create_repo()
++        self._test_dist_source(repo_path, repo_path)
++
++    def test_dist_source_out_of_source(self):
++        repo_path = self._create_repo()
++        build_path = tempfile.mkdtemp()
++        self._test_dist_source(repo_path, build_path)
++
++    def test_install_in_source(self):
++        repo_path = self._create_repo()
++        self._test_install(repo_path, repo_path)
++
++    def test_install_out_of_source(self):
++        repo_path = self._create_repo()
++        build_path = tempfile.mkdtemp()
++        self._test_install(repo_path, build_path)
++
++    def test_build_in_source(self):
++        repo_path = self._create_repo()
++        self._test_build(repo_path, repo_path)
++
++    def test_build_out_of_source(self):
++        repo_path = self._create_repo()
++        build_path = tempfile.mkdtemp()
++        self._test_build(repo_path, build_path)
++
++    def test_dev_in_source(self):
++        repo_path = self._create_repo()
++        self._test_dev(repo_path, repo_path)
++
++    def test_dev_out_of_source(self):
++        repo_path = self._create_repo()
++        build_path = tempfile.mkdtemp()
++        self._test_dev(repo_path, build_path)
++
++    def test_genpot_in_source(self):
++        repo_path = self._create_repo()
++        self._test_genpot(repo_path, repo_path)
++
++    def test_genpot_out_of_source(self):
++        repo_path = self._create_repo()
++        build_path = tempfile.mkdtemp()
++        self._test_genpot(repo_path, build_path)
+diff --git b/tests/test_mime.py a/tests/test_mime.py
+new file mode 100644
+index 0000000..9e478de
+--- /dev/null
++++ a/tests/test_mime.py
+@@ -0,0 +1,109 @@
++#!/usr/bin/env python3
++
++# Copyright (C) 2006, Red Hat, Inc.
++# Copyright (C) 2007, One Laptop Per Child
++#
++# This program is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation; either version 2 of the License, or
++# (at your option) any later version.
++#
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++#
++# You should have received a copy of the GNU General Public License
++# along with this program; if not, write to the Free Software
++# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
++
++import os
++import unittest
++
++from sugar3 import mime
++
++tests_dir = os.path.dirname(__file__)
++data_dir = os.path.join(tests_dir, "data")
++
++
++class TestMime(unittest.TestCase):
++    def test_split_uri_list(self):
++        self.assertSequenceEqual(mime.split_uri_list("http://one\nhttp://two"),
++                                 ("http://one", "http://two"))
++
++    def test_get_mime_parents(self):
++        self.assertListEqual(mime.get_mime_parents("image/svg+xml"),
++                             ["application/xml"])
++
++        # If the mime type don't have parents, should return a empty array
++        self.assertListEqual(mime.get_mime_parents("application/octet-stream"),
++                             [])
++
++    def test_get_for_file(self):
++        self.assertEqual(mime.get_for_file(os.path.join(data_dir, "mime.svg")),
++                         'image/svg+xml')
++
++    def test_from_file_name(self):
++        self.assertEqual(mime.get_from_file_name('test.pdf'),
++                         'application/pdf')
++
++    def test_choose_most_significant(self):
++        # Mozilla's text in dnd
++        mime_type = mime.choose_most_significant(
++            ['text/plain', 'text/_moz_htmlcontext', 'text/unicode',
++             'text/html', 'text/_moz_htmlinfo'])
++        self.assertEqual(mime_type, 'text/html')
++
++        # Mozilla's text in c&v
++        mime_type = mime.choose_most_significant(
++            ['text/_moz_htmlcontext',
++             'STRING',
++             'text/html',
++             'text/_moz_htmlinfo',
++             'text/x-moz-url-priv',
++             'UTF8_STRING',
++             'COMPOUND_TEXT'])
++        self.assertEqual(mime_type, 'text/html')
++
++        # Mozilla gif in dnd
++        mime_type = mime.choose_most_significant(
++            ['application/x-moz-file-promise-url',
++             'application/x-moz-file-promise-dest-filename',
++             'text/_moz_htmlinfo', 'text/x-moz-url-desc',
++             'text/_moz_htmlcontext', 'text/x-moz-url-data',
++             'text/uri-list'])
++        self.assertEqual(mime_type, 'text/uri-list')
++
++        # Mozilla url in dnd
++        mime_type = mime.choose_most_significant(
++            ['text/_moz_htmlcontext',
++             'text/html',
++             'text/_moz_htmlinfo',
++             '_NETSCAPE_URL',
++             'text/x-moz-url',
++             'text/x-moz-url-desc',
++             'text/x-moz-url-data',
++             'text/plain',
++             'text/unicode'])
++        self.assertEqual(mime_type, 'text/x-moz-url')
++
++        # Abiword text in dnd
++        mime_type = mime.choose_most_significant(
++            ['text/rtf', 'text/uri-list'])
++        self.assertEqual(mime_type, 'text/uri-list')
++
++        # Abiword text in c&v
++        mime_type = mime.choose_most_significant(
++            ['UTF8_STRING', 'STRING', 'text/html', 'TEXT', 'text/rtf',
++             'COMPOUND_TEXT', 'application/rtf', 'text/plain',
++             'application/xhtml+xml'])
++        self.assertEqual(mime_type, 'application/rtf')
++
++        # Abiword text in c&v
++        mime_type = mime.choose_most_significant(
++            ['GTK_TEXT_BUFFER_CONTENTS',
++             'application/x-gtk-text-buffer-rich-text',
++             'UTF8_STRING', 'COMPOUND_TEXT', 'TEXT', 'STRING',
++             'text/plain;charset=utf-8', 'text/plain;charset=UTF-8',
++             'text/plain'])
++        self.assertEqual(mime_type, 'text/plain')
+diff --git b/tests/test_uitree.py a/tests/test_uitree.py
+new file mode 100644
+index 0000000..b7c7da4
+--- /dev/null
++++ a/tests/test_uitree.py
+@@ -0,0 +1,54 @@
++# Copyright (C) 2012, Daniel Narvaez
++#
++# This program is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation; either version 2 of the License, or
++# (at your option) any later version.
++#
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++#
++# You should have received a copy of the GNU General Public License
++# along with this program; if not, write to the Free Software
++# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
++
++import sys
++import subprocess
++import unittest
++
++from sugar3.test import uitree
++
++
++class TestUITree(unittest.TestCase):
++    def test_tree(self):
++        process = subprocess.Popen(["python3", __file__, "show_window1"])
++
++        try:
++            root = uitree.get_root()
++            window = root.find_child(name="window1", role_name="frame")
++            button = window.find_child(name="button1", role_name="push button")
++        finally:
++            process.terminate()
++
++        self.assertIsNotNone(button)
++
++
++def show_window1():
++    from gi.repository import Gtk
++
++    window = Gtk.Window()
++    window.set_title("window1")
++
++    button = Gtk.Button(label="button1")
++    window.add(button)
++    button.show()
++
++    window.show()
++
++    Gtk.main()
++
++
++if __name__ == '__main__':
++    globals()[sys.argv[1]]()
