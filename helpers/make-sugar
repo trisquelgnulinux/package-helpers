@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu groovy main universe'
 REPOKEY="871920D1991BC93C"
 
@@ -25,7 +25,7 @@ REPOKEY="871920D1991BC93C"
 
 patch -p1 < $DATA/git-20201017.patch
 
-#sed '1aexport PYBUILD_NAME = sugar' -i debian/rules
+sed '/ImageViewerActivity/d;/sugar.Jukebox/d;/sugar.ReadActivity/d' -i data/activities.hidden
 
 changelog "Backported from groovy"
 
