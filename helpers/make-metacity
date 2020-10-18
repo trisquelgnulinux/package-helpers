@@ -1,0 +1,99 @@
+#!/bin/sh
+#
+#    Copyright (C) 2020  Ruben Rodriguez <ruben@trisquel.info>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=1
+
+. ./config
+
+# https://github.com/sugarlabs/sugar/issues/769
+cat << EOF | patch -p1
+commit 074af8f87ef89b13ff326fb5d04ee424bbfd4ced
+Author: Alberts Muktupāvels <alberts.muktupavels@gmail.com>
+Date:   Thu Nov 29 15:17:58 2018 +0200
+
+    revert "unminimize windows with initial IconicState if first known on MapRequest"
+    
+    According to ICCCM client is allowed to go from Withdrawn to Iconic
+    state. Also there are x11 apps that has -iconic command line option
+    that was broken.
+    
+    Revert 6875256e63fbfd4500ddd27a7bf1aafc8d4c1ca3 commit to restore
+    previous behaviour.
+    
+    https://gitlab.gnome.org/GNOME/metacity/issues/4
+
+diff --git a/src/core/display.c b/src/core/display.c
+index ed0aaf7..273c97c 100644
+--- a/src/core/display.c
++++ b/src/core/display.c
+@@ -2297,34 +2297,22 @@ event_callback (XEvent   *event,
+         {
+           window = meta_window_new (display, event->xmaprequest.window, FALSE,
+                                     META_EFFECT_TYPE_CREATE);
+-
+-          /* The window might have initial iconic state, but this is a
+-           * MapRequest, fall through to ensure it is unminimized in
+-           * that case.
+-           */
+         }
+-      else if (frame_was_receiver)
++      /* if frame was receiver it's some malicious send event or something */
++      else if (!frame_was_receiver && window)
+         {
+-          g_warning ("Map requests on the frame window are unexpected");
+-          break;
+-        }
+-
+-      /* Double check that creating the MetaWindow succeeded */
+-      if (window == NULL)
+-        break;
+-
+-      meta_verbose ("MapRequest on %s mapped = %d minimized = %d\n",
+-                    window->desc, window->mapped, window->minimized);
+-
+-      if (window->minimized)
+-        {
+-          meta_window_unminimize (window);
+-          if (window->workspace != window->screen->active_workspace)
++          meta_verbose ("MapRequest on %s mapped = %d minimized = %d\n",
++                        window->desc, window->mapped, window->minimized);
++          if (window->minimized)
+             {
+-              meta_verbose ("Changing workspace due to MapRequest mapped = %d minimized = %d\n",
+-                            window->mapped, window->minimized);
+-              meta_window_change_workspace (window,
+-                                            window->screen->active_workspace);
++              meta_window_unminimize (window);
++              if (window->workspace != window->screen->active_workspace)
++                {
++                  meta_verbose ("Changing workspace due to MapRequest mapped = %d minimized = %d\n",
++                                window->mapped, window->minimized);
++                  meta_window_change_workspace (window,
++                                                window->screen->active_workspace);
++                }
+             }
+         }
+       break;
+EOF
+
+changelog "Fixed sugar related bug"
+
+compile
+
+
