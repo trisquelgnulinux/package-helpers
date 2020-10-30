@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=75
+VERSION=76
 
 . ./config
 
@@ -144,11 +144,6 @@ EOF
 
 cp $DATA/newtab/*.ico browser/components/newtab/data/content/tippytop/favicons/
 cp $DATA/newtab/*.png browser/components/newtab/data/content/tippytop/images/
-
-# Make DuckDuckGo the default engine
-sed '/searchDefault/s/: \".*\"/: "DuckDuckGo"/g' -i browser/components/search/extensions/list.json
-sed '/visibleDefaultEngines/{n; s/"ddg",//; s/\"/"ddg", "/}'  -i browser/components/search/extensions/list.json
-sed '/searchOrder/s/"Google", "Bing"/"DuckDuckGo", "Google"/' -i browser/components/search/extensions/list.json
 
 # Custom DDG
 sed '/"params"/,/],/d' -i browser/components/search/extensions/ddg/manifest.json
