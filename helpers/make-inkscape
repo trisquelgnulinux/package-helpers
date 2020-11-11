@@ -17,12 +17,17 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 EXTERNAL='deb-src http://ppa.launchpad.net/inkscape.dev/stable/ubuntu bionic main '
 REPOKEY=9DA4BD18B9A06DE3
 BACKPORTS=true
 
 . ./config
+
+cat << EOF >> debian/rules
+override_dh_python3:
+	dh_python3 --no-ext-rename
+EOF
 
 changelog "Backported from ppa"
 
