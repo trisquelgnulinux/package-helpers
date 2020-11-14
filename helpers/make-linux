@@ -18,7 +18,7 @@
 #
 
 
-VERSION=2
+VERSION=3
 
 . ./config
 
@@ -27,17 +27,17 @@ for PATCH in $DATA/*.patch ; do
   patch -p1 < $PATCH
 done
 
-rm -rf /tmp/preserve
-mkdir /tmp/preserve
+TMPDIR=$(mktemp -d preserve-XXXX)
 PRESERVE=$(grep '^+++' $DATA/silent-accept-firmware.patch | /bin/sed 's/+++ //; s/\t.*//;' | cut -d/ -f2- | sort -u )
 for FILE in $PRESERVE; do
-  cp $FILE /tmp/preserve --parents -a
+  cp $FILE $TMPDIR --parents -a
 done
 
 sh $DATA/deblob-4.4 --force
 sed 's/bnx2.*fw/$(DEBLOBBED)/' -i firmware/Makefile
 
-cp /tmp/preserve/* . -a
+cp $TMPDIR/* . -a
+rm -rf $TMPDIR
 
 # Remove ZFS
 rm zfs spl debian/scripts/misc/update-zfs.sh -rf
