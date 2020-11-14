@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 
 . ./config
 
@@ -57,21 +57,20 @@ drivers/net/wireless/realtek/rtlwifi/rtl8723ae
 drivers/net/wireless/realtek/rtlwifi/rtl8723be
 drivers/net/wireless/realtek/rtlwifi/rtl8821ae
 '
-
-rm -rf /tmp/preserve
-mkdir /tmp/preserve
+TMPDIR=$(mktemp -d preserve-XXXX)
 PRESERVE=$(grep '^+++' $DATA/silent-accept-firmware.patch | /bin/sed 's/+++ //; s/\t.*//;' | cut -d/ -f2- | sort -u )
 for FILE in $PRESERVE; do
-  cp $FILE /tmp/preserve --parents -a
+  cp $FILE $TMPDIR --parents -a
 done
 for DIR in $PRESERVEDIRS; do
-  cp $DIR /tmp/preserve --parents -a
+  cp $DIR $TMPDIR --parents -a
 done
 
 sh $DATA/deblob-5.3 --force
 
 echo "Reverting deblobbing for files patched by silent-accept-firmware"
-cp /tmp/preserve/* . -av
+cp $TMPDIR/* . -av
+rm -rf $TMPDIR
 
 # Wipe dkms-versions
 # lists zfs / nvidia versions
