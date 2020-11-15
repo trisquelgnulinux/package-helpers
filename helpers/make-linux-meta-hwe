@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2017-2018  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2017-2020  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,20 +17,27 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=5
+VERSION=6
+
 . ./config
 
-rm ./debian/control.d/signed-generic
-
-sed 's/18.04/9.0/g; s/16.04 to 16.10/8.0/; s/16.04/8.0/; s/Xenial/Flidas/; s/Bionic/Etiona/' -i debian/control
-sed 's/linux-firmware/firmware-linux-free/' -i debian/control ./debian/control.d/generic debian/control.d/lowlatency
-sed 's/Ubuntu/upstream/' -i debian/control
-sed 's/Linux/Linux-libre/g' -i debian/control ./debian/control.d/generic debian/control.d/lowlatency
-sed '/signed/,/^$/ d' -i debian/control
-sed 's/, intel-microcode \[amd64 i386\]//; s/, amd64-microcode \[amd64 i386\]//;' debian/control debian/control.d/generic debian/control.d/lowlatency -i
 find debian/control.d/ -type f | grep -v -e '/generic$' -e '/lowlatency$' -e '/virtual$' |xargs rm
 
+/bin/sed 's/linux-firmware/firmware-linux-free/' -i debian/control ./debian/control.d/*
+sed 's/Ubuntu/upstream/' -i debian/control
+sed 's/Linux/Linux-libre/g' -i debian/control ./debian/control.d/generic debian/control.d/lowlatency
+sed '/Package.*gkeop.*/,/^$/d' -i debian/control
 
-changelog "Removed linux-firmware dependency, renamed release for Trisquel"
+cat << EOF >> debian/control
+
+Package: linux-source-hwe
+Architecture: all
+Depends: \${misc:Depends}, linux-source-\${kernel-version}
+Description: Linux-libre kernel source with upstream patches
+ This package will always depend on the latest Linux-libre kernel source code
+ available. The upstream patches have been applied.
+EOF
+
+changelog "Removed nonfree kernel variants, renamed release for Trisquel"
 
 compile
