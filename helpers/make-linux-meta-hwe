@@ -23,22 +23,16 @@ VERSION=6
 
 find debian/control.d/ -type f | grep -v -e '/generic$' -e '/lowlatency$' -e '/virtual$' |xargs rm
 
+cat debian/control.d/* >> debian/control
+sed 's/${variant:suffix}/-18.04/' -i debian/control
+
 /bin/sed 's/linux-firmware/firmware-linux-free/' -i debian/control ./debian/control.d/*
 sed 's/Ubuntu/upstream/' -i debian/control
 sed 's/Linux/Linux-libre/g' -i debian/control ./debian/control.d/generic debian/control.d/lowlatency
+sed 's/, intel-microcode \[amd64 i386\]//; s/, amd64-microcode \[amd64 i386\]//;' debian/control debian/control.d/generic debian/control.d/lowlatency -i
 sed '/Package.*gkeop.*/,/^$/d' -i debian/control
 
 echo '-hwe-18.04' > debian/variants
-
-cat << EOF >> debian/control
-
-Package: linux-source-hwe
-Architecture: all
-Depends: \${misc:Depends}, linux-source-\${kernel-version}
-Description: Linux-libre kernel source with upstream patches
- This package will always depend on the latest Linux-libre kernel source code
- available. The upstream patches have been applied.
-EOF
 
 changelog "Removed nonfree kernel variants, renamed release for Trisquel"
 
