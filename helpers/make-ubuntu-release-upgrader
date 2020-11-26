@@ -24,7 +24,7 @@
 # Also, don't forget to update the meta-release files at archive and packages.t.i
 # The "obsoletes" list from ubuntu has been removed
 
-VERSION=9
+VERSION=10
 
 . ./config
 
@@ -55,11 +55,11 @@ EOF
 
 rm ./DistUpgrade/Ubuntu.info
 cat << EOF   > DistUpgrade/Trisquel.info
-ChangelogURI: http://packages.trisquel.info/changelogs/pool/%s/%s/%s/%s_%s/%s
+ChangelogURI: https://packages.trisquel.org/changelogs/pool/%s/%s/%s/%s_%s/%s
 
 Suite: $CODENAME
 RepositoryType: deb
-BaseURI: https://archive.trisquel.info/trisquel/
+BaseURI: https://archive.trisquel.org/trisquel/
 Description: Trisquel $CODENAME
 Component: main
 Enabled: 1
@@ -67,7 +67,7 @@ CompDescription: Trisquel GNU/linux packages
 
 Suite: $CODENAME-security
 RepositoryType: deb
-BaseURI: https://archive.trisquel.info/trisquel/
+BaseURI: https://archive.trisquel.org/trisquel/
 Description: Trisquel $CODENAME Security Updates
 Component: main
 Enabled: 1
@@ -75,7 +75,7 @@ CompDescription: Trisquel GNU/linux packages
 
 Suite: $CODENAME-updates
 RepositoryType: deb
-BaseURI: https://archive.trisquel.info/trisquel/
+BaseURI: https://archive.trisquel.org/trisquel/
 Description: Trisquel $CODENAME Updates
 Component: main
 Enabled: 1
@@ -83,7 +83,7 @@ CompDescription: Trisquel GNU/linux packages
 
 Suite: $CODENAME-backports
 RepositoryType: deb
-BaseURI: https://archive.trisquel.info/trisquel/
+BaseURI: https://archive.trisquel.org/trisquel/
 Description: Trisquel $CODENAME Backports
 Component: main
 Enabled: 0
@@ -107,32 +107,32 @@ We hope you enjoy Trisquel.
 If you would like to help shape Trisquel, take a look at the list of 
 ways you can participate at
 
-  http://trisquel.info/en/wiki/how-help
+  https://trisquel.info/en/wiki/how-help
 
 Your comments, bug reports, patches and suggestions will help ensure
 that our next release is the best release of Trisquel ever.  If you feel
 that you have found a bug please send it to us via
 
-  http://trisquel.info/project/issues
+  https://trisquel.info/project/issues
 
 If you have a question, or if you think you may have found a bug but 
 aren't sure, first try asking on the #trisquel IRC channel on Freenode,
 on the Trisquel Users mailing list, or on the Trisquel forums:
 
- http://listas.trisquel.info/
- http://trisquel.info/forum
+ https://listas.trisquel.info/
+ https://trisquel.info/forum
 
 == More Information ==
 
 You can find out more about Trisquel on our website, IRC channel and wiki.
 If you're new to Trisquel, please visit:
 
-  http://trisquel.info
+  https://trisquel.info
 
 To sign up for future Trisquel announcements, please subscribe to Trisquel's 
 very low volume announcement list at:
 
-  http://listas.trisquel.info/mailman/listinfo/trisquel-announce
+  https://listas.trisquel.info/mailman/listinfo/trisquel-announce
 
 EOF
 
@@ -164,32 +164,32 @@ using the latest LTS or STS edition.
 If you would like to help shape Trisquel, take a look at the list of 
 ways you can participate at
 
-  http://trisquel.info/en/wiki/how-help
+  https://trisquel.info/en/wiki/how-help
 
 Your comments, bug reports, patches and suggestions will help ensure
 that our next release is the best release of Trisquel ever.  If you feel
 that you have found a bug please send it to us via
 
-  http://trisquel.info/project/issues
+  https://trisquel.info/project/issues
 
 If you have a question, or if you think you may have found a bug but 
 aren't sure, first try asking on the #trisquel IRC channel on Freenode,
 on the Trisquel Users mailing list, or on the Trisquel forums:
 
- http://listas.trisquel.info/
- http://trisquel.info/forum
+ https://listas.trisquel.info/
+ https://trisquel.info/forum
 
 == More Information ==
 
 You can find out more about Trisquel on our website, IRC channel and wiki.
 If you're new to Trisquel, please visit:
 
-  http://trisquel.info
+  https://trisquel.info
 
 To sign up for future Trisquel announcements, please subscribe to Trisquel's 
 very low volume announcement list at:
 
-  http://listas.trisquel.info/mailman/listinfo/trisquel-announce
+  https://listas.trisquel.info/mailman/listinfo/trisquel-announce
 
 EOF
 
@@ -214,24 +214,27 @@ update-manager-core
 EOF
 
 rm data/mirrors.cfg
+#https://mirmon.trisquel.org/conf.txt
 cat << EOF > data/mirrors.cfg
-https://archive.trisquel.info/trisquel/
-https://es.archive.trisquel.info/trisquel/
-https://fr.archive.trisquel.info/trisquel/
 https://mirror.fsf.org/trisquel/
-https://mirror.csclub.uwaterloo.ca/trisquel/
-https://mirrors.ustc.edu.cn/trisquel/
 https://mirror.cedia.org.ec/trisquel.packages/
-https://quantum-mirror.hu/mirrors/pub/trisquel/packages/
+https://mirrors.ustc.edu.cn/trisquel/
 https://ftp.caliu.cat/pub/distribucions/trisquel/packages/
+https://ftp.acc.umu.se/mirror/trisquel/packages/
+https://mirrors.ocf.berkeley.edu/trisquel/
 https://mirror.librelabucm.org/trisquel/
 https://mirror.linux.pizza/trisquel/packages/
-https://ftp.acc.umu.se/mirror/trisquel/packages/
-https://ftp.yzu.edu.tw/Linux/trisquel.packages/
-https://mirrors.ocf.berkeley.edu/trisquel/
+https://quantum-mirror.hu/mirrors/pub/trisquel/packages/
+https://mirror.csclub.uwaterloo.ca/trisquel/packages/
+https://ftpmirror1.infania.net/mirror/trisquel/packages/
+https://mirrors.nju.edu.cn/trisquel/
+https://mirror.math.princeton.edu/pub/trisquel-packages/
+https://mirror.operationtulip.com/trisquel/packages/
+https://mirrors.dotsrc.org/trisquel/
+https://linkwithlinux.pw/trisquel-packages/
 EOF
 
-replace changelogs.ubuntu.com packages.trisquel.info .
+replace changelogs.ubuntu.com packages.trisquel.org .
 
 rpl 11\.04 5\.0 DistUpgrade/*.ui
 rpl 11\.04 5\.0 po/* -R
@@ -279,7 +282,7 @@ find -type f |xargs rename 's/ubuntu-release-upgrader/trisquel-release-upgrader/
 replace  "ubuntu-release-upgrader" "trisquel-release-upgrader" .
 mv kubuntu-devel-release-upgrade triskel-devel-release-upgrade
 mv tests/test-data-cdrom/ubuntu tests/test-data-cdrom/trisquel
-replace old-releases.ubuntu.com oldarchive.trisquel.info
+replace old-releases.ubuntu.com oldarchive.trisquel.org
 
 rpl "edubuntu" "trisquel-edu" . -R
 rpl "kubuntu" "triskel" . -R
@@ -290,10 +293,10 @@ rpl " Ubuntu" " Trisquel" . -R
 rpl " ubuntu " " trisquel " . -R
 rpl "ubuntu " "trisquel " . -R
 rpl " ubuntu" " trisquel" . -R
-rpl archive.ubuntu.com/ubuntu es.archive.trisquel.info/trisquel . -R
-rpl security.ubuntu.com/ubuntu archive.trisquel.info/trisquel . -R
-rpl archive.ubuntu.com es.archive.trisquel.info . -R
-rpl security.ubuntu.com archive.trisquel.info . -R
+rpl archive.ubuntu.com/ubuntu archive.trisquel.org/trisquel . -R
+rpl security.ubuntu.com/ubuntu archive.trisquel.org/trisquel . -R
+rpl archive.ubuntu.com archive.trisquel.org . -R
+rpl security.ubuntu.com archive.trisquel.org . -R
 
 sed 's/"main", "restricted", "universe", "multiverse"/"main"/g' DistUpgrade/DistUpgradeController.py -i utils/demotions.py
 sed '/restricted/d' -i utils/demotions.py
@@ -310,7 +313,7 @@ replace "https*://wiki.ubuntu.com/" "https://trisquel.info/wiki" .
 replace "https*://help.ubuntu.com/community" "https://trisquel.info/wiki" .
 
 
-/bin/sed -i 's/kubuntu/triskel/g; s/xubuntu/trisquel-mini/g; s/�~Lubuntu/�~Ltrisquel/g; s/被ubuntu/被trisquel/g; s#http://launchpad.net/ubuntu/+source/%s/%s/+changelog#http://trisquel.info/project/issues#g; s/<.*@ubuntu.com/<info@trisquel.info/g; s/ ubuntu\n/ trisquel\n/g; s/ubuntu\ /trisquel\ /g; s/\ ubuntu/\ trisquel/g; s/Ubuntu/Trisquel/g; s/ubuntu-desktop/trisquel-/g; s/www.ubuntu.com/trisquel.info/g; s/www.ubuntulinux.org/trisquel.info/g ' po/*.po $(find -type f | grep py$) $(find -type f | grep '\.glade$')
+/bin/sed -i 's/kubuntu/triskel/g; s/xubuntu/trisquel-mini/g; s/�~Lubuntu/�~Ltrisquel/g; s/被ubuntu/被trisquel/g; s#http://launchpad.net/ubuntu/+source/%s/%s/+changelog#https://trisquel.info/project/issues#g; s/<.*@ubuntu.com/<info@trisquel.info/g; s/ ubuntu\n/ trisquel\n/g; s/ubuntu\ /trisquel\ /g; s/\ ubuntu/\ trisquel/g; s/Ubuntu/Trisquel/g; s/ubuntu-desktop/trisquel-/g; s/www.ubuntu.com/trisquel.info/g; s/www.ubuntulinux.org/trisquel.info/g ' po/*.po $(find -type f | grep py$) $(find -type f | grep '\.glade$')
 replace Trisquel-Gettext Ubuntu-Gettext . -R
 
 sed '1s/trisquel/ubuntu/' debian/control -i
