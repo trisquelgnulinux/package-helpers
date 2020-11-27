@@ -43,6 +43,7 @@ would actually be shown to the user. Avoid replacing copyright statements!
 of the upstream package. Well written regexps and sed will help with that.
 * You can test your changes by doing them inside the _PACKAGES/sourcePackageName/source/_ directory, 
 and running `dpkg-source -b .`, before being added to the helper script
+* You can check the status of failed build at https://jenkins.trisquel.org/job/build-watchdog/lastBuild/consoleText
 
 ## Netinstall
 
