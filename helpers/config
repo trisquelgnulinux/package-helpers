@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#    Copyright (C) 2008-2010  Rubén Rodríguez <ruben@trisquel.info>
+#    Copyright (C) 2008-2020  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C)      2014  Santiago Rodriguez <santi@trisquel.info>
 #    Copyright (C)      2019  David Trudgian <dave@trudgian.net>
 #
@@ -39,15 +39,14 @@ fi
 export DEBIAN_FRONTEND=noninteractive
 export DEBEMAIL=trisquel-devel@listas.trisquel.info
 export DEBFULLNAME="Trisquel GNU/Linux developers"
-export CODENAME=etiona
-export REVISION=9.0
+export CODENAME=nabia
+export REVISION=10.0
 export RELEASE=trisquel
 export DOMAIN=trisquel.info
-export UPSTREAM=bionic
-export UPSTREAMRELEASE=18.04
+export UPSTREAM=focal
+export UPSTREAMRELEASE=20.04
 MIRROR=http://archive.ubuntu.com/ubuntu
-DEVELMIRROR=http://devel.trisquel.info/trisquel/$CODENAME
-LOCALMIRROR=http://archive.trisquel.info/trisquel
+LOCALMIRROR=https://archive.trisquel.org/trisquel
 LOCAL_APT=`mktemp -d` 
 
 export RPL="$PWD/DATA/rpl"

@@ -23,15 +23,15 @@ VERSION=2
 . ./config
 
 # Disable lz4 compression in etiona/bionic
-sed '/CONFIG_KERNEL_LZ4/d; /CONFIG_KERNEL_GZIP/d' -i debian.*/config/annotations
-for i in debian.master/config/annotations debian.hwe/config/annotations ; do
-cat << EOF >> $i
-CONFIG_KERNEL_LZ4                               policy<{'amd64': 'n', 'armhf': 'n', 'i386': 'n', 's390x': 'n'}>
-CONFIG_KERNEL_GZIP                              policy<{'amd64': 'y', 'armhf': 'y', 'i386': 'y', 'ppc64el': 'y', 's390x': 'y'}>
-EOF
-done
-/bin/sed 's/CONFIG_KERNEL_LZ4=y/CONFIG_KERNEL_GZIP=y/' -i debian.master/config/*/config.common.*
-/bin/sed 's/CONFIG_KERNEL_GZIP is not set/CONFIG_KERNEL_LZ4 is not set/' -i debian.master/config/*/config.common.*
+#sed '/CONFIG_KERNEL_LZ4/d; /CONFIG_KERNEL_GZIP/d' -i debian.*/config/annotations
+#for i in debian.master/config/annotations debian.hwe/config/annotations ; do
+#cat << EOF >> $i
+#CONFIG_KERNEL_LZ4                               policy<{'amd64': 'n', 'armhf': 'n', 'i386': 'n', 's390x': 'n'}>
+#CONFIG_KERNEL_GZIP                              policy<{'amd64': 'y', 'armhf': 'y', 'i386': 'y', 'ppc64el': 'y', 's390x': 'y'}>
+#EOF
+#done
+#/bin/sed 's/CONFIG_KERNEL_LZ4=y/CONFIG_KERNEL_GZIP=y/' -i debian.master/config/*/config.common.*
+#/bin/sed 's/CONFIG_KERNEL_GZIP is not set/CONFIG_KERNEL_LZ4 is not set/' -i debian.master/config/*/config.common.*
 
 for PATCH in $DATA/*.patch ; do
   echo $PATCH
