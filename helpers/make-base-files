@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 
 . ./config
 
@@ -27,7 +27,7 @@ CODENAMECAPS=$(echo $CODENAME | /bin/sed -e "s/\b\(.\)/\u\1/g")
 find -name *motd-news* -delete
 sed '/motd-news/d' -i debian/rules
 
-cat << EOF > update-motd.d/01-banner
+cat << EOF > motd/01-banner
 #!/bin/sh
 echo "\
    ___        ___               ___        ___       ___        ___        ___
@@ -44,13 +44,13 @@ echo "\
 "
 EOF
 
-cat << EOF > update-motd.d/10-help-text
+cat << EOF > motd/10-help-text
 #!/bin/sh
-echo "Welcome to Trisquel GNU/Linux"
-echo "Documentation: http://trisquel.info/wiki/"
+echo "Documentation: https://trisquel.info/wiki/"
+echo "Support forum: https://trisquel.info/forum/"
 EOF
 
-chmod 755 update-motd.d/*
+chmod 755 motd/*
 
 cat << EOF > etc/legal
 
