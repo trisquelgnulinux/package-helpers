@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
+VERSION=4
 
 . ./config
 
@@ -107,9 +107,12 @@ ID=trisquel
 ID_LIKE=debian
 PRETTY_NAME="Trisquel GNU/Linux $CODENAMECAPS ($REVISION)"
 VERSION_ID="$REVISION"
+VERSION_CODENAME="$CODENAME"
+UBUNTU_CODENAME="$UPSTREAM"
 HOME_URL="https://trisquel.info/"
 SUPPORT_URL="https://trisquel.info/wiki"
 BUG_REPORT_URL="https://trisquel.info/project/issues"
+PRIVACY_POLICY_URL="https://trisquel.info/legal"
 EOF
 
 cat << EOF > origins/trisquel
