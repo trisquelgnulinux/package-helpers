@@ -1,0 +1,177 @@
+diff --git b/dhpython/__init__.py a/dhpython/__init__.py
+index c53ec93..0c567b2 100644
+--- b/dhpython/__init__.py
++++ a/dhpython/__init__.py
+@@ -25,7 +25,7 @@ PKG_PREFIX_MAP = {'cpython2': 'python',
+                   'pypy': 'pypy'}
+ 
+ # minimum version required for compile/clean scripts:
+-MINPYCDEP = {'cpython2': 'python2:any',
++MINPYCDEP = {'cpython2': 'python:any',
+              'cpython3': 'python3:any',
+              'pypy': 'pypy'}
+ 
+diff --git b/dhpython/depends.py a/dhpython/depends.py
+index 15bdfca..92e2b87 100644
+--- b/dhpython/depends.py
++++ a/dhpython/depends.py
+@@ -42,7 +42,7 @@ class Dependencies:
+         if impl == 'cpython3':
+             self.ipkg_tpl = 'python3-dbg' if dbgpkg else 'python3'
+         elif impl == 'cpython2':
+-            self.ipkg_tpl = 'python2-dbg' if dbgpkg else 'python2'
++            self.ipkg_tpl = 'python-dbg' if dbgpkg else 'python'
+         elif impl == 'pypy':
+             self.ipkg_tpl = 'pypy-dbg' if dbgpkg else 'pypy'
+             self.ipkg_vtpl = 'pypy%s-dbg' if dbgpkg else 'pypy%s'
+@@ -55,9 +55,6 @@ class Dependencies:
+ 
+         self.python_dev_in_bd = 'python-dev' in bdep or\
+                                 'python-all-dev' in bdep or\
+-                                'python2-dev' in bdep or\
+-                                'python2-all-dev' in bdep or\
+-                                'python2.7-dev' in bdep or\
+                                 'python3-dev' in bdep or\
+                                 'python3-all-dev' in bdep
+ 
+diff --git b/pydist/generate_fallback_list.py a/pydist/generate_fallback_list.py
+index 1c274d8..c6cb797 100755
+--- b/pydist/generate_fallback_list.py
++++ a/pydist/generate_fallback_list.py
+@@ -37,22 +37,21 @@ else:
+     SOURCE = 'http://ftp.debian.org/debian/dists/unstable/main/Contents-amd64.gz'
+ 
+ IGNORED_PKGS = {'python-setuptools', 'python3-setuptools', 'pypy-setuptools'}
+-OVERRIDES = {
+-    'cpython2': {
+-        'python': 'python',
+-        'setuptools': 'python-pkg-resources',
+-        'wsgiref': 'python (>= 2.5) | python-wsgiref',
+-        'argparse': 'python (>= 2.7) | python-argparse',
++DEFAULTS = {
++    'cpython2': [
++        'python python\n',
++        'setuptools python-pkg-resources\n',
++        'wsgiref python (>= 2.5) | python-wsgiref\n',
++        'argparse python (>= 2.7) | python-argparse\n',
+         # not recognized due to .pth file (egg-info is in PIL/ and not in *-packages/)
+-        'pil': 'python-pil',
+-        'Pillow': 'python-pil'},
+-    'cpython3': {
+-        'pil': 'python3-pil',
+-        'Pillow': 'python3-pil',
+-        'pylint': 'pylint',
+-        'setuptools': 'python3-pkg-resources',
+-        'argparse': 'python3 (>= 3.2)'},
+-    'pypy': {}
++        'pil python-pil\n',
++        'Pillow python-pil\n'],
++    'cpython3': [
++        'pil python3-pil\n',
++        'Pillow python3-pil\n',
++        'setuptools python3-pkg-resources\n',
++        'argparse python3 (>= 3.2)\n'],
++    'pypy': []
+ }
+ 
+ public_egg = re.compile(r'''
+@@ -135,11 +134,8 @@ for line in data.splitlines():
+ 
+ for impl, details in result.items():
+     with open('{}_fallback'.format(impl), 'w') as fp:
+-        overrides = OVERRIDES[impl]
+-        lines = []
+-        for egg, value in overrides.items():
+-            lines.append('{} {}\n'.format(egg, value))
+-        lines.extend(
+-            '{} {}\n'.format(egg, pkg) for egg, pkg in details.items() if egg not in overrides
+-        )
+-        fp.writelines(sorted(lines))
++        result = DEFAULTS[impl]
++        if result:
++            fp.writelines(result)
++        result = sorted('{} {}\n'.format(egg, pkg) for egg, pkg in details.items())
++        fp.writelines(result)
+diff --git b/tests/t201/Makefile a/tests/t201/Makefile
+index 8aebf79..1631ec8 100644
+--- b/tests/t201/Makefile
++++ a/tests/t201/Makefile
+@@ -10,7 +10,7 @@ check:
+ 		test -f debian/python-foo/usr/lib/python2.6/dist-packages/foo/__init__.p;\
+ 		test ! -f debian/python-foo/usr/lib/python2.6/dist-packages/foo/spam.py;\
+ 	fi
+-	grep -qe "Depends: .*python2\(:any\)\? (<<" debian/python-foo/DEBIAN/control
++	grep -qe "Depends: .*python\(:any\)\? (<<" debian/python-foo/DEBIAN/control
+ 	[ "`readlink debian/python-foo/usr/lib/python$(DPY)/dist-packages/foo/absolute_link_to_tmp`" = "/tmp" ]
+ 	[ "`readlink debian/python-foo/usr/lib/python$(DPY)/dist-packages/foo/link_to_parent_dir`" = ".." ]
+ 
+diff --git b/tests/t206/Makefile a/tests/t206/Makefile
+index 3ab865d..f4bd464 100644
+--- b/tests/t206/Makefile
++++ a/tests/t206/Makefile
+@@ -9,11 +9,10 @@ check:
+ 	grep -q '\-V 2.4 /usr/share/baz24' debian/foo/usr/share/python/runtime.d/foo.rtupdate
+ 	grep -q '/usr/share/baz24 \-V 2.4' debian/foo/DEBIAN/postinst
+ 	# python2.5 due to X-Python-Version: 2.5
+-	#grep -q Depends:.*python2.5 debian/foo/DEBIAN/control
+-	# python2.6 hardcoded via shebang - test ignored as 2.6 is no longer supported
++	grep -q Depends:.*python2.5 debian/foo/DEBIAN/control
++	grep -q '\-V 2.5 /usr/share/bar25' debian/foo/usr/share/python/runtime.d/foo.rtupdate
++	grep -q '/usr/share/bar25 \-V 2.5' debian/foo/DEBIAN/postinst
++	# python2.6 hardcoded via shebang
+ 	#grep -q Depends:.*python2.6 debian/foo/DEBIAN/control
+ 	grep -q '\-V 2.6 /usr/share/foo' debian/foo/usr/share/python/runtime.d/foo.rtupdate
+ 	grep -q '/usr/share/foo \-V 2.6' debian/foo/DEBIAN/postinst
+-	# python2 shebang
+-	grep -q Depends:.*python2 debian/foo/DEBIAN/control
+-	grep -q '#! /usr/bin/python2' debian/foo/usr/bin/egg
+diff --git b/tests/t206/debian/control a/tests/t206/debian/control
+index 881b4b6..2487e09 100644
+--- b/tests/t206/debian/control
++++ a/tests/t206/debian/control
+@@ -5,6 +5,7 @@ Maintainer: Piotr Ożarowski <piotr@debian.org>
+ Build-Depends: debhelper (>= 7.0.50~)
+ Build-Depends-Indep: python
+ Standards-Version: 3.9.1
++X-Python-Version: 2.5
+ 
+ Package: foo
+ Architecture: all
+diff --git b/tests/t206/debian/install a/tests/t206/debian/install
+index 23f4471..12d2c11 100644
+--- b/tests/t206/debian/install
++++ a/tests/t206/debian/install
+@@ -4,4 +4,3 @@ bar.py /usr/share/bar25/
+ spam.py /usr/share/bar25/
+ baz.py /usr/share/baz24/
+ spam.py /usr/share/baz24/
+-egg /usr/bin/
+diff --git b/tests/t206/egg a/tests/t206/egg
+deleted file mode 100755
+index 65fbb20..0000000
+--- b/tests/t206/egg
++++ /dev/null
+@@ -1,2 +0,0 @@
+-#!/usr/bin/python
+-"shebang change: /usr/bin/python -> /usr/bin/python2"
+diff --git b/tests/t207/Makefile a/tests/t207/Makefile
+index 33024c6..2488496 100644
+--- b/tests/t207/Makefile
++++ a/tests/t207/Makefile
+@@ -8,11 +8,11 @@ check:
+ 	grep -q '\-V 2.4 /usr/share/baz24' debian/foo/usr/share/python/runtime.d/foo.rtupdate
+ 	grep -q '/usr/share/baz24 \-V 2.4' debian/foo/DEBIAN/postinst
+ 	grep -q '#! /usr/bin/python2.4 -OO' debian/foo/usr/share/baz24/baz.py
+-	# python2.6 hardcoded via shebang - test ignored as 2.6 is no longer supported
+-	#grep -q '\-V 2.6 /usr/share/foo' debian/foo/usr/share/python/runtime.d/foo.rtupdate
+-	#grep -q '/usr/share/foo \-V 2.6' debian/foo/DEBIAN/postinst
++	# python2.6 hardcoded via shebang
++	grep -q '\-V 2.6 /usr/share/foo' debian/foo/usr/share/python/runtime.d/foo.rtupdate
++	grep -q '/usr/share/foo \-V 2.6' debian/foo/DEBIAN/postinst
+ 	# /env removed from shebang 
+-	grep -q '#! /usr/bin/python2' debian/foo/usr/share/bar/bar.py
++	grep -q '#! /usr/bin/python' debian/foo/usr/share/bar/bar.py
+ 	# /local removed from shebang 
+-	grep -q '#! /usr/bin/python2' debian/foo/usr/share/foo/baz.py
++	grep -q '#! /usr/bin/python' debian/foo/usr/share/foo/baz.py
+ 	grep -q '#! /usr/bin/python2.6' debian/foo/usr/share/foo/foo.py
