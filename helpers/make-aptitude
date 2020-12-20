@@ -21,7 +21,7 @@ VERSION=1
 
 . ./config
 
-sed -i  's/changelogs\.ubuntu\.com/packages\.trisquel\.info/g' debian/patches/04_changelog
+sed -i  's/changelogs\.ubuntu\.com/packages\.trisquel\.org/g' debian/patches/04_changelog
 sed -i 's/Ubuntu/Trisquel/g' debian/patches/04_changelog
 
 changelog "Imported into Trisquel"
