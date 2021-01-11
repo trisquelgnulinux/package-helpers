@@ -24,7 +24,8 @@ DEPENDS=golang-github-openprinting-goipp
 
 . ./config
 
-sed '/debhelper/s/13/12/' -i debian/control
+sed '/debhelper/s/13/12/;/golang-go/s/golang.*/golang-go,/' -i debian/control
+echo "override_dh_dwz:" >> debian/rules
 
 changelog "Backported from groovy"
 
