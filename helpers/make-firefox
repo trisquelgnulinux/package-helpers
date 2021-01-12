@@ -18,13 +18,9 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=76
+VERSION=77
 
 . ./config
-
-sed 's/clang-10 |//' -i debian/control.in
-sed 's/libclang-10-dev |//' -i debian/control.in
-sed 's/llvm-10-dev |//' -i debian/control.in
 
 rm debian/control
 
