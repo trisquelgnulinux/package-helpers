@@ -17,13 +17,13 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 NETINST=true
 . ./config
 
 sed s/ubuntu/trisquel/g -i Makefile
-rpl archive.ubuntu.com archive.trisquel.info . -R
-rpl ports.ubuntu.com archive.trisquel.info . -R
+rpl archive.ubuntu.com archive.trisquel.org . -R
+rpl ports.ubuntu.com archive.trisquel.org . -R
 rpl ubuntu-ports trisquel-ports . -R
 rpl Ubuntu Trisquel . -R
 rpl /ubuntu/ /trisquel/ . -R
@@ -31,7 +31,7 @@ rpl $UPSTREAM $CODENAME . -R
 rpl Mirrors.masterlist.ubuntu Mirrors.masterlist.trisquel . -R
 
 rm Mirrors.masterlist.ubuntu
-wget https://archive.trisquel.info/trisquel/Mirrors.masterlist -o /dev/null -O Mirrors.masterlist.trisquel
+wget https://archive.trisquel.org/trisquel/Mirrors.masterlist -o /dev/null -O Mirrors.masterlist.trisquel
 
 changelog "Rebranded and adapted for Trisquel"
 compile
