@@ -104,6 +104,7 @@ apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver hkps://keyserver.
 # Ubuntu gpg keys
 apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys 40976EAF437D05B5 > /dev/null
 apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys 3B4FE6ACC0B21F32 > /dev/null
+apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys 871920D1991BC93C > /dev/null
 # Debian gpg keys
 apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys 9D6D8F6BC857C906 > /dev/null
 apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys 8B48AD6246925553 > /dev/null
