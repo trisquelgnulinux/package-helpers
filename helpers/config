@@ -137,7 +137,7 @@ if [ "1$EXTERNAL" != "1" ]; then
    COMPONENTS=$(eval echo "$EXTERNAL" | cut -d' ' -f 4-)
    echo "deb-src http://deb.debian.org/debian $RELNAME $COMPONENTS" >> ${LOCAL_APT}/etc/apt.sources.list
    echo "deb-src http://deb.debian.org/debian ${RELNAME}-updates $COMPONENTS" >> ${LOCAL_APT}/etc/apt.sources.list
-   echo "deb-src http://deb.debian.org/debian ${RELNAME}-security $COMPONENTS" >> ${LOCAL_APT}/etc/apt.sources.list
+   echo "deb-src http://deb.debian.org/debian-security ${RELNAME}/updates $COMPONENTS" >> ${LOCAL_APT}/etc/apt.sources.list
  else
    eval echo "$EXTERNAL" >> ${LOCAL_APT}/etc/apt.sources.list
  fi
