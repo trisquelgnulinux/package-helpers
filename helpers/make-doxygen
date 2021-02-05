@@ -1,6 +1,7 @@
 #!/bin/sh
 #
 #    Copyright (C) 2015 fr33domlover <fr33domlover@riseup.net>
+#    Copyright (C) 2021 Luis Guzman <ark@switnet.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -15,11 +16,15 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-VERSION=1
+VERSION=2
 
 . ./config
 
-sed -i 's/Firefox, Chrome, Safari, or Opera/GNU IceCat, Abrowser, Epiphany, or Midori/g' src/dot.cpp
+sed -i 's|Firefox, Chrome, Safari, or Opera|GNU IceCat, Abrowser, Epiphany, or Midori|g' src/dotfilepatcher.cpp
+sed -i 's|Firefox, Chrome, Safari, or Opera|GNU IceCat, Abrowser, Epiphany, or Midori|g' src/htmldocvisitor.cpp
+sed -i 's|Firefox, Chrome, Safari, and Opera|GNU IceCat, Abrowser, Epiphany|g' src/config.xml
+sed -i 's|Mozilla Firefox, Google Chrome, Safari|GNU IceCat, Abrowser, Epiphany|g' doc/starting.doc
+find . -type f -exec sed -i 's|Firefox|Abrowser|g' {} +
 
 changelog "Replace references to nonfree browsers to freedom respecting ones"
 

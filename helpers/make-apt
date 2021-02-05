@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 COMPONENT=main
 
 . ./config
@@ -27,7 +27,7 @@ cp $DATA/trisquel vendor -a
 replace ubuntu-codename trisquel-codename .
 replace Ubuntu Trisquel .
 
-replace "http://archive.ubuntu.com/ubuntu/project/ubuntu-archive-keyring.gpg" "http://archive.trisquel.info/trisquel/trisquel-archive-signkey.gpg" .
+replace "http://archive.ubuntu.com/ubuntu/project/ubuntu-archive-keyring.gpg" "http://archive.trisquel.org/trisquel/trisquel-archive-signkey.gpg" .
 replace ubuntu-keyring trisquel-keyring .
 replace ubuntu-archive-keyring trisquel-archive-keyring .
 
