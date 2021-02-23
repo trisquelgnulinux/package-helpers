@@ -1,6 +1,7 @@
 #!/bin/sh
 #
 #    Copyright (C) 2019 David Philipe GIl <davidpgil@protonmail.com>
+#    Copyright (C) 2021 Luis Guzman <ark@switnet.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -22,11 +23,10 @@ VERSION=1
 EXTERNAL='deb-src http://ppa.launchpad.net/ubuntuhandbook1/dvdstyler/ubuntu $UPSTREAM main'
 REPOKEY=A0062203196CA4482DDB859E4C1CBE14852541CB
 BACKPORTS=true
-DEPENDS=wxsvg
+DEPENDS=cdrkit,libbonobo,gnome-vfs,libgnome,libbonoboui,libgnome-keyring,libgnomeui,orbit2
 
 . ./config
 
 changelog "Backported from ppa"
 
 compile
-
