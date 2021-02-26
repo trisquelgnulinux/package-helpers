@@ -1,0 +1,12 @@
+diff -ru ubiquity/plugins/ubi-partman.py ubiquity-diff/plugins/ubi-partman.py
+--- ubiquity/plugins/ubi-partman.py	2021-02-09 07:58:29.000000000 -0600
++++ ubiquity-diff/plugins/ubi-partman.py	2021-02-25 13:54:40.725587116 -0600
+@@ -739,6 +739,8 @@
+                 if opt_desc:
+                     opt_desc.show()
+                     opt_desc.set_markup(fmt % options[option].desc)
++                if name == "use_crypto":
++                    opt_widget.set_active(True)
+ 
+                 if not ticked and opt_widget.get_sensitive():
+                     opt_widget.set_active(True)

@@ -18,12 +18,12 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=13
+VERSION=14
 
 . ./config
 
 # Enable full disk encryption by default
-patch -p1 < $DATA/encrypt_by_default.patch
+patch -p0 < $DATA/nabia_encrypt_by_default.patch
 
 cp $DATA/trisquel_installed.png pixmaps
 rm pixmaps/ubuntu_installed.png
@@ -37,7 +37,7 @@ replace grub-efi-amd64-signed grub-efi-amd64 .
 /bin/sed '/canonical/d' -i debian/ubiquity.install*
 rm  tests/test_ubi_partman*
 
-sed 's/, ubuntu-artwork//' debian/control -i
+sed -i '0,/ubuntu-artwork/{/ubuntu-artwork/d;}' debian/control
 
 export DEB_BUILD_OPTIONS=nocheck
 
@@ -64,7 +64,7 @@ set -e
 
 file="\$1"
 
-FASTEST=https://archive.trisquel.info/trisquel/
+FASTEST=https://archive.trisquel.org/trisquel/
 SPEED=1000000000000
 
 for i in \$(grep 'tp:' /usr/share/python-apt/templates/Trisquel.mirrors)
@@ -101,11 +101,11 @@ chmod 755 d-i/source/apt-setup/generators/99trisquel
 
 # Redirect ports.ubuntu.com
 sed '/ports.ubuntu.com/d' -i ./d-i/source/apt-setup/debian/apt-mirror-setup.install 
-sed 's/ports.ubuntu.com/archive.trisquel.info/g; s/ubuntu-ports/trisquel/g; s/ubuntu/trisquel/g' -i ./d-i/source/apt-setup/debian/rules ./d-i/source/base-installer/library.sh
-sed 's/CC.ports.ubuntu.com/archive.trisquel.info/g; s/.ports.ubuntu.com/archive.trisquel.info/g' -i ./d-i/source/choose-mirror/choose-mirror.c ./d-i/source/choose-mirror/debian/choose-mirror-bin.templates.ftp.sel-in ./d-i/source/choose-mirror/debian/choose-mirror-bin.templates.http-in
+sed 's/ports.ubuntu.com/archive.trisquel.org/g; s/ubuntu-ports/trisquel/g; s/ubuntu/trisquel/g' -i ./d-i/source/apt-setup/debian/rules ./d-i/source/base-installer/library.sh
+sed 's/CC.ports.ubuntu.com/archive.trisquel.org/g; s/.ports.ubuntu.com/archive.trisquel.org/g' -i ./d-i/source/choose-mirror/choose-mirror.c ./d-i/source/choose-mirror/debian/choose-mirror-bin.templates.ftp.sel-in ./d-i/source/choose-mirror/debian/choose-mirror-bin.templates.http-in
 
 # Set Mirrors.masterlist
-wget https://archive.trisquel.info/trisquel/Mirrors.masterlist -O ./d-i/source/choose-mirror/Mirrors.masterlist
+wget https://archive.trisquel.org/trisquel/Mirrors.masterlist -O ./d-i/source/choose-mirror/Mirrors.masterlist
 sed '/Location/d; /Comment/d;' -i ./d-i/source/choose-mirror/Mirrors.masterlist
 cp ./d-i/source/choose-mirror/Mirrors.masterlist ./d-i/source/choose-mirror/Mirrors.masterlist.trisquel
 rm ./d-i/source/choose-mirror/Mirrors.masterlist.ubuntu
@@ -180,16 +180,19 @@ replace Kubuntu Triskel .
 replace kubuntu triskel .
 find | grep kubuntu.*svg | xargs rename s/kubuntu/triskel/
 replace Trisquel-Gettext-Domain Ubuntu-Gettext-Domain
+## rebrand l18n
+  ## Korean - Fix #27659
+replace 우분투 Trisquel .
 #replace triskel-ubiquity kubuntu-ubiquity
 replace "launchpad.net/ubuntu/+source/ubiquity/+filebug" "trisquel.info/project/issues" .
 replace "launchpad.net/ubuntu/+source/ubiquity/" "trisquel.info/project/issues" .
 replace "launchpad.net/ubuntu/+source/" "trisquel.info/project/issues" .
 replace "ubiquity/+filebug" "" .
 replace "+filebug" "" .
-replace archive.ubuntu.com/ubuntu archive.trisquel.info/trisquel .
-replace security.ubuntu.com/trisquel archive.trisquel.info/trisquel .
-replace archive.ubuntu.com archive.trisquel.info .
-replace security.ubuntu.com archive.trisquel.info .
+replace archive.ubuntu.com/ubuntu archive.trisquel.org/trisquel .
+replace security.ubuntu.com/trisquel archive.trisquel.org/trisquel .
+replace archive.ubuntu.com archive.trisquel.org .
+replace security.ubuntu.com archive.trisquel.org .
 #sed -i 's/apt-install/true #apt-install/' ubiquity/components/check_kernels.py
 sed -i 's/apt-install/true #apt-install/' scripts/check-kernels
 #sed -i '82s/True/False/g' gui/gtk/stepPrepare.ui
@@ -197,10 +200,10 @@ sed -i 's/apt-install/true #apt-install/' scripts/check-kernels
 rm -rf d-i/source/apt-setup/release-files/*
 for DIST in $CODENAME $CODENAME-security $CODENAME-updates $CODENAME-backports
 do
-    WD=d-i/source/apt-setup/release-files/archive.trisquel.info/$DIST
+    WD=d-i/source/apt-setup/release-files/archive.trisquel.org/$DIST
     mkdir $WD -p
-    wget -r -l1 -np https://archive.trisquel.info/trisquel/dists/$DIST/Release -O $WD/Release
-    wget -r -l1 -np https://archive.trisquel.info/trisquel/dists/$DIST/Release.gpg -O $WD/Release.gpg
+    wget -r -l1 -np https://archive.trisquel.org/trisquel/dists/$DIST/Release -O $WD/Release
+    wget -r -l1 -np https://archive.trisquel.org/trisquel/dists/$DIST/Release.gpg -O $WD/Release.gpg
 done
 
 cp $DATA/branding.svgz gui/qt/images/branding.svgz
@@ -271,4 +274,3 @@ changelog "Adapted for Trisquel"
 rm -rf debian/source
 
 compile
-
