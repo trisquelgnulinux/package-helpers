@@ -17,12 +17,12 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 NETINST=true
 . ./config
 
-sed -i s/security.ubuntu.com/trisquel.info/g net-retriever
-sed -i s/ports.ubuntu.com/trisquel.info/g net-retriever
+sed -i s/security.ubuntu.com/security.trisquel.org/g net-retriever
+sed -i s/ports.ubuntu.com/archive.trisquel.org/g net-retriever
 sed -i s/ubuntu-keyring-udeb/trisquel-keyring-udeb/g debian/control
 sed -i s/ubuntu/trisquel/g  net-retriever
 sed -i 's/^Maintainer.*/Maintainer: Rubén Rodríguez <ruben@trisquel.info>/g' debian/control
@@ -31,3 +31,4 @@ sed -i 's/main,.*/main/g' debian/net-retriever.templates
 
 changelog "Rebranded and adapted for Trisquel"
 compile
+
