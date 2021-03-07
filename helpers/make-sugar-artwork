@@ -23,8 +23,6 @@ REPOKEY="871920D1991BC93C"
 
 . ./config
 
-sed 's/python3-empy,/python3-empy, python-empy,/' -i debian/control
-
 changelog "Backported from groovy"
 
 compile
