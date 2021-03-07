@@ -18,13 +18,9 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=76
+VERSION=78
 
 . ./config
-
-sed 's/clang-10 |//' -i debian/control.in
-sed 's/libclang-10-dev |//' -i debian/control.in
-sed 's/llvm-10-dev |//' -i debian/control.in
 
 rm debian/control
 
@@ -309,7 +305,7 @@ EOF
 rm mobile/android/branding/{official,unofficial,beta,nightly} -rf
 cp -a $DATA/android/branding/ mobile/android/branding/official
 cp $DATA/android/mobile.ico mobile/android/app/
-cp $DATA/android/images/* mobile/android/themes/core/images/
+#cp $DATA/android/images/* mobile/android/themes/core/images/
 cp -a $DATA/android/res/main/* mobile/android/geckoview/src/main/res
 
 # Postinst script to manage profile migration and system links
