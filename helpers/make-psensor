@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2011  Rubén Rodríguez <ruben@trisquel.info>
+#    Copyright (C) 2020  Pablo Correa Gómez <ablocorrea@hotmail.com>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,11 +17,12 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
-EXTERNAL='deb-src http://deb.torproject.org/torproject.org bionic main'
-REPOKEY=EE8CBC9E886DDD89
+VERSION=1
+
 . ./config
 
-changelog "Imported into Trisquel"
- 
+sed '/libxnvctrl-dev/d' -i debian/control
+
+changelog "Removed libxnvctrl0 dependency not present in Trisquel"
+
 compile
