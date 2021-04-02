@@ -17,13 +17,16 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 EXTERNAL='deb-src http://ftp.debian.org/debian stable-backports main'
 REPOKEY=04EE7237B7D453EC
 BACKPORT=true
 
 . ./config
 
-changelog "Backported from debian stable backports"
+sed -i "/override_dh_auto_test/a #Prevent tests because of webserver failing" debian/rules
+sed -i "s|dh_auto_test --|#dh_auto_test --|" debian/rules
+
+changelog "Backported from debian old stable backports"
 
 compile
