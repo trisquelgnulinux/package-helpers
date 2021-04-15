@@ -17,10 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
-EXTERNAL='deb-src http://ppa.launchpad.net/ansible/ansible/ubuntu $UPSTREAM main'
-REPOKEY=93C4A3FD7BB9C367
-BACKPORTS=true
+VERSION=2
 
 . ./config
 
@@ -30,4 +27,3 @@ sed 's=KDE neon=Trisquel GNU/Linux=' -i lib/ansible/module_utils/facts/system/di
 changelog "Identify os_family as Debian"
 
 compile
-
