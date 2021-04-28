@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 #    Copyright (C) 2011 MPA
-#    Copyright (C) 2013-2017 Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2013-2021 Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -20,7 +20,27 @@
 
 VERSION=1
 
+# note, we need version 3.20.6 or higher, the binary plugin requirement
+# was reworked on that version.
+
+EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu hirsute main universe'
+QUILT=skip
+
 . ./config
+
+sed '/debhelper-compat/s/13/12/' -i debian/control
+
+# This is somehow missing from the source tarball, fetched from Debian git
+cp $DATA/Common.h .
+
+rm debian/patches/*-Fix-building-with-Python-3.8.patch
+sed -i '/Fix-building-with-Python-3.8/d' debian/patches/series
+rm debian/patches/*-Install-check-plugin.py-as-a-script.patch
+sed -i '/Install-check-plugin.py-as-a-script.patch/d' debian/patches/series
+sed '/plugin/d' -i debian/hplip-gui.manpages debian/hplip.manpages debian/hplip-gui.install debian/hplip.install
+
+export QUILT_PATCHES=debian/patches
+quilt push -a
 
 echo Removing printers not supported with free drivers from the database
 tmp=`mktemp`
@@ -40,28 +60,11 @@ done
 
 cp $output $printers
 
-
-#grep -B 7 'download=True' $printers|grep "\["|/bin/sed 's/\[//g; s/\]//g' > $tmp2
-#grep -B 18 'plugin=1' $printers|grep "\["|/bin/sed 's/\[//g; s/\]//g' >> $tmp2
-#grep -B 33 'support-type=0' $printers|grep "\["|/bin/sed 's/\[//g; s/\]//g' >> $tmp2
-#sort -u < $tmp2 > $tmp
-#for i in `cat $tmp`; do 
-#	/bin/sed -i '/\['"$i"'\]/,/^$/d' $printers
-#done
-sed -i 's/plugin=2/plugin=0/g' $printers
+# Set plugin-optional entries to not-required
+/bin/sed -i 's/plugin=2/plugin=0/g' $printers debian/patches/*
 
 rm $tmp $tmp2
 
-rm debian/patches/hp_photosmart_pro_b9100_support.patch
-sed -i '/hp_photosmart_pro_b9100_support.patch/d' debian/patches/series
-rm debian/local/scripts/hp-plugin-ubuntu
-sed /hp-plugin-ubuntu/d ./debian/rules -i
-
-# disable downloader
-#rm plugin.py
-#sed s/plugin.py//g -i ./hplip.list.in ./Makefile.in ./Makefile.am
-#sed '/run_plugin_command/s/$/\n    return/' -i ./base/pkit.py
-
-changelog "Removed printers with propietary drivers (required and optional)"
+changelog "Removed printers with propietary drivers"
 
 compile
