@@ -209,10 +209,10 @@ sedhelper2(){
   while [ 1"$EXPR" != 1 ];do
     SUBEXPR=$(cut -d\; -f 1 <<< "$EXPR")
     MD5=$(md5sum "$FILE")
-    echo Running modification-aware sed: sed "$SUBEXPR" -i "$FILE"
+    echo Running modification-aware sed: sed "$SUBEXPR" -i "$FILE" 1>&2
     /bin/sed "$SUBEXPR" -i "$FILE"
     if [ "$MD5" = "$(md5sum "$FILE")" ]; then
-      echo File "$FILE" was not modified, stopping.
+      echo File "$FILE" was not modified, stopping. 1>&2
       exit 1
     fi
     EXPR=$(cut -d\; -f 2- <<< "$EXPR" )
@@ -225,17 +225,17 @@ sedhelper(){
   EXPR="$2"
 
   MD5=$(md5sum "$FILE")
-  echo Running modification-aware sed: sed "$EXPR" -i "$FILE"
+  echo Running modification-aware sed: sed "$EXPR" -i "$FILE" 1>&2
   /bin/sed "$EXPR" -i "$FILE"
   if [ "$MD5" = "$(md5sum "$FILE")" ]; then
-    echo File "$FILE" was not modified, stopping.
+    echo File "$FILE" was not modified, stopping. 1>&2
     exit 1
   fi
 }
 
 sed (){
 if ! echo $@ | grep -qw '\-i'; then
-  echo Running fallback sed: /bin/sed "$@"
+  echo Running fallback sed: /bin/sed "$@" 1>&2
   /bin/sed "$@"
 else
 
@@ -248,7 +248,7 @@ else
   if [ -f "$FILE" ]; then
     sedhelper "$FILE" "$SEDEXPR"
   else
-    echo File "$FILE" does not exist, stopping.
+    echo File "$FILE" does not exist, stopping. 1>&2
     exit 1
   fi
   done
