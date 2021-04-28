@@ -34,8 +34,6 @@ sed '/debhelper-compat/s/13/12/' -i debian/control
 # This is somehow missing from the source tarball, fetched from Debian git
 cp $DATA/Common.h .
 
-rm debian/patches/*-Fix-building-with-Python-3.8.patch
-sed -i '/Fix-building-with-Python-3.8/d' debian/patches/series
 rm debian/patches/*-Install-check-plugin.py-as-a-script.patch
 sed -i '/Install-check-plugin.py-as-a-script.patch/d' debian/patches/series
 sed '/plugin/d' -i debian/hplip-gui.manpages debian/hplip.manpages debian/hplip-gui.install debian/hplip.install
