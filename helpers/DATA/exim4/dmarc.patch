@@ -1,0 +1,25 @@
+--- a/src/dmarc.h	2018-02-08 08:22:40.000000000 -0500
++++ b/src/dmarc.h	2021-05-07 11:48:01.567132581 -0400
+@@ -23,7 +23,6 @@
+ uschar *dmarc_exim_expand_query(int);
+ uschar *dmarc_exim_expand_defaults(int);
+ uschar *dmarc_auth_results_header(header_line *,uschar *);
+-int dmarc_write_history_file();
+ 
+ #define DMARC_AR_HEADER        US"Authentication-Results:"
+ #define DMARC_VERIFY_STATUS    1
+--- a/src/dmarc.c	2021-05-07 12:01:44.000000000 -0400
++++ b/src/dmarc.c	2021-05-07 11:56:10.522577205 -0400
+@@ -262,8 +262,8 @@
+ /* Write the contents to the history file */
+ DEBUG(D_receive)
+   debug_printf("DMARC logging history data for opendmarc reporting%s\n",
+-	     (host_checking || f.running_in_test_harness) ? " (not really)" : "");
+-if (host_checking || f.running_in_test_harness)
++	     (host_checking || running_in_test_harness) ? " (not really)" : "");
++if (host_checking || running_in_test_harness)
+   {
+   DEBUG(D_receive)
+     debug_printf("DMARC history data for debugging:\n%s", history_buffer);
+
+
