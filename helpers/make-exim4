@@ -17,20 +17,22 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
-EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu bionic-updates main'
-REPOKEY=7638D0442B90D010
+VERSION=4
 
 . ./config
 
 # Correct event management
 patch -p0 < $DATA/t9eximevent.patch
 
+# Fix build issue
+cp $DATA/dmarc.patch debian/patches
+echo dmarc.patch >> debian/patches/series
+
 cp $DATA/EDITME.exim4-heavy.diff debian/
 sed 's/Build-Depends:/Build-Depends: libopendmarc-dev, libspf2-dev, /;/Package: exim4-daemon-heavy/,/Depends/s/Depends: /Depends: libopendmarc2, libspf2-2,/' -i debian/control
 
 sed 's/default-libmysql/libmysql/' -i debian/control
 
-changelog "Backported from bionic, enabled DMARC and SPF, Corrects event management"
+changelog "Enabled DMARC and SPF, Corrects event management"
 
 compile
