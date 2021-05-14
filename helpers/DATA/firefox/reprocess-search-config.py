@@ -36,11 +36,11 @@ with open(sys.argv[1]) as f:
       item["appliesTo"][0]["default"]="no"
       if item["webExtension"]["id"] == 'ddg@search.mozilla.org':
         item["appliesTo"][0]["default"]="yes"
-        item["appliesTo"][1]["application"]["orderHint"]=5000
-        item["appliesTo"][1]["application"]["override"]=True
-        del item["appliesTo"][1]["application"]["distributions"]
-        del item["appliesTo"][1]["extraParams"]
-        del item["extraParams"]
+        item["appliesTo"][0]["orderHint"]=5000
+        item["appliesTo"][0]["override"]=True
+#        del item["appliesTo"][1]["application"]["distributions"]
+#        del item["appliesTo"][1]["extraParams"]
+#        del item["extraParams"]
       newdata["data"].append(item)
     i+=1
   trisquel={u'webExtension': {u'id': u'trisquel@search.mozilla.org'}, u'appliesTo': [{u'included': {u'everywhere': True}, 'default': 'no'}, {u'override': True, u'application': {'override': True, 'orderHint': 4000}}], u'id': u'4341e834-7290-4d33-beb0-377c04a49566', u'last_modified': 1595254832054, u'telemetryId': u'trisquel', u'schema': 1594312388241}
