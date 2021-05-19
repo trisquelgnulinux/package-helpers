@@ -1,0 +1,174 @@
+diff -ru apache2/source/modules/ssl/mod_ssl.c apache2-mod/source/modules/ssl/mod_ssl.c
+--- apache2/source/modules/ssl/mod_ssl.c	2021-05-19 12:53:00.818947417 -0400
++++ apache2-mod/source/modules/ssl/mod_ssl.c	2021-05-19 12:44:28.702840335 -0400
+@@ -243,6 +243,8 @@
+                 "OCSP responder query timeout")
+     SSL_CMD_SRV(OCSPUseRequestNonce, FLAG,
+                 "Whether OCSP queries use a nonce or not ('on', 'off')")
++    SSL_CMD_SRV(OCSPProxyURL, TAKE1,
++                "Proxy URL to use for OCSP requests")
+ 
+ #ifdef HAVE_OCSP_STAPLING
+     /*
+diff -ru apache2/source/modules/ssl/ssl_engine_config.c apache2-mod/source/modules/ssl/ssl_engine_config.c
+--- apache2/source/modules/ssl/ssl_engine_config.c	2021-05-19 12:53:00.854946855 -0400
++++ apache2-mod/source/modules/ssl/ssl_engine_config.c	2021-05-19 12:50:13.565554740 -0400
+@@ -136,6 +136,7 @@
+     mctx->ocsp_resp_maxage    = UNSET;
+     mctx->ocsp_responder_timeout = UNSET;
+     mctx->ocsp_use_request_nonce = UNSET;
++    mctx->proxy_uri              = NULL;
+ 
+ #ifdef HAVE_OCSP_STAPLING
+     mctx->stapling_enabled           = UNSET;
+@@ -285,6 +286,7 @@
+     cfgMergeInt(ocsp_resp_maxage);
+     cfgMergeInt(ocsp_responder_timeout);
+     cfgMergeBool(ocsp_use_request_nonce);
++    cfgMerge(proxy_uri, NULL);
+ #ifdef HAVE_OCSP_STAPLING
+     cfgMergeBool(stapling_enabled);
+     cfgMergeInt(stapling_resptime_skew);
+@@ -1670,6 +1672,18 @@
+     return NULL;
+ }
+ 
++const char *ssl_cmd_SSLOCSPProxyURL(cmd_parms *cmd, void *dcfg,
++                                    const char *arg)
++{
++    SSLSrvConfigRec *sc = mySrvConfig(cmd->server);
++    sc->server->proxy_uri = apr_palloc(cmd->pool, sizeof(apr_uri_t));
++    if (apr_uri_parse(cmd->pool, arg, sc->server->proxy_uri) != APR_SUCCESS) {
++        return apr_psprintf(cmd->pool,
++                            "SSLOCSPProxyURL: Cannot parse URL %s", arg);
++    }
++    return NULL;
++}
++
+ const char *ssl_cmd_SSLProxyCheckPeerExpire(cmd_parms *cmd, void *dcfg, int flag)
+ {
+     SSLSrvConfigRec *sc = mySrvConfig(cmd->server);
+diff -ru apache2/source/modules/ssl/ssl_private.h apache2-mod/source/modules/ssl/ssl_private.h
+--- apache2/source/modules/ssl/ssl_private.h	2021-05-19 12:53:00.790947856 -0400
++++ apache2-mod/source/modules/ssl/ssl_private.h	2021-05-19 12:47:02.576500742 -0400
+@@ -638,6 +638,7 @@
+     long ocsp_resp_maxage;
+     apr_interval_time_t ocsp_responder_timeout;
+     BOOL ocsp_use_request_nonce;
++    apr_uri_t *proxy_uri;
+ 
+ #ifdef HAVE_SSL_CONF_CMD
+     SSL_CONF_CTX *ssl_ctx_config; /* Configuration context */
+@@ -764,6 +765,7 @@
+ const char *ssl_cmd_SSLOCSPResponderTimeout(cmd_parms *cmd, void *dcfg, const char *arg);
+ const char *ssl_cmd_SSLOCSPUseRequestNonce(cmd_parms *cmd, void *dcfg, int flag);
+ const char *ssl_cmd_SSLOCSPEnable(cmd_parms *cmd, void *dcfg, int flag);
++const char *ssl_cmd_SSLOCSPProxyURL(cmd_parms *cmd, void *dcfg, const char *arg);
+ 
+ #ifdef HAVE_SSL_CONF_CMD
+ const char *ssl_cmd_SSLOpenSSLConfCmd(cmd_parms *cmd, void *dcfg, const char *arg1, const char *arg2);
+diff -ru apache2/source/modules/ssl/ssl_util_ocsp.c apache2-mod/source/modules/ssl/ssl_util_ocsp.c
+--- apache2/source/modules/ssl/ssl_util_ocsp.c	2021-05-19 12:53:00.858946791 -0400
++++ apache2-mod/source/modules/ssl/ssl_util_ocsp.c	2021-05-19 12:51:50.052053179 -0400
+@@ -27,7 +27,8 @@
+ 
+ /* Serialize an OCSP request which will be sent to the responder at
+  * given URI to a memory BIO object, which is returned. */
+-static BIO *serialize_request(OCSP_REQUEST *req, const apr_uri_t *uri)
++static BIO *serialize_request(OCSP_REQUEST *req, const apr_uri_t *uri,
++                              const apr_uri_t *proxy_uri)
+ {
+     BIO *bio;
+     int len;
+@@ -36,7 +37,13 @@
+ 
+     bio = BIO_new(BIO_s_mem());
+ 
+-    BIO_printf(bio, "POST %s%s%s HTTP/1.0\r\n"
++    BIO_printf(bio, "POST ");
++    /* Use full URL instead of URI in case of a request through a proxy */
++    if (proxy_uri) {
++        BIO_printf(bio, "http://%s:%d",
++                   uri->hostname, uri->port);
++    }
++    BIO_printf(bio, "%s%s%s HTTP/1.0\r\n"
+                "Host: %s:%d\r\n"
+                "Content-Type: application/ocsp-request\r\n"
+                "Content-Length: %d\r\n"
+@@ -58,25 +65,38 @@
+  * NULL on error. */
+ static apr_socket_t *send_request(BIO *request, const apr_uri_t *uri,
+                                   apr_interval_time_t timeout,
+-                                  conn_rec *c, apr_pool_t *p)
++                                  conn_rec *c, apr_pool_t *p,
++                                  const apr_uri_t *proxy_uri)
+ {
+     apr_status_t rv;
+     apr_sockaddr_t *sa;
+     apr_socket_t *sd;
+     char buf[HUGE_STRING_LEN];
+     int len;
++    const apr_uri_t *next_hop_uri;
++
++    if (proxy_uri) {
++        next_hop_uri = proxy_uri;
++    }
++    else {
++        next_hop_uri = uri;
++    }
+ 
+-    rv = apr_sockaddr_info_get(&sa, uri->hostname, APR_UNSPEC, uri->port, 0, p);
++    rv = apr_sockaddr_info_get(&sa, next_hop_uri->hostname, APR_UNSPEC,
++                               next_hop_uri->port, 0, p);
+     if (rv) {
+         ap_log_cerror(APLOG_MARK, APLOG_ERR, rv, c, APLOGNO(01972)
+-                      "could not resolve address of OCSP responder %s",
+-                      uri->hostinfo);
++                      "could not resolve address of %s %s",
++                      proxy_uri ? "proxy" : "OCSP responder",
++                      next_hop_uri->hostinfo);
+         return NULL;
+     }
+ 
+     /* establish a connection to the OCSP responder */
+     ap_log_cerror(APLOG_MARK, APLOG_DEBUG, 0, c, APLOGNO(01973)
+-                  "connecting to OCSP responder '%s'", uri->hostinfo);
++                  "connecting to %s '%s'",
++                  proxy_uri ? "proxy" : "OCSP responder",
++                  uri->hostinfo);
+ 
+     /* Cycle through address until a connect() succeeds. */
+     for (; sa; sa = sa->next) {
+@@ -94,8 +114,9 @@
+ 
+     if (sa == NULL) {
+         ap_log_cerror(APLOG_MARK, APLOG_ERR, rv, c, APLOGNO(01974)
+-                      "could not connect to OCSP responder '%s'",
+-                      uri->hostinfo);
++                     "could not connect to %s '%s'",
++                     proxy_uri ? "proxy" : "OCSP responder",
++                     next_hop_uri->hostinfo);
+         return NULL;
+     }
+ 
+@@ -289,8 +310,10 @@
+     OCSP_RESPONSE *response = NULL;
+     apr_socket_t *sd;
+     BIO *bio;
++    const apr_uri_t *proxy_uri;
+ 
+-    bio = serialize_request(request, uri);
++    proxy_uri = (mySrvConfigFromConn(c))->server->proxy_uri;
++    bio = serialize_request(request, uri, proxy_uri);
+     if (bio == NULL) {
+         ap_log_cerror(APLOG_MARK, APLOG_ERR, 0, c, APLOGNO(01989)
+                       "could not serialize OCSP request");
+@@ -298,7 +321,7 @@
+         return NULL;
+     }
+ 
+-    sd = send_request(bio, uri, timeout, c, p);
++    sd = send_request(bio, uri, timeout, c, p, proxy_uri);
+     if (sd == NULL) {
+         /* Errors already logged. */
+         BIO_free(bio);

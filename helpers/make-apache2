@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 
 . ./config
 
@@ -25,6 +25,9 @@ rm debian/icons/ubuntu-logo.png
 cp $DATA/trisquel-logo.png debian/icons/
 cp $DATA/index.html debian/
 replace ubuntu-logo trisquel-logo .
+
+# Backport support for SSLOCSPProxyURL from 2.4.19
+patch -p2 < $DATA/SSLOCSPProxyURL.patch
 
 # Make the banner be Trisquel GNU/Linux instead of just Trisquel
 sed '/^LSB_RELEASE/s/$/_GNU\/Linux/'  -i debian/rules
