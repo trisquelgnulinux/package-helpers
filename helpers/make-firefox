@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=79
+VERSION=80
 
 . ./config
 
@@ -44,7 +44,7 @@ sed 's/preffedRegions.includes.geo. .. ..locales .. locales.includes.locale./fal
 sed 's/.Ubuntu., //' -i browser/components/newtab/css/activity-stream*.css
 echo "#header-asrouter-container{display: none!important;}" >> browser/components/newtab/css/activity-stream-linux.css
 
-sed '/captivedetect.canonicalURL/s/http.*success.txt//' -i modules/libpref/init/all.js
+sed '/network.connectivity-service.IPv/s/http.*success.txt?ipv[46]//' -i modules/libpref/init/all.js
 
 # do not alter useragent/platform/oscpu/etc with fingerprinting countermeasure, it makes things worse
 sed '/ShouldResistFingerprinting/,/}/s/^/\/\//' -i ./netwerk/protocol/http/nsHttpHandler.cpp
