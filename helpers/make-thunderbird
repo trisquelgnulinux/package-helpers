@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=7
+VERSION=8
 
 . ./config
 
@@ -114,7 +114,7 @@ pref("datareporting.healthreport.uploadEnabled", false);
 pref("datareporting.healthreport.about.reportUrl", "https://trisquel.info/legal");
 pref("datareporting.healthreport.infoURL", "https://trisquel.info/legal");
 EOF
-cp toolkit/components/telemetry/healthreport-prefs.js mobile/android/chrome/content/healthreport-prefs.js
+#cp toolkit/components/telemetry/healthreport-prefs.js mobile/android/chrome/content/healthreport-prefs.js
 # Browser legal page
 sed 's%https://www.mozilla.org/legal/privacy/%https://trisquel.info/legal%' -i ./browser/app/profile/firefox.js ./toolkit/content/aboutRights.xhtml
 # Org branding
@@ -164,9 +164,9 @@ sed 's|https://www.icedove.net/get-involved/|https://trisquel.info/wiki/|' -i co
 sed 's|https://donate.mozilla.org/.*help-menu|https://trisquel.info/donate/|' -i comm/mail/base/content/utilityOverlay.js
 
 replace Daily Trisquel comm/mail/branding/
-sed '/.*<description.*communityExperimentalDesc/,/\/description/d' -i ./comm/mail/base/content/aboutDialog.xul
-sed '/.*<description.*communityDesc/,/\/description/d' -i ./comm/mail/base/content/aboutDialog.xul
-sed '/.*<description.*contributeDesc/,/\/description/d' -i ./comm/mail/base/content/aboutDialog.xul
+sed '/.*<description.*communityExperimentalDesc/,/\/description/d' -i ./comm/mail/base/content/aboutDialog.xhtml
+sed '/.*<description.*communityDesc/,/\/description/d' -i ./comm/mail/base/content/aboutDialog.xhtml
+sed '/.*<description.*contributeDesc/,/\/description/d' -i ./comm/mail/base/content/aboutDialog.xhtml
 
 sed '/^Source/s/.*/Source: thunderbird/' -i debian/control.in
 sed 's/Provides: mail-reader,/Provides: mail-reader, thunderbird,/' -i debian/control.in
