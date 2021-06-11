@@ -1,4 +1,4 @@
-# Contributing 
+# Contributing
 
 Whether you've got a bugfix, documentation update, or new feature for us, these are the steps to follow to contribute code back into the main trisquel repo.
 
@@ -6,34 +6,27 @@ Whether you've got a bugfix, documentation update, or new feature for us, these 
 
 
 
- 1. Install needed packages for both, sources and binary builds
+ 1. Install needed packages for running the helpers
 ```
-sudo apt-get install  dpkg-dev devscripts git pbuilder quilt patch sed rpl parsewiki
-```
-
- 1. Configure build environment for binary packages
-```
-git clone https://devel.trisquel.info/trisquel/trisquel-builder.git
-ln -s $(readlink -f trisquel-builder/pbuilderrc) ~/.pbuilderrc
-sudo ln -s $(readlink -f trisquel-builder/hooks) /var/cache/pbuilder/hooks.d
+sudo apt-get install cdbs devscripts dpkg-dev git gnupg patch quilt rpl sed
 ```
 
- 1. Create the build environment for each distribution/architecture you want to work with
+ 1. Get the Trisquel build environment and follow the [README](https://gitlab.trisquel.org/trisquel/trisquel-builder/-/blob/master/README.md) to setup your system for building
 ```
-sudo BUILDDIST=belenos BUILDARCH=amd64 pbuilder create 
+git clone https://gitlab.trisquel.org/trisquel/trisquel-builder.git
 ```
 
 
 ## 2. Get the latest code from gitlab
 
-You'll need to understand a little bit about how git and gitlab work before this step (GitHub works the same way, but we like free software). In simple terms, log in [here](https://devel.trisquel.info/users/sign_in?redirect_to_referer=yes), visit the [trisquel/package-helpers project page](https://devel.trisquel.info/trisquel/package-helpers), and click the "fork" button to create your own copy of the repo.  You will push your changes to this new repo under your own git account, and we will pull changes into the main repo from there.
+You'll need to understand a little bit about how git and gitlab work before this step (GitHub works the same way, but we like free software). In simple terms, log in [here](https://gitlab.trisquel.org/users/sign_in?redirect_to_referer=yes), visit the [trisquel/package-helpers project page](https://gitlab.trisquel.org/trisquel/package-helpers), and click the "fork" button to create your own copy of the repo.  You will push your changes to this new repo under your own git account, and we will pull changes into the main repo from there.
 
 For the sake of the rest of the examples in this guide, we're going to assume your gitlab username is "**richardtorvalds**" and you will be working with the  "**hello**" package, and use those in our examples.
 
 Now, we want to grab the latest from this newly created repository and pull it down to your local machine. Getting the latest code from your repo is simple, just clone it:
 
 ```bash
-git clone https://devel.trisquel.info/richardtorvalds/package-helpers.git
+git clone https://gitlab.trisquel.org/richardtorvalds/package-helpers.git
 cd package-helpers
 ```
 
@@ -44,7 +37,7 @@ This will give you a directory called "package-helpers" on your local machine wi
 One thing you'll need to do to make things easier to integrate and keep up to date in your fork is to add the main repo as a remote reference. This way you can fetch the latest code from the production version and integrate it. So, here's how to set that up:
 
 ```bash
-git remote add upstream https://devel.trisquel.info/trisquel/package-helpers.git
+git remote add upstream https://gitlab.trisquel.org/trisquel/package-helpers.git
 git remote   (this will list out your remotes, showing the new one we added)
 ```
 
@@ -52,14 +45,14 @@ Then, when you need to pull the latest from the main trisquel repo, you just fet
 
 ```bash
 git fetch upstream
-git merge upstream/belenos
+git merge upstream/etiona
 ```
 
-You can also use *git pull upstream belenos* if you want it all in one step.
+You can also use *git pull upstream etiona* if you want it all in one step.
 
 ## 4. Making a branch for your changes
 
-When adding features or bug fixes, please create a separate branch for each changeset you want us to pull in, either with the issue number in the branch name or with an indication of what the feature is (feature, bugfix...). 
+When adding features or bug fixes, please create a separate branch for each changeset you want us to pull in, either with the issue number in the branch name or with an indication of what the feature is (feature, bugfix...).
 
 ```bash
 git branch   (lists your current branches)
@@ -75,7 +68,7 @@ cd helpers
 cp make-apache2 make-hello
 ```
 
-For importing free packages from ppa's or other sources, check [make-toxcore](https://devel.trisquel.info/trisquel/package-helpers/blob/belenos/helpers/make-toxcore) and update the _EXTERNAL_ , _SIGNKEY_ and _changelog_ lines  with your own values.
+For importing free packages from ppa's or other sources, check [make-tor](https://gitlab.trisquel.org/trisquel/package-helpers/blob/etiona/helpers/make-tor) and update the _EXTERNAL_ , _SIGNKEY_ and _changelog_ lines  with your own values.
 
 Then, run the helper with
 ```
@@ -86,12 +79,12 @@ If everything goes fine, you will have your new source package ready at _PACKAGE
 
 ## 6. Build and test the binary package
 
-The last step generated a source package file, so we need to build the binary one:
+The last step generated a source package file, so we need to build the binary one. Please make sure that you set or replace `CODENAME` and `ARCH` variables:
 ```
-sudo BUILDDIST=belenos BUILDARCH=amd64 pbuilder build PACKAGES/hello/*.dsc
+sbuild -v -A --dist $CODENAME --arch $ARCH PACKAGES/hello/*.dsc
 ```
 
-The binary packages will be avaliable at _/var/cache/pbuilder/jenkins-repos/$BUILDDIST/_
+The binary packages will be avaliable in the directory from which you ran the previous command.
 
 
 ## 7. Push your code and make a pull request
@@ -107,6 +100,4 @@ This pushes everything in that branch up. Then you can go back to your forked pa
 That lets us know that there's something new from you that needs to be pulled in. We'll review it and get back to you about it if we have any questions. Otherwise, we'll integrate it and let you know when it's in!
 
 
-Hope this guide helps you get started in contributing to the trisquel project! If you still have questions, don't hesitate to join us on IRC - we're in #trisquel-dev on freenode -, or send a mail to the development mailing list trisquel-devel at listas.trisquel.info.
-
-   
+Hope this guide helps you get started in contributing to the trisquel project! If you still have questions, don't hesitate to join us on IRC - we're in #trisquel-dev on libera.chat -, or send a mail to the development mailing list trisquel-devel at listas.trisquel.info.
