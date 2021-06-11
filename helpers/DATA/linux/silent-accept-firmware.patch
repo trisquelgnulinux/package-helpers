@@ -1,3 +1,9 @@
+The Linux-Libre deblob script that is used to make the Trisquel kernel packages disables all functionality related to loading nonfree firmware blobs. Even if the user chooses to install the blob files, these would still not be loaded and the driver would not activate.
+An alternative solution is to preserve the loading functionality and remove the *advertisment* to the user of the blob filenames when these fail to be loaded, as to not imply that those files are recommended in any way, so the driver would just print "failed to load firmware" or equivalent. This allows the user to use the driver if they so decide.
+
+This method is done by a patch (silent-accept-firmware.patch) that removes all the instances where the blob filenames are printed to the user (via kernel logs), and a section on the package helper that takes care of preventing the deblob script from acting on the files modified by the patch. This is done manually, for individual drivers (usually those for very common devices). It needs to be reviewed on any new major release, checking that no new lines were added to the upstream driver in where it prints the blob filename on the log.
+Printing the blob filename on success operations (that is, when the blob file is present) is acceptable. If in doubt, all instances of printing the blob filenames should be removed.
+
 diff --git a/drivers/base/firmware_class.c b/drivers/base/firmware_class.c
 index bfbe1e1..5a2ee57 100644
 --- a/drivers/base/firmware_class.c
