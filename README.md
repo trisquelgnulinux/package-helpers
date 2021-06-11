@@ -11,9 +11,9 @@ derivative of your own, we suggest you to use Builder instead of this helpers.
 
 Once a new package is added, it takes priority over the original one from Ubuntu,
 so they never enter into the repo from upstream and need to be
-compiled with this helpers and pushed into reprepro. 
+compiled with this helpers and pushed into reprepro.
 
-To add a package to the list, follow the [CONTRIBUTING](https://devel.trisquel.info/trisquel/package-helpers/blob/belenos/CONTRIBUTING.md) guidelines.
+To add a package to the list, follow the [CONTRIBUTING](https://gitlab.trisquel.org/trisquel/package-helpers/blob/nabia/CONTRIBUTING.md) guidelines.
 
 ## Steps
 
@@ -26,11 +26,20 @@ Those are the steps done by the helpers:
 5. Apply the changes described in the helper
 6. Re-package it, adding "triquel$VERSION" version string
 
+## Variables in helper scripts
+
+* `VERSION` (required): The trisquel version for the helper.
+* `EXTERNAL`: When building packages not coming from the upstream Ubuntu, the external `deb-src` in the same format as in `apt.sources.list`.
+* `REPOKEY`: An additional GPG key to import for the helper. Mostly only used in conjunction with `EXTERNAL`.
+* `BACKPORT(S)`: Must be set to `true` if the package is a backport.
+* `PARALLEL`: If `false`, avoids `dpkg-src` to run multi-threaded with as many CPUs as available.
+* `QUILT`: If `skip`, avoids patches to be automatically applied. Only set this variables if you know what you are doing.
+
 ## Recommendations
 
 * You don't need to use sudo in order to run those scripts, but some extra packages are needed:
 
-     `sudo apt-get install dpkg-dev sed git rpl devscripts quilt patch cdbs`
+     `sudo apt-get install cdbs devscripts dpkg-dev git gnupg patch quilt rpl sed`
 
 * Take care to use the right sourcePackageName, many source packages produce
 several binary packages. `apt-cache showsrc binary-package` can help you.
@@ -41,7 +50,7 @@ it at the `DATA/sourcePackageName` directory
 would actually be shown to the user. Avoid replacing copyright statements!
 * Try to write your replacements in a way they might work in future versions
 of the upstream package. Well written regexps and sed will help with that.
-* You can test your changes by doing them inside the _PACKAGES/sourcePackageName/source/_ directory, 
+* You can test your changes by doing them inside the _PACKAGES/sourcePackageName/source/_ directory,
 and running `dpkg-source -b .`, before being added to the helper script
 * You can check the status of failed build at https://jenkins.trisquel.org/job/build-watchdog/lastBuild/consoleText
 
@@ -63,4 +72,3 @@ To generate the images, we run the following scripts:
 
 Then we push the results into the Trisquel repository and run the script
 `make-debian-installer` to build the final images.
-
