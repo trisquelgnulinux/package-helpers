@@ -17,14 +17,12 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=5
+VERSION=6
 
 . ./config
 
-rm debian/patches/ubuntu-example-feeds.patch debian/patches/debian-example-feeds.patch
-sed '/ubuntu-example-feeds/d; /debian-example-feeds/d;' debian/patches/series -i
-sed '/ubuntu-example-feeds/d;' debian/patches/ubuntu.additions -i
-sed '/ubuntu-example-feeds/d; /debian-example-feeds/d;' debian/patches/ubuntu.series -i
+rm debian/patches/debian-example-feeds.patch
+sed '/debian-example-feeds/d;' debian/patches/series -i
 
 cat << EOF > opml/feedlist
 <?xml version="1.0"?>
