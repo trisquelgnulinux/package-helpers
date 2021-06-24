@@ -21,10 +21,7 @@ VERSION=1
 
 . ./config
 
-#Remove upstream distros feeds
-sed -i "/debianize_akregator_default.diff/d" debian/patches/series
-rm debian/patches/debianize_akregator_default.diff debian/patches/kubuntu_debianize_akregator_default.diff
-
+# Patch trisquel feeds
 patch src/akregator_part.cpp < $DATA/trisquel_feeds.patch
 
 changelog "Patched feeds for Trisquel"
