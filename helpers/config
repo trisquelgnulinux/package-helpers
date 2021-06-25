@@ -183,7 +183,9 @@ cd source
 compile(){
 
 # Make sure the series file is formated correctly after removals
-grep -q [a-z] debian/patches/series || echo -n > debian/patches/series
+if [ -f debian/patches/series ]; then
+  grep -q [a-z] debian/patches/series || echo -n > debian/patches/series
+fi
 
 if [ 1$QUILT != 1skip ]; then
 export QUILT_PATCHES=debian/patches
