@@ -1,6 +1,7 @@
 #!/bin/sh
 #
 #    Copyright (C) 2019  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2021  Luis Guzman <ark@switnet.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,11 +18,11 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=4
+VERSION=5
 
 . ./config
 
-sed 's/^Categories=.*/Categories=GTK;Settings;X-MATE-PersonalSettings;/' -i data/seahorse.desktop.in.in
+sed 's/^Categories=.*/Categories=GTK;Settings;X-MATE-PersonalSettings;/' -i data/org.gnome.seahorse.Application.desktop.in.in
 
 changelog "Moved to control panel"
 
