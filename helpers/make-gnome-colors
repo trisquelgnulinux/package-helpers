@@ -1,5 +1,6 @@
 #!/bin/sh
 #
+#    Copyright (C) 2021 Luis Guzman <ark@switnet.org>
 #    Copyright (C) 2008-2019  Rubén Rodríguez <ruben@trisquel.info>
 #    Copyright (C) 2014 Salman Mohammadi <salman@ubuntu.ir>
 #
@@ -18,9 +19,12 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
+VERSION=4
 
 . ./config
+
+#Force non-backports inkscape version
+sed -i "s|inkscape|inkscape (<= 0.93)|" debian/control
 
 rm gnome-colors-common/16x16/apps/skype.png
 rm gnome-colors-common/22x22/apps/skype.png
