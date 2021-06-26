@@ -22,7 +22,7 @@ COMPONENT=main
 
 . ./config
 
-for i in 09_app_install_entry.patch 09_games-menu.patch 11_science-menu.patch 08_settings-menus.patch 12_alacarte.patch
+for i in 09_app_install_entry.patch 09_games-menu.patch 11_science-menu.patch 08_settings-menus.patch
 do
   rm debian/patches/$i
   sed /$i/d -i debian/patches/series
