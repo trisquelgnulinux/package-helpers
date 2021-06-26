@@ -1,6 +1,7 @@
 #!/bin/bash
 #
 #    Copyright (C) 2016  Kevin Peng <kkpengboy@gmail.com>
+#    Copyright (C) 2021  Luis Guzman <ark@switnet.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,12 +18,13 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 
 . ./config
 
-sed "s/archive\.ubuntu\.com\/ubuntu/archive\.trisquel\.info\/trisquel/g" -i debian/rules
-sed "s/$UPSTREAM/$CODENAME/g" -i debian/rules
+sed "s/archive\.ubuntu\.com\/ubuntu/archive\.trisquel\.org\/trisquel/g" -i debian/rules
+sed "s/devel/$CODENAME/g" -i debian/rules
+sed "s/main universe/main/" -i debian/rules
 
 changelog "Rebrand for Trisquel"
 compile
