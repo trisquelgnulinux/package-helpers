@@ -2,6 +2,7 @@
 #
 #    Copyright (C) 2015 Andrew M. Lindley <andrew@andrewlindley.co.uk>
 #    Copyright (C) 2019 Mason Hock <mason@masonhock.com>
+#    Copyright (C) 2021 Luis Guzman <ark@switnet.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -19,19 +20,25 @@
 #
 
 # One release to rule them all :)
-VERSION=2
+VERSION=3
 
+#. ./config
+QUILT=skip
 . ./config
 
+echo "#Remove already applied patch"
+rm debian/patches/python2.diff
+echo -n > debian/patches/series
+
 # Drop languages Trisquel modifications haven't been translated for yet
-sed '/^LANGALL/s/en ja fr it pt de/en/' -i debian/rules 
+sed '/^LANGALL/s/en ja fr it pt de/en/' -i debian/rules
 sed '/^\Package: debian-reference-de/,$ d' debian/control -i
 sed '/debian-reference-fr/,/Description: metapackage/{//p;d;}' debian/control -i
 sed '/debian-reference-fr/d' debian/control -i
 
 # English ASCIIDOC source
 # remove references to the non-GNU FSDG contrib and non-free repos
-sed 's/ contrib non-free//;s/ and no dependency to `non-free`//;/non-free/d;s/ contrib//' -i asciidoc/02_package.txt 
+sed 's/ contrib non-free//;s/ and no dependency to `non-free`//;/non-free/d;s/ contrib//' -i asciidoc/02_package.txt
 sed 's/(non-free)//' -i asciidoc/04_auth.txt
 sed '/non-free/d' -i asciidoc/05_network.txt
 sed 's/Debian also offers helper programs to install non-free browser plugin packages as contrib or non-free archive area.//;/contrib/d' -i asciidoc/06_netapp.txt
@@ -39,7 +46,7 @@ sed 's/previously non-free,//;/non-free/d;/sharing some commercial/,/contaminati
 sed 's/, and `non-free` for binary-only drivers supported by the vendor//;/non-free/d;/Softmodem/d' -i asciidoc/09_systips.txt
 sed 's/  You may need to include the `contrib` and `non-free` archives in addition to the `main` archive since some GFDL documentations are not considered to be DFSG compliant.//' -i asciidoc/12_program.txt
 
-changelog 'Remove references to non-free repos #5950'
+changelog 'Remove references to non-free repos #5950, remove already applied patch'
 
 compile
 
