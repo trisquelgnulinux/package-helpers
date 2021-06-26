@@ -22,12 +22,10 @@ COMPONENT=main
 . ./config
 
 sed -i 's/Skype protocol" ON/Skype protocol" OFF/g' protocols/CMakeLists.txt
-
-sed -i '/skype/d; /callto/d; /tel.protocol/d'  debian/kopete.install
 rm -rf protocols/skype
 sed 's/, Skype//' -i ./doc/index.docbook
 
-changelog "Compiled for Trisquel" 
+changelog "Compiled for Trisquel"
 
 compile
 
