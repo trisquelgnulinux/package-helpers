@@ -1,0 +1,90 @@
+diff -ru a/bleachbit.spec b/bleachbit.spec
+--- a/bleachbit.spec	2020-03-22 21:42:04.000000000 +0100
++++ b/bleachbit.spec	2021-06-25 23:06:33.113952262 +0200
+@@ -72,7 +72,7 @@
+ Delete traces of your activities and other junk files to free disk
+ space and maintain privacy.  BleachBit identifies and erases
+ broken menu entries, cache, cookies, localizations, recent document
+-lists, and temporary files in Firefox, Google Chrome, Flash, and 60
++lists, and temporary files in Firefox, LibreOffice and 60
+ other applications.
+ 
+ Shred files to prevent recovery, and wipe free disk space to
+diff -ru a/cleaners/localizations.xml b/cleaners/localizations.xml
+--- a/cleaners/localizations.xml	2020-03-22 21:42:04.000000000 +0100
++++ b/cleaners/localizations.xml	2021-06-25 23:06:33.117952276 +0200
+@@ -6,9 +6,6 @@
+        the parent element, so <path location="/usr"><path location="share"/></path>
+        effects elements in /usr/share.-->
+     <path location="/usr/lib">
+-      <!-- This filter deletes /usr/lib/chromium/locales/*.pak, where * is every
+-           valid locale not specifically excluded in the configuration.-->
+-      <path location="chromium/locales" filter="*.pak"/>
+       <path location="libreoffice/share">
+         <path location="autocorr" filter="acor_*.dat"/>
+         <path location="fingerprint" filter="*.lm"/>
+diff -ru a/debian/bleachbit.1 b/debian/bleachbit.1
+--- a/debian/bleachbit.1	2020-04-01 06:08:31.000000000 +0200
++++ b/debian/bleachbit.1	2021-06-25 23:06:33.117952276 +0200
+@@ -8,8 +8,8 @@
+ BleachBit deletes unnecessary files to free valuable disk space,
+ maintain privacy, and remove junk. Rid your system of old clutter
+ including cache, temporary files, cookies, and broken shortcuts.
+-It wipes clean Bash, Beagle, Epiphany, Firefox, Flash, Java, KDE,
+-OpenOffice.org, Opera, RealPlayer, rpmbuild, VIM, XChat, and more.
++It wipes clean Bash, Beagle, Epiphany, Firefox, Java, KDE,
++OpenOffice.org, RealPlayer, rpmbuild, VIM, XChat, and more.
+ .PP
+ This is the command line interface for BleachBit.
+ .SH OPTIONS
+diff -ru a/debian/control b/debian/control
+--- a/debian/control	2020-04-01 06:08:31.000000000 +0200
++++ b/debian/control	2021-06-25 23:06:33.117952276 +0200
+@@ -29,8 +29,8 @@
+  privacy, and remove junk. It removes cache, Internet history, temporary files,
+  cookies, and broken shortcuts.
+  .
+- It handles cleaning of Adobe Reader, Bash, Beagle, Epiphany, Firefox, Flash,
+- GIMP, Google Earth, Java, KDE, OpenOffice.org, Opera, RealPlayer, rpmbuild,
++ It handles cleaning of Bash, Beagle, Epiphany, Firefox,
++ GIMP, Java, KDE, OpenOffice.org, RealPlayer, rpmbuild,
+  Second Life Viewer, VIM, XChat, and more.
+  .
+  Beyond simply erasing junk files, BleachBit wipes free disk space (to hide
+diff -ru a/doc/cleaner_markup_language.xsd b/doc/cleaner_markup_language.xsd
+--- a/doc/cleaner_markup_language.xsd	2020-03-22 21:42:04.000000000 +0100
++++ b/doc/cleaner_markup_language.xsd	2021-06-25 23:06:33.117952276 +0200
+@@ -125,11 +125,6 @@
+                             <xs:enumeration value="apt.clean"/>
+                             <xs:enumeration value="apt.autoclean"/>
+                             <xs:enumeration value="apt.autoremove"/>
+-                            <xs:enumeration value="chrome.autofill"/>
+-                            <xs:enumeration value="chrome.databases_db"/>
+-                            <xs:enumeration value="chrome.favicons"/>
+-                            <xs:enumeration value="chrome.history"/>
+-                            <xs:enumeration value="chrome.keywords"/>
+                             <xs:enumeration value="delete"/>
+                             <xs:enumeration value="dnf.autoremove"/>
+                             <xs:enumeration value="dnf.clean_all"/>
+diff -ru a/PKG-INFO b/PKG-INFO
+--- a/PKG-INFO	2020-03-22 21:42:05.000000000 +0100
++++ b/PKG-INFO	2021-06-25 23:06:33.117952276 +0200
+@@ -7,5 +7,5 @@
+ Author-email: andrew@bleachbit.org
+ License: GPLv3
+ Download-URL: https://www.bleachbit.org/download
+-Description: BleachBit frees space and maintains privacy by quickly wiping files you don't need and didn't know you had. Supported applications include Firefox, Flash, Internet Explorer, Java, Opera, Safari, GNOME, and many others.
++Description: BleachBit frees space and maintains privacy by quickly wiping files you don't need and didn't know you had. Supported applications include Firefox, LibreOffice, Bash, Java, GNOME, and many others.
+ Platform: Linux and Windows; Python v2.6 and 2.7; GTK v3.12+
+diff -ru a/setup.py b/setup.py
+--- a/setup.py	2020-03-22 21:42:04.000000000 +0100
++++ b/setup.py	2021-06-25 23:06:33.117952276 +0200
+@@ -253,7 +253,7 @@
+     setup(name='bleachbit',
+           version=bleachbit.APP_VERSION,
+           description="BleachBit - Free space and maintain privacy",
+-          long_description="BleachBit frees space and maintains privacy by quickly wiping files you don't need and didn't know you had. Supported applications include Firefox, Flash, Internet Explorer, Java, Opera, Safari, GNOME, and many others.",
++          long_description="BleachBit frees space and maintains privacy by quickly wiping files you don't need and didn't know you had. Supported applications include Firefox, Java, GNOME, and many others.",
+           author="Andrew Ziem",
+           author_email="andrew@bleachbit.org",
+           download_url="https://www.bleachbit.org/download",
