@@ -63,10 +63,6 @@ for t in $failed_tests; do
 	rm tests/$t.*
 done
 
-# this shouldn't be needed for Ubuntu 20.04
-sed '/UNITY8,/a\        MATE,' -i include/datetime/actions-live.h
-patch -p0 < $DATA/launch-time-admin-in-mate.patch
-
 # This messes things up
 rm debian/indicator-datetime.maintscript
 
