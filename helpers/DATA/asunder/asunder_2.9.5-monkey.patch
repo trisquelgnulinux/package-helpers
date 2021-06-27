@@ -1,7 +1,7 @@
-diff -ruN asunder-2.9.2-acc/src/callbacks.c src/callbacks.c
---- asunder-2.9.2-acc/src/callbacks.c	2019-12-11 03:47:37.748518768 -0600
-+++ src/callbacks.c	2019-12-11 11:37:59.433406734 -0600
-@@ -694,31 +694,6 @@
+diff -ruN b/src/callbacks.c c/src/callbacks.c
+--- b/src/callbacks.c	2021-06-27 15:52:48.030388633 -0500
++++ c/src/callbacks.c	2021-06-27 16:37:37.266736576 -0500
+@@ -835,31 +835,6 @@
  }
  
  void
@@ -33,23 +33,23 @@ diff -ruN asunder-2.9.2-acc/src/callbacks.c src/callbacks.c
  on_rip_musepack_toggled                  (GtkToggleButton *togglebutton,
                                            gpointer         user_data)
  {
-diff -ruN asunder-2.9.2-acc/src/callbacks.h src/callbacks.h
---- asunder-2.9.2-acc/src/callbacks.h	2019-12-11 03:47:37.776519106 -0600
-+++ src/callbacks.h	2019-12-11 11:37:59.433406734 -0600
-@@ -157,9 +157,6 @@
+diff -ruN b/src/callbacks.h c/src/callbacks.h
+--- b/src/callbacks.h	2021-06-27 15:54:41.446511848 -0500
++++ c/src/callbacks.h	2021-06-27 16:38:30.334820157 -0500
+@@ -172,9 +172,6 @@
  on_rip_wavpack_toggled                 (GtkToggleButton *togglebutton,
                                          gpointer         user_data);
  void
 -on_rip_monkey_toggled                  (GtkToggleButton *togglebutton,
--                                        gpointer         user_data);
+-                                     gpointer         user_data);
 -void
  on_rip_musepack_toggled                  (GtkToggleButton *togglebutton,
                                            gpointer         user_data);
  void
-diff -ruN asunder-2.9.2-acc/src/interface.c src/interface.c
---- asunder-2.9.2-acc/src/interface.c	2019-12-11 03:47:37.784519202 -0600
-+++ src/interface.c	2019-12-11 11:37:59.441406834 -0600
-@@ -895,54 +895,6 @@
+diff -ruN b/src/interface.c c/src/interface.c
+--- b/src/interface.c	2021-06-27 16:00:02.926827702 -0500
++++ c/src/interface.c	2021-06-27 16:42:14.287154174 -0500
+@@ -960,53 +960,6 @@
      GLADE_HOOKUP_OBJECT (prefs, rip_musepack, "rip_musepack");
      /* END MUSEPACK */
      
@@ -100,11 +100,10 @@ diff -ruN asunder-2.9.2-acc/src/interface.c src/interface.c
 -                                        NULL);
 -    GLADE_HOOKUP_OBJECT (prefs, rip_monkey, "rip_monkey");
 -    /* END MONKEY */
--    
- 
+     
      label = gtk_label_new (_("Encode"));
      gtk_widget_show (label);
-@@ -1333,18 +1285,6 @@
+@@ -1424,18 +1377,6 @@
      }
  }
  
@@ -123,18 +122,18 @@ diff -ruN asunder-2.9.2-acc/src/interface.c src/interface.c
  void disable_musepack_widgets(void)
  {
      gtk_widget_set_sensitive(lookup_widget(win_prefs, "musepack_bitrate_lbl"), FALSE);
-@@ -1722,7 +1662,7 @@
+@@ -1847,7 +1788,7 @@
  static const char* 
  GBLcomments = 
  N_("An application to save tracks from an Audio CD \n"
--"as WAV, MP3, OGG, FLAC, Wavpack, Musepack, Monkey's Audio files ");
-+"as WAV, MP3, OGG, FLAC, Wavpack and Musepack audio files ");
+-"as WAV, MP3, OGG, FLAC, Wavpack, Opus, Musepack, Monkey's Audio files.");
++"as WAV, MP3, OGG, FLAC, Wavpack, Opus and Musepack audio files.");
  
  static const char* 
  GBLcopyright = 
-diff -ruN asunder-2.9.2-acc/src/interface.h src/interface.h
---- asunder-2.9.2-acc/src/interface.h	2019-12-11 03:47:37.788519251 -0600
-+++ src/interface.h	2019-12-11 11:37:59.441406834 -0600
+diff -ruN b/src/interface.h c/src/interface.h
+--- b/src/interface.h	2021-06-27 16:00:37.894859872 -0500
++++ c/src/interface.h	2021-06-27 16:42:38.247188440 -0500
 @@ -15,8 +15,6 @@
  void enable_opus_widgets(void);
  void disable_wavpack_widgets(void);
@@ -144,9 +143,9 @@ diff -ruN asunder-2.9.2-acc/src/interface.h src/interface.h
  void disable_musepack_widgets(void);
  void enable_musepack_widgets(void);
  void show_aboutbox (void);
-diff -ruN asunder-2.9.2-acc/src/prefs.c src/prefs.c
---- asunder-2.9.2-acc/src/prefs.c	2019-12-11 03:47:37.788519251 -0600
-+++ src/prefs.c	2019-12-11 11:37:59.441406834 -0600
+diff -ruN b/src/prefs.c c/src/prefs.c
+--- b/src/prefs.c	2021-06-27 16:07:27.299217038 -0500
++++ c/src/prefs.c	2021-06-27 16:49:01.759711018 -0500
 @@ -125,8 +125,6 @@
      p->wavpack_compression = 1;
      p->wavpack_hybrid = 1;
@@ -156,7 +155,7 @@ diff -ruN asunder-2.9.2-acc/src/prefs.c src/prefs.c
      p->rip_musepack = 0;
      p->musepack_bitrate = 2;
      p->rip_opus = 0;
-@@ -189,8 +187,6 @@
+@@ -199,8 +197,6 @@
      gtk_range_set_value(GTK_RANGE(lookup_widget(win_prefs, "wavpack_compression")), p->wavpack_compression);
      gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(lookup_widget(win_prefs, "wavpack_hybrid")), p->wavpack_hybrid);
      gtk_range_set_value(GTK_RANGE(lookup_widget(win_prefs, "wavpack_bitrate_slider")), p->wavpack_bitrate);
@@ -165,7 +164,7 @@ diff -ruN asunder-2.9.2-acc/src/prefs.c src/prefs.c
      gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(lookup_widget(win_prefs, "rip_musepack")), p->rip_musepack);
      gtk_range_set_value(GTK_RANGE(lookup_widget(win_prefs, "musepack_bitrate_slider")), p->musepack_bitrate);
      gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(lookup_widget(win_prefs, "rip_opus")), p->rip_opus);
-@@ -221,8 +217,6 @@
+@@ -236,8 +232,6 @@
          disable_wavpack_widgets();
      else
          enable_wavpack_widgets(); /* need this to potentially disable hybrid widgets */
@@ -174,7 +173,7 @@ diff -ruN asunder-2.9.2-acc/src/prefs.c src/prefs.c
      if( !(p->rip_musepack) )
          disable_musepack_widgets();
      if (!(p->rip_opus))
-@@ -281,8 +275,6 @@
+@@ -296,8 +290,6 @@
      p->wavpack_compression = (int)gtk_range_get_value(GTK_RANGE(lookup_widget(win_prefs, "wavpack_compression")));
      p->wavpack_hybrid = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(lookup_widget(win_prefs, "wavpack_hybrid")));
      p->wavpack_bitrate = (int)gtk_range_get_value(GTK_RANGE(lookup_widget(win_prefs, "wavpack_bitrate_slider")));
@@ -183,7 +182,7 @@ diff -ruN asunder-2.9.2-acc/src/prefs.c src/prefs.c
      p->rip_musepack = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(lookup_widget(win_prefs, "rip_musepack")));
      p->musepack_bitrate = (int)gtk_range_get_value(GTK_RANGE(lookup_widget(win_prefs, "musepack_bitrate_slider")));
      p->rip_opus = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(lookup_widget(win_prefs, "rip_opus")));
-@@ -429,8 +421,6 @@
+@@ -452,8 +444,6 @@
          fprintf(config, "%d\n", p->do_log);
          fprintf(config, "%s\n", p->cddb_server_name);
          fprintf(config, "%d\n", p->cddb_port_number);
@@ -192,22 +191,22 @@ diff -ruN asunder-2.9.2-acc/src/prefs.c src/prefs.c
          fprintf(config, "%d\n", p->rip_musepack);
          fprintf(config, "%d\n", p->musepack_bitrate);
          fprintf(config, "%d\n", p->more_formats_expanded);
-@@ -598,12 +588,6 @@
+@@ -626,12 +616,6 @@
+             p->cddb_port_number = DEFAULT_CDDB_SERVER_PORT;
          }
          
-         // this one can be 0
+-        // this one can be 0
 -        p->rip_monkey = read_line_num(fd);
 -        
 -        // this one can be 0
 -        p->monkey_compression = read_line_num(fd);
 -        
--        // this one can be 0
-         p->rip_musepack = read_line_num(fd);
-         
-         // this one can be 0
-diff -ruN asunder-2.9.2-acc/src/prefs.h src/prefs.h
---- asunder-2.9.2-acc/src/prefs.h	2019-12-11 03:47:37.788519251 -0600
-+++ src/prefs.h	2019-12-11 11:37:59.441406834 -0600
+         /* used to be p->rip_aac, but no longer used */
+         aCharPtr = read_line(fd);
+         if (aCharPtr != NULL)
+diff -ruN b/src/prefs.h c/src/prefs.h
+--- b/src/prefs.h	2021-06-27 16:20:10.544156626 -0500
++++ c/src/prefs.h	2021-06-27 16:50:15.719807686 -0500
 @@ -32,8 +32,6 @@
      int do_log;
      char* cddb_server_name;
@@ -217,9 +216,9 @@ diff -ruN asunder-2.9.2-acc/src/prefs.h src/prefs.h
      int rip_musepack;
      int musepack_bitrate;
      int more_formats_expanded;
-diff -ruN asunder-2.9.2-acc/src/threads.c src/threads.c
---- asunder-2.9.2-acc/src/threads.c	2019-12-11 10:11:03.183303965 -0600
-+++ src/threads.c	2019-12-11 15:13:18.736462595 -0600
+diff -ruN b/src/threads.c c/src/threads.c
+--- b/src/threads.c	2021-06-27 16:30:39.049983041 -0500
++++ c/src/threads.c	2021-06-27 16:59:37.104253676 -0500
 @@ -39,7 +39,6 @@
  static FILE * playlist_opus = NULL;
  static FILE * playlist_flac = NULL;
@@ -242,13 +241,14 @@ diff -ruN asunder-2.9.2-acc/src/threads.c src/threads.c
          kill(pid, SIGKILL);
 -    if ((pid = monkey_pid)     != 0)
 -        kill(pid, SIGKILL);
-     if ((pid = musepack_pid)   != 0)
+-    if ((pid = musepack_pid)   != 0)
++   if ((pid = musepack_pid)   != 0)
          kill(pid, SIGKILL);
      
      /* wait until all the worker threads are done */
      while (cdparanoia_pid != 0 || lame_pid != 0 || oggenc_pid != 0 || 
 -           opusenc_pid != 0 || flac_pid != 0 || wavpack_pid != 0 || monkey_pid != 0 ||
-+           opusenc_pid != 0 || flac_pid != 0 || wavpack_pid != 0 || 
++           opusenc_pid != 0 || flac_pid != 0 || wavpack_pid != 0 ||
             musepack_pid != 0)
      {
          debugLog("w1");
@@ -311,7 +311,7 @@ diff -ruN asunder-2.9.2-acc/src/threads.c src/threads.c
      numMusepackOk = 0;
      
      ripper = g_thread_create(rip, NULL, TRUE, NULL);
-@@ -524,9 +509,6 @@
+@@ -533,9 +518,6 @@
      if (playlist_wavpack) 
          fclose(playlist_wavpack);
      playlist_wavpack = NULL;
@@ -321,7 +321,7 @@ diff -ruN asunder-2.9.2-acc/src/threads.c src/threads.c
      if (playlist_musepack) 
          fclose(playlist_musepack);
      playlist_musepack = NULL;
-@@ -953,64 +935,6 @@
+@@ -970,64 +952,6 @@
                  free(wavpackfilename);
                  free(wavpackfilename2);
              }
@@ -386,7 +386,7 @@ diff -ruN asunder-2.9.2-acc/src/threads.c src/threads.c
              if (global_prefs->rip_musepack)
              {
                  if (aborted)
-@@ -1100,7 +1024,6 @@
+@@ -1117,7 +1041,6 @@
              opus_percent = 0.0;
              flac_percent = 0.0;
              wavpack_percent = 0.0;
@@ -394,7 +394,7 @@ diff -ruN asunder-2.9.2-acc/src/threads.c src/threads.c
              musepack_percent = 0.0;
              encode_tracks_completed++;
          }
-@@ -1145,7 +1068,7 @@
+@@ -1162,7 +1085,7 @@
      
      /* wait until all the worker threads are done */
      while (cdparanoia_pid != 0 || lame_pid != 0 || oggenc_pid != 0 || 
@@ -403,18 +403,18 @@ diff -ruN asunder-2.9.2-acc/src/threads.c src/threads.c
             musepack_pid != 0)
      {
          debugLog("w2");
-@@ -1165,8 +1088,8 @@
+@@ -1182,8 +1105,8 @@
          eject_disc(global_prefs->cdrom);
      }
  
 -        show_completed_dialog(numCdparanoiaOk + numLameOk + numOggOk + numOpusOk + numFlacOk + numWavpackOk + numMonkeyOk + numMusepackOk,
--                              numCdparanoiaFailed + numLameFailed + numOggFailed + numOpusFailed + numFlacFailed + numWavpackFailed + numMonkeyFailed + numMusepackFailed );
+-                              numCdparanoiaFailed + numLameFailed + numOggFailed + numOpusFailed + numFlacFailed + numWavpackFailed + numMonkeyFailed + numMusepackFailed);
 +        show_completed_dialog(numCdparanoiaOk + numLameOk + numOggOk + numOpusOk + numFlacOk + numWavpackOk + numMusepackOk,
-+                              numCdparanoiaFailed + numLameFailed + numOggFailed + numOpusFailed + numFlacFailed + numWavpackFailed + numMusepackFailed );
++                              numCdparanoiaFailed + numLameFailed + numOggFailed + numOpusFailed + numFlacFailed + numWavpackFailed + numMusepackFailed);
      gdk_threads_leave();
      
      return NULL;
-@@ -1187,8 +1110,6 @@
+@@ -1204,8 +1127,6 @@
          parts++;
      if(global_prefs->rip_wavpack) 
          parts++;
@@ -423,7 +423,7 @@ diff -ruN asunder-2.9.2-acc/src/threads.c src/threads.c
      if(global_prefs->rip_musepack) 
          parts++;
      
-@@ -1233,7 +1154,7 @@
+@@ -1250,7 +1171,7 @@
          if (parts > 1)
          {
              pencode = ((double)encode_tracks_completed/(double)tracks_to_rip) + 
@@ -432,12 +432,12 @@ diff -ruN asunder-2.9.2-acc/src/threads.c src/threads.c
                           +opus_percent+musepack_percent) /
                          (parts-1) / tracks_to_rip);
              snprintf(sencode, 13, "%d%% (%d/%d)", (int)(pencode*100),
-@@ -1270,10 +1191,10 @@
+@@ -1287,10 +1208,10 @@
          if ((looper % 20) == 0) {
              snprintf(logStr, 1024, "completed tracks %d, rip %.2lf%%; encoded tracks %d, "
                       "mp3 %.2lf%% ogg %.2lf%% opus %.2lf%% flac %.2lf%% wavpack %.2lf%% "
--                     "monkey %.2lf%% musepack %.2lf%% prip %.2lf%% pencode %.2lf%%\n",
-+                     "musepack %.2lf%% prip %.2lf%% pencode %.2lf%%\n",
+-                     "monkey %.2lf%% musepack %.2lf%% aac %.2lf%%; prip %.2lf%% pencode %.2lf%%\n",
++                     "musepack %.2lf%% aac %.2lf%%; prip %.2lf%% pencode %.2lf%%\n",
                       rip_tracks_completed, rip_percent*100, encode_tracks_completed,
                       mp3_percent*100, ogg_percent*100, opus_percent*100, flac_percent*100, wavpack_percent*100,
 -                     monkey_percent*100,musepack_percent*100,
@@ -445,15 +445,15 @@ diff -ruN asunder-2.9.2-acc/src/threads.c src/threads.c
                       prip*100, pencode*100);
              debugLog(logStr);
          }
-diff -ruN asunder-2.9.2-acc/src/wrappers.c src/wrappers.c
---- asunder-2.9.2-acc/src/wrappers.c	2019-12-11 11:11:22.457016117 -0600
-+++ src/wrappers.c	2019-12-11 11:37:59.441406834 -0600
+diff -ruN b/src/wrappers.c c/src/wrappers.c
+--- b/src/wrappers.c	2021-06-27 16:35:20.690511295 -0500
++++ c/src/wrappers.c	2021-06-27 17:02:42.840406254 -0500
 @@ -35,7 +35,6 @@
- pid_t opusenc_pid;
- pid_t flac_pid;
- pid_t wavpack_pid;
--pid_t monkey_pid;
- pid_t musepack_pid;
+ pid_t opusenc_pid = 0;
+ pid_t flac_pid = 0;
+ pid_t wavpack_pid = 0;
+-pid_t monkey_pid = 0;
+ pid_t musepack_pid = 0;
  
  int numCdparanoiaFailed;
 @@ -44,7 +43,6 @@
@@ -464,15 +464,15 @@ diff -ruN asunder-2.9.2-acc/src/wrappers.c src/wrappers.c
  int numMusepackFailed;
  
  int numCdparanoiaOk;
-@@ -90,7 +88,6 @@
- extern pid_t opusenc_pid;
- extern pid_t flac_pid;
- extern pid_t wavpack_pid;
--extern pid_t monkey_pid;
- extern pid_t musepack_pid;
+@@ -53,7 +51,6 @@
+ int numOpusOk;
+ int numFlacOk;
+ int numWavpackOk;
+-int numMonkeyOk;
+ int numMusepackOk;
  
- // Signal handler to find out when our child has exited.
-@@ -140,11 +137,6 @@
+ int numchildren = 0;
+@@ -131,11 +128,6 @@
              wavpack_pid = 0;
              numWavpackFailed++;
          }
@@ -484,7 +484,7 @@ diff -ruN asunder-2.9.2-acc/src/wrappers.c src/wrappers.c
          else if (pid == musepack_pid)
          {
              musepack_pid = 0;
-@@ -184,11 +176,6 @@
+@@ -175,11 +167,6 @@
              wavpack_pid = 0;
              numWavpackOk++;
          }
@@ -496,7 +496,7 @@ diff -ruN asunder-2.9.2-acc/src/wrappers.c src/wrappers.c
          else if (pid == musepack_pid)
          {
              musepack_pid = 0;
-@@ -1156,65 +1143,6 @@
+@@ -1158,65 +1145,6 @@
      *progress = 1;
  }
  
@@ -562,9 +562,9 @@ diff -ruN asunder-2.9.2-acc/src/wrappers.c src/wrappers.c
  // uses mpcenc to encode a WAV file into a .mpc and tag it
  //
  // tracknum - the track number
-diff -ruN asunder-2.9.2-acc/src/wrappers.h src/wrappers.h
---- asunder-2.9.2-acc/src/wrappers.h	2019-12-11 03:47:37.856520071 -0600
-+++ src/wrappers.h	2019-12-11 11:37:59.441406834 -0600
+diff -ruN b/src/wrappers.h c/src/wrappers.h
+--- b/src/wrappers.h	2021-06-27 16:36:17.366606719 -0500
++++ c/src/wrappers.h	2021-06-27 17:03:50.812466083 -0500
 @@ -7,7 +7,6 @@
  extern pid_t opusenc_pid;
  extern pid_t flac_pid;

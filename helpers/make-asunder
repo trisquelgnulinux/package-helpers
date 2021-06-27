@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 #    Copyright (C) 2011  Santiago Rodríguez  <santi@trisquel.info>
-#    Copyright (C) 2019  Luis Guzman  <ark@switnet.org>
+#    Copyright (C) 2021  Luis Guzman  <ark@switnet.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -18,13 +18,12 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 
 . ./config
 
-patch -p0 < $DATA/asunder.4062-aac.patch
-patch -p0 < $DATA/asunder.4062-monkey.patch
-
+patch -p1 < $DATA/asunder_2.9.5-acc.patch
+patch -p1 < $DATA/asunder_2.9.5-monkey.patch
 
 changelog "Removed non-free formats. Closes #4061"
 
