@@ -13,7 +13,7 @@
          [dD]ebian)
              debian "$RELEASE"
              ;;
-@@ -76,6 +82,27 @@
+@@ -76,6 +82,30 @@
              ;;
      esac
  }
@@ -31,6 +31,9 @@
 +            ;;
 +        8.0*) # Flidas
 +            /bin/echo -e "9.5"
++            ;;
++        9.0*) # Etiona
++            /bin/echo -e "10"
 +            ;;
 +        *)
 +            echo "supported_versions: WARNING: Unknown Trisquel release: $1" >&2
