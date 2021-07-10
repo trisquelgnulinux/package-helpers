@@ -2,6 +2,7 @@
 #
 #    Copyright (C) 2008-2020  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C) 2021 Luis Guzman <ark@switnet.org>
+#    Copyright (C) 2021 Pablo Correa Gómez <ablocorrea@hotmail.com>
 #    Copyright (C) 2019 David Trudgian <dave@trudgian.net>
 #
 #    This program is free software; you can redistribute it and/or modify
@@ -19,21 +20,10 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
-#61520e9
+VERSION=3
+#61520e9 
 
 . ./config
-
-# Disable lz4 compression in etiona/bionic
-#sed '/CONFIG_KERNEL_LZ4/d; /CONFIG_KERNEL_GZIP/d' -i debian.*/config/annotations
-#for i in debian.master/config/annotations debian.hwe/config/annotations ; do
-#cat << EOF >> $i
-#CONFIG_KERNEL_LZ4                               policy<{'amd64': 'n', 'armhf': 'n', 'i386': 'n', 's390x': 'n'}>
-#CONFIG_KERNEL_GZIP                              policy<{'amd64': 'y', 'armhf': 'y', 'i386': 'y', 'ppc64el': 'y', 's390x': 'y'}>
-#EOF
-#done
-#/bin/sed 's/CONFIG_KERNEL_LZ4=y/CONFIG_KERNEL_GZIP=y/' -i debian.master/config/*/config.common.*
-#/bin/sed 's/CONFIG_KERNEL_GZIP is not set/CONFIG_KERNEL_LZ4 is not set/' -i debian.master/config/*/config.common.*
 
 for PATCH in $DATA/*.patch ; do
   echo $PATCH
@@ -69,7 +59,6 @@ for DIR in $PRESERVEDIRS; do
 done
 
 sh $DATA/deblob-5.8 --force
-#sh $DATA/deblob-5.8
 
 echo "Reverting deblobbing for files patched by silent-accept-firmware"
 cp $TMPDIR/* . -av
@@ -88,9 +77,9 @@ rm zfs spl debian/scripts/misc/update-zfs.sh -rf
 
 # Remove nvidia
 rm -rf debian/scripts/debian/scripts/dkms-build--nvidia-N
-/bin/sed  '/do_dkms_nvidia = true/d' -i debian.master/abi/*/*/*.modules debian/rules debian.master/control.d/vars.*
+sed -i '/dkms-build--nvidia-N/d' debian.master/reconstruct
+/bin/sed  '/do_dkms_nvidia = true/d' -i debian/rules
 /bin/sed '/do_dkms_nvidia/,/endif/d' -i debian/rules.d/2-binary-arch.mk
-/bin/sed '/do_dkms_nvidia/d' -i debian.master/rules.d/*
 
 # Remove VBox
 /bin/sed '/do_dkms_vbox/d' -i debian.*/rules.d/* debian.hwe-*/scripts/helpers/local-mangle
@@ -116,7 +105,8 @@ sed 's/.unsigned//' -i debian/scripts/control-create
 
 line=$(grep -n ')-Ubuntu' debian/rules.d/0-common-vars.mk|cut -d: -f1)
 sed $(expr $line - 1 ),$(expr $line + 1 )d debian/rules.d/0-common-vars.mk -i
-sed s/family=ubuntu/family=trisquel/ -i debian/rules.d/0-common-vars.mk
+sed 's/family=ubuntu/family=trisquel/' -i debian/rules.d/0-common-vars.mk
+sed 's/ubuntu/trisquel/1' -i debian.*/etc/kernelconfig
 
 rename s/ubuntu/trisquel/ debian.*/config/config.common.ubuntu
 
