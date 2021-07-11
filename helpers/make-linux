@@ -1,5 +1,6 @@
 #!/bin/sh
 #
+#    Copyright (C) 2021 Luis Guzman <ark@switnet.org>
 #    Copyright (C) 2008-2020  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C) 2019 David Trudgian <dave@trudgian.net>
 #
@@ -18,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=7
+VERSION=8
 
 . ./config
 
@@ -56,7 +57,7 @@ for DIR in $PRESERVEDIRS; do
   cp $DIR $TMPDIR --parents -a
 done
 
-sh $DATA/deblob-4.15 --force
+sh $DATA/deblob-5.4
 
 echo "Reverting deblobbing for files patched by silent-accept-firmware"
 cp $TMPDIR/* . -av
@@ -74,9 +75,7 @@ rm zfs spl debian/scripts/misc/update-zfs.sh -rf
 /bin/sed  '/zfs/d' -i debian.master/rules.d/* debian.master/d-i/modules/fs-core-modules debian.master/control.d/generic.inclusion-list debian.master/abi/*/*/*.modules debian/rules debian.master/control.d/vars.*
 
 # Remove VBox
-rm ubuntu/vbox* -rf
-sed /vbox/d -i debian.master/control.d/generic.inclusion-list ubuntu/Makefile 
-sed '/vbox/d' -i debian.master/reconstruct
+sed -i '/vbox/s|true|false|' debian.master/rules.d/amd64.mk
 
 # Remove nvidia
 rm -rf debian/scripts/debian/scripts/dkms-build--nvidia-N
@@ -107,7 +106,7 @@ line=$(grep -n ')-Ubuntu' debian/rules.d/0-common-vars.mk|cut -d: -f1)
 sed $(expr $line - 1 ),$(expr $line + 1 )d debian/rules.d/0-common-vars.mk -i
 sed s/family=ubuntu/family=trisquel/ -i debian/rules.d/0-common-vars.mk
 
-rename s/ubuntu/trisquel/ debian.*/config/config.common.ubuntu 
+rename s/ubuntu/trisquel/ debian.*/config/config.common.ubuntu
 
 find debian* -type f -name *control* -exec sed 's/ with Ubuntu patches//; s/Linux/Linux-libre/g' -i {} \;
 
@@ -120,6 +119,13 @@ echo > ./debian.master/d-i/firmware/scsi-modules
 
 # Disable using udev as a fallback for firmware loading
 replace "CONFIG_FW_LOADER_USER_HELPER=y" "CONFIG_FW_LOADER_USER_HELPER=n" debian.master/config
+
+# Fix armhf port build
+sed -i "/CONFIG_FW_LOADER_USER_HELPER/s|'armhf': 'y',|'armhf': 'n',|g" debian.master/config/annotations
+sed -i "/CONFIG_FW_LOADER_USER_HELPER_FALLBACK/s|'armhf': 'n',|'armhf': '-',|g" debian.master/config/annotations
+
+# Disable ahc1ec0.
+sed -i "/AHC1EC0/d" debian.master/config/annotations
 
 cp debian.master/config debian.hwe -a
 
