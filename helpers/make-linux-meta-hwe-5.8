@@ -31,7 +31,6 @@ sed 's/${variant:suffix}/-20.04/' -i debian/control
 sed 's/Ubuntu/upstream/' -i debian/control
 sed 's/Linux/Linux-libre/g' -i debian/control ./debian/control.d/generic debian/control.d/lowlatency
 sed 's/, intel-microcode \[amd64\]//; s/, amd64-microcode \[amd64\]//;' debian/control debian/control.d/generic debian/control.d/lowlatency -i
-#sed '/Package.*gkeop.*/,/^$/d' -i debian/control
 
 echo '-hwe-20.04' > debian/variants
 
