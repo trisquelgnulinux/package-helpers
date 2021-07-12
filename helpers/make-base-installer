@@ -29,8 +29,8 @@ sed s/KERNEL_PRIO=medium/KERNEL_PRIO=high/g library.sh -i
 sed 's/main,restricted/main/; s/ubuntu/trisquel/' -i library.sh ./debian/bootstrap-base.postinst 
 sed 's/ubuntu-keyring/trisquel-keyring/' -i ./debian/control
 
-#rpl SECMIRROR/ubuntu MIRROR/trisquel . -R
-#rpl /trisquel \$DIRECTORY . -R
+rpl SECMIRROR/ubuntu MIRROR/trisquel . -R
+rpl /trisquel \$DIRECTORY . -R
 
 changelog "Rebranded and adapted for Trisquel"
 compile
