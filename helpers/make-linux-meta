@@ -20,14 +20,11 @@
 VERSION=5
 . ./config
 
-rm ./debian/control.d/signed-generic
-
 sed 's/18.04/9.0/g; s/16.04 to 16.10/8.0/; s/16.04/8.0/; s/Xenial/Flidas/; s/Bionic/Etiona/' -i debian/control
 sed 's/linux-firmware/firmware-linux-free/' -i debian/control ./debian/control.d/generic debian/control.d/lowlatency
 sed 's/Ubuntu/upstream/' -i debian/control
 sed 's/Linux/Linux-libre/g' -i debian/control ./debian/control.d/generic debian/control.d/lowlatency
-sed '/signed/,/^$/ d' -i debian/control
-sed 's/, intel-microcode \[amd64 i386\]//; s/, amd64-microcode \[amd64 i386\]//;' debian/control debian/control.d/generic debian/control.d/lowlatency -i
+sed 's/, intel-microcode \[amd64\]//; s/, amd64-microcode \[amd64\]//;' debian/control debian/control.d/generic debian/control.d/lowlatency -i
 
 
 changelog "Removed linux-firmware dependency, renamed release for Trisquel"
