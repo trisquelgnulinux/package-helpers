@@ -18,11 +18,11 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=8
+VERSION=9
 
 . ./config
 
-# Copy in our local Trisquel branding files
+# Copy in our local Trisquel branding files.
 cp $DATA/branding/* comm/mail/branding/nightly/ -r
 cp $DATA/branding/* comm/mail/branding/thunderbird/ -r
 for i in aurora nightly official unofficial; do
@@ -117,6 +117,7 @@ EOF
 #cp toolkit/components/telemetry/healthreport-prefs.js mobile/android/chrome/content/healthreport-prefs.js
 # Browser legal page
 sed 's%https://www.mozilla.org/legal/privacy/%https://trisquel.info/legal%' -i ./browser/app/profile/firefox.js ./toolkit/content/aboutRights.xhtml
+sed -i 's|https://www.mozilla.org/thunderbird/legal/privacy/|https://trisquel.info/legal|' comm/mail/components/newmailaccount/content/accountProvisioner.js comm/mail/app/profile/all-thunderbird.js
 # Org branding
 sed 's/com.ubuntu/org.trisquel/' -i debian/config/mozconfig.in
 # Disable DRM support
@@ -162,6 +163,7 @@ find . -type f -not -iregex '.*changelog.*' -not -iregex '.*copyright.*' -not -i
 sed 's|https://www.icedove.net/features/|https://trisquel.info/wiki/icedove|' -i comm/mail/base/content/utilityOverlay.js
 sed 's|https://www.icedove.net/get-involved/|https://trisquel.info/wiki/|' -i comm/mail/base/content/utilityOverlay.js
 sed 's|https://donate.mozilla.org/.*help-menu|https://trisquel.info/donate/|' -i comm/mail/base/content/utilityOverlay.js
+sed 's|https://give.icedove.net/.*|https://trisquel.info/donate/"|' -i comm/mailnews/base/content/msgAccountCentral.js
 
 replace Daily Trisquel comm/mail/branding/
 sed '/.*<description.*communityExperimentalDesc/,/\/description/d' -i ./comm/mail/base/content/aboutDialog.xhtml
