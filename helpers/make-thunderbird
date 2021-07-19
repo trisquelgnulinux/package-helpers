@@ -166,9 +166,9 @@ sed 's|https://donate.mozilla.org/.*help-menu|https://trisquel.info/donate/|' -i
 sed 's|https://give.icedove.net/.*|https://trisquel.info/donate/"|' -i comm/mailnews/base/content/msgAccountCentral.js
 
 replace Daily Trisquel comm/mail/branding/
-sed '/.*<description.*communityExperimentalDesc/,/\/description/d' -i ./comm/mail/base/content/aboutDialog.xul
-sed '/.*<description.*communityDesc/,/\/description/d' -i ./comm/mail/base/content/aboutDialog.xul
-sed '/.*<description.*contributeDesc/,/\/description/d' -i ./comm/mail/base/content/aboutDialog.xul
+sed '/.*<description.*communityExperimentalDesc/,/\/description/d' -i ./comm/mail/base/content/aboutDialog.xhtml
+sed '/.*<description.*communityDesc/,/\/description/d' -i ./comm/mail/base/content/aboutDialog.xhtml
+sed '/.*<description.*contributeDesc/,/\/description/d' -i ./comm/mail/base/content/aboutDialog.xhtml
 
 sed '/^Source/s/.*/Source: thunderbird/' -i debian/control.in
 sed 's/Provides: mail-reader,/Provides: mail-reader, thunderbird,/' -i debian/control.in
