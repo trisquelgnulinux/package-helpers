@@ -120,8 +120,13 @@ sed 's%https://www.mozilla.org/legal/privacy/%https://trisquel.info/legal%' -i .
 sed -i 's|https://www.mozilla.org/thunderbird/legal/privacy/|https://trisquel.info/legal|' comm/mail/components/newmailaccount/content/accountProvisioner.js comm/mail/app/profile/all-thunderbird.js
 # Org branding
 sed 's/com.ubuntu/org.trisquel/' -i debian/config/mozconfig.in
-# Disable DRM support
-echo ac_add_options --disable-eme >> debian/config/mozconfig.in
+# Disable DRM support, armhf has no such option.
+## Add other archs that might present the same lack of disable-eme option
+cat << ARCH >> debian/config/mozconfig.in
+%%if DEB_HOST_ARCH != armhf
+ac_add_options --disable-eme
+%%endif
+ARCH
 ########################################################
 
 sed '/^MOZ_PKG_NAME/s/.*/MOZ_PKG_NAME=icedove/' -i debian/build/config.mk
