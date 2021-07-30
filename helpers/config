@@ -101,6 +101,7 @@ cp trusted.local.gpg "${LOCAL_APT}/etc/trusted.gpg"
 else
 # Trisquel key
 apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys B4EFB9F38D8AEBF1 > /dev/null
+apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys B138CA450C05112F > /dev/null
 # Ubuntu gpg keys
 apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys 40976EAF437D05B5 > /dev/null
 apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys 3B4FE6ACC0B21F32 > /dev/null
