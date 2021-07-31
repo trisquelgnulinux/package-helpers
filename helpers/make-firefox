@@ -68,8 +68,14 @@ sed '/Google API/,/google-api-keyfile/ d' debian/config/mozconfig.in -i
 # Org branding
 sed 's/com.ubuntu/org.trisquel/' -i debian/config/mozconfig.in
 
-# Disable DRM support
-echo ac_add_options --disable-eme >> debian/config/mozconfig.in
+# Disable DRM support, armhf has no such option.
+## Add other archs that might present the same lack of disable-eme option
+cat << ARCH >> debian/config/mozconfig.in
+%%if DEB_HOST_ARCH != armhf
+ac_add_options --disable-eme
+%%endif
+ARCH
+
 sed '/gmp-clearkey/d' -i ./debian/firefox.install.in
 
 # Locale packages should provide firefox-locale-$LANG
