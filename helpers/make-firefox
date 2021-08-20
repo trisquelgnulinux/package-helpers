@@ -138,6 +138,55 @@ cat << EOF >> browser/components/newtab/data/content/tippytop/top_sites.json
 ]
 EOF
 
+cat << TOP_JSON > services/settings/dumps/main/top-sites.json
+{
+  "data": [
+    {
+      "url": "https://trisquel.info/",
+      "order": 0,
+      "title": "Trisquel",
+      "id": "17aeb24c-da88-53bc-8915-c3e3d458070d",
+      "last_modified": $(date +%s%N | cut -b1-13)
+    },
+    {
+      "url": "https://www.gnu.org/",
+      "order": 1,
+      "title": "GNU",
+      "id": "2a833806-e5c1-58e9-8b7c-69d9417a1253",
+      "last_modified": $(date +%s%N | cut -b1-13)
+    },
+    {
+      "url": "https://www.fsf.org/",
+      "order": 2,
+      "title": "FSF",
+      "id": "d4e3e7e2-64d3-5bac-9c59-3c5c8e1efd8c",
+      "last_modified": $(date +%s%N | cut -b1-13)
+    },
+    {
+      "url": "https://directory.fsf.org/",
+      "order": 3,
+      "title": "FSF Directory",
+      "id": "dbff6206-2ada-57ad-8091-8a62ac37be4c",
+      "last_modified": $(date +%s%N | cut -b1-13)
+    },
+    {
+      "url": "https://libreplanet.org/",
+      "order": 4,
+      "title": "LibrePlanet",
+      "id": "6f586839-4063-58b8-95ed-62e034e1915e",
+      "last_modified": $(date +%s%N | cut -b1-13)
+    },
+    {
+      "url": "https://www.wikipedia.org/",
+      "order": 5,
+      "title": "Wikipedia",
+      "id": "5a18acd7-0440-5512-b3a4-20a35bdc9a1d",
+      "last_modified": $(date +%s%N | cut -b1-13)
+    }
+  ]
+}
+TOP_JSON
+
 cp $DATA/newtab/*.ico browser/components/newtab/data/content/tippytop/favicons/
 cp $DATA/newtab/*.png browser/components/newtab/data/content/tippytop/images/
 
