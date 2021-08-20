@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#    Copyright (C) 2008-2020  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2008-2021  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C) 2015       Santiago Rodriguez <santi@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=80
+VERSION=81
 
 . ./config
 
@@ -200,7 +200,7 @@ sed 's|ddg@|ddg-html@|' -i browser/components/search/extensions/ddg-html/manifes
 #sed '/search/s|q=|k1=-1\&kd=-1\&ko=1\&q=|' -i browser/components/search/extensions/ddg/manifest.json
 
 # Reprocess search preconfiguration dump
-python $DATA/reprocess-search-config.py  ./services/settings/dumps/main/search-config.json
+python3 $DATA/process-json-files.py . browser/components/extensions/schemas/
 
 cat << EOF > debian/distribution.ini
 [Global]
