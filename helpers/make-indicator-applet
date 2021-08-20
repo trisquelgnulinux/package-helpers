@@ -24,13 +24,13 @@ COMPONENT=main
 
 # Fixes https://bugs.launchpad.net/indicator-applet/+bug/965953
 
-cat << EOF | patch -p1
---- indicator-applet-12.10.2+14.04.20140403/src/applet-main.c	2014-04-03 01:10:57.000000000 +0000
-+++ indicator-applet-12.10.2+14.04.20140403.mod/src/applet-main.c	2014-05-20 21:34:34.856698376 +0000
-@@ -364,6 +364,24 @@
-   return;
+cat << EOF | patch -p0
+--- src/indicator-applet.c      2020-04-09 06:09:47.000000000 -0500
++++ src.mod/indicator-applet.c  2021-08-11 19:21:12.914141219 -0500
+@@ -305,6 +305,24 @@
+   return 0.0;
  }
- 
+
 +static void
 +do_menu_reposition(gpointer menu)
 +{
@@ -50,21 +50,12 @@ cat << EOF | patch -p1
 +}
 +
  static GtkWidget*
- create_menuitem (IndicatorObject * io, IndicatorObjectEntry * entry, GtkWidget * menubar)
- {
-@@ -415,6 +433,7 @@
-     gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), GTK_WIDGET(entry->menu));
-   }
- 
-+  g_signal_connect(G_OBJECT(entry->menu), "show", G_CALLBACK(on_menuitem_show), entry->menu); 
-   place_in_menu(menubar, menuitem, io, entry);
- 
-   return menuitem;
+ create_menuitem (IndicatorObject      *io,
+                  IndicatorObjectEntry *entry,
 EOF
 
 # Show datetime in standard applet
-sed '/datetime/,/}/d' -i src/applet-main.c
-
+#sed '/datetime/,/}/d' -i src/indicator-applet.c
 
 changelog "Fixes LP:965953"
 
