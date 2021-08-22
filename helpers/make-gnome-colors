@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=4
+VERSION=5
 
 . ./config
 
@@ -32,7 +32,10 @@ rm gnome-colors-common/24x24/apps/skype.png
 rm gnome-colors-common/32x32/apps/skype.png
 rm gnome-colors-common/scalable/apps/skype.svg
 
-changelog "Removed Skype logo"
+#Fix badly formated empty trash icon - https://github.com/gnome-colors/gnome-colors/pull/155
+cp $DATA/user-trash.svg gnome-colors-common/scalable/places
+
+changelog "Removed Skype logo and fixed empty trash icon."
 
 compile
 
