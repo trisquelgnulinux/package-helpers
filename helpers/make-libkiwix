@@ -18,7 +18,7 @@
 #
 
 VERSION=2
-EXTERNAL='deb-src http://ftp.debian.org/debian stable-backports main'
+EXTERNAL='deb-src http://ftp.debian.org/debian stable main'
 REPOKEY=04EE7237B7D453EC
 BACKPORT=true
 
@@ -27,6 +27,6 @@ BACKPORT=true
 sed -i "/override_dh_auto_test/a #Prevent tests because of webserver failing" debian/rules
 sed -i "s|dh_auto_test --|#dh_auto_test --|" debian/rules
 
-changelog "Backported from debian old stable backports"
+changelog "Backported from debian stable as a kiwix dependency"
 
 compile
