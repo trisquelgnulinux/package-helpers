@@ -18,12 +18,12 @@
 #
 
 VERSION=1
-EXTERNAL='deb-src http://ftp.debian.org/debian stable-backports main'
+EXTERNAL='deb-src http://ftp.debian.org/debian stable main'
 REPOKEY=648ACFD622F3D138
 BACKPORT=true
 
 . ./config
 
-changelog "Backported from debian stable-backports"
+changelog "Backported from debian stable"
 
 compile
