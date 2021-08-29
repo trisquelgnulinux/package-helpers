@@ -18,13 +18,13 @@
 #
 
 VERSION=1
-EXTERNAL='deb-src http://ftp.debian.org/debian oldstable-backports main'
-REPOKEY=04EE7237B7D453EC
+EXTERNAL='deb-src http://ftp.debian.org/debian stretch-backports main'
+REPOKEY=54404762BBB6E853
 BACKPORT=true
 DEPENDS=khronos-api,unicode-data
 
 . ./config
 
-changelog "Backported from debian old stable backports"
+changelog "Backported from debian oldold stable backports"
 
 compile
