@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 EXTERNAL='deb-src http://ppa.launchpad.net/nextcloud-devs/client/ubuntu focal main'
 REPOKEY="60EE47FBAD3DD469"
 BACKPORT=true
@@ -26,6 +26,7 @@ BACKPORT=true
 
 #Force non-backports inkscape version
 sed -i "s|inkscape|inkscape (<= 0.93)|" debian/control
+sed -i "s|Utility|Network|" mirall.desktop.in
 
 changelog "Imported into Trisquel"
 
