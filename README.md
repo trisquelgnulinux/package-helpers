@@ -32,7 +32,6 @@ Those are the steps done by the helpers:
 * `EXTERNAL`: When building packages not coming from the upstream Ubuntu, the external `deb-src` in the same format as in `apt.sources.list`.
 * `REPOKEY`: An additional GPG key to import for the helper. Mostly only used in conjunction with `EXTERNAL`.
 * `BACKPORT(S)`: Must be set to `true` if the package is a backport.
-* `PARALLEL`: If `false`, avoids `dpkg-src` to run multi-threaded with as many CPUs as available.
 * `QUILT`: If `skip`, avoids patches to be automatically applied. Only set this variables if you know what you are doing.
 
 ## Recommendations
