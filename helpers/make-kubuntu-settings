@@ -17,9 +17,15 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=4
+VERSION=5
 COMPONENT=main
 . ./config
+
+# Rebrand logo
+rm desktop/usr-share/kubuntu-circle-128.png
+cp $DATA/TrisquelLogo.png desktop/usr-share/
+cp $DATA/TrisquelLogo.png desktop/kubuntu-logo.png
+sed 's/kubuntu-circle-128\.png/TrisquelLogo\.png/' -i $(find -name 'kcm-about-distrorc')
 
 sed '/plymouth-theme-kubuntu-logo/,$d; /ttf-ubuntu/d' -i debian/control
 sed 's/kubuntu-settings-desktop/triskel-settings-desktop/g; s/Kubuntu/Triskel/' -i debian/control
