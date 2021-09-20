@@ -1,0 +1,49 @@
+#!/bin/sh
+#
+#    Copyright (C) 2021 Denis 'GNUtoo' Carikli <GNUtoo@cyberdimension.org>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=1
+
+. ./config
+
+cat > conf/sources.list <<EOF
+# Trisquel repositories for supported software and updates
+
+deb https://archive.trisquel.org/trisquel $CODENAME main
+#deb-src https://archive.trisquel.org/trisquel $CODENAME main
+
+deb https://archive.trisquel.org/trisquel $CODENAME-updates main
+#deb-src https://archive.trisquel.org/trisquel $CODENAME-updates main
+
+deb https://archive.trisquel.org/trisquel $CODENAME-security main
+#deb-src https://archive.trisquel.org/trisquel $CODENAME-security main
+
+#deb https://archive.trisquel.org/trisquel $CODENAME-backports main
+#deb-src https://archive.trisquel.org/trisquel $CODENAME-backports main
+
+EOF
+
+
+sed "s#^FAI_DEBOOTSTRAP=.*#FAI_DEBOOTSTRAP=\"$CODENAME http://archive.trisquel.org/trisquel\"#" \
+    -i conf/nfsroot.conf
+
+sed 's/linux-image-server/linux-image-generic/g' -i conf/NFSROOT
+
+changelog "Adapted for Trisquel. Fixes #28007"
+
+compile
