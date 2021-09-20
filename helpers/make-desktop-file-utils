@@ -1,6 +1,7 @@
 #!/bin/sh
 #
 #    Copyright (C) 2011  Rubén Rodríguez <ruben@trisquel.info>
+#    Copyright (C) 2021  Pablo Correa Gómez <ablocorrea@hotmail.com>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,14 +18,13 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 
 . ./config
 
 #% Replace default applications in /usr/share/applications/defaults.list (makes icecat appear in gnome-default-applications-properties)
-sed 's/firefox/abrowser/g; s/ubuntu-software-center/gdebi/g; s/f-spot-import/gthumb/g; s/eog/gthumb/g; s/banshee.*/exaile.desktop/g;' -i debian/defaults.list
+sed 's/firefox/abrowser/g; s/snap-store_ubuntu-software-local-file/gdebi/g; s/banshee/vlc.desktop/g;' -i debian/defaults.list
 
 changelog "Rebranded for Trisquel"
 
 compile
-
