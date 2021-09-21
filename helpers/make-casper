@@ -27,21 +27,26 @@ sed 's/keep-existing/keep-existing $LANG/' -i scripts/casper-bottom/14locales
 # Make sure we disable ureadahead
 sed 's/readahead-list/ureadahead/' -i scripts/casper-bottom/25configure_init
 
-# Install gsettings for the lightdm user as well
-cat << EOF | patch -p0
---- scripts/casper-bottom/30accessibility	2017-04-09 15:17:52.538923862 -0400
-+++ scripts/casper-bottom/30accessibility	2017-04-09 20:05:56.018921800 -0400
-@@ -20,6 +20,9 @@
- 		chroot /root /usr/bin/a11y-profile-manager -s \$1 -D /tmp/a11y-profile-casper.d/01-profile
- 		chroot /root /usr/bin/dconf compile /tmp/dconf.\$USERNAME /tmp/a11y-profile-casper.d
- 		mkdir -p /root/home/\$USERNAME/.config/dconf
-+		mkdir -p /root/var/lib/lightdm/.config/dconf
-+                cp /root/tmp/dconf.\$USERNAME /root/var/lib/lightdm/.config/dconf/user
-+		chroot /root chown lightdm.lightdm -R /root/var/lib/lightdm/.config
- 		mv /root/tmp/dconf.\$USERNAME /root/home/\$USERNAME/.config/dconf/user
- 		chroot /root chown \$USERNAME.\$USERNAME -R /home/\$USERNAME/.config
- 		rmdir /root/tmp/a11y-profile-casper.d
-EOF
+# -----
+# This patch is no longer a thing on later versions.
+# Info at: https://git.launchpad.net/ubuntu/+source/casper/commit/?h=applied/ubuntu/eoan-proposed&id=ce50ef3831a24cb3a5c09c90a98d5a21c20329f4
+
+## Install gsettings for the lightdm user as well
+##cat << EOF | patch -p0
+##--- scripts/casper-bottom/30accessibility	2017-04-09 15:17:52.538923862 -0400
+##+++ scripts/casper-bottom/30accessibility	2017-04-09 20:05:56.018921800 -0400
+##@@ -20,6 +20,9 @@
+## 		chroot /root /usr/bin/a11y-profile-manager -s \$1 -D /tmp/a11y-profile-casper.d/01-profile
+## 		chroot /root /usr/bin/dconf compile /tmp/dconf.\$USERNAME /tmp/a11y-profile-casper.d
+## 		mkdir -p /root/home/\$USERNAME/.config/dconf
+##+		mkdir -p /root/var/lib/lightdm/.config/dconf
+##+                cp /root/tmp/dconf.\$USERNAME /root/var/lib/lightdm/.config/dconf/user
+##+		chroot /root chown lightdm.lightdm -R /root/var/lib/lightdm/.config
+## 		mv /root/tmp/dconf.\$USERNAME /root/home/\$USERNAME/.config/dconf/user
+## 		chroot /root chown \$USERNAME.\$USERNAME -R /home/\$USERNAME/.config
+## 		rmdir /root/tmp/a11y-profile-casper.d
+##EOF
+# -----
 
 rm scripts/casper-premount/10driver_updates
 rm scripts/casper-bottom/33enable_apport_crashes
