@@ -23,9 +23,7 @@ NETINST=true
 . ./config
 
 sed 's:Ubuntu:Trisquel\ GNU/Linux:g' -i debian/rules
-#sed 's:lsb_release -is:echo $(lsb_release -is) GNU/Linux:' -i debian/rules
-sed "s%^SSH_EXTRAVERSION.*%SSH_EXTRAVERSION := Trisquel_GNU/Linux_$REVISION-$VERSION%" -i debian/rules
-sed "s%^DISTRIBUTOR :=.*%DISTRIBUTOR := Trisquel GNU/Linux%" -i debian/rules
+sed "s|^SSH_EXTRAVERSION.*|SSH_EXTRAVERSION := Trisquel_GNU/Linux_$REVISION-$VERSION|" -i debian/rules
 
 changelog "Rebranded for Trisquel"
 
