@@ -30,9 +30,6 @@ sed '/send fqdn/s|added by NetworkManager|Enable at /etc/dhcp/dhclient.conf|' -i
 sed '/HOSTNAME4_TAG/s|added by NetworkManager|Enable at /etc/dhcp/dhclient.conf|' -i src/dhcp/nm-dhcp-dhclient-utils.c
 sed '/FQDN_TAG/s|added by NetworkManager|Enable at /etc/dhcp/dhclient.conf|' -i src/dhcp/nm-dhcp-dhclient-utils.c
 
-# This breaks builds
-rm debian/network-manager.examples
-
 changelog "Do not send hostname on dhcp, plus other features"
 compile
 
