@@ -53,7 +53,7 @@ cat << EOF >> DistUpgrade/DistUpgradeQuirks.py
 EOF
 
 
-rm ./DistUpgrade/Ubuntu.info
+rm $(find . -name Ubuntu.info)
 cat << EOF   > DistUpgrade/Trisquel.info
 ChangelogURI: https://packages.trisquel.org/changelogs/pool/%s/%s/%s/%s_%s/%s
 
