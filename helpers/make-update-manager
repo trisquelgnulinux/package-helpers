@@ -52,7 +52,7 @@ replace Ubuntu Trisquel .
 replace TrisquelDistroInfo UbuntuDistroInfo .
 replace "Trisquel-Gettext" "Ubuntu-Gettext" .
 
-sed -i 's/Trisquel 16.04 LTS to Trisquel 18.04 LTS/Trisquel 8.0 LTS to Trisquel 9.0 LTS/' HweSupportStatus/consts.py
+sed -i 's/Trisquel 18.04 LTS to Trisquel 20.04 LTS/Trisquel 9.0 LTS to Trisquel 10.0 LTS/' HweSupportStatus/consts.py
 
 replace ubuntu-desktop trisquel .
 replace kubuntu-desktop triskel .
@@ -60,7 +60,7 @@ replace xubuntu-desktop trisquel-mini .
 replace edubuntu-desktop toast .
 
 sed '/%s base/ s/name.*/name = "Trisquel base"/' -i ./UpdateManager/Core/UpdateList.py
-sed 's_https://changelogs.ubuntu.com/changelogs/pool/_https://packages.trisquel.info/changelogs/pool/_' -i UpdateManager/Core/MyCache.py
+sed 's_https://changelogs.ubuntu.com/changelogs/pool/_https://packages.trisquel.org/changelogs/pool/_' -i UpdateManager/Core/MyCache.py
 sed '/len(changelog) == 0/,/"later."/d' -i UpdateManager/Core/MyCache.py
 
 changelog "Compiled for Trisquel"
