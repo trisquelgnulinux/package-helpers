@@ -20,10 +20,11 @@
 VERSION=3
 . ./config
 
-for patch in 16_unity_new_documents.patch; do
-  rm debian/patches/$patch
-  sed "/$patch/d" -i debian/patches/series
-done
+# Keeping function for later use as 16_unity_new_documents.patch has been removed.
+#for patch in 16_unity_new_documents.patch; do
+#  rm debian/patches/$patch
+#  sed "/$patch/d" -i debian/patches/series
+#done
 
 echo "Checking for necessary files to install by debian/docs."
 while read i
