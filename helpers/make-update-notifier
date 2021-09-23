@@ -17,17 +17,18 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 COMPONENT=main
 
 . ./config
- 
+
 rm debian/update-notifier-hp-firmware.conf
 sed '/hp-firmware/d' -i debian/update-notifier.install
+sed -i "/ubuntu-drivers-common/d" debian/control
 
 # Prevent automated connections
 sed '/Update-Package-Lists/s/1/0/' -i debian/10periodic
 
-changelog "Disabled hp-firmware handling"
+changelog "Disabled hp-firmware handling and ubuntu-drivers"
 
 compile
