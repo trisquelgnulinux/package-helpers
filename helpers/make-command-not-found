@@ -2,6 +2,7 @@
 #
 #    Copyright (C) 2013  Rubén Rodríguez <ruben@trisquel.info>
 #    Copyright (C) 2019 Mason Hock <mason@masonhock.com>
+#    Copyright (C) 2021 Luis Guzman <ark@switnet.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -18,16 +19,27 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 
 . ./config
 
-rm -rf CommandNotFound/db/dists/$UPSTREAM*/multiverse
-rm -rf CommandNotFound/db/dists/$UPSTREAM*/restricted
+# ---
+# New way of working the db
+#https://bugs.launchpad.net/ubuntu/+source/command-not-found/+bug/1844651
+# ---
 
-for word in restricted nonfree multiverse aee afio app-install-data-commercial app-install-data-partner b43-fwcutter bcm43xx-fwcutter chromium-codecs-ffmpeg chromium-browser d4x easycrypt gdecrypt envyng-core envyng-gtk envyng-qt fglrx-installer freesci gfxboot-theme-ubuntu pitfdll helix-player isdnactivecards isdnutils ivman jockey mame mesademos moon ndisgtk ndiswrapper nikto nvidia-common nvidia-graphics-drivers nvidia-graphics-drivers-173 nvidia-graphics-drivers-180 nvidia-graphics-drivers-71 nvidia-graphics-drivers-96 nvidia-settings nvidia-xconfig ophcrack rman simutrans-pak128.britain simutrans simutrans-pak64 scribus-ng-doc software-center starfighter tatan testdrive unetbootin ubuntuone-client ubuntu-restricted-extras rhythmbox-ubuntuone-music-store seamonkey ubuntuone-dev-tools libubuntuone ubuntuone-storage-protocol user-mode-linux user-mode-linux-doc vrms 9wm 9menu w9wm acetoneiso a2ps-perl-ja bibletime bibledit bible-kjv winetricks ; do
-  /bin/sed "/name: .*$word.*/,+3d" -i CommandNotFound/db/dists/$UPSTREAM*/*/cnf/Commands-*
-done
+#Delete components upstream, keep universe for passing test making main the first (only) parsed.
+sed -i '/contrib/d;/restricted/d;/non-free/d;/multiverse/d' CommandNotFound/db/creator.py
+
+#Remove reference to non-free software or mirrors.
+#do-mirror
+sed -i 's|ARCH_LIST=.*|ARCH_LIST="amd64,armhf"|' mirror/do-mirror
+sed -i 's|SECTION_LIST=.*|SECTION_LIST="main"|' mirror/do-mirror
+sed -i 's|MIRROR_HOST=.*|MIRROR_HOST="archive.trisquel.org"|' mirror/do-mirror
+sed -i 's|MIRROR_ROOT=.*|MIRROR_ROOT=":trisquel"|' mirror/do-mirror
+sed -i 's|--dist=$DIST,$DIST-updates,$DIST-backports|--dist=$DIST,$DIST-updates,$DIST-security,$DIST-backports|' mirror/do-mirror
+#control
+sed -i '/snapd/d' debian/control
 
 changelog "Removed references to non-free software"
 
