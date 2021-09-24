@@ -58,7 +58,7 @@ pkgversion(){
 	dpkg-parsechangelog --show-field Version
 }
 replace(){
-find $3 -type f -not -iregex '.*changelog.*' -not -iregex '.*copyright.*' -execdir /bin/sed --follow-symlinks -i s^"$1"^"$2"^g {} \;
+find ${@:3} -type f -not -iregex '.*changelog.*' -not -iregex '.*copyright.*' -execdir /bin/sed --follow-symlinks -i s^"$1"^"$2"^g {} \;
 }
 changelog(){
 head -n 1 debian/changelog | grep -q $UPSTREAM-security && REPO=$CODENAME-security || REPO=$CODENAME
