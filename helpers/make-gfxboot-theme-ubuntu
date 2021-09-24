@@ -104,6 +104,10 @@ sed '1s/gfxboot-theme-ubuntu/gfxboot-theme-trisquel/' debian/changelog -i
 mv debian/gfxboot-theme-ubuntu.install debian/gfxboot-theme-trisquel.install
 sed 's/ubuntu/trisquel/' debian/gfxboot-theme-trisquel.install -i
 
+#Fix debian/control build dependencies
+sed -i 's|Build-Depends: .*|Build-Depends: debhelper (>= 7.0.0)|' debian/control
+sed -i '/Build-Depends:/a Build-Depends-Indep: gfxboot-dev (>= 4.1.42), cpio, libfribidi-bin' debian/control
+
 changelog "Rebranded for Trisquel"
 
 compile
