@@ -19,16 +19,20 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
+EXTERNAL='deb-src http://ftp.debian.org/debian stable main'
+REPOKEY=04EE7237B7D453EC
+VERSION=1
 
 . ./config
+
 
 # ---
 # New way of working the db
 #https://bugs.launchpad.net/ubuntu/+source/command-not-found/+bug/1844651
 # ---
 
-#Delete components upstream, keep universe for passing test making main the first (only) parsed.
+# Delete components upstream, keep universe for passing test making main the first (only) parsed.
+#sed -i '/universe/d' CommandNotFound/db/creator.py
 sed -i '/contrib/d;/restricted/d;/non-free/d;/multiverse/d' CommandNotFound/db/creator.py
 
 #Remove reference to non-free software or mirrors.
