@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=10
+VERSION=11
 
 . ./config
 
@@ -27,6 +27,8 @@ rm tests/test_livepatch_socket.py
 patch --no-backup-if-mismatch -p1 < $DATA/remove-livepatch.patch
 sed -i '/import LivePatchSocket/d' UpdateManager/Dialogs.py
 sed -i '/self.check_livepatch_status/d' UpdateManager/Dialogs.py
+
+sed -i "/ubuntu-advantage-tools/d" debian/control
 
 #Closes #12545
 patch -p0 < $DATA/trisquel-versions.patch
