@@ -880,15 +880,17 @@ diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/nvm.c b/drivers/net/wireless
 index dac7e54..d2aefe6 100644
 --- a/drivers/net/wireless/intel/iwlwifi/mvm/nvm.c
 +++ b/drivers/net/wireless/intel/iwlwifi/mvm/nvm.c
-@@ -410,7 +410,7 @@ int iwl_mvm_read_external_nvm(struct iwl_mvm *mvm)
+@@ -419,8 +419,8 @@
  	ret = request_firmware(&fw_entry, mvm->nvm_file_name,
  			       mvm->trans->dev);
  	if (ret) {
 -		IWL_ERR(mvm, "ERROR: %s isn't available %d\n",
-+		IWL_ERR(mvm, "ERROR: firmware isn't available \n",
- 			mvm->nvm_file_name, ret);
+-			mvm->nvm_file_name, ret);
++		IWL_ERR(mvm, "ERROR: firmware isn't available %d\n",
++			ret);
  		return ret;
  	}
+
 diff --git a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
 index 21e5ef0..520e63b 100644
 --- a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
