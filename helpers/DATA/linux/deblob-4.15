@@ -620,6 +620,22 @@ clean_blob arch/arm/boot/dts/sun8i-a33-ga10h-v1.1.dts
 clean_kconfig arch/arm/mach-sunxi/Kconfig MACH_SUN8I
 clean_mk CONFIG_MACH_SUN8I arch/arm/boot/dts/Makefile
 
+# ppc
+
+announce UCODE_PATCH - "ppc microcode"
+clean_blob arch/powerpc/platforms/8xx/micropatch.c
+clean_kconfig arch/powerpc/platforms/8xx/Kconfig UCODE_PATCH
+clean_mk CONFIG_UCODE_PATCH arch/powerpc/platforms/8xx/Makefile
+
+announce USB_SOF_UCODE_PATCH - "USB SOF patch"
+clean_kconfig arch/powerpc/platforms/8xx/Kconfig USB_SOF_UCODE_PATCH
+
+announce I2C_SPI_UCODE_PATCH - "I2C/SPI relocation patch"
+clean_kconfig arch/powerpc/platforms/8xx/Kconfig I2C_SPI_UCODE_PATCH
+
+announce I2C_SPI_SMC1_UCODE_PATCH - "I2C/SPI/SMC1 relocation patch"
+clean_kconfig arch/powerpc/platforms/8xx/Kconfig I2C_SPI_SMC1_UCODE_PATCH
+
 #######
 # ATM #
 #######
@@ -1468,6 +1484,11 @@ reject_firmware drivers/media/i2c/s5k5baf.c
 clean_blob drivers/media/i2c/s5k5baf.c
 clean_kconfig drivers/media/i2c/Kconfig VIDEO_S5K5BAF
 clean_mk CONFIG_VIDEO_S5K5BAF drivers/media/i2c/Makefile
+
+announce VIDEO_VS6624 - "ST VS6624 sensor support"
+clean_blob drivers/media/i2c/vs6624.c
+clean_kconfig drivers/media/i2c/Kconfig VIDEO_VS6624
+clean_mk CONFIG_VIDEO_VS6624 drivers/media/i2c/Makefile
 
 announce VIDEO_SAMSUNG_S5P_MFC - "Samsung S5P MFC 5.1 Video Codec"
 reject_firmware drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c
