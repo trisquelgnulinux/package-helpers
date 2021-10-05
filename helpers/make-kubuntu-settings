@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=5
+VERSION=6
 COMPONENT=main
 . ./config
 
@@ -37,7 +37,7 @@ rm desktop/etc/skel/.face
 
 sed '/showAppsByName/s/true/false/' -i desktop/theme/layout-templates/org.triskel.desktop.defaultPanel/contents/layout.js
 sed '/showAppsByName/akickoff.writeConfig("icon", "/usr/share/pixmaps/trisquel.svg")' -i desktop/theme/layout-templates/org.triskel.desktop.defaultPanel/contents/layout.js
-sed 's|/usr/share/wallpapers/Next/contents/images/3200x2000.png|/usr/share/backgrounds/etiona.jpg|' -i ./debian/triskel-settings-desktop.postinst
+sed 's|/usr/share/wallpapers/Next/contents/images/3200x2000.png|/usr/share/backgrounds/nabia.jpg|' -i ./debian/triskel-settings-desktop.postinst
 
 replace kubuntu.org trisquel.info .
 replace Kubuntu Triskel .
