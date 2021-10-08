@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=82
+VERSION=83
 
 . ./config
 
@@ -45,6 +45,8 @@ sed 's/.Ubuntu., //' -i browser/components/newtab/css/activity-stream*.css
 echo "#header-asrouter-container{display: none!important;}" >> browser/components/newtab/css/activity-stream-linux.css
 #Disable «Sponsored tiles on the New Tab page» - firefox 92
 sed '/"showSponsoredTopSites"/,/value/s/value: true/value: false/' -i $ActivityStream
+#Disable «Mozilla VPN» - firefox 93
+sed '/"browser.privatebrowsing.promoEnabled"/s/true/false/' -i browser/app/profile/firefox.js
 
 sed '/network.connectivity-service.IPv/s/http.*success.txt?ipv[46]//' -i modules/libpref/init/all.js
 
