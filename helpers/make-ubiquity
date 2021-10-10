@@ -18,7 +18,9 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=14
+VERSION=15
+EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu impish main universe'
+#REPOKEY="871920D1991BC93C"
 
 . ./config
 
@@ -31,13 +33,19 @@ replace ubuntu_installed trisquel_installed .
 
 replace linux-signed linux-lowlatency .
 replace shim-signed shim .
-mv d-i/source/shim-signed d-i/source/shim
 replace grub-efi-amd64-signed grub-efi-amd64 .
 
 /bin/sed '/canonical/d' -i debian/ubiquity.install*
 rm  tests/test_ubi_partman*
 
 sed -i '0,/ubuntu-artwork/{/ubuntu-artwork/d;}' debian/control
+
+#Early patch ubiquity-dm, remove after 21.10.9 is out.
+NEED_PATCH="$(grep 'osextras.find_on_path("kwin") or' bin/ubiquity-dm)"
+if [ -n "$NEED_PATCH" ]; then
+  echo "Applying a11n fix patch."
+  patch -p1 < $DATA/apply-before-21.10.9-release.patch
+fi
 
 export DEB_BUILD_OPTIONS=nocheck
 
@@ -100,7 +108,7 @@ EOF1
 chmod 755 d-i/source/apt-setup/generators/99trisquel
 
 # Redirect ports.ubuntu.com
-sed '/ports.ubuntu.com/d' -i ./d-i/source/apt-setup/debian/apt-mirror-setup.install 
+sed '/ports.ubuntu.com/d' -i ./d-i/source/apt-setup/debian/apt-mirror-setup.install
 sed 's/ports.ubuntu.com/archive.trisquel.org/g; s/ubuntu-ports/trisquel/g; s/ubuntu/trisquel/g' -i ./d-i/source/apt-setup/debian/rules ./d-i/source/base-installer/library.sh
 sed 's/CC.ports.ubuntu.com/archive.trisquel.org/g; s/.ports.ubuntu.com/archive.trisquel.org/g' -i ./d-i/source/choose-mirror/choose-mirror.c ./d-i/source/choose-mirror/debian/choose-mirror-bin.templates.ftp.sel-in ./d-i/source/choose-mirror/debian/choose-mirror-bin.templates.http-in
 

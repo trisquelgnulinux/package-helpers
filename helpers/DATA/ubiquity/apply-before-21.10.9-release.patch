@@ -1,0 +1,17 @@
+diff --git a/bin/ubiquity-dm b/bin/ubiquity-dm
+index 08e96d1..227301c 100755
+--- a/bin/ubiquity-dm
++++ b/bin/ubiquity-dm
+@@ -404,11 +404,7 @@ EndSection
+                 stdin=null, stdout=logfile, stderr=logfile,
+                 preexec_fn=self.drop_privileges))
+ 
+-        if (
+-            osextras.find_on_path("kwin") or
+-            osextras.find_on_path("kwin_x11") or
+-            osextras.find_on_path("gnome-shell")
+-        ) and osextras.find_on_path("dbus-update-activation-environment"):
++        if osextras.find_on_path("dbus-update-activation-environment"):
+             subprocess.Popen(
+                 [
+                     "dbus-update-activation-environment",
