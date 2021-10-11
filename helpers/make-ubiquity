@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=15
+VERSION=16
 EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu impish main universe'
 #REPOKEY="871920D1991BC93C"
 
@@ -38,14 +38,7 @@ replace grub-efi-amd64-signed grub-efi-amd64 .
 /bin/sed '/canonical/d' -i debian/ubiquity.install*
 rm  tests/test_ubi_partman*
 
-sed -i '0,/ubuntu-artwork/{/ubuntu-artwork/d;}' debian/control
-
-#Early patch ubiquity-dm, remove after 21.10.9 is out.
-NEED_PATCH="$(grep 'osextras.find_on_path("kwin") or' bin/ubiquity-dm)"
-if [ -n "$NEED_PATCH" ]; then
-  echo "Applying a11n fix patch."
-  patch -p1 < $DATA/apply-before-21.10.9-release.patch
-fi
+#sed -i '0,/ubuntu-artwork/{/ubuntu-artwork/d;}' debian/control
 
 export DEB_BUILD_OPTIONS=nocheck
 
