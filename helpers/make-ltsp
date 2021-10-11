@@ -2,7 +2,8 @@
 #
 #    Copyright (C) 2011  Rubén Rodríguez <ruben@trisquel.info>
 #    Copyright (C) 2017  Pablo Correa
-#    Copyright (C) 2019  Mason Hock <mason@masonhock.com> 
+#    Copyright (C) 2019  Mason Hock <mason@masonhock.com>
+#    Copyright (C) 2021 Luis Guzman <ark@switnet.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -19,33 +20,24 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=1
+EXTERNAL='deb-src http://ppa.launchpad.net/ltsp/ppa/ubuntu focal main'
+REPOKEY=B64988E8F9B7EF68
 
 . ./config
 
+sed -i '/ubuntu-advantage-tools/d' ltsp/client/init/55-cron.sh
 
-cp -a server/share/ltsp/plugins/ltsp-build-client/Ubuntu server/share/ltsp/plugins/ltsp-build-client/Trisquel
-cp -a client/Ubuntu client/Trisquel
-
-/bin/sed 's/main restricted universe multiverse/main/g;
-s:archive.ubuntu.com/ubuntu:archive.trisquel.info/trisquel:g;
-s:security.ubuntu.com/ubuntu:archive.trisquel.info/trisquel:g;
-s/ubuntu-desktop/trisquel-desktop/g;
-s/\.\*buntu-desktop/trisquel-desktop/g;
-s/ubuntu-theme/trisquel-theme/g;
-s/ubuntu-standard/trisquel-recommended/g;
-s/ubuntu/trisquel/g;' server/share/ltsp/plugins/ltsp-build-client/Trisquel/* -i
-
-sed 's/theme-ubuntu/theme-trisquel/g;' debian/control -i
-sed '/ubuntu-font/d' debian/control -i
+replace ubuntu-mate trisquel .
+replace ubuntu. trisquel. .
+replace Xubuntu Trisquel\ Mini .
+replace xubuntu-18.04-desktop-amd64.iso trisquel-mini_9.0_amd64.iso .
+replace xubuntu-18.04 trisquel-mini-9.0 .
+replace ubuntu-mate-18.04.1-desktop-i386.iso trisquel_9.0_i686.iso .
 
 replace edubuntu trisquel .
 replace Edubuntu Trisquel .
 
-# turn off the encrypted X tunnel via SSH and instead run a less secure, but much faster unencrypted tunnel.
-sed 's/\[example\]/[default]/; s/key=value/LDM_DIRECTX=True/' server/share/ltsp/plugins/ltsp-build-client/Trisquel/030-default-lts-conf -i
-
-changelog "Rebranded for Trisquel, LDM_DIRECTX=True by default"
+changelog "Backported from oficial PPA and some rebranding."
 
 compile
-
