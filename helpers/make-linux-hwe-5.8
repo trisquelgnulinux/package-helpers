@@ -21,7 +21,6 @@
 #
 
 VERSION=4
-#61520e9 
 
 . ./config
 
@@ -58,7 +57,7 @@ for DIR in $PRESERVEDIRS; do
   cp $DIR $TMPDIR --parents -a
 done
 
-sh $DATA/deblob-5.8 --force
+sh $DATA/deblob-5.8
 
 echo "Reverting deblobbing for files patched by silent-accept-firmware"
 cp $TMPDIR/* . -av
