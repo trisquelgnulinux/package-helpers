@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=83
+VERSION=84
 
 . ./config
 
@@ -92,50 +92,42 @@ sed 's/}$/},/' -i browser/components/newtab/data/content/tippytop/top_sites.json
 
 cat << EOF >> browser/components/newtab/data/content/tippytop/top_sites.json
   {
-    "title": "Trisquel",
-    "url": "https://trisquel.info/",
+    "domains": ["trisquel.info"],
     "image_url": "images/trisquel.png",
     "favicon_url": "favicons/trisquel.ico"
   },
   {
-    "title": "GNU",
-    "url": "https://www.gnu.org/",
+    "domains": ["gnu.org"],
     "image_url": "images/gnu.png",
     "favicon_url": "favicons/gnu.ico"
   },
   {
-    "title": "FSF",
-    "url": "https://www.fsf.org/",
+    "domains": ["fsf.org"],
     "image_url": "images/fsf.png",
     "favicon_url": "favicons/fsf.ico"
   },
   {
-    "title": "FSF Directory",
-    "url": "https://directory.fsf.org/",
-    "image_url": "images/fsf.png",
+    "domains": ["directory.fsf.org"],
+    "image_url": "images/directory.png",
     "favicon_url": "favicons/fsf.ico"
   },
   {
-    "title": "LibrePlanet",
-    "url": "https://libreplanet.org/",
+    "domains": ["libreplanet.org"],
     "image_url": "images/libreplanet.png",
     "favicon_url": "favicons/libreplanet.ico"
   },
   {
-    "title": "FSF Europe",
-    "url": "https://fsfe.org/",
+    "domains": ["fsfe.org"],
     "image_url": "images/fsfe.png",
     "favicon_url": "favicons/fsfe.ico"
   },
   {
-    "title": "Wikipedia",
-    "url": "https://www.wikipedia.org/wiki/",
+    "domains": ["wikipedia.org"],
     "image_url": "images/wikipedia.png",
     "favicon_url": "favicons/wikipedia.ico"
   },
   {
-    "title": "Wikinews",
-    "url": "https://www.wikinews.org/wiki/",
+    "domains": ["wikinews.org"],
     "image_url": "images/wikinews.png",
     "favicon_url": "favicons/wikinews.ico"
   }
@@ -185,6 +177,13 @@ cat << TOP_JSON > services/settings/dumps/main/top-sites.json
       "order": 5,
       "title": "Wikipedia",
       "id": "5a18acd7-0440-5512-b3a4-20a35bdc9a1d",
+      "last_modified": $(date +%s%N | cut -b1-13)
+    },
+    {
+      "url": "https://www.wikinews.org/",
+      "order": 6,
+      "title": "Wikinews",
+      "id": "3bb633ba-0823-4501-b3b5-bc1b8670e3e1",
       "last_modified": $(date +%s%N | cut -b1-13)
     }
   ]
@@ -374,7 +373,7 @@ do
     [ -d $HOMEDIR/.mozilla/firefox ] || continue
     echo Linking $HOMEDIR/.mozilla/firefox into $HOMEDIR/.mozilla/abrowser
     ln -s $HOMEDIR/.mozilla/firefox $HOMEDIR/.mozilla/abrowser
-done 
+done
 fi
 exit 0 ' >> debian/abrowser.postinst.in
 
@@ -382,7 +381,12 @@ sed 's/1410/65/; s/1310/60/' -i debian/rules
 
 sed 's/^Source:.*/Source: firefox/' -i debian/control.in
 
+#Set fixed requirement to llvm-11
+sed -i 's/llvm-11-dev | llvm-10-dev/llvm-11-dev/g
+        s/clang-11 | clang-10/clang-11/
+        s/libclang-11-dev | libclang-10-dev/libclang-11-dev/' debian/control.in
 debian/rules debian/control
+
 touch -d "yesterday" debian/control
 debian/rules debian/control
 
