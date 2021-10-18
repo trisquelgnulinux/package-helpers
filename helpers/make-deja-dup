@@ -1,6 +1,7 @@
 #!/bin/sh
 #
 #    Copyright (C) 2008-2017  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2021  Luis Guzman <ark@switnet.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -18,13 +19,15 @@
 #
 
 VERSION=1
+EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu focal main universe'
+REPOKEY="3B4FE6ACC0B21F32"
 COMPONENT=main
+DEPENDS=meson,gnome-pkg-tools
 
 . ./config
 
-sed -i "s:<default>'auto'</default>:<default>'file'</default>:" data/org.gnome.DejaDup.gschema.xml
-sed -i 's/Categories.*/Categories=Application;System;Settings;/g' data/org.gnome.DejaDup.desktop
+sed -i 's/Categories.*/Categories=Application;System;Settings;/g' data/org.gnome.DejaDup.desktop.in
 
-changelog "Compiled for Trisquel"
+changelog "Compiled for Trisquel adjusting package category settings."
 
 compile
