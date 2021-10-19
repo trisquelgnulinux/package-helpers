@@ -18,12 +18,12 @@
 #
 
 VERSION=1
-EXTERNAL='deb-src http://ftp.debian.org/debian testing main'
-REPOKEY=648ACFD622F3D138
-DEPENDS=aiorpcx,aiohttp-socks
+EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu focal main universe'
+REPOKEY="3B4FE6ACC0B21F32"
+
 
 . ./config
 
-changelog "Backported from debian testing"
+changelog "Backported from focal"
 
 compile
