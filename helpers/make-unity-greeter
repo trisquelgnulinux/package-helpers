@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2012-2018  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2012-2021  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,9 +17,12 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=4
+VERSION=5
 
 . ./config
+
+# https://github.com/canonical/lightdm/issues/55
+sed '/Protect memory from being paged to disk/d; /Posix.mlockall/d' -i src/unity-greeter.vala
 
 # Custom settings
 cp $DATA/com.canonical.unity-greeter.gschema.xml data
