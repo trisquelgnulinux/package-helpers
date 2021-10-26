@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=6
+VERSION=7
 COMPONENT=main
 . ./config
 
@@ -60,7 +60,7 @@ X-KDE-PluginInfo-EnabledByDefault=true
 X-Plasma-API=5.0
  
 [Wallpaper]
-defaultWallpaperTheme=Etiona
+defaultWallpaperTheme=Nabia
 defaultFileSuffix=.jpg
 defaultWidth=4935
 defaultHeight=3296
@@ -75,16 +75,16 @@ EOF
 cat << EOF > desktop/kf5-settings/kdeglobals
 [General]
 fixed=Monospace,9,-1,0,50,0,0,0,0,0,Regular
-font=Roboto,10,-1,0,50,0,0,0,0,0,Regular
-menuFont=Roboto,10,-1,0,50,0,0,0,0,0,Regular
-smallestReadableFont=Roboto,8,-1,0,50,0,0,0,0,0,Regular
-toolBarFont=Roboto,10,-1,0,50,0,0,0,0,0,Regular
+font=Noto Sans,10,-1,0,50,0,0,0,0,0,Regular
+menuFont=Noto Sans,10,-1,0,50,0,0,0,0,0,Regular
+smallestReadableFont=Noto Sans,8,-1,0,50,0,0,0,0,0,Regular
+toolBarFont=Noto Sans,10,-1,0,50,0,0,0,0,0,Regular
 XftAntialias=true
 XftHintStyle=hintslight
 XftSubPixel=rgb
 
 [WM]
-activeFont=Roboto,10,-1,0,57,0,0,0,0,0,Medium
+activeFont=Noto Sans,10,-1,0,57,0,0,0,0,0,Bold
 
 [KDE]
 LookAndFeelPackage=org.triskel.desktop
@@ -96,10 +96,34 @@ echo 'wallpaper/*	usr/share/wallpapers/' >> debian/triskel-settings-desktop.inst
 
 sed 's/gtk-fallback-icon-theme=gnome/gtk-fallback-icon-theme=trisquel/' -i desktop/usr-share/settings.ini
 
-cat << EOF >> desktop/theme/look-and-feel/org.triskel.desktop/contents/defaults
+cat << EOF > desktop/theme/look-and-feel/org.triskel.desktop/contents/defaults
+[kdeglobals][KDE]
+widgetStyle=Breeze
+
+[kdeglobals][General]
+ColorScheme=Breeze
+
+[kdeglobals][Icons]
+Theme=breeze
+
+[plasmarc][Theme]
+name=Triskel
+
+[Wallpaper]
+Image=Next
+
+[kcminputrc][Mouse]
+cursorTheme=DMZ-White
+
+[Desktop][org.kde.plasma.desktop]
+Containment=org.kde.plasma.folder
+
 [ksplashrc][KSplash]
 Engine=none
 Theme=none
+
+[ksmserverrc][General]
+loginMode=emptySession
 EOF
 
 cat << EOF1 > debian/triskel-settings-desktop.preinst
@@ -121,7 +145,7 @@ gtk-theme-name = Breeze
 gtk-icon-theme-name = Breeze
 gtk-fallback-icon-theme = Trisquel
 gtk-sound-theme-name = Trisquel
-gtk-font-name=Sans Serif Regular 10
+gtk-font-name=Noto Sans Regular 10
 gtk-menu-images=1
 gtk-button-images=1
 gtk-toolbar-style=GTK_TOOLBAR_BOTH_HORIZ
@@ -138,10 +162,10 @@ cat << EOF > \$item
 include "/usr/share/themes/Breeze/gtk-2.0/gtkrc"
 style "user-font" 
 {
-        font_name="Sans Serif Regular"
+        font_name="Noto Sans Regular"
 }
 widget_class "*" style "user-font"
-gtk-font-name="Sans Serif Regular 10"
+gtk-font-name="Noto Sans Regular 10"
 gtk-theme-name="Breeze"
 gtk-icon-theme-name="breeze"
 gtk-fallback-icon-theme="trisquel"
