@@ -18,14 +18,15 @@
 #
 
 VERSION=1
-EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu groovy main universe'
+EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu impish main universe'
 REPOKEY="871920D1991BC93C"
 
 . ./config
 
 sed '/dh-sequence-gir/d' -i debian/control
+sed '/debhelper-compat/s|13|12|' -i debian/control
 
-changelog "Backported from groovy"
+changelog "Backported from impish as dependency for sugar"
 
 compile
 
