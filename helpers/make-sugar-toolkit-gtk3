@@ -18,7 +18,7 @@
 #
 
 VERSION=1
-EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu groovy main universe'
+EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu impish main universe'
 REPOKEY="871920D1991BC93C"
 
 . ./config
@@ -26,10 +26,9 @@ REPOKEY="871920D1991BC93C"
 rm debian/patches/2003_bundlebuilder_exit_nonzero_on_error.patch debian/patches/1001_espeak-ng.patch
 sed '/2003_bundlebuilder_exit_nonzero_on_error.patch/d; /1001_espeak-ng.patch/d' -i debian/patches/series
 
-patch -p1 < $DATA/git-20201017.patch
-
 sed '/dh-sequence-gir/d' -i debian/control
+sed '/debhelper-compat/s|13|12|' -i debian/control
 
-changelog "Backported from groovy"
+changelog "Backported from impish as dependency of sugar"
 
 compile
