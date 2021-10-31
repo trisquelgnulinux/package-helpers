@@ -18,16 +18,16 @@
 #
 
 VERSION=2
-EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu groovy main universe'
+EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu impish main universe'
 REPOKEY="871920D1991BC93C"
 
 . ./config
 
-patch -p1 < $DATA/git-20201017.patch
-
 sed '/ImageViewerActivity/d;/sugar.Jukebox/d;/sugar.ReadActivity/d' -i data/activities.hidden
+#Replace upstream dependencies with trisquel sugar-activities
+sed '/sucrose/,/\${cdbs:Depends}/s|\${cdbs:Depends}|sugar-honey|' -i debian/control
 
-changelog "Backported from groovy"
+changelog "Backported from impish for trisquel-sugar"
 
 compile
 
