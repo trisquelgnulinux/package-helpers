@@ -17,13 +17,16 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
-EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu groovy main universe'
+VERSION=2
+EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu impish main universe'
 REPOKEY="871920D1991BC93C"
 
 . ./config
 
-changelog "Backported from groovy"
+sed '/debhelper-compat/s|13|12|' -i debian/control
+
+changelog "Backported from impish as dependency of sugar package"
 
 compile
+
 
