@@ -45,8 +45,8 @@ sed 's/.Ubuntu., //' -i browser/components/newtab/css/activity-stream*.css
 echo "#header-asrouter-container{display: none!important;}" >> browser/components/newtab/css/activity-stream-linux.css
 #Disable «Sponsored tiles on the New Tab page» - firefox 92
 sed '/"showSponsoredTopSites"/,/value/s/value: true/value: false/' -i $ActivityStream
-#Disable «Mozilla VPN» - firefox 93
-sed '/"browser.privatebrowsing.promoEnabled"/s/true/false/' -i browser/app/profile/firefox.js
+#Disable «Mozilla VPN» - firefox 94
+sed '/"browser.privatebrowsing.vpnpromourl"/s/https.*"/"/' -i browser/app/profile/firefox.js
 
 sed '/network.connectivity-service.IPv/s/http.*success.txt?ipv[46]//' -i modules/libpref/init/all.js
 
@@ -381,10 +381,6 @@ sed 's/1410/65/; s/1310/60/' -i debian/rules
 
 sed 's/^Source:.*/Source: firefox/' -i debian/control.in
 
-#Set fixed requirement to llvm-11
-sed -i 's/llvm-11-dev | llvm-10-dev/llvm-11-dev/g
-        s/clang-11 | clang-10/clang-11/
-        s/libclang-11-dev | libclang-10-dev/libclang-11-dev/' debian/control.in
 debian/rules debian/control
 
 touch -d "yesterday" debian/control
