@@ -17,11 +17,11 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 
 . ./config
 
-echo "Hidden=true" >> data/mate-volume-control-applet.desktop.in
+sed -i '/X-MATE-Autostart-Notify/s|true|false|' data/mate-volume-control-status-icon.desktop.in
 
 changelog "Disabled volume-control-applet, already provided as an indicator"
 
