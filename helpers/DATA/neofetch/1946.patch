@@ -1,0 +1,80 @@
+From 58d96e21d4efcce9bdf28c3433011d687f7db6e2 Mon Sep 17 00:00:00 2001
+From: Jakob Hampel <67579757+jahampel@users.noreply.github.com>
+Date: Sat, 6 Nov 2021 18:24:52 +0100
+Subject: [PATCH 1/2] Improve logo for Trisquel GNU/Linux
+
+I always thought the logo for Trisquel looked a bit clunky and awkward compared to the others. This is an updated one more in line with the other distributions' logos and closer to Trisquel's actual logo.
+---
+ neofetch | 35 +++++++++++++++++------------------
+ 1 file changed, 17 insertions(+), 18 deletions(-)
+
+diff --git a/neofetch b/neofetch
+index f3907d329..cdced81f6 100755
+--- a/neofetch
++++ b/neofetch
+@@ -10784,24 +10784,23 @@ EOF
+         "Trisquel"*)
+             set_colors 4 6
+             read -rd '' ascii_data <<'EOF'
+-${c1}                         ▄▄▄▄▄▄
+-                      ▄█████████▄
+-      ▄▄▄▄▄▄         ████▀   ▀████
+-   ▄██████████▄     ████▀   ▄▄ ▀███
+- ▄███▀▀   ▀▀████     ███▄   ▄█   ███
+-▄███   ▄▄▄   ████▄    ▀██████   ▄███
+-███   █▀▀██▄  █████▄     ▀▀   ▄████
+-▀███      ███  ███████▄▄  ▄▄██████
+-${c1} ▀███▄   ▄███  █████████████${c2}████▀
+-${c1}  ▀█████████    ███████${c2}███▀▀▀
+-    ▀▀███▀▀     ██████▀▀
+-               ██████▀   ▄▄▄▄
+-              █████▀   ████████
+-              █████   ███▀  ▀███
+-               ████▄   ██▄▄▄  ███
+-                █████▄   ▀▀  ▄██
+-                  ██████▄▄▄████
+-                     ▀▀█████▀▀
++${c1}                         ,o$$$o.
++                       ,o$$Y"""Y$$b
++    ,o$$$$$$o.       ,$$'   ,   Y$$b
++ ,o$$$$$$$$$$$$o.    :$      b   Y$$.
++,$$"'      "Y$$$$o.   'b.   ,b  d$$$
++$$'  .d$$$$b  '$$$$o   'Y$$$Y  d$$$'
++$$'  q'    'b  '$$$$$o._   _.o$$$$'
++.$$,_    _,d$  ,$$$$$$$$$$$$${c2}$$$$Y'
++${c1} '$$$$aaa$$$' .$$$$$$${c2}$$$$$$$$'
++${c1}     """"     ${c2}d$$$$"'
++             d$$$'   .d$$b.
++             $$$$  .$"   'a$.
++             $$$$  $b      $$.
++             '$$$. '$b,,.  $$$
++              '$$$.       .$$'
++               'a$$$o._.o$$a'
++                  'a$$$$a' 
+ EOF
+         ;;
+ 
+
+From fcae0110e4d2724b00e6acbefdd6f40f7d7aa809 Mon Sep 17 00:00:00 2001
+From: Jakob Hampel <67579757+jahampel@users.noreply.github.com>
+Date: Sat, 6 Nov 2021 18:33:04 +0100
+Subject: [PATCH 2/2] Removed one space too much in second line of Trisquel
+ ASCII art
+
+---
+ neofetch | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/neofetch b/neofetch
+index cdced81f6..bf91e11ae 100755
+--- a/neofetch
++++ b/neofetch
+@@ -10785,7 +10785,7 @@ EOF
+             set_colors 4 6
+             read -rd '' ascii_data <<'EOF'
+ ${c1}                         ,o$$$o.
+-                       ,o$$Y"""Y$$b
++                      ,o$$Y"""Y$$b
+     ,o$$$$$$o.       ,$$'   ,   Y$$b
+  ,o$$$$$$$$$$$$o.    :$      b   Y$$.
+ ,$$"'      "Y$$$$o.   'b.   ,b  d$$$
