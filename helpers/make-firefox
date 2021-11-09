@@ -43,8 +43,9 @@ sed '/topics_endpoint/s/getpocket.cdn.mozilla.net/127.0.0.1/' -i $ActivityStream
 sed 's/preffedRegions.includes.geo. .. ..locales .. locales.includes.locale./false/' -i $ActivityStream
 sed 's/.Ubuntu., //' -i browser/components/newtab/css/activity-stream*.css
 echo "#header-asrouter-container{display: none!important;}" >> browser/components/newtab/css/activity-stream-linux.css
-#Disable «Sponsored tiles on the New Tab page» - firefox 92
+#Disable «Sponsored tiles on the New Tab page» - firefox 92+94
 sed '/"showSponsoredTopSites"/,/value/s/value: true/value: false/' -i $ActivityStream
+sed -i '/activity-stream.showSponsored/s|true|false|g' browser/app/profile/firefox.js
 #Disable «Mozilla VPN» - firefox 94
 sed '/"browser.privatebrowsing.vpnpromourl"/s/https.*"/"/' -i browser/app/profile/firefox.js
 
