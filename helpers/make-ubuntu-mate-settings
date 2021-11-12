@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
+VERSION=4
 
 . ./config
 
@@ -94,6 +94,11 @@ rm debian/indicator-session.desktop.in
 sed '/indicator-session.desktop/d' -i usr/lib/ubuntu-mate/ubuntu-mate-settings-overlay debian/ubuntu-mate-default-settings.install debian/rules
 
 sed '/fonts-ubuntu/d' -i debian/control
+
+#Remove caja's dropbox autostart.
+rm usr/bin/caja-dropbox-autostart
+rm usr/share/mate/autostart/caja-dropbox-autostart.desktop
+sed '/dropbox/d' -i debian/ubuntu-mate-default-settings.install
 
 changelog "Customized for Trisquel"
 
