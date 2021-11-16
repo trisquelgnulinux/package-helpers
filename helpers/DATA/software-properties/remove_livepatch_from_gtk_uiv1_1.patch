@@ -1,6 +1,7 @@
---- data/gtkbuilder/main.ui	2019-09-08 00:59:05.221188984 -0700
-+++ data/gtkbuilder/main.ui	2019-09-08 00:56:52.294542817 -0700
-@@ -1116,231 +1116,6 @@
+diff -Nru software-properties-0.99.9.8/data/gtkbuilder/main.ui software-properties-0.99.9.8_new/data/gtkbuilder/main.ui
+--- software-properties-0.99.9.8/data/gtkbuilder/main.ui	2021-10-26 07:27:56.000000000 -0500
++++ software-properties-0.99.9.8_new/data/gtkbuilder/main.ui	2021-11-15 21:32:20.534728294 -0600
+@@ -1241,256 +1241,6 @@
                  <property name="tab_fill">False</property>
                </packing>
              </child>
@@ -11,6 +12,35 @@
 -                <property name="border_width">12</property>
 -                <property name="orientation">vertical</property>
 -                <property name="spacing">12</property>
+-                <child>
+-                  <object class="GtkInfoBar" id="info_bar_ubuntu_pro">
+-                    <property name="visible">True</property>
+-                    <property name="show-close-button">True</property>
+-                    <signal name="response" handler="on_info_bar_ubuntu_pro_response" swapped="no"/>
+-                    <child internal-child="content_area">
+-                      <object class="GtkBox">
+-                        <property name="visible">True</property>
+-                        <property name="orientation">vertical</property>
+-                        <child>
+-                          <object class="GtkLabel">
+-                            <property name="visible">True</property>
+-                            <property name="label" translatable="yes">&lt;b&gt;Preview: Ubuntu Pro for Desktop&lt;/b&gt;. Automatic security updates to over 30,000 open source software packages.</property>
+-                            <property name="use_markup">True</property>
+-                            <property name="xalign">0</property>
+-                          </object>
+-                        </child>
+-                        <child>
+-                          <object class="GtkLabel">
+-                            <property name="visible">True</property>
+-                            <property name="label">&lt;a href="http://ubuntu.com/advantage"&gt;Join the beta programme&lt;/a&gt;.</property>
+-                            <property name="use_markup">True</property>
+-                            <property name="xalign">0</property>
+-                          </object>
+-                        </child>
+-                      </object>
+-                    </child>
+-                  </object>
+-                </child>
 -                <child>
 -                  <object class="GtkLabel" id="label_livepatch_description">
 -                    <property name="visible">True</property>
@@ -24,7 +54,6 @@
 -                  <packing>
 -                    <property name="expand">False</property>
 -                    <property name="fill">True</property>
--                    <property name="position">0</property>
 -                  </packing>
 -                </child>
 -                <child>
@@ -81,7 +110,6 @@
 -                  <packing>
 -                    <property name="expand">False</property>
 -                    <property name="fill">True</property>
--                    <property name="position">1</property>
 -                  </packing>
 -                </child>
 -                <child>
@@ -193,7 +221,6 @@
 -                  <packing>
 -                    <property name="expand">True</property>
 -                    <property name="fill">True</property>
--                    <property name="position">2</property>
 -                  </packing>
 -                </child>
 -                <child>
@@ -210,7 +237,6 @@
 -                    <property name="expand">False</property>
 -                    <property name="fill">True</property>
 -                    <property name="pack_type">end</property>
--                    <property name="position">3</property>
 -                  </packing>
 -                </child>
 -              </object>
