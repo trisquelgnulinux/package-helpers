@@ -1,0 +1,58 @@
+#!/bin/sh
+#
+#    Copyright (C) 2021 Pablo Correa Gómez <ablocorrea@hotmail.com>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=1
+
+. ./config
+
+sed '/libxnvctrl-dev/d' -i debian/control
+
+while read -r file; do
+    rm -rf $file
+done << EOF
+src/3rdparty/chromium/net/tools/testserver/dist/*.pyd
+src/3rdparty/chromium/third_party/blink/manual_tests/plugins/*.swf
+src/3rdparty/chromium/third_party/blink/manual_tests/resources/spinbox.swf
+src/3rdparty/chromium/third_party/breakpad/breakpad/src/tools/windows/binaries
+src/3rdparty/chromium/third_party/breakpad/symupload.exe
+src/3rdparty/chromium/third_party/crashpad/crashpad/handler/win/z7_test.dll
+src/3rdparty/chromium/third_party/crashpad/crashpad/snapshot/elf/elf_image_reader_fuzzer_corpus
+src/3rdparty/chromium/third_party/lzma_sdk/7zr.exe
+src/3rdparty/chromium/third_party/lzma_sdk/Executable/7za.exe
+src/3rdparty/chromium/third_party/webrtc/data/voice_engine/stereo_rtp_files/rtpplay.exe
+src/3rdparty/chromium/third_party/webrtc/examples/androidapp/third_party/autobanh
+src/3rdparty/chromium/third_party/lzma_sdk/Executable/7zS2.sfx
+src/3rdparty/chromium/third_party/arcore-android-sdk
+src/3rdparty/chromium/third_party/swiftshader/third_party/PowerVR_SDK
+tests/auto/widgets/resources/test.swf
+src/3rdparty/chromium/third_party/icu/windows/icudt.dll
+src/3rdparty/chromium/third_party/sfntly/src/cpp/ext/redist/cmake-2.8.5-win32-x86.zip
+src/3rdparty/chromium/third_party/sfntly/src/cpp/ext/redist/icu4c-4_6_1-Win32-msvc10.zip
+src/3rdparty/chromium/third_party/breakpad/breakpad/src/client/mac/testapp/crashduringload
+src/3rdparty/chromium/third_party/breakpad/breakpad/src/client/mac/testapp/crashInMain
+src/3rdparty/chromium/third_party/breakpad/breakpad/src/client/mac/gcov/libgcov.a
+src/3rdparty/chromium/third_party/skia/platform_tools/android/bin/mac/perfhost
+src/3rdparty/chromium/third_party/openh264/src/autotest/performanceTest/ios/fruitstrap
+src/3rdparty/chromium/third_party/openh264/src/autotest/performanceTest/ios/iFileTransfer
+EOF
+# src/3rdparty/chromium/third_party/unrar
+
+changelog "Removed non-free and prebuilt binaries. Fixes #28287"
+
+compile
