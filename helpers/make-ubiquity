@@ -24,6 +24,9 @@ EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu impish main universe'
 
 . ./config
 
+#Patch python test after tzdata update.
+sed 's/Canada/Bahamas/' -i ./tests/test_timezone.py
+
 # Enable full disk encryption by default
 patch -p0 < $DATA/nabia_encrypt_by_default.patch
 
