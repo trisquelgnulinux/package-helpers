@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=8
+VERSION=9
 
 . ./config
 
@@ -29,6 +29,9 @@ sed 's/readahead-list/ureadahead/' -i scripts/casper-bottom/25configure_init
 
 # Only do integrity check by request
 sed 's|^casper-md5check|grep -q integrity-check /proc/cmdline \&\& casper-md5check|' -i scripts/casper-bottom/01integrity_check
+
+# Enable a11y on mate
+sed '/gset org.gnome.desktop.interface toolkit-accessibility true/a \ \ \ \ \ \ \ \ gset org.mate.interface accessibility true' -i bin/casper-a11y-enable
 
 rm scripts/casper-premount/10driver_updates
 rm scripts/casper-bottom/33enable_apport_crashes
