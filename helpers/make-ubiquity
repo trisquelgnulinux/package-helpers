@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=17
+VERSION=18
 EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu impish main universe'
 #REPOKEY="871920D1991BC93C"
 
@@ -29,6 +29,9 @@ sed 's/Canada/Bahamas/' -i ./tests/test_timezone.py
 
 # Enable full disk encryption by default
 patch -p0 < $DATA/nabia_encrypt_by_default.patch
+
+# Fix some gtk labels for Orca
+patch -p1 < $DATA/a11y.patch
 
 cp $DATA/trisquel_installed.png pixmaps
 rm pixmaps/ubuntu_installed.png

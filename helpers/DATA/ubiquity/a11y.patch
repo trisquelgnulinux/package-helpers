@@ -1,0 +1,130 @@
+diff -ru source.orig/gui/gtk/stepKeyboardConf.ui source/gui/gtk/stepKeyboardConf.ui
+--- source.orig/gui/gtk/stepKeyboardConf.ui	2021-11-22 14:53:55.012805275 -0500
++++ source/gui/gtk/stepKeyboardConf.ui	2021-11-24 12:10:59.192658305 -0500
+@@ -30,6 +30,7 @@
+                     <property name="can_focus">True</property>
+                     <property name="xalign">0</property>
+                     <property name="label" translatable="yes">Choose your keyboard layout:</property>
++                    <property name="mnemonic_widget">keyboardlayoutview</property>
+                   </object>
+                   <packing>
+                     <property name="expand">False</property>
+diff -ru source.orig/gui/gtk/stepPartAsk.ui source/gui/gtk/stepPartAsk.ui
+--- source.orig/gui/gtk/stepPartAsk.ui	2021-11-22 14:53:55.028805021 -0500
++++ source/gui/gtk/stepPartAsk.ui	2021-11-24 12:59:59.998653586 -0500
+@@ -184,6 +184,7 @@
+             <property name="label" translatable="yes">This computer currently has Trisquel 11.04 on it. What would you like to do?</property>
+             <property name="wrap">True</property>
+             <property name="width_chars">45</property>
++            <property name="mnemonic_widget">use_device</property>
+           </object>
+           <packing>
+             <property name="left_attach">0</property>
+diff -ru source.orig/gui/gtk/stepPartAuto.ui source/gui/gtk/stepPartAuto.ui
+--- source.orig/gui/gtk/stepPartAuto.ui	2021-11-22 14:53:55.056804575 -0500
++++ source/gui/gtk/stepPartAuto.ui	2021-11-24 14:24:32.143372256 -0500
+@@ -32,6 +32,7 @@
+                 <property name="can_focus">False</property>
+                 <property name="xalign">0</property>
+                 <property name="label" translatable="yes">Select drive:</property>
++                <property name="mnemonic-widget">part_auto_select_drive</property>
+               </object>
+               <packing>
+                 <property name="expand">False</property>
+@@ -70,6 +71,7 @@
+                 <property name="can_focus">False</property>
+                 <property name="xalign">0</property>
+                 <property name="label" translatable="yes">Allocate drive space by dragging the divider below:</property>
++                <property name="mnemonic-widget">partition_container</property>
+               </object>
+               <packing>
+                 <property name="expand">False</property>
+diff -ru source.orig/gui/gtk/stepPartCrypto.ui source/gui/gtk/stepPartCrypto.ui
+--- source.orig/gui/gtk/stepPartCrypto.ui	2021-11-22 14:53:55.024805085 -0500
++++ source/gui/gtk/stepPartCrypto.ui	2021-11-24 13:19:36.312346350 -0500
+@@ -34,6 +34,7 @@
+             <property name="justify">right</property>
+             <property name="single-line-mode">True</property>
+             <property name="xalign">1</property>
++            <property name="mnemonic-widget">verified_password</property>
+           </object>
+           <packing>
+             <property name="left-attach">0</property>
+@@ -48,6 +49,7 @@
+             <property name="justify">right</property>
+             <property name="single-line-mode">True</property>
+             <property name="xalign">1</property>
++	    <property name="mnemonic-widget">password</property>
+           </object>
+           <packing>
+             <property name="left-attach">0</property>
+@@ -64,6 +66,7 @@
+             <property name="width-chars">92</property>
+             <property name="max-width-chars">92</property>
+             <property name="xalign">0</property>
++	    <property name="mnemonic-widget">password_grid</property>
+           </object>
+           <packing>
+             <property name="left-attach">0</property>
+@@ -385,6 +388,7 @@
+             <property name="justify">right</property>
+             <property name="single-line-mode">True</property>
+             <property name="xalign">1</property>
++	    <property name="mnemonic-widget">recovery_key</property>
+           </object>
+           <packing>
+             <property name="left-attach">0</property>
+@@ -399,6 +403,7 @@
+             <property name="justify">right</property>
+             <property name="single-line-mode">True</property>
+             <property name="xalign">1</property>
++	    <property name="mnemonic-widget">verified_recovery_key</property>
+           </object>
+           <packing>
+             <property name="left-attach">0</property>
+diff -ru source.orig/gui/gtk/stepUserInfo.ui source/gui/gtk/stepUserInfo.ui
+--- source.orig/gui/gtk/stepUserInfo.ui	2021-11-22 14:53:55.036804893 -0500
++++ source/gui/gtk/stepUserInfo.ui	2021-11-24 13:46:34.074704783 -0500
+@@ -38,6 +38,7 @@
+                 <property name="can_focus">False</property>
+                 <property name="label" translatable="yes">Your name:</property>
+                 <property name="xalign">1</property>
++                <property name="mnemonic-widget">fullname</property>
+               </object>
+               <packing>
+                 <property name="left_attach">0</property>
+@@ -51,6 +52,7 @@
+                 <property name="label" translatable="yes">Pick a username:</property>
+                 <property name="justify">right</property>
+                 <property name="xalign">1</property>
++                <property name="mnemonic-widget">username</property>
+               </object>
+               <packing>
+                 <property name="left_attach">0</property>
+@@ -64,6 +66,7 @@
+                 <property name="label" translatable="yes">Choose a password:</property>
+                 <property name="justify">right</property>
+                 <property name="xalign">1</property>
++                <property name="mnemonic-widget">password</property>
+               </object>
+               <packing>
+                 <property name="left_attach">0</property>
+@@ -77,6 +80,7 @@
+                 <property name="label" translatable="yes">Confirm your password:</property>
+                 <property name="justify">right</property>
+                 <property name="xalign">1</property>
++                <property name="mnemonic-widget">verified_password</property>
+               </object>
+               <packing>
+                 <property name="left_attach">0</property>
+diff -ru source.orig/gui/gtk/stepWireless.ui source/gui/gtk/stepWireless.ui
+--- source.orig/gui/gtk/stepWireless.ui	2021-11-22 14:53:55.044804767 -0500
++++ source/gui/gtk/stepWireless.ui	2021-11-24 13:43:24.397688300 -0500
+@@ -16,6 +16,7 @@
+         <property name="label" translatable="yes">Connecting this computer to a wi-fi network helps with</property>
+         <property name="wrap">True</property>
+         <property name="max-width-chars">50</property>
++        <property name="mnemonic-widget">no_wireless</property>
+       </object>
+       <packing>
+         <property name="expand">False</property>
