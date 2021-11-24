@@ -17,11 +17,14 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu focal main universe'
 REPOKEY="871920D1991BC93C"
 
 . ./config
+
+sed -i '/${python:Depends},/a \ python (>= 2.6.6-3~),' debian/control
+echo  9 > debian/compat
 
 changelog "Backported from focal"
 
