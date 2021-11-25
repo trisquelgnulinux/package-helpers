@@ -34,8 +34,8 @@ sed 's/Canada/Bahamas/' -i ./tests/test_timezone.py
 patch -p1 < $DATA/a11y.patch
 
 # Do not unconditionally try to start orca on ubiquity-dm
-sed '2aimport psutil' -i ubiquity/source/bin/ubiquity-dm
-sed 's/osextras.find_on_path.*orca.*/"orca" not in (p.name() for p in psutil.process_iter()):/' -i ubiquity/source/bin/ubiquity-dm
+sed '2aimport psutil' -i bin/ubiquity-dm
+sed 's/osextras.find_on_path.*orca.*/"orca" not in (p.name() for p in psutil.process_iter()):/' -i bin/ubiquity-dm
 
 # Disable non-main repository handling
 sed 's/main.*//' -i autopilot/ubiquity-autopilot-runner/custom-installation/iso-override/etc/apt/sources.list.d/all.list
