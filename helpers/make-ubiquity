@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=18
+VERSION=19
 EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu impish main universe'
 #REPOKEY="871920D1991BC93C"
 
@@ -27,11 +27,19 @@ EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu impish main universe'
 #Patch python test after tzdata update.
 sed 's/Canada/Bahamas/' -i ./tests/test_timezone.py
 
-# Enable full disk encryption by default
-patch -p0 < $DATA/nabia_encrypt_by_default.patch
+# Enable full disk encryption by default. Disabled, as it hinders a11y and sighted people can choose to enable it.
+#patch -p0 < $DATA/nabia_encrypt_by_default.patch
 
 # Fix some gtk labels for Orca
 patch -p1 < $DATA/a11y.patch
+
+# Do not unconditionally try to start orca on ubiquity-dm
+sed '2aimport psutil' -i ubiquity/source/bin/ubiquity-dm
+sed 's/osextras.find_on_path.*orca.*/"orca" not in (p.name() for p in psutil.process_iter()):/' -i ubiquity/source/bin/ubiquity-dm
+
+# Disable non-main repository handling
+sed 's/main.*//' -i autopilot/ubiquity-autopilot-runner/custom-installation/iso-override/etc/apt/sources.list.d/all.list
+sed '/universe multiverse/d' -i bin/oem-config-remaster
 
 cp $DATA/trisquel_installed.png pixmaps
 rm pixmaps/ubuntu_installed.png
@@ -247,7 +255,7 @@ screen-reader-enabled=true
 [org.mate.applications-at-visual]
 startup=true
 
-[org.mate.interface]
+[org.mate.desktop.interface]
 accessibility=true
 
 [org.gnome.desktop.a11y.applications]
