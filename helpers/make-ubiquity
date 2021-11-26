@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=19
+VERSION=20
 EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu impish main universe'
 #REPOKEY="871920D1991BC93C"
 
@@ -33,9 +33,8 @@ sed 's/Canada/Bahamas/' -i ./tests/test_timezone.py
 # Fix some gtk labels for Orca
 patch -p1 < $DATA/a11y.patch
 
-# Do not unconditionally try to start orca on ubiquity-dm
-sed '2aimport psutil' -i bin/ubiquity-dm
-sed 's/osextras.find_on_path.*orca.*/"orca" not in (p.name() for p in psutil.process_iter()):/' -i bin/ubiquity-dm
+# Do not try to start orca on ubiquity-dm
+sed 's/osextras.find_on_path.*orca.*/False: #disabled by trisquel changes/' -i bin/ubiquity-dm
 
 # Disable non-main repository handling
 sed 's/main.*//' -i autopilot/ubiquity-autopilot-runner/custom-installation/iso-override/etc/apt/sources.list.d/all.list
