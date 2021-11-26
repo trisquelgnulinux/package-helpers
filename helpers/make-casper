@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=10
+VERSION=11
 
 . ./config
 
@@ -32,6 +32,8 @@ sed 's|^casper-md5check|grep -q integrity-check /proc/cmdline \&\& casper-md5che
 
 # Enable a11y on mate
 sed '/gset org.gnome.desktop.interface toolkit-accessibility true/a \ \ \ \ \ \ \ \ gset org.mate.desktop.interface accessibility true' -i bin/casper-a11y-enable
+sed "/gset org.gnome.desktop.interface toolkit-accessibility true/a \ \ \ \ \ \ \ \ gset com.canonical.a11y-profile-manager active-profile \"'blindness\'\"" -i bin/casper-a11y-enable
+sed '/gset org.gnome.desktop.interface toolkit-accessibility true/a \ \ \ \ \ \ \ \ gset org.mate.desktop.applications.at screen-reader-enabled true' -i bin/casper-a11y-enable
 
 rm scripts/casper-premount/10driver_updates
 rm scripts/casper-bottom/33enable_apport_crashes
