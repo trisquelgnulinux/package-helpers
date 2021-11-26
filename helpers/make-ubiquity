@@ -34,7 +34,7 @@ sed 's/Canada/Bahamas/' -i ./tests/test_timezone.py
 patch -p1 < $DATA/a11y.patch
 
 # Do not try to start orca on ubiquity-dm
-sed 's/osextras.find_on_path.*orca.*/False: #disabled by trisquel changes/' -i bin/ubiquity-dm
+sed 's/osextras.find_on_path.*orca.*/False:  # Disabled by trisquel changes/' -i bin/ubiquity-dm
 
 # Disable non-main repository handling
 sed 's/main.*//' -i autopilot/ubiquity-autopilot-runner/custom-installation/iso-override/etc/apt/sources.list.d/all.list
