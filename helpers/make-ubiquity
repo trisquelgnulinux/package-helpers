@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=21
+VERSION=22
 EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu impish main universe'
 #REPOKEY="871920D1991BC93C"
 
@@ -42,6 +42,9 @@ sed '/universe multiverse/d' -i bin/oem-config-remaster
 
 # Use standard monospaced font for console
 sed 's/Ubuntu Mono/Monospace Regular/' -i ubiquity/frontend/gtk_ui.py
+
+# Kill at-spi after maybe-ubiquity, allows a11y to work on live desktop installer
+sed "/signal.alarm(0)/a\ \ \ \ \ \ \ \ subprocess.call\(['pkill', '-9', 'at-spi'], stdin=null, stdout=logfile, stderr=logfile)" -i bin/ubiquity-dm
 
 cp $DATA/trisquel_installed.png pixmaps
 rm pixmaps/ubuntu_installed.png
