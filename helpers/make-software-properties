@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
+VERSION=4
 
 . ./config
 
@@ -50,8 +50,19 @@ EOF
 
 patch -p1 < $DATA/remove_livepatch_from_gtk_uiv1_1.patch
 patch -p1 < $DATA/disable-livepatch.patch
+patch -p0 < $DATA/remove_snap_label_etiona.patch
+
+# Python specific changes
+cp $DATA/trisquel_info.py softwareproperties/gtk/
+sed -i '/import softwareproperties.SoftwareProperties/a from softwareproperties.gtk.trisquel_info import trisquel_rel_desc, trisquel_eol' softwareproperties/gtk/SoftwarePropertiesGtk.py
+sed -i 's|eol_date = distro.eol|eol_date = trisquel_eol|' softwareproperties/gtk/SoftwarePropertiesGtk.py
+sed -i 's|eol_text = .*|eol_text = trisquel_rel_desc|' softwareproperties/gtk/SoftwarePropertiesGtk.py
+# Allow to start and remove drivers tab for kde flavor
+sed -i '/info_bar_ubuntu_pro/d' softwareproperties/gtk/SoftwarePropertiesGtk.py
+
 
 sed '/UbuntuDrivers/d' -i softwareproperties/gtk/SoftwarePropertiesGtk.py
+
 sed '/vbox_drivers/,+1 s/True/False/' -i data/gtkbuilder/main.ui
 
 replace Kubuntu Triskel .
@@ -60,6 +71,9 @@ replace ftpmaster@ubuntu.com trisquel-devel@listas.trisquel.info .
 replace cdimage@ubuntu.com trisquel-devel@listas.trisquel.info .
 replace TrisquelDistribution UbuntuDistribution .
 sed '/NoDisplay/d; s/Trisquel/Ubuntu/' -i data/software-properties-gtk.desktop.in
+
+#Replace went too far
+sed -i 's|TrisquelDistroInfo|UbuntuDistroInfo|' softwareproperties/gtk/utils.py
 
 sed '/ubuntu-drivers-common/d' -i debian/control
 sed '/software-properties-drivers/d' -i debian/software-properties-gtk.install setup.cfg
