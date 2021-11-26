@@ -1,0 +1,22 @@
+--- data/gtkbuilder/main.ui	2021-11-26 14:49:57.068200377 -0600
++++ data/gtkbuilder/main.ui_remove_label	2021-11-26 15:06:51.035673116 -0600
+@@ -534,19 +534,6 @@
+                     <property name="border_width">12</property>
+                     <property name="spacing">18</property>
+                     <child>
+-                      <object class="GtkLabel">
+-                        <property name="visible">True</property>
+-                        <property name="can_focus">False</property>
+-                        <property name="label" translatable="yes">Snap package updates are checked routinely and installed automatically.</property>
+-                        <property name="xalign">0.5</property>
+-                      </object>
+-                      <packing>
+-                        <property name="expand">False</property>
+-                        <property name="fill">False</property>
+-                        <property name="position">0</property>
+-                      </packing>
+-                    </child>
+-                    <child>
+                       <object class="GtkAlignment">
+                         <property name="visible">True</property>
+                         <property name="can_focus">False</property>
