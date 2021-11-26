@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2011  Rubén Rodríguez <ruben@trisquel.info>
+#    Copyright (C) 2021  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C) 2015  Santiago Rodríguez <santi@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 
 . ./config
 
@@ -58,6 +58,7 @@ replace Ubuntu Trisquel .
 sed /txt_option_free/d dia_fulloptions.inc -i
 sed /fulloptions.free/d dia_fulloptions.inc -i
 
+# This hack adds parameters to the kernel if the timeout reaches 0, used to enable a11y
 #sed 's:\(.*\)120\(.*\):\181\2\n/timeout.time.x timeout.x 550 add def:' timeout.inc -i
 cat << EOF | patch -p1
 diff -ru gfxboot-theme-ubuntu-0.13.3.orig/common.inc gfxboot-theme-ubuntu-0.13.3/common.inc
@@ -68,7 +69,7 @@ diff -ru gfxboot-theme-ubuntu-0.13.3.orig/common.inc gfxboot-theme-ubuntu-0.13.3
    } if
  
 +  timeout.finished {
-+    " access=v3 " bc.cmd dup length add sprintf
++    " access=v3 maybe-ubiquity " bc.cmd dup length add sprintf
 +  } if
 +
    bc.cmd dropspaces
