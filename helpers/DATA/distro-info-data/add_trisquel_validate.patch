@@ -1,0 +1,52 @@
+--- validate-csv-data	2019-03-07 13:29:01.000000000 -0600
++++ validate-csv-data_trisquel	2021-11-25 01:35:02.724556980 -0600
+@@ -23,6 +23,7 @@
+ import sys
+ 
+ _COLUMNS = {
++    "trisquel": ("version", "codename", "series", "created", "release", "eol"),
+     "debian": ("version", "codename", "series", "created", "release", "eol"),
+     "ubuntu": ("version", "codename", "series", "created", "release", "eol",
+                "eol-server", "eol-esm"),
+@@ -34,8 +35,10 @@
+     ("eol", "eol-server"),
+ )
+ _STRINGS = {
++    "trisquel": ("version", "codename", "series"),
+     "debian": ("codename", "series"),
+     "ubuntu": ("version", "codename", "series"),
++
+ }
+ 
+ def convert_date(string):
+@@ -127,9 +130,11 @@
+ def main():
+     """Main function with command line parameter parsing."""
+     script_name = os.path.basename(sys.argv[0])
+-    usage = "%s -d|-u csv-file" % (script_name)
++    usage = "%s -d|-u|-t csv-file" % (script_name)
+     parser = optparse.OptionParser(usage=usage)
+ 
++    parser.add_option("-t", "--trisquel", dest="trisquel", action="store_true",
++                      default=False, help="validate a Trisquel CSV file")
+     parser.add_option("-d", "--debian", dest="debian", action="store_true",
+                       default=False, help="validate a Debian CSV file")
+     parser.add_option("-u", "--ubuntu", dest="ubuntu", action="store_true",
+@@ -142,12 +147,14 @@
+     elif len(args) > 1:
+         parser.error("Multiple CSV files specified: %s" % (", ".join(args)))
+ 
+-    if len([x for x in [options.debian, options.ubuntu] if x]) != 1:
+-        parser.error("You have to select exactly one of --debian, --ubuntu.")
++    if len([x for x in [options.debian, options.ubuntu, options.trisquel] if x]) != 1:
++        parser.error("You have to select exactly one of --debian, --ubuntu, --trisquel.")
+     if options.debian:
+         distro = "debian"
+-    else:
++    elif options.ubuntu:
+         distro = "ubuntu"
++    else:
++        distro = "trisquel"
+ 
+     if validate(args[0], distro):
+         return 0
