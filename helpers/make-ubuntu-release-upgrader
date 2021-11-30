@@ -24,7 +24,7 @@
 # Also, don't forget to update the meta-release files at archive and packages.t.i
 # The "obsoletes" list from ubuntu has been removed
 
-VERSION=10
+VERSION=11
 
 . ./config
 
@@ -244,13 +244,16 @@ rpl 12\.04 6\.0 DistUpgrade/*.ui
 rpl 12\.04 6\.0 po/* -R
 rpl 14\.04 7\.0 po/* -R
 rpl 14\.04 7\.0 DistUpgrade/*.ui -R
-replace '14.04' '7.0' . -R
+replace '14.04' '7.0'
 rpl 16\.04 8\.0 po/* -R
 rpl 16\.04 8\.0 DistUpgrade/*.ui -R
-replace '16.04' '8.0' . -R
+replace '16.04' '8.0'
 rpl 18\.04 9\.0 po/* -R
 rpl 18\.04 9\.0 DistUpgrade/*.ui -R
-replace '18.04' '9.0' . -R
+replace '18.04' '9.0'
+rpl 20\.04 10\.0 po/* -R
+rpl 20\.04 10\.0 DistUpgrade/*.ui -R
+replace '20.04' '10.0'
 rpl $UPSTREAM $CODENAME . -R
 rpl oneiric brigantia . -R
 rpl natty dagda . -R
@@ -306,8 +309,8 @@ rpl "main restricted" "main" DistUpgrade -R
 sed 's/,"restricted"//g' DistUpgrade/DistUpgradeController.py -i
 #sed 's/","restricted"/\\n"/g' DistUpgrade/DistUpgradeController.py -i
 #rpl '10.04' $REVISION DistUpgrade po -R
-replace Ubuntu Trisquel . -R
-replace Canonical Trisquel . -R
+replace Ubuntu Trisquel
+replace Canonical Trisquel
 replace "https*://www.ubuntu.com/" "https://trisquel.info" .
 replace "https*://wiki.ubuntu.com/X/Bugs/" "https://trisquel.info/project/issues" .
 replace "https*://wiki.ubuntu.com/" "https://trisquel.info/wiki" .
@@ -315,7 +318,7 @@ replace "https*://help.ubuntu.com/community" "https://trisquel.info/wiki" .
 
 
 /bin/sed -i 's/kubuntu/triskel/g; s/xubuntu/trisquel-mini/g; s/�~Lubuntu/�~Ltrisquel/g; s/被ubuntu/被trisquel/g; s#http://launchpad.net/ubuntu/+source/%s/%s/+changelog#https://trisquel.info/project/issues#g; s/<.*@ubuntu.com/<info@trisquel.info/g; s/ ubuntu\n/ trisquel\n/g; s/ubuntu\ /trisquel\ /g; s/\ ubuntu/\ trisquel/g; s/Ubuntu/Trisquel/g; s/ubuntu-desktop/trisquel-/g; s/www.ubuntu.com/trisquel.info/g; s/www.ubuntulinux.org/trisquel.info/g ' po/*.po $(find -type f | grep py$) $(find -type f | grep '\.glade$')
-replace Trisquel-Gettext Ubuntu-Gettext . -R
+replace Trisquel-Gettext Ubuntu-Gettext
 
 sed '1s/trisquel/ubuntu/' debian/control -i
 sed '/drivers/d' debian/control -i
