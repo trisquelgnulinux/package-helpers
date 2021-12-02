@@ -17,11 +17,12 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 
 . ./config
 
 sed '/libxnvctrl-dev/d' -i debian/control
+echo "gn_args += safe_browsing_mode=0" >> src/core/config/common.pri
 
 while read -r file; do
     rm -rf $file
@@ -53,8 +54,12 @@ src/3rdparty/chromium/third_party/openh264/src/autotest/performanceTest/ios/iFil
 src/3rdparty/chromium/third_party/blink/renderer/devtools/scripts/closure/closure_runner/closure_runner.jar
 src/3rdparty/chromium/third_party/blink/renderer/devtools/scripts/closure/compiler.jar
 src/3rdparty/chromium/third_party/blink/renderer/devtools/scripts/jsdoc_validator/jsdoc_validator.jar
+src/3rdparty/chromium/third_party/unrar
+src/3rdparty/chromium/third_party/win_build_output
+src/3rdparty/chromium/build/android/CheckInstallApk-debug.apk
+src/3rdparty/chromium/third_party/blink/manual_tests/accessibility/resources/AppletTest.class
+src/3rdparty/chromium/third_party/blink/manual_tests/resources/*.class
 EOF
-# src/3rdparty/chromium/third_party/unrar
 
 changelog "Removed non-free and prebuilt binaries. Fixes #28287"
 
