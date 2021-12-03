@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 
-VERSION=1
+VERSION=2
 EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu impish main universe'
 
 . ./config
@@ -25,7 +25,7 @@ EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu impish main universe'
 sed '/debhelper-compat/s/13/12/' -i debian/control
 
 #highlight color
-sed 's/#398ee7/#6699CC/g' -i light/gtk-3.0/_colors.scss
+sed 's/#398ee7/#6699CC/g' -i light/gtk-3.0/_colors.scss light/gtk-2.0/gtkrc dark/gtk-2.0/gtkrc
 
 #custom mate-panel and other mate enhancements
 cat $DATA/mate.scss >> light/gtk-3.0/_others.scss
@@ -36,6 +36,7 @@ echo '@define-color content_view_bg #{"" + $panelgradient_color};' >> dark/gtk-3
 
 #main background: trisquel grey, dark version desaturated
 sed '/bg_color/s/#cecece, #3b3e3f/#D4D4D4, #3b3b3b/' -i light/gtk-3.0/_colors.scss
+sed 's/#CECECE/#D4D4D4/g; s/#3b3e3f/#3b3b3b/g' -i light/gtk-2.0/gtkrc dark/gtk-2.0/gtkrc
 
 #increase contrast on gtk notebooks
 sed 's/shade($bg_color, 1.05);/shade($bg_color, 1.13);/' -i light/gtk-3.0/_common.scss
@@ -69,10 +70,27 @@ sed '/$menu_color/s/18/7/' -i light/gtk-3.0/_colors.scss
 #border on side panel top, gtk file chooser
 sed '/^placessidebar/,/^$/s/border-style: none;/border-width:1px 0px 0px 0px/' -i light/gtk-3.0/_common.scss
 
-#TODO
-#dark theme panel correction
-#dark theme darkbar
+#square scrollbars
+sed '/\/\/ slider$/,/^$/s/min-width: 7px/min-width: 12px/g' -i light/gtk-3.0/_common.scss
+sed '/\/\/ slider$/,/^$/s/min-height: 7px/min-height: 12px/g' -i light/gtk-3.0/_common.scss
+sed '/\/\/ slider$/,/^$/s/margin: 3px/margin: 0px/g' -i light/gtk-3.0/_common.scss
+sed '/\/\/ slider$/,/^$/s/border-radius: 10px/border-radius: 0px/g' -i light/gtk-3.0/_common.scss
 
+sed '/GtkScrollbar/s/::trough-border.*/::trough-border = 0/' -i light/gtk-2.0/gtkrc dark/gtk-2.0/gtkrc
+sed '/GtkScrollbar/s/::slider-width.*/::slider-width = 12/' -i light/gtk-2.0/gtkrc dark/gtk-2.0/gtkrc
+sed '/^style "scrollbar"/,/^}$/s/roundness.*/roundness = 0/' -i light/gtk-2.0/gtkrc dark/gtk-2.0/gtkrc
+
+#bigger buttons
+sed '/^button {/,/transition/s/min-height: 24px/min-height: 26px/' -i light/gtk-3.0/_common.scss
+sed '/^button {/,/transition/s/padding: 1px 2px/padding: 1px 4px/' -i light/gtk-3.0/_common.scss
+
+#tooltips
+sed '/^tooltip {$/,/^}$/s/background-color: transparentize.*/background-color: #F5F5B5;/' -i light/gtk-3.0/_common.scss
+sed '/^tooltip {$/,/^}$/s/color: white/color: black/' -i light/gtk-3.0/_common.scss
+sed '/^tooltip {$/,/^}$/s/border-radius: 5px/border-radius: 0px/' -i light/gtk-3.0/_common.scss
+sed '/^tooltip {$/,/^}$/s/padding: 1px/padding: 3px/' -i light/gtk-3.0/_common.scss
+sed '/^tooltip {$/,/^}$/s/text-shadow.*/text-shadow: none;/' -i light/gtk-3.0/_common.scss
+sed '/tooltip/s/#000000/#F5F5B5/; s/#E1E1E1/#000000/' -i light/gtk-2.0/gtkrc dark/gtk-2.0/gtkrc
 
 changelog "Customized for Trisquel" 
 
