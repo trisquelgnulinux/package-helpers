@@ -1,0 +1,382 @@
+
+/*********************
+ * CAJA File manager *
+ *********************/
+
+
+/* pathbar */
+/* pathbar buttons */
+.caja-pathbar button {
+    padding: 4px;
+}
+
+
+.caja-pathbar button.slider-button:nth-child(odd) {
+    border-radius: 3px 0px 0px 3px;
+    margin: 0px -2px 0px 1px;
+}
+
+.caja-pathbar button.slider-button:nth-child(even) {
+    border-radius: 0 3px 3px 0;
+    /* remove left border */
+    margin: 0px 1px 0px -2px;
+}
+
+/* remove box shadow from last-child */
+.caja-pathbar button.slider-button:disabled:nth-child(even) {
+	box-shadow: none;
+}
+
+/* folder buttons */
+.caja-pathbar button.toggle.text-button,
+.caja-pathbar button.toggle.text-button.image-button {
+    border-radius: 0px;
+    margin: 0px -2px 0px -2px;
+}
+
+/* places, treeview, history, information, emblems and notes */
+.caja-side-pane notebook treeview.view{
+    background-color: $sidebar_bg_color;
+    color: $fg_color;
+}
+.caja-side-pane notebook treeview.view:selected{
+        color: $fg_color;
+      background-image: linear-gradient(to bottom,
+                                        shade($sidebar_bg_color, 0.87),
+                                        shade($sidebar_bg_color, 0.95) 10%,
+                                        shade($sidebar_bg_color, 0.99) 92%,
+                                        shade($sidebar_bg_color, 0.92)
+                                        );
+      border-top: 1px solid shade($bg_color, 0.85);
+      border-bottom: 1px solid shade($bg_color, 1.12);
+}
+.caja-side-pane notebook treeview.view:hover{
+	background-color: shade($sidebar_bg_color, 0.9);
+}
+
+
+/* treeview rows */
+.caja-side-pane treeview.view {
+    padding: 4px 0px 4px 0px;
+}
+
+/* to avoid overlap with eject buttons */
+.caja-side-pane scrolledwindow scrollbar.vertical.left.overlay-indicator,
+.caja-side-pane scrolledwindow scrollbar.vertical.left.overlay-indicator trough,
+.caja-side-pane scrolledwindow scrollbar.vertical.left.overlay-indicator slider,
+.caja-side-pane scrolledwindow scrollbar.vertical.left.overlay-indicator button {
+    min-width: 8px;
+}
+
+
+/* rows and header in listview */
+.caja-notebook treeview.view header button {
+    border-width: 1px 1px 1px 0px;
+}
+
+/****************
+ * Mate-Panel *
+ ****************/
+
+/* first make all transparent */
+.mate-panel-menu-bar,
+.mate-panel-menu-bar menubar,
+.mate-panel-menu-bar menuitem,
+#PanelPlug,
+#PanelApplet button,
+PanelToplevel.background {
+    border-image: none;
+    background-image: none;
+    background-color: transparent;
+    box-shadow: none;
+}
+
+/* let's start it */
+#PanelPlug,
+.mate-panel-menu-bar,
+PanelToplevel.background {
+    background-color: transparent;
+    background-image: none;
+    color: $fg_color;
+    text-shadow: none;
+}
+
+/* workaround to avoid unwanted black frames if switching compositor on/off */
+.mate-panel-menu-bar .csd.popup decoration {
+    box-shadow: none;
+}
+
+/* hide buttons */
+PanelToplevel > grid > button {
+    background: transparent;
+    border-image: none;
+    border-radius: 0px;
+    border-width: 0px;
+    padding: 0px;
+    box-shadow: none;
+}
+
+PanelToplevel > grid > button:hover,
+PanelToplevel > grid > button:hover:active {
+    background-image: linear-gradient(to bottom,
+                                      shade($selected_bg_color, 0.86),
+                                      shade($selected_bg_color, 0.26));
+    color: shade($selected_fg_color, 1.00);
+    border-width: 0px;
+}
+
+#PanelApplet {
+    border-width: 0;
+}
+
+PanelSeparator {
+    border-width: 0;
+    background-color: $bg_color;
+    color: shade($fg_color, 4.30);
+    text-shadow: none;
+}
+
+
+/* this makes text readable with all kind of wallpapers if using a transparent panel */
+#PanelApplet label,
+.mate-panel-menu-bar menubar > menuitem {
+    text-shadow: 1px 1px transparentize(black, 0.2);
+    color:white;
+}
+
+/* outlines */
+window.background, /* selector where outlines are writen on GtkTrayIcon */
+.mate-panel-menu-bar menubar,
+.mate-panel-menu-bar button,
+.mate-panel-menu-bar PanelApplet {
+    outline-style: solid;
+    outline-offset: -2px;
+    outline-color: shade($selected_bg_color, 1.0);
+}
+
+/* main menu */
+/* set normal menubar button */
+.mate-panel-menu-bar menubar > menuitem {
+    transition: all 300ms ease-out;
+    text-shadow: none;
+    font-weight: normal;
+    padding: 4px;
+}
+
+/* set normal menubar menuitem */
+.mate-panel-menu-bar menubar menu menuitem {
+    padding: 6px;
+    font-weight: normal;
+}
+
+/* all applets */
+/* needed for mate-menu/mintmenu/wnck-tasklist to override a wildcard at line 37 gtk-widgets.css */
+#PanelApplet:selected,
+#PanelApplet #tasklist-button * {
+    color: white;
+}
+
+.mate-panel-menu-bar #PanelApplet button,
+.mate-panel-menu-bar #PanelApplet button.flat,
+.mate-panel-menu-bar #PanelApplet button.toggle,
+.mate-panel-menu-bar #PanelApplet button.flat.toggle {
+    color: white;
+    transition: all 400ms ease-out;
+    background-image: none;
+    background-color: transparent;
+    border-image: none;
+    border-style: solid;
+    border-width: 1px 0px 0px 0px;
+    border-radius: 0px;
+    text-shadow: none;
+    -GtkWidget-window-dragging: true;
+    padding: 4px 4px 4px 4px;
+    min-width: 44px; /* margings on the "show desktop" button */
+    min-height:20px; /* Important to allow for 2 rows of items in windowlist applet */
+}
+
+.mate-panel-menu-bar #PanelApplet button:checked,
+.mate-panel-menu-bar #PanelApplet button:checked:hover,
+.mate-panel-menu-bar #PanelApplet button:hover:active,
+.mate-panel-menu-bar #PanelApplet button.flat:checked,
+.mate-panel-menu-bar #PanelApplet button.flat:checked:hover,
+.mate-panel-menu-bar #PanelApplet button.flat:hover:active,
+.mate-panel-menu-bar #PanelApplet button.toggle:checked,
+.mate-panel-menu-bar #PanelApplet button.toggle:checked:hover,
+.mate-panel-menu-bar #PanelApplet button.toggle:hover:active,
+.mate-panel-menu-bar #PanelApplet button.flat.toggle:checked,
+.mate-panel-menu-bar #PanelApplet button.flat.toggle:checked:hover,
+.mate-panel-menu-bar #PanelApplet button.flat.toggle:hover:active {
+    background-image: linear-gradient(to bottom,
+                                      transparentize($panelgradient_color, 0.8),
+                                      transparentize(white, 0.7));
+    background-color: transparent;
+    color: white;
+    border-color:transparentize(white, 0.7);
+    border-style: solid;
+    border-width: 1px 0px 0px 0px;
+    border-radius: 3px;
+    text-shadow: none;
+    padding: 0px;
+    margin:10px;
+}
+
+.mate-panel-menu-bar #PanelApplet button:hover,
+.mate-panel-menu-bar #PanelApplet button.flat:hover,
+.mate-panel-menu-bar #PanelApplet button.toggle:hover,
+.mate-panel-menu-bar #PanelApplet button.flat.toggle:hover {
+    background-image: linear-gradient(to bottom,
+                                      transparentize(white, 0.7),
+                                      transparentize($panelgradient_color, 0.8));
+    background-color: transparent;
+    color: white;
+    border-color: transparentize(white, 0.5);
+    border-style: inset;
+    border-width: 1px 0px 0px 0px;
+    border-radius: 3px;
+    text-shadow: none;
+    padding: 4px 4px 4px 4px;
+}
+
+/* indicator applets */
+.mate-panel-menu-bar menubar > menuitem:hover:active,
+.mate-panel-menu-bar menubar > menuitem:hover {
+    background-image: linear-gradient(to bottom,
+                                      transparentize(white, 0.7),
+                                      transparentize(black, 0.5));
+    background-color: transparent;
+    color: white;
+    border-image: none;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 1px;
+    border-color:transparent;
+    text-shadow: none;
+    padding: 4px 4px 4px 4px;
+}
+
+
+/* WnckPager */
+PanelApplet.wnck-applet .wnck-pager {
+    color: shade($selected_fg_color, 1.30);
+    background-color: shade($bg_color, 0.4);
+    text-shadow: none;
+    outline-color: shade($base_color, 1.0);
+}
+
+/* selected WnckPager */
+PanelApplet.wnck-applet .wnck-pager:selected {
+    background-color: $selected_bg_color;
+}
+
+/* prelight of WnckPager */
+PanelApplet.wnck-applet .wnck-pager:hover {
+    background-color: shade($bg_color, 0.6);
+}
+
+#clock-applet-button.flat.toggle > box.horizontal > label {
+    font-weight: normal;
+}
+
+#MatePanelPopupWindow {
+	border-radius: 3px;
+}
+
+#MatePanelPopupWindow frame border {
+    border-radius: 3px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: shade($borders_color, 0.95);
+}
+
+/* Weird, this sets the border color of the clockmap */
+#MatePanelPopupWindow > frame > box > box > box > widget {
+    color: $borders_color;
+}
+
+na-tray-applet {
+    -NaTrayApplet-icon-padding: 1px; /*any more and outlines get cut off*/
+}
+
+/* remove right space a bit */
+na-tray-applet > widget > box {
+    margin: 1px 2px 1px 1px;
+}
+
+/* no background for icon-padding area */
+na-tray-applet widget box widget {
+    background-color: transparent;
+}
+
+/* Classic icon style */
+.mate-panel-menu-bar {
+    -PanelMenuBar-icon-visible: true;
+}
+
+/* make the volume indicator icon more visible */
+.mate-panel-menu-bar menubar > menuitem * * * {
+    -gtk-icon-shadow: 0 0 2px black;
+}
+
+/* volume applet, brightness applet */
+.mate-panel-applet-slider {
+    background: transparent;
+}
+
+.mate-panel-applet-slider > frame {
+    background-color: $bg_color;
+    border-radius:3px;
+    padding: 0px;
+    margin: 0px;
+}
+
+.mate-panel-applet-slider > frame > border {
+    border-image: none;
+    border-style: solid;
+    border-radius:3px;
+    padding: 2px;
+}
+
+.mate-panel-applet-slider > frame > frame > border {
+    background-color:transparent;
+    border-style: none;
+    box-shadow: none;
+}
+
+.mate-panel-applet-slider > frame > button {
+    color: $fg_color;
+}
+
+/* mate-menu, mintmenu */
+#mintmenu.background,
+#mate-menu.background {
+    border-color: $borders_color;
+    border-style: solid;
+    border-width: 1px;
+}
+
+#mintmenu.background button,
+#mintmenu.background button.flat,
+#mate-menu.background button,
+#mate-menu.background button.flat {
+    padding: 3px 1px;
+    border-width: 2px;
+}
+
+#mintmenu.background scrollbar.vertical button,
+#mate-menu.background scrollbar.vertical button {
+    padding: 1px 0px;
+}
+
+#mintmenu.background scrolledwindow,
+#mate-menu.background scrolledwindow {
+    border-color: $borders_color;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 0px;
+}
+
+#mintmenu.background notebook.frame scrolledwindow,
+#mate-menu.background notebook.frame scrolledwindow {
+    border-style: none;
+}

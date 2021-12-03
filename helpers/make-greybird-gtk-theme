@@ -1,0 +1,80 @@
+#!/bin/sh
+#
+#    Copyright (C) 2021  Ruben Rodriguez <ruben@trisquel.info>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+
+
+VERSION=1
+EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu impish main universe'
+
+. ./config
+
+sed '/debhelper-compat/s/13/12/' -i debian/control
+
+#highlight color
+sed 's/#398ee7/#6699CC/g' -i light/gtk-3.0/_colors.scss
+
+#custom mate-panel and other mate enhancements
+cat $DATA/mate.scss >> light/gtk-3.0/_others.scss
+cat $DATA/mate.scss >> dark/gtk-3.0/_others.scss
+echo '$panelgradient_color: #555555;' >> light/gtk-3.0/_colors.scss
+echo '@define-color content_view_bg #{"" + $panelgradient_color};' >> light/gtk-3.0/_colors_public.scss
+echo '@define-color content_view_bg #{"" + $panelgradient_color};' >> dark/gtk-3.0/_colors_public.scss
+
+#main background: trisquel grey, dark version desaturated
+sed '/bg_color/s/#cecece, #3b3e3f/#D4D4D4, #3b3b3b/' -i light/gtk-3.0/_colors.scss
+
+#increase contrast on gtk notebooks
+sed 's/shade($bg_color, 1.05);/shade($bg_color, 1.13);/' -i light/gtk-3.0/_common.scss
+
+#border contrast
+sed '/^\$backdrop_borders_color/s/90%/50%/' -i light/gtk-3.0/_colors.scss
+
+#thicker progress bars
+sed '/progress.*min/s/8px/10px/' -i light/gtk-3.0/_common.scss
+sed '/trough.*min/s/6px/8px/' -i light/gtk-3.0/_common.scss
+
+#gradient on menu bar
+sed '/Menus/,/^}/s/&:backdrop.*/background-image: linear-gradient(to bottom, $bg_color ,shade($bg_color, 0.95));/' -i light/gtk-3.0/_common.scss
+sed '/headerbar_fill/,/}/s/linear-gradient(to bottom, $c/linear-gradient(to bottom, shade($c, 0.95)/' -i light/gtk-3.0/_drawing.scss
+sed '/headerbar_fill/,/}/s/@if $variant.*//' -i light/gtk-3.0/_drawing.scss
+sed 's/^$headerbar_color:.*/$headerbar_color: $bg_color;/' -i light/gtk-3.0/_colors.scss
+
+#make buttons stand up more
+sed '/normal button$/,/  }/s/1.02), 1.05/1.02), 1.1/; s/1.15), 0.97/1.02), 0.95/' -i light/gtk-3.0/_drawing.scss
+sed '/normal button$/,/  }/s/$_button_edge/ inset 0 -1px 1px transparentize(black, 0.9)/' -i light/gtk-3.0/_drawing.scss
+
+#more space on menus
+sed '/  menuitem {/,/padding/s/min-height: 16px;/min-height: 18px;/'  -i light/gtk-3.0/_common.scss
+
+#smaller menu arrows
+sed '/submenu indicators/,/^$/s/16px/10px/' -i light/gtk-3.0/_common.scss
+
+#grey menus
+sed '/$menu_color/s/18/7/' -i light/gtk-3.0/_colors.scss
+
+#border on side panel top, gtk file chooser
+sed '/^placessidebar/,/^$/s/border-style: none;/border-width:1px 0px 0px 0px/' -i light/gtk-3.0/_common.scss
+
+#TODO
+#dark theme panel correction
+#dark theme darkbar
+
+
+changelog "Customized for Trisquel" 
+
+compile
+
