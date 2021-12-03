@@ -380,3 +380,10 @@ na-tray-applet widget box widget {
 #mate-menu.background notebook.frame scrolledwindow {
     border-style: none;
 }
+
+/* mate-terminal */
+vte-terminal {
+    -TerminalWindow-background-darkness: 1.0;
+    background-color: black;
+    color: white;
+}
