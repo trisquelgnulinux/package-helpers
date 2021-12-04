@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
+VERSION=4
 
 . ./config
 
@@ -52,14 +52,17 @@ src/3rdparty/chromium/third_party/breakpad/breakpad/src/client/mac/gcov/libgcov.
 src/3rdparty/chromium/third_party/skia/platform_tools/android/bin/mac/perfhost
 src/3rdparty/chromium/third_party/openh264/src/autotest/performanceTest/ios/fruitstrap
 src/3rdparty/chromium/third_party/openh264/src/autotest/performanceTest/ios/iFileTransfer
-src/3rdparty/chromium/third_party/blink/renderer/devtools/scripts/closure/closure_runner/closure_runner.jar
-src/3rdparty/chromium/third_party/blink/renderer/devtools/scripts/closure/compiler.jar
-src/3rdparty/chromium/third_party/blink/renderer/devtools/scripts/jsdoc_validator/jsdoc_validator.jar
+src/3rdparty/chromium/third_party/WebKit/Source/devtools/scripts/closure/closure_runner/closure_runner.jar
+src/3rdparty/chromium/third_party/WebKit/Source/devtools/scripts/closure/compiler.jar
+src/3rdparty/chromium/third_party/WebKit/Source/devtools/scripts/jsdoc_validator/jsdoc_validator.jar
 src/3rdparty/chromium/third_party/unrar
 src/3rdparty/chromium/third_party/win_build_output
 src/3rdparty/chromium/build/android/CheckInstallApk-debug.apk
 src/3rdparty/chromium/third_party/blink/manual_tests/accessibility/resources/AppletTest.class
 src/3rdparty/chromium/third_party/blink/manual_tests/resources/*.class
+src/3rdparty/chromium/third_party/webpagereplay/third_party/ipfw_win32/ipfw.exe
+src/3rdparty/chromium/third_party/webpagereplay/third_party/ipfw_win32/ipfw.sys
+src/3rdparty/chromium/third_party/yasm/binaries/win/yasm.exe
 EOF
 
 changelog "Removed non-free and prebuilt binaries. Fixes #28287"
