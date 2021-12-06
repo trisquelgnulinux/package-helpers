@@ -16,15 +16,20 @@
 #    along with this program; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
-VERSION=5
+VERSION=6
 EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu impish main universe'
 
 . ./config
 
 sed '/debhelper-compat/s/13/12/' -i debian/control
 
+#correct gtk2 color syntax
+sed '/gtk-color-scheme/d' -i light/gtk-2.0/gtkrc dark/gtk-2.0/gtkrc
+sed '5agtk-color-scheme        = "bg_color:#D4D4D4\\nselected_bg_color:#6699CC\\nbase_color:#fcfcfc\\nfg_color:#3C3C3C\\nselected_fg_color:#ffffff\\ntext_color:#212121\\ntooltip_bg_color:#F5F5B5\\ntooltip_fg_color:#000000\\nlink_color:#35b9ab\\npanel_bg:#686868\\nfm_color:#F7F7F7\\nbg_color_dark:#686868\\ntext_color_dark:#FFF"' -i light/gtk-2.0/gtkrc
+sed '5agtk-color-scheme        = "bg_color:#3b3b3b\\nselected_bg_color:#6699CC\\nbase_color:#2d2e30\\nfg_color:#eeeeec\\nselected_fg_color:#ffffff\\ntext_color:#ffffff\\ntooltip_bg_color:#F5F5B5\\ntooltip_fg_color:#000000\\nlink_color:#35b9ab\\npanel_bg:#686868\\nfm_color:#F7F7F7\\nbg_color_dark:#686868\\ntext_color_dark:#FFF"' -i dark/gtk-2.0/gtkrc
+
 #highlight color
-sed 's/#398ee7/#6699CC/g' -i light/gtk-3.0/_colors.scss light/gtk-2.0/gtkrc dark/gtk-2.0/gtkrc
+sed 's/#398ee7/#6699CC/g' -i light/gtk-3.0/_colors.scss
 
 #custom mate-panel and other mate enhancements
 cat $DATA/*.scss >> light/gtk-3.0/_others.scss
@@ -35,7 +40,6 @@ echo '@define-color content_view_bg #{"" + $panelgradient_color};' >> dark/gtk-3
 
 #main background: trisquel grey, dark version desaturated
 sed '/bg_color/s/#cecece, #3b3e3f/#D4D4D4, #3b3b3b/' -i light/gtk-3.0/_colors.scss
-sed 's/#CECECE/#D4D4D4/g; s/#3b3e3f/#3b3b3b/g' -i light/gtk-2.0/gtkrc dark/gtk-2.0/gtkrc
 
 #increase contrast on gtk notebooks
 sed 's/shade($bg_color, 1.05);/shade($bg_color, 1.13);/' -i light/gtk-3.0/_common.scss
@@ -90,6 +94,14 @@ sed '/^tooltip {$/,/^}$/s/border-radius: 5px/border-radius: 0px/' -i light/gtk-3
 sed '/^tooltip {$/,/^}$/s/padding: 1px/padding: 3px/' -i light/gtk-3.0/_common.scss
 sed '/^tooltip {$/,/^}$/s/text-shadow.*/text-shadow: none;/' -i light/gtk-3.0/_common.scss
 sed '/tooltip/s/#000000/#F5F5B5/; s/#E1E1E1/#000000/' -i light/gtk-2.0/gtkrc dark/gtk-2.0/gtkrc
+
+#wider paned separators
+sed '/Paned/,/^$/s/min-width: 1px/min-width: 4px/' -i light/gtk-3.0/_common.scss
+sed '/Paned/,/^$/s/min-height: 1px/min-height: 4px/' -i light/gtk-3.0/_common.scss
+sed '/Paned/,/^$/s/transparent.*/$bg_color;/' -i light/gtk-3.0/_common.scss
+sed '/Paned/,/^$/s/background-image.*//' -i light/gtk-3.0/_common.scss
+sed '/Paned/,/^$/s/background-size.*//' -i light/gtk-3.0/_common.scss
+sed '/Paned/,/^}$/s/image($backdrop_borders_color)/image($bg_color)/' -i light/gtk-3.0/_common.scss
 
 # lxde panel
 cat << EOF >> dark/gtk-2.0/apps/xfce-panel.rc
