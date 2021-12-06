@@ -1,0 +1,485 @@
+
+/*******
+ * OSD *
+ *******/
+
+@define-color osd_highlight #ffffff;
+@define-color osd_lowlight #525252;
+@define-color osd_base #0a1201;
+@define-color osd_fg #ededed;
+@define-color osd_bg alpha(@osd_base, 0.80);
+@define-color osd_bg_backdrop alpha(shade(@osd_base, 1.40), 0.90);
+@define-color osd_text_shadow alpha(black, 0.75);
+@define-color osd_toolbar_bg_a alpha(@osd_base, 0.80);
+@define-color osd_toolbar_bg_b alpha(#101010, 0.80);
+@define-color osd_toolbar_bg_c alpha(shade(@osd_base, 1.02), 0.80);
+@define-color osd_button_bg_a alpha(@osd_highlight, 0.16);
+@define-color osd_button_bg_b alpha(@osd_lowlight, 0.05);
+@define-color osd_button_bg_c alpha(@osd_highlight, 0.12);
+@define-color osd_button_bg_insensitive alpha(@osd_highlight, 0.25);
+@define-color osd_button_bg_insensitive_active alpha(@osd_highlight, 0.16);
+@define-color osd_button_bg_hover_a alpha(@osd_highlight, 0.28);
+@define-color osd_button_bg_hover_b alpha(@osd_lowlight, 0.14);
+@define-color osd_button_bg_hover_c alpha(@osd_highlight, 0.14);
+@define-color osd_button_bg_active_a alpha(@osd_lowlight, 0.18);
+@define-color osd_button_bg_active_b alpha(@osd_highlight, 0.23);
+@define-color osd_button_bg_active_c alpha(@osd_lowlight, 0.17);
+@define-color osd_button_bg_backdrop alpha(@osd_highlight, 0.18);
+@define-color osd_button_bg_backdrop_hover alpha(@osd_highlight, 0.25);
+@define-color osd_button_bg_backdrop_active alpha(@osd_highlight, 0.35);
+@define-color osd_button_bg_backdrop_insensitive alpha(@osd_highlight, 0.08);
+@define-color osd_button_fg_backdrop shade(@osd_fg, 0.70);
+@define-color osd_button_fg_backdrop_active shade(@osd_fg, 0.95);
+@define-color osd_button_fg shade(@osd_fg, 0.85);
+@define-color osd_button_fg_hover shade(@osd_fg, 0.96);
+@define-color osd_button_fg_active shade(@osd_fg, 1.10);
+@define-color osd_button_fg_insensitive shade(@osd_fg, 0.70);
+@define-color osd_button_border shade (#6699CC, 0.8);
+@define-color osd_button_inset shade(@osd_fg, 0.67);
+@define-color osd_button_shadow alpha(black, 0.35);
+@define-color osd_trough_bg alpha(@osd_button_fg, 0.10);
+@define-color osd_progressbar_background_a #6699CC;
+@define-color osd_progressbar_background_b #6699CC;
+
+
+.osd,
+.background.osd {
+	color: @osd_fg;
+	background-image: none;
+	background-color: @osd_bg;
+	border-radius:20px;
+}
+
+overlay.osd {
+    background-color: transparent;
+}
+
+.osd.frame {
+    background-clip: border-box;
+    background-origin: border-box;
+}
+
+.osd button,
+.osd button:focus,
+.osd button:checked,
+.osd button:hover:active,
+.osd button:focus:hover:active,
+button.osd,
+button.osd:focus,
+button.osd:checked,
+button.osd:hover:active,
+button.osd:focus:hover:active {
+    border-width: 1px;
+    border-style: solid;
+    border-image: none;
+    border-color: @osd_button_border;
+    border-radius: 5px;
+    box-shadow: none;
+}
+
+.osd button,
+.osd button:hover,
+.osd button:checked,
+button.osd,
+button.osd:hover,
+button.osd:checked {
+    background-color: shade(@osd_bg, 1.10);
+    border-radius: 5px;
+    border-color: @osd_button_border;
+}
+
+.osd button:hover,
+.osd button:checked,
+button.osd:hover,
+button.osd:checked {
+    background-color: transparent;
+    box-shadow: none;
+}
+
+.osd button:disabled,
+button.osd:disabled {
+    background-image: none;
+    border-color: @osd_button_bg_insensitive;
+    background-color: transparent;
+    box-shadow: none;
+    color: @osd_button_fg_insensitive;
+}
+
+.osd button:checked:disabled,
+button.osd:checked:disabled {
+    background-image: none;
+    background-color: @osd_button_bg_insensitive_active;
+    color: @osd_button_fg_insensitive;
+}
+
+.osd button,
+.osd button:focus,
+button.osd,
+button.osd:focus {
+    padding: 4px;
+    background-image: linear-gradient(to bottom,
+                                      @osd_button_bg_a,
+                                      @osd_button_bg_b 68%,
+                                      @osd_button_bg_c);
+    color: @osd_button_fg;
+    text-shadow: none;
+    -gtk-icon-shadow: 0 -1px @osd_button_shadow;
+}
+
+.osd button:hover,
+button.osd:hover,
+.osd .linked button:hover {
+    background-image: linear-gradient(to bottom,
+                                      @osd_button_bg_hover_a,
+                                      @osd_button_bg_hover_b 68%,
+                                      @osd_button_bg_hover_c);
+    color: @osd_button_fg_hover;
+}
+
+.osd button:checked,
+.osd button:checked:hover,
+.osd button:checked:hover:active,
+.osd button:hover:active,
+.osd button:focus:hover:active,
+.osd button.popup:checked,   /* GtkMenuButton */
+button.osd:checked,
+button.osd:checked:hover,
+button.osd:checked:hover:active,
+button.osd:hover:active,
+button.osd:focus:hover:active,
+button.osd.menu-button:checked {
+    background-image: linear-gradient(to bottom,
+                                      @osd_button_bg_active_a,
+                                      @osd_button_bg_active_b 68%,
+                                      @osd_button_bg_active_c);
+    color: @osd_button_fg_active;
+    text-shadow: none;
+}
+
+.osd button.popup:checked {
+    background-color: transparent;
+    border-color: @osd_button_border;
+}
+
+/* ie. gnome-weather */
+.linked.stack-switcher.osd button {
+    border-width: 1px 0 1px 0px;
+    color: @osd_button_fg_hover;
+    text-shadow: none;
+}
+
+.linked.stack-switcher.osd button:checked {
+    color: shade(@theme_fg_color, 1.00);
+}
+
+.linked.stack-switcher.osd button:first-child {
+    border-width: 1px 1px 1px 1px;
+}
+
+.linked.stack-switcher.osd button:last-child {
+    border-width: 1px 1px 1px 0px;
+}
+
+.linked.stack-switcher.osd button:only-child {
+    border-width: 1px;
+}
+
+/* ie. parole media-player */
+/* previous/play/next */
+.osd .horizontal .horizontal button {
+    padding: 5px 8px;
+}
+
+.osd .horizontal .horizontal button:disabled {
+    border-color: @osd_button_bg_disabled;
+}
+
+.osd .horizontal .horizontal label {
+    padding: 5px 5px;
+    background-color: transparent;
+    background-image: linear-gradient(to bottom,
+                                      @osd_button_bg_a,
+                                      @osd_button_bg_b 68%,
+                                      @osd_button_bg_c);
+    border-color: @osd_button_bg_insensitive;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 5px;
+}
+
+toolbar.osd {
+    color: @osd_fg;
+    text-shadow: none;
+    padding: 10px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: shade (@theme_selected_bg_color, 0.8);
+    border-radius: 7px;
+    background-image: linear-gradient(to left,
+                                      alpha(shade(@theme_selected_bg_color, 1.2), 0.7),
+                                      alpha(shade(@theme_selected_bg_color, 0.95), 0.7));
+    background-color: alpha(shade(@theme_selected_bg_color, 1.0), 0.4);
+    -GtkToolbar-button-relief: normal;
+}
+
+toolbar.osd button,
+toolbar.osd button:hover,
+toolbar.osd button:focus,
+toolbar.osd button:focus:hover,
+toolbar.osd button:focus:hover:active,
+toolbar.osd button:hover:active,
+toolbar.osd .linked button
+toolbar.osd .linked button:hover,
+toolbar.osd .linked button:hover:active,
+toolbar.osd .linked button:focus,
+toolbar.osd .linked button:focus:hover,
+toolbar.osd .linked button:focus:hover:active,
+toolbar.osd button.scale.flat.image-button {
+    padding: 8px;
+    border-width: 1px;
+    border-radius: 5px;
+}
+
+toolbar.osd button:first-child,
+toolbar.osd .linked button:first-child,
+toolbar.osd .linked button:focus:hover:first-child,
+toolbar.osd .linked button:focus:hover:active:first-child {
+    border-radius: 5px 0 0 5px;
+    border-width: 1px 0 1px 1px;
+    box-shadow: inset -1px 0 @osd_button_inset;
+}
+
+toolbar.osd button:last-child,
+toolbar.osd .linked button:last-child,
+toolbar.osd .linked button:focus:hover:last-child,
+toolbar.osd .linked button:focus:hover:active:last-child {
+    box-shadow: none;
+    border-radius: 0 5px 5px 0;
+    border-width: 1px 1px 1px 0;
+}
+
+toolbar.osd button:only-child,
+toolbar.osd .linked button:only-child,
+toolbar.osd toolitem button,
+toolbar.osd toolitem button:only-child,
+toolbar.osd toolitem button:last-child,
+toolbar.osd toolitem button:first-child {
+    border-width: 1px;
+    border-radius: 5px;
+    border-style: solid;
+    box-shadow: none;
+}
+
+toolbar.osd separator {
+    color: shade(@osd_lowlight, 0.80);
+}
+
+/* used by gnome-settings-daemon's media-keys OSD
+   and Epiphany */
+.osd trough {
+    background-color: @osd_trough_bg;
+    border-width: 0;
+}
+
+.osd .progressbar,
+.osd progressbar {
+    background-color: @osd_fg;
+}
+
+.osd scale trough:disabled,
+.osd scale trough.highlight:disabled {
+    background-image: none;
+    background-color: transparent;
+}
+
+.osd popover.background.scale-popup {
+    color: @osd_fg;
+    border-style: solid;
+    border-width: 1px;
+    border-color: shade (@theme_selected_bg_color, 0.8);
+    border-radius: 4px;
+    background-image: linear-gradient(to bottom,
+                                      alpha(shade(@theme_selected_bg_color, 1.2), 0.7),
+                                      alpha(shade(@theme_selected_bg_color, 0.95), 0.7));
+    background-color: alpha(shade(@theme_selected_bg_color, 1.0), 0.4);
+}
+
+.osd popover.background.scale-popup button.flat.image-button {
+    background-image: linear-gradient(to bottom,
+                                      @osd_button_bg_a,
+                                      @osd_button_bg_b 68%,
+                                      @osd_button_bg_c);
+    border-radius: 4px;
+    border-width: 1px;
+    border-color: @osd_button_border;
+    box-shadow: none;
+    padding: 2px;
+}
+
+.osd popover.background.scale-popup button.flat.image-button:hover {
+    background-image: linear-gradient(to bottom,
+                                      @osd_button_bg_hover_a,
+                                      @osd_button_bg_hover_b 68%,
+                                      @osd_button_bg_hover_c);
+    border-color: alpha(shade(@theme_selected_bg_color, 2.2), 0.8);
+/*    -gtk-image-effect: highlight; */
+}
+
+.osd popover.background.scale-popup button.flat.image-button:disabled {
+    background-image: none;
+    background-color: transparent;
+    border-image: none;
+    border-color: transparent;
+    box-shadow: none;
+}
+
+.osd progressbar,
+progressbar .osd {
+    padding: 0;
+}
+
+.osd progressbar.horizontal,
+progressbar.horizontal .osd {
+    min-height: 3px;
+}
+
+.osd .trough,
+.osd progressbar trough,
+progressbar .osd trough {
+    padding: 0;
+    border-image: none;
+    border-style: none;
+    border-width: 0;
+    background-image: none;
+    background-color: shade (@theme_fg_color, 0.6);
+    border-radius: 2px;
+}
+
+.osd .progressbar,
+.osd progressbar,
+progressbar .osd {
+	padding: 0;
+	-progressbar-xspacing: 0;
+	-progressbar-yspacing: 3px;
+	-progressbar-min-horizontal-bar-height: 3px;
+	border-style: none;
+	background-color: shade(@osd_progressbar_background_b, 1.3);
+	background-image: linear-gradient(to bottom,
+	                                  @osd_progressbar_background_a,
+	                                  @osd_progressbar_background_b);
+	border-radius: 2px;
+}
+
+.osd view {
+    background-color: @osd_view_bg;
+}
+
+.osd scrollbar trough.trough {
+    background-color: @osd_scrollbar_trough;
+}
+
+.osd scrollbar trough.slider {
+    background-color: @osd_scrollbar_slider;
+}
+
+.osd scrollbar trough.slider:hover {
+    background-color: @osd_scrollbar_slider_prelight;
+}
+
+.osd scrollbar trough.slider:active {
+    background-color: @osd_scrollbar_slider_active;
+}
+
+.osd iconview.cell:selected,
+.osd iconview.cell:selected:focus {
+    background-color: transparent;
+    border-style: solid;
+    border-radius: 15px;
+    border-width: 3px;
+    border-color: @osd_button_fg;
+    outline-color: transparent;
+}
+
+/* ie. colorchooser */
+.osd.popover {
+    background-image: none;
+    background-color: alpha(shade(#3D3E40, 0.85), 0.35);
+    border: 1px solid black;
+    box-shadow: none;
+    color: @theme_selected_fg_color;
+}
+
+.osd.popover > grid {
+    text-shadow: 1px 1px alpha (#000000, 0.8);
+}
+
+.osd.popover > grid > spinbutton {
+    color: @theme_selected_fg_color;
+    text-shadow: 1px 1px alpha (#000000, 0.8);
+}
+
+.osd.popover spinbutton > button:hover,
+.osd.popover spinbutton > button:active {
+    background-image: linear-gradient(to bottom,
+                                      alpha(shade(@theme_selected_bg_color, 1.2), 0.4),
+                                      alpha(shade(@theme_selected_bg_color, 0.95), 0.4));
+    background-color: alpha(shade(@theme_selected_bg_color, 1.0), 0.4);
+}
+
+.osd.popover spinbutton.horizontal {
+    border: 1px solid black;
+    border-radius: 7px;
+}
+
+.osd.popover spinbutton.horizontal > entry {
+    border-radius: 7px 0px 0px 7px;
+    background-color: transparent;
+    background-image: none;
+}
+
+.osd.popover spinbutton.horizontal > button {
+    border-radius: 0px;
+    border-image: none;
+    border-style: none;
+}
+
+.osd.popover spinbutton.horizontal > button:first-child {
+    border-radius: 0px;
+    border-image: none;
+}
+
+.osd.popover spinbutton.horizontal > button:last-child {
+    border-radius: 0px 7px 7px 0px;
+    border-image: none;
+}
+
+.osd.popover toolbar {
+    background-image: none;
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+.osd.popover button {
+    text-shadow: none;
+    -gtk-icon-shadow: 0 -1px @osd_text_shadow;
+    background-color: transparent;
+}
+
+.osd.popover button:checked {
+    box-shadow: none;
+}
+
+.osd.popover button:disabled {
+    color: alpha(@theme_selected_fg_color, 0.4);
+}
+
+/* used by Documents */
+.osd .page-thumbnail {
+    border-style: solid;
+    border-width: 1px;
+    border-color: @osd_lowlight;
+    /* when there's no pixbuf yet */
+    background-color: @osd_bg;
+}
+

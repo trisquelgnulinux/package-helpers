@@ -16,8 +16,7 @@
 #    along with this program; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
-
-VERSION=4
+VERSION=5
 EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu impish main universe'
 
 . ./config
@@ -28,8 +27,8 @@ sed '/debhelper-compat/s/13/12/' -i debian/control
 sed 's/#398ee7/#6699CC/g' -i light/gtk-3.0/_colors.scss light/gtk-2.0/gtkrc dark/gtk-2.0/gtkrc
 
 #custom mate-panel and other mate enhancements
-cat $DATA/mate.scss >> light/gtk-3.0/_others.scss
-cat $DATA/mate.scss >> dark/gtk-3.0/_others.scss
+cat $DATA/*.scss >> light/gtk-3.0/_others.scss
+cat $DATA/*.scss >> dark/gtk-3.0/_others.scss
 echo '$panelgradient_color: #555555;' >> light/gtk-3.0/_colors.scss
 echo '@define-color content_view_bg #{"" + $panelgradient_color};' >> light/gtk-3.0/_colors_public.scss
 echo '@define-color content_view_bg #{"" + $panelgradient_color};' >> dark/gtk-3.0/_colors_public.scss
