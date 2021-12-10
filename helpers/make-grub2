@@ -20,6 +20,7 @@
 #
 
 VERSION=5
+FIXED_VER=2.04-1ubuntu26.13
 COMPONENT=main
 
 . ./config
@@ -50,9 +51,6 @@ replace Ubuntu Trisquel .
 replace ubuntu trisquel .
 find |grep ubuntu|xargs rename s/ubuntu/trisquel/
 
-#Avoid the use of signed grub efi package
-sed -i '/Recommends:/s|grub-efi-amd64-signed|grub-efi-amd64|' debian/control
-
 # Allow Windows and MacOX entries to boot without a password
 sed 's/class osx/class osx --unrestricted/; s/class windows/class osx --unrestricted/;' -i ./util/grub.d/30_os-prober.in
 
@@ -61,4 +59,3 @@ sed -i '/set -e/aexit 77' tests/grub_cmd_set_date.in
 changelog "skip test grub_cmd_set_date.in"
 
 compile
-
