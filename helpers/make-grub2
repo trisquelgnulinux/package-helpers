@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=4
+VERSION=5
 COMPONENT=main
 
 . ./config
@@ -49,6 +49,9 @@ replace "Linux" "Linux-Libre" po
 replace Ubuntu Trisquel .
 replace ubuntu trisquel .
 find |grep ubuntu|xargs rename s/ubuntu/trisquel/
+
+#Avoid the use of signed grub efi package
+sed -i '/Recommends:/s|grub-efi-amd64-signed|grub-efi-amd64|' debian/control
 
 # Allow Windows and MacOX entries to boot without a password
 sed 's/class osx/class osx --unrestricted/; s/class windows/class osx --unrestricted/;' -i ./util/grub.d/30_os-prober.in
