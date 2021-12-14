@@ -19,11 +19,9 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-#################################################################################################
-# This helper and DATA folder are a copy of the grub2 package, please track changes accordingly.
-# The only change is the FIXED_VER variable that needs to be empty or removed.
-# Please keep this note on the helper until a new change or approach solves this state.
-#################################################################################################
+# This helper is heavily based on grub2, and even when is adviced to track changes from there,
+# please make sure to test changes by building the package before copying and commiting
+# every change at grub2.
 
 VERSION=5
 FIXED_VER='' #Keep FIXED_VER empty or delete it.
@@ -31,21 +29,25 @@ COMPONENT=main
 
 . ./config
 
+#Avoid recommendation for signed efi packages.
+sed -i '/Recommends: grub-efi-amd64-signed/s|grub-efi-amd64-signed|grub-efi-amd64|' debian/control
+
 # http://grub.johnlane.ie/
 ## updated to 2.04-1 on https://aur.archlinux.org/packages/grub-luks-keyfile/
 for i in $DATA/*.patch; do
-echo Applying patch $i
-patch -p1 < $i
+    echo Applying patch $i
+    patch -p1 < $i
 done
 
-#apt-get remove -y --force-yes dosfstools
-#sed '/dosfstools/d' -i debian/control
 sed '/mkfs.minix/s/-B $BLKSIZE//g' -i tests/util/grub-fs-tester.in
 
-for i in install-efi-ubuntu-flavours.patch mkconfig-ubuntu-distributor.patch; do
+for i in install-efi-ubuntu-flavours.patch; do
     rm debian/patches/$i
     sed /$i/d debian/patches/series -i
 done
+
+#Trisquel is Trisquel GNU/Linux - mkconfig-ubuntu-distributor.patch
+replace \"\${GRUB_DISTRIBUTOR}\" \"\${GRUB_DISTRIBUTOR}\ GNU/Linux\"  debian/patches
 
 #Allow passwords https://bugs.launchpad.net/ubuntu/+source/grub2/+bug/1311302
 /bin/sed '/CLASS=/s/class os/class os --unrestricted/' -i util/grub.d/* debian/patches/mkconfig-other-inits.patch
@@ -53,6 +55,7 @@ done
 replace "with Linux" "with Linux-Libre" util
 replace "with Linux" "with Linux-Libre" debian
 replace "Linux" "Linux-Libre" po
+replace Kubuntu Triskel .
 replace Ubuntu Trisquel .
 replace ubuntu trisquel .
 find |grep ubuntu|xargs rename s/ubuntu/trisquel/
@@ -60,8 +63,10 @@ find |grep ubuntu|xargs rename s/ubuntu/trisquel/
 # Allow Windows and MacOX entries to boot without a password
 sed 's/class osx/class osx --unrestricted/; s/class windows/class osx --unrestricted/;' -i ./util/grub.d/30_os-prober.in
 
-sed -i '/set -e/aexit 77' tests/grub_cmd_set_date.in
+#Other changes
+#test/grub_cmd_set_date.in already skipped by upstream.
+#revert patch mkconfig-ubuntu-distributor.patch 'without' removing it, as it fails if removed.
 
-changelog "skip test grub_cmd_set_date.in"
+changelog "Rebrand trisquel bits."
 
 compile
