@@ -1,0 +1,119 @@
+diff -Nru source/distro-info-util.c source_b/distro-info-util.c
+--- source/distro-info-util.c	2019-03-07 13:33:56.000000000 -0600
++++ source_b/distro-info-util.c	2021-12-17 09:47:58.217720979 -0600
+@@ -545,7 +545,7 @@
+ #endif
+            "  -a  --all              list all known versions\n"
+            "  -d  --devel            latest development version\n"
+-#ifdef UBUNTU
++#ifdef TRISQUEL
+            "      --lts              latest long term support (LTS) version\n"
+ #endif
+ #ifdef DEBIAN
+@@ -553,9 +553,6 @@
+ #endif
+            "  -s  --stable           latest stable version\n"
+            "      --supported        list of all supported stable versions\n"
+-#ifdef UBUNTU
+-           "      --supported-esm    list of all Ubuntu Advantage supported stable versions\n"
+-#endif
+ #ifdef DEBIAN
+            "  -t  --testing          current testing version\n"
+ #endif
+@@ -573,16 +570,13 @@
+             "--alias, "
+ #endif
+             "--all, --devel, "
+-#ifdef UBUNTU
++#ifdef TRISQUEL
+             "--latest, --lts, "
+ #endif
+ #ifdef DEBIAN
+             "--oldstable, "
+ #endif
+             "--stable, --supported, "
+-#ifdef UBUNTU
+-            "--supported-esm, "
+-#endif
+             "--series, "
+ #ifdef DEBIAN
+             "--testing, "
+@@ -611,7 +605,7 @@
+ #ifdef DEBIAN
+     char *alias_codename = NULL;
+ #endif
+-#ifdef UBUNTU
++#ifdef TRISQUEL
+     bool filter_latest = false;
+ #endif
+ 
+@@ -624,9 +618,6 @@
+         {"devel",         no_argument,       NULL, 'd' },
+         {"stable",        no_argument,       NULL, 's' },
+         {"supported",     no_argument,       NULL, 'S' },
+-#ifdef UBUNTU
+-        {"supported-esm", no_argument,       NULL, 'e' },
+-#endif
+         {"unsupported",   no_argument,       NULL, 'U' },
+         {"codename",      no_argument,       NULL, 'c' },
+         {"fullname",      no_argument,       NULL, 'f' },
+@@ -636,14 +627,14 @@
+         {"oldstable",     no_argument,       NULL, 'o' },
+         {"testing",       no_argument,       NULL, 't' },
+ #endif
+-#ifdef UBUNTU
++#ifdef TRISQUEL
+         {"latest",        no_argument,       NULL, 'l' },
+         {"lts",           no_argument,       NULL, 'L' },
+ #endif
+         {NULL,            0,                 NULL, '\0' }
+     };
+ 
+-#ifdef UBUNTU
++#ifdef TRISQUEL
+     const char *short_options = "hadscrfly::";
+ #endif
+ #ifdef DEBIAN
+@@ -689,7 +680,7 @@
+             case 'd':
+                 selected_filters++;
+                 filter_cb = filter_devel;
+-#ifdef UBUNTU
++#ifdef TRISQUEL
+                 select_cb = select_latest_created;
+ #endif
+ #ifdef DEBIAN
+@@ -740,7 +731,7 @@
+                 free(date);
+                 return EXIT_SUCCESS;
+ 
+-#ifdef UBUNTU
++#ifdef TRISQUEL
+             case 'l':
+                 selected_filters++;
+                 filter_latest = true;
+@@ -782,15 +773,6 @@
+                 select_cb = NULL;
+                 break;
+ 
+-#ifdef UBUNTU
+-            case 'e':
+-                // Only long option --supported-esm is used
+-                selected_filters++;
+-                filter_cb = filter_esm_supported;
+-                select_cb = NULL;
+-                break;
+-
+-#endif
+ #ifdef DEBIAN
+             case 't':
+                 selected_filters++;
+@@ -922,7 +904,7 @@
+             selected = select_series(distro_list, series_name);
+         } else {
+             selected = get_distro(distro_list, date, filter_cb, select_cb);
+-#ifdef UBUNTU
++#ifdef TRISQUEL
+             if(selected == NULL && filter_latest) {
+                 selected = get_distro(distro_list, date, filter_stable, select_latest_release);
+             }
