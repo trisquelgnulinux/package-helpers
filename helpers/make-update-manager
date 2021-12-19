@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=10
+VERSION=11
 
 . ./config
 
@@ -62,6 +62,10 @@ replace edubuntu-desktop toast .
 sed '/%s base/ s/name.*/name = "Trisquel base"/' -i ./UpdateManager/Core/UpdateList.py
 sed 's_https://changelogs.ubuntu.com/changelogs/pool/_https://packages.trisquel.info/changelogs/pool/_' -i UpdateManager/Core/MyCache.py
 sed '/len(changelog) == 0/,/"later."/d' -i UpdateManager/Core/MyCache.py
+
+#Make use of new TrisquelDistroInfo
+sed -i 's|UbuntuDistroInfo|TrisquelDistroInfo|g' UpdateManager/UpdateManager.py
+sed -i 's|UbuntuDistroInfo|TrisquelDistroInfo|g' hwe-support-status
 
 changelog "Compiled for Trisquel"
 
