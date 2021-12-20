@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=12
+VERSION=13
 
 . ./config
 
@@ -68,6 +68,13 @@ sed '/len(changelog) == 0/,/"later."/d' -i UpdateManager/Core/MyCache.py
 #Make sure apt_pkg is enabled for prevent-autoconnection.patch to work.
 [ -z "$(grep 'import apt_pkg' UpdateManager/UpdateManager.py)" ] && \
 sed -i '/import distro_info/i import apt_pkg' UpdateManager/UpdateManager.py
+
+#Make use of new TrisquelDistroInfo
+sed -i 's|UbuntuDistroInfo|TrisquelDistroInfo|g' UpdateManager/UpdateManager.py
+sed -i 's|UbuntuDistroInfo|TrisquelDistroInfo|g' hwe-support-status
+sed -i 's|UbuntuDistroInfo|TrisquelDistroInfo|g' ubuntu-security-status
+sed -i 's|UbuntuDistroInfo|TrisquelDistroInfo|g' tests/test_meta_release_core.py
+sed -i 's|UbuntuDistroInfo|TrisquelDistroInfo|g' UpdateManager/Core/MetaRelease.py
 
 changelog "Compiled for Trisquel"
 
