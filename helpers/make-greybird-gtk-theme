@@ -16,7 +16,7 @@
 #    along with this program; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
-VERSION=6
+VERSION=7
 EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu impish main universe'
 
 . ./config
@@ -93,7 +93,8 @@ sed '/^tooltip {$/,/^}$/s/color: white/color: black/' -i light/gtk-3.0/_common.s
 sed '/^tooltip {$/,/^}$/s/border-radius: 5px/border-radius: 0px/' -i light/gtk-3.0/_common.scss
 sed '/^tooltip {$/,/^}$/s/padding: 1px/padding: 3px/' -i light/gtk-3.0/_common.scss
 sed '/^tooltip {$/,/^}$/s/text-shadow.*/text-shadow: none;/' -i light/gtk-3.0/_common.scss
-sed '/tooltip/s/#000000/#F5F5B5/; s/#E1E1E1/#000000/' -i light/gtk-2.0/gtkrc dark/gtk-2.0/gtkrc
+#Leave tooltip text as default.
+#sed '/tooltip/s/#000000/#F5F5B5/; s/#E1E1E1/#000000/' -i light/gtk-2.0/gtkrc dark/gtk-2.0/gtkrc
 
 #wider paned separators
 sed '/Paned/,/^$/s/min-width: 1px/min-width: 4px/' -i light/gtk-3.0/_common.scss
