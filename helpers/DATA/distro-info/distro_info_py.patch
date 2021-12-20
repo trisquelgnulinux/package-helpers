@@ -1,0 +1,67 @@
+diff -Nru source/python/distro_info.py source_b/python/distro_info.py
+--- source/python/distro_info.py	2019-03-07 13:33:56.000000000 -0600
++++ source_b/python/distro_info.py	2021-12-17 15:44:54.509722643 -0600
+@@ -1,3 +1,4 @@
++# Copyright (C) 2021, Trisquel GNU/Linux developers <trisquel-devel@listas.trisquel.info>
+ # Copyright (C) 2009-2012, Benjamin Drung <bdrung@debian.org>
+ #
+ # Permission to use, copy, modify, and/or distribute this software for any
+@@ -12,7 +13,7 @@
+ # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ 
+-"""provides information about Ubuntu's and Debian's distributions"""
++"""provides information about Trisquel's and Debian's distributions"""
+ 
+ import csv
+ import datetime
+@@ -83,7 +84,7 @@
+ 
+ class DistroInfo(object):
+     """Base class for distribution information.
+-    Use DebianDistroInfo or UbuntuDistroInfo instead of using this directly.
++    Use DebianDistroInfo or TrisquelDistroInfo instead of using this directly.
+     """
+ 
+     def __init__(self, distro):
+@@ -237,14 +238,14 @@
+                 codename in ["unstable", "testing", "stable", "oldstable"])
+ 
+ 
+-class UbuntuDistroInfo(DistroInfo):
+-    """provides information about Ubuntu's distributions"""
++class TrisquelDistroInfo(DistroInfo):
++    """provides information about Trisquel's distributions"""
+ 
+     def __init__(self):
+-        super(UbuntuDistroInfo, self).__init__("Ubuntu")
++        super(TrisquelDistroInfo, self).__init__("Trisquel")
+ 
+     def lts(self, date=None, result="codename"):
+-        """Get latest long term support (LTS) Ubuntu distribution based on the
++        """Get latest long term support (LTS) Trisquel distribution based on the
+            given date."""
+         if date is None:
+             date = self._date
+@@ -262,7 +263,7 @@
+         return "LTS" in distros[0].version
+ 
+     def supported(self, date=None, result="codename"):
+-        """Get list of all supported Ubuntu distributions based on the given
++        """Get list of all supported Trisquel distributions based on the given
+            date."""
+         if date is None:
+             date = self._date
+@@ -270,12 +271,3 @@
+                    if date <= x.eol or
+                    (x.eol_server is not None and date <= x.eol_server)]
+         return distros
+-
+-    def supported_esm(self, date=None, result="codename"):
+-        """Get list of all ESM supported Ubuntu distributions based on the
+-           given date."""
+-        if date is None:
+-            date = self._date
+-        distros = [self._format(result, x) for x in self._avail(date)
+-                   if x.eol_esm is not None and date <= x.eol_esm]
+-        return distros

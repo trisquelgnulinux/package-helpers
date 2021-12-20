@@ -1,0 +1,282 @@
+#!/bin/sh
+
+# Copyright (C) 2021, Trisquel GNU/Linux developers <trisquel-devel@listas.trisquel.info>
+# Copyright (C) 2012-2014, Benjamin Drung <bdrung@debian.org>
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+COMMAND="${0%/*}/trisquel-distro-info"
+
+. "${0%/*}/shunit2-helper-functions.sh"
+
+testAll() {
+    local result="toutanis
+belenos
+flidas
+etiona"
+    local pattern=$(echo $result | sed "s/ /\\\\|/g")
+    success "--date 2019-07-07 --all | grep -w \"$pattern\"" "$result"
+    success "-a | grep -w \"$pattern\"" "$result"
+}
+
+testDevel() {
+    success "--date 2019-01-10 --devel" "etiona"
+    success "--date 2017-05-10 -d --codename" "flidas"
+}
+
+testLatest() {
+    success "--date 2014-01-10 --latest" "belenos"
+    success "--date 2015-05-10 -l --codename" "belenos"
+}
+
+testLTS() {
+    success "--lts --date=2013-05-10" "toutanis"
+}
+
+testStable() {
+    success "--date=2014-01-10 -c --stable" "toutanis"
+    success "--date=2019-01-10 -s" "flidas"
+}
+
+testSupported() {
+    local result="belenos
+flidas
+etiona"
+    success "--date=2018-05-10 --supported" "$result"
+}
+
+testUnsupported() {
+    local result="dwyn"
+    success "--date=2011-01-10 --unsupported" "$result"
+}
+
+testFullname() {
+    success "--date=2013-08-10 --fullname --lts" \
+        'Trisquel GNU/Linux 6.0 LTS "Toutanis"'
+    success "--date=2013-08-10 --fullname --lts -y" \
+        'Trisquel GNU/Linux 6.0 LTS "Toutanis" -152'
+    success "--date=2013-08-10 --fullname --lts --days" \
+        'Trisquel GNU/Linux 6.0 LTS "Toutanis" -152'
+    success "--date=2013-08-10 --fullname --lts -ycreated" \
+        'Trisquel GNU/Linux 6.0 LTS "Toutanis" -667'
+    success "--date=2013-08-10 --fullname --lts --days=created" \
+        'Trisquel GNU/Linux 6.0 LTS "Toutanis" -667'
+    success "--date=2013-08-10 --fullname --lts -yrelease" \
+        'Trisquel GNU/Linux 6.0 LTS "Toutanis" -152'
+    success "--date=2013-08-10 --fullname --lts --days=release" \
+        'Trisquel GNU/Linux 6.0 LTS "Toutanis" -152'
+    success "--date=2013-08-10 --fullname --lts -yeol" \
+        'Trisquel GNU/Linux 6.0 LTS "Toutanis" 1357'
+    success "--date=2013-08-10 --fullname --lts --days=eol" \
+        'Trisquel GNU/Linux 6.0 LTS "Toutanis" 1357'
+}
+
+testRelease() {
+    success "--date=2013-08-10 --lts --release" "6.0 LTS"
+    success "--date=2013-08-10 --lts --release -ycreated" \
+        "6.0 LTS -667"
+    success "--date=2013-08-10 --lts --release --days=created" \
+        "6.0 LTS -667"
+    success "--date=2013-08-10 --lts --release --days" \
+        "6.0 LTS -152"
+    success "--date=2013-08-10 --lts --release -y" \
+        "6.0 LTS -152"
+    success "--date=2013-08-10 --lts --release --days=release" \
+        "6.0 LTS -152"
+    success "--date=2013-08-10 --lts --release -yrelease" \
+        "6.0 LTS -152"
+    success "--date=2013-08-10 --lts --release --days=eol" \
+        "6.0 LTS 1357"
+    success "--date=2013-08-10 --lts --release -yeol" \
+        "6.0 LTS 1357"
+
+    success "--date=2013-11-10 -r --stable" "6.0 LTS"
+}
+
+testSeries() {
+    success "-r --series etiona" "9.0 LTS"
+}
+
+testCombinedShortform() {
+    success "-fs --date=2013-08-10" 'Trisquel GNU/Linux 6.0 LTS "Toutanis"'
+}
+
+testReleaseDate() {
+    success "--date 2013-08-10 -s" "toutanis"
+    success "--date 2016-11-03 -d" "flidas"
+    success "--date 2018-04-18 -s" "flidas"
+    success "--date 2020-10-16 -d" "nabia"
+}
+
+testHelp() {
+    local help='Usage: trisquel-distro-info [options]
+
+Options:
+  -h  --help             show this help message and exit
+      --date=DATE        date for calculating the version (default: today)
+      --series=SERIES    series to calculate the version for
+  -y[MILESTONE]          additionally, display days until milestone
+      --days=[MILESTONE] (created, release, eol)
+  -a  --all              list all known versions
+  -d  --devel            latest development version
+      --lts              latest long term support (LTS) version
+  -s  --stable           latest stable version
+      --supported        list of all supported stable versions
+      --unsupported      list of all unsupported stable versions
+  -c  --codename         print the codename (default)
+  -f  --fullname         print the full name
+  -r  --release          print the release version
+
+See trisquel-distro-info(1) for more info.'
+    success "--help" "$help"
+    success "-h" "$help"
+}
+
+testExactlyOne() {
+    local result='trisquel-distro-info: You have to select exactly one of --all, --devel, --latest, --lts, --stable, --supported, --series, --unsupported.'
+    failure "" "$result"
+    failure "--date=2013-08-10 -sad" "$result"
+}
+
+testUnrecognizedOption() {
+    failure "--bar" "trisquel-distro-info: unrecognized option \`--bar'"
+    failure "-z" "trisquel-distro-info: unrecognized option \`-z'"
+    failure "--testing" "trisquel-distro-info: unrecognized option \`--testing'"
+    failure "--oldstable" "trisquel-distro-info: unrecognized option \`--oldstable'"
+}
+
+testUnrecognizedArguments() {
+    failure "foo" "trisquel-distro-info: unrecognized arguments: foo"
+    failure "foo --all bar" "trisquel-distro-info: unrecognized arguments: foo bar"
+}
+
+testMissingArgumentDate() {
+    failure "--date" "trisquel-distro-info: option \`--date' requires an argument DATE"
+}
+
+testMissingArgumentSeries() {
+    failure "--series" "trisquel-distro-info: option \`--series' requires an argument SERIES"
+}
+
+testDistributionDataOutdated() {
+    local future_year=$(expr $(date  +"%Y" --date=now) + 7)
+    local outdated_e="Distribution data outdated.
+Please check for an update for distro-info-data. See /usr/share/doc/distro-info-data/README.Debian for details."
+
+    failure "--date 1970-10-03 --lts" "trisquel-distro-info: $outdated_e"
+    failure "--date ${future_year}-10-03 -s" "trisquel-distro-info: $outdated_e"
+    failure "--date ${future_year}-10-03 -d" "trisquel-distro-info: $outdated_e"
+    failure "--date ${future_year}-10-03 -l" "trisquel-distro-info: $outdated_e"
+}
+
+testInvalidDate() {
+    failure "--date fail -s" "trisquel-distro-info: invalid date \`fail'"
+    failure "--date=2010-02-30 -d" "trisquel-distro-info: invalid date \`2010-02-30'"
+}
+
+testInvalidSeries() {
+    failure "--series wr0ng" "trisquel-distro-info: invalid distribution series \`wr0ng'"
+}
+
+testMultipleDates() {
+    failure "--date 2007-06-05 -s --date 2004-03-02" "trisquel-distro-info: Date specified multiple times."
+}
+
+testMultipleSeries() {
+    failure "--series flidas --series etiona" "trisquel-distro-info: series requested multiple times."
+}
+
+testUnknownSeries() {
+    failure "--series foobar" "trisquel-distro-info: unknown distribution series \`foobar'"
+}
+
+testDays() {
+    # day after belenos released
+    date=2014-11-04
+
+    success "--date=$date --lts" "belenos"
+
+    success "--date=$date --lts --days=created" "-383"
+    success "--date=$date --lts --days=created -c" "belenos -383"
+    success "--date=$date --lts --days=created -f" "Trisquel GNU/Linux 7.0 LTS \"Belenos\" -383"
+    success "--date=$date --lts --days=created -r" "7.0 LTS -383"
+
+    success "--date=$date --lts --days=release" "-1"
+    success "--date=$date --lts --days=release -c" "belenos -1"
+    success "--date=$date --lts --days=release -f" "Trisquel GNU/Linux 7.0 LTS \"Belenos\" -1"
+    success "--date=$date --lts --days=release -r" "7.0 LTS -1"
+
+    success "--date=$date --lts --days" "-1"
+    success "--date=$date --lts --days -c" "belenos -1"
+    success "--date=$date --lts --days -f" "Trisquel GNU/Linux 7.0 LTS \"Belenos\" -1"
+    success "--date=$date --lts --days -r" "7.0 LTS -1"
+
+    success "--date=$date --lts --days=eol" "1633"
+    success "--date=$date --lts --days=eol -c" "belenos 1633"
+    success "--date=$date --lts --days=eol -f" "Trisquel GNU/Linux 7.0 LTS \"Belenos\" 1633"
+    success "--date=$date --lts --days=eol -r" "7.0 LTS 1633"
+
+    # date flidas released
+    date=2018-04-18
+
+    success "--date=$date --lts" "flidas"
+
+    success "--date=$date --lts --days=created" "-909"
+    success "--date=$date --lts --days=created -c" "flidas -909"
+    success "--date=$date --lts --days=created -f" "Trisquel GNU/Linux 8.0 LTS \"Flidas\" -909"
+    success "--date=$date --lts --days=created -r" "8.0 LTS -909"
+
+    success "--date=$date --lts --days=release" "0"
+    success "--date=$date --lts --days=release -c" "flidas 0"
+    success "--date=$date --lts --days=release -f" "Trisquel GNU/Linux 8.0 LTS \"Flidas\" 0"
+    success "--date=$date --lts --days=release -r" "8.0 LTS 0"
+
+    success "--date=$date --lts --days" "0"
+    success "--date=$date --lts --days -c" "flidas 0"
+    success "--date=$date --lts --days -f" "Trisquel GNU/Linux 8.0 LTS \"Flidas\" 0"
+    success "--date=$date --lts --days -r" "8.0 LTS 0"
+
+    success "--date=$date --lts --days=eol" "1099"
+    success "--date=$date --lts --days=eol -c" "flidas 1099"
+    success "--date=$date --lts --days=eol -f" "Trisquel GNU/Linux 8.0 LTS \"Flidas\" 1099"
+    success "--date=$date --lts --days=eol -r" "8.0 LTS 1099"
+
+
+    # day before etiona was released
+    date=2020-10-15
+
+    success "--devel --date=$date" "nabia"
+
+    success "--devel --date=$date --days=created" "-364"
+    success "--devel --date=$date --days=created -c" "nabia -364"
+    success "--devel --date=$date --days=created -r" "10.0 LTS -364"
+    success "--devel --date=$date --days=created -f" "Trisquel GNU/Linux 10.0 LTS \"Nabia\" -364"
+
+    success "--devel --date=$date --days" "427"
+
+    success "--devel --date=$date --days -c" "nabia 427"
+    success "--devel --date=$date --days -r" "10.0 LTS 427"
+    success "--devel --date=$date --days -f" "Trisquel GNU/Linux 10.0 LTS \"Nabia\" 427"
+
+    success "--devel --date=$date --days=release" "427"
+    success "--devel --date=$date --days=release -c" "nabia 427"
+    success "--devel --date=$date --days=release -r" "10.0 LTS 427"
+    success "--devel --date=$date --days=release -f" "Trisquel GNU/Linux 10.0 LTS \"Nabia\" 427"
+
+    success "--devel --date=$date --days=eol" "1651"
+    success "--devel --date=$date --days=eol -c" "nabia 1651"
+    success "--devel --date=$date --days=eol -r" "10.0 LTS 1651"
+    success "--devel --date=$date --days=eol -f" "Trisquel GNU/Linux 10.0 LTS \"Nabia\" 1651"
+}
+
+. shunit2
