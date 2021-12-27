@@ -1,0 +1,20 @@
+--- DistUpgrade/ReleaseNotesViewer.py	2019-12-18 14:25:38.000000000 -0600
++++ DistUpgrade/ReleaseNotesViewer.py_iter	2021-12-23 16:36:22.621561826 -0600
+@@ -128,6 +128,8 @@
+         (x, y) = self.window_to_buffer_coords(Gtk.TextWindowType.WIDGET,
+                                               int(event.x), int(event.y))
+         iter = self.get_iter_at_location(x, y)
++        if isinstance(iter, tuple):
++            iter = iter[1]
+ 
+         # call open_url if an URL is assigned to the iter
+         tags = iter.get_tags()
+@@ -163,6 +165,8 @@
+         _hovering = False
+         # get the iter at the mouse position
+         iter = self.get_iter_at_location(x, y)
++        if isinstance(iter, tuple):
++            iter = iter[1]
+ 
+         # set _hovering if the iter has the tag "url"
+         tags = iter.get_tags()

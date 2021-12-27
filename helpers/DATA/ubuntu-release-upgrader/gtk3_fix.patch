@@ -1,0 +1,11 @@
+--- a/DistUpgrade/DistUpgradeFetcher.py	2021-12-24 00:53:17.857391419 -0600
++++ b/DistUpgrade/DistUpgradeFetcher.py	2021-12-24 00:50:01.655078555 -0600
+@@ -20,6 +20,8 @@
+ #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ #  USA
+ 
++import gi
++gi.require_version('Gtk','3.0')
+ from gi.repository import Gtk, Gdk
+ 
+ from .ReleaseNotesViewer import ReleaseNotesViewer
