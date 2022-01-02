@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=13
+VERSION=14
 
 . ./config
 
@@ -75,6 +75,8 @@ sed -i 's|UbuntuDistroInfo|TrisquelDistroInfo|g' hwe-support-status
 sed -i 's|UbuntuDistroInfo|TrisquelDistroInfo|g' ubuntu-security-status
 sed -i 's|UbuntuDistroInfo|TrisquelDistroInfo|g' tests/test_meta_release_core.py
 sed -i 's|UbuntuDistroInfo|TrisquelDistroInfo|g' UpdateManager/Core/MetaRelease.py
+#Fix partial upgrade button
+sed -i '/do-partial-upgrade/s|ubuntu-release|trisquel-release|' UpdateManager/Dialogs.py
 
 changelog "Compiled for Trisquel"
 
