@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=11
+VERSION=12
 
 . ./config
 
@@ -66,6 +66,8 @@ sed '/len(changelog) == 0/,/"later."/d' -i UpdateManager/Core/MyCache.py
 #Make use of new TrisquelDistroInfo
 sed -i 's|UbuntuDistroInfo|TrisquelDistroInfo|g' UpdateManager/UpdateManager.py
 sed -i 's|UbuntuDistroInfo|TrisquelDistroInfo|g' hwe-support-status
+#Fix partial upgrade button
+sed -i '/do-partial-upgrade/s|ubuntu-release|trisquel-release|' UpdateManager/Dialogs.py
 
 changelog "Compiled for Trisquel"
 
