@@ -17,12 +17,14 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 COMPONENT=main
 
 . ./config
 
 sed 's/user-session=ubuntu/user-session=trisquel/' -i debian/rules
+#Change recommendation priority greeter.
+sed -i 's/unity-greeter | lightdm-greeter/lightdm-gtk-greeter | unity-greeter/' debian/control
 
 changelog "Trisquel themed"
 
