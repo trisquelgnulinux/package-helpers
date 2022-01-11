@@ -17,8 +17,8 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
-EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu groovy main universe'
+VERSION=2
+EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu jammy main universe'
 REPOKEY="871920D1991BC93C"
 
 . ./config
@@ -26,7 +26,7 @@ REPOKEY="871920D1991BC93C"
 sed 's/debhelper.*/debhelper,/' -i debian/control
 echo 12 > debian/compat
 
-changelog "Backported from groovy"
+changelog "Backported from jammy"
 
 compile
 
