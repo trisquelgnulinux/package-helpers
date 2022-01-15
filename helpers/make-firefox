@@ -272,7 +272,8 @@ sed s/ubuntu/trisquel/g debian/distribution.ini -i
 sed "s/ubuntu_version/trisquel_version/; s/Ubuntu 10.10/Trisquel $REVISION/; s/1010/40/" -i debian/firefox.postinst.in
 
 # Delete stuff we don't use and that may contain trademaked logos
-rm -rf ./browser/metro ./addon-sdk/source/doc/static-files/media ./browser/themes/windows ./browser/themes/osx ./b2g
+##keeping "windows" icons for ff96
+rm -rf ./browser/metro ./addon-sdk/source/doc/static-files/media ./browser/themes/osx ./b2g
 
 #Trisquel custom bookmarks
 cp $DATA/bookmarks.html.in browser/locales/generic/profile/bookmarks.html.in
