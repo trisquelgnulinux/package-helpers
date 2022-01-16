@@ -17,10 +17,11 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 . ./config
 
 sed 's/firefox /abrowser /' -i debian/control*
+sed 's|gnome-software.*|trisquel-app-install,|g' -i debian/control*
 
 changelog "Replace firefox dependency with abrowser"
 compile
