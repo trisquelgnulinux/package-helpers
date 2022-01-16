@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=5
+VERSION=6
 
 . ./config
 
@@ -92,6 +92,11 @@ sed 's/status = self.get_status()/status = Snapd.SnapStatus.UNKNOWN/' -i softwar
 
 rm data/software-properties-drivers.desktop.in
 sed -i '/software-properties-drivers/d' po/POTFILES.in
+
+rm data/software-properties-livepatch.desktop.in
+sed -i '/software-properties-livepatch.desktop.in/d' po/POTFILES.in
+sed -i '/software-properties-livepatch.desktop.in/d' setup.cfg
+sed -i '/software-properties-livepatch.desktop/s|^|#|' debian/software-properties-gtk.install
 
 changelog "Removed Ubuntu-specifc tests, Livepatch, Snap"
 
