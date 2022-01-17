@@ -16,13 +16,15 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-VERSION=1
+VERSION=2
 
 . ./config
 
 replace ubuntu-logo-icon TrisquelLogo
 cp $DATA/TrisquelLogo.png debian/TrisquelLogo.png
 rm debian/ubuntu-logo-icon.png
+
+sed -i 's/: gnome-software/: trisquel-app-install | gnome-software/' debian/control*
 
 changelog "Rebrand for trisquel."
 
