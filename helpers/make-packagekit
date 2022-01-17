@@ -1,6 +1,7 @@
 #!/bin/sh
 #
-#    Copyright (C) 2008-2010  Rubén Rodríguez <ruben@trisquel.info>
+#    Copyright (C) 2022 Trisquel GNU/Linux developers
+#                       <trisquel-devel@listas.trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,18 +18,13 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
-COMPONENT=main
+VERSION=1
 
 . ./config
 
-sed 's/;GNOME;/;/' debian/patches/05_menu_entries.patch -i
-cp $DATA/testpage* debian/local/
-
 #Recommend trisquel-app-installer over gnome-software
-sed 's|gnome-software.*|trisquel-app-install,|g' -i debian/control*
+sed 's/gnome-software/trisquel-app-install | gnome-software/g' -i debian/control
 
-changelog "Compiled for Trisquel"
+changelog "Recommend trisquel-app-install over gnome software."
 
 compile
-
