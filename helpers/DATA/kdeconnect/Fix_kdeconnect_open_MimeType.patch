@@ -1,0 +1,26 @@
+From f1ce22124ce7dd630b8e909b4c50f90f035166d5 Mon Sep 17 00:00:00 2001
+From: Thomas Staudinger <staudi.kaos@gmail.com>
+Date: Sun, 4 Oct 2020 21:03:03 +0000
+Subject: [PATCH] Fix kdeconnect_open MimeType
+
+This changes the MimeType handler of the kdeconnect_open desktop file from an invalid "*/*" to the (hopefully) appropriate "application/octet-stream;" as discussed [here](https://bugs.launchpad.net/ubuntu/+source/kdeconnect/+bug/1878400)(including this solution), [here](https://github.com/clearlinux/distribution/issues/1906) and [here](https://bugs.archlinux.org/task/65865).
+---
+ data/org.kde.kdeconnect_open.desktop | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/data/org.kde.kdeconnect_open.desktop b/data/org.kde.kdeconnect_open.desktop
+index 0e0fb8ff..fce4da31 100644
+--- a/data/org.kde.kdeconnect_open.desktop
++++ b/data/org.kde.kdeconnect_open.desktop
+@@ -97,7 +97,7 @@ Comment[uk]=Відкрити на з'єднаному пристрої за до
+ Comment[x-test]=xxOpen on a connected device using KDE Connectxx
+ Comment[zh_CN]=通过 KDE Connect 在已连接的设备上打开
+ Comment[zh_TW]=使用 KDE 連線於連線裝置中開啟
+-MimeType=*/*;
++MimeType=application/octet-stream;
+ Exec=kdeconnect-handler --open %U
+ Icon=kdeconnect
+ Type=Service
+-- 
+GitLab
+
