@@ -212,16 +212,18 @@ sed -i \
 third_party/dump_syms/vendor/symbolic-minidump/.cargo-checksum.json
 #EO Manual fixing.
 
-#Debbungin tools
+#Debbuging tools
 sed -i 's|this-firefox|this-abrowser|g' devtools/client/framework/test/browser_about-devtools-toolbox_reload.js
-#Rebrand debug
+#Rebrand debug tools
 echo "devtools/client/themes/images/aboutdebugging-fenix.svg \
 devtools/client/themes/images/aboutdebugging-fenix-nightly.svg \
 devtools/client/themes/images/aboutdebugging-firefox-aurora.svg \
 devtools/client/themes/images/aboutdebugging-firefox-beta.svg \
 devtools/client/themes/images/aboutdebugging-firefox-nightly.svg \
-devtools/client/themes/images/aboutdebugging-firefox-release.svg" | xargs -n1 cp $DATA/debuglogo.svg
+devtools/client/themes/images/aboutdebugging-firefox-release.svg \
+devtools/startup/aboutdevtools/images/dev-edition-logo.svg" | xargs -n1 cp $DATA/debuglogo.svg
 cp $DATA/debuglogo_gray.svg devtools/client/themes/images/aboutdebugging-firefox-logo.svg
+cp $DATA/about-logo.svg comm/mail/branding/icedove/TB-symbolic.svg
 
 cat << EOF > comm/mail/branding/nightly/locales/en-US/brand.properties
 brandShortName=Icedove
