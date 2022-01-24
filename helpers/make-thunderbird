@@ -18,16 +18,16 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=9
+VERSION=10
 
 . ./config
 
 # Copy in our local Trisquel branding files.
 cp $DATA/branding/* comm/mail/branding/nightly/ -r
 cp $DATA/branding/* comm/mail/branding/thunderbird/ -r
-for i in aurora nightly official unofficial; do
-  cp $DATA/branding/* browser/branding/$i/ -r
-done
+#for i in aurora nightly official unofficial; do
+#  cp $DATA/branding/* browser/branding/$i/ -r
+#done
 
 # Privacy and branding via prefs
 cat << EOF >> debian/vendor.js
@@ -104,7 +104,7 @@ sed '/visibleDefaultEngines/{n; s/"ddg",//; s/\"/"ddg", "/}'  -i comm/mail/compo
 # Privacy / branding brought in from abrowser for 60.x
 #
 # captive portal page
-sed '/captivedetect.canonicalURL/s/http.*success.txt//' -i modules/libpref/init/all.js
+sed '/captivedetect.canonicalURL/s/http.*.html//' -i modules/libpref/init/all.js
 # do not alter useragent/platform/oscpu/etc with fingerprinting countermeasure, it makes things worse
 sed '/ShouldResistFingerprinting/,/}/s/^/\/\//' -i ./netwerk/protocol/http/nsHttpHandler.cpp
 sed '/If fingerprinting resistance is on/,/}/s/^/\/\//' -i ./dom/base/Navigator.cpp
@@ -163,7 +163,7 @@ find . -type f -not -iregex '.*changelog.*' -not -iregex '.*copyright.*' -not -i
 sed 's|https://www.icedove.net/features/|https://trisquel.info/wiki/icedove|' -i comm/mail/base/content/utilityOverlay.js
 sed 's|https://www.icedove.net/get-involved/|https://trisquel.info/wiki/|' -i comm/mail/base/content/utilityOverlay.js
 sed 's|https://donate.mozilla.org/.*help-menu|https://trisquel.info/donate/|' -i comm/mail/base/content/utilityOverlay.js
-sed 's|https://give.icedove.net/.*|https://trisquel.info/donate/"|' -i comm/mailnews/base/content/msgAccountCentral.js
+sed 's|https://give.icedove.net/.*|https://trisquel.info/donate/"|' -i comm/mailnews/base/content/msgAccountCentral.xhtml
 
 replace Daily Trisquel comm/mail/branding/
 sed '/.*<description.*communityExperimentalDesc/,/\/description/d' -i ./comm/mail/base/content/aboutDialog.xhtml
@@ -173,6 +173,52 @@ sed '/.*<description.*contributeDesc/,/\/description/d' -i ./comm/mail/base/cont
 sed '/^Source/s/.*/Source: thunderbird/' -i debian/control.in
 sed 's/Provides: mail-reader,/Provides: mail-reader, thunderbird,/' -i debian/control.in
 sed "s/Provides.*/Provides: icedove-locale-@LANGCODE@/" -i debian/control.langpacks
+
+#Manual fixes to allow rebranding processed through hash checks and other changes.
+#Fix 1 character bigger than allowed yml line (81 > 80)
+sed -i 's|Abrowser is not running.  It|Abrowser is not running. It|' toolkit/mozapps/update/pings.yaml
+
+sed -i \
+'s|91a59d470e0700b4bcb3ff735d06799f3107b8ef4875a2e9904607b164be0326|05f8e055df0e14ee6d50183e701888a49b74fa085dfac9d6032a2f985b5309e6|' \
+third_party/dump_syms/vendor/regex/.cargo-checksum.json
+
+sed -i \
+'s|af4ff013841da9bf00cf88ad3ae468f30c122b730ed37327d965d11b8e367459|a68c2df0024ff65f43efd5f5a48fe39a35d859ac459cce8695e4b09120cc1f35|' \
+third_party/dump_syms/vendor/encoding_rs/.cargo-checksum.json
+
+sed -i \
+'s|eb9f00340e0f6ba3d01f4770356062ab2142e1646c7c2556c9b35348f90980f0|af2b7e2811c649615d4726c7dc4fd9b2e8aa35c229e8225c930e8e7d8e003fa2|' \
+third_party/dump_syms/vendor/encoding_rs/.cargo-checksum.json
+
+sed -i \
+'s|04fc9b146177e7bf615156b8570fa0f97b89f68a2c02b946778711728b81e81f|16221c6c37245cd078ffdb1bd314e45334ddf60098742fc38b821e733fc4c5ca|' \
+third_party/dump_syms/vendor/h2/.cargo-checksum.json
+
+sed -i \
+'s|caabd31cbcb00172bb7f31a1398dbed27a3bf36b01d69729c3d6fbd9a4008e05|080cba5e2b65e6542f364aa4703a179c58b20e41489573d941ef68b9619a2734|' \
+third_party/dump_syms/vendor/httparse/.cargo-checksum.json
+
+sed -i \
+'s|dc1147f2b16de747c15ff9bdab44fc02fe18dcc1b6abe6acba56b69bec99013b|0fcf90cc1bd0498e18dba003142bc0dfdb43e761d88a8caefeb2d8018e2da1bb|' \
+third_party/dump_syms/vendor/openssl/.cargo-checksum.json
+
+sed -i \
+'s|82c82f8ef547f67f3f449a0b240e2df4ed538d976a379b07e53d5ce7cde2438c|01baa5e11aa7ec74360151d379ba8b5607abcd34132e69568c816c0116958a26|' \
+third_party/dump_syms/vendor/symbolic-minidump/.cargo-checksum.json
+#EO Manual fixing.
+
+#Debbuging tools
+sed -i 's|this-firefox|this-abrowser|g' devtools/client/framework/test/browser_about-devtools-toolbox_reload.js
+#Rebrand debug tools
+echo "devtools/client/themes/images/aboutdebugging-fenix.svg \
+devtools/client/themes/images/aboutdebugging-fenix-nightly.svg \
+devtools/client/themes/images/aboutdebugging-firefox-aurora.svg \
+devtools/client/themes/images/aboutdebugging-firefox-beta.svg \
+devtools/client/themes/images/aboutdebugging-firefox-nightly.svg \
+devtools/client/themes/images/aboutdebugging-firefox-release.svg \
+devtools/startup/aboutdevtools/images/dev-edition-logo.svg" | xargs -n1 cp $DATA/debuglogo.svg
+cp $DATA/debuglogo_gray.svg devtools/client/themes/images/aboutdebugging-firefox-logo.svg
+cp $DATA/about-logo.svg comm/mail/branding/icedove/TB-symbolic.svg
 
 cat << EOF > comm/mail/branding/nightly/locales/en-US/brand.properties
 brandShortName=Icedove
