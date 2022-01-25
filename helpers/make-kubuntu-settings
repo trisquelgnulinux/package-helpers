@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2021  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2021-2022  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=9
+VERSION=10
 
 . ./config
 
@@ -35,16 +35,26 @@ find -type d -name '*kubuntu*' | xargs rename s/kubuntu/triskel/
 find -type f -name '*kubuntu*' | xargs rename s/kubuntu/triskel/
 rm desktop/etc/skel/.face
 
-sed '/showAppsByName/s/true/false/' -i desktop/theme/layout-templates/org.triskel.desktop.defaultPanel/contents/layout.js
-sed '/showAppsByName/akickoff.writeConfig("icon", "/usr/share/pixmaps/trisquel.svg")' -i desktop/theme/layout-templates/org.triskel.desktop.defaultPanel/contents/layout.js
 sed 's|/usr/share/wallpapers/Next/contents/images/3200x2000.png|/usr/share/backgrounds/nabia.jpg|' -i ./debian/triskel-settings-desktop.postinst
+
+# customize main menu
+sed 's/kickoff/kicker/g' -i desktop/theme/layout-templates/org.triskel.desktop.defaultPanel/contents/layout.js
+sed '/^kicker/d' -i desktop/theme/layout-templates/org.triskel.desktop.defaultPanel/contents/layout.js
+/bin/sed '/plasma.kicker/s|$|\
+kicker.currentConfigGroup = ["Shortcuts"]\
+kicker.writeConfig("global", "Alt+F1")\
+kicker.currentConfigGroup = ["Configuration/General"]\
+kicker.writeConfig("customButtonImage", "/usr/share/pixmaps/trisquel.svg")\
+kicker.writeConfig("limitDepth", "true")\
+kicker.writeConfig("showIconsRootLevel", "true")\
+kicker.writeConfig("useCustomButtonImage", "true")|' -i desktop/theme/layout-templates/org.triskel.desktop.defaultPanel/contents/layout.js
 
 replace kubuntu.org trisquel.info .
 replace Kubuntu Triskel .
 replace kubuntu triskel .
 
-# add trisquel-app-install to main menu
-sed -i 's|</default>|,trisquel-app-install.desktop</default>|' desktop/plasmoids/org.kde.plasma.simplemenu/contents/config/main.xml
+# Custom favorite apps on main menu
+sed '/favoriteApps/,/^$/s|<default.*|<default>preferred://browser,icedove.desktop,libreoffice-startcenter.desktop,org.kde.kcalc.desktop,org.kde.dolphin.desktop,systemsettings.desktop,org.kde.konsole.desktop,trisquel-app-install.desktop</default>|' -i desktop/plasmoids/org.kde.plasma.simplemenu/contents/config/main.xml
 
 cat << EOF > desktop/theme/desktoptheme/triskel/metadata.desktop
 [Desktop Entry]
