@@ -1,0 +1,245 @@
+From e43f4830933fa4f88ab6f6017be566bea559305d Mon Sep 17 00:00:00 2001
+From: Mercy <myrcy@posteo.net>
+Date: Fri, 10 Dec 2021 23:35:10 -0700
+Subject: [PATCH] Trisquel: Add Trisquel 9 Etiona Trisquel GNU/Linux is a free
+ OS for home users, small businesses, and education
+
+Signed-off-by: Mercy <myrcy@posteo.net>
+---
+ data/os/trisquel.info/trisquel-9.xml.in       | 76 +++++++++++++++++++
+ .../trisquel9/triskel_9.0.1_amd64.iso.txt     | 29 +++++++
+ .../trisquel-mini_9.0.1_amd64.iso.txt         | 29 +++++++
+ .../trisquel-sugar_9.0.1_amd64.iso.txt        | 29 +++++++
+ .../trisquel9/trisquel_9.0.1_amd64.iso.txt    | 29 +++++++
+ 5 files changed, 192 insertions(+)
+ create mode 100644 data/os/trisquel.info/trisquel-9.xml.in
+ create mode 100644 tests/isodata/trisquel/trisquel9/triskel_9.0.1_amd64.iso.txt
+ create mode 100644 tests/isodata/trisquel/trisquel9/trisquel-mini_9.0.1_amd64.iso.txt
+ create mode 100644 tests/isodata/trisquel/trisquel9/trisquel-sugar_9.0.1_amd64.iso.txt
+ create mode 100644 tests/isodata/trisquel/trisquel9/trisquel_9.0.1_amd64.iso.txt
+
+diff --git a/data/os/trisquel.info/trisquel-9.xml.in b/data/os/trisquel.info/trisquel-9.xml.in
+new file mode 100644
+index 00000000..2d3f5352
+--- /dev/null
++++ b/data/os/trisquel.info/trisquel-9.xml.in
+@@ -0,0 +1,76 @@
++<?xml version="1.0"?>
++<libosinfo version="0.0.1">
++  <!-- Licensed under the GNU General Public License version 2 or later.
++     See http://www.gnu.org/licenses/ for a copy of the license text -->
++  <os id="http://trisquel.info/trisquel/9">
++    <short-id>trisquel9</short-id>
++    <name>Trisquel</name>
++    <version>9</version>
++    <vendor>The Trisquel Project</vendor>
++    <family>linux</family>
++    <distro>trisquel</distro>
++    <release-date>2021-10-16</release-date>
++    <derives-from id="http://ubuntu.com/ubuntu/18.04"/>
++
++    <variant id="trisquel">
++      <name>Trisquel 9</name>
++    </variant>
++    <variant id="triskel">
++      <name>Triskel 9</name>
++    </variant>
++    <variant id="mini">
++      <name>Trisquel 9 Mini</name>
++    </variant>
++    <variant id="sugar-toast">
++      <name>Trisquel 9 Sugar Toast</name>
++    </variant>
++
++    <!-- x86_64 -->
++    <media arch="x86_64" live="true" installer-script="false">
++      <variant id="trisquel"/>
++      <url>https://cdimage.trisquel.info/trisquel-images/trisquel_9.0.1_amd64.iso</url>
++      <iso>
++        <volume-id>trisquel 9.0.1 amd64.*</volume-id>
++      </iso>
++      <kernel>casper/vmlinuz</kernel>
++      <initrd>casper/initrd</initrd>
++    </media>
++    <media arch="x86_64" live="true" installer-script="false">
++      <variant id="mini"/>
++      <url>https://cdimage.trisquel.info/trisquel-images/trisquel-mini_9.0.1_amd64.iso</url>
++      <iso>
++        <volume-id>trisquel-mini 9.0.1 amd64.*</volume-id>
++      </iso>
++      <kernel>casper/vmlinuz</kernel>
++      <initrd>casper/initrd</initrd>
++    </media>
++    <media arch="x86_64" live="true" installer-script="false">
++      <variant id="sugar-toast"/>
++      <url>https://cdimage.trisquel.info/trisquel-images/trisquel-sugar_9.0.1_amd64.iso</url>
++      <iso>
++        <volume-id>trisquel-sugar 9.0.1 amd64.*</volume-id>
++      </iso>
++      <kernel>casper/vmlinuz</kernel>
++      <initrd>casper/initrd</initrd>
++    </media>
++    <media arch="x86_64" live="true" installer-script="false">
++      <variant id="triskel"/>
++      <url>https://cdimage.trisquel.info/trisquel-images/triskel_9.0.1_amd64.iso</url>
++      <iso>
++        <volume-id>triskel 9.0.1 amd64.*</volume-id>
++      </iso>
++      <kernel>casper/vmlinuz</kernel>
++      <initrd>casper/initrd</initrd>
++    </media>
++
++
++    <resources arch="all">
++      <recommended>
++        <cpu>1000000000</cpu>
++        <ram>1073741824</ram>
++        <storage>16106127360</storage>
++      </recommended>
++    </resources>
++
++  </os>
++</libosinfo>
+diff --git a/tests/isodata/trisquel/trisquel9/triskel_9.0.1_amd64.iso.txt b/tests/isodata/trisquel/trisquel9/triskel_9.0.1_amd64.iso.txt
+new file mode 100644
+index 00000000..b220fd50
+--- /dev/null
++++ b/tests/isodata/trisquel/trisquel9/triskel_9.0.1_amd64.iso.txt
+@@ -0,0 +1,29 @@
++CD-ROM is in ISO 9660 format
++System id: 
++Volume id: triskel 9.0.1 amd64
++Volume set id: 
++Publisher id: 
++Data preparer id: XORRISO-1.4.8 2017.09.12.143001, LIBISOBURN-1.4.8, LIBISOFS-1.4.8, LIBBURN-1.4.8
++Application id: TRISKEL 9.0.1 AMD64
++Copyright File id: 
++Abstract File id: 
++Bibliographic File id: 
++Volume set size is: 1
++Volume set sequence number is: 1
++Logical block size is: 2048
++Volume size is: 1032192
++El Torito VD version 1 found, boot catalog is in sector 79
++Joliet with UCS level 3 found
++Rock Ridge signatures version 1 found
++Eltorito validation header:
++    Hid 1
++    Arch 0 (x86)
++    ID ''
++    Key 55 AA
++    Eltorito defaultboot header:
++        Bootid 88 (bootable)
++        Boot media 0 (No Emulation Boot)
++        Load segment 0
++        Sys type 0
++        Nsect 4
++        Bootoff 250 592
+diff --git a/tests/isodata/trisquel/trisquel9/trisquel-mini_9.0.1_amd64.iso.txt b/tests/isodata/trisquel/trisquel9/trisquel-mini_9.0.1_amd64.iso.txt
+new file mode 100644
+index 00000000..747f1be5
+--- /dev/null
++++ b/tests/isodata/trisquel/trisquel9/trisquel-mini_9.0.1_amd64.iso.txt
+@@ -0,0 +1,29 @@
++CD-ROM is in ISO 9660 format
++System id: 
++Volume id: trisquel-mini 9.0.1 amd64
++Volume set id: 
++Publisher id: 
++Data preparer id: XORRISO-1.4.8 2017.09.12.143001, LIBISOBURN-1.4.8, LIBISOFS-1.4.8, LIBBURN-1.4.8
++Application id: TRISQUEL-MINI 9.0.1 AMD64
++Copyright File id: 
++Abstract File id: 
++Bibliographic File id: 
++Volume set size is: 1
++Volume set sequence number is: 1
++Logical block size is: 2048
++Volume size is: 625856
++El Torito VD version 1 found, boot catalog is in sector 79
++Joliet with UCS level 3 found
++Rock Ridge signatures version 1 found
++Eltorito validation header:
++    Hid 1
++    Arch 0 (x86)
++    ID ''
++    Key 55 AA
++    Eltorito defaultboot header:
++        Bootid 88 (bootable)
++        Boot media 0 (No Emulation Boot)
++        Load segment 0
++        Sys type 0
++        Nsect 4
++        Bootoff 250 592
+diff --git a/tests/isodata/trisquel/trisquel9/trisquel-sugar_9.0.1_amd64.iso.txt b/tests/isodata/trisquel/trisquel9/trisquel-sugar_9.0.1_amd64.iso.txt
+new file mode 100644
+index 00000000..2b45e3e5
+--- /dev/null
++++ b/tests/isodata/trisquel/trisquel9/trisquel-sugar_9.0.1_amd64.iso.txt
+@@ -0,0 +1,29 @@
++CD-ROM is in ISO 9660 format
++System id: 
++Volume id: trisquel-sugar 9.0.1 amd64
++Volume set id: 
++Publisher id: 
++Data preparer id: XORRISO-1.4.8 2017.09.12.143001, LIBISOBURN-1.4.8, LIBISOFS-1.4.8, LIBBURN-1.4.8
++Application id: TRISQUEL-SUGAR 9.0.1 AMD64
++Copyright File id: 
++Abstract File id: 
++Bibliographic File id: 
++Volume set size is: 1
++Volume set sequence number is: 1
++Logical block size is: 2048
++Volume size is: 582336
++El Torito VD version 1 found, boot catalog is in sector 79
++Joliet with UCS level 3 found
++Rock Ridge signatures version 1 found
++Eltorito validation header:
++    Hid 1
++    Arch 0 (x86)
++    ID ''
++    Key 55 AA
++    Eltorito defaultboot header:
++        Bootid 88 (bootable)
++        Boot media 0 (No Emulation Boot)
++        Load segment 0
++        Sys type 0
++        Nsect 4
++        Bootoff 250 592
+diff --git a/tests/isodata/trisquel/trisquel9/trisquel_9.0.1_amd64.iso.txt b/tests/isodata/trisquel/trisquel9/trisquel_9.0.1_amd64.iso.txt
+new file mode 100644
+index 00000000..6bfcb7dd
+--- /dev/null
++++ b/tests/isodata/trisquel/trisquel9/trisquel_9.0.1_amd64.iso.txt
+@@ -0,0 +1,29 @@
++CD-ROM is in ISO 9660 format
++System id: 
++Volume id: trisquel 9.0.1 amd64
++Volume set id: 
++Publisher id: 
++Data preparer id: XORRISO-1.4.8 2017.09.12.143001, LIBISOBURN-1.4.8, LIBISOFS-1.4.8, LIBBURN-1.4.8
++Application id: TRISQUEL 9.0.1 AMD64
++Copyright File id: 
++Abstract File id: 
++Bibliographic File id: 
++Volume set size is: 1
++Volume set sequence number is: 1
++Logical block size is: 2048
++Volume size is: 1340864
++El Torito VD version 1 found, boot catalog is in sector 79
++Joliet with UCS level 3 found
++Rock Ridge signatures version 1 found
++Eltorito validation header:
++    Hid 1
++    Arch 0 (x86)
++    ID ''
++    Key 55 AA
++    Eltorito defaultboot header:
++        Bootid 88 (bootable)
++        Boot media 0 (No Emulation Boot)
++        Load segment 0
++        Sys type 0
++        Nsect 4
++        Bootoff 250 592
+-- 
+GitLab
+

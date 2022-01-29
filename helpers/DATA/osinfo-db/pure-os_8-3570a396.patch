@@ -1,0 +1,58 @@
+From 3570a3965b6ebce5b59b8b2e96f0730f4c3e1340 Mon Sep 17 00:00:00 2001
+From: Chris Lamb <chris.lamb@puri.sm>
+Date: Mon, 11 Feb 2019 23:24:40 +0100
+Subject: [PATCH] pureos: Add generic PureOS entry.
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Chris Lamb <lamby@debian.org>
+Reviewed-by: Fabiano Fidêncio <fidencio@redhat.com>
+---
+ data/os/pureos.net/pureos-8.xml.in | 34 ++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
+ create mode 100644 data/os/pureos.net/pureos-8.xml.in
+
+diff --git a/data/os/pureos.net/pureos-8.xml.in b/data/os/pureos.net/pureos-8.xml.in
+new file mode 100644
+index 00000000..13c5ba6b
+--- /dev/null
++++ b/data/os/pureos.net/pureos-8.xml.in
+@@ -0,0 +1,34 @@
++<libosinfo version="0.0.1">
++<!-- Licensed under the GNU General Public License version 2 or later.
++     See http://www.gnu.org/licenses/ for a copy of the license text -->
++  <os id="http://pureos.net/pureos/8">
++    <short-id>pureos8</short-id>
++    <name>PureOS</name>
++    <version>8</version>
++    <vendor>Purism, SPC</vendor>
++    <family>linux</family>
++    <distro>pureos</distro>
++
++    <resources arch="all">
++      <minimum>
++        <cpu>1000000000</cpu>
++        <n-cpus>1</n-cpus>
++        <ram>1073741824</ram>
++        <storage>5368709120</storage>
++      </minimum>
++      <recommended>
++        <cpu>1000000000</cpu>
++        <ram>1073741824</ram>
++        <storage>16106127360</storage>
++      </recommended>
++    </resources>
++
++    <media arch="x86_64" live="true">
++      <iso>
++        <volume-id>PureOS 8.0 GNOME Live</volume-id>
++      </iso>
++      <kernel>casper/vmlinuz</kernel>
++      <initrd>casper/initrd.img</initrd>
++    </media>
++  </os>
++</libosinfo>
+-- 
+GitLab
+
