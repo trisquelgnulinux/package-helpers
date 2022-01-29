@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2021  Ruben Rodriguez  <ruben@trisquel.info>
+#    Copyright (C) 2021-2022  Ruben Rodriguez  <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,13 +17,17 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 
 . ./config
 
+# Smaller clock size on panel
 sed -i 's/main.height \* 0.56 : main.height \* 0.71/main.height * 0.4 : main.height * 0.4/' applets/digital-clock/package/contents/ui/DigitalClock.qml
 
-changelog "Smaller clock size on panel"
+# Use trisquel background
+sed 's|/Next/contents/images/5120x2880.jpg|/Nabia/contents/images/4494x3000.jpg|' -i sddm-theme/theme.conf.cmake
+
+changelog "Customized for Trisquel"
 
 compile
 
