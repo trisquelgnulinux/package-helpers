@@ -18,7 +18,7 @@
 #
 #
 
-VERSION=1
+VERSION=2
 EXTERNAL='deb-src https://ppa.launchpadcontent.net/xuzhen666/gnome-mpv/ubuntu $UPSTREAM main'
 REPOKEY=6CAE7FA0B44EEF4EBD4E955F77D026E2EEAD66BD
 
@@ -41,6 +41,9 @@ diff -ur source.orig/src/celluloid-menu.c source/src/celluloid-menu.c
  
  	celluloid_menu_build_menu(menu, entries, TRUE);
 EOF
+
+# Fix mpris integration
+patch -p1 < $DATA/mpris-v0.22.patch
 
 changelog "Backported from ppa"
 
