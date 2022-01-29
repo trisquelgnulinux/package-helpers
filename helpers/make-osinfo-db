@@ -18,13 +18,15 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=0
+VERSION=1
 
 . ./config
 
 #Apply patches fow new fully free distros availbale at libosinfo as Jan-2022
 # trisquel.info
 patch -p1 < $DATA/trisquel9-e43f4830.patch
+sed -i '/derives-from/d' data/os/trisquel.info/trisquel-9.xml.in
+sed -i '/release-date/a \ \ \ \ <codename>Etiona</codename>' data/os/trisquel.info/trisquel-9.xml.in
 # guix.gnu.org
 patch -p1 < $DATA/guix_base-9bb849fe.patch
 patch -p1 < $DATA/guix_1.3-e75ed5cd.patch
