@@ -1,0 +1,46 @@
+#!/bin/sh
+#
+#    Copyright (C) 2022 Trisquel GNU/Linux developers
+#                       <trisquel-devel@listas.trisquel.info>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=0
+
+. ./config
+
+cat << recommended-os > data/recommended-downloads.xml
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  These are OSes listed in the recommended section of the "Download an OS" page.
+
+  This list is powered by libosinfo, therefore the URLs are unique identifiers
+  for each OS in osinfo-db.
+
+  Downstreams are encouraged to tweak the list as they wish. Sorting is also
+  available.
+ -->
+<list>
+  <os_id>http://trisquel.info/trisquel/9</os_id>
+  <os_id>http://guix.gnu.org/guix/1.3</os_id>
+  <os_id>http://hyperbola.info/hyperbola/03</os_id>
+  <os_id>http://pureos.net/pureos/8</os_id>
+</list>
+recommended-os
+
+changelog "Replace recommended downloads."
+
+compile
