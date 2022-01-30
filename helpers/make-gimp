@@ -17,13 +17,16 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 
-VERSION=1
+VERSION=2
 COMPONENT=main
 
 . ./config
 
 sed 's/# (theme "Dark")/(theme "System")/' -i etc/gimprc.in
 sed 's/# (icon-theme "Symbolic")/(icon-theme "Color")/' -i etc/gimprc.in
+sed 's/(icon-theme "Symbolic")/(icon-theme "Color")/' -i docs/gimprc.5.in
+sed '/DEFAULT_ICON_THEME/s/Symbolic/Color/' -i app/config/gimpguiconfig.h libgimpwidgets/gimpicons.c
+
 
 changelog "Use system gtk theme and color icons"
 
