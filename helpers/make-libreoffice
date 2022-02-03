@@ -18,17 +18,13 @@
 #
 
 VERSION=4
-EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu $UPSTREAM-backports main universe'
+EXTERNAL='deb-src https://ppa.launchpadcontent.net/libreoffice/libreoffice-still/ubuntu $UPSTREAM main'
 REPOKEY="83FBA1751378B444"
 
 . ./config
 
 # Make sure that Trisquel gets compiled same as Ubuntu
 patch -p0 < $DATA/debian-rules.patch
-
-#Fix upgrade conflict etiona/nabia libreoffice
-#Remove for libreoffice 7.2 or later.
-patch -p0 < $DATA/fix_upgrade_buster-bullseye_985297.patch
 
 changelog "Backported to get latest version into Trisquel"
 
