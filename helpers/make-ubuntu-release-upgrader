@@ -24,7 +24,7 @@
 # Also, don't forget to update the meta-release files at archive and packages.t.i
 # The "obsoletes" list from ubuntu has been removed
 
-VERSION=12
+VERSION=13
 
 . ./config
 
@@ -328,6 +328,17 @@ for i in core gtk qt; do
 done
 
 sed 's/ubuntu-release-upgrader-core/ubuntu-release-upgrader-core (= ${source:Version})/' -i debian/control
+
+# Fix meta-release file
+cat << MR-FILE > data/meta-release
+# default location for the meta-release file
+
+[METARELEASE]
+URI = https://archive.trisquel.org/trisquel/meta-release
+URI_LTS = https://archive.trisquel.org/trisquel/meta-release
+URI_UNSTABLE_POSTFIX = -development
+URI_PROPOSED_POSTFIX = -proposed
+MR-FILE
 
 changelog "Compiled for Trisquel"
 
