@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=11
+VERSION=12
 
 . ./config
 
@@ -221,9 +221,33 @@ devtools/client/themes/images/aboutdebugging-firefox-aurora.svg \
 devtools/client/themes/images/aboutdebugging-firefox-beta.svg \
 devtools/client/themes/images/aboutdebugging-firefox-nightly.svg \
 devtools/client/themes/images/aboutdebugging-firefox-release.svg \
-devtools/startup/aboutdevtools/images/dev-edition-logo.svg" | xargs -n1 cp $DATA/debuglogo.svg
-cp $DATA/debuglogo_gray.svg devtools/client/themes/images/aboutdebugging-firefox-logo.svg
-cp $DATA/about-logo.svg comm/mail/branding/icedove/TB-symbolic.svg
+devtools/startup/aboutdevtools/images/dev-edition-logo.svg" | xargs -n1 cp $DATA/debug_brand/debuglogo.svg
+cp $DATA/debug_brand/debuglogo_gray.svg devtools/client/themes/images/aboutdebugging-firefox-logo.svg
+cp $DATA/debug_brand/about-logo.svg comm/mail/branding/icedove/TB-symbolic.svg
+cp $DATA/debug_brand/about-logo.svg comm/mail/themes/shared/mail/icons/aboutdebugging-logo.svg
+cp $DATA/debug_brand/icon.png    comm/mail/themes/icon.png
+cp $DATA/debug_brand/icon64.png  comm/mail/themes/icon64.png
+
+#Requirements for Icedove
+THNDR_SYS_URL="https://www.icedove.net/icedove/system-requirements/"
+ICEDV_SYS_URL="https://trisquel.info/wiki/icedove-requirements/"
+sed -i "s|$THNDR_SYS_URL|$ICEDV_SYS_URL|" comm/mail/branding/icedove/branding.nsi
+
+#Remove search engines inherited from firefox (remove all?).
+for r in amazon amazondotcn amazondotcom bing google mercadolibre mercadolivre yahoo-jp yahoo-jp-auctions
+do
+    rm -r comm/mail/components/search/extensions/$r
+done
+
+for r2 in amazon bing google yahoo
+do
+    find comm/suite -name $r2* -delete
+done
+
+# Reprocess search preconfiguration dump
+python3 $DATA/process-json-files.py . browser/components/extensions/schemas/
+
+#EO Debbuging tools
 
 cat << EOF > comm/mail/branding/nightly/locales/en-US/brand.properties
 brandShortName=Icedove
@@ -231,6 +255,13 @@ brandShorterName=Icedove
 brandFullName=Icedove Mail
 vendorShortName=Icedove
 EOF
+
+BRAND_FTL_NTLY=comm/mail/branding/nightly/locales/en-US/brand.ftl
+BRAND_FTL_STD=comm/mail/branding/icedove/locales/en-US/brand.ftl
+sed -i '/shorter-name/s|Trisquel|Icedove|' $BRAND_FTL_NTLY
+sed -i '/short-name/s|Trisquel|Icedove|' $BRAND_FTL_NTLY
+sed -i '/full-name/s|Icedove Trisquel|Icedove Mail|' $BRAND_FTL_NTLY
+sed -i '/full-name/s|Icedove|Icedove Mail|' $BRAND_FTL_STD
 
 cat << EOF > comm/mail/branding/nightly/locales/en-US/brand.dtd
 <!-- This Source Code Form is subject to the terms of the Mozilla Public
