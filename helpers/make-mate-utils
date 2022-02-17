@@ -1,6 +1,7 @@
 #!/bin/sh
 #
-#    Copyright (C) 2017  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2022 Trisquel GNU/Linux developers
+#                       <trisquel-devel@listas.trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,17 +18,13 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=9
-COMPONENT=main
+VERSION=0
 
 . ./config
 
-cp $DATA/applications.menu layout/mate-applications.menu
-
 #Fix LP:1891891 Broken icons on localization MATE (only for nabia)
-patch -p1 < $DATA/nabia_mate-menus_fix_based_on_39c1188.patch
+patch -p1 < $DATA/nabia_mate_fix_based_on_7680719.patch
 
-changelog "Default layout adapted for Trisquel"
+changelog "Fix LP:1891891 Broken icons on localization MATE."
 
 compile
-

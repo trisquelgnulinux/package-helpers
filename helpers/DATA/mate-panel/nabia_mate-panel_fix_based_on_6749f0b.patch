@@ -1,0 +1,78 @@
+From 6749f0b63fbbb49f15b2591e37a24e2199897d03 Mon Sep 17 00:00:00 2001
+From: rbuj <robert.buj@gmail.com>
+Date: Mon, 2 Mar 2020 10:03:36 +0100
+Subject: [PATCH] Do not collect the translation for Icon
+
+---
+ applets/clock/Makefile.am             | 2 +-
+ applets/fish/Makefile.am              | 2 +-
+ applets/notification_area/Makefile.am | 2 +-
+ applets/wncklet/Makefile.am           | 2 +-
+ mate-panel/Makefile.am                | 2 +-
+ 5 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/applets/clock/Makefile.am b/applets/clock/Makefile.am
+index 5247f63ac..55f94e935 100644
+--- a/applets/clock/Makefile.am
++++ b/applets/clock/Makefile.am
+@@ -136,7 +136,7 @@ $(applet_in_files): $(applet_in_files).in Makefile
+ 		$< > $@
+ 
+ $(applet_DATA): $(applet_in_files)
+-	$(AM_V_GEN) $(MSGFMT) --desktop --keyword Name --keyword Description --template $< -d $(top_srcdir)/po -o $@
++	$(AM_V_GEN) $(MSGFMT) --desktop --keyword= --keyword=Name --keyword=Description --template $< -d $(top_srcdir)/po -o $@
+ 
+ if !CLOCK_INPROCESS
+ servicedir       = $(datadir)/dbus-1/services
+diff --git a/applets/fish/Makefile.am b/applets/fish/Makefile.am
+index f5cfbf78e..814d5d8cb 100644
+--- a/applets/fish/Makefile.am
++++ b/applets/fish/Makefile.am
+@@ -51,7 +51,7 @@ $(applet_in_files): $(applet_in_files).in Makefile
+ 		$< > $@
+ 
+ $(applet_DATA): $(applet_in_files)
+-	$(AM_V_GEN) $(MSGFMT) --desktop --keyword Name --keyword Description --template $< -d $(top_srcdir)/po -o $@
++	$(AM_V_GEN) $(MSGFMT) --desktop --keyword= --keyword=Name --keyword=Description --template $< -d $(top_srcdir)/po -o $@
+ 
+ if !FISH_INPROCESS
+ servicedir       = $(datadir)/dbus-1/services
+diff --git a/applets/notification_area/Makefile.am b/applets/notification_area/Makefile.am
+index f7b681103..539db550b 100644
+--- a/applets/notification_area/Makefile.am
++++ b/applets/notification_area/Makefile.am
+@@ -74,7 +74,7 @@ applet_in_files = org.mate.panel.NotificationAreaApplet.mate-panel-applet.deskto
+ applet_DATA     = $(applet_in_files:.mate-panel-applet.desktop.in=.mate-panel-applet)
+ 
+ $(applet_DATA): $(applet_in_files)
+-	$(AM_V_GEN) $(MSGFMT) --desktop --keyword Name --keyword Description --template $< -d $(top_srcdir)/po -o $@
++	$(AM_V_GEN) $(MSGFMT) --desktop --keyword= --keyword=Name --keyword=Description --template $< -d $(top_srcdir)/po -o $@
+ 
+ $(applet_in_files): $(applet_in_files).in Makefile
+ 	$(AM_V_GEN)sed \
+diff --git a/applets/wncklet/Makefile.am b/applets/wncklet/Makefile.am
+index 199238785..b933f81b9 100644
+--- a/applets/wncklet/Makefile.am
++++ b/applets/wncklet/Makefile.am
+@@ -60,7 +60,7 @@ $(applet_in_files): $(applet_in_files).in Makefile
+ 		$< > $@
+ 
+ $(applet_DATA): $(applet_in_files)
+-	$(AM_V_GEN) $(MSGFMT) --desktop --keyword Name --keyword Description --template $< -d $(top_srcdir)/po -o $@
++	$(AM_V_GEN) $(MSGFMT) --desktop --keyword= --keyword=Name --keyword=Description --template $< -d $(top_srcdir)/po -o $@
+ 
+ if !WNCKLET_INPROCESS
+ servicedir       = $(datadir)/dbus-1/services
+diff --git a/mate-panel/Makefile.am b/mate-panel/Makefile.am
+index 91edecf1d..0c6415837 100644
+--- a/mate-panel/Makefile.am
++++ b/mate-panel/Makefile.am
+@@ -291,7 +291,7 @@ desktopdir = $(datadir)/applications
+ desktop_in_files = mate-panel.desktop.in
+ desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
+ $(desktop_DATA): $(desktop_in_files)
+-	$(AM_V_GEN) $(MSGFMT) --desktop --template $< -d $(top_srcdir)/po -o $@
++	$(AM_V_GEN) $(MSGFMT) --desktop --keyword= --keyword=Name --keyword=Comment --template $< -d $(top_srcdir)/po -o $@
+ 
+ EXTRA_DIST = \
+ 	$(ui_FILES) \

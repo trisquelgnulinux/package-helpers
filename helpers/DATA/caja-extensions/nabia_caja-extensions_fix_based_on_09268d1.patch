@@ -1,0 +1,103 @@
+From 09268d17746f7b956ae0c018f4f5b1f736c8818b Mon Sep 17 00:00:00 2001
+From: raveit65 <mate@raveit.de>
+Date: Wed, 4 Mar 2020 11:05:54 +0100
+Subject: [PATCH] Do not collect the translation for Icon
+
+---
+ gksu/Makefile.am            | 2 +-
+ image-converter/Makefile.am | 2 +-
+ open-terminal/Makefile.am   | 2 +-
+ sendto/Makefile.am          | 2 +-
+ share/Makefile.am           | 2 +-
+ wallpaper/Makefile.am       | 2 +-
+ xattr-tags/Makefile.am      | 2 +-
+ 7 files changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/gksu/Makefile.am b/gksu/Makefile.am
+index 93431c8..3cf4ed8 100644
+--- a/gksu/Makefile.am
++++ b/gksu/Makefile.am
+@@ -31,6 +31,6 @@ extensiondir = $(datadir)/caja/extensions
+ extension_in_files = libcaja-gksu.caja-extension.desktop.in
+ extension_DATA = $(extension_in_files:.caja-extension.desktop.in=.caja-extension)
+ $(extension_DATA): $(extension_in_files)
+-	$(AM_V_GEN) $(MSGFMT) --desktop --keyword=Copyright --keyword=Name --keyword=Description --template $< -d $(top_srcdir)/po -o $@
++	$(AM_V_GEN) $(MSGFMT) --desktop --keyword= --keyword=Copyright --keyword=Name --keyword=Description --template $< -d $(top_srcdir)/po -o $@
+ 
+ CLEANFILES = $(extension_DATA)
+diff --git a/image-converter/Makefile.am b/image-converter/Makefile.am
+index 0b8154f..df93167 100644
+--- a/image-converter/Makefile.am
++++ b/image-converter/Makefile.am
+@@ -48,7 +48,7 @@ extensiondir = $(datadir)/caja/extensions
+ extension_in_files = libcaja-image-converter.caja-extension.desktop.in
+ extension_DATA = $(extension_in_files:.caja-extension.desktop.in=.caja-extension)
+ $(extension_DATA): $(extension_in_files)
+-	$(AM_V_GEN) $(MSGFMT) --desktop --keyword=Copyright --keyword=Name --keyword=Description --template $< -d $(top_srcdir)/po -o $@
++	$(AM_V_GEN) $(MSGFMT) --desktop --keyword= --keyword=Copyright --keyword=Name --keyword=Description --template $< -d $(top_srcdir)/po -o $@
+ 
+ EXTRA_DIST = $(builder_DATA)
+ 
+diff --git a/open-terminal/Makefile.am b/open-terminal/Makefile.am
+index f1c77fb..d65fade 100644
+--- a/open-terminal/Makefile.am
++++ b/open-terminal/Makefile.am
+@@ -40,7 +40,7 @@ extensiondir = $(datadir)/caja/extensions
+ extension_in_files = libcaja-open-terminal.caja-extension.desktop.in
+ extension_DATA = $(extension_in_files:.caja-extension.desktop.in=.caja-extension)
+ $(extension_DATA): $(extension_in_files)
+-	$(AM_V_GEN) $(MSGFMT) --desktop --keyword=Copyright --keyword=Name --keyword=Description --template $< -d $(top_srcdir)/po -o $@
++	$(AM_V_GEN) $(MSGFMT) --desktop --keyword= --keyword=Copyright --keyword=Name --keyword=Description --template $< -d $(top_srcdir)/po -o $@
+ 
+ DISTCLEANFILES = \
+ 	org.mate.caja-open-terminal.gschema.xml
+diff --git a/sendto/Makefile.am b/sendto/Makefile.am
+index e23cde8..d4f056c 100644
+--- a/sendto/Makefile.am
++++ b/sendto/Makefile.am
+@@ -83,7 +83,7 @@ extensiondir = $(datadir)/caja/extensions
+ extension_in_files = libcaja-sendto.caja-extension.desktop.in
+ extension_DATA = $(extension_in_files:.caja-extension.desktop.in=.caja-extension)
+ $(extension_DATA): $(extension_in_files)
+-	$(AM_V_GEN) $(MSGFMT) --desktop --keyword=Copyright --keyword=Name --keyword=Description --template $< -d $(top_srcdir)/po -o $@
++	$(AM_V_GEN) $(MSGFMT) --desktop --keyword= --keyword=Copyright --keyword=Name --keyword=Description --template $< -d $(top_srcdir)/po -o $@
+ 
+ EXTRA_DIST = \
+ 	$(man_MANS) \
+diff --git a/share/Makefile.am b/share/Makefile.am
+index 8a257f3..6fc1a32 100644
+--- a/share/Makefile.am
++++ b/share/Makefile.am
+@@ -41,7 +41,7 @@ extensiondir = $(datadir)/caja/extensions
+ extension_in_files = libcaja-share.caja-extension.desktop.in
+ extension_DATA = $(extension_in_files:.caja-extension.desktop.in=.caja-extension)
+ $(extension_DATA): $(extension_in_files)
+-	$(AM_V_GEN) $(MSGFMT) --desktop --keyword=Copyright --keyword=Name --keyword=Description --template $< -d $(top_srcdir)/po -o $@
++	$(AM_V_GEN) $(MSGFMT) --desktop --keyword= --keyword=Copyright --keyword=Name --keyword=Description --template $< -d $(top_srcdir)/po -o $@
+ 
+ EXTRA_DIST = share-dialog.ui
+ 
+diff --git a/wallpaper/Makefile.am b/wallpaper/Makefile.am
+index 5bb905e..acc6496 100644
+--- a/wallpaper/Makefile.am
++++ b/wallpaper/Makefile.am
+@@ -33,6 +33,6 @@ extensiondir = $(datadir)/caja/extensions
+ extension_in_files = libcaja-wallpaper.caja-extension.desktop.in
+ extension_DATA = $(extension_in_files:.caja-extension.desktop.in=.caja-extension)
+ $(extension_DATA): $(extension_in_files)
+-	$(AM_V_GEN) $(MSGFMT) --desktop --keyword=Copyright --keyword=Name --keyword=Description --template $< -d $(top_srcdir)/po -o $@
++	$(AM_V_GEN) $(MSGFMT) --desktop --keyword= --keyword=Copyright --keyword=Name --keyword=Description --template $< -d $(top_srcdir)/po -o $@
+ 
+ CLEANFILES = $(extension_DATA)
+diff --git a/xattr-tags/Makefile.am b/xattr-tags/Makefile.am
+index 27cd567..515d8e1 100644
+--- a/xattr-tags/Makefile.am
++++ b/xattr-tags/Makefile.am
+@@ -34,6 +34,6 @@ extensiondir = $(datadir)/caja/extensions
+ extension_in_files = libcaja-xattr-tags.caja-extension.desktop.in
+ extension_DATA = $(extension_in_files:.caja-extension.desktop.in=.caja-extension)
+ $(extension_DATA): $(extension_in_files)
+-	$(AM_V_GEN) $(MSGFMT) --desktop --keyword=Copyright --keyword=Name --keyword=Description --template $< -d $(top_srcdir)/po -o $@
++	$(AM_V_GEN) $(MSGFMT) --desktop --keyword= --keyword=Copyright --keyword=Name --keyword=Description --template $< -d $(top_srcdir)/po -o $@
+ 
+ CLEANFILES = $(extension_DATA)

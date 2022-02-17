@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=9
+VERSION=10
 
 . ./config
 
@@ -120,6 +120,9 @@ cat << EOF >> debian/mate-panel.install
 debian/mate-panel-layout-update.desktop etc/xdg/autostart
 debian/layout-reset usr/share/mate-panel
 EOF
+
+#Fix LP:1891891 Broken icons on localization MATE (only for nabia)
+patch -p1 < $DATA/nabia_mate-panel_fix_based_on_6749f0b.patch
 
 changelog "Changed default layout"
 
