@@ -24,6 +24,9 @@ BACKPORT=true
 
 . ./config
 
+#Customize python for etiona
+sed -i '/Python3-Version/s|3.7|3.6|' debian/control
+
 changelog "Backported from official PPA for videomass"
 
 compile
