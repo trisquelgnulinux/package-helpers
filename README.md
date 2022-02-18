@@ -33,6 +33,7 @@ Those are the steps done by the helpers:
 * `REPOKEY`: An additional GPG key to import for the helper. Mostly only used in conjunction with `EXTERNAL`.
 * `BACKPORT(S)`: Must be set to `true` if the package is a backport.
 * `QUILT`: If `skip`, avoids patches to be automatically applied. Only set this variables if you know what you are doing.
+* `BUILD_UNTIL`: build this helper if the Trisquel REVISION number (e.g. Trisquel 10.0) is <= this number. To be used when we know that the helper will not be needed at a certain future release.
 
 ## Recommendations
 

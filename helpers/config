@@ -49,6 +49,11 @@ MIRROR=http://archive.ubuntu.com/ubuntu
 LOCALMIRROR=https://archive.trisquel.org/trisquel
 LOCAL_APT=`mktemp -d` 
 
+if [ -n "$BUILD_UNTIL" ] && (( $(echo "$BUILD_UNTIL $REVISION" | awk '{print ($1 > $2)}') )); then
+    echo "Skipping build of helper with BUILD_UNTIL=$BUILD_UNTIL > REVISION=$REVISION"
+    exit 0
+fi
+
 export RPL="$PWD/DATA/rpl"
 rpl(){
 $RPL "$@"
