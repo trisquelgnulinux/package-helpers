@@ -6167,6 +6167,8 @@ set_except () {
     # Added by Trisquel for nabia
     blobname '\(silead[/]\)\?gsl1680-chuwi-hibook\.fw' drivers/platform/x86/touchscreen_dmi.c
     blobna '[/][*][ ]linux-firmware\.git[ ]hash[ ][0-9a-f]*[ ][*][/]' drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+    blobname 'mediatek[/]WIFI_RAM_CODE_MT7922_1\.bin' drivers/net/wireless/mediatek/mt76/mt7921/mt7921.h
+    blobname 'mediatek[/]WIFI_MT7922_patch_mcu_1_1_hdr\.bin' drivers/net/wireless/mediatek/mt76/mt7921/mt7921.h
 
     # New in 5.13-rc.
     # Sources are in cwsr_trap_handler_gfx9.asm.
