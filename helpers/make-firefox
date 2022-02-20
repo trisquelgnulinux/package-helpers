@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=85
+VERSION=86
 
 . ./config
 
@@ -315,6 +315,14 @@ for STRING in rights-intro-point-2 rights-intro-point-3 rights-intro-point-4 rig
 do
  find -name aboutRights.ftl | xargs sed -i "s/^$STRING.*/$STRING = /"
 done
+#Remove invalid policy for trisquel.
+find -name aboutRights.ftl | xargs sed -i '/rights-intro-point-5/,$d'
+delete_point() {
+sed -i "/$1/d" "$(find -name $2)"
+}
+delete_point rights-intro-point-5 aboutRights.xhtml
+delete_point rights-intro-point-6 aboutRights.xhtml
+delete_point rights-intro-point-5 aboutRights-unbranded.xhtml
 
 sed -i 's/<a\ href\=\"http\:\/\/www.mozilla.org\/\">Mozilla\ Project<\/a>/<a\ href\=\"http\:\/\/www.trisquel.info\/\"\>Trisquel\ Project<\/a>/g' browser/base/content/overrides/app-license.html
 
