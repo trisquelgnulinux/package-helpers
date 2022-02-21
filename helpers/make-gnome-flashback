@@ -1,7 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2022 Trisquel GNU/Linux developers
-#                       <trisquel-devel@listas.trisquel.info>
+#    Copyright (C) 2022 Luis Guzman <ark@switnet.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -18,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=0
+VERSION=1
 
 . ./config
 
@@ -30,6 +29,9 @@ sed -i '/gnome-flashback-applications.menu/d' data/menus/Makefile.in
 
 #Install flashback as default x-session-manager (above 50).
 sed -i '/metacity/s|40|60|' debian/gnome-session-flashback.postinst
+
+#Remove hardcoded gsettings
+rm  debian/gnome-session-flashback.gsettings-override
 
 changelog "Prevent conflict for pre-installed menu layout."
 
