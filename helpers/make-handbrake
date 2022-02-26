@@ -18,9 +18,10 @@
 #
 
 VERSION=2
-EXTERNAL="deb-src http://ppa.launchpad.net/stebbins/handbrake-releases/ubuntu focal main"
+EXTERNAL="deb-src http://ppa.launchpad.net/stebbins/handbrake-releases/ubuntu $UPSTREAM main"
 REPOKEY="8771ADB0816950D8"
 BACKPORT=true
+BUILD_UNTIL=10.0
 
 . ./config
 

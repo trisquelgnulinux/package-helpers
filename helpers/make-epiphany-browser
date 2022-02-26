@@ -24,7 +24,7 @@ VERSION=1
 cat << EOF > debian/branding.conf.in
 [User Agent]
 Vendor=Trisquel GNU/Linux
-VendorSub=Toutatis $REVISION
+VendorSub=$CODENAME $REVISION
 VendorComment=@PACKAGEVERSION@
 EOF
 

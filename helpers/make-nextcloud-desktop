@@ -18,9 +18,10 @@
 #
 
 VERSION=2
-EXTERNAL='deb-src http://ppa.launchpad.net/nextcloud-devs/client/ubuntu focal main'
+EXTERNAL='deb-src http://ppa.launchpad.net/nextcloud-devs/client/ubuntu $UPSTREAM main'
 REPOKEY="60EE47FBAD3DD469"
 BACKPORT=true
+BUILD_UNTIL=10.0
 
 . ./config
 

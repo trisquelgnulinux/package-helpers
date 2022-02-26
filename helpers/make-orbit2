@@ -22,10 +22,11 @@ VERSION=1
 EXTERNAL='deb-src http://ppa.launchpad.net/ubuntuhandbook1/dvdstyler/ubuntu $UPSTREAM main'
 REPOKEY=A0062203196CA4482DDB859E4C1CBE14852541CB
 BACKPORTS=true
+BUILD_UNTIL=10.0
 
 . ./config
 
-changelog "Backported from ppa"
+changelog "Backported from ppa as part of dvdstyler dependency"
 
 compile
 
