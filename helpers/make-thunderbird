@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=11
+VERSION=12
 
 . ./config
 
@@ -222,6 +222,7 @@ cp $DATA/debug_brand/about-logo.svg comm/mail/branding/icedove/TB-symbolic.svg
 cp $DATA/debug_brand/about-logo.svg comm/mail/themes/shared/mail/icons/aboutdebugging-logo.svg
 cp $DATA/debug_brand/icon.png    comm/mail/themes/icon.png
 cp $DATA/debug_brand/icon64.png  comm/mail/themes/icon64.png
+cp $DATA/debug_brand/account-watermark*.png comm/mail/themes/shared/mail/images/
 
 #Requirements for Icedove
 THNDR_SYS_URL="https://www.icedove.net/icedove/system-requirements/"
