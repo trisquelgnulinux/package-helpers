@@ -1,0 +1,730 @@
+diff -ru reprepro.orig/source/atoms.c reprepro/source/atoms.c
+--- reprepro.orig/source/atoms.c	2016-12-23 19:11:30.000000000 -0500
++++ reprepro/source/atoms.c	2020-11-01 16:33:38.182181608 -0500
+@@ -26,7 +26,7 @@
+ 
+ const char **atoms_architectures;
+ const char **atoms_components;
+-const char * const packagetypes[4] = { "!!NONE!!", "dsc", "deb", "udeb" };
++const char * const packagetypes[5] = { "!!NONE!!", "dsc", "deb", "udeb", "ddeb" };
+ const char **atoms_packagetypes = (const char **)&packagetypes;
+ const char **atoms_commands;
+ static int command_count;
+@@ -159,6 +159,8 @@
+ 		return pt_deb;
+ 	else if (strcmp(value, "udeb") == 0)
+ 		return pt_udeb;
++	else if (strcmp(value, "ddeb") == 0)
++		return pt_ddeb;
+ 	else
+ 		return atom_unknown;
+ }
+@@ -169,8 +171,12 @@
+ 			return pt_dsc;
+ 		else if (strncmp(value, "deb", 3) == 0)
+ 			return pt_deb;
+-	} else if (len == 4 && strncmp(value, "udeb", 4) == 0)
+-		return pt_udeb;
++	} else if (len == 4) {
++		if (strncmp(value, "udeb", 4) == 0)
++			return pt_udeb;
++		else if (strncmp(value, "ddeb", 4) == 0)
++			return pt_ddeb;
++	}
+ 	return atom_unknown;
+ }
+ 
+diff -ru reprepro.orig/source/atoms.h reprepro/source/atoms.h
+--- reprepro.orig/source/atoms.h	2016-12-23 19:11:30.000000000 -0500
++++ reprepro/source/atoms.h	2020-11-01 16:33:38.182181608 -0500
+@@ -19,6 +19,7 @@
+ #define pt_dsc ((packagetype_t)1)
+ #define pt_deb ((packagetype_t)2)
+ #define pt_udeb ((packagetype_t)3)
++#define pt_ddeb ((packagetype_t)4)
+ 
+ #define atom_defined(a) ((a) > (atom_t)0)
+ 
+diff -ru reprepro.orig/source/changes.c reprepro/source/changes.c
+--- reprepro.orig/source/changes.c	2016-12-23 19:11:30.000000000 -0500
++++ reprepro/source/changes.c	2020-11-01 16:33:38.182181608 -0500
+@@ -164,6 +164,8 @@
+ 
+ 	if (l >= 4 && memcmp(p-4, ".deb", 4) == 0)
+ 		type = fe_DEB;
++	else if (l >= 5 && memcmp(p-5, ".ddeb", 5) == 0)
++		type = fe_DDEB;
+ 	else if (l >= 5 && memcmp(p-5, ".udeb", 5) == 0)
+ 		type = fe_UDEB;
+ 	else
+@@ -189,7 +191,7 @@
+ 		if (type == fe_DEB)
+ 			archend = versionstart + l - 4;
+ 		else {
+-			assert (type == fe_UDEB);
++			assert (type == fe_DDEB || type == fe_UDEB);
+ 			archend = versionstart + l - 5;
+ 		}
+ 		if (archend - archstart == 6 &&
+@@ -203,7 +205,7 @@
+ 		const char *eoi;
+ 
+ 		/* without those, it gets more complicated.
+-		 * It's not .deb or .udeb, so most likely a
++		 * It's not .deb, .ddeb or .udeb, so most likely a
+ 		 * source file (or perhaps a log (reprepro extension)) */
+ 
+ 		/* if it uses a known compression, things are easy,
+diff -ru source.or/changes.h source/changes.h
+--- reprepro.orig/source/changes.h 2018-09-09 01:17:15.000000000 -0400
++++ reprepro/source/changes.h    2022-03-08 19:52:49.495104016 -0500
+@@ -7,7 +7,7 @@
+ 
+ typedef enum {
+ 	fe_UNKNOWN=0,
+-	fe_DEB, fe_UDEB,
++	fe_DEB, fe_UDEB, fe_DDEB,
+ 	fe_DSC, fe_DIFF, fe_ORIG, fe_TAR,
+ 	fe_SIG,
+ 	fe_ALTSRC,
+@@ -15,8 +15,8 @@
+        fe_BUILDINFO
+ } filetype;
+ 
+-#define FE_PACKAGE(ft) ((ft) == fe_DEB || (ft) == fe_UDEB || (ft) == fe_DSC)
+-#define FE_BINARY(ft) ((ft) == fe_DEB || (ft) == fe_UDEB)
++#define FE_PACKAGE(ft) ((ft) == fe_DEB || (ft) == fe_UDEB || (ft) == fe_DSC || (ft) == fe_DDEB)
++#define FE_BINARY(ft) ((ft) == fe_DEB || (ft) == fe_DDEB || (ft) == fe_UDEB)
+ #define FE_SOURCE(ft) ((ft) == fe_DIFF || (ft) == fe_ORIG || (ft) == fe_TAR || (ft) == fe_DSC || (ft) == fe_UNKNOWN || (ft) == fe_ALTSRC || (ft) == fe_SIG)
+ 
+ struct hash_data;
+diff -ru reprepro.orig/source/checkin.c reprepro/source/checkin.c
+--- reprepro.orig/source/checkin.c	2016-12-28 10:03:44.000000000 -0500
++++ reprepro/source/checkin.c	2020-11-01 16:33:38.182181608 -0500
+@@ -207,6 +207,11 @@
+ 		*ignoredlines_p = true;
+ 		return RET_NOTHING;
+ 	}
++	if (e->type == fe_DDEB && limitations_missed(packagetypes, pt_ddeb)) {
++		freeentries(e);
++		*ignoredlines_p = true;
++		return RET_NOTHING;
++	}
+ 	if (e->type != fe_LOG && e->type != fe_BUILDINFO &&
+ 			e->architecture_into == architecture_source &&
+ 			strcmp(e->name, sourcename) != 0) {
+@@ -1208,6 +1213,15 @@
+ 				e->filekey, e->checksums,
+ 				&changes->binaries,
+ 				changes->source, changes->sourceversion);
++		} else if (e->type == fe_DDEB) {
++			r = deb_prepare(&e->pkg.deb,
++				e->component, e->architecture_into,
++				e->section, e->priority,
++				pt_ddeb,
++				distribution, fullfilename,
++				e->filekey, e->checksums,
++				&changes->binaries,
++				changes->source, changes->sourceversion);
+ 		} else if (e->type == fe_DSC) {
+ 			if (!changes->isbinnmu || IGNORING(dscinbinnmu,
+ "File '%s' looks like a source package, but this .changes looks like a binNMU\n"
+@@ -1256,6 +1270,15 @@
+ 				pt_deb, distribution, trackingdata);
+ 			if (r == RET_NOTHING)
+ 				*missed_p = true;
++		} else if (e->type == fe_DDEB) {
++			r = deb_addprepared(e->pkg.deb,
++				/* architecture all needs this, the rest is
++				 * already filtered out */
++				(e->architecture_into == architecture_all)?
++					forcearchitectures:NULL,
++				pt_ddeb, distribution, trackingdata);
++			if (r == RET_NOTHING)
++				*missed_p = true;
+ 		} else if (e->type == fe_UDEB) {
+ 			r = deb_addprepared(e->pkg.deb,
+ 				/* architecture all needs this, the rest is
+diff -ru reprepro.orig/source/checkindeb.c reprepro/source/checkindeb.c
+--- reprepro.orig/source/checkindeb.c	2016-12-28 10:13:15.000000000 -0500
++++ reprepro/source/checkindeb.c	2020-11-01 16:33:38.182181608 -0500
+@@ -105,7 +105,13 @@
+ 	const struct overridedata *oinfo;
+ 	retvalue r;
+ 
+-	if (packagetype == pt_udeb) {
++	if (packagetype == pt_ddeb) {
++		/* ddebs don't have overrides */
++		forcesection = "debug";
++		forcepriority = "extra";
++		binoverride = NULL;
++		components = &distribution->ddebcomponents;
++	} else if (packagetype == pt_udeb) {
+ 		binoverride = distribution->overrides.udeb;
+ 		components = &distribution->udebcomponents;
+ 	} else {
+@@ -113,14 +119,21 @@
+ 		components = &distribution->components;
+ 	}
+ 
+-	oinfo = override_search(binoverride, pkg->deb.name);
+-	*oinfo_ptr = oinfo;
+-	if (forcesection == NULL) {
+-		forcesection = override_get(oinfo, SECTION_FIELDNAME);
+-	}
+-	if (forcepriority == NULL) {
+-		forcepriority = override_get(oinfo, PRIORITY_FIELDNAME);
++	if (binoverride == NULL) {
++		oinfo = NULL;
++	} else {
++		oinfo = override_search(binoverride, pkg->deb.name);
++
++		if (forcesection == NULL) {
++			forcesection = override_get(oinfo, SECTION_FIELDNAME);
++		}
++
++		if (forcepriority == NULL) {
++			forcepriority = override_get(oinfo, PRIORITY_FIELDNAME);
++		}
+ 	}
++	*oinfo_ptr = oinfo;
++
+ 	if (!atom_defined(forcecomponent)) {
+ 		const char *fc;
+ 
+@@ -261,7 +274,29 @@
+ 		base = NULL;
+ 	}
+ 
+-	if (!strlist_in(allowed_binaries, packagenametocheck) &&
++	if (packagetype == pt_ddeb) {
++		/* ddebs are allowed if they are an allowed
++		 * binary + "-dbgsym" */
++		int i;
++		bool found = false;
++
++		for (i = 0; i < allowed_binaries->count; i++) {
++			const char *s = allowed_binaries->values[i];
++			size_t len = strlen(s);
++
++			if (strncmp(s, pkg->deb.name, len) == 0 &&
++					strcmp(pkg->deb.name + len, "-dbgsym") == 0) {
++				found = true;
++			}
++		}
++
++		if (!found && !IGNORING(surprisingbinary,
++					"'%s' has packagename '%s' not corresponding to a .deb listed in the .changes file!\n",
++					debfilename, pkg->deb.name)) {
++			deb_free(pkg);
++			return RET_ERROR;
++		}
++	} else if (!strlist_in(allowed_binaries, packagenametocheck) &&
+ 	    !IGNORING(surprisingbinary,
+ "'%s' has packagename '%s' not listed in the .changes file!\n",
+ 					debfilename, packagenametocheck)) {
+diff -ru reprepro.orig/source/contents.c reprepro/source/contents.c
+--- reprepro.orig/source/contents.c	2016-12-23 19:11:30.000000000 -0500
++++ reprepro/source/contents.c	2020-11-01 16:33:38.182181608 -0500
+@@ -43,6 +43,7 @@
+ 		cf_uncompressed, cf_gz, cf_bz2, cf_xz,
+ 		cf_percomponent, cf_allcomponents,
+ 		cf_compatsymlink, cf_nocompatsymlink,
++		cf_ddebs,
+ 		cf_COUNT
+ 	};
+ 	bool flags[cf_COUNT];
+@@ -60,6 +61,7 @@
+ 		{".bz2", cf_bz2},
+ 		{".gz", cf_gz},
+ 		{".", cf_uncompressed},
++		{"ddebs", cf_ddebs},
+ 		{NULL, -1}
+ 	};
+ 	retvalue r;
+@@ -130,6 +132,7 @@
+ 		distribution->contents.compressions |= IC_FLAG(ic_xz);
+ #endif
+ 	distribution->contents.flags.udebs = flags[cf_udebs];
++	distribution->contents.flags.ddebs = flags[cf_ddebs];
+ 	distribution->contents.flags.nodebs = flags[cf_nodebs];
+ 	if (flags[cf_allcomponents])
+ 		distribution->contents.flags.allcomponents = true;
+@@ -173,20 +176,36 @@
+ 	struct filetorelease *file;
+ 	struct filelist_list *contents;
+ 	struct package_cursor iterator;
++	const char *suffix;
++	const char *symlink_prefix;
+ 
+ 	if (onlyneeded && target->saved_wasmodified)
+ 		onlyneeded = false;
+ 
++	switch (target->packagetype) {
++		case pt_ddeb:
++			symlink_prefix = "d";
++			suffix = "-ddeb";
++			break;
++		case pt_udeb:
++			symlink_prefix = "s";
++			suffix = "-udeb";
++			break;
++		default:
++			symlink_prefix = "";
++			suffix = "";
++	}
++
+ 	contentsfilename = mprintf("%s/Contents%s-%s",
+ 			atoms_components[target->component],
+-			(target->packagetype == pt_udeb)?"-udeb":"",
++			suffix,
+ 			atoms_architectures[target->architecture]);
+ 	if (FAILEDTOALLOC(contentsfilename))
+ 		return RET_ERROR_OOM;
+ 
+ 	if (symlink) {
+ 		char *symlinkas = mprintf("%sContents-%s",
+-				(target->packagetype == pt_udeb)?"s":"",
++				symlink_prefix,
+ 				atoms_architectures[target->architecture]);
+ 		if (FAILEDTOALLOC(symlinkas)) {
+ 			free(contentsfilename);
+@@ -244,17 +263,30 @@
+ 	const struct atomlist *components;
+ 	struct target *target;
+ 	bool combinedonlyifneeded;
++	const char *prefix;
++	const char *symlink_prefix;
+ 
+-	if (type == pt_udeb) {
++	if (type == pt_ddeb) {
++		if (distribution->contents_components_set)
++			components = &distribution->contents_dcomponents;
++		else
++			components = &distribution->ddebcomponents;
++		prefix = "d";
++		symlink_prefix = "d";
++	} else if (type == pt_udeb) {
+ 		if (distribution->contents_components_set)
+ 			components = &distribution->contents_ucomponents;
+ 		else
+ 			components = &distribution->udebcomponents;
++		prefix = "u";
++		symlink_prefix = "s";
+ 	} else {
+ 		if (distribution->contents_components_set)
+ 			components = &distribution->contents_components;
+ 		else
+ 			components = &distribution->components;
++		prefix = "";
++		symlink_prefix = "";
+ 	}
+ 
+ 	if (components->count == 0)
+@@ -286,7 +318,7 @@
+ 	if (!distribution->contents.flags.allcomponents) {
+ 		if (!distribution->contents.flags.compatsymlink) {
+ 			char *symlinkas = mprintf("%sContents-%s",
+-					(type == pt_udeb)?"s":"",
++					symlink_prefix,
+ 					atoms_architectures[architecture]);
+ 			if (FAILEDTOALLOC(symlinkas))
+ 				return RET_ERROR_OOM;
+@@ -298,7 +330,7 @@
+ 	}
+ 
+ 	contentsfilename = mprintf("%sContents-%s",
+-			(type == pt_udeb)?"u":"",
++			prefix,
+ 			atoms_architectures[architecture]);
+ 	if (FAILEDTOALLOC(contentsfilename))
+ 		return RET_ERROR_OOM;
+@@ -365,6 +397,12 @@
+ 					release, onlyneeded);
+ 			RET_UPDATE(result, r);
+ 		}
++		if (distribution->contents.flags.ddebs) {
++			r = genarchcontents(distribution,
++					architecture, pt_ddeb,
++					release, onlyneeded);
++			RET_UPDATE(result, r);
++		}
+ 	}
+ 	return result;
+ }
+diff -ru reprepro.orig/source/contents.h reprepro/source/contents.h
+--- reprepro.orig/source/contents.h	2016-12-23 19:11:30.000000000 -0500
++++ reprepro/source/contents.h	2020-11-01 16:33:38.182181608 -0500
+@@ -19,6 +19,7 @@
+ 		bool percomponent;
+ 		bool allcomponents;
+ 		bool compatsymlink;
++		bool ddebs;
+ 	} flags;
+ 	compressionset compressions;
+ };
+diff -ru reprepro.orig/source/copypackages.c reprepro/source/copypackages.c
+--- reprepro.orig/source/copypackages.c	2016-12-23 19:11:30.000000000 -0500
++++ reprepro/source/copypackages.c	2020-11-01 16:33:38.182181608 -0500
+@@ -779,7 +779,14 @@
+ 					into->codename,
+ 					atoms_architectures[architecture]);
+ 		}
+-		if (packagetype != pt_udeb) {
++		if (packagetype == pt_ddeb) {
++			if (!atomlist_in(&into->ddebcomponents, component)) {
++				fprintf(stderr,
++"Distribution '%s' does not contain ddeb component '%s!'\n",
++					into->codename,
++					atoms_components[component]);
++			}
++		} else if (packagetype != pt_udeb) {
+ 			if (!atomlist_in(&into->components, component)) {
+ 				fprintf(stderr,
+ "Distribution '%s' does not contain component '%s!'\n",
+diff -ru reprepro.orig/source/distribution.c reprepro/source/distribution.c
+--- reprepro.orig/source/distribution.c	2016-12-23 19:11:30.000000000 -0500
++++ reprepro/source/distribution.c	2020-11-01 16:33:38.182181608 -0500
+@@ -69,8 +69,10 @@
+ 		exportmode_done(&distribution->dsc);
+ 		exportmode_done(&distribution->deb);
+ 		exportmode_done(&distribution->udeb);
++		exportmode_done(&distribution->ddeb);
+ 		atomlist_done(&distribution->contents_architectures);
+ 		atomlist_done(&distribution->contents_components);
++		atomlist_done(&distribution->contents_dcomponents);
+ 		atomlist_done(&distribution->contents_ucomponents);
+ 		override_free(distribution->overrides.deb);
+ 		override_free(distribution->overrides.udeb);
+@@ -185,6 +187,26 @@
+ 					return r;
+ 
+ 			}
++			if (atomlist_in(&distribution->ddebcomponents, c)) {
++				r = target_initialize_dbinary(
++						distribution,
++						c, a,
++						&distribution->ddeb,
++						distribution->readonly,
++						distribution->exportoptions[deo_noexport],
++						distribution->fakecomponentprefix,
++						&t);
++				if (RET_IS_OK(r)) {
++					if (last != NULL) {
++						last->next = t;
++					} else {
++						distribution->targets = t;
++					}
++					last = t;
++				}
++				if (RET_WAS_ERROR(r))
++					return r;
++			}
+ 		}
+ 		/* check if this distribution contains source
+ 		 * (yes, yes, source is not really an architecture, but
+@@ -227,6 +249,11 @@
+ 		(void)distribution_free(n);
+ 		return r;
+ 	}
++	r = exportmode_init(&n->ddeb, true, "Release", "Packages");
++	if (RET_WAS_ERROR(r)) {
++		(void)distribution_free(n);
++		return r;
++	}
+ 	r = exportmode_init(&n->deb, true, "Release", "Packages");
+ 	if (RET_WAS_ERROR(r)) {
+ 		(void)distribution_free(n);
+@@ -329,6 +356,9 @@
+ 	    notpropersuperset(&n->components, "Components",
+ 			    &n->contents_components, "ContentsComponents",
+ 			    atoms_components, n) ||
++	    notpropersuperset(&n->ddebcomponents, "DDebComponents",
++			    &n->contents_dcomponents, "ContentsDComponents",
++			    atoms_components, n) ||
+ 	    notpropersuperset(&n->udebcomponents, "UDebComponents",
+ 			    &n->contents_ucomponents, "ContentsUComponents",
+ 			    atoms_components, n) ||
+@@ -336,6 +366,9 @@
+ 	    // in the rest of the code...:
+ 	    notpropersuperset(&n->components, "Components",
+ 			    &n->udebcomponents, "UDebComponents",
++			    atoms_components, n) ||
++	    notpropersuperset(&n->components, "Components",
++			    &n->ddebcomponents, "DDebComponents",
+ 			    atoms_components, n)) {
+ 		(void)distribution_free(n);
+ 		return RET_ERROR;
+@@ -357,6 +390,14 @@
+ 			n->contents.flags.udebs = false;
+ 		}
+ 	}
++	if (n->contents_dcomponents_set) {
++		if (n->contents_dcomponents.count > 0) {
++			n->contents.flags.enabled = true;
++			n->contents.flags.ddebs = true;
++		} else {
++			n->contents.flags.ddebs = false;
++		}
++	}
+ 	if (n->contents_architectures_set) {
+ 		if (n->contents_architectures.count > 0)
+ 			n->contents.flags.enabled = true;
+@@ -410,8 +451,11 @@
+ CFinternatomsSETPROC(distribution, architectures, checkforarchitecture, at_architecture)
+ CFatomsublistSETPROC(distribution, contents_architectures, at_architecture, architectures, "Architectures")
+ CFatomsublistSETPROC(distribution, contents_components, at_component, components, "Components")
++CFatomsublistSETPROC(distribution, ddebcomponents, at_component, components, "Components")
+ CFatomsublistSETPROC(distribution, udebcomponents, at_component, components, "Components")
++CFatomsublistSETPROC(distribution, contents_dcomponents, at_component, ddebcomponents, "DDebComponents")
+ CFatomsublistSETPROC(distribution, contents_ucomponents, at_component, udebcomponents, "UDebComponents")
++CFexportmodeSETPROC(distribution, ddeb)
+ CFexportmodeSETPROC(distribution, udeb)
+ CFexportmodeSETPROC(distribution, deb)
+ CFexportmodeSETPROC(distribution, dsc)
+@@ -461,6 +505,8 @@
+ 	CF("ContentsComponents", distribution,	contents_components),
+ 	CF("Contents",		distribution,	Contents),
+ 	CF("ContentsUComponents", distribution,	contents_ucomponents),
++	CF("DDebComponents",	distribution,	ddebcomponents),
++	CF("DDebIndices",	distribution,	ddeb),
+ 	CF("DebIndices",	distribution,	deb),
+ 	CF("DebOverride",	distribution,	deb_override),
+ 	CF("Description",	distribution,	description),
+diff -ru reprepro.orig/source/distribution.h reprepro/source/distribution.h
+--- reprepro.orig/source/distribution.h	2016-12-23 19:11:30.000000000 -0500
++++ reprepro/source/distribution.h	2020-11-01 16:33:38.182181608 -0500
+@@ -63,8 +63,10 @@
+ 	/* the list of components containing a debian-installer dir,
+ 	 * normally only "main" */
+ 	struct atomlist udebcomponents;
++	/* the list of components containing a debug directory */
++	struct atomlist ddebcomponents;
+ 	/* what kind of index files to generate */
+-	struct exportmode dsc, deb, udeb;
++	struct exportmode dsc, deb, udeb, ddeb;
+ 	bool exportoptions[deo_COUNT];
+ 	/* (NONE must be 0 so it is the default) */
+ 	enum trackingtype { dt_NONE=0, dt_KEEP, dt_ALL, dt_MINIMAL } tracking;
+@@ -80,11 +82,14 @@
+ 	struct contentsoptions contents;
+ 	struct atomlist contents_architectures,
+ 		       contents_components,
++		       contents_dcomponents,
+ 		       contents_ucomponents;
+ 	bool contents_architectures_set,
+ 		       contents_components_set,
++		       contents_dcomponents_set,
+ 		       contents_ucomponents_set,
+ 		       /* not used, just here to keep things simpler: */
++		       ddebcomponents_set,
+ 		       udebcomponents_set;
+ 	/* A list of all targets contained in the distribution*/
+ 	struct target *targets;
+diff -ru reprepro.orig/source/incoming.c reprepro/source/incoming.c
+--- reprepro.orig/source/incoming.c	2016-12-28 10:10:28.000000000 -0500
++++ reprepro/source/incoming.c	2020-11-01 16:33:38.182181608 -0500
+@@ -1264,9 +1264,13 @@
+ 	assert (file == package->master);
+ 	if (file->type == fe_DEB)
+ 		package->packagetype = pt_deb;
++	else if (file->type == fe_DDEB)
++		package->packagetype = pt_ddeb;
+ 	else
+ 		package->packagetype = pt_udeb;
+ 
++	/* we use the deb overrides for ddebs too - ddebs aren't
++	 * meant to have overrides so this is probably fine */
+ 	oinfo = override_search(file->type==fe_UDEB?into->overrides.udeb:
+ 			                    into->overrides.deb,
+ 	                        file->name);
+@@ -1277,6 +1281,16 @@
+ 	if (RET_WAS_ERROR(r))
+ 		return r;
+ 
++	if (file->type == fe_DDEB &&
++	    !atomlist_in(&into->ddebcomponents, package->component)) {
++		fprintf(stderr,
++"Cannot put file '%s' of '%s' into component '%s',\n"
++"as it is not listed in DDebComponents of '%s'!\n",
++			BASENAME(i, file->ofs), BASENAME(i, c->ofs),
++			atoms_components[package->component],
++			into->codename);
++		return RET_ERROR;
++	}
+ 	if (file->type == fe_UDEB &&
+ 	    !atomlist_in(&into->udebcomponents, package->component)) {
+ 		fprintf(stderr,
+@@ -1670,6 +1684,7 @@
+ 		switch (file->type) {
+ 			case fe_UDEB:
+ 			case fe_DEB:
++			case fe_DDEB:
+ 				r = prepare_deb(i, c, d, file);
+ 				break;
+ 			case fe_DSC:
+diff -ru reprepro.orig/source/main.c reprepro/source/main.c
+--- reprepro.orig/source/main.c	2016-12-28 10:02:44.000000000 -0500
++++ reprepro/source/main.c	2020-11-01 16:35:21.842197208 -0500
+@@ -2512,7 +2512,9 @@
+         retvalue result, r;
+ 
+         assert(target->packages == NULL);
+-	assert(target->packagetype == pt_deb || target->packagetype == pt_udeb);
++        assert(target->packagetype == pt_deb ||
++                       target->packagetype == pt_udeb ||
++                       target->packagetype == pt_ddeb);
+ 
+         if (verbose > 2) {
+                 printf(
+@@ -2688,6 +2690,13 @@
+ "Calling includeudeb with a -T not containing udeb makes no sense!\n");
+ 			return RET_ERROR;
+ 		}
++	} else if (strcmp(argv[0], "includeddeb") == 0) {
++		packagetype = pt_ddeb;
++		if (limitations_missed(packagetypes, pt_ddeb)) {
++			fprintf(stderr,
++"Calling includeddeb with a -T not containing ddeb makes no sense!\n");
++			return RET_ERROR;
++		}
+ 	} else if (strcmp(argv[0], "includedeb") == 0) {
+ 		packagetype = pt_deb;
+ 		if (limitations_missed(packagetypes, pt_deb)) {
+@@ -2708,6 +2717,10 @@
+ 			if (!endswith(filename, ".udeb") && !IGNORING(extension,
+ "includeudeb called with file '%s' not ending with '.udeb'\n", filename))
+ 				return RET_ERROR;
++		} else if (packagetype == pt_ddeb) {
++			if (!endswith(filename, ".ddeb") && !IGNORING(extension,
++"includeddeb called with file '%s' not ending with '.ddeb'\n", filename))
++				return RET_ERROR;
+ 		} else {
+ 			if (!endswith(filename, ".deb") && !IGNORING(extension,
+ "includedeb called with file '%s' not ending with '.deb'\n", filename))
+@@ -2730,6 +2743,8 @@
+ 		result = override_read(distribution->udeb_override,
+ 				&distribution->overrides.udeb, false);
+ 	else
++		/* we use the normal deb overrides for ddebs too -
++		 * they're not meant to have overrides anyway */
+ 		result = override_read(distribution->deb_override,
+ 				&distribution->overrides.deb, false);
+ 	if (RET_WAS_ERROR(result)) {
+@@ -3993,6 +4008,8 @@
+ 		2, -1, "[--delete] includedeb <distribution> <.deb-file>"},
+ 	{"includeudeb",		A_Dactsp(includedeb)|NEED_DELNEW,
+ 		2, -1, "[--delete] includeudeb <distribution> <.udeb-file>"},
++	{"includeddeb",		A_Dactsp(includedeb)|NEED_DELNEW,
++		2, -1, "[--delete] includeddeb <distribution> <.ddeb-file>"},
+ 	{"includedsc",		A_Dactsp(includedsc)|NEED_DELNEW,
+ 		2, 2, "[--delete] includedsc <distribution> <package>"},
+ 	{"include",		A_Dactsp(include)|NEED_DELNEW,
+@@ -4183,7 +4200,7 @@
+ 			if (r == RET_NOTHING) {
+ 				fprintf(stderr,
+ "Error: Packagetype '%s' as given to --packagetype is not know.\n"
+-"(only dsc, deb, udeb and combinations of those are allowed)\n",
++"(only dsc, deb, udeb, ddeb and combinations of those are allowed)\n",
+ 					unknownitem);
+ 				r = RET_ERROR;
+ 			}
+@@ -4450,7 +4467,7 @@
+ " -P, --priority <priority>:         Force include* to set priority.\n"
+ " -C, --component <component>: 	     Add,list or delete only in component.\n"
+ " -A, --architecture <architecture>: Add,list or delete only to architecture.\n"
+-" -T, --type <type>:                 Add,list or delete only type (dsc,deb,udeb).\n"
++" -T, --type <type>:                 Add,list or delete only type (dsc,deb,udeb,ddeb).\n"
+ "\n"
+ "actions (selection, for more see manpage):\n"
+ " dumpreferences:    Print all saved references\n"
+@@ -4469,6 +4486,8 @@
+ "       Include the given upload.\n"
+ " includedeb <distribution> <.deb-file>\n"
+ "       Include the given binary package.\n"
++" includeddeb <distribution> <.ddeb-file>\n"
++"       Include the given debug binary package.\n"
+ " includeudeb <distribution> <.udeb-file>\n"
+ "       Include the given installer binary package.\n"
+ " includedsc <distribution> <.dsc-file>\n"
+diff -ru reprepro.orig/source/target.c reprepro/source/target.c
+--- reprepro.orig/source/target.c	2016-12-23 19:11:30.000000000 -0500
++++ reprepro/source/target.c	2020-11-01 16:33:38.186181609 -0500
+@@ -53,6 +53,10 @@
+ 		return mprintf("u|%s|%s|%s", codename,
+ 				atoms_components[component],
+ 				atoms_architectures[architecture]);
++	else if (packagetype == pt_ddeb)
++		return mprintf("d|%s|%s|%s", codename,
++				atoms_components[component],
++				atoms_architectures[architecture]);
+ 	else
+ 		return mprintf("%s|%s|%s", codename,
+ 				atoms_components[component],
+@@ -129,6 +133,25 @@
+ 				dist_component_name(component,
+ 					fakecomponentprefix),
+ 				atoms_architectures[architecture]),
++			exportmode, readonly, noexport, target);
++}
++retvalue target_initialize_dbinary(struct distribution *d, component_t component, architecture_t architecture, const struct exportmode *exportmode, bool readonly, bool noexport, const char *fakecomponentprefix, struct target **target) {
++	return target_initialize(d, component, architecture, pt_ddeb,
++			binaries_getversion,
++			binaries_getinstalldata,
++			binaries_getarchitecture,
++			binaries_getfilekeys, binaries_getchecksums,
++			binaries_getsourceandversion,
++			/* we use the main overrides */
++			binaries_doreoverride, binaries_retrack,
++			binaries_complete_checksums,
++			/* FIXME: we don't know what the Debian archive layout
++			 * is going to look like yet, so take a guess based
++			 * on udebs */
++			mprintf("%s/debug/binary-%s",
++				dist_component_name(component,
++					fakecomponentprefix),
++				atoms_architectures[architecture]),
+ 			exportmode, readonly, noexport, target);
+ }
+ retvalue target_initialize_binary(struct distribution *d, component_t component, architecture_t architecture, const struct exportmode *exportmode, bool readonly, bool noexport, const char *fakecomponentprefix, struct target **target) {
+diff -ru reprepro.orig/source/target.h reprepro/source/target.h
+--- reprepro.orig/source/target.h	2016-12-23 19:11:30.000000000 -0500
++++ reprepro/source/target.h	2020-11-01 16:33:38.186181609 -0500
+@@ -76,6 +76,7 @@
+ };
+ 
+ retvalue target_initialize_ubinary(/*@dependant@*/struct distribution *, component_t, architecture_t, /*@dependent@*/const struct exportmode *, bool /*readonly*/, bool /*noexport*/, /*@NULL@*/const char *fakecomponentprefix, /*@out@*/struct target **);
++retvalue target_initialize_dbinary(/*@dependant@*/struct distribution *, component_t, architecture_t, /*@dependent@*/const struct exportmode *, bool /*readonly*/, bool /*noexport*/, /*@NULL@*/const char *fakecomponentprefix, /*@out@*/struct target **);
+ retvalue target_initialize_binary(/*@dependant@*/struct distribution *, component_t, architecture_t, /*@dependent@*/const struct exportmode *, bool /*readonly*/, bool /*noexport*/, /*@NULL@*/const char *fakecomponentprefix, /*@out@*/struct target **);
+ retvalue target_initialize_source(/*@dependant@*/struct distribution *, component_t, /*@dependent@*/const struct exportmode *, bool /*readonly*/, bool /*noexport*/, /*@NULL@*/const char *fakecomponentprefix, /*@out@*/struct target **);
+ retvalue target_free(struct target *);
+diff -ru reprepro.orig/source/tests/genpackage.sh reprepro/source/tests/genpackage.sh
+--- reprepro.orig/source/tests/genpackage.sh	2016-12-23 19:11:30.000000000 -0500
++++ reprepro/source/tests/genpackage.sh	2020-11-01 16:33:38.186181609 -0500
+@@ -9,6 +9,8 @@
+ fi
+ 
+ DIR="$PACKAGE-$VERSION"
++ARCH="${ARCH:-$(dpkg-architecture -qDEB_HOST_ARCH)}"
++rm -rf "$DIR"
+ mkdir "$DIR"
+ mkdir "$DIR"/debian
+ cat >"$DIR"/debian/control <<END
+@@ -28,6 +30,17 @@
+ Description: bla
+  blub
+ END
++
++if test -n "${DDEB-}" ; then
++cat >>"$DIR"/debian/control <<END
++
++Package: ${PACKAGE}-dbgsym
++Architecture: ${ARCH}
++Description: ${PACKAGE} debug symbols
++Package-Type: ddeb
++END
++fi
++
+ if test -z "$DISTRI" ; then
+ 	DISTRI=test1
+ fi
