@@ -20,7 +20,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=4
+VERSION=5
 
 . ./config
 
@@ -56,6 +56,9 @@ done
 for DIR in $PRESERVEDIRS; do
   cp $DIR $TMPDIR --parents -a
 done
+
+# Enable blobless activation - https://libreplanet.org/wiki/Group:Hardware/research/gpu/radeon
+rm $TMPDIR/drivers/gpu/drm/radeon/ni.c
 
 sh $DATA/deblob-5.8
 
