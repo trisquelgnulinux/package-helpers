@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=9
+VERSION=10
 NETINST=true
 
 . ./config
@@ -63,7 +63,7 @@ open-ath9k-htc-firmware-udeb
 openfwwf-udeb
 EOF
 
-replace "2004-20.." "2004-20$(date +'%y')" . -R
+replace "2004-20.." "2004-20$(date +'%y')" .
 rpl www.ubuntu.com trisquel.info . -R
 rpl ubuntu.com trisquel.info build/boot/ -R
 rpl www.ubuntu trisquel build/boot/ -R
