@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=86
+VERSION=87
 
 . ./config
 
@@ -282,7 +282,7 @@ sed "s/ubuntu_version/trisquel_version/; s/Ubuntu 10.10/Trisquel $REVISION/; s/1
 rm -rf ./browser/metro ./addon-sdk/source/doc/static-files/media ./browser/themes/osx ./b2g
 
 #Trisquel custom bookmarks
-cp $DATA/bookmarks.html.in browser/locales/generic/profile/bookmarks.html.in
+cp $DATA/default-bookmarks.html browser/base/content/default-bookmarks.html
 
 #Trisquel custom search engines
 cp -a $DATA/searchplugins/* browser/components/search/extensions/
@@ -358,16 +358,8 @@ MOZ_TELEMETRY_REPORTING=0
 MOZ_ADDON_SIGNING=0
 EOF
 
-# Fix locale
-cat << EOF >> mobile/locales/en-US/chrome/region.properties
-browser.search.defaultenginename=DuckDuckGo
-browser.search.order.1=DuckDuckGo
-browser.search.order.2=Google
-browser.search.order.3=Yahoo
-browser.suggestedsites.restricted_mozilla.url=https://www.trisquel.info
-browser.suggestedsites.webmaker.title=GNU Project
-browser.suggestedsites.webmaker.url=https://www.gnu.org
-EOF
+#Enable EGL by default
+sed -i '/gfx.x11-egl.force-enabled/,/mirror/s|false|true|' modules/libpref/init/StaticPrefList.yaml
 
 # Branding
 rm mobile/android/branding/{official,unofficial,beta,nightly} -rf
