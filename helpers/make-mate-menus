@@ -24,9 +24,6 @@ COMPONENT=main
 
 cp $DATA/applications.menu layout/mate-applications.menu
 
-#Fix LP:1891891 Broken icons on localization MATE (only for nabia)
-patch -p1 < $DATA/nabia_mate-menus_fix_based_on_39c1188.patch
-
 changelog "Default layout adapted for Trisquel"
 
 compile
