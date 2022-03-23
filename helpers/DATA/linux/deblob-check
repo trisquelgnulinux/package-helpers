@@ -6280,6 +6280,9 @@ set_except () {
     accept 'ARM[ ]assembly[ ]source[ ]code[ ]available[ ]at[ ]https[:][/][/]linuxtv\.org[/]downloads[/]firmware[/]Boot\.S' firmware/WHENCE
 
 
+    # New in 5.16.3, 5.15.17, 5.10.94, 5.4.174, 4.19.226, 4.14.263.
+    accept 'static[ ]struct[ ]dvb_usb_device_properties[ ]\(p1100\|s660\|p7500\)_properties[ ]=[ ][{][\n]\([	]\.\(caps\|usb_ctrl\|size_of_priv\)[ ]*=[ ][^",]*,[\n]*\)*[	]\.firmware[ ]*=[ ]' drivers/media/usb/dvb-usb/dw2102.c
+
     ;;
 
   */*freedo*.patch | */*logo*.patch)
