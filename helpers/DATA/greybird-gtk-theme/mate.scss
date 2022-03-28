@@ -74,6 +74,12 @@
     border-width: 1px 1px 1px 0px;
 }
 
+/* fix no cursor on dark theme*/
+.caja-desktop.view .entry,
+.caja-navigation-window .view .entry {
+    caret-color: #000;
+}
+
 /****************
  * Mate-Panel *
  ****************/
