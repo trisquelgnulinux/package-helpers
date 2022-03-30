@@ -68,7 +68,12 @@ find ${@:3} -type f -not -iregex '.*changelog.*' -not -iregex '.*copyright.*' -e
 changelog(){
 head -n 1 debian/changelog | grep -q $UPSTREAM-security && REPO=$CODENAME-security || REPO=$CODENAME
 [ "$BACKPORT" = true ] || [ "$BACKPORTS" = true ] && REPO=${CODENAME}-backports
+#Name convention issue "+" breaking packages build like console-setup, using "-" instead.
+if [ "$NAME_CI" = true ];then
+echo | dch -D $REPO -v `pkgversion`-${REVISION}trisquel${VERSION} "$1"
+else
 echo | dch -D $REPO -v `pkgversion`+${REVISION}trisquel${VERSION} "$1"
+fi
 
 # Make sure the changelog file is identical between archs
 /bin/sed "/-- Trisquel/s/.*/ -- Trisquel GNU\/Linux developers <trisquel-devel@listas.trisquel.info>  $DATE/" -i debian/changelog
