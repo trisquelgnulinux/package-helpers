@@ -17,11 +17,15 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 COMPONENT=main
 
 . ./config
- 
+
+#Use custom apt-check to fix motd update notification by striping esm stuff.
+cp $DATA/apt_check.py data/apt_check.py
+sed -i '/test_package-data-downloader.py/d' debian/rules
+
 rm debian/update-notifier-hp-firmware.conf
 sed '/hp-firmware/d' -i debian/update-notifier.install
 
