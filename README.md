@@ -54,6 +54,23 @@ of the upstream package. Well written regexps and sed will help with that.
 and running `dpkg-source -b .`, before being added to the helper script
 * You can check the status of failed build at https://jenkins.trisquel.org/job/build-watchdog/lastBuild/consoleText
 
+## Debootstrap
+On every new release we need to get compiled the very basic packages in order
+to create a trisquel base builder.
+Before that we currently relay on a upstream debootstrap image, so creating a
+trisquel debootstrap is the starting point.
+
+Every new release need the following packages taken care of first,
+
+* `make-apt`
+* `make-base-files`
+* `make-bash`
+* `make-debootstrap`
+* `make-dpkg`
+* `make-cdebconf`
+* `trisquel-keyring` (not as helper)
+* `trisquel-meta` (not as helper)
+
 ## Netinstall
 
 Included are the set of scipts used to generate the network installer images
