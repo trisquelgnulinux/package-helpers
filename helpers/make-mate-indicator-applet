@@ -23,7 +23,6 @@ COMPONENT=main
 . ./config
 
 sed 's/size - PANEL_PADDING/(size - PANEL_PADDING) < 28 ? (size - PANEL_PADDING) : (28)/' -i src/applet-main.c
-sed 's/Ubuntu/Trisquel/' -i debian/rules
 
 changelog "Limit size of indicator icons"
 
