@@ -1,51 +1,24 @@
---- validate-csv-data	2020-01-27 15:25:09.000000000 -0600
-+++ validate-csv-data_nabia	2021-11-25 01:56:57.107530515 -0600
-@@ -26,6 +26,7 @@
- import sys
+--- validate-csv-data	2021-10-15 08:01:00.000000000 -0500
++++ validate-csv-data	2022-04-06 12:27:29.004706669 -0500
+@@ -27,6 +27,13 @@
+ 
  
  _COLUMNS = {
-+    "trisquel": ("version", "codename", "series", "created", "release", "eol"),
-     "debian": ("version", "codename", "series", "created", "release", "eol"),
-     "ubuntu": ("version", "codename", "series", "created", "release", "eol",
-                "eol-server", "eol-esm"),
-@@ -37,6 +38,7 @@
-     ("eol", "eol-server"),
++    "trisquel": (
++        "version",
++        "codename",
++        "series",
++        "created",
++        "release",
++        "eol"),
+     "debian": (
+         "version",
+         "codename",
+@@ -58,6 +65,7 @@
+     ("eol-lts", "eol-elts"),
  )
  _STRINGS = {
 +    "trisquel": ("version", "codename", "series"),
      "debian": ("codename", "series"),
      "ubuntu": ("version", "codename", "series"),
  }
-@@ -130,24 +132,28 @@
- def main():
-     """Main function with command line parameter parsing."""
-     script_name = os.path.basename(sys.argv[0])
--    usage = "%s [-h] -d|-u csv-file" % (script_name)
-+    usage = "%s [-h] -d|-u|-t csv-file" % (script_name)
-     parser = argparse.ArgumentParser(usage=usage)
- 
-     parser.add_argument("-d", "--debian", dest="debian", action="store_true",
-                         default=False, help="validate a Debian CSV file")
-     parser.add_argument("-u", "--ubuntu", dest="ubuntu", action="store_true",
-                         default=False, help="validate an Ubuntu CSV file")
-+    parser.add_argument("-t", "--trisquel", dest="trisquel", action="store_true",
-+                        default=False, help="validate a Trisquel CSV file")
-     parser.add_argument("csv_file", metavar="csv-file",
-                         help="CSV file to validate")
- 
-     args = parser.parse_args()
--    if len([x for x in [args.debian, args.ubuntu] if x]) != 1:
--        parser.error("You have to select exactly one of --debian, --ubuntu.")
-+    if len([x for x in [args.trisquel, args.debian, args.ubuntu] if x]) != 1:
-+        parser.error("You have to select exactly one of --trisquel, --debian, --ubuntu.")
- 
-     if args.debian:
-         distro = "debian"
--    else:
-+    elif args.ubuntu:
-         distro = "ubuntu"
-+    else:
-+        distro = "trisquel"
- 
-     return int(not validate(args.csv_file, distro))
- 
