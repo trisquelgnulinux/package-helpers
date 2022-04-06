@@ -21,6 +21,10 @@ VERSION=1
 
 . ./config
 
+#Remove snap patches
+rm debian/patches/snap_store.diff
+sed -i '/snap_store.diff/d' debian/patches/series
+
 #Remove pre-installed menu by gnome-menus' trisquel package
 rm data/menus/gnome-flashback-applications.menu
 sed -i '/etc\/xdg\/menus/d' debian/gnome-flashback-common.install
