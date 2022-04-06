@@ -54,7 +54,7 @@ replace Kubuntu Triskel .
 replace kubuntu triskel .
 
 # Custom favorite apps on main menu
-sed '/favoriteApps/,/^$/s|<default.*|<default>preferred://browser,icedove.desktop,libreoffice-startcenter.desktop,org.kde.kcalc.desktop,org.kde.dolphin.desktop,systemsettings.desktop,org.kde.konsole.desktop,trisquel-app-install.desktop</default>|' -i desktop/plasmoids/org.kde.plasma.simplemenu/contents/config/main.xml
+sed -i '/FavoriteURLs/s|FavoriteURLs=preferred.*|FavoriteURLs=preferred://browser,icedove.desktop,libreoffice-startcenter.desktop,org.kde.kcalc.desktop,org.kde.dolphin.desktop,systemsettings.desktop,org.kde.konsole.desktop,trisquel-app-install.desktop|' desktop/etc/xdg/kickoffrc
 
 cat << EOF > desktop/theme/desktoptheme/triskel/metadata.desktop
 [Desktop Entry]
