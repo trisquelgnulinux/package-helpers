@@ -24,8 +24,6 @@ REPOKEY=04EE7237B7D453EC
 
 . ./config
 
-sed '/Build-Depends/s/$/, python-configparser/' -i 	debian/control \
-							debian/templates/control.source.in
 sed '/Suggests/s/$/\nProvides: linux-firmware/' -i 	debian/control \
 							debian/templates/control.binary.in
 
