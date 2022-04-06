@@ -32,8 +32,12 @@ sed '/Package: ubuntu-session/,/^$/d' debian/control -i
 echo "X-LightDM-DesktopName=GNOME" >> ./data/gnome.desktop.in
 
 #sed -i '/Package: communitheme-snap-session/,/^$/d' debian/control
+
 #Prevent failing on missing files
-sed -i 's|dh_missing --fail-missing|dh_missing|' debian/rules
+cat << RULES >> debian/rules
+override_dh_missing:
+	dh_missing --list-missing
+RULES
 
 changelog "Adapted for Trisquel"
 
