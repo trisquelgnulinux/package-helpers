@@ -21,7 +21,6 @@ VERSION=2
 
 . ./config
 
-sed 's/ and Debian Icedove//' -i debian/control
 sed 's/Thunderbird/Icedove/' -i debian/control
 sed 's/thunderbird/icedove/' -i debian/control
 
