@@ -22,6 +22,9 @@ VERSION=0
 
 . ./config
 
+rm debian/patches/Update-recommended-downloads.patch
+sed -i '/Update-recommended-downloads.patch/d' debian/patches/series
+
 cat << recommended-os > data/recommended-downloads.xml
 <?xml version="1.0" encoding="utf-8" ?>
 <!--
