@@ -27,10 +27,6 @@ X-MATE-AutoRestart=true
 X-MATE-Autostart-Phase=Initialization
 EOF
 
-# This removes a circular build dependency
-sed '/gedit/d' -i debian/control
-rm debian/tests/gedit
-
 changelog "Enable on MATE"
 
 compile
