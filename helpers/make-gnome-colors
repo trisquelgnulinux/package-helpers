@@ -23,9 +23,6 @@ VERSION=5
 
 . ./config
 
-#Force non-backports inkscape version
-sed -i "s|inkscape|inkscape (<= 0.93)|" debian/control
-
 rm gnome-colors-common/16x16/apps/skype.png
 rm gnome-colors-common/22x22/apps/skype.png
 rm gnome-colors-common/24x24/apps/skype.png
