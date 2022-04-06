@@ -42,8 +42,6 @@ EOF
 sed "s#^FAI_DEBOOTSTRAP=.*#FAI_DEBOOTSTRAP=\"$CODENAME http://archive.trisquel.org/trisquel\"#" \
     -i conf/nfsroot.conf
 
-sed 's/linux-image-server/linux-image-generic/g' -i conf/NFSROOT
-
 changelog "Adapted for Trisquel. Fixes #28007"
 
 compile
