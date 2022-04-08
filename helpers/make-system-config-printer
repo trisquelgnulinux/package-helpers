@@ -22,8 +22,14 @@ COMPONENT=main
 
 . ./config
 
-sed 's/;GNOME;/;/' debian/patches/05_menu_entries.patch -i
-cp $DATA/testpage* debian/local/
+sed -i '/+NotShowIn/s|;GNOME;|;|g' debian/patches/Hide-Printers-app-in-GNOME-and-KDE.patch \
+                                  debian/patches/Do-not-autostart-the-applet-on-LXDE-or-Unity.patch
+
+remove_patch Allow-installing-non-free-drivers-from-OpenPrinting.patch
+remove_patch Allow-installing-packages-from-OpenPrinting.patch
+
+#mkdir debian/local/
+#cp $DATA/testpage* debian/local/
 
 #Recommend trisquel-app-installer over gnome-software
 sed 's|gnome-software.*|trisquel-app-install,|g' -i debian/control
