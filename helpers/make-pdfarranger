@@ -22,7 +22,7 @@ VERSION=1
 . ./config
 
 
-sed -i "s|Office;|Utility;|" data/pdfarranger.desktop
+sed -i "s|Office;|Utility;|" data/com.github.jeromerobert.pdfarranger.desktop
 rm -r data/icons
 cp -r $DATA/icons data/
 cp $DATA/pdfarranger.ico data/
