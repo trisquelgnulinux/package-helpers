@@ -44,7 +44,7 @@ sed '/paint_with_alpha/s/0.4/0.7/' -i src/menubar.vala
 sed '/set_source_rgb/s/(0.1, 0.1, 0.1)/(0.0, 0.0, 0.0)/' -i src/menubar.vala
 sed '/set_source_rgba/s/(0.1, 0.1, 0.1, 0.4)/(0.0, 0.0, 0.0, 0.7)/' -i src/dash-box.vala
 
-sed '/ttf-ubuntu-font-family/d' -i debian/control
+sed '/fonts-ubuntu/d' -i debian/control
 
 sed '/default_session/ s/ubuntu/trisquel/' -i ./src/user-list.vala
 sed '/session_name/ s/ubuntu/trisquel/' -i ./src/settings-daemon.vala
