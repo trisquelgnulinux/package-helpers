@@ -25,7 +25,6 @@ VERSION=2
 sed '/kns-backend.so/d' -i ./debian/plasma-discover.install
 
 #Disable backend for snap, flatpack and fwupd
-sed -i "/DBUILD/s|ON|OFF|g" debian/rules
 rm debian/plasma-discover-backend-*.install
 
 #Removing will break build, keeping.
@@ -34,19 +33,15 @@ rm debian/plasma-discover-backend-*.install
 #rm -r libdiscover/backends/$i
 #done
 
-#Remove binaries
-sed -i '/Package: plasma-discover-backend-flatpak/,/^$/d' debian/control
-sed -i '/Package: plasma-discover-backend-snap/,/^$/d' debian/control
-sed -i '/Package: plasma-discover-backend-fwupd/,/^$/d' debian/control
-sed -i '/Package: plasma-discover-flatpak-backend/,/^$/d' debian/control
-sed -i '/Package: plasma-discover-snap-backend/,/^$/d' debian/control
-
 # Do not show Plasma Addons in the main menu
 /bin/sed -n '0,/^  <\/Menu>/p' -i ./libdiscover/backends/PackageKitBackend/packagekit-backend-categories.xml
 echo '</Menu>' >> ./libdiscover/backends/PackageKitBackend/packagekit-backend-categories.xml
 
-#Disable dh_missing fail
-sed -i "s|--fail-missing|--list-missing|" debian/rules
+#Prevent failing on missing files
+cat << RULES >> debian/rules
+override_dh_missing:
+	dh_missing --list-missing
+RULES
 
 changelog "Disable kns, snap and flatpack backend"
 
