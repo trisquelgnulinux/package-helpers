@@ -22,21 +22,12 @@ VERSION=1
 
 . ./config
 
-#Apply patches fow new fully free distros availbale at libosinfo as Jan-2022
+#Apply changes for new fully free distros availbale at libosinfo.
 # trisquel.info
-patch -p1 < $DATA/trisquel9-e43f4830.patch
 sed -i '/derives-from/d' data/os/trisquel.info/trisquel-9.xml.in
 sed -i '/release-date/a \ \ \ \ <codename>Etiona</codename>' data/os/trisquel.info/trisquel-9.xml.in
-# guix.gnu.org
-patch -p1 < $DATA/guix_base-9bb849fe.patch
-patch -p1 < $DATA/guix_1.3-e75ed5cd.patch
-# hyperbola.info
-patch -p1 < $DATA/hyperbola_03-a77800ad.patch
-# pureos.net
-rm -r data/os/pureos.net
-patch -p1 < $DATA/pure-os_8-3570a396.patch
 
 
-changelog "Apply patches fow new fully free distros availbale at libosinfo (Jan-2022)."
+changelog "Apply changes for new fully free distros availbale at libosinfo."
 
 compile
