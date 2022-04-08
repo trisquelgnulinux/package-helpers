@@ -1,5 +1,6 @@
 #!/bin/sh
 #
+#    Copyright (C) 2022 Luis Guzman <ark@switnet.org>
 #    Copyright (C) 2011-2020  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C) 2011  Carlos Pais <freemind@lavabit.com>
 #    Copyright (C) 2019 Mason Hock <mason@masonhock.com>
@@ -26,10 +27,12 @@ VERSION=6
 cat << EOF | patch -p1
 --- source.orig/softwareproperties/SoftwareProperties.py        2014-04-14 17:10:58.000000000 +0200
 +++ source/softwareproperties/SoftwareProperties.py     2014-05-18 03:02:05.309290804 +0200
-@@ -725,8 +725,18 @@
+@@ -722,8 +746,18 @@
      site is in whitelist or the shortcut implementer adds it.
      """
  
+-    deb_line = shortcut.SourceEntry().line
+-    file = shortcut.sourceparts_file
 +    codenames = {}
 +    codenames["nabia"] = "focal" 
 +    codenames["etiona"] = "bionic" 
@@ -42,15 +45,15 @@ cat << EOF | patch -p1
 +    codenames["taranis"] = "lucid"
 +    codenames["awen"] = "karmic" 
 +    (deb_line, file) = shortcut.expand(codename=codenames[self.distro.codename])
--    (deb_line, file) = shortcut.expand(
--        codename=self.distro.codename, distro=self.distro.id.lower())
      deb_line = self.expand_http_line(deb_line)
      debsrc_entry_type = 'deb-src' if enable_source_code else '# deb-src'
      debsrc_line = debsrc_entry_type + deb_line[3:]
 EOF
 
-patch -p1 < $DATA/remove_livepatch_from_gtk_uiv1_1.patch
-patch -p1 < $DATA/disable-livepatch.patch
+  #Temporary removal of livepatch LP:1965993
+  #patch -p1 < $DATA/remove_livepatch_from_gtk_uiv1_1.patch
+  #patch -p1 < $DATA/disable-livepatch.patch
+rm softwareproperties/gtk/UbuntuProPage.py
 patch -p0 < $DATA/remove_snap_label.patch
 
 #Python specific changes
@@ -59,7 +62,8 @@ sed -i '/import softwareproperties.SoftwareProperties/a from softwareproperties.
 sed -i 's|eol_date = distro.eol|eol_date = trisquel_eol|' softwareproperties/gtk/SoftwarePropertiesGtk.py
 sed -i 's|eol_text = .*|eol_text = trisquel_rel_desc|' softwareproperties/gtk/SoftwarePropertiesGtk.py
 #Allow to start and remove drivers tab for qt flavor
-sed -i '/info_bar_ubuntu_pro/d' softwareproperties/gtk/SoftwarePropertiesGtk.py
+  #Temporary removal of livepatch LP:1965993
+  #sed -i '/info_bar_ubuntu_pro/d' softwareproperties/gtk/SoftwarePropertiesGtk.py
 sed -i '/UbuntuDrivers/d' softwareproperties/qt/SoftwarePropertiesQt.py
 sed -i '/tab_switched(self)/i \ \ \ \ self.userinterface.tabWidget.removeTab(4)' softwareproperties/qt/SoftwarePropertiesQt.py
 sed -i '/tab_switched(self)/,/self.button_revert.setVisible(True)/{//!d}' softwareproperties/qt/SoftwarePropertiesQt.py
@@ -74,24 +78,22 @@ replace cdimage@ubuntu.com trisquel-devel@listas.trisquel.info .
 replace TrisquelDistribution UbuntuDistribution .
 sed '/NoDisplay/d; s/Trisquel/Ubuntu/' -i data/software-properties-gtk.desktop.in
 
-#Replace went too far
-sed -i 's|TrisquelDistroInfo|UbuntuDistroInfo|' softwareproperties/gtk/utils.py
-
 sed '/ubuntu-drivers-common/d' -i debian/control
 sed '/software-properties-drivers/d' -i debian/software-properties-gtk.install setup.cfg
 
 replace "Trisquel-Gettext" "Ubuntu-Gettext" .
-sed -i 's|UbuntuDistroInfo|TrisquelDistroInfo|g' softwareproperties/gtk/utils.py
 
 sed '/test_suite/d' -i setup.py
 rm -rf tests
 
 sed '/gir1.2-snapd-1/d' -i debian/control
-sed '/self.init_livepatch/d' -i softwareproperties/gtk/SoftwarePropertiesGtk.py
-sed 's/status = self.get_status()/status = Snapd.SnapStatus.UNKNOWN/' -i softwareproperties/LivepatchSnap.py
+  #Temporary removal of livepatch LP:1965993
+  #sed '/self.init_livepatch/d' -i softwareproperties/gtk/SoftwarePropertiesGtk.py
+  #sed 's/status = self.get_status()/status = Snapd.SnapStatus.UNKNOWN/' -i softwareproperties/LivepatchSnap.py
 
 rm data/software-properties-drivers.desktop.in
 sed -i '/software-properties-drivers/d' po/POTFILES.in
+sed -i '/TrisquelProPage/d' po/POTFILES.in
 
 rm data/software-properties-livepatch.desktop.in
 sed -i '/software-properties-livepatch.desktop.in/d' po/POTFILES.in
