@@ -31,13 +31,16 @@ sed '/no-composite/a # Do not run without 3D acceleration\nglxinfo | grep -q "Ac
 
 # Allow loading global compton config file
 sed '/for this wrapper./aif [ -f /etc/xdg/compton.conf ]; then \n    compton --config /etc/xdg/compton.conf' -i marco-compton
-sed '/^if.*HOME.*compton.conf/s/if/elif/' -i marco-compton
+sed '/if.*HOME.*config.*.conf/s/if/elif/' -i marco-compton
 
 # Corrects rendering delay on Pluma, possibly others
 sed '/--backend/s/\\/--xrender-sync-fence --xrender-sync \\/' -i  marco-compton
 
 # Shadow config
-sed 's/-r 10 -o 0.225 -l -12 -t -12/-r 6 -o 0.6 -l -9 -t -9/' -i marco-compton
+sed -i '/shadow-radius/s|12|6|' marco-compton
+sed -i '/shadow-opacity/s|0.125|0.6|' marco-compton
+sed -i '/shadow-offset-x/s|-12|-9|' marco-compton
+sed -i '/shadow-offset-y/s|-12|-9|' marco-compton
 
 # Add Trisquel to layout list
 sed 's/fedora/trisquel/g; s/Fedora/Trisquel/' -i mate-tweak
