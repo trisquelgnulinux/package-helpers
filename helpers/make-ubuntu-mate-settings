@@ -89,15 +89,11 @@ image/x-gray=viewnior.desktop;gimp.desktop;
 image/svg+xml=viewnior.desktop;
 EOF
 
-# indicator-session is only needed for lightdm
-rm debian/indicator-session.desktop.in
-sed '/indicator-session.desktop/d' -i usr/lib/ubuntu-mate/ubuntu-mate-settings-overlay debian/ubuntu-mate-default-settings.install debian/rules
-
 sed '/fonts-ubuntu/d' -i debian/control
 
 #Remove caja's dropbox autostart.
-rm usr/bin/caja-dropbox-autostart
-rm usr/share/mate/autostart/caja-dropbox-autostart.desktop
+rm $(find -name caja-dropbox-autostart)
+rm $(find -name caja-dropbox-autostart.desktop)
 sed '/dropbox/d' -i debian/ubuntu-mate-default-settings.install
 
 changelog "Customized for Trisquel"
