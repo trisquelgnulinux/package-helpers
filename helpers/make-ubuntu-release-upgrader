@@ -199,8 +199,7 @@ perl $DATA/parsewiki DistUpgrade/EOLReleaseAnnouncement > DistUpgrade/EOLRelease
 perl $DATA/parsewiki DistUpgrade/ReleaseAnnouncement > DistUpgrade/ReleaseAnnouncement.html
 perl $DATA/parsewiki DistUpgrade/DevelReleaseAnnouncement > DistUpgrade/DevelReleaseAnnouncement.html
 
-rm data/removal_blacklist.cfg
-cat <<EOF > data/removal_blacklist.cfg
+cat <<EOF > data/removal_denylist.cfg
 # blacklist of packages that should never be removed
 trisquel-base
 trisquel-minimal
@@ -211,6 +210,15 @@ trisquel-sugar
 # update-manager should not remove itself
 update-manager
 update-manager-core
+trisquel-release-upgrader-core
+# if for example postgresql-10 is purged the cluster can be dropped which we
+# should prevent (LP: #871893, #1825563)
+^postgresql-.*[0-9]\.[0-9].*
+^postgresql-.*[0-9][0-9].*
+# the upgrade runs in it
+^screen$
+# the upgrade might be run over ssh
+^openssh-server$
 EOF
 
 rm data/mirrors.cfg
@@ -285,7 +293,7 @@ replace "https*://bugs.launchpad.net/ubuntu/+source/ubuntu-release-upgrader/+fil
 find -type f |xargs rename 's/ubuntu-release-upgrader/trisquel-release-upgrader/g'
 replace  "ubuntu-release-upgrader" "trisquel-release-upgrader" .
 mv kubuntu-devel-release-upgrade triskel-devel-release-upgrade
-mv tests/test-data-cdrom/ubuntu tests/test-data-cdrom/trisquel
+#mv tests/test-data-cdrom/ubuntu tests/test-data-cdrom/trisquel
 replace old-releases.ubuntu.com oldarchive.trisquel.org
 
 rpl "edubuntu" "trisquel-edu" . -R
