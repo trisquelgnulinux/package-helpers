@@ -21,10 +21,10 @@ VERSION=1
 COMPONENT=main
 . ./config
 
-sed -i 's/You may also want to install some non-free packages like "unace-nonfree",//g;s/"unrar-nonfree" and "lha" to extract archives of these types\.//g' debian/control
+sed -i '/\ \./Q' debian/control
 
 changelog "Description changed
-	   Closes #2076 " 
+	   Closes #2076 "
 
 compile
 
