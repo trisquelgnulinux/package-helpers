@@ -171,8 +171,13 @@ cat << EOF | patch -p1
  If you do not use encryption and use regular disk files, you do
 EOF
 
+#Prevent the use of patch 11-typo-it-is-ambiguities-not-amgibuities.patch
+sed -i 's|amgibuities|ambiguities|g' man/zip.1
+
+remove_patch 11-typo-it-is-ambiguities-not-amgibuities.patch
+
 changelog "Removed proprietary suggestions from the manual file
-	   Closes #6711" 
+	   Closes #6711"
 
 compile
 
