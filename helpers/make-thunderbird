@@ -124,7 +124,9 @@ sed 's/com.ubuntu/org.trisquel/' -i debian/config/mozconfig.in
 ## Add other archs that might present the same lack of disable-eme option
 cat << ARCH >> debian/config/mozconfig.in
 %%if DEB_HOST_ARCH != armhf
+%%if DEB_HOST_ARCH != arm64
 ac_add_options --disable-eme
+%%endif
 %%endif
 ARCH
 ########################################################
