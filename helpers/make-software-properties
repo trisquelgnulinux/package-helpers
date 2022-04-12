@@ -100,6 +100,10 @@ sed -i '/software-properties-livepatch.desktop.in/d' po/POTFILES.in
 sed -i '/software-properties-livepatch.desktop.in/d' setup.cfg
 sed -i '/software-properties-livepatch.desktop/s|^|#|' debian/software-properties-gtk.install
 
+#Remove ProPage
+sed -i '/TrisquelProPage/d' softwareproperties/gtk/SoftwarePropertiesGtk.py
+sed -i '/init_ubuntu_pro/d' softwareproperties/gtk/SoftwarePropertiesGtk.py
+
 changelog "Removed Ubuntu-specifc tests, Livepatch, Snap"
 
 compile
