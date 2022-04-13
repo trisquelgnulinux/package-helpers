@@ -20,8 +20,8 @@
 #
 
 VERSION=6
-FIXED_VER=2.04-1ubuntu26.13
 COMPONENT=main
+DEPENDS=base-files
 
 . ./config
 
@@ -36,10 +36,8 @@ done
 #sed '/dosfstools/d' -i debian/control
 sed '/mkfs.minix/s/-B $BLKSIZE//g' -i tests/util/grub-fs-tester.in
 
-for i in install-efi-ubuntu-flavours.patch mkconfig-ubuntu-distributor.patch; do
-    rm debian/patches/$i
-    sed /$i/d debian/patches/series -i
-done
+#remove_patch install-efi-ubuntu-flavours.patch
+remove_patch mkconfig-ubuntu-distributor.patch
 
 #Allow passwords https://bugs.launchpad.net/ubuntu/+source/grub2/+bug/1311302
 /bin/sed '/CLASS=/s/class os/class os --unrestricted/' -i util/grub.d/* debian/patches/mkconfig-other-inits.patch
@@ -51,6 +49,9 @@ replace Ubuntu Trisquel .
 replace ubuntu trisquel .
 find |grep ubuntu|xargs rename s/ubuntu/trisquel/
 
+#Prevent "replace"ment break patches
+sed -i '/^trisquel/s|-trisquel|-ubuntu|g' debian/patches/series
+
 #Avoid the use of signed grub efi package
 sed -i '/Recommends:/s|grub-efi-amd64-signed|grub-efi-amd64|' debian/control
 
@@ -58,6 +59,9 @@ sed -i '/Recommends:/s|grub-efi-amd64-signed|grub-efi-amd64|' debian/control
 sed 's/class osx/class osx --unrestricted/; s/class windows/class osx --unrestricted/;' -i ./util/grub.d/30_os-prober.in
 
 sed -i '/set -e/aexit 77' tests/grub_cmd_set_date.in
+
+# Remove this change once building on a trisquel schroot
+sed -i '/SB_EFI_VENDOR ?/s|=.*|= trisquel|' debian/rules
 
 changelog "skip test grub_cmd_set_date.in"
 
