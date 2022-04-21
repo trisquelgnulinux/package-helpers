@@ -1758,17 +1758,17 @@ clean_sed '
 	  -EINVAL)
 }' drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c 'report missing Free firmware'
 clean_blob drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-clean_sed '
+clean_sed "
 /^int bnx2x_compare_fw_ver/,/^}$/{
-  /^		u32 my_fw = /i\
-		/*(DEBLOBBED)*/
-  /^		u32 my_fw = /,/<< 24);/d;
-  /^		u32 loaded_fw = /,/^$/{
-    /^$/i\
-\
-		u32 my_fw = ~loaded_fw;
+  /[[:space:]]u32 my_fw = /i\\
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ /*(DEBLOBBED)*/
+  /[[:space:]]u32 my_fw = /,/<< 24);/d;
+  /[[:space:]]u32 loaded_fw = /,/^$/{
+    /^$/i\\
+\\
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ u32 my_fw = ~loaded_fw;
   }
-}' drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c 'fail already-loaded test'
+}" drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c 'fail already-loaded test'
 clean_blob drivers/net/ethernet/broadcom/bnx2x/bnx2x_hsi.h
 clean_sed '
 /static void bnx2x_init_wr_wb/{
@@ -3878,6 +3878,15 @@ clean_sed s,usb8388,whatever,g drivers/base/firmware_loader/Kconfig 'removed blo
 
 if $errors; then
   echo errors above were ignored because of --force >&2
+else
+  echo cleaning up has completed successfully, without verification >&2
+  # Verification is largely manual, comparing the changes with
+  # those of a previous known (presumed) good version, e.g.
+  # git merge the previous known good version onto the current base
+  # version, and then git diff with this cleaned-up version.
+  # Creating a tarball of this version, named linux-*.*.tar,
+  # and running deblob-check on it may also help catch cleaning-up
+  # errors: .../deblob-check --use-awk -B linux-*.*.tar.
 fi
 
 exit 0
