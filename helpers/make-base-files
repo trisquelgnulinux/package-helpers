@@ -17,11 +17,12 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=4
+VERSION=5
 
 . ./config
 
 CODENAMECAPS=$(echo $CODENAME | /bin/sed -e "s/\b\(.\)/\u\1/g")
+POINT_RELEASE=""
 
 # Disable dynamic motd
 find -name *motd-news* -delete
@@ -85,28 +86,28 @@ fi
 EOF
 
 cat > etc/issue <<EOF
-Trisquel GNU/Linux $REVISION \n \l
+Trisquel GNU/Linux $REVISION$POINT_RELEASE \n \l
 
 EOF
 
 cat > etc/issue.net <<EOF
-Trisquel GNU/Linux $REVISION
+Trisquel GNU/Linux $REVISION$POINT_RELEASE
 EOF
 
 cat > etc/lsb-release <<EOF
 DISTRIB_ID=Trisquel
-DISTRIB_RELEASE=$REVISION
+DISTRIB_RELEASE=$REVISION$POINT_RELEASE
 DISTRIB_CODENAME=$CODENAME
-DISTRIB_DESCRIPTION="Trisquel GNU/Linux $REVISION, $CODENAMECAPS"
+DISTRIB_DESCRIPTION="Trisquel GNU/Linux $REVISION$POINT_RELEASE, $CODENAMECAPS"
 EOF
 
 cat > etc/os-release <<EOF
 NAME="Trisquel GNU/Linux"
-VERSION="$REVISION, $CODENAMECAPS"
+VERSION="$REVISION$POINT_RELEASE, $CODENAMECAPS"
 ID=trisquel
 ID_LIKE=debian
-PRETTY_NAME="Trisquel GNU/Linux $CODENAMECAPS ($REVISION)"
-VERSION_ID="$REVISION"
+PRETTY_NAME="Trisquel GNU/Linux $CODENAMECAPS ($REVISION$POINT_RELEASE)"
+VERSION_ID="$REVISION$POINT_RELEASE"
 VERSION_CODENAME="$CODENAME"
 UBUNTU_CODENAME="$UPSTREAM"
 HOME_URL="https://trisquel.info/"
