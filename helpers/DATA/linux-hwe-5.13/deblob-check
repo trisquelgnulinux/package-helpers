@@ -6237,6 +6237,9 @@ set_except () {
     # New in 5.13.5 and 5.10.53.
     blobna 'and[ ]booted[ ]am335x-pm-firmware\.elf\.[\n][ ][*][/]' Documentation/devicetree/bindings/remoteproc/wkup_m3_rproc.txt
 
+    # Trisquel linux-hwe-5.13 adjustments
+    blobname 'gsl1680-rwc-nanote-p8\.fw' drivers/platform/x86/touchscreen_dmi.c
+
     # New in 5.14-rc.
     accept '[	 ]*nvidia,emc-registers[ ]=[ 	]*<\(0x[0-9a-f]*[ 	\n]*\)*>[;]' Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.yaml
     blobname 'msnv11\.bin' Documentation/devicetree/bindings/net/qualcomm-bluetooth.yaml
