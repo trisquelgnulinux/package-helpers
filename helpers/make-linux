@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 #    Copyright (C) 2021 Luis Guzman <ark@switnet.org>
-#    Copyright (C) 2008-2020  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2008-2022  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C) 2019 David Trudgian <dave@trudgian.net>
 #
 #    This program is free software; you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=10
+VERSION=11
 
 . ./config
 
@@ -108,6 +108,10 @@ sed 's/.unsigned//' -i debian/scripts/control-create
 line=$(grep -n ')-Ubuntu' debian/rules.d/0-common-vars.mk|cut -d: -f1)
 sed $(expr $line - 1 ),$(expr $line + 1 )d debian/rules.d/0-common-vars.mk -i
 sed s/family=ubuntu/family=trisquel/ -i debian/rules.d/0-common-vars.mk
+cat << EOF > debian.master/etc/kernelconfig
+archs="amd64 i386 armhf arm64 ppc64el"
+family='trisquel'
+EOF
 
 rename s/ubuntu/trisquel/ debian.*/config/config.common.ubuntu
 

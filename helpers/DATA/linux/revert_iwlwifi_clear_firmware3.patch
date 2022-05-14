@@ -1,0 +1,13 @@
+reverts https://lore.kernel.org/all/iwlwifi.20211210110539.1f742f0eb58a.I1315f22f6aa632d94ae2069f85e1bca5e734dce0@changeid/
+
+diff -ru source.orig/drivers/net/wireless/intel/iwlwifi/iwl-drv.c source/drivers/net/wireless/intel/iwlwifi/iwl-drv.c
+--- source.orig/drivers/net/wireless/intel/iwlwifi/iwl-drv.c	2022-05-13 16:10:11.883295769 -0400
++++ source/drivers/net/wireless/intel/iwlwifi/iwl-drv.c	2022-05-13 20:13:06.568151229 -0400
+@@ -1605,7 +1605,6 @@
+ 	complete(&drv->request_firmware_complete);
+ 	device_release_driver(drv->trans->dev);
+ 	/* drv has just been freed by the release */
+-	failure = false;
+  free:
+ 	if (pieces) {
+ 		for (i = 0; i < ARRAY_SIZE(pieces->img); i++)
