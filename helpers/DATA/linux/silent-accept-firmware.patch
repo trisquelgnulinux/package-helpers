@@ -1056,8 +1056,28 @@ diff -ur a/drivers/net/wireless/intel/iwlwifi/dvm/main.c b/drivers/net/wireless/
  	if (iwl_trans_start_hw(priv->trans))
  		goto out_free_hw;
 diff -ur a/drivers/net/wireless/intel/iwlwifi/iwl-drv.c b/drivers/net/wireless/intel/iwlwifi/iwl-drv.c
---- a/drivers/net/wireless/intel/iwlwifi/iwl-drv.c	2021-06-25 14:52:20.000000000 +0200
-+++ b/drivers/net/wireless/intel/iwlwifi/iwl-drv.c	2021-06-25 14:54:58.336092716 +0200
+--- a/drivers/net/wireless/intel/iwlwifi/iwl-drv.c	2022-05-13 15:20:06.000000000 -0400
++++ b/drivers/net/wireless/intel/iwlwifi/iwl-drv.c	2022-05-13 15:40:28.252484852 -0400
+@@ -237,19 +237,6 @@
+
+ 	if (drv->fw_index < cfg->ucode_api_min) {
+ 		IWL_ERR(drv, "no suitable firmware found!\n");
+-
+-		if (cfg->ucode_api_min == cfg->ucode_api_max) {
+-			IWL_ERR(drv, "%s%d is required\n", cfg->fw_name_pre,
+-				cfg->ucode_api_max);
+-		} else {
+-			IWL_ERR(drv, "minimum version required: %s%d\n",
+-				cfg->fw_name_pre, cfg->ucode_api_min);
+-			IWL_ERR(drv, "maximum version supported: %s%d\n",
+-				cfg->fw_name_pre, cfg->ucode_api_max);
+-		}
+-
+-		IWL_ERR(drv,
+-			"check git://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git\n");
+ 		return -ENOENT;
+ 	}
+
 @@ -253,8 +253,7 @@
  	snprintf(drv->firmware_name, sizeof(drv->firmware_name), "%s%s.ucode",
  		 cfg->fw_name_pre, tag);
