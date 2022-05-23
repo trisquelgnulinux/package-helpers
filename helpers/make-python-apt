@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2008-2020 Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2008-2022 Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,47 +17,46 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=4
+VERSION=5
 COMPONENT=main
 
 . ./config
 
 cat << EOF > data/templates/Trisquel.mirrors
 #LOC:CA
-https://mirror.freemirror.org/trisquel-packages/
-#LOC:FR
-https://archive.trisquel.info/trisquel/
-#LOC:US
-https://mirror.fsf.org/trisquel/
-http://mirrors.knoesis.org/trisquel/packages
-https://mirrors.ocf.berkeley.edu/trisquel/
-#LOC:IN
-http://in.archive.trisquel.info/trisquel/
-#LOC:EC
-https://mirror.cedia.org.ec/trisquel.packages
-#LOC:RO
-http://mirrors.serverhost.ro/trisquel/packages
+https://mirror.csclub.uwaterloo.ca/trisquel/packages/
 #LOC:CN
 https://mirrors.ustc.edu.cn/trisquel
+https://mirrors.nju.edu.cn/trisquel/
+#LOC:DE
+https://mirrors.dotsrc.org/trisquel/
+#LOC:EC
+https://mirror.cedia.org.ec/trisquel.packages
+#LOC:HU
+https://quantum-mirror.hu/mirrors/pub/trisquel/packages/
 #LOC:ES
 https://ftp.caliu.cat/pub/distribucions/trisquel/packages
 https://mirror.librelabucm.org/trisquel/
-#LOC:TW
-https://ftp.yzu.edu.tw/Linux/trisquel.packages/
 #LOC:SE
 https://mirror.linux.pizza/trisquel/packages/
 https://ftp.acc.umu.se/mirror/trisquel/packages/
-#LOC:HU
-https://quantum-mirror.hu/mirrors/pub/trisquel/packages/
+https://ftpmirror1.infania.net/mirror/trisquel/packages/
+https://mirror.operationtulip.com/trisquel/packages/
+#LOC:US
+https://archive.trisquel.info/trisquel/
+https://archive.trisquel.org/trisquel/
+https://mirror.fsf.org/trisquel/
+https://mirrors.ocf.berkeley.edu/trisquel/
+https://mirror.math.princeton.edu/pub/trisquel-packages/
 EOF
 
 cat << EOF > data/templates/Trisquel.info.in
-_ChangelogURI: http://packages.trisquel.info/changelogs/pool/%s/%s/%s/%s_%s/changelog
+_ChangelogURI: https://packages.trisquel.org/changelogs/pool/%s/%s/%s/%s_%s/changelog
 
 Suite: $CODENAME
 RepositoryType: deb
-BaseURI: https://archive.trisquel.info/trisquel/
-MatchURI: archive.trisquel.info/trisquel
+BaseURI: https://archive.trisquel.org/trisquel/
+MatchURI: archive.trisquel.org/trisquel
 MirrorsFile: Trisquel.mirrors
 _Description: Trisquel $REVISION '$CODENAME'
 Component: main
@@ -67,8 +66,8 @@ _CompDescriptionLong: Officially supported
 Suite: $CODENAME-security
 ParentSuite: $CODENAME
 RepositoryType: deb
-BaseURI: https://archive.trisquel.info/trisquel/
-MatchURI: archive.trisquel.info/trisquel
+BaseURI: https://archive.trisquel.org/trisquel/
+MatchURI: archive.trisquel.org/trisquel
 _Description: Important security updates
 
 Suite: $CODENAME-updates
