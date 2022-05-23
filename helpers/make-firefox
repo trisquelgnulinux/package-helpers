@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=87
+VERSION=88
 
 . ./config
 
@@ -367,6 +367,10 @@ cp -a $DATA/android/branding/ mobile/android/branding/official
 cp $DATA/android/mobile.ico mobile/android/app/
 #cp $DATA/android/images/* mobile/android/themes/core/images/
 cp -a $DATA/android/res/main/* mobile/android/geckoview/src/main/res
+
+#Fixes by patch on source.
+##Firefox v100, based on parabola 9004-FSDG-misc.patch
+patch -p1 < $DATA/patch_changes/Remove_moreFromMozilla_Focus_and_Klar.patch
 
 # Postinst script to manage profile migration and system links
 echo '
