@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=24
+VERSION=25
 EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu impish main universe'
 #REPOKEY="871920D1991BC93C"
 
@@ -42,6 +42,9 @@ sed '/universe multiverse/d' -i bin/oem-config-remaster
 
 # Use standard monospaced font for console
 sed 's/Ubuntu Mono/Monospace Regular/' -i ubiquity/frontend/gtk_ui.py
+
+# Start a11y-profile-manager-indicator only if not running already
+sed '/if osextras.find_on_path..a11y-profile-manager-indicator/s/:/ and (subprocess.run(['pgrep', '-f', 'a11y-profile-manager-indicator'], capture_output=True).returncode == 0)/' -i ubiquity/frontend/gtk_ui.py
 
 # Fixes issues starting orca
 sed "/Popen/s/'orca'/'orca', '--replace'/" -i ubiquity/frontend/gtk_ui.py
@@ -90,20 +93,23 @@ file="\$1"
 FASTEST=https://archive.trisquel.org/trisquel/
 SPEED=1000000000000
 
-for i in \$(grep 'tp:' /usr/share/python-apt/templates/Trisquel.mirrors)
-do
-    echo Testing \$i
-    TIME=\$(date +%s%N)
-    wget -t 1 -T 5 --max-redirect=0 -o /dev/null -O /dev/null \$i/speedtest || continue
-    TIME2=\$(date +%s%N)
-    ELAPSED=\$(expr \$TIME2 - \$TIME)
-    echo Time: \$ELAPSED
-    if [ \$ELAPSED -lt \$SPEED ]
-    then
-        FASTEST=\$i
-        SPEED=\$ELAPSED
-    fi
-done
+if nm-online -xq
+then
+    for i in \$(grep 'tp:' /usr/share/python-apt/templates/Trisquel.mirrors)
+    do
+        echo Testing \$i
+        TIME=\$(date +%s%N)
+        wget -t 1 -T 5 --max-redirect=0 -o /dev/null -O /dev/null \$i/speedtest || continue
+        TIME2=\$(date +%s%N)
+        ELAPSED=\$(expr \$TIME2 - \$TIME)
+        echo Time: \$ELAPSED
+        if [ \$ELAPSED -lt \$SPEED ]
+        then
+            FASTEST=\$i
+            SPEED=\$ELAPSED
+        fi
+    done
+fi
 
 MIRROR=\$FASTEST
 RELEASE=\$(lsb_release -c | cut -f 2)
@@ -254,7 +260,7 @@ then
 fi
 
 # Hacks for accessibility
-if [ \$(gsettings get com.canonical.a11y-profile-manager active-profile) = "'blindness'" ]
+if [ \$(gsettings get org.mate.interface accessibility) = "true" ]
 then
   echo "Accessibility profile set to 'blindness', enabling screen reader by default in target system"
   echo "[org.mate.applications-at]
