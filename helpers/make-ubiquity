@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=25
+VERSION=26
 EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu impish main universe'
 #REPOKEY="871920D1991BC93C"
 
@@ -44,10 +44,8 @@ sed '/universe multiverse/d' -i bin/oem-config-remaster
 sed 's/Ubuntu Mono/Monospace Regular/' -i ubiquity/frontend/gtk_ui.py
 
 # Start a11y-profile-manager-indicator only if not running already && Fixes issues starting orca
-sed "/if osextras.find_on_path..a11y-profile-manager-indicator/s/:/ and (subprocess.run(['pgrep', '-f', 'a11y-profile-manager-indicator'], capture_output=True).returncode == 0):/" -i ubiquity/frontend/gtk_ui.py
+sed "/if osextras.find_on_path..a11y-profile-manager-indicator/s/:/ and (subprocess.run(\n                ['pgrep', '-f', 'a11y-profile-manager-indicator'], capture_output=True).returncode == 0):/" -i ubiquity/frontend/gtk_ui.py
 sed "/Popen/s/'orca'/'orca', '--replace'/" -i ubiquity/frontend/gtk_ui.py
-#Fix style patch
-patch -p1 < $DATA/a11y-profile-manager-indicator__orca.patch
 
 # Kill at-spi after maybe-ubiquity, allows a11y to work on live desktop installer
 sed "/signal.alarm(0)/a\ \ \ \ \ \ \ \ subprocess.call\(['pkill', '-9', 'at-spi'], stdin=null, stdout=logfile, stderr=logfile)" -i bin/ubiquity-dm
@@ -95,11 +93,11 @@ SPEED=1000000000000
 
 if nm-online -xq
 then
-    for i in \$(grep 'tp:' /usr/share/python-apt/templates/Trisquel.mirrors)
+    for i in \$(grep '//' /usr/share/python-apt/templates/Trisquel.mirrors | sed 's|/$||')
     do
         echo Testing \$i
         TIME=\$(date +%s%N)
-        wget -t 1 -T 5 --max-redirect=0 -o /dev/null -O /dev/null \$i/speedtest || continue
+        wget --no-check-certificate -t 1 -T 5 --max-redirect=0 -o /dev/null -O /dev/null \$i/speedtest || continue
         TIME2=\$(date +%s%N)
         ELAPSED=\$(expr \$TIME2 - \$TIME)
         echo Time: \$ELAPSED
@@ -110,6 +108,8 @@ then
         fi
     done
 fi
+
+echo "Selected mirror: \$FASTEST"
 
 MIRROR=\$FASTEST
 RELEASE=\$(lsb_release -c | cut -f 2)
