@@ -4,11 +4,37 @@ An alternative solution is to preserve the loading functionality and remove the 
 This method is done by a patch (silent-accept-firmware.patch) that removes all the instances where the blob filenames are printed to the user (via kernel logs), and a section on the package helper that takes care of preventing the deblob script from acting on the files modified by the patch. This is done manually, for individual drivers (usually those for very common devices). It needs to be reviewed on any new major release, checking that no new lines were added to the upstream driver in where it prints the blob filename on the log.
 Printing the blob filename on success operations (that is, when the blob file is present) is acceptable. If in doubt, all instances of printing the blob filenames should be removed.
 
+diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
+index d0a61d3..af960c9 100644
+--- a/arch/x86/kernel/cpu/microcode/amd.c
++++ b/arch/x86/kernel/cpu/microcode/amd.c
+@@ -756,7 +756,7 @@ static enum ucode_state request_microcode_amd(int cpu, struct device *device,
+ 		snprintf(fw_name, sizeof(fw_name), "amd-ucode/microcode_amd_fam%.2xh.bin", c->x86);
+ 
+ 	if (request_firmware_direct(&fw, (const char *)fw_name, device)) {
+-		pr_debug("failed to load file %s\n", fw_name);
++		pr_debug("failed to load file\n", fw_name);
+ 		goto out;
+ 	}
+ 
+diff --git a/arch/x86/kernel/cpu/microcode/intel.c b/arch/x86/kernel/cpu/microcode/intel.c
+index 3aa0e5a..b180690 100644
+--- a/arch/x86/kernel/cpu/microcode/intel.c
++++ b/arch/x86/kernel/cpu/microcode/intel.c
+@@ -946,7 +946,7 @@ static enum ucode_state request_microcode_fw(int cpu, struct device *device,
+ 		c->x86, c->x86_model, c->x86_stepping);
+ 
+ 	if (request_firmware_direct(&firmware, name, device)) {
+-		pr_debug("data file %s load failed\n", name);
++		pr_debug("data file load failed\n", name);
+ 		return UCODE_NFOUND;
+ 	}
+ 
 diff --git a/drivers/base/firmware_class.c b/drivers/base/firmware_class.c
-index bfbe1e1..5a2ee57 100644
+index 0e74268..0e2fe41 100644
 --- a/drivers/base/firmware_class.c
 +++ b/drivers/base/firmware_class.c
-@@ -447,14 +447,14 @@ fw_get_filesystem_firmware(struct device *device, struct firmware_buf *buf)
+@@ -419,14 +419,14 @@ fw_get_filesystem_firmware(struct device *device, struct firmware_buf *buf)
  						id);
  		if (rc) {
  			if (rc == -ENOENT)
@@ -26,7 +52,7 @@ index bfbe1e1..5a2ee57 100644
  		buf->size = size;
  		fw_state_done(&buf->fw_st);
  		break;
-@@ -1072,7 +1072,7 @@ static int _request_firmware_load(struct firmware_priv *fw_priv,
+@@ -1050,7 +1050,7 @@ static int _request_firmware_load(struct firmware_priv *fw_priv,
  	if (opt_flags & FW_OPT_UEVENT) {
  		buf->need_uevent = true;
  		dev_set_uevent_suppress(f_dev, false);
@@ -35,7 +61,7 @@ index bfbe1e1..5a2ee57 100644
  		kobject_uevent(&fw_priv->dev.kobj, KOBJ_ADD);
  	} else {
  		timeout = MAX_JIFFY_OFFSET;
-@@ -1108,14 +1108,14 @@ static int fw_load_from_user_helper(struct firmware *firmware,
+@@ -1089,14 +1089,14 @@ static int fw_load_from_user_helper(struct firmware *firmware,
  	if (opt_flags & FW_OPT_NOWAIT) {
  		timeout = usermodehelper_read_lock_wait(timeout);
  		if (!timeout) {
@@ -52,7 +78,7 @@ index bfbe1e1..5a2ee57 100644
  				name);
  			return ret;
  		}
-@@ -1171,7 +1171,7 @@ _request_firmware_prepare(struct firmware **firmware_p, const char *name,
+@@ -1152,7 +1152,7 @@ _request_firmware_prepare(struct firmware **firmware_p, const char *name,
  	}
  
  	if (fw_get_builtin_firmware(firmware, name, dbuf, size)) {
@@ -61,7 +87,7 @@ index bfbe1e1..5a2ee57 100644
  		return 0; /* assigned */
  	}
  
-@@ -1249,12 +1249,13 @@ _request_firmware(const struct firmware **firmware_p, const char *name,
+@@ -1224,12 +1224,13 @@ _request_firmware(const struct firmware **firmware_p, const char *name,
  	if (ret) {
  		if (!(opt_flags & FW_OPT_NO_WARN))
  			dev_warn(device,
@@ -77,10 +103,10 @@ index bfbe1e1..5a2ee57 100644
  	} else
  		ret = assign_firmware_buf(fw, device, opt_flags);
 diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
-index c0a8062..65c1170 100644
+index c475ba1..b4351c4 100644
 --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
 +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
-@@ -734,7 +734,7 @@ static int amdgpu_cgs_get_firmware_info(struct cgs_device *cgs_device,
+@@ -817,7 +817,7 @@ static int amdgpu_cgs_get_firmware_info(struct cgs_device *cgs_device,
  
  			err = amdgpu_ucode_validate(adev->pm.fw);
  			if (err) {
@@ -89,8 +115,29 @@ index c0a8062..65c1170 100644
  				release_firmware(adev->pm.fw);
  				adev->pm.fw = NULL;
  				return err;
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+index 82a9ea0..6c0b703 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+@@ -1499,14 +1499,14 @@ static int amdgpu_device_parse_gpu_info_fw(struct amdgpu_device *adev)
+ 	err = request_firmware(&adev->firmware.gpu_info_fw, fw_name, adev->dev);
+ 	if (err) {
+ 		dev_err(adev->dev,
+-			"Failed to load gpu_info firmware \"%s\"\n",
++			"Failed to load gpu_info firmware \n",
+ 			fw_name);
+ 		goto out;
+ 	}
+ 	err = amdgpu_ucode_validate(adev->firmware.gpu_info_fw);
+ 	if (err) {
+ 		dev_err(adev->dev,
+-			"Failed to validate gpu_info firmware \"%s\"\n",
++			"Failed to validate gpu_info firmware \n",
+ 			fw_name);
+ 		goto out;
+ 	}
 diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c
-index 2ca09f1..15caf24 100644
+index 05613b1..7b63320 100644
 --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c
 +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c
 @@ -173,7 +173,7 @@ int amdgpu_uvd_sw_init(struct amdgpu_device *adev)
@@ -103,7 +150,7 @@ index 2ca09f1..15caf24 100644
  		return r;
  	}
 diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c
-index b692ad4..1ca7f9f 100644
+index 2f6fba4..8398c74 100644
 --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c
 +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c
 @@ -140,7 +140,7 @@ int amdgpu_vce_sw_init(struct amdgpu_device *adev, unsigned long size)
@@ -115,11 +162,24 @@ index b692ad4..1ca7f9f 100644
  			fw_name);
  		return r;
  	}
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c
+index 408f719..b656ff3 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c
+@@ -70,7 +70,7 @@ int amdgpu_vcn_sw_init(struct amdgpu_device *adev)
+ 
+ 	r = request_firmware(&adev->vcn.fw, fw_name, adev->dev);
+ 	if (r) {
+-		dev_err(adev->dev, "amdgpu_vcn: Can't load firmware \"%s\"\n",
++		dev_err(adev->dev, "amdgpu_vcn: Can't load firmware \n",
+ 			fw_name);
+ 		return r;
+ 	}
 diff --git a/drivers/gpu/drm/amd/amdgpu/ci_dpm.c b/drivers/gpu/drm/amd/amdgpu/ci_dpm.c
-index cb508a2..ca4453b 100644
+index 68b505c..99b02c4 100644
 --- a/drivers/gpu/drm/amd/amdgpu/ci_dpm.c
 +++ b/drivers/gpu/drm/amd/amdgpu/ci_dpm.c
-@@ -5848,7 +5848,7 @@ static int ci_dpm_init_microcode(struct amdgpu_device *adev)
+@@ -5860,7 +5860,7 @@ static int ci_dpm_init_microcode(struct amdgpu_device *adev)
  
  out:
  	if (err) {
@@ -129,7 +189,7 @@ index cb508a2..ca4453b 100644
  		adev->pm.fw = NULL;
  	}
 diff --git a/drivers/gpu/drm/amd/amdgpu/cik_sdma.c b/drivers/gpu/drm/amd/amdgpu/cik_sdma.c
-index c216e16..4a399cc 100644
+index b83cee6..ebb7c4f 100644
 --- a/drivers/gpu/drm/amd/amdgpu/cik_sdma.c
 +++ b/drivers/gpu/drm/amd/amdgpu/cik_sdma.c
 @@ -142,7 +142,7 @@ static int cik_sdma_init_microcode(struct amdgpu_device *adev)
@@ -141,8 +201,21 @@ index c216e16..4a399cc 100644
  		for (i = 0; i < adev->sdma.num_instances; i++) {
  			release_firmware(adev->sdma.instance[i].fw);
  			adev->sdma.instance[i].fw = NULL;
+diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c
+index dbbe986..d5709b1 100644
+--- a/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c
+@@ -378,7 +378,7 @@ static int gfx_v6_0_init_microcode(struct amdgpu_device *adev)
+ 
+ out:
+ 	if (err) {
+-		pr_err("gfx6: Failed to load firmware \"%s\"\n", fw_name);
++		pr_err("gfx6: Failed to load firmware \n", fw_name);
+ 		release_firmware(adev->gfx.pfp_fw);
+ 		adev->gfx.pfp_fw = NULL;
+ 		release_firmware(adev->gfx.me_fw);
 diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c
-index 37b45e4..b7fa33c 100644
+index 356ca56..5a831ef 100644
 --- a/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c
 +++ b/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c
 @@ -973,7 +973,7 @@ static int gfx_v7_0_init_microcode(struct amdgpu_device *adev)
@@ -155,10 +228,10 @@ index 37b45e4..b7fa33c 100644
  		adev->gfx.pfp_fw = NULL;
  		release_firmware(adev->gfx.me_fw);
 diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
-index aa5a50f..c7acffb 100644
+index 285a414..acda871 100644
 --- a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
 +++ b/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
-@@ -1106,7 +1106,7 @@ static int gfx_v8_0_init_microcode(struct amdgpu_device *adev)
+@@ -1167,7 +1167,7 @@ static int gfx_v8_0_init_microcode(struct amdgpu_device *adev)
  out:
  	if (err) {
  		dev_err(adev->dev,
@@ -167,11 +240,37 @@ index aa5a50f..c7acffb 100644
  			fw_name);
  		release_firmware(adev->gfx.pfp_fw);
  		adev->gfx.pfp_fw = NULL;
+diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
+index b6e4185..53c873a 100644
+--- a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
+@@ -609,7 +609,7 @@ static int gfx_v9_0_init_microcode(struct amdgpu_device *adev)
+ out:
+ 	if (err) {
+ 		dev_err(adev->dev,
+-			"gfx9: Failed to load firmware \"%s\"\n",
++			"gfx9: Failed to load firmware \n",
+ 			fw_name);
+ 		release_firmware(adev->gfx.pfp_fw);
+ 		adev->gfx.pfp_fw = NULL;
+diff --git a/drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c b/drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c
+index 99cb3d7..19cb819 100644
+--- a/drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c
+@@ -145,7 +145,7 @@ static int gmc_v6_0_init_microcode(struct amdgpu_device *adev)
+ out:
+ 	if (err) {
+ 		dev_err(adev->dev,
+-		       "si_mc: Failed to load firmware \"%s\"\n",
++		       "si_mc: Failed to load firmware \n",
+ 		       fw_name);
+ 		release_firmware(adev->mc.fw);
+ 		adev->mc.fw = NULL;
 diff --git a/drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c b/drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c
-index 7e9ea53..6815fb5 100644
+index f75f1ee..13d6879 100644
 --- a/drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c
 +++ b/drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c
-@@ -163,7 +163,7 @@ static int gmc_v7_0_init_microcode(struct amdgpu_device *adev)
+@@ -158,7 +158,7 @@ static int gmc_v7_0_init_microcode(struct amdgpu_device *adev)
  
  out:
  	if (err) {
@@ -181,10 +280,10 @@ index 7e9ea53..6815fb5 100644
  		adev->mc.fw = NULL;
  	}
 diff --git a/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c b/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c
-index cc9f880..67359b3 100644
+index aaf82c1..924cbd6 100644
 --- a/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c
 +++ b/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c
-@@ -247,7 +247,7 @@ static int gmc_v8_0_init_microcode(struct amdgpu_device *adev)
+@@ -271,7 +271,7 @@ static int gmc_v8_0_init_microcode(struct amdgpu_device *adev)
  
  out:
  	if (err) {
@@ -193,8 +292,34 @@ index cc9f880..67359b3 100644
  		release_firmware(adev->mc.fw);
  		adev->mc.fw = NULL;
  	}
+diff --git a/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c b/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c
+index 1e4aa4e..b1151ea 100644
+--- a/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c
+@@ -128,7 +128,7 @@ int psp_v10_0_init_microcode(struct psp_context *psp)
+ out:
+ 	if (err) {
+ 		dev_err(adev->dev,
+-			"psp v10.0: Failed to load firmware \"%s\"\n",
++			"psp v10.0: Failed to load firmware \n",
+ 			fw_name);
+ 		release_firmware(adev->psp.asd_fw);
+ 		adev->psp.asd_fw = NULL;
+diff --git a/drivers/gpu/drm/amd/amdgpu/psp_v3_1.c b/drivers/gpu/drm/amd/amdgpu/psp_v3_1.c
+index c7bcfe8..5c6089f 100644
+--- a/drivers/gpu/drm/amd/amdgpu/psp_v3_1.c
++++ b/drivers/gpu/drm/amd/amdgpu/psp_v3_1.c
+@@ -151,7 +151,7 @@ int psp_v3_1_init_microcode(struct psp_context *psp)
+ out:
+ 	if (err) {
+ 		dev_err(adev->dev,
+-			"psp v3.1: Failed to load firmware \"%s\"\n",
++			"psp v3.1: Failed to load firmware \n",
+ 			fw_name);
+ 		release_firmware(adev->psp.sos_fw);
+ 		adev->psp.sos_fw = NULL;
 diff --git a/drivers/gpu/drm/amd/amdgpu/sdma_v2_4.c b/drivers/gpu/drm/amd/amdgpu/sdma_v2_4.c
-index f2d0710..bf0edd5 100644
+index a9c1845..28f7367 100644
 --- a/drivers/gpu/drm/amd/amdgpu/sdma_v2_4.c
 +++ b/drivers/gpu/drm/amd/amdgpu/sdma_v2_4.c
 @@ -170,7 +170,7 @@ static int sdma_v2_4_init_microcode(struct amdgpu_device *adev)
@@ -207,7 +332,7 @@ index f2d0710..bf0edd5 100644
  			release_firmware(adev->sdma.instance[i].fw);
  			adev->sdma.instance[i].fw = NULL;
 diff --git a/drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c b/drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c
-index 1d766ae..1103992 100644
+index b5dddcd..a4df112 100644
 --- a/drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c
 +++ b/drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c
 @@ -321,7 +321,7 @@ static int sdma_v3_0_init_microcode(struct amdgpu_device *adev)
@@ -219,11 +344,39 @@ index 1d766ae..1103992 100644
  		for (i = 0; i < adev->sdma.num_instances; i++) {
  			release_firmware(adev->sdma.instance[i].fw);
  			adev->sdma.instance[i].fw = NULL;
+diff --git a/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c b/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c
+index 7ca6265..9f3fee5 100644
+--- a/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c
+@@ -217,7 +217,7 @@ static int sdma_v4_0_init_microcode(struct amdgpu_device *adev)
+ 	}
+ out:
+ 	if (err) {
+-		DRM_ERROR("sdma_v4_0: Failed to load firmware \"%s\"\n", fw_name);
++		DRM_ERROR("sdma_v4_0: Failed to load firmware \n", fw_name);
+ 		for (i = 0; i < adev->sdma.num_instances; i++) {
+ 			release_firmware(adev->sdma.instance[i].fw);
+ 			adev->sdma.instance[i].fw = NULL;
+diff --git a/drivers/gpu/drm/amd/amdgpu/si_dpm.c b/drivers/gpu/drm/amd/amdgpu/si_dpm.c
+index ddf5489..a285e40 100644
+--- a/drivers/gpu/drm/amd/amdgpu/si_dpm.c
++++ b/drivers/gpu/drm/amd/amdgpu/si_dpm.c
+@@ -7673,8 +7673,8 @@ static int si_dpm_init_microcode(struct amdgpu_device *adev)
+ 
+ out:
+ 	if (err) {
+-		DRM_ERROR("si_smc: Failed to load firmware. err = %d\"%s\"\n",
+-			  err, fw_name);
++		DRM_ERROR("si_smc: Failed to load firmware. err = %d\n",
++			  err);
+ 		release_firmware(adev->pm.fw);
+ 		adev->pm.fw = NULL;
+ 	}
 diff --git a/drivers/gpu/drm/drm_edid_load.c b/drivers/gpu/drm/drm_edid_load.c
-index 1c0495a..0085e8e 100644
+index a0e107a..6629850 100644
 --- a/drivers/gpu/drm/drm_edid_load.c
 +++ b/drivers/gpu/drm/drm_edid_load.c
-@@ -188,8 +188,8 @@ static void *edid_load(struct drm_connector *connector, const char *name,
+@@ -204,8 +204,8 @@ static void *edid_load(struct drm_connector *connector, const char *name,
  		err = request_firmware(&fw, name, &pdev->dev);
  		platform_device_unregister(pdev);
  		if (err) {
@@ -255,10 +408,10 @@ index c9890af..cfe11ce 100644
  		rc = -EINVAL;
  		goto out_release;
 diff --git a/drivers/gpu/drm/radeon/cik.c b/drivers/gpu/drm/radeon/cik.c
-index 3cb6c55..5bf3ff6 100644
+index 478ffd5..50558d8 100644
 --- a/drivers/gpu/drm/radeon/cik.c
 +++ b/drivers/gpu/drm/radeon/cik.c
-@@ -2072,7 +2072,7 @@ static int cik_init_microcode(struct radeon_device *rdev)
+@@ -2071,7 +2071,7 @@ static int cik_init_microcode(struct radeon_device *rdev)
  		if (err)
  			goto out;
  		if (rdev->pfp_fw->size != pfp_req_size) {
@@ -267,7 +420,7 @@ index 3cb6c55..5bf3ff6 100644
  			       rdev->pfp_fw->size, fw_name);
  			err = -EINVAL;
  			goto out;
-@@ -2080,7 +2080,7 @@ static int cik_init_microcode(struct radeon_device *rdev)
+@@ -2079,7 +2079,7 @@ static int cik_init_microcode(struct radeon_device *rdev)
  	} else {
  		err = radeon_ucode_validate(rdev->pfp_fw);
  		if (err) {
@@ -276,7 +429,7 @@ index 3cb6c55..5bf3ff6 100644
  			       fw_name);
  			goto out;
  		} else {
-@@ -2096,14 +2096,14 @@ static int cik_init_microcode(struct radeon_device *rdev)
+@@ -2095,14 +2095,14 @@ static int cik_init_microcode(struct radeon_device *rdev)
  		if (err)
  			goto out;
  		if (rdev->me_fw->size != me_req_size) {
@@ -293,7 +446,7 @@ index 3cb6c55..5bf3ff6 100644
  			       fw_name);
  			goto out;
  		} else {
-@@ -2119,14 +2119,14 @@ static int cik_init_microcode(struct radeon_device *rdev)
+@@ -2118,14 +2118,14 @@ static int cik_init_microcode(struct radeon_device *rdev)
  		if (err)
  			goto out;
  		if (rdev->ce_fw->size != ce_req_size) {
@@ -310,7 +463,7 @@ index 3cb6c55..5bf3ff6 100644
  			       fw_name);
  			goto out;
  		} else {
-@@ -2142,14 +2142,14 @@ static int cik_init_microcode(struct radeon_device *rdev)
+@@ -2141,14 +2141,14 @@ static int cik_init_microcode(struct radeon_device *rdev)
  		if (err)
  			goto out;
  		if (rdev->mec_fw->size != mec_req_size) {
@@ -327,7 +480,7 @@ index 3cb6c55..5bf3ff6 100644
  			       fw_name);
  			goto out;
  		} else {
-@@ -2180,14 +2180,14 @@ static int cik_init_microcode(struct radeon_device *rdev)
+@@ -2179,14 +2179,14 @@ static int cik_init_microcode(struct radeon_device *rdev)
  		if (err)
  			goto out;
  		if (rdev->rlc_fw->size != rlc_req_size) {
@@ -344,7 +497,7 @@ index 3cb6c55..5bf3ff6 100644
  			       fw_name);
  			goto out;
  		} else {
-@@ -2203,14 +2203,14 @@ static int cik_init_microcode(struct radeon_device *rdev)
+@@ -2202,14 +2202,14 @@ static int cik_init_microcode(struct radeon_device *rdev)
  		if (err)
  			goto out;
  		if (rdev->sdma_fw->size != sdma_req_size) {
@@ -361,7 +514,7 @@ index 3cb6c55..5bf3ff6 100644
  			       fw_name);
  			goto out;
  		} else {
-@@ -2233,7 +2233,7 @@ static int cik_init_microcode(struct radeon_device *rdev)
+@@ -2232,7 +2232,7 @@ static int cik_init_microcode(struct radeon_device *rdev)
  			}
  			if ((rdev->mc_fw->size != mc_req_size) &&
  			    (rdev->mc_fw->size != mc2_req_size)){
@@ -370,7 +523,7 @@ index 3cb6c55..5bf3ff6 100644
  				       rdev->mc_fw->size, fw_name);
  				err = -EINVAL;
  			}
-@@ -2241,7 +2241,7 @@ static int cik_init_microcode(struct radeon_device *rdev)
+@@ -2240,7 +2240,7 @@ static int cik_init_microcode(struct radeon_device *rdev)
  		} else {
  			err = radeon_ucode_validate(rdev->mc_fw);
  			if (err) {
@@ -379,7 +532,7 @@ index 3cb6c55..5bf3ff6 100644
  				       fw_name);
  				goto out;
  			} else {
-@@ -2258,20 +2258,20 @@ static int cik_init_microcode(struct radeon_device *rdev)
+@@ -2257,20 +2257,20 @@ static int cik_init_microcode(struct radeon_device *rdev)
  			snprintf(fw_name, sizeof(fw_name), "radeon/%s_smc.bin", chip_name);
  			err = request_firmware(&rdev->smc_fw, fw_name, rdev->dev);
  			if (err) {
@@ -403,7 +556,7 @@ index 3cb6c55..5bf3ff6 100644
  				       fw_name);
  				goto out;
  			} else {
-@@ -2292,7 +2292,7 @@ static int cik_init_microcode(struct radeon_device *rdev)
+@@ -2291,7 +2291,7 @@ static int cik_init_microcode(struct radeon_device *rdev)
  out:
  	if (err) {
  		if (err != -EINVAL)
@@ -477,7 +630,7 @@ index 9eccd0c..3b9b7d6 100644
  		release_firmware(rdev->pfp_fw);
  		rdev->pfp_fw = NULL;
 diff --git a/drivers/gpu/drm/radeon/r100.c b/drivers/gpu/drm/radeon/r100.c
-index c31e660..658eaf8 100644
+index b24401f..b144a1a 100644
 --- a/drivers/gpu/drm/radeon/r100.c
 +++ b/drivers/gpu/drm/radeon/r100.c
 @@ -1042,9 +1042,9 @@ static int r100_cp_init_microcode(struct radeon_device *rdev)
@@ -493,7 +646,7 @@ index c31e660..658eaf8 100644
  		err = -EINVAL;
  		release_firmware(rdev->me_fw);
 diff --git a/drivers/gpu/drm/radeon/r600.c b/drivers/gpu/drm/radeon/r600.c
-index e06e2d8..9004945 100644
+index a724bb8..d7a5058 100644
 --- a/drivers/gpu/drm/radeon/r600.c
 +++ b/drivers/gpu/drm/radeon/r600.c
 @@ -2550,7 +2550,7 @@ int r600_init_microcode(struct radeon_device *rdev)
@@ -548,7 +701,7 @@ index e06e2d8..9004945 100644
  		release_firmware(rdev->pfp_fw);
  		rdev->pfp_fw = NULL;
 diff --git a/drivers/gpu/drm/radeon/radeon_uvd.c b/drivers/gpu/drm/radeon/radeon_uvd.c
-index d34d1cf..10e859c 100644
+index fde9c69..8512f99 100644
 --- a/drivers/gpu/drm/radeon/radeon_uvd.c
 +++ b/drivers/gpu/drm/radeon/radeon_uvd.c
 @@ -140,7 +140,7 @@ int radeon_uvd_init(struct radeon_device *rdev)
@@ -583,7 +736,7 @@ index c1c619f..744612d 100644
  		return r;
  	}
 diff --git a/drivers/gpu/drm/radeon/si.c b/drivers/gpu/drm/radeon/si.c
-index 1907c95..7ff65cc 100644
+index 1144caf..e96a500 100644
 --- a/drivers/gpu/drm/radeon/si.c
 +++ b/drivers/gpu/drm/radeon/si.c
 @@ -1786,7 +1786,7 @@ static int si_init_microcode(struct radeon_device *rdev)
@@ -705,11 +858,24 @@ index 1907c95..7ff65cc 100644
  			       fw_name);
  		release_firmware(rdev->pfp_fw);
  		rdev->pfp_fw = NULL;
+diff --git a/drivers/net/wireless/intel/ipw2x00/ipw2100.c b/drivers/net/wireless/intel/ipw2x00/ipw2100.c
+index 8fbdd7d..98c2819 100644
+--- a/drivers/net/wireless/intel/ipw2x00/ipw2100.c
++++ b/drivers/net/wireless/intel/ipw2x00/ipw2100.c
+@@ -8420,7 +8420,7 @@ static int ipw2100_get_firmware(struct ipw2100_priv *priv,
+ 
+ 	if (rc < 0) {
+ 		printk(KERN_ERR DRV_NAME ": "
+-		       "%s: Firmware '%s' not available or load failed.\n",
++		       "%s: Firmware not available or load failed.\n",
+ 		       priv->net_dev->name, fw_name);
+ 		return rc;
+ 	}
 diff --git a/drivers/net/wireless/intel/ipw2x00/ipw2200.c b/drivers/net/wireless/intel/ipw2x00/ipw2200.c
-index 9368abd..fa4de6a 100644
+index 2d0734a..a7fcc9b 100644
 --- a/drivers/net/wireless/intel/ipw2x00/ipw2200.c
 +++ b/drivers/net/wireless/intel/ipw2x00/ipw2200.c
-@@ -3417,12 +3417,12 @@ static int ipw_get_fw(struct ipw_priv *priv,
+@@ -3419,12 +3419,12 @@ static int ipw_get_fw(struct ipw_priv *priv,
  	/* ask firmware_class module to get the boot firmware off disk */
  	rc = request_firmware(raw, name, &priv->pci_dev->dev);
  	if (rc < 0) {
@@ -724,7 +890,7 @@ index 9368abd..fa4de6a 100644
  		return -EINVAL;
  	}
  
-@@ -3430,13 +3430,12 @@ static int ipw_get_fw(struct ipw_priv *priv,
+@@ -3432,13 +3432,12 @@ static int ipw_get_fw(struct ipw_priv *priv,
  
  	if ((*raw)->size < sizeof(*fw) + le32_to_cpu(fw->boot_size) +
  	    le32_to_cpu(fw->ucode_size) + le32_to_cpu(fw->fw_size)) {
@@ -741,7 +907,7 @@ index 9368abd..fa4de6a 100644
  		       le32_to_cpu(fw->ver) >> 16,
  		       le32_to_cpu(fw->ver) & 0xff,
  		       (*raw)->size - sizeof(*fw));
-@@ -3569,7 +3568,7 @@ static int ipw_load(struct ipw_priv *priv)
+@@ -3571,7 +3570,7 @@ static int ipw_load(struct ipw_priv *priv)
  	/* DMA the initial boot firmware into the device */
  	rc = ipw_load_firmware(priv, boot_img, le32_to_cpu(fw->boot_size));
  	if (rc < 0) {
@@ -750,7 +916,7 @@ index 9368abd..fa4de6a 100644
  		goto error;
  	}
  
-@@ -3601,7 +3600,7 @@ static int ipw_load(struct ipw_priv *priv)
+@@ -3603,7 +3602,7 @@ static int ipw_load(struct ipw_priv *priv)
  	/* DMA bss firmware into the device */
  	rc = ipw_load_firmware(priv, fw_img, le32_to_cpu(fw->fw_size));
  	if (rc < 0) {
@@ -759,7 +925,7 @@ index 9368abd..fa4de6a 100644
  		goto error;
  	}
  #ifdef CONFIG_PM
-@@ -11213,7 +11212,7 @@ static int ipw_up(struct ipw_priv *priv)
+@@ -11215,7 +11214,7 @@ static int ipw_up(struct ipw_priv *priv)
  		 * Also start the clocks. */
  		rc = ipw_load(priv);
  		if (rc) {
@@ -769,10 +935,10 @@ index 9368abd..fa4de6a 100644
  		}
  
 diff --git a/drivers/net/wireless/intel/iwlegacy/3945-mac.c b/drivers/net/wireless/intel/iwlegacy/3945-mac.c
-index 38bf403..a7934a6 100644
+index c738395..e636d0e 100644
 --- a/drivers/net/wireless/intel/iwlegacy/3945-mac.c
 +++ b/drivers/net/wireless/intel/iwlegacy/3945-mac.c
-@@ -1861,7 +1861,7 @@ il3945_read_ucode(struct il_priv *il)
+@@ -1862,7 +1862,7 @@ il3945_read_ucode(struct il_priv *il)
  		sprintf(buf, "%s%u%s", name_pre, idx, ".ucode");
  		ret = request_firmware(&ucode_raw, buf, &il->pci_dev->dev);
  		if (ret < 0) {
@@ -781,7 +947,7 @@ index 38bf403..a7934a6 100644
  			if (ret == -ENOENT)
  				continue;
  			else
-@@ -1870,7 +1870,7 @@ il3945_read_ucode(struct il_priv *il)
+@@ -1871,7 +1871,7 @@ il3945_read_ucode(struct il_priv *il)
  			if (idx < api_max)
  				IL_ERR("Loaded firmware %s, "
  				       "which is deprecated. "
@@ -790,7 +956,7 @@ index 38bf403..a7934a6 100644
  				       api_max);
  			D_INFO("Got firmware '%s' file "
  			       "(%zd bytes) from disk\n", buf, ucode_raw->size);
-@@ -1906,16 +1906,14 @@ il3945_read_ucode(struct il_priv *il)
+@@ -1907,16 +1907,14 @@ il3945_read_ucode(struct il_priv *il)
  
  	if (api_ver < api_min || api_ver > api_max) {
  		IL_ERR("Driver unable to support your firmware API. "
@@ -810,10 +976,10 @@ index 38bf403..a7934a6 100644
  
  	IL_INFO("loaded firmware version %u.%u.%u.%u\n",
 diff --git a/drivers/net/wireless/intel/iwlegacy/4965-mac.c b/drivers/net/wireless/intel/iwlegacy/4965-mac.c
-index 5b51fba..b16ab69 100644
+index 064ce53..ce0cf6e 100644
 --- a/drivers/net/wireless/intel/iwlegacy/4965-mac.c
 +++ b/drivers/net/wireless/intel/iwlegacy/4965-mac.c
-@@ -4708,7 +4708,7 @@ il4965_request_firmware(struct il_priv *il, bool first)
+@@ -4709,7 +4709,7 @@ il4965_request_firmware(struct il_priv *il, bool first)
  
  	sprintf(il->firmware_name, "%s%s%s", name_pre, tag, ".ucode");
  
@@ -822,7 +988,7 @@ index 5b51fba..b16ab69 100644
  
  	return request_firmware_nowait(THIS_MODULE, 1, il->firmware_name,
  				       &il->pci_dev->dev, GFP_KERNEL, il,
-@@ -4799,7 +4799,7 @@ il4965_ucode_callback(const struct firmware *ucode_raw, void *context)
+@@ -4800,7 +4800,7 @@ il4965_ucode_callback(const struct firmware *ucode_raw, void *context)
  
  	if (!ucode_raw) {
  		if (il->fw_idx <= il->cfg->ucode_api_max)
@@ -831,7 +997,7 @@ index 5b51fba..b16ab69 100644
  			       il->firmware_name);
  		goto try_again;
  	}
-@@ -4829,16 +4829,13 @@ il4965_ucode_callback(const struct firmware *ucode_raw, void *context)
+@@ -4830,16 +4830,13 @@ il4965_ucode_callback(const struct firmware *ucode_raw, void *context)
  	 * on the API version read from firmware header from here on forward
  	 */
  	if (api_ver < api_min || api_ver > api_max) {
@@ -851,10 +1017,31 @@ index 5b51fba..b16ab69 100644
  
  	IL_INFO("loaded firmware version %u.%u.%u.%u\n",
 diff --git a/drivers/net/wireless/intel/iwlwifi/iwl-drv.c b/drivers/net/wireless/intel/iwlwifi/iwl-drv.c
-index 4e0f86f..05ac835 100644
+index 56186fc..03523b1 100644
 --- a/drivers/net/wireless/intel/iwlwifi/iwl-drv.c
 +++ b/drivers/net/wireless/intel/iwlwifi/iwl-drv.c
-@@ -257,7 +257,7 @@ static int iwl_request_firmware(struct iwl_drv *drv, bool first)
+@@ -239,28 +239,13 @@ static int iwl_request_firmware(struct iwl_drv *drv, bool first)
+ 
+ 	if (drv->fw_index < cfg->ucode_api_min) {
+ 		IWL_ERR(drv, "no suitable firmware found!\n");
+-
+-		if (cfg->ucode_api_min == cfg->ucode_api_max) {
+-			IWL_ERR(drv, "%s%d is required\n", fw_pre_name,
+-				cfg->ucode_api_max);
+-		} else {
+-			IWL_ERR(drv, "minimum version required: %s%d\n",
+-				fw_pre_name,
+-				cfg->ucode_api_min);
+-			IWL_ERR(drv, "maximum version supported: %s%d\n",
+-				fw_pre_name,
+-				cfg->ucode_api_max);
+-		}
+-
+-		IWL_ERR(drv,
+-			"check git://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git\n");
+ 		return -ENOENT;
+ 	}
+ 
  	snprintf(drv->firmware_name, sizeof(drv->firmware_name), "%s%s.ucode",
  		 fw_pre_name, tag);
  
@@ -864,10 +1051,10 @@ index 4e0f86f..05ac835 100644
  
  	return request_firmware_nowait(THIS_MODULE, 1, drv->firmware_name,
 diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/fw.c b/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
-index 82863e9..1f2f235 100644
+index 2795153..6a97ce1 100644
 --- a/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
 +++ b/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
-@@ -1677,7 +1677,7 @@ int iwl_mvm_load_d3_fw(struct iwl_mvm *mvm)
+@@ -1184,7 +1184,7 @@ int iwl_mvm_load_d3_fw(struct iwl_mvm *mvm)
  
  	ret = iwl_mvm_load_ucode_wait_alive(mvm, IWL_UCODE_WOWLAN);
  	if (ret) {
@@ -877,10 +1064,10 @@ index 82863e9..1f2f235 100644
  	}
  
 diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/nvm.c b/drivers/net/wireless/intel/iwlwifi/mvm/nvm.c
-index dac7e54..d2aefe6 100644
+index 7cc0136..c2e57bc 100644
 --- a/drivers/net/wireless/intel/iwlwifi/mvm/nvm.c
 +++ b/drivers/net/wireless/intel/iwlwifi/mvm/nvm.c
-@@ -419,8 +419,8 @@
+@@ -419,8 +419,8 @@ int iwl_mvm_read_external_nvm(struct iwl_mvm *mvm)
  	ret = request_firmware(&fw_entry, mvm->nvm_file_name,
  			       mvm->trans->dev);
  	if (ret) {
@@ -890,9 +1077,9 @@ index dac7e54..d2aefe6 100644
 +			ret);
  		return ret;
  	}
-
+ 
 diff --git a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
-index 21e5ef0..520e63b 100644
+index 7618e8f..01bc0bf 100644
 --- a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
 +++ b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
 @@ -2074,9 +2074,9 @@ int rtl8xxxu_load_firmware(struct rtl8xxxu_priv *priv, char *fw_name)
@@ -908,7 +1095,7 @@ index 21e5ef0..520e63b 100644
  		goto exit;
  	}
 diff --git a/drivers/net/wireless/realtek/rtlwifi/core.c b/drivers/net/wireless/realtek/rtlwifi/core.c
-index b0ad061..dab2248 100644
+index b4a5836..7fe1aa0 100644
 --- a/drivers/net/wireless/realtek/rtlwifi/core.c
 +++ b/drivers/net/wireless/realtek/rtlwifi/core.c
 @@ -106,7 +106,7 @@ static void rtl_fw_do_work(const struct firmware *firmware, void *context,
@@ -921,10 +1108,10 @@ index b0ad061..dab2248 100644
  			if (!err)
  				goto found_alt;
 diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/sw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/sw.c
-index 774e720..a364c1b 100644
+index 82681b9..1b50584 100644
 --- a/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/sw.c
 +++ b/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/sw.c
-@@ -169,7 +169,7 @@ int rtl88e_init_sw_vars(struct ieee80211_hw *hw)
+@@ -170,7 +170,7 @@ int rtl88e_init_sw_vars(struct ieee80211_hw *hw)
  
  	fw_name = "rtlwifi/rtl8188efw.bin";
  	rtlpriv->max_fw_size = 0x8000;
@@ -934,10 +1121,10 @@ index 774e720..a364c1b 100644
  				      rtlpriv->io.dev, GFP_KERNEL, hw,
  				      rtl_fw_cb);
 diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8192ce/sw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192ce/sw.c
-index bcbb0c6..a1a9734 100644
+index 71a6761..e357075 100644
 --- a/drivers/net/wireless/realtek/rtlwifi/rtl8192ce/sw.c
 +++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192ce/sw.c
-@@ -170,7 +170,7 @@ int rtl92c_init_sw_vars(struct ieee80211_hw *hw)
+@@ -171,7 +171,7 @@ int rtl92c_init_sw_vars(struct ieee80211_hw *hw)
  		fw_name = "rtlwifi/rtl8192cfw.bin";
  
  	rtlpriv->max_fw_size = 0x4000;
@@ -947,7 +1134,7 @@ index bcbb0c6..a1a9734 100644
  				      rtlpriv->io.dev, GFP_KERNEL, hw,
  				      rtl_fw_cb);
 diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/sw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/sw.c
-index 96c923b..26eece2 100644
+index 43e021b..456f4d0 100644
 --- a/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/sw.c
 +++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/sw.c
 @@ -80,7 +80,7 @@ static int rtl92cu_init_sw_vars(struct ieee80211_hw *hw)
@@ -960,10 +1147,10 @@ index 96c923b..26eece2 100644
  	err = request_firmware_nowait(THIS_MODULE, 1,
  				      fw_name, rtlpriv->io.dev,
 diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/sw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/sw.c
-index 16132c6..dc9db6d 100644
+index 2b0c030..5d190b7 100644
 --- a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/sw.c
 +++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/sw.c
-@@ -175,7 +175,7 @@ static int rtl92d_init_sw_vars(struct ieee80211_hw *hw)
+@@ -176,7 +176,7 @@ static int rtl92d_init_sw_vars(struct ieee80211_hw *hw)
  
  	rtlpriv->max_fw_size = 0x8000;
  	pr_info("Driver for Realtek RTL8192DE WLAN interface\n");
@@ -973,10 +1160,10 @@ index 16132c6..dc9db6d 100644
  	/* request fw */
  	err = request_firmware_nowait(THIS_MODULE, 1, fw_name,
 diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/sw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/sw.c
-index eaa503b..343f691 100644
+index ef92a78..06ea6fa 100644
 --- a/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/sw.c
 +++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/sw.c
-@@ -171,7 +171,7 @@ int rtl92ee_init_sw_vars(struct ieee80211_hw *hw)
+@@ -172,7 +172,7 @@ int rtl92ee_init_sw_vars(struct ieee80211_hw *hw)
  	fw_name = "rtlwifi/rtl8192eefw.bin";
  
  	rtlpriv->max_fw_size = 0x8000;
@@ -986,10 +1173,10 @@ index eaa503b..343f691 100644
  				      rtlpriv->io.dev, GFP_KERNEL, hw,
  				      rtl_fw_cb);
 diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8192se/sw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192se/sw.c
-index 2006b09..475940e 100644
+index d55554b..bc3b9bf 100644
 --- a/drivers/net/wireless/realtek/rtlwifi/rtl8192se/sw.c
 +++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192se/sw.c
-@@ -91,7 +91,7 @@ static void rtl92se_fw_cb(const struct firmware *firmware, void *context)
+@@ -92,7 +92,7 @@ static void rtl92se_fw_cb(const struct firmware *firmware, void *context)
  			 "Firmware callback routine entered!\n");
  	complete(&rtlpriv->firmware_loading_complete);
  	if (!firmware) {
@@ -998,7 +1185,7 @@ index 2006b09..475940e 100644
  		rtlpriv->max_fw_size = 0;
  		return;
  	}
-@@ -209,7 +209,7 @@ static int rtl92s_init_sw_vars(struct ieee80211_hw *hw)
+@@ -210,7 +210,7 @@ static int rtl92s_init_sw_vars(struct ieee80211_hw *hw)
  	rtlpriv->max_fw_size = RTL8190_MAX_FIRMWARE_CODE_SIZE*2 +
  			       sizeof(struct fw_hdr);
  	pr_info("Driver for Realtek RTL8192SE/RTL8191SE\n"
@@ -1008,10 +1195,10 @@ index 2006b09..475940e 100644
  	err = request_firmware_nowait(THIS_MODULE, 1, fw_name,
  				      rtlpriv->io.dev, GFP_KERNEL, hw,
 diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/sw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/sw.c
-index 7bf9f25..a2acfac 100644
+index a545ea3..2d1feea 100644
 --- a/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/sw.c
 +++ b/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/sw.c
-@@ -178,7 +178,7 @@ int rtl8723e_init_sw_vars(struct ieee80211_hw *hw)
+@@ -179,7 +179,7 @@ int rtl8723e_init_sw_vars(struct ieee80211_hw *hw)
  		fw_name = "rtlwifi/rtl8723fw_B.bin";
  
  	rtlpriv->max_fw_size = 0x6000;
@@ -1021,10 +1208,10 @@ index 7bf9f25..a2acfac 100644
  				      rtlpriv->io.dev, GFP_KERNEL, hw,
  				      rtl_fw_cb);
 diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8723be/sw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8723be/sw.c
-index f9d10f1..9048c51 100644
+index 6a42988..1eb4a3c 100644
 --- a/drivers/net/wireless/realtek/rtlwifi/rtl8723be/sw.c
 +++ b/drivers/net/wireless/realtek/rtlwifi/rtl8723be/sw.c
-@@ -182,7 +182,7 @@ int rtl8723be_init_sw_vars(struct ieee80211_hw *hw)
+@@ -183,7 +183,7 @@ int rtl8723be_init_sw_vars(struct ieee80211_hw *hw)
  	}
  
  	rtlpriv->max_fw_size = 0x8000;
@@ -1034,10 +1221,10 @@ index f9d10f1..9048c51 100644
  				      rtlpriv->io.dev, GFP_KERNEL, hw,
  				      rtl_fw_cb);
 diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/sw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/sw.c
-index d71d277..f2c70e1 100644
+index ab5d462..cb3297a 100644
 --- a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/sw.c
 +++ b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/sw.c
-@@ -209,7 +209,7 @@ int rtl8821ae_init_sw_vars(struct ieee80211_hw *hw)
+@@ -212,7 +212,7 @@ int rtl8821ae_init_sw_vars(struct ieee80211_hw *hw)
  
  	rtlpriv->max_fw_size = 0x8000;
  	/*load normal firmware*/
@@ -1046,8 +1233,8 @@ index d71d277..f2c70e1 100644
  	err = request_firmware_nowait(THIS_MODULE, 1, fw_name,
  				      rtlpriv->io.dev, GFP_KERNEL, hw,
  				      rtl_fw_cb);
-@@ -226,7 +226,7 @@ int rtl8821ae_init_sw_vars(struct ieee80211_hw *hw)
- 		}
+@@ -223,7 +223,7 @@ int rtl8821ae_init_sw_vars(struct ieee80211_hw *hw)
+ 		return 1;
  	}
  	/*load wowlan firmware*/
 -	pr_info("Using firmware %s\n", wowlan_fw_name);
@@ -1055,157 +1242,3 @@ index d71d277..f2c70e1 100644
  	err = request_firmware_nowait(THIS_MODULE, 1,
  				      wowlan_fw_name,
  				      rtlpriv->io.dev, GFP_KERNEL, hw,
-diff -ru linux.orig/source/arch/x86/kernel/cpu/microcode/amd.c linux/source/arch/x86/kernel/cpu/microcode/amd.c
---- a/arch/x86/kernel/cpu/microcode/amd.c	2020-06-27 13:12:17.000000000 -0400
-+++ b/arch/x86/kernel/cpu/microcode/amd.c	2020-06-27 13:21:09.792495638 -0400
-@@ -756,7 +756,7 @@
- 		snprintf(fw_name, sizeof(fw_name), "amd-ucode/microcode_amd_fam%.2xh.bin", c->x86);
- 
- 	if (request_firmware_direct(&fw, (const char *)fw_name, device)) {
--		pr_debug("failed to load file %s\n", fw_name);
-+		pr_debug("failed to load file\n", fw_name);
- 		goto out;
- 	}
- 
-diff -ru linux.orig/source/arch/x86/kernel/cpu/microcode/intel.c linux/source/arch/x86/kernel/cpu/microcode/intel.c
---- a/arch/x86/kernel/cpu/microcode/intel.c	2020-06-27 13:12:17.000000000 -0400
-+++ b/arch/x86/kernel/cpu/microcode/intel.c	2020-06-27 13:37:05.143739228 -0400
-@@ -989,7 +989,7 @@
- 		c->x86, c->x86_model, c->x86_stepping);
- 
- 	if (request_firmware_direct(&firmware, name, device)) {
--		pr_debug("data file %s load failed\n", name);
-+		pr_debug("data file load failed\n", name);
- 		return UCODE_NFOUND;
- 	}
- 
-diff -ru a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c	2020-07-06 14:31:51.000000000 -0400
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c	2020-07-06 15:04:47.318942996 -0400
-@@ -1499,14 +1499,14 @@
- 	err = request_firmware(&adev->firmware.gpu_info_fw, fw_name, adev->dev);
- 	if (err) {
- 		dev_err(adev->dev,
--			"Failed to load gpu_info firmware \"%s\"\n",
-+			"Failed to load gpu_info firmware \n",
- 			fw_name);
- 		goto out;
- 	}
- 	err = amdgpu_ucode_validate(adev->firmware.gpu_info_fw);
- 	if (err) {
- 		dev_err(adev->dev,
--			"Failed to validate gpu_info firmware \"%s\"\n",
-+			"Failed to validate gpu_info firmware \n",
- 			fw_name);
- 		goto out;
- 	}
-diff -ru a/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c	2020-07-06 14:31:51.000000000 -0400
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c	2020-07-06 15:07:45.178781957 -0400
-@@ -70,7 +70,7 @@
- 
- 	r = request_firmware(&adev->vcn.fw, fw_name, adev->dev);
- 	if (r) {
--		dev_err(adev->dev, "amdgpu_vcn: Can't load firmware \"%s\"\n",
-+		dev_err(adev->dev, "amdgpu_vcn: Can't load firmware \n",
- 			fw_name);
- 		return r;
- 	}
-diff -ru a/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c
---- a/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c	2018-01-28 16:20:33.000000000 -0500
-+++ b/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c	2020-07-06 15:02:53.419019182 -0400
-@@ -378,7 +378,7 @@
- 
- out:
- 	if (err) {
--		pr_err("gfx6: Failed to load firmware \"%s\"\n", fw_name);
-+		pr_err("gfx6: Failed to load firmware \n", fw_name);
- 		release_firmware(adev->gfx.pfp_fw);
- 		adev->gfx.pfp_fw = NULL;
- 		release_firmware(adev->gfx.me_fw);
-diff -ru a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
---- a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c	2020-07-06 14:31:51.000000000 -0400
-+++ b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c	2020-07-06 15:07:23.966802499 -0400
-@@ -609,7 +609,7 @@
- out:
- 	if (err) {
- 		dev_err(adev->dev,
--			"gfx9: Failed to load firmware \"%s\"\n",
-+			"gfx9: Failed to load firmware \n",
- 			fw_name);
- 		release_firmware(adev->gfx.pfp_fw);
- 		adev->gfx.pfp_fw = NULL;
-diff -ru a/drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c b/drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c
---- a/drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c	2020-07-06 14:31:51.000000000 -0400
-+++ b/drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c	2020-07-06 15:02:30.263034763 -0400
-@@ -145,7 +145,7 @@
- out:
- 	if (err) {
- 		dev_err(adev->dev,
--		       "si_mc: Failed to load firmware \"%s\"\n",
-+		       "si_mc: Failed to load firmware \n",
- 		       fw_name);
- 		release_firmware(adev->mc.fw);
- 		adev->mc.fw = NULL;
-diff -ru a/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c b/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c
---- a/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c	2020-07-06 14:31:51.000000000 -0400
-+++ b/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c	2020-07-06 15:06:58.862827119 -0400
-@@ -128,7 +128,7 @@
- out:
- 	if (err) {
- 		dev_err(adev->dev,
--			"psp v10.0: Failed to load firmware \"%s\"\n",
-+			"psp v10.0: Failed to load firmware \n",
- 			fw_name);
- 		release_firmware(adev->psp.asd_fw);
- 		adev->psp.asd_fw = NULL;
-diff -ru a/drivers/gpu/drm/amd/amdgpu/psp_v3_1.c b/drivers/gpu/drm/amd/amdgpu/psp_v3_1.c
---- a/drivers/gpu/drm/amd/amdgpu/psp_v3_1.c	2018-01-28 16:20:33.000000000 -0500
-+++ b/drivers/gpu/drm/amd/amdgpu/psp_v3_1.c	2020-07-06 15:07:11.678814507 -0400
-@@ -151,7 +151,7 @@
- out:
- 	if (err) {
- 		dev_err(adev->dev,
--			"psp v3.1: Failed to load firmware \"%s\"\n",
-+			"psp v3.1: Failed to load firmware \n",
- 			fw_name);
- 		release_firmware(adev->psp.sos_fw);
- 		adev->psp.sos_fw = NULL;
-diff -ru a/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c b/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c
---- a/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c	2020-07-06 14:31:51.000000000 -0400
-+++ b/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c	2020-07-06 15:06:45.466840398 -0400
-@@ -217,7 +217,7 @@
- 	}
- out:
- 	if (err) {
--		DRM_ERROR("sdma_v4_0: Failed to load firmware \"%s\"\n", fw_name);
-+		DRM_ERROR("sdma_v4_0: Failed to load firmware \n", fw_name);
- 		for (i = 0; i < adev->sdma.num_instances; i++) {
- 			release_firmware(adev->sdma.instance[i].fw);
- 			adev->sdma.instance[i].fw = NULL;
-diff -ru a/drivers/gpu/drm/amd/amdgpu/si_dpm.c b/drivers/gpu/drm/amd/amdgpu/si_dpm.c
---- a/drivers/gpu/drm/amd/amdgpu/si_dpm.c	2020-07-06 14:31:51.000000000 -0400
-+++ b/drivers/gpu/drm/amd/amdgpu/si_dpm.c	2020-07-06 15:03:44.522984911 -0400
-@@ -7673,8 +7673,8 @@
- 
- out:
- 	if (err) {
--		DRM_ERROR("si_smc: Failed to load firmware. err = %d\"%s\"\n",
--			  err, fw_name);
-+		DRM_ERROR("si_smc: Failed to load firmware. err = %d\n",
-+			  err);
- 		release_firmware(adev->pm.fw);
- 		adev->pm.fw = NULL;
- 	}
-diff -ru a/drivers/net/wireless/intel/ipw2x00/ipw2100.c b/drivers/net/wireless/intel/ipw2x00/ipw2100.c
---- a/drivers/net/wireless/intel/ipw2x00/ipw2100.c	2020-07-06 14:31:51.000000000 -0400
-+++ b/drivers/net/wireless/intel/ipw2x00/ipw2100.c	2020-07-06 15:09:35.178678896 -0400
-@@ -8420,7 +8420,7 @@
- 
- 	if (rc < 0) {
- 		printk(KERN_ERR DRV_NAME ": "
--		       "%s: Firmware '%s' not available or load failed.\n",
-+		       "%s: Firmware not available or load failed.\n",
- 		       priv->net_dev->name, fw_name);
- 		return rc;
- 	}
