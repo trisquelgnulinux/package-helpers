@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2008-2018  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2008-2022  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C) 2022 Luis Guzman <ark@switnet.org>
 #
 #    This program is free software; you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
+VERSION=4
 COMPONENT=main
 
 . ./config
@@ -27,8 +27,8 @@ sed -i '/ESM/d' data/50unattended-upgrades.Ubuntu
 mv data/50unattended-upgrades.Ubuntu data/50unattended-upgrades.Trisquel
 echo "0498b3cb348c43d20d369a7be431ea14" >> data/50unattended-upgrades.md5sum
 
-# Prevent automated connections
-sed '/Update-Package-Lists/s/1/0/' -i data/20auto-upgrades
+# Disable by default
+sed '/Template: unattended-upgrades.enable_auto_updates/,/Default/s/Default: true/Default: false/' -i ./debian/templates
 
 rm test/test_remove_unused.py
 
