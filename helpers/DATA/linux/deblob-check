@@ -1,13 +1,22 @@
 #! /bin/sh
 
-# deblob-check version 2021-08-29
+# deblob-check version 2021-10-23 r18408
+#        modified with 2021-11-17 r18471
+#        modified with 2021-11-18 r18476
+#        modified with 2022-01-27 r18550
+#        modified with 2022-01-29 r18573
+#        modified with 2022-02-23 r18607
+#        modified with 2021-12-20 r18515 (partial)
+#        modified with 2022-03-20 r18637
+#        modified with 2022-04-20 r18680
+#        modified with 2022-05-09 r18697
 # Inspired in gNewSense's find-firmware script.
 # Written by Alexandre Oliva <lxoliva@fsfla.org>
 
 # Check http://www.fsfla.org/svn/fsfla/software/linux-libre for newer
 # versions.
 
-# Copyright 2008-2021 Alexandre Oliva <lxoliva@fsfla.org>
+# Copyright 2008-2022 Alexandre Oliva <lxoliva@fsfla.org>
 #
 # This program is part of GNU Linux-libre, a GNU project that
 # publishes scripts to clean up Linux so as to make it suitable for
@@ -2281,7 +2290,8 @@ set_except () {
     defsnc 'static[ ]\(u16\|struct[ ]i2c_reg_u16\)[ ]\(bridge\|mt9\(v\(11[12]\|011\)\|m001\)\)_init\[\]\(\[2\]\)\?[ ]=' drivers/media/video/gspca/sn9c20x.c
     defsnc 'static[ ]\(u8\|struct[ ]i2c_reg_u8\)[ ]\(soi968\|ov\(76[67]0\|965[05]\)\|hv7131r\)_init\[\]\(\[2\]\)\?[ ]=' drivers/media/video/gspca/sn9c20x.c
     defsnc 'static[ ]struct[ ]nand_ecclayout[ ]onenand_oob_128[ ]=' drivers/mtd/onenand/onenand_base.c
-    blob '#define[ ]BCM_5710_FW_\(\(MAJOR\|MINOR\|REVISION\|ENGINEERING\)_VERSION\|COMPILE_FLAGS\)[ 	]*[0-9]\+\([\n]#define[ ]BCM_5710_FW_\(\(MAJOR\|MINOR\|REVISION\|ENGINEERING\)_VERSION\|COMPILE_FLAGS\)[ 	]*[0-9]\+\)*' 'drivers/net/\(bnx2x[/]\)\?bnx2x_hsi\.h'
+    # Moved down to avoid shorter earlier match.
+    # blob '#define[ ]BCM_5710_FW_\(\(MAJOR\|MINOR\|REVISION\|ENGINEERING\)_VERSION\|COMPILE_FLAGS\)[ 	]*[0-9]\+\([\n]#define[ ]BCM_5710_FW_\(\(MAJOR\|MINOR\|REVISION\|ENGINEERING\)_VERSION\|COMPILE_FLAGS\)[ 	]*[0-9]\+\)*' 'drivers/net/\(bnx2x[/]\)\?bnx2x_hsi\.h'
     blob 'static[ ]int[ ]\(__devinit[ ]\)\?bnx2x_check_firmware[(]struct[ ]bnx2x[ ][*]bp[)][\n][{][^\n]*\([\n]\+[^\n}][^\n]*\)*[\n]\+[}]' 'drivers/net/\(bnx2x[/]\)\?bnx2x_main\.c'
     blobna 'if[ ][(][(]fw_ver\[[0-3]\][ ]!=[ ]BCM_5710_FW_\(MAJOR\|MINOR\|REVISION\|ENGINEERING\)_VERSION[)]\([ ][|][|][\n][ 	]*[(]fw_ver\[[0-3]\][ ]!=[ ]BCM_5710_FW_\(MAJOR\|MINOR\|REVISION\|ENGINEERING\)_VERSION[)]\)*[)][ ][{][^{}]*[}]' 'drivers/net/\(bnx2x[/]\)\?bnx2x_main\.c'
     blobna 'sprintf[(]fw_file_name[ ][+][ ]offset,[ ]["]%d[.]%d[.]%d[.]%d[.]fw["]\(,[\n][ 	]*BCM_5710_FW_\(MAJOR\|MINOR\|REVISION\|ENGINEERING\)_VERSION\)*[)][;]' 'drivers/net/\(bnx2x[/]\)\?bnx2x_main\.c'
@@ -2411,7 +2421,8 @@ set_except () {
     blob '#define[ ]_FW_NAME[(]api[)][ ]DRV_NAME[ ]["][.]["][ ]#api[ ]["]\.fw["]' drivers/media/video/iwmc3200top.h
     blob '#define[ ]FW_FILE_VERSION\([	]*[\\][\n][	]__stringify[(]BCM_5710_FW_\(MAJOR\|MINOR\|REVISION\|ENGINEERING\)_VERSION[)]\([ ]["][.]["]\)\?\)\+' 'drivers/net/\(bnx2x/\)\?bnx2x_main\.c'
     blobname '\(bnx2x[/]\)\?bnx2x-e[12]h\?-["][ ]FW_FILE_VERSION[ ]["]\.fw' 'drivers/net/\(bnx2x/\)\?bnx2x_main\.c'
-    blobname '\(bnx2x[/]\)\?bnx2x-e[12]h\?-\([0-9.%d]*\.fw\)\?' 'drivers/net/\(bnx2x/\)\?bnx2x_main\.c'
+    # Moved down to avoid shorter earlier match.
+    # blobname '\(bnx2x[/]\)\?bnx2x-e[12]h\?-\([0-9.%d]*\.fw\)\?' 'drivers/net/\(bnx2x/\)\?bnx2x_main\.c'
     blob '#define[ ]FW_VERSION\([ 	]__stringify[(]FW_VERSION_\(MAJOR\|MINOR\|MICRO\)[)]\([ ]["][.]["]\)\?\([	]*[\\][\n]\)\?\)\+' drivers/net/cxgb3/cxgb3_main.c
     blobname 'cxgb3[/]t3fw-["][ ]FW_VERSION[ ]["]\.bin' drivers/net/cxgb3/cxgb3_main.c
     blob '#define[ ]TPSRAM_VERSION\([ 	]__stringify[(]TP_VERSION_\(MAJOR\|MINOR\|MICRO\)[)]\([ ]["][.]["]\)\?\([	]*[\\][\n]\)\?\)\+' drivers/net/cxgb3/cxgb3_main.c
@@ -5269,7 +5280,7 @@ set_except () {
     blobname 'intel[/]ipu3-fw\.bin' drivers/staging/media/ipu3/ipu3-css-fw.h
     blobname 'intel[/]dsp_fw_icl\.bin' sound/soc/intel/common/soc-acpi-intel-icl-match.c
     # SOF stands for Sound Open Firmware, and it is Free Software.
-    # blobname 'sof-icl\(\.ri\|-rt274\.tplg\)' sound/soc/intel/common/soc-acpi-intel-icl-match.c
+    # blobname '\(sof\|reef\)-icl\(\.ri\|-rt274\.tplg\)' sound/soc/intel/common/soc-acpi-intel-icl-match.c
     blobname 'iwl-dbg-tlv\.ini' drivers/net/wireless/intel/iwlwifi/iwl-dbg-tlv.c
     accept '\(static[ ]int[ ]\|[\t]*\)brcmf_fw_request_firmware[(]' drivers/net/wireless/broadcom/brcm80211/brcmfmac/firmware.c
     blobna 'snprintf[(]version[,][ ]ETHTOOL_FWVERS_LEN[,][ ]["][ ]storm[ ]%d\.%d\.%d\.%d["]\([,][ \t\n]*BCM_5710_FW_\(MAJOR\|MINOR\|REVISION\|ENGINEERING\)_VERSION\)\+[)]' drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c
@@ -5278,14 +5289,14 @@ set_except () {
     # macros will be caught and dropped by other much earlier patterns.
     blobname '[ ]storm[ ]%d\.%d\.%d\.%d' drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c
     # These are probably older, we did not check for .ri and .tplg before.
-    # blobname 'intel[/]sof-apl\(\.ri\|-\(rt298\|da7219\|pcm512x\|wm8804\|tdf8532\)\.tplg\)' sound/soc/intel/common/soc-acpi-intel-bxt-match.c
-    # blobname 'intel[/]sof-byt\(\.ri\|-\(rt5670\|rt5640\|rt5651\|da7213\|rt5645\|max98090\)\.tplg\)' sound/soc/intel/common/soc-acpi-intel-byt-match.c
-    # blobname 'intel[/]sof-cht\(\.ri\|-\(rt5645\|rt5670\|max98090\|nau8824\|da7213\|es8316\|rt5640\|rt5651\)\.tplg\)' sound/soc/intel/common/soc-acpi-intel-cht-match.c
-    # blobname 'intel[/]sof-cnl\(\.ri\|-rt274\.tplg\)' sound/soc/intel/common/soc-acpi-intel-cnl-match.c
-    # blobname 'intel[/]sof-glk\(\.ri\|-\(alc298\|da7219\)\.tplg\)' sound/soc/intel/common/soc-acpi-intel-glk-match.c
-    # blobname 'intel[/]sof-hda-generic\.tplg' sound/soc/intel/common/soc-acpi-intel-hda-match.c
-    # blobname 'intel[/]sof-hsw\(\.ri\|\.tplg\)' sound/soc/intel/common/soc-acpi-intel-hsw-bdw-match.c
-    # blobname 'intel[/]sof-bdw\(\.ri\|-\(rt286\|rt5677\|rt5640\)\.tplg\)' sound/soc/intel/common/soc-acpi-intel-hsw-bdw-match.c
+    # blobname 'intel[/]\(sof\|reef\)-apl\(\.ri\|-\(rt298\|da7219\|pcm512x\|wm8804\|tdf8532\)\.tplg\)' sound/soc/intel/common/soc-acpi-intel-bxt-match.c
+    # blobname 'intel[/]\(sof\|reef\)-byt\(\.ri\|-\(rt5670\|rt5640\|rt5651\|da7213\|rt5645\|max98090\)\.tplg\)' sound/soc/intel/common/soc-acpi-intel-byt-match.c
+    # blobname 'intel[/]\(sof\|reef\)-cht\(\.ri\|-\(rt5645\|rt5670\|max98090\|nau8824\|da7213\|es8316\|rt5640\|rt5651\)\.tplg\)' sound/soc/intel/common/soc-acpi-intel-cht-match.c
+    # blobname 'intel[/]\(sof\|reef\)-cnl\(\.ri\|-rt274\.tplg\)' sound/soc/intel/common/soc-acpi-intel-cnl-match.c
+    # blobname 'intel[/]\(sof\|reef\)-glk\(\.ri\|-\(alc298\|da7219\)\.tplg\)' sound/soc/intel/common/soc-acpi-intel-glk-match.c
+    # blobname 'intel[/]\(sof\|reef\)-hda-generic\.tplg' sound/soc/intel/common/soc-acpi-intel-hda-match.c
+    # blobname 'intel[/]\(sof\|reef\)-hsw\(\.ri\|\.tplg\)' sound/soc/intel/common/soc-acpi-intel-hsw-bdw-match.c
+    # blobname 'intel[/]\(sof\|reef\)-bdw\(\.ri\|-\(rt286\|rt5677\|rt5640\)\.tplg\)' sound/soc/intel/common/soc-acpi-intel-hsw-bdw-match.c
     accept '[\t][\t]pr_err[(]["]%s:[ ]request_firmware[ ]error' drivers/net/wireless/quantenna/qtnfmac/pcie/topaz_pcie.c
 
     # New in 5.0.7.
@@ -5326,15 +5337,15 @@ set_except () {
     blobname 'gsl3676-chuwi-hi8-air\.fw' drivers/platform/x86/touchscreen_dmi.c
     blobname 'gsl1680-chuwi-hi10-air\.fw' drivers/platform/x86/touchscreen_dmi.c
     blobname 'gsl3692-pov-mobii-wintab-p1006w-v10\.fw' drivers/platform/x86/touchscreen_dmi.c
-    # blobname 'sof-apl\(\.ri\|-\(rt298\|da7219\|pcm512x\|wm8804\|tdf8532\)\.tplg\)' sound/soc/intel/common/soc-acpi-intel-bxt-match.c
-    # blobname 'sof-byt\(\.ri\|-\(rt5670\|rt5640\|rt5651\|da7213\|es8316\|rt5645\|max98090\)\.tplg\)' sound/soc/intel/common/soc-acpi-intel-byt-match.c
-    # blobname 'sof-cht\(\.ri\|-\(rt5645\|rt5670\|rt5645\|max98090\|nau8824\|da7213\|es8316\|rt5640\|rt5651\)\.tplg\)' sound/soc/intel/common/soc-acpi-intel-cht-match.c
-    # blobname 'sof-cnl\(\.ri\|-rt274\.tplg\)' sound/soc/intel/common/soc-acpi-intel-cnl-match.c
-    # blobname 'sof-glk\(\.ri\|-\(alc298\|da7219\)\.tplg\)' sound/soc/intel/common/soc-acpi-intel-glk-match.c
-    # blobname 'sof-hda-generic\.tplg' sound/soc/intel/common/soc-acpi-intel-hda-match.c
-    # blobname 'sof-hsw\(\.ri\|\.tplg\)' sound/soc/intel/common/soc-acpi-intel-hsw-bdw-match.c
-    # blobname 'sof-bdw\(\.ri\|-\(rt286\|rt5677\|rt5640\)\.tplg\)' sound/soc/intel/common/soc-acpi-intel-hsw-bdw-match.c
-    # blobname 'sof-icl\(\.ri\|-rt274\.tplg\)' sound/soc/intel/common/soc-acpi-intel-icl-match.c
+    # blobname '\(sof\|reef\)-apl\(\.ri\|-\(rt298\|da7219\|pcm512x\|wm8804\|tdf8532\)\.tplg\)' sound/soc/intel/common/soc-acpi-intel-bxt-match.c
+    # blobname '\(sof\|reef\)-byt\(\.ri\|-\(rt5670\|rt5640\|rt5651\|da7213\|es8316\|rt5645\|max98090\)\.tplg\)' sound/soc/intel/common/soc-acpi-intel-byt-match.c
+    # blobname '\(sof\|reef\)-cht\(\.ri\|-\(rt5645\|rt5670\|rt5645\|max98090\|nau8824\|da7213\|es8316\|rt5640\|rt5651\)\.tplg\)' sound/soc/intel/common/soc-acpi-intel-cht-match.c
+    # blobname '\(sof\|reef\)-cnl\(\.ri\|-rt274\.tplg\)' sound/soc/intel/common/soc-acpi-intel-cnl-match.c
+    # blobname '\(sof\|reef\)-glk\(\.ri\|-\(alc298\|da7219\)\.tplg\)' sound/soc/intel/common/soc-acpi-intel-glk-match.c
+    # blobname '\(sof\|reef\)-hda-generic\.tplg' sound/soc/intel/common/soc-acpi-intel-hda-match.c
+    # blobname '\(sof\|reef\)-hsw\(\.ri\|\.tplg\)' sound/soc/intel/common/soc-acpi-intel-hsw-bdw-match.c
+    # blobname '\(sof\|reef\)-bdw\(\.ri\|-\(rt286\|rt5677\|rt5640\)\.tplg\)' sound/soc/intel/common/soc-acpi-intel-hsw-bdw-match.c
+    # blobname '\(sof\|reef\)-icl\(\.ri\|-rt274\.tplg\)' sound/soc/intel/common/soc-acpi-intel-icl-match.c
     blobna '[/][*][ ]brcmfmac4366c-pcie\.\(ap\.\)\?bin[ ]from[ ]linux-firmware\.git[ ]commit[ ][0-9a-f]*[ ][*][/]' drivers/net/wireless/broadcom/brcm80211/brcmfmac/feature.c
     blobname 'iwlwifi-[^ ]*-[ab]0-' drivers/net/wireless/intel/iwlwifi/cfg/22000.c
     blobname 'iwlwifi-\(\(QuZ-a0-hr\|QuQnj-b0-jf\|so-a0-\(jf\|hr\)\)-b0\|\(cc\|\(so\|ty\)-a0-gf\)-a0\)-' drivers/net/wireless/intel/iwlwifi/cfg/22000.c
@@ -5390,21 +5401,21 @@ set_except () {
     blobname 'ccg_\(boot\|primary\|secondary\)\.cyacd' drivers/usb/typec/ucsi/ucsi_ccg.c
     defsnc 'static[ ]const[ ]struct[ ]utf8data[ ]utf8nfdi\(cf\|\)data\[\][ ]=' fs/unicode/utf8data.h_shipped
     defsc 'static[ ]const[ ]unsigned[ ]char[ ]utf8data\[64256\][ ]=' fs/unicode/utf8data.h_shipped
-    accept '[\t]*\.sof_fw_filename[ ]=[ ]["]\(intel[/]\)\?sof-[^" ;]*\.ri["]' sound/soc/intel/common/soc-acpi-intel-'\(b[xy]t\|cht\|cnl\|icl\|glk\|hda\|hsw-bdw\|kbl\|skl\)-match\.c'
-    accept '[\t]*\.sof_tplg_filename[ ]=[ ]["]\(intel[/]\)\?sof-[^" ;]*\.tplg["]' sound/soc/intel/common/soc-acpi-intel-'\(b[xy]t\|cht\|cnl\|icl\|glk\|hda\|hsw-bdw\|kbl\|skl\)-match\.c'
+    accept '[\t]*\.sof_fw_filename[ ]=[ ]["]\(intel[/]\)\?\(sof\|reef\)-[^" ;]*\.ri["]' sound/soc/intel/common/soc-acpi-intel-'\(b[xy]t\|cht\|cnl\|icl\|glk\|hda\|hsw-bdw\|kbl\|skl\)-match\.c'
+    accept '[\t]*\.sof_tplg_filename[ ]=[ ]["]\(intel[/]\)\?\(sof\|reef\)-[^" ;]*\.tplg["]' sound/soc/intel/common/soc-acpi-intel-'\(b[xy]t\|cht\|cnl\|icl\|glk\|hda\|hsw-bdw\|kbl\|skl\)-match\.c'
     accept '[\t]*tplg_filename[ ]=[ ]devm_kasprintf[(]sdev->dev[,][ ]GFP_KERNEL[,][\n\t ]*["]%s-idisp\.tplg["][,][ ]split_ext[)]' sound/soc/sof/intel/hda.c
     accept '[\t]ret[ ]=[ ]request_firmware[(][&]plat_data->fw[,][ ]fw_filename[,][ ]sdev->dev[)]' sound/soc/sof/loader.c
-    accept '[\t]*\.\(nocodec\|sof\)_fw_filename[ ]=[ ]["]sof-[^" ;]*\.ri["]' sound/soc/sof/sof-'\(acpi\|pci\)-dev\.c'
-    accept '[\t]*\.\(nocodec\|sof\)_tplg_filename[ ]=[ ]["]sof-[^" ;]*\.tplg["]' sound/soc/sof/sof-'\(acpi\|pci\)-dev\.c'
+    accept '[\t]*\.\(nocodec\|sof\)_fw_filename[ ]=[ ]["]\(sof\|reef\)-[^" ;]*\.ri["]' sound/soc/sof/'\(sof\|reef\)-\(acpi\|pci\)-dev\.c'
+    accept '[\t]*\.\(nocodec\|sof\)_tplg_filename[ ]=[ ]["]\(sof\|reef\)-[^" ;]*\.tplg["]' sound/soc/sof/'\(sof\|reef\)-\(acpi\|pci\)-dev\.c'
     accept '[\t]ret[ ]=[ ]request_firmware[(][&]fw[,][ ]file[,][ ]sdev->dev[)]' sound/soc/sof/topology.c
-    # blobname 'sof-byt-rt5682\.tplg' sound/soc/intel/common/soc-acpi-intel-byt-match.c
-    # blobname 'sof-cht-rt5682\.tplg' sound/soc/intel/common/soc-acpi-intel-cht-match.c
-    # blobname 'sof-cml-rt5682\(-max98357a\)\?\.tplg' sound/soc/intel/common/soc-acpi-intel-cnl-match.c
-    # blobname 'sof-glk-rt5682\.tplg' sound/soc/intel/common/soc-acpi-intel-glk-match.c
-    # blobname 'sof-icl-rt5682\.tplg' sound/soc/intel/common/soc-acpi-intel-icl-match.c
+    # blobname '\(sof\|reef\)-byt-rt5682\.tplg' sound/soc/intel/common/soc-acpi-intel-byt-match.c
+    # blobname '\(sof\|reef\)-cht-rt5682\.tplg' sound/soc/intel/common/soc-acpi-intel-cht-match.c
+    # blobname '\(sof\|reef\)-cml-rt5682\(-max98357a\)\?\.tplg' sound/soc/intel/common/soc-acpi-intel-cnl-match.c
+    # blobname '\(sof\|reef\)-glk-rt5682\.tplg' sound/soc/intel/common/soc-acpi-intel-glk-match.c
+    # blobname '\(sof\|reef\)-icl-rt5682\.tplg' sound/soc/intel/common/soc-acpi-intel-icl-match.c
     # blobname '%s-idisp\.tplg' sound/soc/sof/intel/hda.c
-    # blobname 'sof-\(hsw\|bdw\|byt\|cht\)\(\.ri\|\(-nocodec\)\?\.tplg\)' sound/soc/sof/sof-acpi-dev.c
-    # blobname 'sof-\(apl\|glk\|cnl\|icl\|skl\|kbl\)\(\.ri\|\(-nocodec\)\?\.tplg\)' sound/soc/sof/sof-pci-dev.c
+    # blobname '\(sof\|reef\)-\(hsw\|bdw\|byt\|cht\)\(\.ri\|\(-nocodec\)\?\.tplg\)' sound/soc/sof/'\(sof\|reef\)-acpi-dev\.c'
+    # blobname '\(sof\|reef\)-\(apl\|glk\|cnl\|icl\|skl\|kbl\)\(\.ri\|\(-nocodec\)\?\.tplg\)' sound/soc/sof/'\(sof\|reef\)-pci-dev\.c'
 
     # New in 5.2.1, 5.1.18, and 4.19.58.
     accept '[ ][ ][ ]the[ ]latest[ ]updated[ ]microcode\.' Documentation/admin-guide/hw-vuln/spectre.rst
@@ -5791,7 +5802,7 @@ set_except () {
     defsnc 'static[ ]const[ ]short[ ]\(attack\|decay\)_time_tbl\[128\][ ]=' sound/synth/emux/soundfont.c
     defsnc 'static[ ]const[ ]unsigned[ ]char[ ]bcd2000_init_sequence\[\][ ]=' sound/usb/bcd2000/bcd2000.c
     defsc 'static[ ]const[ ]struct[ ]s_c2[ ]SetRate48000\[\][ ]=' sound/usb/usx2y/usbusx2yaudio.c
-    accept '[\t]*\.default_fw_filename[ ]=[ ]["]sof-[^" ;]*\.ri["]' sound/soc/sof/sof-'\(acpi\|pci\)-dev\.c'
+    accept '[\t]*\.default_fw_filename[ ]=[ ]["]\(sof\|reef\)-[^" ;]*\.ri["]' sound/soc/sof/'\(sof\|reef\)-\(acpi\|pci\)-dev\.c'
     accept '[\t]*tplg_filename[ ]=[ ]devm_kasprintf[(]sdev->dev[,][ ]GFP_KERNEL[,][\n][\t ]*["]%s-%s\.tplg["][,]' sound/soc/sof/intel/byt.c
     accept '[\t]*dev_dbg[(]sdev->dev[,][ ]["]request_firmware[ ]%s[ ]successful' sound/soc/sof/loader.c
     accept '[\t]ret[ ]=[ ]request_firmware[(][&]fw[,][ ]file[,][ ]scomp->dev[)]' sound/soc/sof/topology.c
@@ -6017,7 +6028,7 @@ set_except () {
     defsc 'static[ ]struct[ ]font_data[ ]fontdata_ter16x32[ ]=' lib/fonts/font_ter16x32.c
 
     # New in 5.9.2 and 5.8.17.
-    accept '[\t][\t]\.driver_data[ ]=[ ]["]sof-[^" ;]*\.tplg["]' sound/soc/sof/sof-pci-dev.c
+    accept '[\t][\t]\.driver_data[ ]=[ ]["]\(sof\|reef\)-[^" ;]*\.tplg["]' sound/soc/sof/'\(sof\|reef\)-pci-dev\.c'
 
     # New in 5.9.7 and 5.4.76.
     defsc 'static[ ]const[ ]struct[ ]font_data[ ]fontdata_ter16x32[ ]=' lib/fonts/font_ter16x32.c
@@ -6279,7 +6290,74 @@ set_except () {
     # Present in 4.9, links to Free Software.
     accept 'ARM[ ]assembly[ ]source[ ]code[ ]available[ ]at[ ]https[:][/][/]linuxtv\.org[/]downloads[/]firmware[/]Boot\.S' firmware/WHENCE
 
+    # New in 5.14.11, 5.10.72.
+    blobname '\(silead[/]\)\?gsl1680-chuwi-hi\(10plus\|book\)\.fw' drivers/platform/x86/touchscreen_dmi.c
 
+    # New in 5.15-rc.
+    blobname 'achc\.bin' 'Documentation/ABI/testing/sysfs-driver-ge-achc\|drivers/misc/gehc-achc\.c'
+    blobname 'qcom[/]sdm845[/]oneplus6[/]ipa_fws\.mbn' arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi
+    defsnc 'static[ ]__amode31_data[ ]u32[ ]__ctl_duald_amode31\[32\][ ]__aligned[(]128[)][ ]=' arch/s390/kernel/setup.c
+    defsnc '[\t]umc_v6_7_channel_idx_tbl_\(second\|first\)\[UMC_V6_7_UMC_INSTANCE_NUM\]\[UMC_V6_7_CHANNEL_INSTANCE_NUM\][ ]=' drivers/gpu/drm/amd/amdgpu/umc_v6_7.c
+    defsnc 'static[ ]const[ ]struct[ ]reg_sequence[ ]ej030na_init_sequence\[\][ ]=' drivers/gpu/drm/panel/panel-innolux-ej030na.c
+    defsnc '[\t]static[ ]const[ ]int[ ]voltages\[\][ ]=' drivers/hid/hid-logitech-hidpp.c
+    defsnc 'static[ ]const[ ]struct[ ]imx335_reg[ ]mode_2592x1940_regs\[\][ ]=' drivers/media/i2c/imx335.c
+    defsnc 'static[ ]const[ ]struct[ ]imx412_reg[ ]mode_4056x3040_regs\[\][ ]=' drivers/media/i2c/imx412.c
+    defsnc 'static[ ]const[ ]struct[ ]ov9282_reg[ ]mode_1280x720_regs\[\][ ]=' drivers/media/i2c/ov9282.c
+    defsnc 'static[ ]const[ ]u8[ ]channel_all\[59\][ ]=' drivers/net/wireless/realtek/rtlwifi/rtl8192de/phy.c
+    defsnc 'static[ ]const[ ]struct[ ]ab8500_v_to_cap[ ]cap_tbl\(_[ab]_thermistor\)\?\[\][ ]=' drivers/power/supply/ab8500_bmdata.c
+    blobname 'rtlwifi\([/]\|[\\][\\]\)rtl8188eufw\.bin' drivers/staging/r8188eu/hal/rtl8188e_hal_init.c
+    defsnc 'static[ ]char[ ]NEGOTIATE_GSS_HEADER\[AUTH_GSS_LENGTH\][ ]=' fs/ksmbd/auth.c
+    defsnc 'const[ ]u8[ ]s_default_security\[\][ ]__aligned[(]8[)][ ]=' fs/ntfs3/fsntfs.c
+    accept '[ ]*[*][ ][ ][ ]1[ ]0[ ]9[ ]8[ ]7[ ]6[ ]5[ ]4[ ]3[ ]2[ ]1[ ]0[ ]9[ ]8[ ]7[ ]6[ ]5[ ]4[ ]3[ ]2[ ]1[ ]0[ ]9[ ]8[ ]7[ ]6[ ]5[ ]4[ ]3[ ]2[ ]1[ ]0' fs/ntfs3/ntfs.h
+    defsnc 'static[ ]const[ ]u32[ ]__cacheline_aligned[ ]ck\[32\][ ]=' lib/crypto/sm4.c
+    defsnc 'static[ ]const[ ]u8[ ]__cacheline_aligned[ ]sbox\[256\][ ]=' lib/crypto/sm4.c
+    defsnc 'static[ ]const[ ]char[ ]large_mask\[\][ ]__initconst[ ]=' lib/test_bitmap.c
+    defsnc 'static[ ]const[ ]struct[ ]cs8409_i2c_param[ ]dolphin_c[01]_init_reg_seq\[\][ ]=' sound/pci/hda/patch_cs8409-tables.c
+    defsnc 'const[ ]__u8[ ]nci_rf_activate_ntf\[\][ ]=' tools/testing/selftests/nci/nci_dev.c
+    blobname 'brcmfmac43\(430b0\|752\)-sdio' drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
+    # Catch other names likely to appear in BRCMF_FW*_DEF strings in these files.
+    blobna 'brcmfmac43[^";) \t\n]*\(-sdio\|-pcie\)\?' drivers/net/wireless/broadcom/brcm80211/brcmfmac/'\(sdio\|pcie\|usb\)\.c'
+
+    # New in 5.15.3-gnu and 5.14.19-gnu.
+    blobna '[/][*][ ]linux-firmware\.git[ ]hash[ ][0-9a-f]*[ ][*][/]' drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+
+    # New in 5.15.3-gnu.
+    defsnc 'static[ ]const[ ]u32[ ]____cacheline_aligned[ ]ck\[32\][ ]=' lib/crypto/sm4.c
+    defsnc 'static[ ]const[ ]u8[ ]____cacheline_aligned[ ]sbox\[256\][ ]=' lib/crypto/sm4.c
+
+    # New in 5.16.3, 5.15.17, 5.10.94, 5.4.174, 4.19.226, 4.14.263.
+    accept 'static[ ]struct[ ]dvb_usb_device_properties[ ]\(p1100\|s660\|p7500\)_properties[ ]=[ ][{][\n]\([	]\.\(caps\|usb_ctrl\|size_of_priv\)[ ]*=[ ][^",]*,[\n]*\)*[	]\.firmware[ ]*=[ ]' drivers/media/usb/dvb-usb/dw2102.c
+
+    # New in 5.16.4, 5.15.18, 5.10.95.
+    blob '#define[ ]BCM_5710_FW_\(\(MAJOR\|MINOR\|REVISION\|ENGINEERING\)_VERSION\|COMPILE_FLAGS\)\(_V15\)\?[ 	]*[0-9]\+\([\n]#define[ ]BCM_5710_FW_\(\(MAJOR\|MINOR\|REVISION\|ENGINEERING\)_VERSION\|COMPILE_FLAGS\)\(_V15\)\?[ 	]*[0-9]\+\)*' 'drivers/net/\(bnx2x[/]\)\?bnx2x_hsi\.h'
+    blob '#define[ ]FW_FILE_VERSION\(_V15\)\?\([	 ]*[\\][\n][	]__stringify[(]BCM_5710_FW_\(MAJOR\|MINOR\|REVISION\|ENGINEERING\)_VERSION\(_V15\)\?[)]\([ ]["][.]["]\)\?\)\+\([\n]\+#define[ ]FW_FILE_VERSION\(_V15\)\?\([	 ]*[\\][\n][	]__stringify[(]BCM_5710_FW_\(MAJOR\|MINOR\|REVISION\|ENGINEERING\)_VERSION\(_V15\)\?[)]\([ ]["][.]["]\)\?\)\+\)*' 'drivers/net/\(bnx2x/\)\?bnx2x_main\.c'
+    blobname '\(bnx2x[/]\)\?bnx2x-e[12]h\?-["][ ]FW_FILE_VERSION\(_V15\)\?[ ]["]\.fw' 'drivers/net/\(bnx2x/\)\?bnx2x_main\.c'
+    blobname '\(bnx2x[/]\)\?bnx2x-e[12]h\?-\([0-9.%d]*\.fw\)\?' 'drivers/net/\(bnx2x/\)\?bnx2x_main\.c'
+    blobna '\([,][\n \t]*BCM_5710_FW_\(MAJOR\|MINOR\|REVISION\|ENGINEERING\)_VERSION\)\+' drivers/net/wireless/broadcom/bnx2x/bnx2x_main.c
+    accept '[\t][\t][\t]goto[ ]request_firmware_exit[;]' drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
+    blobna 'bp->fw_\(major\|minor\|eng\|rev\)[ ]=[ ]BCM_5710_FW_\(MAJOR\|MINOR\|ENGINEERING\|REVISION\)_VERSION\(_V15\)\?[;]\([\n][\t]*bp->fw_\(major\|minor\|eng\|rev\)[ ]=[ ]BCM_5710_FW_\(MAJOR\|MINOR\|ENGINEERING\|REVISION\)_VERSION\(_V15\)\?[;]\)*' drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
+    blobna '\([,][\n \t]*bp->fw_\(major\|minor\|rev\)\)\+' drivers/net/wireless/broadcom/bnx2x/bnx2x_main.c
+
+    # New in 5.16.11, 5.15.25, 5.10.102.
+    blobname 'gsl1680-rwc-nanote-p8\.fw' drivers/platform/x86/touchscreen_dmi.c
+
+    # New in 5.15.27.
+    defsc 'static[ ]const[ ]u16[ ]amdgpu_unsupported_pciidlist\[\][ ]=' drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
+
+    # New in 5.16.17, 5.15.31, 5.10.108.
+    blobna 'if[ ][(]loaded_fw_\(major\|minor\|eng\|rev\)[ ]\(!=\|<\)[ ]BCM_5710_FW_\(MAJOR\|MINOR\|ENGINEERING\|REVISION\)_VERSION\(_V15\)\?\([ ][|][|][\n][\t ]*loaded_fw_\(major\|minor\|eng\|rev\)[ ]\(!=\|<\)[ ]BCM_5710_FW_\(MAJOR\|MINOR\|ENGINEERING\|REVISION\)_VERSION\(_V15\)\?\)*[)]' drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
+
+    # New in 5.17.4 and 5.15.35.
+    accept '[ ][*][ ]enabled[ ]with[ ]updated[ ]microcode[.]' arch/x86/kernel/cpu/tsx.c
+
+    # New in 5.17.6, 5.15.38, 5.10.114, 5.4.192.
+    accept '[ ][*][ ]microcode_bsp_resume[ ]-[ ]Update[ ]boot[ ]CPU[ ]microcode[ ]during[ ]resume' arch/x86/kernel/cpu/microcode/core.c
+
+    # Trisquel changes for Aramo
+    blobname 'mediatek[/]WIFI_RAM_CODE_MT7922_1\.bin' drivers/net/wireless/mediatek/mt76/mt7921/mt7921.h
+    blobname 'mediatek[/]WIFI_MT7922_patch_mcu_1_1_hdr\.bin' drivers/net/wireless/mediatek/mt76/mt7921/mt7921.h
+    blobname 'qca[/]nvm_usb_%08x\.bin' drivers/bluetooth/btusb.c
+    blobname 'qca[/]nvm_usb_%08x%s_%04x\.bin' drivers/bluetooth/btusb.c
     ;;
 
   */*freedo*.patch | */*logo*.patch)

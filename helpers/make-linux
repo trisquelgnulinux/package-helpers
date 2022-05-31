@@ -1,7 +1,7 @@
 #!/bin/sh
 #
-#    Copyright (C) 2021 Luis Guzman <ark@switnet.org>
-#    Copyright (C) 2008-2020  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2022 Luis Guzman <ark@switnet.org>
+#    Copyright (C) 2008-2022  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C) 2019 David Trudgian <dave@trudgian.net>
 #
 #    This program is free software; you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=10
+VERSION=10.5
 
 . ./config
 
@@ -30,6 +30,7 @@ done
 
 PRESERVEDIRS='
 drivers/gpu/drm/amd/amdgpu
+drivers/gpu/drm/amd/pm/powerplay
 drivers/gpu/drm/r128
 drivers/gpu/drm/radeon
 drivers/net/wireless/intel/ipw2x00
@@ -60,35 +61,52 @@ done
 # Enable blobless activation - https://libreplanet.org/wiki/Group:Hardware/research/gpu/radeon
 rm $TMPDIR/drivers/gpu/drm/radeon/ni.c
 
-sh $DATA/deblob-5.4
+sh $DATA/deblob-5.15
 
 echo "Reverting deblobbing for files patched by silent-accept-firmware"
 cp $TMPDIR/* . -av
 rm -rf $TMPDIR
 
 # Wipe dkms-versions
-# lists zfs / nvidia versions
+# lists zfs / v4l2loopback versions
 echo > debian/dkms-versions
 
 # Remove ZFS
 rm zfs spl debian/scripts/misc/update-zfs.sh -rf
-/bin/sed 's/spl-dkms, zfs-dkms//' -i debian/control debian.master/control.d/vars.generic debian.master/control.d/vars.*
-/bin/sed '/^define build_zfs/,/^endef/d; /^define install_zfs/,/^endef/d; /zfs/d' -i debian/rules.d/2-binary-arch.mk
-/bin/sed '/ifeq ($(do_zfs),false)/,/endif/d' -i debian/rules
-/bin/sed  '/zfs/d' -i debian.master/rules.d/* debian.master/d-i/modules/fs-core-modules debian.master/control.d/generic.inclusion-list debian.master/abi/*/*/*.modules debian/rules debian.master/control.d/vars.*
+/bin/sed 's/spl-dkms, zfs-dkms//' -i debian/control \
+                                     debian.master/control.d/vars.generic \
+                                     debian.master/control.d/vars.*
+
+/bin/sed -i '/ifeq ($(do_zfs),false)/,/endif$/d' debian/rules
+/bin/sed  -i '/zfs/d' debian.master/abi/*/*.modules \
+                      debian/rules.d/2-binary-arch.mk \
+                      debian.master/rules.d/* \
+                      debian/rules
+#                      debian.master/d-i/modules/fs-core-modules \
+#                      debian.master/control.d/generic.inclusion-list \
+#                      debian.master/control.d/vars.*
 
 # Remove VBox
-sed -i '/vbox/s|true|false|' debian.master/rules.d/amd64.mk
+#sed -i '/vbox/s|true|false|' debian.master/rules.d/amd64.mk
+
+# Remove v4l2loopback
+/bin/sed -i '/ifeq ($(do_v4l2loopback),false)/,/endif$/d' debian/rules
+/bin/sed -i '/v4l2loopback/d' debian/rules.d/2-binary-arch.mk \
+                              debian/rules
+/bin/sed -i '/do_v4l2loopback/d' debian.master/rules.d/*
 
 # Remove nvidia
-rm -rf debian/scripts/debian/scripts/dkms-build--nvidia-N
-/bin/sed  '/do_dkms_nvidia = true/d' -i debian.master/abi/*/*/*.modules debian/rules debian.master/control.d/vars.*
-sed '/do_dkms_nvidia/,/endif/d' -i debian/rules.d/2-binary-arch.mk
-/bin/sed '/do_dkms_nvidia/d' -i debian.master/rules.d/*
+rm -rf debian/scripts/dkms-build--nvidia-N
+sed -i '/dkms-build--nvidia-N/d' debian.master/reconstruct
+
+#/bin/sed  '/do_dkms_nvidia = true/d' -i debian.master/abi/*/*/*.modules \
+#                                        debian/rules \
+#                                        debian.master/control.d/vars.*
 
 # Remove wireguard
-sed '/do_dkms_wireguard/d' -i debian/rules.d/2-binary-arch.mk
-/bin/sed '/do_dkms_wireguard/d' -i debian.master/rules.d/*
+/bin/sed '/ifeq ($(do_dkms_wireguard),false)/,/endif$/d' -i debian/rules
+#sed '/do_dkms_wireguard/d' -i debian/rules.d/2-binary-arch.mk
+#/bin/sed '/do_dkms_wireguard/d' -i debian.master/rules.d/*
 
 # Compile with less modules and avoid abi check
 echo 'skipmodule = true' >> debian.master/rules.d/0-common-vars.mk
@@ -100,7 +118,6 @@ echo 'skipabi = true' >> debian/rules.d/0-common-vars.mk
 echo 'skipretpoline = true' >> debian.master/rules.d/0-common-vars.mk
 echo 'skipretpoline = true' >> debian/rules.d/0-common-vars.mk
 
-
 # Do not label packages as unsigned
 sed '/bin_pkg_name_unsigned/s/linux-image-unsigned/linux-image/' -i debian/rules.d/0-common-vars.mk
 sed 's/.unsigned//' -i debian/scripts/control-create
@@ -108,6 +125,10 @@ sed 's/.unsigned//' -i debian/scripts/control-create
 line=$(grep -n ')-Ubuntu' debian/rules.d/0-common-vars.mk|cut -d: -f1)
 sed $(expr $line - 1 ),$(expr $line + 1 )d debian/rules.d/0-common-vars.mk -i
 sed s/family=ubuntu/family=trisquel/ -i debian/rules.d/0-common-vars.mk
+cat << EOF > debian.master/etc/kernelconfig
+archs="amd64 i386 armhf arm64 ppc64el"
+family='trisquel'
+EOF
 
 rename s/ubuntu/trisquel/ debian.*/config/config.common.ubuntu
 
@@ -116,19 +137,21 @@ find debian* -type f -name *control* -exec sed 's/ with Ubuntu patches//; s/Linu
 # Descriptions should not change based on the build arch
 sed 's/on DESC//; s/PKGVER on/PKGVER/; /^ DESC.$/d;' debian*/control.d/flavour-control.stub -i
 
-sed '/^firmware/d' ./debian*/abi/*/fwinfo -i
-echo > ./debian.master/d-i/firmware/nic-modules
-echo > ./debian.master/d-i/firmware/scsi-modules
+sed '/^firmware/d' ./debian*/abi/fwinfo -i
+#echo > ./debian.master/d-i/firmware/nic-modules
+#echo > ./debian.master/d-i/firmware/scsi-modules
 
 # Disable using udev as a fallback for firmware loading
 replace "CONFIG_FW_LOADER_USER_HELPER=y" "CONFIG_FW_LOADER_USER_HELPER=n" debian.master/config
 
-# Fix armhf port build
+# Fix arm port build
 sed -i "/CONFIG_FW_LOADER_USER_HELPER/s|'armhf': 'y',|'armhf': 'n',|g" debian.master/config/annotations
+sed -i "/CONFIG_FW_LOADER_USER_HELPER/s|'arm64': 'y',|'arm64': 'n',|g" debian.master/config/annotations
 sed -i "/CONFIG_FW_LOADER_USER_HELPER_FALLBACK/s|'armhf': 'n',|'armhf': '-',|g" debian.master/config/annotations
+sed -i "/CONFIG_FW_LOADER_USER_HELPER_FALLBACK/s|'arm64': 'n',|'arm64': '-',|g" debian.master/config/annotations
 
-# Disable ahc1ec0.
-sed -i "/AHC1EC0/d" debian.master/config/annotations
+# Disable aaeon.
+sed -i "/AAEON/d" debian.master/config/annotations #10.2
 
 cp debian.master/config debian.hwe -a
 
