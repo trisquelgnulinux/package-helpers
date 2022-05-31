@@ -18,11 +18,13 @@
 #
 
 VERSION=1
-EXTERNAL='deb-src http://ftp.debian.org/debian testing main'
+EXTERNAL='deb-src http://ftp.debian.org/debian stable main'
 REPOKEY=648ACFD622F3D138
 
 . ./config
 
-changelog "Backported from debian-testing"
+sed -i '/debhelper-compat/s|12|11|' debian/control
+
+changelog "Backported from debian stable"
 
 compile
