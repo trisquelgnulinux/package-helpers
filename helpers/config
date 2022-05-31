@@ -110,6 +110,7 @@ apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver hkps://keyserver.
 apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys 8B48AD6246925553 > /dev/null
 apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys DCC9EFBF77E11517 > /dev/null
 apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys 648ACFD622F3D138 > /dev/null
+apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys 54404762BBB6E853 > /dev/null
 # Tor gpg key
 apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --import DATA/tor/A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89.asc
 fi
@@ -137,7 +138,7 @@ if [ "1$EXTERNAL" != "1" ]; then
    COMPONENTS=$(eval echo "$EXTERNAL" | cut -d' ' -f 4-)
    echo "deb-src http://deb.debian.org/debian $RELNAME $COMPONENTS" >> ${LOCAL_APT}/etc/apt.sources.list
    echo "deb-src http://deb.debian.org/debian ${RELNAME}-updates $COMPONENTS" >> ${LOCAL_APT}/etc/apt.sources.list
-   echo "deb-src http://deb.debian.org/debian-security ${RELNAME}/updates $COMPONENTS" >> ${LOCAL_APT}/etc/apt.sources.list
+   echo "deb-src http://deb.debian.org/debian-security ${RELNAME}-security $COMPONENTS" >> ${LOCAL_APT}/etc/apt.sources.list
  else
    eval echo "$EXTERNAL" >> ${LOCAL_APT}/etc/apt.sources.list
  fi
