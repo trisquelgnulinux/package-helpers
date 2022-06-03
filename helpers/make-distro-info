@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 DEPENDS=distro-info-data
 
 . ./config
@@ -50,6 +50,8 @@ cp $DATA/test.pl perl/
 
 #shell
 mv shell/ubuntu-distro-info.in shell/trisquel-distro-info.in
+
+mv haskell/UbuntuDistroInfo.hs haskell/TrisquelDistroInfo.hs
 
 changelog "Reworking and branding Trisquel GNU/Linux distro info."
 
