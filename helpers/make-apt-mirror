@@ -18,13 +18,12 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 
 . ./config
 
 cp $DATA/Trisquel-mirror.list debian/
 
-changelog "Added config for Trisquel GNU/Linux"
 
 sed 's/Debian or Ubuntu/Trisquel/' -i apt-mirror
 sed 's/Debian/Trisquel/g' -i apt-mirror
@@ -33,7 +32,7 @@ sed "s/stable/$CODENAME/g" -i apt-mirror
 sed 's/ contrib//g' -i apt-mirror
 sed 's/ non-free//g' -i apt-mirror
 
-changelog "Update manpage for Trisquel"
+changelog "Added config and update manpage for Trisquel."
 
 compile
 
