@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 
 . ./config
 
@@ -38,10 +38,6 @@ replace firefox abrowser .
 
 cp $DATA/icecat.xml cleaners/icecat.xml
 
-changelog "Rename firefox to abrowser"
-
-changelog "Add icecat cleaner"
-
-changelog "Remove cleaners for non-free programs and stop advertising them"
+changelog "Rename firefox to abrowser, add icecat cleaner and remove cleaners for non-free programs and stop advertising them"
 
 compile
