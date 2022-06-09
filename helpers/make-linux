@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=10.5
+VERSION=11
 
 . ./config
 
@@ -144,14 +144,16 @@ sed '/^firmware/d' ./debian*/abi/fwinfo -i
 # Disable using udev as a fallback for firmware loading
 replace "CONFIG_FW_LOADER_USER_HELPER=y" "CONFIG_FW_LOADER_USER_HELPER=n" debian.master/config
 
-# Fix arm port build
+# Fix ports build
 sed -i "/CONFIG_FW_LOADER_USER_HELPER/s|'armhf': 'y',|'armhf': 'n',|g" debian.master/config/annotations
 sed -i "/CONFIG_FW_LOADER_USER_HELPER/s|'arm64': 'y',|'arm64': 'n',|g" debian.master/config/annotations
+sed -i "/CONFIG_FW_LOADER_USER_HELPER/s|'ppc64el': 'y',|'ppc64el': 'n',|g" debian.master/config/annotations
 sed -i "/CONFIG_FW_LOADER_USER_HELPER_FALLBACK/s|'armhf': 'n',|'armhf': '-',|g" debian.master/config/annotations
 sed -i "/CONFIG_FW_LOADER_USER_HELPER_FALLBACK/s|'arm64': 'n',|'arm64': '-',|g" debian.master/config/annotations
+sed -i "/CONFIG_FW_LOADER_USER_HELPER_FALLBACK/s|'ppc64el': 'n',|'ppc64el': '-',|g" debian.master/config/annotations
 
 # Disable aaeon.
-sed -i "/AAEON/d" debian.master/config/annotations #10.2
+sed -i "/AAEON/d" debian.master/config/annotations
 
 cp debian.master/config debian.hwe -a
 
