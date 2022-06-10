@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=4
+VERSION=5
 
 . ./config
 
@@ -95,6 +95,16 @@ sed '/fonts-ubuntu/d' -i debian/control
 rm $(find -name caja-dropbox-autostart)
 rm $(find -name caja-dropbox-autostart.desktop)
 sed '/dropbox/d' -i debian/ubuntu-mate-default-settings.install
+
+#Remove abrowser/firefox policies (starting on Jammy/Aramo).
+rm etc/firefox/policies/policies.json
+
+#sed -i '/exit/i if [ -f /etc/firefox/policies/policies.json ]; then' debian/ubuntu-mate-default-settings.postinst \
+#                                                                     debian/ubuntu-mate-default-settings.postrm
+#sed -i '/exit/i    rm -f /etc/firefox/policies/policies.json' debian/ubuntu-mate-default-settings.postinst \
+#                                                              debian/ubuntu-mate-default-settings.postrm
+#sed -i '/exit/i fi' debian/ubuntu-mate-default-settings.postinst \
+#                    debian/ubuntu-mate-default-settings.postrm
 
 changelog "Customized for Trisquel"
 
