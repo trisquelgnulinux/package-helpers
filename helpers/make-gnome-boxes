@@ -2,6 +2,7 @@
 #
 #    Copyright (C) 2022 Trisquel GNU/Linux developers
 #                       <trisquel-devel@listas.trisquel.info>
+#    Copyright (C) 2022 Luis Guzman <ark@switnet.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -18,12 +19,15 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=0
+VERSION=1
 
 . ./config
 
 rm debian/patches/Update-recommended-downloads.patch
 sed -i '/Update-recommended-downloads.patch/d' debian/patches/series
+
+#Required dependencies not in upstream.
+sed -i 's|libvirt-dev,|libvirt-dev, cmake, libsasl2-dev, libpulse-dev,|' debian/control*
 
 cat << recommended-os > data/recommended-downloads.xml
 <?xml version="1.0" encoding="utf-8" ?>
