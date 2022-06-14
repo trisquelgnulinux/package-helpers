@@ -61,13 +61,14 @@ diff -Nru source_orig/browser/base/content/test/static/browser_all_files_referen
  
    // layout/mathml/nsMathMLChar.cpp
 diff -Nru source_orig/browser/components/newtab/lib/OnboardingMessageProvider.jsm source/browser/components/newtab/lib/OnboardingMessageProvider.jsm
---- source_orig/browser/components/newtab/lib/OnboardingMessageProvider.jsm	2022-05-22 09:35:55.448674482 +0000
-+++ source/browser/components/newtab/lib/OnboardingMessageProvider.jsm	2022-05-22 21:37:23.090968112 +0000
-@@ -96,221 +96,6 @@
+--- source_orig/browser/components/newtab/lib/OnboardingMessageProvider.jsm	2022-06-08 17:44:48.000000000 -0500
++++ source/browser/components/newtab/lib/OnboardingMessageProvider.jsm	2022-06-13 23:03:00.516557944 -0500
+@@ -96,220 +96,6 @@
      },
    },
    {
 -    id: "PB_NEWTAB_FOCUS_PROMO",
+-    type: "default",
 -    template: "pb_newtab",
 -    groups: ["pbNewtab"],
 -    content: {
@@ -94,12 +95,10 @@ diff -Nru source_orig/browser/components/newtab/lib/OnboardingMessageProvider.js
 -              id: "FOCUS_PROMO",
 -              template: "multistage",
 -              modal: "tab",
--              metrics: "block",
 -              backdrop: "transparent",
 -              screens: [
 -                {
 -                  id: "DEFAULT_MODAL_UI",
--                  order: 0,
 -                  content: {
 -                    logo: {
 -                      imageURL:
@@ -168,16 +167,17 @@ diff -Nru source_orig/browser/components/newtab/lib/OnboardingMessageProvider.js
 -    frequency: {
 -      custom: [
 -        {
--          cap: 1,
--          period: 604800000, // Max 1 per week
+-          cap: 3,
+-          period: 604800000, // Max 3 per week
 -        },
 -      ],
--      lifetime: 3,
+-      lifetime: 12,
 -    },
 -    targeting: "!(region in [ 'DE', 'AT', 'CH'] && localeLanguageCode == 'en')",
 -  },
 -  {
 -    id: "PB_NEWTAB_KLAR_PROMO",
+-    type: "default",
 -    template: "pb_newtab",
 -    groups: ["pbNewtab"],
 -    content: {
@@ -205,7 +205,6 @@ diff -Nru source_orig/browser/components/newtab/lib/OnboardingMessageProvider.js
 -              id: "KLAR_PROMO",
 -              template: "multistage",
 -              modal: "tab",
--              metrics: "block",
 -              backdrop: "transparent",
 -              screens: [
 -                {
@@ -273,11 +272,11 @@ diff -Nru source_orig/browser/components/newtab/lib/OnboardingMessageProvider.js
 -    frequency: {
 -      custom: [
 -        {
--          cap: 1,
--          period: 604800000, // Max 1 per week
+-          cap: 3,
+-          period: 604800000, // Max 3 per week
 -        },
 -      ],
--      lifetime: 3,
+-      lifetime: 12,
 -    },
 -    targeting: "region in [ 'DE', 'AT', 'CH'] && localeLanguageCode == 'en'",
 -  },
