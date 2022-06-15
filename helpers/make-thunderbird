@@ -125,7 +125,9 @@ sed 's/com.ubuntu/org.trisquel/' -i debian/config/mozconfig.in
 cat << ARCH >> debian/config/mozconfig.in
 %%if DEB_HOST_ARCH != armhf
 %%if DEB_HOST_ARCH != arm64
+%%if DEB_HOST_ARCH != ppc64el
 ac_add_options --disable-eme
+%%endif
 %%endif
 %%endif
 ARCH
