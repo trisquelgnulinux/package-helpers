@@ -18,11 +18,12 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=4
+VERSION=5
 
 . ./config
 
 sed 's/OnlyShowIn=Unity;/OnlyShowIn=Unity;MATE;/' -i a11y-profile-manager-indicator-autostart.desktop.in
+sed 's/GSettings.*/GSettings org.mate.interface accessibility/' -i a11y-profile-manager-indicator-autostart.desktop.in
 
 cat << EOF >> profiles/blindness/profile.gsettings
 
