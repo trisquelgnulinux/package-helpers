@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=13
+VERSION=14
 
 . ./config
 
@@ -123,6 +123,7 @@ sed 's/com.ubuntu/org.trisquel/' -i debian/config/mozconfig.in
 # Disable DRM support
 echo ac_add_options --disable-eme >> debian/config/mozconfig.in
 ########################################################
+sed "s_^Maintainer.*_Maintainer: $DEBFULLNAME <$DEBEMAIL>_g" -i debian/control.in
 
 sed '/^MOZ_PKG_NAME/s/.*/MOZ_PKG_NAME=icedove/' -i debian/build/config.mk
 
