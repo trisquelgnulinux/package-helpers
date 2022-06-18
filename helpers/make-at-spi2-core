@@ -27,6 +27,9 @@ X-MATE-AutoRestart=true
 X-MATE-Autostart-Phase=Initialization
 EOF
 
+#Remove unnecessary requirement.
+sed -i '/gedit/d' debian/control
+
 changelog "Enable on MATE"
 
 compile
