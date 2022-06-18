@@ -2,6 +2,7 @@
 #
 #    Copyright (C) 2022 Trisquel GNU/Linux developers
 #                       <trisquel-devel@listas.trisquel.info>
+#    Copyright (C) 2022  Luis Guzman <ark@switnet.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -18,13 +19,15 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=0
-EXTERNAL='deb-src http://archive.neon.kde.org/user $UPSTREAM main'
+#Temporary fordward port from focal to aramo backports.
+VERSION=1
+EXTERNAL='deb-src http://archive.neon.kde.org/user focal main'
 REPOKEY="E6D4736255751E5D"
 BACKPORT=true
 
 . ./config
 
+sed -i 's|kdevplatform-dev|kdevelop-dev|' debian/control
 
 changelog "Backport latest release from kde archive."
 
