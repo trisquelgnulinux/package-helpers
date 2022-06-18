@@ -8,7 +8,7 @@ Whether you've got a bugfix, documentation update, or new feature for us, these 
 
  1. Install needed packages for running the helpers
 ```
-sudo apt-get install cdbs devscripts dpkg-dev git gnupg patch quilt rpl sed
+sudo apt-get install cdbs devscripts dpkg-dev git gnupg2 patch quilt rpl sed sbuild
 ```
 
  1. Get the Trisquel build environment and follow the [README](https://gitlab.trisquel.org/trisquel/trisquel-builder/-/blob/master/README.md) to setup your system for building
