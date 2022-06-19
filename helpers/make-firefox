@@ -2,6 +2,7 @@
 #
 #    Copyright (C) 2008-2021  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C) 2015       Santiago Rodriguez <santi@trisquel.info>
+#    Copyright (C) 2022       Luis Guzman <ark@switnet.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -18,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=88
+VERSION=89
 
 . ./config
 
@@ -76,8 +77,12 @@ sed 's/com.ubuntu/org.trisquel/' -i debian/config/mozconfig.in
 # Disable DRM support, armhf has no such option.
 ## Add other archs that might present the same lack of disable-eme option
 cat << ARCH >> debian/config/mozconfig.in
+%%if DEB_HOST_ARCH != ppc64el
+%%if DEB_HOST_ARCH != arm64
 %%if DEB_HOST_ARCH != armhf
 ac_add_options --disable-eme
+%%endif
+%%endif
 %%endif
 ARCH
 
@@ -134,13 +139,14 @@ cat << EOF >> browser/components/newtab/data/content/tippytop/top_sites.json
     "favicon_url": "favicons/wikipedia.ico"
   },
   {
-    "domains": ["wikinews.org"],
-    "image_url": "images/wikinews.png",
-    "favicon_url": "favicons/wikinews.ico"
+    "domains": ["h-node.org"],
+    "image_url": "images/hnode.png",
+    "favicon_url": "favicons/hnode.ico"
   }
 ]
 EOF
 
+#uuidgen --sha1 --namespace @dns --name "trisquel.info"
 cat << TOP_JSON > services/settings/dumps/main/top-sites.json
 {
   "data": [
@@ -148,52 +154,53 @@ cat << TOP_JSON > services/settings/dumps/main/top-sites.json
       "url": "https://trisquel.info/",
       "order": 0,
       "title": "Trisquel",
-      "id": "17aeb24c-da88-53bc-8915-c3e3d458070d",
+      "id": "ec7f4843-6be5-5e86-870a-1c8383500a4b",
       "last_modified": $(date +%s%N | cut -b1-13)
     },
     {
       "url": "https://www.gnu.org/",
       "order": 1,
       "title": "GNU",
-      "id": "2a833806-e5c1-58e9-8b7c-69d9417a1253",
+      "id": "1baee931-751c-5993-b6fe-d86fbf78f9b0",
       "last_modified": $(date +%s%N | cut -b1-13)
     },
     {
       "url": "https://www.fsf.org/",
       "order": 2,
       "title": "FSF",
-      "id": "d4e3e7e2-64d3-5bac-9c59-3c5c8e1efd8c",
+      "id": "fcc60dd8-4d97-5aca-8e5d-784652c75818",
       "last_modified": $(date +%s%N | cut -b1-13)
     },
     {
       "url": "https://directory.fsf.org/",
       "order": 3,
       "title": "FSF Directory",
-      "id": "dbff6206-2ada-57ad-8091-8a62ac37be4c",
+      "id": "abe5bfb2-9487-5697-9f27-e0b782dfe006",
       "last_modified": $(date +%s%N | cut -b1-13)
     },
     {
       "url": "https://libreplanet.org/",
       "order": 4,
       "title": "LibrePlanet",
-      "id": "6f586839-4063-58b8-95ed-62e034e1915e",
+      "id": "e3d2cf88-a4dc-5d2e-9f9a-f3ea241d17d8",
       "last_modified": $(date +%s%N | cut -b1-13)
     },
     {
       "url": "https://www.wikipedia.org/",
       "order": 5,
       "title": "Wikipedia",
-      "id": "5a18acd7-0440-5512-b3a4-20a35bdc9a1d",
+      "id": "02c295f5-54a8-5d29-8d1f-b619216b20c0",
       "last_modified": $(date +%s%N | cut -b1-13)
     },
     {
-      "url": "https://www.wikinews.org/",
+      "url": "https://h-node.org/",
       "order": 6,
-      "title": "Wikinews",
-      "id": "3bb633ba-0823-4501-b3b5-bc1b8670e3e1",
+      "title": "h-node",
+      "id": "c426481f-8c3f-53b8-b23a-431a91a1c7b4",
       "last_modified": $(date +%s%N | cut -b1-13)
     }
-  ]
+  ],
+  "timestamp": $(date +%s%N | cut -b1-13)
 }
 TOP_JSON
 
@@ -237,14 +244,19 @@ sed "s_^Maintainer.*_Maintainer: $DEBFULLNAME <$DEBEMAIL>_g" -i debian/control.i
 cp -a $DATA/branding/* browser/branding/official
 cp -a $DATA/branding/* browser/branding/unofficial
 cp -a $DATA/branding/* browser/branding/nightly
+cp -a $DATA/branding/* browser/branding/aurora
+
 sed '/about-wordmark.svg/d' -i browser/base/content/aboutDialog.css
 echo '#warningDesc, #communityExperimentalDesc, #communityDesc, #contributeDesc {display:none!important}' >> browser/base/content/aboutDialog.css
 # Disable preprocessor
 sed 's/_PP//' -i browser/branding/branding-common.mozbuild
-cat << EOF >> debian/config/branch.mk
+#Prevent duplicated values.
+cat << EOF > debian/config/branch.mk
+MOZILLA_REPO = https://hg.mozilla.org/releases/mozilla-release
+L10N_REPO = https://hg.mozilla.org/l10n-central
 CHANNEL                 = release
 MOZ_WANT_UNIT_TESTS     = 0
-MOZ_BUILD_OFFICIAL      = 0
+MOZ_OFFICIAL_BUILD      = 0
 MOZ_ENABLE_BREAKPAD     = 0
 MOZ_ENABLE_TELEMETRY    = 0
 EOF
@@ -260,8 +272,9 @@ s|www.mozilla.com/firefox/central|trisquel.info/browser|g;
 s|mozilla.com/plugincheck|trisquel.info/browser|g;
 s|www.mozilla.com/legal/privacy|trisquel.info/legal|g;
 s|Firefox Nightly|Abrowser|;
+s|Firefox Developer Edition|Abrowser|g;
 s|Nightly|Abrowser|g;
-s|brandProductName=Firefox|brandProductName=Abrowser|;
+s|brand-product-name = Firefox|brand-product-name = Abrowser|;
 s|Sign in to Firefox|Sign in to Sync|;
 s|Search addons.mozilla.org|Search|g;
 s|firefox.settings.services.mozilla.com|127.0.0.1|g;
