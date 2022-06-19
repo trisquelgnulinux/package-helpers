@@ -51,10 +51,18 @@ class RemoteSettings:
     DUMPS_PATH_ABSOLUTE = arguments.MAIN_PATH / DUMPS_PATH_RELATIVE
 
     _WRAPPER_NAME = 'data'
+    _LAST_MODIFIED_KEY_NAME = 'last_modified'
+
+    @classmethod
+    def get_collection_timestamp(cls, collection):
+        return max((record[cls._LAST_MODIFIED_KEY_NAME]
+                   for record in collection.content), default=0)
 
     @classmethod
     def wrap(cls, processed):
-        return File(processed.path, {cls._WRAPPER_NAME: processed.content})
+        return File(processed.path,
+                    {cls._WRAPPER_NAME: processed.content,
+                     'timestamp': cls.get_collection_timestamp(processed)})
 
     @classmethod
     def unwrap(cls, parsed_jsons):
@@ -88,13 +96,15 @@ class RemoteSettings:
                         while timestamp in timestamps:
                             timestamp += 1
                         timestamps.append(timestamp)
-                        record['last_modified'] = timestamp
+                        record[cls._LAST_MODIFIED_KEY_NAME] = timestamp
 
                 if parsed_schema is not None:
                     validate(record, schema=parsed_schema)
 
                 result.append(record)
 
+        result.sort(
+            key=lambda record: record[cls._LAST_MODIFIED_KEY_NAME], reverse=True)
         cls.OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
 
         return File(cls.OUTPUT_PATH, result)
@@ -109,7 +119,7 @@ class RemoteSettings:
 
 class Changes(RemoteSettings):
     JSON_PATHS = tuple(RemoteSettings.DUMPS_PATH_ABSOLUTE.glob('*/*.json'))
-    OUTPUT_PATH = RemoteSettings.DUMPS_PATH_ABSOLUTE / 'monitor/changes.json'
+    OUTPUT_PATH = RemoteSettings.DUMPS_PATH_ABSOLUTE / 'monitor/changes'
 
     @classmethod
     def wrap(cls, processed):
@@ -124,8 +134,8 @@ class Changes(RemoteSettings):
         for collection in unwrapped_jsons:
             if collection.path != RemoteSettings.DUMPS_PATH_ABSOLUTE / 'main/example.json':
                 latest_change = {}
-                latest_change['last_modified'] = max(
-                    (record['last_modified'] for record in collection.content), default=0)
+                latest_change[cls._LAST_MODIFIED_KEY_NAME] = cls.get_collection_timestamp(
+                    collection)
                 latest_change['bucket'] = collection.path.parent.name
                 latest_change['collection'] = collection.path.stem
                 changes.append(latest_change)
