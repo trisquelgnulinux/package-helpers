@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2011-2021  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2011-2022  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C)      2019  Mason Hock <mason@masonhock.com>
 #
 #    This program is free software; you can redistribute it and/or modify
@@ -18,14 +18,12 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=23
-EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu impish main universe'
-#REPOKEY="871920D1991BC93C"
+VERSION=24
 
 . ./config
 
 #Patch python test after tzdata update.
-sed 's/Canada/Bahamas/' -i ./tests/test_timezone.py
+#sed 's/Canada/Bahamas/' -i ./tests/test_timezone.py
 
 # Enable full disk encryption by default. Disabled, as it hinders a11y and sighted people can choose to enable it.
 #patch -p0 < $DATA/nabia_encrypt_by_default.patch
@@ -42,6 +40,9 @@ sed '/universe multiverse/d' -i bin/oem-config-remaster
 
 # Use standard monospaced font for console
 sed 's/Ubuntu Mono/Monospace Regular/' -i ubiquity/frontend/gtk_ui.py
+
+# Start a11y-profile-manager-indicator only if not running already
+sed "/if osextras.find_on_path..a11y-profile-manager-indicator/s/:/ and (subprocess.run(\n                ['pgrep', '-f', 'a11y-profile-manager-indicator'], capture_output=True).returncode == 0):/" -i ubiquity/frontend/gtk_ui.py
 
 # Fixes issues starting orca
 sed "/Popen/s/'orca'/'orca', '--replace'/" -i ubiquity/frontend/gtk_ui.py
@@ -90,20 +91,25 @@ file="\$1"
 FASTEST=https://archive.trisquel.org/trisquel/
 SPEED=1000000000000
 
-for i in \$(grep 'tp:' /usr/share/python-apt/templates/Trisquel.mirrors)
-do
-    echo Testing \$i
-    TIME=\$(date +%s%N)
-    wget -t 1 -T 5 --max-redirect=0 -o /dev/null -O /dev/null \$i/speedtest || continue
-    TIME2=\$(date +%s%N)
-    ELAPSED=\$(expr \$TIME2 - \$TIME)
-    echo Time: \$ELAPSED
-    if [ \$ELAPSED -lt \$SPEED ]
-    then
-        FASTEST=\$i
-        SPEED=\$ELAPSED
-    fi
-done
+if nm-online -xq
+then
+    for i in \$(grep '//' /usr/share/python-apt/templates/Trisquel.mirrors | sed 's|/$||')
+    do
+        echo Testing \$i
+        TIME=\$(date +%s%N)
+        wget --no-check-certificate -t 1 -T 5 --max-redirect=0 -o /dev/null -O /dev/null \$i/speedtest || continue
+        TIME2=\$(date +%s%N)
+        ELAPSED=\$(expr \$TIME2 - \$TIME)
+        echo Time: \$ELAPSED
+        if [ \$ELAPSED -lt \$SPEED ]
+        then
+            FASTEST=\$i
+            SPEED=\$ELAPSED
+        fi
+    done
+fi
+
+echo "Selected mirror: \$FASTEST"
 
 MIRROR=\$FASTEST
 RELEASE=\$(lsb_release -c | cut -f 2)
@@ -207,11 +213,12 @@ replace Trisquel-Gettext-Domain Ubuntu-Gettext-Domain
   ## Korean - Fix #27659
 replace 우분투 Trisquel .
 #replace triskel-ubiquity kubuntu-ubiquity
-replace "launchpad.net/ubuntu/+source/ubiquity/+filebug" "trisquel.info/project/issues" .
-replace "launchpad.net/ubuntu/+source/ubiquity/" "trisquel.info/project/issues" .
-replace "launchpad.net/ubuntu/+source/" "trisquel.info/project/issues" .
+replace "https://bugs.launchpad.net/ubuntu/+source/.*/+bug/" "LP:#" .
+replace "https://git.launchpad.net/ubuntu/+source/" "https://gitlab.trisquel.org/trisquel/" .
+replace "launchpad.net/ubuntu/+source/ubiquity/+filebug" "gitlab.trisquel.org/trisquel/package-helpers/-/issues" .
 replace "ubiquity/+filebug" "" .
 replace "+filebug" "" .
+replace " ubuntu/devel$" "" .
 replace archive.ubuntu.com/ubuntu archive.trisquel.org/trisquel .
 replace security.ubuntu.com/trisquel archive.trisquel.org/trisquel .
 replace archive.ubuntu.com archive.trisquel.org .
@@ -254,7 +261,7 @@ then
 fi
 
 # Hacks for accessibility
-if [ \$(gsettings get com.canonical.a11y-profile-manager active-profile) == "'blindness'" ]
+if [ \$(gsettings get org.mate.interface accessibility) = "true" ]
 then
   echo "Accessibility profile set to 'blindness', enabling screen reader by default in target system"
   echo "[org.mate.applications-at]
@@ -289,6 +296,9 @@ sed '/Package: ubiquity-frontend-kde/,/Depends/s/Depends:/Depends: libkf5kdelibs
 
 sed 's/Trisquel/Trsql/' -i ubiquity/plugins/ubi-partman.py
 sed 's/Trisquel-Battersea/Ubuntu-Battersea/' -i  tests/test_gtkwidgets.py
+
+#Remove ubuntu-artwork dependency
+sed -i '/ubuntu-artwork,/d' debian/control
 
 changelog "Adapted for Trisquel"
 
