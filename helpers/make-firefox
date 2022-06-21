@@ -201,7 +201,8 @@ cat << TOP_JSON > services/settings/dumps/main/top-sites.json
       "id": "c426481f-8c3f-53b8-b23a-431a91a1c7b4",
       "last_modified": $(date +%s%N | cut -b1-13)
     }
-  ]
+  ],
+  "timestamp": $(date +%s%N | cut -b1-13)
 }
 TOP_JSON
 
@@ -245,14 +246,19 @@ sed "s_^Maintainer.*_Maintainer: $DEBFULLNAME <$DEBEMAIL>_g" -i debian/control.i
 cp -a $DATA/branding/* browser/branding/official
 cp -a $DATA/branding/* browser/branding/unofficial
 cp -a $DATA/branding/* browser/branding/nightly
+cp -a $DATA/branding/* browser/branding/aurora
+
 sed '/about-wordmark.svg/d' -i browser/base/content/aboutDialog.css
 echo '#warningDesc, #communityExperimentalDesc, #communityDesc, #contributeDesc {display:none!important}' >> browser/base/content/aboutDialog.css
 # Disable preprocessor
 sed 's/_PP//' -i browser/branding/branding-common.mozbuild
-cat << EOF >> debian/config/branch.mk
+#Prevent duplicated values.
+cat << EOF > debian/config/branch.mk
+MOZILLA_REPO = https://hg.mozilla.org/releases/mozilla-release
+L10N_REPO = https://hg.mozilla.org/l10n-central
 CHANNEL                 = release
 MOZ_WANT_UNIT_TESTS     = 0
-MOZ_BUILD_OFFICIAL      = 0
+MOZ_OFFICIAL_BUILD      = 0
 MOZ_ENABLE_BREAKPAD     = 0
 MOZ_ENABLE_TELEMETRY    = 0
 EOF
@@ -268,8 +274,9 @@ s|www.mozilla.com/firefox/central|trisquel.info/browser|g;
 s|mozilla.com/plugincheck|trisquel.info/browser|g;
 s|www.mozilla.com/legal/privacy|trisquel.info/legal|g;
 s|Firefox Nightly|Abrowser|;
+s|Firefox Developer Edition|Abrowser|g;
 s|Nightly|Abrowser|g;
-s|brandProductName=Firefox|brandProductName=Abrowser|;
+s|brand-product-name = Firefox|brand-product-name = Abrowser|;
 s|Sign in to Firefox|Sign in to Sync|;
 s|Search addons.mozilla.org|Search|g;
 s|firefox.settings.services.mozilla.com|127.0.0.1|g;
