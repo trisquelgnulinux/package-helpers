@@ -113,7 +113,7 @@ Your comments, bug reports, patches and suggestions will help ensure
 that our next release is the best release of Trisquel ever.  If you feel
 that you have found a bug please send it to us via
 
-  https://trisquel.info/project/issues
+  https://gitlab.trisquel.org/trisquel/package-helpers/-/issues
 
 If you have a question, or if you think you may have found a bug but 
 aren't sure, first try asking on the #trisquel IRC channel on Freenode,
@@ -170,7 +170,7 @@ Your comments, bug reports, patches and suggestions will help ensure
 that our next release is the best release of Trisquel ever.  If you feel
 that you have found a bug please send it to us via
 
-  https://trisquel.info/project/issues
+  https://gitlab.trisquel.org/trisquel/package-helpers/-/issues
 
 If you have a question, or if you think you may have found a bug but 
 aren't sure, first try asking on the #trisquel IRC channel on Freenode,
@@ -286,10 +286,10 @@ resolvconf
 eom
 EOF
 
-sed 's|.ubuntu-bug ubuntu-release-upgrader-core. in a terminal|https://trisquel.info/en/project/issues in a browser.|' DistUpgrade/DistUpgradeCache.py -i
-replace "https*://launchpad.net/ubuntu/+source/ubuntu-release-upgrader/+filebug" "https://trisquel.info/project/issues" .
-replace "https*://launchpad.net/ubuntu/+source/ubuntu-release-upgrader" "https://trisquel.info/project/issues" .
-replace "https*://bugs.launchpad.net/ubuntu/+source/ubuntu-release-upgrader/+filebug" "https://trisquel.info/project/issues" .
+sed 's|.ubuntu-bug ubuntu-release-upgrader-core. in a terminal|https://gitlab.trisquel.org/trisquel/package-helpers in a browser.|' DistUpgrade/DistUpgradeCache.py -i
+replace "https*://launchpad.net/ubuntu/+source/ubuntu-release-upgrader/+filebug" "https://gitlab.trisquel.org/trisquel/package-helpers/-/issues" .
+replace "https*://launchpad.net/ubuntu/+source/ubuntu-release-upgrader" "https://gitlab.trisquel.org/trisquel/package-helpers/" .
+replace "https*://bugs.launchpad.net/ubuntu/+source/ubuntu-release-upgrader/+filebug" "https://gitlab.trisquel.org/trisquel/package-helpers/-/issues" .
 find -type f |xargs rename 's/ubuntu-release-upgrader/trisquel-release-upgrader/g'
 replace  "ubuntu-release-upgrader" "trisquel-release-upgrader" .
 mv kubuntu-devel-release-upgrade triskel-devel-release-upgrade
@@ -320,12 +320,12 @@ sed 's/,"restricted"//g' DistUpgrade/DistUpgradeController.py -i
 replace Ubuntu Trisquel
 replace Canonical Trisquel
 replace "https*://www.ubuntu.com/" "https://trisquel.info" .
-replace "https*://wiki.ubuntu.com/X/Bugs/" "https://trisquel.info/project/issues" .
+replace "https*://wiki.ubuntu.com/X/Bugs/" "https://gitlab.trisquel.org/trisquel/package-helpers/-/issues" .
 replace "https*://wiki.ubuntu.com/" "https://trisquel.info/wiki" .
 replace "https*://help.ubuntu.com/community" "https://trisquel.info/wiki" .
 
 
-/bin/sed -i 's/kubuntu/triskel/g; s/xubuntu/trisquel-mini/g; s/�~Lubuntu/�~Ltrisquel/g; s/被ubuntu/被trisquel/g; s#http://launchpad.net/ubuntu/+source/%s/%s/+changelog#https://trisquel.info/project/issues#g; s/<.*@ubuntu.com/<info@trisquel.info/g; s/ ubuntu\n/ trisquel\n/g; s/ubuntu\ /trisquel\ /g; s/\ ubuntu/\ trisquel/g; s/Ubuntu/Trisquel/g; s/ubuntu-desktop/trisquel-/g; s/www.ubuntu.com/trisquel.info/g; s/www.ubuntulinux.org/trisquel.info/g ' po/*.po $(find -type f | grep py$) $(find -type f | grep '\.glade$')
+/bin/sed -i 's/kubuntu/triskel/g; s/xubuntu/trisquel-mini/g; s/�~Lubuntu/�~Ltrisquel/g; s/被ubuntu/被trisquel/g; s#http://launchpad.net/ubuntu/+source/%s/%s/+changelog#https://gitlab.trisquel.org/trisquel/package-helpers#g; s/<.*@ubuntu.com/<info@trisquel.info/g; s/ ubuntu\n/ trisquel\n/g; s/ubuntu\ /trisquel\ /g; s/\ ubuntu/\ trisquel/g; s/Ubuntu/Trisquel/g; s/ubuntu-desktop/trisquel-/g; s/www.ubuntu.com/trisquel.info/g; s/www.ubuntulinux.org/trisquel.info/g ' po/*.po $(find -type f | grep py$) $(find -type f | grep '\.glade$')
 replace Trisquel-Gettext Ubuntu-Gettext
 
 sed '1s/trisquel/ubuntu/' debian/control -i
