@@ -18,25 +18,25 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=15
+VERSION=16
 
 . ./config
 
 rm UpdateManager/Core/LivePatchSocket.py
 rm tests/test_livepatch_socket.py
-patch --no-backup-if-mismatch -p1 < $DATA/remove-livepatch.patch
+patch --no-backup-if-mismatch -p1 < $DATA/remove-livepatch2.patch
 sed -i '/import LivePatchSocket/d' UpdateManager/Dialogs.py
 sed -i '/self.check_livepatch_status/d' UpdateManager/Dialogs.py
 
 sed -i "/ubuntu-advantage-tools/d" debian/control
 
 #Closes #12545
-patch -p0 < $DATA/trisquel-versions.patch
+patch --no-backup-if-mismatch -p0 < $DATA/trisquel-versions.patch
 
 cp $DATA/index.docbook help/C/index.docbook
 
 # Prevent automated connections
-patch -p1 < $DATA/prevent-autoconnection.patch
+patch --no-backup-if-mismatch -p1 < $DATA/prevent-autoconnection.patch
 cat << EOF >> po/es.po
 
 msgid ""
@@ -54,7 +54,7 @@ replace Ubuntu Trisquel .
 replace TrisquelDistroInfo UbuntuDistroInfo .
 replace "Trisquel-Gettext" "Ubuntu-Gettext" .
 
-sed -i 's/Trisquel 18.04 LTS to Trisquel 20.04 LTS/Trisquel 9.0 LTS to Trisquel 10.0 LTS/' HweSupportStatus/consts.py
+sed -i 's/Trisquel 20.04 LTS to Trisquel 22.04 LTS/Trisquel 10.0 LTS to Trisquel 11.0 LTS/' HweSupportStatus/consts.py
 
 replace ubuntu-desktop trisquel .
 replace kubuntu-desktop triskel .

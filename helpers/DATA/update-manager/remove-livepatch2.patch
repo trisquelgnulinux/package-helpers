@@ -1,8 +1,7 @@
-diff --git a/UpdateManager/Dialogs.py b/UpdateManager/Dialogs.py
-index b100c3a..d604f54 100644
---- a/UpdateManager/Dialogs.py
-+++ b/UpdateManager/Dialogs.py
-@@ -149,61 +149,6 @@ class InternalDialog(BuilderDialog):
+diff -ru a/UpdateManager/Dialogs.py b/UpdateManager/Dialogs.py
+--- a/UpdateManager/Dialogs.py	2022-04-11 07:56:45.000000000 +0000
++++ b/UpdateManager/Dialogs.py.clean	2022-06-21 18:44:39.204551351 +0000
+@@ -148,70 +148,6 @@
              self.main_container.add(content_widget)
          self.main_container.set_visible(bool(content_widget))
  
@@ -11,12 +10,20 @@ index b100c3a..d604f54 100644
 -        codename = get_dist()
 -        return di.is_lts(codename)
 -
+-    def _has_livepatch_settings_ui(self):
+-        try:
+-            return Gio.DesktopAppInfo \
+-                .new('gnome-online-accounts-panel.desktop')
+-        except Exception:
+-            return None
+-
 -    def on_livepatch_status_ready(self, active, cs, ps, fixes):
 -        self.set_desc(None)
 -
 -        if not active:
 -            if self._is_livepatch_supported() and \
 -               self.settings_button and \
+-               self._has_livepatch_settings_ui() and \
 -               self.settings.get_int('launch-count') >= 4:
 -                self.set_desc(_("<b>Tip:</b> You can use Livepatch to "
 -                                "keep your computer more secure between "
@@ -61,6 +68,7 @@ index b100c3a..d604f54 100644
 -        self.lp_socket = LivePatchSocket()
 -        self.lp_socket.get_status(self.on_livepatch_status_ready)
 -
- 
+-
  class StoppedUpdatesDialog(InternalDialog):
      def __init__(self, window_main):
+         InternalDialog.__init__(self, window_main)
