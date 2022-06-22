@@ -13,7 +13,7 @@
          [dD]ebian)
              debian "$RELEASE"
              ;;
-@@ -76,6 +82,33 @@
+@@ -76,6 +82,36 @@
              ;;
      esac
  }
@@ -37,6 +37,9 @@
 +            ;;
 +        10.0*) # Nabia
 +            /bin/echo -e "12"
++            ;;
++        11.0*) # Aramo
++            /bin/echo -e "14"
 +            ;;
 +        *)
 +            echo "supported_versions: WARNING: Unknown Trisquel release: $1" >&2
