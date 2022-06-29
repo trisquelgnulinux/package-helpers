@@ -24,6 +24,9 @@ VERSION=2
 sed 's/Thunderbird/Icedove/' -i debian/control
 sed 's/thunderbird/icedove/' -i debian/control
 
+#Complete dependencies for test suite.
+sed -i 's|node-text-table <!nocheck>,|node-text-table <!nocheck>, node-chalk <!nocheck>, node-strip-ansi <!nocheck>,|' debian/control
+
 changelog "Imported into Trisquel"
 
 compile
