@@ -1,0 +1,72 @@
+#! /bin/sh
+#
+# Filter a list of tasks based on whether they are listed in
+# tasksel/force-tasks, tasksel/limit-tasks, or tasksel/skip-tasks. We take a
+# list of all displayable tasks as arguments. In the output file (first
+# argument), we emit a series of lines each of one of these two forms, with
+# the same meaning as in Test-new-install:
+#
+#   task-name install
+#   task-name skip
+#
+# Tasks that should be shown as normal are omitted.
+#
+# (Yes, this could be done as part of the new-install test. However, until
+# such time as tasksel's core uses debconf, this is very slow because it
+# requires starting up debconf once per task.)
+
+set -e
+
+. /usr/share/debconf/confmodule
+
+OUTPUT="$1"
+shift
+
+FORCE=
+if db_fget tasksel/force-tasks seen && [ "$RET" = true ]; then
+	db_get tasksel/force-tasks
+	FORCE="$(echo "$RET" | sed 's/,/ /g')"
+fi
+
+LIMIT=
+if db_fget tasksel/limit-tasks seen && [ "$RET" = true ]; then
+	db_get tasksel/limit-tasks
+	LIMIT="$(echo "$RET" | sed 's/,/ /g')"
+fi
+
+SKIP=
+if db_fget tasksel/skip-tasks seen && [ "$RET" = true ]; then
+	db_get tasksel/skip-tasks
+	SKIP="$(echo "$RET" | sed 's/,/ /g')"
+fi
+
+for task; do
+	for force in $FORCE; do
+		if [ "$task" = "$force" ]; then
+			echo "$task install" >> "$OUTPUT"
+			continue 2
+		fi
+	done
+
+	for skip in $SKIP; do
+		if [ "$task" = "$skip" ]; then
+			echo "$task skip" >> "$OUTPUT"
+			continue 2
+		fi
+	done
+
+	if [ "$LIMIT" ]; then
+		found=0
+		for limit in $LIMIT; do
+			if [ "$task" = "$limit" ]; then
+				found=1
+				break
+			fi
+		done
+		if [ "$found" = 0 ]; then
+			echo "$task skip" >> "$OUTPUT"
+		fi
+	fi
+done
+
+exit 0

@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
+VERSION=4
 COMPONENT=main
 
 . ./config
@@ -25,14 +25,14 @@ COMPONENT=main
 # No install recommends
 sed 's/Install-Recommends=true/Install-Recommends=false/g' -i tasksel.pl
 
-mkdir trisquel-tasks
-cp $DATA/* trisquel-tasks
-sed s/lubuntu/trisquel-sugar/g Makefile -i
-sed s/xubuntu/trisquel-mini/g Makefile -i
-sed s/kubuntu/triskel/g Makefile -i
-sed s/ubuntu/trisquel/g Makefile -i
+#Remove debian generic-tasks
+sed -i '/Package: task-desktop/,/$p/d' debian/control
+
+#Setup trisquel task required customization.
+cp -r $DATA/trisquel-tasks .
+cp $DATA/Makefile .
+cp $DATA/filter-tasks .
 sed "/USUITE/s/.*/USUITE=$CODENAME/" Makefile -i
-sed 's/\(UFLAVOURS=\).*/\1trisquel-desktop triskel trisquel-mini trisquel-sugar trisquel-edu trisquel-pro trisquel-console/'  Makefile -i
 
 changelog "Added Trisquel's tasks"
 
