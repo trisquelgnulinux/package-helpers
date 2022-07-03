@@ -1,5 +1,6 @@
 #!/bin/sh
 #
+#    Copyright (C) 2022 Luis Guzman <ark@switnet.org>
 #    Copyright (C) 2021 Pablo Correa Gómez <ablocorrea@hotmail.com>
 #
 #    This program is free software; you can redistribute it and/or modify
@@ -23,6 +24,9 @@ VERSION=3
 
 sed '/libxnvctrl-dev/d' -i debian/control
 echo "gn_args += safe_browsing_mode=0" >> src/core/config/common.pri
+
+#Increase parallel restriction (it fails at full speed).
+sed -i 's|j2|j4|' debian/rules
 
 while read -r file; do
     rm -rf $file
