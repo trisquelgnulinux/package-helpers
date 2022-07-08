@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
+VERSION=4
 EXTERNAL='deb-src http://ppa.launchpad.net/scribus/ppa/ubuntu bionic main '
 REPOKEY=B70D6F7664B6EE15
 BACKPORTS=true
@@ -31,8 +31,6 @@ sed -i 's|^do-not-install-dicts$|#do-not-install-dicts|1' debian/patches/series
 # Remove building non-free docs package
 sed -i '/Package: scribus-doc/,$d' debian/control # scribus-doc is the last package in the control file
 
-changelog "Backported from ppa"
-
-changelog "Revert non-free parts of the package"
+changelog "Backported from ppa and revert non-free parts of the package"
 
 compile
