@@ -2,8 +2,8 @@
 #
 #    Copyright (C) 2022 Luis Guzman <ark@switnet.org>
 #    Copyright (C) 2011-2020  Ruben Rodriguez <ruben@trisquel.info>
-#    Copyright (C) 2011  Carlos Pais <freemind@lavabit.com>
 #    Copyright (C) 2019 Mason Hock <mason@masonhock.com>
+#    Copyright (C) 2011  Carlos Pais <freemind@lavabit.com>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=6
+VERSION=8
 
 . ./config
 
@@ -53,8 +53,9 @@ EOF
   #Temporary removal of livepatch LP:1965993
   #patch -p1 < $DATA/remove_livepatch_from_gtk_uiv1_1.patch
   #patch -p1 < $DATA/disable-livepatch.patch
+
 rm softwareproperties/gtk/UbuntuProPage.py
-patch -p0 < $DATA/remove_snap_label.patch
+patch --no-backup-if-mismatch -p0 < $DATA/remove_snap_label.patch
 
 #Python specific changes
 cp $DATA/trisquel_info.py softwareproperties/gtk/
@@ -79,6 +80,7 @@ replace TrisquelDistribution UbuntuDistribution .
 sed '/NoDisplay/d; s/Trisquel/Ubuntu/' -i data/software-properties-gtk.desktop.in
 
 sed '/ubuntu-drivers-common/d' -i debian/control
+sed '/ubuntu-advantage-desktop-daemon/d' -i debian/control
 sed '/software-properties-drivers/d' -i debian/software-properties-gtk.install setup.cfg
 
 replace "Trisquel-Gettext" "Ubuntu-Gettext" .
@@ -103,6 +105,9 @@ sed -i '/software-properties-livepatch.desktop/s|^|#|' debian/software-propertie
 #Remove ProPage
 sed -i '/TrisquelProPage/d' softwareproperties/gtk/SoftwarePropertiesGtk.py
 sed -i '/init_ubuntu_pro/d' softwareproperties/gtk/SoftwarePropertiesGtk.py
+
+#Livepatch - aramo
+patch --no-backup-if-mismatch -p0 < $DATA/aramo_rm_livepatch.patch
 
 changelog "Removed Ubuntu-specifc tests, Livepatch, Snap"
 

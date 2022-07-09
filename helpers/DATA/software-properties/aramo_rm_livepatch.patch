@@ -1,0 +1,398 @@
+--- data/gtkbuilder/main.ui	2022-07-08 00:34:50.006995542 +0000
++++ data/gtkbuilder/main.ui.fix	2022-07-08 00:41:41.280173798 +0000
+@@ -1221,395 +1221,6 @@
+                 <property name="tab_fill">False</property>
+               </packing>
+             </child>
+-            <child>
+-              <object class="GtkBox">
+-                <property name="visible">True</property>
+-                <property name="border_width">12</property>
+-                <property name="orientation">vertical</property>
+-                <property name="spacing">12</property>
+-                <child>
+-                  <object class="GtkLabel">
+-                    <property name="visible">False</property>
+-                    <property name="label" translatable="yes">&lt;b&gt;Settings&lt;/b&gt;</property>
+-                    <property name="use_markup">True</property>
+-                    <property name="wrap">True</property>
+-                    <property name="max_width_chars">1</property>
+-                    <property name="xalign">0</property>
+-                  </object>
+-                </child>
+-                <child>
+-                  <object class="GtkStack" id="stack_ua_attach">
+-                    <property name="visible">True</property>
+-                    <child>
+-                      <object class="GtkBox" id="box_ua_unattached">
+-                        <property name="visible">True</property>
+-                        <property name="spacing">12</property>
+-                        <child>
+-                          <object class="GtkButton" id="button_ua_attach">
+-                            <property name="visible">True</property>
+-                            <property name="label" translatable="yes">Attach this machine</property>
+-                          </object>
+-                        </child>
+-                        <child>
+-                          <object class="GtkLabel">
+-                            <property name="visible">False</property>
+-                            <property name="label" translatable="yes">This machine is not covered by an Trisquel Pro subscription. Receive security updates for over 30,000 Trisquel packages, on up to 3 machines free for personal use: &lt;a href="https://ubuntu.com/advantage"&gt;More information&lt;/a&gt;.</property>
+-                            <property name="use_markup">True</property>
+-                            <property name="wrap">True</property>
+-                            <property name="max-width-chars">90</property>
+-                            <property name="xalign">0</property>
+-                          </object>
+-                        </child>
+-                        <child>
+-                          <object class="GtkLabel">
+-                            <property name="visible">True</property>
+-                            <property name="label" translatable="yes">This machine is not covered by an Trisquel Advantage subscription.</property>
+-                            <property name="use_markup">True</property>
+-                            <property name="wrap">True</property>
+-                            <property name="max-width-chars">90</property>
+-                            <property name="xalign">0</property>
+-                          </object>
+-                        </child>
+-                      </object>
+-                    </child>
+-                    <child>
+-                      <object class="GtkBox" id="box_ua_attached">
+-                        <property name="visible">True</property>
+-                        <property name="spacing">12</property>
+-                        <child>
+-                          <object class="GtkButton" id="button_ua_detach">
+-                            <property name="visible">True</property>
+-                            <property name="label" translatable="yes">Detach this machine</property>
+-                          </object>
+-                        </child>
+-                        <child>
+-                          <object class="GtkLabel">
+-                            <property name="visible">False</property>
+-                            <property name="label" translatable="yes">Trisquel Pro subscription attached.</property>
+-                            <property name="xalign">0</property>
+-                          </object>
+-                        </child>
+-                        <child>
+-                          <object class="GtkLabel">
+-                            <property name="visible">True</property>
+-                            <property name="label" translatable="yes">Trisquel Advantage subscription attached.</property>
+-                            <property name="xalign">0</property>
+-                          </object>
+-                        </child>
+-                      </object>
+-                    </child>
+-                  </object>
+-                </child>
+-                <child>
+-                  <object class="GtkLabel">
+-                    <property name="visible">False</property>
+-                    <property name="can_focus">False</property>
+-                    <property name="label" translatable="yes">&lt;b&gt;Services&lt;/b&gt;</property>
+-                    <property name="use_markup">True</property>
+-                    <property name="wrap">True</property>
+-                    <property name="max_width_chars">1</property>
+-                    <property name="xalign">0</property>
+-                  </object>
+-                </child>
+-                <child>
+-                  <object class="GtkBox" id="box_ua_esm">
+-                    <property name="visible">True</property>
+-                    <property name="spacing">12</property>
+-                    <property name="sensitive">False</property>
+-                    <child>
+-                      <object class="GtkSwitch" id="switch_ua_esm">
+-                        <property name="visible">False</property>
+-                        <property name="valign">start</property>
+-                      </object>
+-                    </child>
+-                    <child>
+-                      <object class="GtkBox">
+-                        <property name="visible">False</property>
+-                        <property name="orientation">vertical</property>
+-                        <property name="spacing">6</property>
+-                        <child>
+-                          <object class="GtkLabel">
+-                            <property name="visible">True</property>
+-                            <property name="label" translatable="yes">&lt;b&gt;Extended Security Maintenance&lt;/b&gt; provides security updates for over 30,000 Trisquel packages.</property>
+-                            <property name="use_markup">True</property>
+-                          </object>
+-                        </child>
+-                        <child>
+-                          <object class="GtkLabel" id="label_ua_esm_error">
+-                            <property name="visible">False</property>
+-                            <property name="label" translatable="yes">Could not enable Extended Security Maintenance. Please try again.</property>
+-                            <property name="xalign">0</property>
+-                            <attributes>
+-                              <attribute name="foreground" value="red"/>
+-                              <attribute name="scale" value="0.9"/>
+-                            </attributes>
+-                          </object>
+-                        </child>
+-                      </object>
+-                    </child>
+-                  </object>
+-                </child>
+-                <child>
+-                  <object class="GtkBox" id="box_ua_livepatch">
+-                    <property name="visible">True</property>
+-                    <property name="spacing">12</property>
+-                    <property name="sensitive">False</property>
+-                    <child>
+-                      <object class="GtkSwitch" id="switch_ua_livepatch">
+-                        <property name="visible">True</property>
+-                        <property name="valign">start</property>
+-                      </object>
+-                    </child>
+-                    <child>
+-                      <object class="GtkBox">
+-                        <property name="visible">True</property>
+-                        <property name="orientation">vertical</property>
+-                        <property name="spacing">6</property>
+-                        <child>
+-                          <object class="GtkLabel">
+-                            <property name="visible">True</property>
+-                            <property name="label" translatable="yes">&lt;b&gt;Livepatch&lt;/b&gt; helps keep your system secure by applying security updates that don't require a restart.</property>
+-                            <property name="use_markup">True</property>
+-                            <property name="xalign">0</property>
+-                          </object>
+-                        </child>
+-                        <child>
+-                          <object class="GtkCheckButton" id="checkbutton_livepatch_topbar">
+-                            <property name="visible">True</property>
+-                            <property name="label" translatable="yes">Show Livepatch status in the top bar</property>
+-                            <property name="sensitive">False</property>
+-                            <property name="halign">start</property>
+-                            <property name="draw_indicator">True</property>
+-                          </object>
+-                        </child>
+-                        <child>
+-                          <object class="GtkLabel" id="label_ua_livepatch_error">
+-                            <property name="visible">False</property>
+-                            <property name="label" translatable="yes">Could not enable Livepatch. Please try again.</property>
+-                            <property name="xalign">0</property>
+-                            <attributes>
+-                              <attribute name="foreground" value="red"/>
+-                              <attribute name="scale" value="0.9"/>
+-                            </attributes>
+-                          </object>
+-                        </child>
+-                      </object>
+-                    </child>
+-                  </object>
+-                </child>
+-                <child>
+-                  <object class="GtkLabel">
+-                    <property name="visible">False</property>
+-                    <property name="label" translatable="yes">&lt;b&gt;Compliance &amp;amp; Hardening&lt;/b&gt;</property>
+-                    <property name="use_markup">True</property>
+-                    <property name="xalign">0</property>
+-                  </object>
+-                </child>
+-                <child>
+-                  <object class="GtkLabel">
+-                    <property name="visible">False</property>
+-                    <property name="label" translatable="yes">Please read the documentation and only enable these settings if you specifically require these certifications.</property>
+-                    <property name="wrap">True</property>
+-                    <property name="xalign">0</property>
+-                  </object>
+-                </child>
+-                <child>
+-                  <object class="GtkFrame">
+-                    <property name="visible">False</property>
+-                    <child>
+-                      <object class="GtkBox">
+-                      <property name="visible">True</property>
+-                      <property name="orientation">vertical</property>
+-                      <property name="spacing">12</property>
+-                      <property name="margin">18</property>
+-                        <child>
+-                          <object class="GtkBox" id="box_ua_fips">
+-                            <property name="visible">True</property>
+-                            <property name="spacing">12</property>
+-                            <property name="sensitive">False</property>
+-                            <child>
+-                              <object class="GtkSwitch" id="switch_ua_fips">
+-                                <property name="visible">True</property>
+-                                <property name="valign">start</property>
+-                              </object>
+-                            </child>
+-                            <child>
+-                              <object class="GtkBox">
+-                                <property name="visible">True</property>
+-                                <property name="orientation">vertical</property>
+-                                <property name="spacing">6</property>
+-                                <child>
+-                                  <object class="GtkLabel">
+-                                    <property name="visible">True</property>
+-                                    <property name="label" translatable="yes">&lt;b&gt;FIPS 140-2 Level 1.&lt;/b&gt; &lt;a href="https://ubuntu.com/security/certifications#fips"&gt;FIPS documentation.&lt;/a&gt;</property>
+-                                    <property name="use_markup">True</property>
+-				    <property name="xalign">0</property>
+-                                  </object>
+-                                </child>
+-                                <child>
+-                                  <object class="GtkLabel" id="label_ua_fips_error">
+-                                    <property name="visible">False</property>
+-                                    <property name="label" translatable="yes">Could not enable FIPS 140-2 Level 1. Please try again.</property>
+-                                    <property name="xalign">0</property>
+-                                    <attributes>
+-                                      <attribute name="foreground" value="red"/>
+-                                      <attribute name="scale" value="0.9"/>
+-                                    </attributes>
+-                                  </object>
+-                                </child>
+-                              </object>
+-                            </child>
+-                          </object>
+-                        </child>
+-                        <child>
+-                          <object class="GtkBox" id="box_ua_fips_updates">
+-                            <property name="visible">True</property>
+-                            <property name="spacing">12</property>
+-                            <property name="sensitive">False</property>
+-                            <child>
+-                              <object class="GtkSwitch" id="switch_ua_fips_updates">
+-                                <property name="visible">True</property>
+-                                <property name="valign">start</property>
+-                              </object>
+-                            </child>
+-                            <child>
+-                              <object class="GtkBox">
+-                                <property name="visible">True</property>
+-                                <property name="orientation">vertical</property>
+-                                <property name="spacing">6</property>
+-                                <child>
+-                                  <object class="GtkLabel">
+-                                    <property name="visible">True</property>
+-                                    <property name="label" translatable="yes">&lt;b&gt;FIPS Updates.&lt;/b&gt; &lt;a href="https://ubuntu.com/security/certifications#fips-updates"&gt;FIPS Updates documentation.&lt;/a&gt;</property>
+-                                    <property name="use_markup">True</property>
+-                                    <property name="xalign">0</property>
+-                                  </object>
+-                                </child>
+-                                <child>
+-                                  <object class="GtkLabel" id="label_ua_fips_updates_error">
+-                                    <property name="visible">False</property>
+-                                    <property name="label" translatable="yes">Could not enable FIPS Updates. Please try again.</property>
+-                                    <property name="xalign">0</property>
+-                                    <attributes>
+-                                      <attribute name="foreground" value="red"/>
+-                                      <attribute name="scale" value="0.9"/>
+-                                    </attributes>
+-                                  </object>
+-                                </child>
+-                              </object>
+-                            </child>
+-                          </object>
+-                        </child>
+-                        <child>
+-                          <object class="GtkBox" id="box_ua_cc_eal">
+-                            <property name="visible">True</property>
+-                            <property name="spacing">12</property>
+-                            <property name="sensitive">False</property>
+-                            <child>
+-                              <object class="GtkSwitch" id="switch_ua_cc_eal">
+-                                <property name="visible">True</property>
+-                                <property name="valign">start</property>
+-                              </object>
+-                            </child>
+-                            <child>
+-                              <object class="GtkBox">
+-                                <property name="visible">True</property>
+-                                <property name="orientation">vertical</property>
+-                                <property name="spacing">6</property>
+-                                <child>
+-                                  <object class="GtkLabel">
+-                                    <property name="visible">True</property>
+-                                    <property name="label" translatable="yes">&lt;b&gt;CC-EAL2.&lt;/b&gt; &lt;a href="https://ubuntu.com/security/certifications#common-criteria"&gt;CC-EAL2 documentation.&lt;/a&gt;</property>
+-                                    <property name="use_markup">True</property>
+-                                    <property name="xalign">0</property>
+-                                  </object>
+-                                </child>
+-                                <child>
+-                                  <object class="GtkLabel" id="label_ua_cc_eal_error">
+-                                    <property name="visible">False</property>
+-                                    <property name="label" translatable="yes">Could not enable CC-EAL2. Please try again.</property>
+-                                    <property name="xalign">0</property>
+-                                    <attributes>
+-                                      <attribute name="foreground" value="red"/>
+-                                      <attribute name="scale" value="0.9"/>
+-                                    </attributes>
+-                                  </object>
+-                                </child>
+-                              </object>
+-                            </child>
+-                          </object>
+-                        </child>
+-                        <child>
+-                          <object class="GtkBox" id="box_ua_cis_tools">
+-                            <property name="visible">True</property>
+-                            <property name="spacing">12</property>
+-                            <property name="sensitive">False</property>
+-                            <child>
+-                              <object class="GtkSwitch" id="switch_ua_cis_tools">
+-                                <property name="visible">True</property>
+-                                <property name="valign">start</property>
+-                              </object>
+-                            </child>
+-                            <child>
+-                              <object class="GtkBox">
+-                                <property name="visible">True</property>
+-                                <property name="orientation">vertical</property>
+-                                <property name="spacing">6</property>
+-                                <child>
+-                                  <object class="GtkLabel">
+-                                    <property name="visible">True</property>
+-                                    <property name="label" translatable="yes">&lt;b&gt;CIS Tools.&lt;/b&gt; &lt;a href="https://ubuntu.com/security/certifications#cis-tools"&gt;CIS Tools documentation.&lt;/a&gt;</property>
+-                                    <property name="use_markup">True</property>
+-                                    <property name="xalign">0</property>
+-                                  </object>
+-                                </child>
+-                                <child>
+-                                  <object class="GtkLabel" id="label_ua_cis_tools_error">
+-                                    <property name="visible">False</property>
+-                                    <property name="label" translatable="yes">Could not enable CIS Tools. Please try again.</property>
+-                                    <property name="xalign">0</property>
+-                                    <attributes>
+-                                      <attribute name="foreground" value="red"/>
+-                                      <attribute name="scale" value="0.9"/>
+-                                    </attributes>
+-                                  </object>
+-                                </child>
+-                              </object>
+-                            </child>
+-                          </object>
+-                        </child>
+-                      </object>
+-                    </child>
+-                  </object>
+-                </child>
+-              </object>
+-              <packing>
+-                <property name="position">6</property>
+-              </packing>
+-            </child>
+-            <child type="tab">
+-              <object class="GtkBox">
+-                <property name="visible">True</property>
+-                <child>
+-                  <object class="GtkLabel">
+-                    <property name="visible">True</property>
+-                    <property name="can_focus">False</property>
+-                    <property name="label">Livepatch</property>
+-                  </object>
+-                </child>
+-                <child>
+-                  <object class="GtkLabel">
+-                    <property name="visible">False</property>
+-                    <property name="can_focus">False</property>
+-                    <property name="label">Trisquel Pro</property>
+-                  </object>
+-                </child>
+-              </object>
+-              <packing>
+-                <property name="position">6</property>
+-                <property name="tab_fill">False</property>
+-              </packing>
+-            </child>
+           </object>
+           <packing>
+             <property name="expand">True</property>
