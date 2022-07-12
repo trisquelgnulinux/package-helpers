@@ -18,16 +18,19 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=8
+VERSION=9
 
 . ./config
 
 sed -i 's/manjaro/trisquel/g' mate-tweak
 sed -i 's/Manjaro/Trisquel/g' mate-tweak
 
+# Set icon
+sed 's/Icon=.*/Icon=mate-desktop-symbolic/' -i data/mate-tweak.desktop
+
 # Disable composition on llvm
 sed 's/Software Rasterizer/Accelerated: no/' -i mate-tweak
-sed '/no-composite/a # Do not run without 3D acceleration\nglxinfo | grep -q "Accelerated: no" && exit 0\n' -i marco-compton
+sed '1a\\n # Do not run without 3D acceleration\nglxinfo | grep -q "Accelerated: no" && exit 0' -i marco-compton
 
 # Allow loading global compton config file
 sed '/for this wrapper./aif [ -f /etc/xdg/compton.conf ]; then \n    compton --config /etc/xdg/compton.conf' -i marco-compton
