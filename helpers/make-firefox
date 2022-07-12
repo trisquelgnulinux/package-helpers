@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=88
+VERSION=89
 
 . ./config
 
@@ -58,6 +58,10 @@ sed '/If fingerprinting resistance is on/,/}/s/^/\/\//' -i ./dom/base/Navigator.
 
 # Replace ubufox recommendation
 sed 's/xul-ext-ubufox/xul-ext-youtube-html5-video-player/' -i debian/control.in
+
+#Remove exceptions on warnings when installing addons.
+sed -i '/addons.mozilla.org/d' browser/app/permissions
+sed -i '/fpn.firefox.com/d' browser/app/permissions
 
 # Disable healtreport
 cat << EOF > toolkit/components/telemetry/healthreport-prefs.js
