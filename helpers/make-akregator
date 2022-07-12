@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2020  Luis Guzmán <ark@switnet.org>
+#    Copyright (C) 2022  Luis Guzmán <ark@switnet.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -24,7 +24,11 @@ VERSION=1
 # Patch trisquel feeds
 patch src/akregator_part.cpp < $DATA/trisquel_feeds.patch
 
+#Prevent ppc64el arch since qtwebengine is not build for ppc64el either.
+sed -i 's|Architecture:.*|Architecture: amd64 arm64 armhf i386 mips64el mipsel|g' debian/control
+sed -i 's|qtwebengine5-dev.*|qtwebengine5-dev (>= 5.6.1~) [!ppc64el],|' debian/control
+sed -i '/libkf5/s|,| [!ppc64el],|g' debian/control
+
 changelog "Patched feeds for Trisquel"
 
 compile
-
