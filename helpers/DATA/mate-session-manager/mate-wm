@@ -40,22 +40,9 @@ for n in "$@" ; do
   esac
 done
 
-glxinfo |grep "OpenGL renderer"| grep -vi Gallium | grep -q .
-IS_X_COMPOSITED=$?
-
 # WINDOW_MANAGER overrides all
 if [ -z "$WINDOW_MANAGER" ] ; then
-    WINDOW_MANAGER=`gsettings get org.mate.session.required-components windowmanager 2> /dev/null | sed s/\'//g`
-fi
-
-if [ "x$WINDOW_MANAGER" = "xmarco-compton" ] && [ $IS_X_COMPOSITED != 0 ]; then
-    WINDOW_MANAGER=marco-no-composite
-    gsettings set org.mate.session.required-components windowmanager marco-no-composite
-fi
-
-if [ "x$WINDOW_MANAGER" = "xmarco-compton" ] && [ $IS_X_COMPOSITED = 0 ]; then
-    WINDOW_MANAGER=marco-compton
-    gsettings set org.mate.session.required-components windowmanager marco-compton
+    WINDOW_MANAGER=`gsettings get org.mate.session.required-components windowmanager 2> /dev/null | sed -r -e "s/^'([^']*)'$/\\1/"`
 fi
 
 # Migrate compiz to compiz-manager if possible and needed
@@ -74,25 +61,20 @@ fi
 # Avoid looping if the session configuration tells us to use mate-wm or if
 # the user forces mate-wm via WINDOW_MANAGER
 if [ "x$WINDOW_MANAGER" = "xmate-wm" ]; then
-  if [ $IS_X_COMPOSITED = 0 ]; then
-    WINDOW_MANAGER="marco-compton"
-    gsettings set org.mate.session.required-components windowmanager marco-compton
-  else
-    WINDOW_MANAGER="marco-no-composite"
-    gsettings set org.mate.session.required-components windowmanager marco-no-composite
-  fi
+  WINDOW_MANAGER=""
 fi
 
 if [ -z "$WINDOW_MANAGER" ] ; then
   # Create a list of window manager we can handle, trying to only use the
   # compositing ones when it makes sense
 
+  xdpyinfo 2> /dev/null | grep -q "^ *Composite$" 2> /dev/null
+  IS_X_COMPOSITED=$?
+
   KNOWN_WM="sawfish sawmill enlightenment icewm wmaker fvwm2 qvwm fvwm twm kwm"
-
   if [ $IS_X_COMPOSITED -eq 0 ] ; then
-    KNOWN_WM="marco-compton mutter compiz-manager compiz beryl $KNOWN_WM"
+    KNOWN_WM="mutter compiz-manager compiz beryl $KNOWN_WM"
   fi
-
   # marco is still the default wm in MATE
   KNOWN_WM="marco $KNOWN_WM"
 
@@ -173,6 +155,10 @@ case `basename $WINDOW_MANAGER` in
     emerald &
     ;;
 esac
+
+if [ $IS_X_COMPOSITED -eq 0 ] && [ $WINDOW_MANAGER = marco ] && [ -x /usr/bin/marco-picom ] ; then
+  WINDOW_MANAGER=marco-picom
+fi
 
 exec $WINDOW_MANAGER $OPT1 $OPT2 $OPT3 $OPT4
 
