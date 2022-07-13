@@ -17,13 +17,20 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=0
+VERSION=1
 EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu impish main universe'
 REPOKEY="871920D1991BC93C"
 BACKPORT=true
 BUILD_UNTIL=10.0
 
 . ./config
+
+#Prevent advertise non-debianized packaged versions.
+replace 'https://vokoscreen.volkoh.de/3.0/version/linux/VERSION' ''
+
+#Remove one sided logo.
+cp src/pictures/space.png src/pictures/linux.png
+
 
 changelog "Backported from Impish"
 
