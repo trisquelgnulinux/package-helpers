@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2012-2016  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2012-2022  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 COMPONENT=main
 
 . ./config
@@ -25,35 +25,18 @@ COMPONENT=main
 cat << EOF > scripts/t/origins/trisquel
 Vendor: Trisquel
 Vendor-URL: http://trisquel.info/
-Bugs: https://trisquel.info/en/project/issues
+Bugs: https://gitlab.trisquel.org/groups/trisquel/-/issues
 Parent: Ubuntu
 EOF
 
-cat << EOF >> scripts/t/600_Dpkg_Changelog_Trisquel.t
-# -*- perl -*-
-#
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-use strict;
-use warnings;
-
-\$ENV{DEB_VENDOR} = 'Trisquel';
-my \$srcdir = \$ENV{srcdir} || '.';
-do "\$srcdir/t/600_Dpkg_Changelog.t";
-EOF
-
+cp scripts/t/Dpkg_BuildFlags_Ubuntu.t scripts/t/Dpkg_BuildFlags_Trisquel.t
+cp scripts/t/Dpkg_Changelog_Ubuntu.t scripts/t/Dpkg_Changelog_Trisquel.t
+sed 's/Ubuntu/Trisquel/g' -i scripts/t/Dpkg_Changelog_Trisquel.t scripts/t/Dpkg_BuildFlags_Trisquel.t
 cp $DATA/Trisquel.pm scripts/Dpkg/Vendor/Trisquel.pm
+
+sed '/Ubuntu.pm/a\\tDpkg/Vendor/Trisquel.pm \\' -i scripts/Makefile.in scripts/Makefile.am
+sed '/Dpkg_BuildFlags_Ubuntu.t/a\\tt/Dpkg_BuildFlags_Trisquel.t \\' -i scripts/Makefile.in scripts/Makefile.am
+sed '/Dpkg_Changelog_Ubuntu.t/a\\tt/Dpkg_Changelog_Trisquel.t \\' -i scripts/Makefile.in scripts/Makefile.am
 
 changelog "Compiled for Trisquel"
 
