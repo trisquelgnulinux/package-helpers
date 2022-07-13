@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 #    Copyright (C) 2019  Mason Hock <mason@masonhock.com>
-#    Copyright (C) 2021  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2021,2022  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=9
+VERSION=10
 
 . ./config
 
@@ -30,20 +30,30 @@ sed 's/Icon=.*/Icon=mate-desktop-symbolic/' -i data/mate-tweak.desktop
 
 # Disable composition on llvm
 sed 's/Software Rasterizer/Accelerated: no/' -i mate-tweak
-sed '1a\\n # Do not run without 3D acceleration\nglxinfo | grep -q "Accelerated: no" && exit 0' -i marco-compton
-
-# Allow loading global compton config file
-sed '/for this wrapper./aif [ -f /etc/xdg/compton.conf ]; then \n    compton --config /etc/xdg/compton.conf' -i marco-compton
-sed '/if.*HOME.*config.*.conf/s/if/elif/' -i marco-compton
 
 # Corrects rendering delay on Pluma, possibly others
-sed '/--backend/s/\\/--xrender-sync-fence --xrender-sync \\/' -i  marco-compton
+sed '/--backend/s/\\/--xrender-sync-fence \\/' -i  marco-picom
 
 # Shadow config
-sed -i '/shadow-radius/s|12|6|' marco-compton
-sed -i '/shadow-opacity/s|0.125|0.6|' marco-compton
-sed -i '/shadow-offset-x/s|-12|-9|' marco-compton
-sed -i '/shadow-offset-y/s|-12|-9|' marco-compton
+sed -i '/shadow-radius/s|12|6|' marco-picom
+sed -i '/shadow-opacity/s|0.125|0.6|' marco-picom
+sed -i '/shadow-offset-x/s|-12|-9|' marco-picom
+sed -i '/shadow-offset-y/s|-12|-9|' marco-picom
+
+# Transitional dummy marco-compton
+cat << EOF > marco-compton
+#!/bin/sh
+
+# Compton has been replaced by picom, and should be handled by mate-wm
+
+WINDOW_MANAGER=\`gsettings get org.mate.session.required-components windowmanager 2> /dev/null | sed s/\'//g\`
+
+if [ "\$WINDOW_MANAGER = "marco-compton" ]; then
+    gsettings set org.mate.session.required-components windowmanager mate-wm
+fi
+
+exec /usr/bin/mate-wm
+EOF
 
 # Add Trisquel to layout list
 sed 's/fedora/trisquel/g; s/Fedora/Trisquel/' -i mate-tweak
