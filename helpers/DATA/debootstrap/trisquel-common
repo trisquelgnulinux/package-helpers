@@ -1,11 +1,5 @@
-case $ARCH in
-  amd64|i386)
-	default_mirror http://archive.trisquel.org/trisquel
-	;;
-  *)
-	default_mirror http://ports.trisquel.org/trisquel
-	;;
-esac
+default_mirror http://archive.trisquel.org/trisquel
+
 mirror_style release
 download_style apt
 finddebs_style from-indices

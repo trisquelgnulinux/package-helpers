@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2008-2020  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2008-2022  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=5
+VERSION=6
 NETINST=true
 
 . ./config
@@ -25,9 +25,7 @@ NETINST=true
 rm scripts/*
 cp -a $DATA/* scripts/
 
-replace ports.trisquel.org archive.trisquel.org
-
-changelog "Only include trisquel origins + armfh ports to archive"
+changelog "Only include trisquel origins"
 
 compile
 
