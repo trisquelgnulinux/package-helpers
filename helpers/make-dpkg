@@ -31,7 +31,7 @@ EOF
 
 cp scripts/t/Dpkg_BuildFlags_Ubuntu.t scripts/t/Dpkg_BuildFlags_Trisquel.t
 cp scripts/t/Dpkg_Changelog_Ubuntu.t scripts/t/Dpkg_Changelog_Trisquel.t
-sed 's/Ubuntu/Trisquel/g' -i scripts/t/Dpkg_Changelog_Trisquel.t scripts/t/Dpkg_BuildFlags_Trisquel.t
+sed 's/Ubuntu/Trisquel/g' -i scripts/t/Dpkg_BuildFlags_Trisquel.t
 cp $DATA/Trisquel.pm scripts/Dpkg/Vendor/Trisquel.pm
 
 sed '/Ubuntu.pm/a\\tDpkg/Vendor/Trisquel.pm \\' -i scripts/Makefile.in scripts/Makefile.am
