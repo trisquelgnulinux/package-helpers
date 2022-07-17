@@ -1,5 +1,6 @@
 #!/bin/sh
 #
+#    Copyright (C) 2022 Luis Guzmán <ark@switnet.org>
 #    Copyright (C) 2009-2018  Ruben Rodriguez <ruben@gnu.org>
 #
 #    This program is free software; you can redistribute it and/or modify
@@ -17,20 +18,27 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
+VERSION=4
+EXTERNAL='deb-src http://ftp.debian.org/debian stable main'
+REPOKEY=648ACFD622F3D138
 NETINST=true
 . ./config
 
-sed s/ubuntu/trisquel/g -i Makefile
-rpl archive.ubuntu.com archive.trisquel.org . -R
-rpl ports.ubuntu.com archive.trisquel.org . -R
-rpl ubuntu-ports trisquel-ports . -R
-rpl Ubuntu Trisquel . -R
-rpl /ubuntu/ /trisquel/ . -R
-rpl $UPSTREAM $CODENAME . -R
-rpl Mirrors.masterlist.ubuntu Mirrors.masterlist.trisquel . -R
+patch -R -p1 < $DATA/rev_Makefile.patch
+patch -R -p1 < $DATA/rev_choose-mirror-bin.templates-in.patch
 
-rm Mirrors.masterlist.ubuntu
+sed -i '/oldstable/d;
+        /testing/d;
+        /unstable/d;' mirrors.h
+sed -i "s|stable|$CODENAME|" mirrors.h
+
+replace "deb.debian.org" "archive.trisquel.org" .
+replace "debian.org" "trisquel.org" .
+replace "Debian" "Trisquel" .
+replace "/debian/" "/trisquel/" .
+sed -i 's|Mirrors.masterlist|Mirrors.masterlist.trisquel|' mirrorlist
+
+rm Mirrors.masterlist
 wget https://archive.trisquel.org/trisquel/Mirrors.masterlist -o /dev/null -O Mirrors.masterlist.trisquel
 
 changelog "Rebranded and adapted for Trisquel"

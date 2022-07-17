@@ -1,0 +1,22 @@
+diff -ru choose-mirror-2.78ubuntu7+10.0trisquel3/debian/choose-mirror-bin.templates-in choose-mirror-2.111/debian/choose-mirror-bin.templates-in
+--- choose-mirror-2.78ubuntu7+10.0trisquel3/debian/choose-mirror-bin.templates-in	2021-02-26 15:22:56.000000000 -0600
++++ choose-mirror-2.111/debian/choose-mirror-bin.templates-in	2021-02-08 06:52:03.000000000 -0600
+@@ -12,10 +12,14 @@
+ Type: select
+ Choices-C: ${CHOICES-C}
+ Choices: ${CHOICES}
+-Default: nabia
+-Description: Trisquel version to install:
+- In Trisquel, this question is never asked, and is only for preseeding.
+- Caveat emptor.
++# :sl2:
++_Description: Debian version to install:
++ Debian comes in several flavors. Stable is well-tested and rarely changes.
++ Unstable is untested and frequently changing. Testing is a middle ground,
++ that receives many of the new versions from unstable if they are not too
++ buggy.
++ .
++ Only flavors available on the selected mirror are listed.
+ 
+ Template: mirror/codename
+ Type: string
