@@ -18,16 +18,10 @@
 #
 
 VERSION=1
+EXTERNAL='deb-src http://ftp.debian.org/debian stable main'
+REPOKEY=648ACFD622F3D138
 NETINST=true
 . ./config
-
-sed -i 's/unattended-upgrades, landscape/unattended-upgrades/;
-s/Install security updates automatically, Manage system with Landscape/Install security updates automatically/;
-/By default, updates need to be applied manually using package management/d;
-/tools. Alternatively, you can choose to have this system automatically/d;
-/download and install security updates, or you can choose to manage this/d;
-/system over the web as part of a group of systems using Canonical/d;
-/Landscape service./d;' debian/pkgsel.templates
 
 changelog "Rebranded and adapted for Trisquel"
 compile
