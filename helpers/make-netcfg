@@ -18,11 +18,13 @@
 #
 
 VERSION=1
+EXTERNAL='deb-src http://ftp.debian.org/debian stable main'
+REPOKEY=648ACFD622F3D138
 NETINST=true
 . ./config
 
-rpl "Default: ubuntu" "Default: trisquel" . -R
-sed -i 's/ubuntu/trisquel/g' netcfg-common.c
+rpl "Default: debian" "Default: trisquel" . -R
+sed -i '/client, template,/s/debian/trisquel/g' netcfg-common.c
 
 changelog "Rebranded and adapted for Trisquel"
 compile
