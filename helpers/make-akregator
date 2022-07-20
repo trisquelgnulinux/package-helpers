@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 
 . ./config
 
@@ -25,9 +25,7 @@ VERSION=1
 patch src/akregator_part.cpp < $DATA/trisquel_feeds.patch
 
 #Prevent ppc64el arch since qtwebengine is not build for ppc64el either.
-sed -i 's|Architecture:.*|Architecture: amd64 arm64 armhf i386 mips64el mipsel|g' debian/control
-sed -i 's|qtwebengine5-dev.*|qtwebengine5-dev (>= 5.6.1~) [!ppc64el],|' debian/control
-sed -i '/libkf5/s|,| [!ppc64el],|g' debian/control
+sed -i 's|Architecture: any|Architecture: amd64 arm64 armhf i386|g' debian/control
 
 changelog "Patched feeds for Trisquel"
 
