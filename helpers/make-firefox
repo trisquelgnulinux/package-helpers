@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=91
+VERSION=92
 EXTERNAL='deb-src https://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu $UPSTREAM main'
 REPOKEY=9BDB3D89CE49EC21
 
@@ -91,6 +91,10 @@ ac_add_options --disable-eme
 %%endif
 %%endif
 ARCH
+
+cat << SIGN >> debian/config/mozconfig.in
+export MOZ_REQUIRE_SIGNING=
+SIGN
 
 sed '/gmp-clearkey/d' -i ./debian/firefox.install.in
 
@@ -244,7 +248,6 @@ sed  "s/^MOZ_PKG_NAME\t.*/MOZ_PKG_NAME\t\t:= abrowser/;" debian/build/config.mk 
 ############################################################################3
 ############################################################################3
 ############################################################################3
-sed "s_^Maintainer.*_Maintainer: $DEBFULLNAME <$DEBEMAIL>_g" -i debian/control.in
 
 # Branding files
 cp -a $DATA/branding/* browser/branding/official
