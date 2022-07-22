@@ -2,7 +2,7 @@
 #
 #    Copyright (C) 2015 Andrew M. Lindley <andrew@andrewlindley.co.uk>
 #    Copyright (C) 2019 Mason Hock <mason@masonhock.com>
-#    Copyright (C) 2021 Luis Guzman <ark@switnet.org>
+#    Copyright (C) 2022 Luis Guzman <ark@switnet.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -20,31 +20,53 @@
 #
 
 # One release to rule them all :)
-VERSION=3
+VERSION=4
 
 #. ./config
 QUILT=skip
 . ./config
 
-echo "#Remove already applied patch"
-rm debian/patches/python2.diff
-echo -n > debian/patches/series
-
 # Drop languages Trisquel modifications haven't been translated for yet
-sed '/^LANGALL/s/en ja fr it pt de/en/' -i debian/rules
+sed "s|^LANGPO.*|LANGPO  :=\t|" -i debian/rules
+sed -i 's|"LANGPO=$(LANGPO)"||' debian/rules
 sed '/^\Package: debian-reference-de/,$ d' debian/control -i
 sed '/debian-reference-fr/,/Description: metapackage/{//p;d;}' debian/control -i
 sed '/debian-reference-fr/d' debian/control -i
 
 # English ASCIIDOC source
 # remove references to the non-GNU FSDG contrib and non-free repos
-sed 's/ contrib non-free//;s/ and no dependency to `non-free`//;/non-free/d;s/ contrib//' -i asciidoc/02_package.txt
-sed 's/(non-free)//' -i asciidoc/04_auth.txt
-sed '/non-free/d' -i asciidoc/05_network.txt
-sed 's/Debian also offers helper programs to install non-free browser plugin packages as contrib or non-free archive area.//;/contrib/d' -i asciidoc/06_netapp.txt
-sed 's/previously non-free,//;/non-free/d;/sharing some commercial/,/contaminating/d' -i asciidoc/07_xwindow.txt
-sed 's/, and `non-free` for binary-only drivers supported by the vendor//;/non-free/d;/Softmodem/d' -i asciidoc/09_systips.txt
-sed 's/  You may need to include the `contrib` and `non-free` archives in addition to the `main` archive since some GFDL documentations are not considered to be DFSG compliant.//' -i asciidoc/12_program.txt
+sed -i 's/ contrib non-free//' rawxml/02_debian_package_management.rawxml
+sed -i 's| and no dependency to <literal>non-free</literal> ||' rawxml/02_debian_package_management.rawxml
+#Be carefull to avoid break items or xml structure deleting complete lines.
+sed -i 's|We will be guided by the needs.*such uses of the system.||' rawxml/02_debian_package_management.rawxml
+sed -i 's|We acknowledge that some of our .*system and mailing lists).||' rawxml/02_debian_package_management.rawxml
+sed -i 's|Users should be aware.*areas:||' rawxml/02_debian_package_management.rawxml
+sed -i 's|Please note that the number of.*system as free as you wish.||' rawxml/02_debian_package_management.rawxml
+
+sed -i '/non-free/d' rawxml/02_debian_package_management.rawxml
+sed -i 's/ contrib//' rawxml/02_debian_package_management.rawxml
+
+sed -i 's/(non-free)//' rawxml/04_authentication.rawxml
+#Be carefull to avoid break items or xml structure deleting complete lines.
+sed -i 's|Although most hardware devices.*and_firmware"\/>.||' rawxml/05_network_setup.rawxml
+#sed -i '/non-free/d' rawxml/05_network_setup.rawxml
+
+sed -i 's/Debian also offers helper programs to install non-free browser plugin packages as contrib or non-free archive area.//' rawxml/06_network_applications.rawxml
+sed -i '/contrib/d' -i rawxml/06_network_applications.rawxml
+#sed -i 's/previously non-free,//' rawxml/07_gui_system.rawxml
+sed -i '/non-free/d' rawxml/07_gui_system.rawxml
+#sed -i '/sharing some commercial/,/contaminating/d' rawxml/07_gui_system.rawxml
+
+#Be carefull to avoid break items or xml structure deleting complete lines.
+sed -i 's|<ulink url="https://en.wikipedia.org/wiki/Softmodem">Softmodem</ulink> driver ||' rawxml/09_system_tips.rawxml
+sed -i 's| martian-modem and sl-modem-dkms packages (<literal>non-free</literal>) ||' rawxml/09_system_tips.rawxml
+sed -i 's|Please note that.*100_free_software"/>.||' rawxml/09_system_tips.rawxml
+sed -i 's|Please also note.*-free</literal>.||' rawxml/09_system_tips.rawxml
+
+sed -i 's|, and <literal>non-free</literal> for binary-only drivers supported by the vendor||' rawxml/09_system_tips.rawxml
+sed -i '/non-free/d' rawxml/09_system_tips.rawxml
+#sed -i '/Softmodem/d' -i rawxml/09_system_tips.rawxml
+sed -i 's|  You may need to include the <literal>contrib</literal> and <literal>non-free</literal> archives in addition to the <literal>main</literal> archive since some GFDL documentations are not considered to be DFSG compliant.||' rawxml/12_programming.rawxml
 
 changelog 'Remove references to non-free repos #5950, remove already applied patch'
 
