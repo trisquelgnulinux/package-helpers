@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=89
+VERSION=90
 
 . ./config
 
@@ -51,6 +51,7 @@ sed -i '/activity-stream.showSponsored/s|true|false|g' browser/app/profile/firef
 sed '/"browser.privatebrowsing.vpnpromourl"/s/https.*"/"/' -i browser/app/profile/firefox.js
 
 sed '/network.connectivity-service.IPv/s/http.*success.txt?ipv[46]//' -i modules/libpref/init/all.js
+sed 's/accounts-static.cdn.mozilla.net.*sync.services.mozilla.com//' -i modules/libpref/init/all.js
 
 # do not alter useragent/platform/oscpu/etc with fingerprinting countermeasure, it makes things worse
 sed '/ShouldResistFingerprinting/,/}/s/^/\/\//' -i ./netwerk/protocol/http/nsHttpHandler.cpp
@@ -89,6 +90,10 @@ ac_add_options --disable-eme
 %%endif
 %%endif
 ARCH
+
+cat << SIGN >> debian/config/mozconfig.in
+export MOZ_REQUIRE_SIGNING=
+SIGN
 
 sed '/gmp-clearkey/d' -i ./debian/firefox.install.in
 
@@ -242,7 +247,6 @@ sed  "s/^MOZ_PKG_NAME\t.*/MOZ_PKG_NAME\t\t:= abrowser/;" debian/build/config.mk 
 ############################################################################3
 ############################################################################3
 ############################################################################3
-sed "s_^Maintainer.*_Maintainer: $DEBFULLNAME <$DEBEMAIL>_g" -i debian/control.in
 
 # Branding files
 cp -a $DATA/branding/* browser/branding/official
