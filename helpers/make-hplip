@@ -18,21 +18,14 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 
 # note, we need version 3.20.6 or higher, the binary plugin requirement
 # was reworked on that version.
 
-EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu hirsute main universe'
-REPOKEY=871920D1991BC93C
 QUILT=skip
 
 . ./config
-
-sed '/debhelper-compat/s/13/12/' -i debian/control
-
-# This is somehow missing from the source tarball, fetched from Debian git
-cp $DATA/Common.h .
 
 rm debian/patches/*-Install-check-plugin.py-as-a-script.patch
 sed -i '/Install-check-plugin.py-as-a-script.patch/d' debian/patches/series
@@ -63,6 +56,13 @@ cp $output $printers
 /bin/sed -i 's/plugin=2/plugin=0/g' $printers debian/patches/*
 
 rm $tmp $tmp2
+
+#Prevent failing on missing files
+cat << RULES >> debian/rules
+
+override_dh_missing:
+	dh_missing --list-missing
+RULES
 
 changelog "Removed printers with propietary drivers"
 
