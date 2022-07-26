@@ -22,12 +22,10 @@ COMPONENT=main
 
 . ./config
 
-#% Change default channel
+#Change default channel
+sed -i 's/#ubuntu/#trisquel/g' debian/patches/01_change_default_libera_channel.patch
 
-rm -f debian/patches/01_default_network_channel.patch
-sed -i '/01_default_network_channel.patch/d' debian/patches/series
-sed -i 's/#quassel/#trisquel/g' data/networks.ini
-changelog "Change default channel" 
+changelog "Change default channel"
 
 compile
 
