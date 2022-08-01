@@ -1,0 +1,71 @@
+#!/bin/sh
+#
+#    Copyright (C) 2022 Luis Guzman <ark@switnet.org>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=1
+
+. ./config
+
+# Temporary patch for Aramo 'til Jammy publish a fix.
+# Cherry pick patch 12 from upstream to fix runtime issue under Python 3.10
+cat << EOF | patch -p1
+
+diff --git a/debian/patches/deb-12-Fix-strict-parameters-for-gui.move.patch b/debian/patches/deb-12-Fix-strict-parameters-for-gui.move.patch
+new file mode 100644
+index 0000000..0bd6acf
+--- /dev/null
++++ b/debian/patches/deb-12-Fix-strict-parameters-for-gui.move.patch
+@@ -0,0 +1,24 @@
++From: Erik Johnson <github@ekriirke.net>
++Date: Sat, 4 Sep 2021 00:34:50 +0200
++Subject: Fix strict parameters for gui.move
++
++(cherry picked from commit bcd65bdd45cb45efd568ed911b009665b061ac9e)
++---
++ torbrowser_launcher/__init__.py | 4 ++--
++ 1 file changed, 2 insertions(+), 2 deletions(-)
++
++diff --git a/torbrowser_launcher/__init__.py b/torbrowser_launcher/__init__.py
++index 2e3743f..355743b 100644
++--- a/torbrowser_launcher/__init__.py
+++++ b/torbrowser_launcher/__init__.py
++@@ -96,8 +96,8 @@ def main():
++             desktop = app.desktop()
++             window_size = gui.size()
++             gui.move(
++-                (desktop.width() - window_size.width()) / 2,
++-                (desktop.height() - window_size.height()) / 2
+++                int((desktop.width() - window_size.width()) / 2),
+++                int((desktop.height() - window_size.height()) / 2)
++             )
++             gui.show()
++             sys.exit(app.exec_())
+diff --git a/debian/patches/series b/debian/patches/series
+index 67dc16e..d55ee37 100644
+--- a/debian/patches/series
++++ b/debian/patches/series
+@@ -12,3 +12,4 @@ po/03-Add-Chinese-Traditional-translation.patch
+ 15-AppArmor-Allow-reading-sys-fs-cgroup-cpu-cpuacct-cpu.c.patch
+ 16-Update-available-languages-for-torbrowser.patch
+ u17-apparmor-abstractions.patch
++deb-12-Fix-strict-parameters-for-gui.move.patch
+EOF
+
+changelog "Apply patch 12 from upstream to fix runtime issue under Python 3.10"
+
+compile
