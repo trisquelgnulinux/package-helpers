@@ -2,7 +2,7 @@
 #
 #    Copyright (C) 2011-2017  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C) 2019  Mason Hock <mason@masonhock.com>
-#    Copyright (C) 2021  Luis Guzman <ark@switnet.org>
+#    Copyright (C) 2022  Luis Guzman <ark@switnet.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -19,11 +19,17 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=6
+VERSION=7
 COMPONENT=main
 DEPENDS=base-files
 
 . ./config
+
+#Prevent to built grub2-unsigned on armhf and ppc64el arch
+sed -i "/Architecture:/s|any-ppc64*||g" debian/control
+sed -i "/Architecture:/s|any-arm$|armel|g;s|any-arm |armel|g" debian/control
+sed -i "/Architecture:/s|linux-any|linux|" debian/control
+sed -i '/Package: grub-common/,/Built-Using:/s|Architecture: any|Architecture: any-i386 any-amd64 any-ia64 any-arm64 riscv64|' debian/control
 
 # http://grub.johnlane.ie/
 ## updated to 2.04-1 on https://aur.archlinux.org/packages/grub-luks-keyfile/
