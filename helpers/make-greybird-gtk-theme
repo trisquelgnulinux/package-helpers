@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2021  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2021,2022  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
 #    along with this program; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
-VERSION=8
+VERSION=9
 EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu $UPSTREAM main universe'
 
 . ./config
@@ -103,6 +103,9 @@ sed '/Paned/,/^$/s/transparent.*/$bg_color;/' -i light/gtk-3.0/_common.scss
 sed '/Paned/,/^$/s/background-image.*//' -i light/gtk-3.0/_common.scss
 sed '/Paned/,/^$/s/background-size.*//' -i light/gtk-3.0/_common.scss
 sed '/Paned/,/^}$/s/image($backdrop_borders_color)/image($bg_color)/' -i light/gtk-3.0/_common.scss
+
+# fix panel toggles too wide
+sed '/min-width: 44px/d' -i light/gtk-3.0/_others.scss dark/gtk-3.0/_others.scss
 
 # lxde panel
 cat << EOF >> dark/gtk-2.0/apps/xfce-panel.rc
