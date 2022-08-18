@@ -55,10 +55,6 @@ sed '/"browser.privatebrowsing.vpnpromourl"/s/https.*"/"/' -i browser/app/profil
 sed '/network.connectivity-service.IPv/s/http.*success.txt?ipv[46]//' -i modules/libpref/init/all.js
 sed 's/accounts-static.cdn.mozilla.net.*sync.services.mozilla.com//' -i modules/libpref/init/all.js
 
-# do not alter useragent/platform/oscpu/etc with fingerprinting countermeasure, it makes things worse
-sed '/ShouldResistFingerprinting/,/}/s/^/\/\//' -i ./netwerk/protocol/http/nsHttpHandler.cpp
-sed '/If fingerprinting resistance is on/,/}/s/^/\/\//' -i ./dom/base/Navigator.cpp
-
 # Replace ubufox recommendation
 sed 's/xul-ext-ubufox/xul-ext-youtube-html5-video-player/' -i debian/control.in
 
