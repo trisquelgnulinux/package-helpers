@@ -1,0 +1,185 @@
+diff --git a/README.md b/README.md
+index 3fb54f4..8b01fbd 100644
+--- a/README.md
++++ b/README.md
+@@ -1,7 +1,3 @@
+-[![pipeline status](https://salsa.debian.org/freedombox-team/freedom-maker/badges/master/pipeline.svg)](https://salsa.debian.org/freedombox-team/freedom-maker/commits/master)
+-[![Debian Unstable](https://badges.debian.net/badges/debian/unstable/freedom-maker/version.svg)](https://packages.debian.org/unstable/freedom-maker)
+-[![Debian Testing](https://badges.debian.net/badges/debian/testing/freedom-maker/version.svg)](https://packages.debian.org/testing/freedom-maker)
+-
+ # Freedom-Maker: The FreedomBox image builder
+ 
+ These scripts build FreedomBox-images for various supported hardware
+@@ -13,9 +9,9 @@ during releases and for advanced users who intend to build their own
+ images. Regular users who wish to turn their devices into
+ FreedomBoxes should instead download the pre-built images.
+ 
+-Get a pre-built image via https://freedombox.org/download/.  There
++Get a pre-built image via https://cdimage.trisquel.info/trisquel-images/. There
+ are images available for all supported target devices.  You also find
+-the setup instructions on the [Wiki](https://wiki.debian.org/FreedomBox/).
++the setup instructions on the [Wiki](https://trisquel.info/en/wiki/FreedomBox/).
+ 
+ If you wish to create your own FreedomBox image, perhaps with some
+ tweaks, see the *Build Images* section below.
+@@ -24,7 +20,7 @@ tweaks, see the *Build Images* section below.
+ 
+ ## Supported Targets
+ 
+-Freedom-maker supports building for the following targets:
++Trisquel Freedom-maker supports building for the following targets:
+ 
+ | target                | description |
+ |-----------------------|-------------|
+@@ -43,25 +39,18 @@ Freedom-maker supports building for the following targets:
+ | *pine64-plus*         | Pine64+ board's SD card |
+ | *qemu-amd64*          | 64-bit image for the Qemu virtualization tool |
+ | *qemu-i386*           | 32-bit image for the Qemu virtualization tool |
+-| *raspberry2*          | RasbperryPi 2's SD card |
+-| *raspberry3*          | RasbperryPi 3's SD card |
+-| *raspberry3-b-plus*   | RasbperryPi 3 Model B+'s SD card |
+-| *test*                | build virtualbox i386 image and run diagnostics tests on it |
+-| *virtualbox-amd64*    | 64-bit image for the VirtualBox virtualization tool |
+-| *virtualbox-i386*     | 32-bit image for the VirtualBox virtualization tool |
+ 
+ ## Running Build
+ 
+-1. Fetch the git source of freedom-maker:
++1. Fetch the 'freedom-maker' source code:
+     ```
+-    $ git clone https://salsa.debian.org/freedombox-team/freedom-maker.git
++    $ apt source freedom-maker
+     ```
+ 
+ 2. Install the required dependencies:
+     ```shell
+     $ sudo apt install btrfs-progs debootstrap kpartx parted qemu-user-static sshpass
+-    $ cd freedom-maker
+-    $ sudo apt build-dep .
++    $ sudo apt build-dep freedom-maker
+     ```
+ 
+ 3. Build images:
+@@ -70,6 +59,7 @@ Freedom-maker supports building for the following targets:
+     to run "parted".
+ 
+     ```
++    $ cd $(find -type d -name 'freedom-maker-*')
+     $ sudo python3 -m freedommaker <TARGET>
+     ```
+     where: &lt;TARGET&gt; is one of the 'Supported Targets' above.
+diff --git a/debian/freedom-maker.1 b/debian/freedom-maker.1
+index 60f3d86..820e84d 100644
+--- a/debian/freedom-maker.1
++++ b/debian/freedom-maker.1
+@@ -51,17 +51,17 @@ Size of the image to build
+ .PP
+ \fB\-\-build\-mirror\fR
+ .RS 4
+-Debian mirror to use for building
++Trisquel mirror to use for building
+ .RE
+ .PP
+ \fB\-\-mirror\fR
+ .RS 4
+-Debian mirror to use in built image
++Trisquel mirror to use in built image
+ .RE
+ .PP
+ \fB\-\-distribution\fR
+ .RS 4
+-Debian release to use in built image
++Trisquel release to use in built image
+ .RE
+ .PP
+ \fB\-\-include\-source\fR
+@@ -106,7 +106,7 @@ Force rebuild of images even when required image exists
+ .PP
+ \fBtargets\fR
+ .RS 4
+-Image targets to build\&. Choose one or more of freedommaker, dreamplug, raspberry, raspberry2, beaglebone, cubieboard2, cubietruck, a20\-olinuxino\-lime, a20\-olinuxino\-lime2, a20\-olinuxino\-micro, i386, amd64, virtualbox\-i386, virtualbox\-amd64, qemu\-i386, qemu\-amd64, pcDuino3
++Image targets to build\&. Choose one or more of freedommaker, dreamplug, beaglebone, cubieboard2, cubietruck, a20\-olinuxino\-lime, a20\-olinuxino\-lime2, a20\-olinuxino\-micro, i386, amd64, qemu\-i386, qemu\-amd64, pcDuino3
+ .RE
+ .SH "EXAMPLES"
+ .PP
+@@ -130,9 +130,9 @@ Build a FreedomBox image for the BeagleBone Single Board Computer\&.
+ .RS 4
+ .\}
+ .nf
+-$ python3 \-m freedommaker dreamplug raspberry raspberry2
++$ python3 \-m freedommaker dreamplug
+       beaglebone cubieboard2 cubietruck a20\-olinuxino\-lime a20\-olinuxino\-lime2 
+-      a20\-olinuxino\-micro i386 amd64 virtualbox\-i386 virtualbox\-amd64 
++      a20\-olinuxino\-micro i386 amd64
+       qemu\-i386 qemu\-amd64 pcDuino3
+ .fi
+ .if n \{\
+diff --git a/doc/freedom-maker.xml b/doc/freedom-maker.xml
+index 74ce990..349a136 100644
+--- a/doc/freedom-maker.xml
++++ b/doc/freedom-maker.xml
+@@ -94,7 +94,7 @@
+         <term> <option>--build-mirror</option></term>
+          <listitem>
+           <para>
+-            Debian mirror to use for building
++            Trisquel mirror to use for building
+           </para>
+         </listitem>
+       </varlistentry>
+@@ -102,7 +102,7 @@
+         <term> <option>--mirror</option></term>
+          <listitem>
+            <para>
+-             Debian mirror to use in built image
++             Trisquel mirror to use in built image
+           </para>
+         </listitem>
+       </varlistentry>
+@@ -110,7 +110,7 @@
+         <term> <option>--distribution</option></term>
+          <listitem>
+            <para>
+-             Debian release to use in built image
++             Trisquel release to use in built image
+           </para>
+         </listitem>
+       </varlistentry>
+diff --git a/freedommaker/application.py b/freedommaker/application.py
+index dbe8ca0..0bebc35 100644
+--- a/freedommaker/application.py
++++ b/freedommaker/application.py
+@@ -94,15 +94,15 @@ class Application(object):
+         parser.add_argument(
+             '--build-mirror',
+             default=BUILD_MIRROR,
+-            help='Debian mirror to use for building')
++            help='Trisquel mirror to use for building')
+         parser.add_argument(
+             '--mirror',
+             default=MIRROR,
+-            help='Debian mirror to use in built image')
++            help='Trisquel mirror to use in built image')
+         parser.add_argument(
+             '--distribution',
+             default=DISTRIBUTION,
+-            help='Debian release to use in built image')
++            help='Trisquel release to use in built image')
+         parser.add_argument(
+             '--package',
+             action='append',
+diff --git a/freedommaker/internal.py b/freedommaker/internal.py
+index acc22d8..49bd4a9 100644
+--- a/freedommaker/internal.py
++++ b/freedommaker/internal.py
+@@ -275,9 +275,7 @@ class InternalBuilderBackend():
+ 
+     def _set_freedombox_disk_image_flag(self):
+         """Set a flag to indicate that this is a FreedomBox image.
+-
+-        And that FreedomBox is not installed using a Debian package.
+-
++        And not a standard Trisquel system with the FreedomBox packages installed.
+         """
+         library.run_in_chroot(
+             self.state, ['mkdir', '-p', '-m', '755', '/var/lib/freedombox'])

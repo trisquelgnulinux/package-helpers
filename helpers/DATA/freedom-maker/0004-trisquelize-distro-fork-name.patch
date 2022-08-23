@@ -1,0 +1,13 @@
+diff --git a/freedommaker/builder.py b/freedommaker/builder.py
+index 8a13188..343af14 100644
+--- a/freedommaker/builder.py
++++ b/freedommaker/builder.py
+@@ -23,7 +23,7 @@ import os
+ 
+ from . import internal, library
+ 
+-DISTRO_BRAND = 'Debian'
++DISTRO_BRAND = 'Trisquel'
+ 
+ # initramfs-tools is a dependency for the kernel-image package. However, when
+ # kernel is not installed, as in case of Raspberry Pi image, explicit dependency

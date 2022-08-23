@@ -1,0 +1,54 @@
+diff --git a/freedommaker/application.py b/freedommaker/application.py
+index 0bebc35..1c012da 100644
+--- a/freedommaker/application.py
++++ b/freedommaker/application.py
+@@ -30,9 +30,9 @@ import freedommaker
+ from .builder import ImageBuilder
+ 
+ IMAGE_SIZE = '3800M'
+-BUILD_MIRROR = 'http://deb.debian.org/debian'
+-MIRROR = 'http://deb.debian.org/debian'
+-DISTRIBUTION = 'unstable'
++BUILD_MIRROR = 'http://us.archive.trisquel.info/trisquel'
++MIRROR = 'http://us.archive.trisquel.info/trisquel'
++DISTRIBUTION = 'nabia'
+ BUILD_DIR = 'build'
+ LOG_LEVEL = 'debug'
+ HOSTNAME = 'freedombox'
+diff --git a/freedommaker/library.py b/freedommaker/library.py
+index 9805278..d724053 100644
+--- a/freedommaker/library.py
++++ b/freedommaker/library.py
+@@ -484,14 +484,14 @@ deb-src {mirror} {distribution} {components}
+     updates_template = '''
+ deb {mirror} {distribution}-updates {components}
+ deb-src {mirror} {distribution}-updates {components}
+-'''
+-    old_security_template = '''
+-deb http://security.debian.org/debian-security/ {distribution}/updates {components}
+-deb-src http://security.debian.org/debian-security/ {distribution}/updates {components}
+ '''
+     security_template = '''
+-deb http://security.debian.org/debian-security/ {distribution}-security {components}
+-deb-src http://security.debian.org/debian-security/ {distribution}-security {components}
++deb {mirror} {distribution}-security {components}
++deb-src {mirror} {distribution}-security {components}
++'''
++    backports_template = '''
++#deb {mirror} {distribution}-backports {components}
++#deb-src {mirror} {distribution}-backports {components}
+ '''
+     file_path = path_in_mount(state, 'etc/apt/sources.list')
+     with open(file_path, 'w') as file_handle:
+@@ -500,8 +500,9 @@ deb-src http://security.debian.org/debian-security/ {distribution}-security {com
+             file_handle.write(updates_template.format(**values))
+             if distribution in ('bullseye', 'testing'):
+                 file_handle.write(security_template.format(**values))
+-            else:  # stable/buster
+-                file_handle.write(old_security_template.format(**values))
++            elif distribution in ('nabia'):
++                file_handle.write(security_template.format(**values))
++                file_handle.write(backports_template.format(**values))
+ 
+     run_in_chroot(state, ['apt-get', 'update'])
+     run_in_chroot(state, ['apt-get', 'clean'])

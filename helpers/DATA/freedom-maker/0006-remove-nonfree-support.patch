@@ -1,0 +1,383 @@
+diff --git a/debian/control b/debian/control
+index 21f77ce..f13aafd 100644
+--- a/debian/control
++++ b/debian/control
+@@ -41,7 +41,7 @@ Depends:
+  u-boot-tools,
+  xz-utils (>= 5.2.2),
+ Suggests:
+- virtualbox
++ debootstrap
+ Description: FreedomBox image builder
+  FreedomBox is a personal cloud server which can be installed on single board
+  computers and Debian machines.
+diff --git a/freedommaker/builders/__init__.py b/freedommaker/builders/__init__.py
+index 4df3c3f..05e2f4d 100644
+--- a/freedommaker/builders/__init__.py
++++ b/freedommaker/builders/__init__.py
+@@ -35,10 +35,3 @@ from . import pine64_plus
+ from . import pine64_lts
+ from . import qemu_amd64
+ from . import qemu_i386
+-from . import raspberry_pi_2
+-from . import raspberry_pi_3
+-from . import raspberry_pi_3_b_plus
+-from . import raspberry_pi_with_uboot
+-from . import vagrant
+-from . import virtualbox_amd64
+-from . import virtualbox_i386
+diff --git a/freedommaker/builders/raspberry_pi_2.py b/freedommaker/builders/raspberry_pi_2.py
+deleted file mode 100644
+index 5821a94..0000000
+--- a/freedommaker/builders/raspberry_pi_2.py
++++ /dev/null
+@@ -1,31 +0,0 @@
+-#
+-# This file is part of Freedom Maker.
+-#
+-# This program is free software: you can redistribute it and/or modify
+-# it under the terms of the GNU General Public License as published by
+-# the Free Software Foundation, either version 3 of the License, or
+-# (at your option) any later version.
+-#
+-# This program is distributed in the hope that it will be useful,
+-# but WITHOUT ANY WARRANTY; without even the implied warranty of
+-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-# GNU General Public License for more details.
+-#
+-# You should have received a copy of the GNU General Public License
+-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-#
+-"""
+-Worker class to build Raspberry Pi 2 image.
+-"""
+-
+-from .raspberry_pi_with_uboot import RaspberryPiWithUBoot
+-
+-
+-class RaspberryPi2ImageBuilder(RaspberryPiWithUBoot):
+-    """Image builder for Raspberry Pi 2 target."""
+-    architecture = 'armhf'
+-    machine = 'raspberry2'
+-    boot_offset = '64mib'
+-    kernel_flavor = 'armmp'
+-    flash_kernel_name = 'Raspberry Pi 2 Model B'
+-    uboot_variant = 'rpi_2'
+diff --git a/freedommaker/builders/raspberry_pi_3.py b/freedommaker/builders/raspberry_pi_3.py
+deleted file mode 100644
+index 0cfe209..0000000
+--- a/freedommaker/builders/raspberry_pi_3.py
++++ /dev/null
+@@ -1,32 +0,0 @@
+-#
+-# This file is part of Freedom Maker.
+-#
+-# This program is free software: you can redistribute it and/or modify
+-# it under the terms of the GNU General Public License as published by
+-# the Free Software Foundation, either version 3 of the License, or
+-# (at your option) any later version.
+-#
+-# This program is distributed in the hope that it will be useful,
+-# but WITHOUT ANY WARRANTY; without even the implied warranty of
+-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-# GNU General Public License for more details.
+-#
+-# You should have received a copy of the GNU General Public License
+-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-#
+-"""
+-Worker class to build Raspberry Pi 3 image.
+-"""
+-
+-from .raspberry_pi_with_uboot import RaspberryPiWithUBoot
+-
+-
+-class RaspberryPi3ImageBuilder(RaspberryPiWithUBoot):
+-    """Image builder for Raspberry Pi 3 target."""
+-    architecture = 'armhf'
+-    machine = 'raspberry3'
+-    free = False
+-    boot_offset = '64mib'
+-    kernel_flavor = 'armmp'
+-    flash_kernel_name = 'Raspberry Pi 3 Model B'
+-    uboot_variant = 'rpi_3_32b'
+diff --git a/freedommaker/builders/raspberry_pi_3_b_plus.py b/freedommaker/builders/raspberry_pi_3_b_plus.py
+deleted file mode 100644
+index 35c778d..0000000
+--- a/freedommaker/builders/raspberry_pi_3_b_plus.py
++++ /dev/null
+@@ -1,27 +0,0 @@
+-#
+-# This file is part of Freedom Maker.
+-#
+-# This program is free software: you can redistribute it and/or modify
+-# it under the terms of the GNU General Public License as published by
+-# the Free Software Foundation, either version 3 of the License, or
+-# (at your option) any later version.
+-#
+-# This program is distributed in the hope that it will be useful,
+-# but WITHOUT ANY WARRANTY; without even the implied warranty of
+-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-# GNU General Public License for more details.
+-#
+-# You should have received a copy of the GNU General Public License
+-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-#
+-"""
+-Worker class to build Raspberry Pi 3 Model B+ image.
+-"""
+-
+-from .raspberry_pi_3 import RaspberryPi3ImageBuilder
+-
+-
+-class RaspberryPi3BPlusImageBuilder(RaspberryPi3ImageBuilder):
+-    """Image builder for Raspberry Pi 3 Model B+ target."""
+-    machine = 'raspberry3-b-plus'
+-    flash_kernel_name = 'Raspberry Pi 3 Model B+'
+diff --git a/freedommaker/builders/raspberry_pi_with_uboot.py b/freedommaker/builders/raspberry_pi_with_uboot.py
+deleted file mode 100644
+index e983404..0000000
+--- a/freedommaker/builders/raspberry_pi_with_uboot.py
++++ /dev/null
+@@ -1,62 +0,0 @@
+-#
+-# This file is part of Freedom Maker.
+-#
+-# This program is free software: you can redistribute it and/or modify
+-# it under the terms of the GNU General Public License as published by
+-# the Free Software Foundation, either version 3 of the License, or
+-# (at your option) any later version.
+-#
+-# This program is distributed in the hope that it will be useful,
+-# but WITHOUT ANY WARRANTY; without even the implied warranty of
+-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-# GNU General Public License for more details.
+-#
+-# You should have received a copy of the GNU General Public License
+-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-#
+-"""
+-Base worker class to build Raspberry Pi 2 and 3 images.
+-"""
+-
+-from .. import library
+-from .arm import ARMImageBuilder
+-
+-
+-class RaspberryPiWithUBoot(ARMImageBuilder):
+-    """Base image builder for Raspberry Pi 2 and 3 targets."""
+-    free = False
+-    uboot_variant = None
+-    firmware_filesystem_type = 'vfat'
+-    firmware_size = '60mib'
+-
+-    def install_boot_loader(self, state):
+-        """Install the boot loader onto the image."""
+-        if not self.uboot_variant:
+-            raise NotImplementedError
+-
+-        firmware_package = 'raspi-firmware'
+-        if self.arguments.distribution in ['buster', 'stable']:
+-            firmware_package = 'raspi3-firmware'
+-
+-        script = '''
+-set -e
+-set -x
+-set -o pipefail
+-
+-apt-get install --no-install-recommends -y dpkg-dev
+-cd /tmp
+-apt-get source {firmware_package}
+-cp {firmware_package}*/boot/* /boot/firmware
+-rm -rf {firmware_package}*
+-cd /
+-
+-# remove unneeded firmware files
+-rm -f /boot/firmware/fixup_*
+-rm -f /boot/firmware/start_*
+-
+-# u-boot setup
+-apt-get install -y u-boot-rpi
+-cp /usr/lib/u-boot/{uboot_variant}/u-boot.bin /boot/firmware/kernel.img
+-cp /usr/lib/u-boot/{uboot_variant}/u-boot.bin /boot/firmware/kernel7.img
+-'''.format(firmware_package=firmware_package, uboot_variant=self.uboot_variant)
+-        library.run_in_chroot(state, ['bash', '-c', script])
+diff --git a/freedommaker/builders/vagrant.py b/freedommaker/builders/vagrant.py
+deleted file mode 100644
+index f1243dd..0000000
+--- a/freedommaker/builders/vagrant.py
++++ /dev/null
+@@ -1,55 +0,0 @@
+-#
+-# This file is part of Freedom Maker.
+-#
+-# This program is free software: you can redistribute it and/or modify
+-# it under the terms of the GNU General Public License as published by
+-# the Free Software Foundation, either version 3 of the License, or
+-# (at your option) any later version.
+-#
+-# This program is distributed in the hope that it will be useful,
+-# but WITHOUT ANY WARRANTY; without even the implied warranty of
+-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-# GNU General Public License for more details.
+-#
+-# You should have received a copy of the GNU General Public License
+-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-#
+-"""
+-Worker class to build Vagrant images.
+-"""
+-
+-import os
+-
+-from .. import library
+-from .virtualbox_amd64 import VirtualBoxAmd64ImageBuilder
+-
+-
+-class VagrantImageBuilder(VirtualBoxAmd64ImageBuilder):
+-    """Image builder for Vagrant package."""
+-    vagrant_extension = '.box'
+-
+-    @classmethod
+-    def get_target_name(cls):
+-        """Return the name of the target for an image builder."""
+-        return 'vagrant'
+-
+-    def build(self):
+-        """Run the image building process."""
+-        vm_file = self._replace_extension(self.image_file,
+-                                          self.vm_image_extension)
+-        vagrant_file = self._replace_extension(self.image_file,
+-                                               self.vagrant_extension)
+-
+-        self.make_image()
+-        self.create_vm_file(self.image_file, vm_file)
+-        os.remove(self.image_file)
+-        self.vagrant_package(vm_file, vagrant_file)
+-
+-    @staticmethod
+-    def vagrant_package(vm_file, vagrant_file):
+-        """Create a vagrant package from VM file."""
+-        library.run(
+-            ['bin/vagrant-package', '--output', vagrant_file, vm_file])
+-
+-
+-
+diff --git a/freedommaker/builders/virtualbox.py b/freedommaker/builders/virtualbox.py
+deleted file mode 100644
+index f5bac57..0000000
+--- a/freedommaker/builders/virtualbox.py
++++ /dev/null
+@@ -1,46 +0,0 @@
+-#
+-# This file is part of Freedom Maker.
+-#
+-# This program is free software: you can redistribute it and/or modify
+-# it under the terms of the GNU General Public License as published by
+-# the Free Software Foundation, either version 3 of the License, or
+-# (at your option) any later version.
+-#
+-# This program is distributed in the hope that it will be useful,
+-# but WITHOUT ANY WARRANTY; without even the implied warranty of
+-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-# GNU General Public License for more details.
+-#
+-# You should have received a copy of the GNU General Public License
+-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-#
+-"""
+-Base worker class to build VirtualBox images.
+-"""
+-
+-import os
+-
+-from .. import library
+-from .vm import VMImageBuilder
+-
+-
+-class VirtualBoxImageBuilder(VMImageBuilder):
+-    """Base image builder for all VirtualBox targets."""
+-    vm_image_extension = '.vdi'
+-
+-    @classmethod
+-    def get_target_name(cls):
+-        """Return the name of the target for an image builder."""
+-        if getattr(cls, 'architecture', None):
+-            return 'virtualbox-' + cls.architecture
+-
+-        return None
+-
+-    def create_vm_file(self, image_file, vm_file):
+-        """Create a VM file from image file."""
+-        try:
+-            os.remove(vm_file)
+-        except FileNotFoundError:
+-            pass
+-
+-        library.run(['VBoxManage', 'convertdd', image_file, vm_file])
+diff --git a/freedommaker/builders/virtualbox_amd64.py b/freedommaker/builders/virtualbox_amd64.py
+deleted file mode 100644
+index 90609e0..0000000
+--- a/freedommaker/builders/virtualbox_amd64.py
++++ /dev/null
+@@ -1,27 +0,0 @@
+-#
+-# This file is part of Freedom Maker.
+-#
+-# This program is free software: you can redistribute it and/or modify
+-# it under the terms of the GNU General Public License as published by
+-# the Free Software Foundation, either version 3 of the License, or
+-# (at your option) any later version.
+-#
+-# This program is distributed in the hope that it will be useful,
+-# but WITHOUT ANY WARRANTY; without even the implied warranty of
+-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-# GNU General Public License for more details.
+-#
+-# You should have received a copy of the GNU General Public License
+-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-#
+-"""
+-Worker class to build VirtualBox amd64 images.
+-"""
+-
+-from .virtualbox import VirtualBoxImageBuilder
+-
+-
+-class VirtualBoxAmd64ImageBuilder(VirtualBoxImageBuilder):
+-    """Image builder for all VirtualBox amd64 targets."""
+-    architecture = 'amd64'
+-    kernel_flavor = 'amd64'
+diff --git a/freedommaker/builders/virtualbox_i386.py b/freedommaker/builders/virtualbox_i386.py
+deleted file mode 100644
+index a7846a7..0000000
+--- a/freedommaker/builders/virtualbox_i386.py
++++ /dev/null
+@@ -1,27 +0,0 @@
+-#
+-# This file is part of Freedom Maker.
+-#
+-# This program is free software: you can redistribute it and/or modify
+-# it under the terms of the GNU General Public License as published by
+-# the Free Software Foundation, either version 3 of the License, or
+-# (at your option) any later version.
+-#
+-# This program is distributed in the hope that it will be useful,
+-# but WITHOUT ANY WARRANTY; without even the implied warranty of
+-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-# GNU General Public License for more details.
+-#
+-# You should have received a copy of the GNU General Public License
+-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-#
+-"""
+-Worker class to build VirtualBox i386 images.
+-"""
+-
+-from .virtualbox import VirtualBoxImageBuilder
+-
+-
+-class VirtualBoxI386ImageBuilder(VirtualBoxImageBuilder):
+-    """Image builder for all VirtualBox i386 targets."""
+-    architecture = 'i386'
+-    kernel_flavor = '686'

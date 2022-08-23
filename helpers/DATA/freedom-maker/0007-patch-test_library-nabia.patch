@@ -1,0 +1,79 @@
+Make sure to replace stable (strech) for "nabia" to the corresponding CODENAME on further releases
+Also unstable to the corresponding dev release, aramo for nabia.
+
+diff --git a/freedommaker/tests/test_library.py b/freedommaker/tests/test_library.py
+index daf34c2..b58fc6d 100644
+--- a/freedommaker/tests/test_library.py
++++ b/freedommaker/tests/test_library.py
+@@ -438,13 +438,13 @@ modify x x
+     @patch('freedommaker.library.run')
+     def test_qemu_debootstrap(self, run):
+         """Test debootstrapping using qemu."""
+-        library.qemu_debootstrap(self.state, 'i386', 'stretch', 'minbase',
+-                                 ['main', 'contrib'], ['p1', 'p2'],
+-                                 'http://deb.debian.org/debian')
++        library.qemu_debootstrap(self.state, 'amd64', 'nabia', 'minbase',
++                                 ['main'], ['p1', 'p2'],
++                                 'http://archive.trisquel.org/trisquel')
+         run.assert_called_with([
+-            'qemu-debootstrap', '--arch=i386', '--variant=minbase',
+-            '--components=main,contrib', '--include=p1,p2', 'stretch',
+-            self.state['mount_point'], 'http://deb.debian.org/debian'
++            'qemu-debootstrap', '--arch=amd64', '--variant=minbase',
++            '--components=main', '--include=p1,p2', 'nabia',
++            self.state['mount_point'], 'http://archive.trisquel.org/trisquel'
+         ])
+ 
+         self.assertEqual(
+@@ -566,31 +566,37 @@ ff02::2 ip6-allrouters
+         sources_path = self.state['mount_point'] + '/etc/apt/sources.list'
+ 
+         stable_content = '''
+-deb http://deb.debian.org/debian stretch main
+-deb-src http://deb.debian.org/debian stretch main
++deb http://archive.trisquel.org/trisquel nabia main
++deb-src http://archive.trisquel.org/trisquel nabia main
+ 
+-deb http://deb.debian.org/debian stretch-updates main
+-deb-src http://deb.debian.org/debian stretch-updates main
++deb http://archive.trisquel.org/trisquel nabia-updates main
++deb-src http://archive.trisquel.org/trisquel nabia-updates main
+ 
+-deb http://security.debian.org/debian-security/ stretch/updates main
+-deb-src http://security.debian.org/debian-security/ stretch/updates main
++deb http://archive.trisquel.org/trisquel nabia-security main
++deb-src http://archive.trisquel.org/trisquel nabia-security main
++
++#deb http://archive.trisquel.org/trisquel nabia-backports main
++#deb-src http://archive.trisquel.org/trisquel nabia-backports main
+ '''
+         with self.assert_file_change(sources_path, None, stable_content):
+-            library.setup_apt(self.state, 'http://deb.debian.org/debian',
+-                              'stretch', ['main'])
++            library.setup_apt(self.state, 'http://archive.trisquel.org/trisquel',
++                              'nabia', ['main'])
+ 
+         self.assertEqual(run.call_args_list, [
+             call(self.state, ['apt-get', 'update']),
+             call(self.state, ['apt-get', 'clean'])
+         ])
+ 
+-        unstable_content = '''
+-deb http://ftp.us.debian.org/debian unstable main contrib non-free
+-deb-src http://ftp.us.debian.org/debian unstable main contrib non-free
++        aramo_content = '''
++deb http://archive.trisquel.org/trisquel aramo main
++deb-src http://archive.trisquel.org/trisquel aramo main
++
++deb http://archive.trisquel.org/trisquel aramo-updates main
++deb-src http://archive.trisquel.org/trisquel aramo-updates main
+ '''
+-        with self.assert_file_change(sources_path, None, unstable_content):
+-            library.setup_apt(self.state, 'http://ftp.us.debian.org/debian',
+-                              'unstable', ['main', 'contrib', 'non-free'])
++        with self.assert_file_change(sources_path, None, aramo_content):
++            library.setup_apt(self.state, 'http://archive.trisquel.org/trisquel',
++                              'aramo', ['main'])
+ 
+     @patch('freedommaker.library.run_in_chroot')
+     def test_setup_flash_kernel(self, run):
