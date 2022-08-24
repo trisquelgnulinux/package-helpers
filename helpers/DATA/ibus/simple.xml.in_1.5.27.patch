@@ -1,0 +1,1093 @@
+From ef9bd3b1c8e2ed122b064abb59fc6e121e23bb59 Mon Sep 17 00:00:00 2001
+From: fujiwarat <takao.fujiwara1@gmail.com>
+Date: Tue, 23 Aug 2022 00:26:57 +0900
+Subject: [PATCH] engine: Update simple.xml with xkeyboard-config 2.36
+
+---
+ engine/simple.xml.in | 875 ++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 780 insertions(+), 95 deletions(-)
+
+diff --git a/engine/simple.xml.in b/engine/simple.xml.in
+index 1152b5934..914895e76 100644
+--- a/engine/simple.xml.in
++++ b/engine/simple.xml.in
+@@ -3,7 +3,7 @@
+     <name>org.freedesktop.IBus.Simple</name>
+     <description>A table based simple engine</description>
+     <exec>@libexecdir@/ibus-engine-simple</exec>
+-    <version>1.5.26.20220314</version>
++    <version>1.5.27.20220823</version>
+     <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
+     <license>GPL</license>
+     <homepage>https://github.com/ibus/ibus/wiki</homepage>
+@@ -781,8 +781,8 @@
+             <rank>1</rank>
+         </engine>
+         <engine>
+-            <name>xkb:by:ru:bel</name>
+-            <language>be</language>
++            <name>xkb:by:ru:rus</name>
++            <language>ru</language>
+             <license>GPL</license>
+             <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
+             <layout>by</layout>
+@@ -4289,14 +4289,14 @@
+             <rank>1</rank>
+         </engine>
+         <engine>
+-            <name>xkb:fr:bre:fra</name>
+-            <language>fr</language>
++            <name>xkb:fr:bre:bre</name>
++            <language>br</language>
+             <license>GPL</license>
+             <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
+             <layout>fr</layout>
+             <layout_variant>bre</layout_variant>
+-            <longname>French (Breton)</longname>
+-            <description>French (Breton)</description>
++            <longname>Breton (France)</longname>
++            <description>Breton (France)</description>
+             <icon>ibus-keyboard</icon>
+             <rank>1</rank>
+         </engine>
+@@ -5570,6 +5570,77 @@
+             <icon>ibus-keyboard</icon>
+             <rank>1</rank>
+         </engine>
++        <engine>
++            <name>xkb:latam::spa</name>
++            <language>es</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>latam</layout>
++            <longname>Spanish (Latin American)</longname>
++            <description>Spanish (Latin American)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>50</rank>
++        </engine>
++        <engine>
++            <name>xkb:latam:nodeadkeys:spa</name>
++            <language>es</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>latam</layout>
++            <layout_variant>nodeadkeys</layout_variant>
++            <longname>Spanish (Latin American, no dead keys)</longname>
++            <description>Spanish (Latin American, no dead keys)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>1</rank>
++        </engine>
++        <engine>
++            <name>xkb:latam:deadtilde:spa</name>
++            <language>es</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>latam</layout>
++            <layout_variant>deadtilde</layout_variant>
++            <longname>Spanish (Latin American, dead tilde)</longname>
++            <description>Spanish (Latin American, dead tilde)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>1</rank>
++        </engine>
++        <engine>
++            <name>xkb:latam:dvorak:spa</name>
++            <language>es</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>latam</layout>
++            <layout_variant>dvorak</layout_variant>
++            <longname>Spanish (Latin American, Dvorak)</longname>
++            <description>Spanish (Latin American, Dvorak)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>1</rank>
++        </engine>
++        <engine>
++            <name>xkb:latam:colemak:spa</name>
++            <language>es</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>latam</layout>
++            <layout_variant>colemak</layout_variant>
++            <longname>Spanish (Latin American, Colemak)</longname>
++            <description>Spanish (Latin American, Colemak)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>1</rank>
++        </engine>
++        <engine>
++            <name>xkb:latam:colemak-gaming:spa</name>
++            <language>es</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>latam</layout>
++            <layout_variant>colemak-gaming</layout_variant>
++            <longname>Spanish (Latin American, Colemak for gaming)</longname>
++            <description>Spanish (Latin American, Colemak for gaming)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>1</rank>
++        </engine>
+         <engine>
+             <name>xkb:lt::lit</name>
+             <language>lt</language>
+@@ -6744,6 +6815,18 @@
+             <icon>ibus-keyboard</icon>
+             <rank>1</rank>
+         </engine>
++        <engine>
++            <name>xkb:ru:ab:abk</name>
++            <language>ab</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>ru</layout>
++            <layout_variant>ab</layout_variant>
++            <longname>Abkhazian (Russia)</longname>
++            <description>Abkhazian (Russia)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>1</rank>
++        </engine>
+         <engine>
+             <name>xkb:rs::srp</name>
+             <language>sr</language>
+@@ -7488,6 +7571,18 @@
+             <icon>ibus-keyboard</icon>
+             <rank>1</rank>
+         </engine>
++        <engine>
++            <name>xkb:tr:e:tur</name>
++            <language>tr</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>tr</layout>
++            <layout_variant>e</layout_variant>
++            <longname>Turkish (E)</longname>
++            <description>Turkish (E)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>1</rank>
++        </engine>
+         <engine>
+             <name>xkb:tr:alt:tur</name>
+             <language>tr</language>
+@@ -7895,8 +7990,8 @@
+             <rank>1</rank>
+         </engine>
+         <engine>
+-            <name>xkb:ua:rstu_ru:ukr</name>
+-            <language>uk</language>
++            <name>xkb:ua:rstu_ru:rus</name>
++            <language>ru</language>
+             <license>GPL</license>
+             <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
+             <layout>ua</layout>
+@@ -8150,8 +8245,8 @@
+             <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
+             <layout>vn</layout>
+             <layout_variant>fr</layout_variant>
+-            <longname>Vietnamese (French)</longname>
+-            <description>Vietnamese (French)</description>
++            <longname>Vietnamese (France)</longname>
++            <description>Vietnamese (France)</description>
+             <icon>ibus-keyboard</icon>
+             <rank>1</rank>
+         </engine>
+@@ -10029,8 +10124,8 @@
+             <rank>50</rank>
+         </engine>
+         <engine>
+-            <name>xkb:id::msa</name>
+-            <language>ms</language>
++            <name>xkb:id::ace</name>
++            <language>ace</language>
+             <license>GPL</license>
+             <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
+             <layout>id</layout>
+@@ -10040,8 +10135,8 @@
+             <rank>50</rank>
+         </engine>
+         <engine>
+-            <name>xkb:id::min</name>
+-            <language>min</language>
++            <name>xkb:id::ban</name>
++            <language>ban</language>
+             <license>GPL</license>
+             <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
+             <layout>id</layout>
+@@ -10051,8 +10146,19 @@
+             <rank>50</rank>
+         </engine>
+         <engine>
+-            <name>xkb:id::ace</name>
+-            <language>ace</language>
++            <name>xkb:id::bbc</name>
++            <language>bbc</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>id</layout>
++            <longname>Indonesian (Latin)</longname>
++            <description>Indonesian (Latin)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>50</rank>
++        </engine>
++        <engine>
++            <name>xkb:id::bew</name>
++            <language>bew</language>
+             <license>GPL</license>
+             <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
+             <layout>id</layout>
+@@ -10073,8 +10179,8 @@
+             <rank>50</rank>
+         </engine>
+         <engine>
+-            <name>xkb:id::tsg</name>
+-            <language>tsg</language>
++            <name>xkb:id::btm</name>
++            <language>btm</language>
+             <license>GPL</license>
+             <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
+             <layout>id</layout>
+@@ -10084,8 +10190,8 @@
+             <rank>50</rank>
+         </engine>
+         <engine>
+-            <name>xkb:id::mfa</name>
+-            <language>mfa</language>
++            <name>xkb:id::bts</name>
++            <language>bts</language>
+             <license>GPL</license>
+             <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
+             <layout>id</layout>
+@@ -10095,183 +10201,762 @@
+             <rank>50</rank>
+         </engine>
+         <engine>
+-            <name>xkb:id:phonetic:ind</name>
++            <name>xkb:id::bug</name>
++            <language>bug</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>id</layout>
++            <longname>Indonesian (Latin)</longname>
++            <description>Indonesian (Latin)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>50</rank>
++        </engine>
++        <engine>
++            <name>xkb:id::gor</name>
++            <language>gor</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>id</layout>
++            <longname>Indonesian (Latin)</longname>
++            <description>Indonesian (Latin)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>50</rank>
++        </engine>
++        <engine>
++            <name>xkb:id::jav</name>
++            <language>jv</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>id</layout>
++            <longname>Indonesian (Latin)</longname>
++            <description>Indonesian (Latin)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>50</rank>
++        </engine>
++        <engine>
++            <name>xkb:id::jax</name>
++            <language>jax</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>id</layout>
++            <longname>Indonesian (Latin)</longname>
++            <description>Indonesian (Latin)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>50</rank>
++        </engine>
++        <engine>
++            <name>xkb:id::mad</name>
++            <language>mad</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>id</layout>
++            <longname>Indonesian (Latin)</longname>
++            <description>Indonesian (Latin)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>50</rank>
++        </engine>
++        <engine>
++            <name>xkb:id::mak</name>
++            <language>mak</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>id</layout>
++            <longname>Indonesian (Latin)</longname>
++            <description>Indonesian (Latin)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>50</rank>
++        </engine>
++        <engine>
++            <name>xkb:id::min</name>
++            <language>min</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>id</layout>
++            <longname>Indonesian (Latin)</longname>
++            <description>Indonesian (Latin)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>50</rank>
++        </engine>
++        <engine>
++            <name>xkb:id::mui</name>
++            <language>mui</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>id</layout>
++            <longname>Indonesian (Latin)</longname>
++            <description>Indonesian (Latin)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>50</rank>
++        </engine>
++        <engine>
++            <name>xkb:id::sas</name>
++            <language>sas</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>id</layout>
++            <longname>Indonesian (Latin)</longname>
++            <description>Indonesian (Latin)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>50</rank>
++        </engine>
++        <engine>
++            <name>xkb:id::sun</name>
++            <language>su</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>id</layout>
++            <longname>Indonesian (Latin)</longname>
++            <description>Indonesian (Latin)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>50</rank>
++        </engine>
++        <engine>
++            <name>xkb:id:javanese:ind</name>
+             <language>id</language>
+             <license>GPL</license>
+             <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
+             <layout>id</layout>
+-            <layout_variant>phonetic</layout_variant>
+-            <longname>Indonesian (Arab Pegon, phonetic)</longname>
+-            <description>Indonesian (Arab Pegon, phonetic)</description>
++            <layout_variant>javanese</layout_variant>
++            <longname>Javanese</longname>
++            <description>Javanese</description>
+             <icon>ibus-keyboard</icon>
+             <rank>1</rank>
+         </engine>
+         <engine>
+-            <name>xkb:id:phonetic:msa</name>
+-            <language>ms</language>
++            <name>xkb:id:javanese:ace</name>
++            <language>ace</language>
+             <license>GPL</license>
+             <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
+             <layout>id</layout>
+-            <layout_variant>phonetic</layout_variant>
+-            <longname>Indonesian (Arab Pegon, phonetic)</longname>
+-            <description>Indonesian (Arab Pegon, phonetic)</description>
++            <layout_variant>javanese</layout_variant>
++            <longname>Javanese</longname>
++            <description>Javanese</description>
+             <icon>ibus-keyboard</icon>
+             <rank>1</rank>
+         </engine>
+         <engine>
+-            <name>xkb:id:phonetic:min</name>
+-            <language>min</language>
++            <name>xkb:id:javanese:ban</name>
++            <language>ban</language>
+             <license>GPL</license>
+             <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
+             <layout>id</layout>
+-            <layout_variant>phonetic</layout_variant>
+-            <longname>Indonesian (Arab Pegon, phonetic)</longname>
+-            <description>Indonesian (Arab Pegon, phonetic)</description>
++            <layout_variant>javanese</layout_variant>
++            <longname>Javanese</longname>
++            <description>Javanese</description>
+             <icon>ibus-keyboard</icon>
+             <rank>1</rank>
+         </engine>
+         <engine>
+-            <name>xkb:id:phonetic:ace</name>
+-            <language>ace</language>
++            <name>xkb:id:javanese:bbc</name>
++            <language>bbc</language>
+             <license>GPL</license>
+             <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
+             <layout>id</layout>
+-            <layout_variant>phonetic</layout_variant>
+-            <longname>Indonesian (Arab Pegon, phonetic)</longname>
+-            <description>Indonesian (Arab Pegon, phonetic)</description>
++            <layout_variant>javanese</layout_variant>
++            <longname>Javanese</longname>
++            <description>Javanese</description>
+             <icon>ibus-keyboard</icon>
+             <rank>1</rank>
+         </engine>
+         <engine>
+-            <name>xkb:id:phonetic:bjn</name>
++            <name>xkb:id:javanese:bew</name>
++            <language>bew</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>id</layout>
++            <layout_variant>javanese</layout_variant>
++            <longname>Javanese</longname>
++            <description>Javanese</description>
++            <icon>ibus-keyboard</icon>
++            <rank>1</rank>
++        </engine>
++        <engine>
++            <name>xkb:id:javanese:bjn</name>
+             <language>bjn</language>
+             <license>GPL</license>
+             <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
+             <layout>id</layout>
+-            <layout_variant>phonetic</layout_variant>
+-            <longname>Indonesian (Arab Pegon, phonetic)</longname>
+-            <description>Indonesian (Arab Pegon, phonetic)</description>
++            <layout_variant>javanese</layout_variant>
++            <longname>Javanese</longname>
++            <description>Javanese</description>
+             <icon>ibus-keyboard</icon>
+             <rank>1</rank>
+         </engine>
+         <engine>
+-            <name>xkb:id:phonetic:tsg</name>
+-            <language>tsg</language>
++            <name>xkb:id:javanese:btm</name>
++            <language>btm</language>
+             <license>GPL</license>
+             <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
+             <layout>id</layout>
+-            <layout_variant>phonetic</layout_variant>
+-            <longname>Indonesian (Arab Pegon, phonetic)</longname>
+-            <description>Indonesian (Arab Pegon, phonetic)</description>
++            <layout_variant>javanese</layout_variant>
++            <longname>Javanese</longname>
++            <description>Javanese</description>
+             <icon>ibus-keyboard</icon>
+             <rank>1</rank>
+         </engine>
+         <engine>
+-            <name>xkb:id:phonetic:mfa</name>
+-            <language>mfa</language>
++            <name>xkb:id:javanese:bts</name>
++            <language>bts</language>
+             <license>GPL</license>
+             <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
+             <layout>id</layout>
+-            <layout_variant>phonetic</layout_variant>
+-            <longname>Indonesian (Arab Pegon, phonetic)</longname>
+-            <description>Indonesian (Arab Pegon, phonetic)</description>
++            <layout_variant>javanese</layout_variant>
++            <longname>Javanese</longname>
++            <description>Javanese</description>
+             <icon>ibus-keyboard</icon>
+             <rank>1</rank>
+         </engine>
+         <engine>
+-            <name>xkb:id:phoneticx:ind</name>
+-            <language>id</language>
++            <name>xkb:id:javanese:bug</name>
++            <language>bug</language>
+             <license>GPL</license>
+             <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
+             <layout>id</layout>
+-            <layout_variant>phoneticx</layout_variant>
+-            <longname>Indonesian (Arab Pegon, extended phonetic)</longname>
+-            <description>Indonesian (Arab Pegon, extended phonetic)</description>
++            <layout_variant>javanese</layout_variant>
++            <longname>Javanese</longname>
++            <description>Javanese</description>
+             <icon>ibus-keyboard</icon>
+             <rank>1</rank>
+         </engine>
+         <engine>
+-            <name>xkb:id:phoneticx:msa</name>
+-            <language>ms</language>
++            <name>xkb:id:javanese:gor</name>
++            <language>gor</language>
+             <license>GPL</license>
+             <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
+             <layout>id</layout>
+-            <layout_variant>phoneticx</layout_variant>
+-            <longname>Indonesian (Arab Pegon, extended phonetic)</longname>
+-            <description>Indonesian (Arab Pegon, extended phonetic)</description>
++            <layout_variant>javanese</layout_variant>
++            <longname>Javanese</longname>
++            <description>Javanese</description>
+             <icon>ibus-keyboard</icon>
+             <rank>1</rank>
+         </engine>
+         <engine>
+-            <name>xkb:id:phoneticx:min</name>
+-            <language>min</language>
++            <name>xkb:id:javanese:jav</name>
++            <language>jv</language>
+             <license>GPL</license>
+             <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
+             <layout>id</layout>
+-            <layout_variant>phoneticx</layout_variant>
+-            <longname>Indonesian (Arab Pegon, extended phonetic)</longname>
+-            <description>Indonesian (Arab Pegon, extended phonetic)</description>
++            <layout_variant>javanese</layout_variant>
++            <longname>Javanese</longname>
++            <description>Javanese</description>
+             <icon>ibus-keyboard</icon>
+             <rank>1</rank>
+         </engine>
+         <engine>
+-            <name>xkb:id:phoneticx:ace</name>
+-            <language>ace</language>
++            <name>xkb:id:javanese:jax</name>
++            <language>jax</language>
+             <license>GPL</license>
+             <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
+             <layout>id</layout>
+-            <layout_variant>phoneticx</layout_variant>
+-            <longname>Indonesian (Arab Pegon, extended phonetic)</longname>
+-            <description>Indonesian (Arab Pegon, extended phonetic)</description>
++            <layout_variant>javanese</layout_variant>
++            <longname>Javanese</longname>
++            <description>Javanese</description>
+             <icon>ibus-keyboard</icon>
+             <rank>1</rank>
+         </engine>
+         <engine>
+-            <name>xkb:id:phoneticx:bjn</name>
+-            <language>bjn</language>
++            <name>xkb:id:javanese:mad</name>
++            <language>mad</language>
+             <license>GPL</license>
+             <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
+             <layout>id</layout>
+-            <layout_variant>phoneticx</layout_variant>
+-            <longname>Indonesian (Arab Pegon, extended phonetic)</longname>
+-            <description>Indonesian (Arab Pegon, extended phonetic)</description>
++            <layout_variant>javanese</layout_variant>
++            <longname>Javanese</longname>
++            <description>Javanese</description>
+             <icon>ibus-keyboard</icon>
+             <rank>1</rank>
+         </engine>
+         <engine>
+-            <name>xkb:id:phoneticx:tsg</name>
+-            <language>tsg</language>
++            <name>xkb:id:javanese:mak</name>
++            <language>mak</language>
+             <license>GPL</license>
+             <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
+             <layout>id</layout>
+-            <layout_variant>phoneticx</layout_variant>
+-            <longname>Indonesian (Arab Pegon, extended phonetic)</longname>
+-            <description>Indonesian (Arab Pegon, extended phonetic)</description>
++            <layout_variant>javanese</layout_variant>
++            <longname>Javanese</longname>
++            <description>Javanese</description>
+             <icon>ibus-keyboard</icon>
+             <rank>1</rank>
+         </engine>
+         <engine>
+-            <name>xkb:id:phoneticx:mfa</name>
+-            <language>mfa</language>
++            <name>xkb:id:javanese:min</name>
++            <language>min</language>
+             <license>GPL</license>
+             <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
+             <layout>id</layout>
+-            <layout_variant>phoneticx</layout_variant>
+-            <longname>Indonesian (Arab Pegon, extended phonetic)</longname>
+-            <description>Indonesian (Arab Pegon, extended phonetic)</description>
++            <layout_variant>javanese</layout_variant>
++            <longname>Javanese</longname>
++            <description>Javanese</description>
+             <icon>ibus-keyboard</icon>
+             <rank>1</rank>
+         </engine>
+         <engine>
+-            <name>xkb:jv::jav</name>
+-            <language>jv</language>
++            <name>xkb:id:javanese:mui</name>
++            <language>mui</language>
+             <license>GPL</license>
+             <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
+-            <layout>jv</layout>
+-            <longname>Indonesian (Javanese)</longname>
+-            <description>Indonesian (Javanese)</description>
++            <layout>id</layout>
++            <layout_variant>javanese</layout_variant>
++            <longname>Javanese</longname>
++            <description>Javanese</description>
+             <icon>ibus-keyboard</icon>
+-            <rank>50</rank>
++            <rank>1</rank>
++        </engine>
++        <engine>
++            <name>xkb:id:javanese:sas</name>
++            <language>sas</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>id</layout>
++            <layout_variant>javanese</layout_variant>
++            <longname>Javanese</longname>
++            <description>Javanese</description>
++            <icon>ibus-keyboard</icon>
++            <rank>1</rank>
++        </engine>
++        <engine>
++            <name>xkb:id:javanese:sun</name>
++            <language>su</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>id</layout>
++            <layout_variant>javanese</layout_variant>
++            <longname>Javanese</longname>
++            <description>Javanese</description>
++            <icon>ibus-keyboard</icon>
++            <rank>1</rank>
++        </engine>
++        <engine>
++            <name>xkb:id:phonetic:ind</name>
++            <language>id</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>id</layout>
++            <layout_variant>phonetic</layout_variant>
++            <longname>Indonesian (Arab Pegon, phonetic)</longname>
++            <description>Indonesian (Arab Pegon, phonetic)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>1</rank>
++        </engine>
++        <engine>
++            <name>xkb:id:phonetic:ace</name>
++            <language>ace</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>id</layout>
++            <layout_variant>phonetic</layout_variant>
++            <longname>Indonesian (Arab Pegon, phonetic)</longname>
++            <description>Indonesian (Arab Pegon, phonetic)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>1</rank>
++        </engine>
++        <engine>
++            <name>xkb:id:phonetic:ban</name>
++            <language>ban</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>id</layout>
++            <layout_variant>phonetic</layout_variant>
++            <longname>Indonesian (Arab Pegon, phonetic)</longname>
++            <description>Indonesian (Arab Pegon, phonetic)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>1</rank>
++        </engine>
++        <engine>
++            <name>xkb:id:phonetic:bbc</name>
++            <language>bbc</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>id</layout>
++            <layout_variant>phonetic</layout_variant>
++            <longname>Indonesian (Arab Pegon, phonetic)</longname>
++            <description>Indonesian (Arab Pegon, phonetic)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>1</rank>
++        </engine>
++        <engine>
++            <name>xkb:id:phonetic:bew</name>
++            <language>bew</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>id</layout>
++            <layout_variant>phonetic</layout_variant>
++            <longname>Indonesian (Arab Pegon, phonetic)</longname>
++            <description>Indonesian (Arab Pegon, phonetic)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>1</rank>
++        </engine>
++        <engine>
++            <name>xkb:id:phonetic:bjn</name>
++            <language>bjn</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>id</layout>
++            <layout_variant>phonetic</layout_variant>
++            <longname>Indonesian (Arab Pegon, phonetic)</longname>
++            <description>Indonesian (Arab Pegon, phonetic)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>1</rank>
++        </engine>
++        <engine>
++            <name>xkb:id:phonetic:btm</name>
++            <language>btm</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>id</layout>
++            <layout_variant>phonetic</layout_variant>
++            <longname>Indonesian (Arab Pegon, phonetic)</longname>
++            <description>Indonesian (Arab Pegon, phonetic)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>1</rank>
++        </engine>
++        <engine>
++            <name>xkb:id:phonetic:bts</name>
++            <language>bts</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>id</layout>
++            <layout_variant>phonetic</layout_variant>
++            <longname>Indonesian (Arab Pegon, phonetic)</longname>
++            <description>Indonesian (Arab Pegon, phonetic)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>1</rank>
++        </engine>
++        <engine>
++            <name>xkb:id:phonetic:bug</name>
++            <language>bug</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>id</layout>
++            <layout_variant>phonetic</layout_variant>
++            <longname>Indonesian (Arab Pegon, phonetic)</longname>
++            <description>Indonesian (Arab Pegon, phonetic)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>1</rank>
++        </engine>
++        <engine>
++            <name>xkb:id:phonetic:gor</name>
++            <language>gor</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>id</layout>
++            <layout_variant>phonetic</layout_variant>
++            <longname>Indonesian (Arab Pegon, phonetic)</longname>
++            <description>Indonesian (Arab Pegon, phonetic)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>1</rank>
++        </engine>
++        <engine>
++            <name>xkb:id:phonetic:jav</name>
++            <language>jv</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>id</layout>
++            <layout_variant>phonetic</layout_variant>
++            <longname>Indonesian (Arab Pegon, phonetic)</longname>
++            <description>Indonesian (Arab Pegon, phonetic)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>1</rank>
++        </engine>
++        <engine>
++            <name>xkb:id:phonetic:jax</name>
++            <language>jax</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>id</layout>
++            <layout_variant>phonetic</layout_variant>
++            <longname>Indonesian (Arab Pegon, phonetic)</longname>
++            <description>Indonesian (Arab Pegon, phonetic)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>1</rank>
++        </engine>
++        <engine>
++            <name>xkb:id:phonetic:mad</name>
++            <language>mad</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>id</layout>
++            <layout_variant>phonetic</layout_variant>
++            <longname>Indonesian (Arab Pegon, phonetic)</longname>
++            <description>Indonesian (Arab Pegon, phonetic)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>1</rank>
++        </engine>
++        <engine>
++            <name>xkb:id:phonetic:mak</name>
++            <language>mak</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>id</layout>
++            <layout_variant>phonetic</layout_variant>
++            <longname>Indonesian (Arab Pegon, phonetic)</longname>
++            <description>Indonesian (Arab Pegon, phonetic)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>1</rank>
++        </engine>
++        <engine>
++            <name>xkb:id:phonetic:min</name>
++            <language>min</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>id</layout>
++            <layout_variant>phonetic</layout_variant>
++            <longname>Indonesian (Arab Pegon, phonetic)</longname>
++            <description>Indonesian (Arab Pegon, phonetic)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>1</rank>
++        </engine>
++        <engine>
++            <name>xkb:id:phonetic:mui</name>
++            <language>mui</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>id</layout>
++            <layout_variant>phonetic</layout_variant>
++            <longname>Indonesian (Arab Pegon, phonetic)</longname>
++            <description>Indonesian (Arab Pegon, phonetic)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>1</rank>
++        </engine>
++        <engine>
++            <name>xkb:id:phonetic:sas</name>
++            <language>sas</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>id</layout>
++            <layout_variant>phonetic</layout_variant>
++            <longname>Indonesian (Arab Pegon, phonetic)</longname>
++            <description>Indonesian (Arab Pegon, phonetic)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>1</rank>
++        </engine>
++        <engine>
++            <name>xkb:id:phonetic:sun</name>
++            <language>su</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>id</layout>
++            <layout_variant>phonetic</layout_variant>
++            <longname>Indonesian (Arab Pegon, phonetic)</longname>
++            <description>Indonesian (Arab Pegon, phonetic)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>1</rank>
++        </engine>
++        <engine>
++            <name>xkb:id:phoneticx:ind</name>
++            <language>id</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>id</layout>
++            <layout_variant>phoneticx</layout_variant>
++            <longname>Indonesian (Arab Pegon, extended phonetic)</longname>
++            <description>Indonesian (Arab Pegon, extended phonetic)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>1</rank>
++        </engine>
++        <engine>
++            <name>xkb:id:phoneticx:ace</name>
++            <language>ace</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>id</layout>
++            <layout_variant>phoneticx</layout_variant>
++            <longname>Indonesian (Arab Pegon, extended phonetic)</longname>
++            <description>Indonesian (Arab Pegon, extended phonetic)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>1</rank>
++        </engine>
++        <engine>
++            <name>xkb:id:phoneticx:ban</name>
++            <language>ban</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>id</layout>
++            <layout_variant>phoneticx</layout_variant>
++            <longname>Indonesian (Arab Pegon, extended phonetic)</longname>
++            <description>Indonesian (Arab Pegon, extended phonetic)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>1</rank>
++        </engine>
++        <engine>
++            <name>xkb:id:phoneticx:bbc</name>
++            <language>bbc</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>id</layout>
++            <layout_variant>phoneticx</layout_variant>
++            <longname>Indonesian (Arab Pegon, extended phonetic)</longname>
++            <description>Indonesian (Arab Pegon, extended phonetic)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>1</rank>
++        </engine>
++        <engine>
++            <name>xkb:id:phoneticx:bew</name>
++            <language>bew</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>id</layout>
++            <layout_variant>phoneticx</layout_variant>
++            <longname>Indonesian (Arab Pegon, extended phonetic)</longname>
++            <description>Indonesian (Arab Pegon, extended phonetic)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>1</rank>
++        </engine>
++        <engine>
++            <name>xkb:id:phoneticx:bjn</name>
++            <language>bjn</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>id</layout>
++            <layout_variant>phoneticx</layout_variant>
++            <longname>Indonesian (Arab Pegon, extended phonetic)</longname>
++            <description>Indonesian (Arab Pegon, extended phonetic)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>1</rank>
++        </engine>
++        <engine>
++            <name>xkb:id:phoneticx:btm</name>
++            <language>btm</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>id</layout>
++            <layout_variant>phoneticx</layout_variant>
++            <longname>Indonesian (Arab Pegon, extended phonetic)</longname>
++            <description>Indonesian (Arab Pegon, extended phonetic)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>1</rank>
++        </engine>
++        <engine>
++            <name>xkb:id:phoneticx:bts</name>
++            <language>bts</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>id</layout>
++            <layout_variant>phoneticx</layout_variant>
++            <longname>Indonesian (Arab Pegon, extended phonetic)</longname>
++            <description>Indonesian (Arab Pegon, extended phonetic)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>1</rank>
++        </engine>
++        <engine>
++            <name>xkb:id:phoneticx:bug</name>
++            <language>bug</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>id</layout>
++            <layout_variant>phoneticx</layout_variant>
++            <longname>Indonesian (Arab Pegon, extended phonetic)</longname>
++            <description>Indonesian (Arab Pegon, extended phonetic)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>1</rank>
++        </engine>
++        <engine>
++            <name>xkb:id:phoneticx:gor</name>
++            <language>gor</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>id</layout>
++            <layout_variant>phoneticx</layout_variant>
++            <longname>Indonesian (Arab Pegon, extended phonetic)</longname>
++            <description>Indonesian (Arab Pegon, extended phonetic)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>1</rank>
++        </engine>
++        <engine>
++            <name>xkb:id:phoneticx:jav</name>
++            <language>jv</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>id</layout>
++            <layout_variant>phoneticx</layout_variant>
++            <longname>Indonesian (Arab Pegon, extended phonetic)</longname>
++            <description>Indonesian (Arab Pegon, extended phonetic)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>1</rank>
++        </engine>
++        <engine>
++            <name>xkb:id:phoneticx:jax</name>
++            <language>jax</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>id</layout>
++            <layout_variant>phoneticx</layout_variant>
++            <longname>Indonesian (Arab Pegon, extended phonetic)</longname>
++            <description>Indonesian (Arab Pegon, extended phonetic)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>1</rank>
++        </engine>
++        <engine>
++            <name>xkb:id:phoneticx:mad</name>
++            <language>mad</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>id</layout>
++            <layout_variant>phoneticx</layout_variant>
++            <longname>Indonesian (Arab Pegon, extended phonetic)</longname>
++            <description>Indonesian (Arab Pegon, extended phonetic)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>1</rank>
++        </engine>
++        <engine>
++            <name>xkb:id:phoneticx:mak</name>
++            <language>mak</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>id</layout>
++            <layout_variant>phoneticx</layout_variant>
++            <longname>Indonesian (Arab Pegon, extended phonetic)</longname>
++            <description>Indonesian (Arab Pegon, extended phonetic)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>1</rank>
++        </engine>
++        <engine>
++            <name>xkb:id:phoneticx:min</name>
++            <language>min</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>id</layout>
++            <layout_variant>phoneticx</layout_variant>
++            <longname>Indonesian (Arab Pegon, extended phonetic)</longname>
++            <description>Indonesian (Arab Pegon, extended phonetic)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>1</rank>
++        </engine>
++        <engine>
++            <name>xkb:id:phoneticx:mui</name>
++            <language>mui</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>id</layout>
++            <layout_variant>phoneticx</layout_variant>
++            <longname>Indonesian (Arab Pegon, extended phonetic)</longname>
++            <description>Indonesian (Arab Pegon, extended phonetic)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>1</rank>
++        </engine>
++        <engine>
++            <name>xkb:id:phoneticx:sas</name>
++            <language>sas</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>id</layout>
++            <layout_variant>phoneticx</layout_variant>
++            <longname>Indonesian (Arab Pegon, extended phonetic)</longname>
++            <description>Indonesian (Arab Pegon, extended phonetic)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>1</rank>
++        </engine>
++        <engine>
++            <name>xkb:id:phoneticx:sun</name>
++            <language>su</language>
++            <license>GPL</license>
++            <author>Peng Huang &lt;shawn.p.huang@gmail.com&gt;</author>
++            <layout>id</layout>
++            <layout_variant>phoneticx</layout_variant>
++            <longname>Indonesian (Arab Pegon, extended phonetic)</longname>
++            <description>Indonesian (Arab Pegon, extended phonetic)</description>
++            <icon>ibus-keyboard</icon>
++            <rank>1</rank>
+         </engine>
+         <engine>
+             <name>xkb:my::ind</name>
