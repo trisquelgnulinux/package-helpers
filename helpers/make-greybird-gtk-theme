@@ -16,8 +16,7 @@
 #    along with this program; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
-VERSION=9
-EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu $UPSTREAM main universe'
+VERSION=10
 
 . ./config
 
@@ -106,6 +105,13 @@ sed '/Paned/,/^}$/s/image($backdrop_borders_color)/image($bg_color)/' -i light/g
 
 # fix panel toggles too wide
 sed '/min-width: 44px/d' -i light/gtk-3.0/_others.scss dark/gtk-3.0/_others.scss
+
+#fix invisible alt-tab transparent selector under white brackground.
+cat << EOF >> dark/gtk-3.0/_others.scss
+.osd image:selected {
+  background: #363636;
+}
+EOF
 
 # lxde panel
 cat << EOF >> dark/gtk-2.0/apps/xfce-panel.rc
