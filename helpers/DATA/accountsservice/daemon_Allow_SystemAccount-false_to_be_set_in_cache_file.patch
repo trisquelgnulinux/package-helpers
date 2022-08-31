@@ -1,0 +1,70 @@
+From 985aed055313f968003c2515087974b2b934cf83 Mon Sep 17 00:00:00 2001
+From: Ray Strode <rstrode@redhat.com>
+Date: Wed, 8 Sep 2021 16:38:17 -0400
+Subject: [PATCH] daemon: Allow SystemAccount=false to be set in cache file
+
+At the moment we do dodgy checks based on uid to decide whether or not
+an account is a system account.
+
+For legacy reasons, sometimes normal users have really low UIDs.
+
+This commit reshuffles things, so the cache file "wins" for deciding
+whether or not a user is a system user.
+---
+ src/daemon.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/src/daemon.c b/src/daemon.c
+index 122b652..1760ef2 100644
+--- a/src/daemon.c
++++ b/src/daemon.c
+@@ -247,6 +247,14 @@ entry_generator_fgetpwent (Daemon       *daemon,
+                         if (shadow_entry_buffers != NULL) {
+                             *spent = &shadow_entry_buffers->spbuf;
+                         }
++
++                        /* Skip system users... */
++                        if (!user_classify_is_human (pwent->pw_uid, pwent->pw_name, pwent->pw_shell, (*spent)? (*spent)->sp_pwdp : NULL)) {
++                                g_debug ("skipping user: %s", pwent->pw_name);
++
++                                return entry_generator_fgetpwent (daemon, users, state, spent);
++                        }
++
+                         return pwent;
+                 }
+         }
+@@ -401,12 +409,6 @@ load_entries (Daemon             *daemon,
+                 if (pwent == NULL)
+                         break;
+ 
+-                /* Skip system users... */
+-                if (!explicitly_requested && !user_classify_is_human (pwent->pw_uid, pwent->pw_name, pwent->pw_shell, spent? spent->sp_pwdp : NULL)) {
+-                        g_debug ("skipping user: %s", pwent->pw_name);
+-                        continue;
+-                }
+-
+                 /* Only process users that haven't been processed yet.
+                  * We do always make sure entries get promoted
+                  * to "cached" status if they are supposed to be
+@@ -990,7 +992,6 @@ finish_list_cached_users (ListUserData *data)
+         GHashTableIter iter;
+         gpointer key, value;
+         uid_t uid;
+-        const gchar *shell;
+ 
+         object_paths = g_ptr_array_new ();
+ 
+@@ -1000,9 +1001,8 @@ finish_list_cached_users (ListUserData *data)
+                 User *user = value;
+ 
+                 uid = user_get_uid (user);
+-                shell = user_get_shell (user);
+ 
+-                if (!user_classify_is_human (uid, name, shell, NULL)) {
++                if (user_get_system_account (user)) {
+                         g_debug ("user %s %ld excluded", name, (long) uid);
+                         continue;
+                 }
+-- 
+GitLab
+
