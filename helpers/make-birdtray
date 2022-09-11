@@ -17,12 +17,12 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 . ./config
 
 #Replace name & paths.
 rpl -R '/.thunderbird' '/.icedove' .
-rpl -R 'Mozilla Thunderbird' 'Trisquel Icedove' .
+rpl -R 'Mozilla Thunderbird' 'Icedove Mail' .
 rpl -R 'Thunderbirda' 'Icedove' src/translations
 rpl -R 'Thunderbird' 'Icedove' src/translations \
                                contrib \
