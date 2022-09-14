@@ -1,0 +1,49 @@
+#!/bin/sh
+#
+#    Copyright (C) 2022  Rubén Rodríguez <ruben@trisquel.info>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=1
+
+. ./config
+
+cat << EOF |patch -p1
+diff -ru glibc-2.35/debian/debhelper.in/libc-udeb.install glibc-2.35/debian/debhelper.in/libc-udeb.install
+
+There is no file containing "-" (dash) on their udeb name pattern. Also debian
+udeb libraries don't have any of such files.
+
+--- glibc-2.35/debian/debhelper.in/libc-udeb.install	2022-07-04 17:58:49.000000000 -0500
++++ glibc-2.35/debian/debhelper.in/libc-udeb.install	2022-09-10 10:35:44.037341872 -0500
+@@ -1,12 +1,9 @@
+ TMPDIR/RTLDDIR/*.so* RTLDDIR
+ TMPDIR/SLIBDIR/ld*.so* SLIBDIR
+-TMPDIR/SLIBDIR/libm-*.so* SLIBDIR
+ TMPDIR/SLIBDIR/libm.so* SLIBDIR
+-TMPDIR/SLIBDIR/libmvec-* SLIBDIR
+ TMPDIR/SLIBDIR/libmvec.so* SLIBDIR
+ TMPDIR/SLIBDIR/libdl*.so* SLIBDIR
+ TMPDIR/SLIBDIR/libresolv*.so* SLIBDIR
+-TMPDIR/SLIBDIR/libc-*.so* SLIBDIR
+ TMPDIR/SLIBDIR/libc.so* SLIBDIR
+ TMPDIR/SLIBDIR/libutil* SLIBDIR
+ TMPDIR/SLIBDIR/libcrypt* SLIBDIR
+EOF
+
+changelog "Rebuild as part of udeb repository for debian-installer."
+
+compile
