@@ -1,0 +1,32 @@
+diff --git a/freedommaker/builder.py b/freedommaker/builder.py
+index ca998d9..1b051e2 100644
+--- a/freedommaker/builder.py
++++ b/freedommaker/builder.py
+@@ -8,6 +8,8 @@ import os
+ 
+ from . import internal, library
+ 
++DISTRO_BRAND = 'Debian'
++
+ # initramfs-tools is a dependency for the kernel-image package. However, when
+ # kernel is not installed, as in case of Raspberry Pi image, explicit
+ # dependency is needed.
+@@ -114,14 +116,15 @@ class ImageBuilder(object):  # pylint: disable=too-many-instance-attributes
+             elif 'contrib' in self.release_components:
+                 free_tag = 'contrib'
+             else:
+-                free_tag = 'free'
++                free_tag = 'libre'
+         else:
+-            free_tag = 'nonfree'
++            free_tag = 'libre'
+ 
+         build_stamp = self.arguments.build_stamp
+         build_stamp = build_stamp + '_' if build_stamp else ''
+-        return 'freedombox-{distribution}-{free_tag}_{build_stamp}{machine}' \
++        return '{distro}freedombox-{distribution}-{free_tag}_{build_stamp}_{machine}' \
+             '-{architecture}'.format(
++                distro=DISTRO_BRAND.lower() + '-' if DISTRO_BRAND else '',
+                 distribution=self.arguments.distribution, free_tag=free_tag,
+                 build_stamp=build_stamp, machine=self.machine,
+                 architecture=self.architecture)

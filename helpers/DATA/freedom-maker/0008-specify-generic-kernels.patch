@@ -1,0 +1,105 @@
+diff --git a/freedommaker/builders/a20.py b/ffreedommaker/builders/a20.py
+index ff7f807..ad94e1c 100644
+--- a/freedommaker/builders/a20.py
++++ b/ffreedommaker/builders/a20.py
+@@ -10,7 +10,7 @@ from .arm import ARMImageBuilder
+ class A20ImageBuilder(ARMImageBuilder):
+     """Base image builder for all Allwinner A20 board based targets."""
+     architecture = 'armhf'
+-    kernel_flavor = 'armmp-lpae'
++    kernel_flavor = 'generic'
+     u_boot_path = None
+ 
+     def install_boot_loader(self, state):
+diff --git a/freedommaker/builders/a64.py b/ffreedommaker/builders/a64.py
+index 7314724..21f3ae1 100644
+--- a/freedommaker/builders/a64.py
++++ b/ffreedommaker/builders/a64.py
+@@ -12,7 +12,7 @@ from .arm import ARMImageBuilder
+ class A64ImageBuilder(ARMImageBuilder):
+     """Image builder for all Allwinner A64 board targets."""
+     architecture = 'arm64'
+-    kernel_flavor = 'arm64'
++    kernel_flavor = 'generic'
+     u_boot_target = None
+ 
+     def __init__(self, *args, **kwargs):
+diff --git a/freedommaker/builders/amd64.py b/ffreedommaker/builders/amd64.py
+index d577ece..1b758f8 100644
+--- a/freedommaker/builders/amd64.py
++++ b/ffreedommaker/builders/amd64.py
+@@ -9,4 +9,4 @@ from .amd_intel import AMDIntelImageBuilder
+ class AMD64ImageBuilder(AMDIntelImageBuilder):
+     """Image builder for all amd64 targets."""
+     architecture = 'amd64'
+-    kernel_flavor = 'amd64'
++    kernel_flavor = 'generic'
+diff --git a/freedommaker/builders/arm64.py b/ffreedommaker/builders/arm64.py
+index 4576d3e..fc593f9 100644
+--- a/freedommaker/builders/arm64.py
++++ b/ffreedommaker/builders/arm64.py
+@@ -9,7 +9,7 @@ from .arm_efi import ARMEFIImageBuilder
+ class ARM64ImageBuilder(ARMEFIImageBuilder):
+     """Image builder a universal ARM64 images using UEFI."""
+     architecture = 'arm64'
+-    kernel_flavor = 'arm64'
++    kernel_flavor = 'generic'
+     efi_architecture = 'aa64'
+ 
+     def __init__(self, *args, **kwargs):
+diff --git a/freedommaker/builders/armhf.py b/ffreedommaker/builders/armhf.py
+index 6571c8a..6fba0a2 100644
+--- a/freedommaker/builders/armhf.py
++++ b/ffreedommaker/builders/armhf.py
+@@ -9,7 +9,7 @@ from .arm_efi import ARMEFIImageBuilder
+ class ARMHFImageBuilder(ARMEFIImageBuilder):
+     """Image builder a universal ARM32 images using UEFI."""
+     architecture = 'armhf'
+-    kernel_flavor = 'armmp-lpae'
++    kernel_flavor = 'generic'
+     efi_architecture = 'arm'
+     grub_target = 'arm-efi'
+ 
+diff --git a/freedommaker/builders/beaglebone.py b/ffreedommaker/builders/beaglebone.py
+index 13c0c48..0dcaddc 100644
+--- a/freedommaker/builders/beaglebone.py
++++ b/ffreedommaker/builders/beaglebone.py
+@@ -11,7 +11,7 @@ class BeagleBoneImageBuilder(ARMImageBuilder):
+     """Image builder for BeagleBone target."""
+     architecture = 'armhf'
+     machine = 'beaglebone'
+-    kernel_flavor = 'armmp'
++    kernel_flavor = 'generic'
+     flash_kernel_name = 'TI AM335x BeagleBone Black'
+     flash_kernel_options = 'console=ttyO0'
+ 
+diff --git a/freedommaker/builders/i386.py b/ffreedommaker/builders/i386.py
+index 98a48da..692122d 100644
+--- a/freedommaker/builders/i386.py
++++ b/ffreedommaker/builders/i386.py
+@@ -9,4 +9,4 @@ from .amd_intel import AMDIntelImageBuilder
+ class I386ImageBuilder(AMDIntelImageBuilder):
+     """Image builder for all i386 targets."""
+     architecture = 'i386'
+-    kernel_flavor = '686'
++    kernel_flavor = 'generic'
+diff --git a/freedommaker/builders/qemu_amd64.py b/ffreedommaker/builders/qemu_amd64.py
+index bb28f0a..61e5863 100644
+--- a/freedommaker/builders/qemu_amd64.py
++++ b/ffreedommaker/builders/qemu_amd64.py
+@@ -9,4 +9,4 @@ from .qemu import QemuImageBuilder
+ class QemuAmd64ImageBuilder(QemuImageBuilder):
+     """Image builder for all Qemu amd64 targets."""
+     architecture = 'amd64'
+-    kernel_flavor = 'amd64'
++    kernel_flavor = 'generic'
+diff --git a/freedommaker/builders/qemu_i386.py b/ffreedommaker/builders/qemu_i386.py
+index ea9646a..e3bbda5 100644
+--- a/freedommaker/builders/qemu_i386.py
++++ b/ffreedommaker/builders/qemu_i386.py
+@@ -9,4 +9,4 @@ from .qemu import QemuImageBuilder
+ class QemuI386ImageBuilder(QemuImageBuilder):
+     """Image builder for all Qemu i386 targets."""
+     architecture = 'i386'
+-    kernel_flavor = '686'
++    kernel_flavor = 'generic'

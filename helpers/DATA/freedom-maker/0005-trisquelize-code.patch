@@ -1,0 +1,38 @@
+diff --git a/freedommaker/application.py b/freedommaker/application.py
+index c5175a8..a479721 100644
+--- a/freedommaker/application.py
++++ b/freedommaker/application.py
+@@ -15,9 +15,9 @@ import freedommaker
+ from .builder import ImageBuilder
+ 
+ IMAGE_SIZE = '3800M'
+-BUILD_MIRROR = 'http://deb.debian.org/debian'
+-MIRROR = 'http://deb.debian.org/debian'
+-DISTRIBUTION = 'unstable'
++BUILD_MIRROR = 'http://archive.trisquel.org/trisquel'
++MIRROR = 'http://archive.trisquel.org/trisquel'
++DISTRIBUTION = 'aramo'
+ BUILD_DIR = 'build'
+ LOG_LEVEL = 'debug'
+ HOSTNAME = 'freedombox'
+diff --git a/freedommaker/library.py b/freedommaker/library.py
+index f8ea629..04954b5 100644
+--- a/freedommaker/library.py
++++ b/freedommaker/library.py
+@@ -493,12 +493,12 @@ deb {mirror} {distribution}-updates {components}
+ deb-src {mirror} {distribution}-updates {components}
+ '''
+     security_template = '''
+-deb http://security.debian.org/debian-security/ {distribution}-security {components}
+-deb-src http://security.debian.org/debian-security/ {distribution}-security {components}
++deb {mirror} {distribution}-security {components}
++deb-src {mirror} {distribution}-security {components}
+ '''
+     backports_template = f'''
+-deb http://deb.debian.org/debian {STABLE_CODENAME}-backports main
+-deb-src http://deb.debian.org/debian {STABLE_CODENAME}-backports main
++#deb {mirror} {distribution}-backports {components}
++#deb-src {mirror} {distribution}-backports {components}
+ '''
+     file_path = path_in_mount(state, 'etc/apt/sources.list')
+     with open(file_path, 'w') as file_handle:

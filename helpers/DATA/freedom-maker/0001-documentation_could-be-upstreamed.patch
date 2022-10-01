@@ -1,0 +1,164 @@
+diff --git a/README.md b/README.md
+index cd1815f..aaa7caa 100644
+--- a/README.md
++++ b/README.md
+@@ -26,31 +26,32 @@ tweaks, see the *Build Images* section below.
+ 
+ Freedom-maker supports building for the following targets:
+ 
+-
+-- *a20-olinuxino-lime*: A20 OLinuXino Lime's SD card
+-- *a20-olinuxino-lime2*: A20 OLinuXino Lime2's SD card
+-- *a20-olinuxino-micro*: A20 OLinuXino MICRO's SD card
+-- *amd64*: Disk image for any machine with amd64 architecture
+-- *arm64*: Disk image for any machine with arm64/aarch64 architecture
+-- *armhf*: Disk image for any machine with arm32 architecture
+-- *banana-pro*: Banana Pro's SD card
+-- *beaglebone*: BeagleBone Black's SD card
+-- *cubieboard2*: Cubieboard2's SD card
+-- *cubietruck*: Cubietruck's SD card
+-- *i386*: Disk image for any machine with i386 architecture
+-- *lamobo-r1*: Lamobo R1 aka BananaPi Router SD card
+-- *orange-pi-zero*: Orange Pi Zero's SD card
+-- *pcduino3*: pcDuino3's SD card
+-- *pine64-lts*: Pine64 LTS board's SD card
+-- *pine64-plus*: Pine64+ board's SD card
+-- *qemu-amd64*: 64-bit image for the Qemu virtualization tool
+-- *qemu-i386*: 32-bit image for the Qemu virtualization tool
+-- *raspberry2*: RasbperryPi 2's SD card
+-- *raspberry3*: RasbperryPi 3's SD card
+-- *raspberry3-b-plus*: RasbperryPi 3 Model B+'s SD card
+-- *test*: build virtualbox i386 image and run diagnostics tests on it
+-- *virtualbox-amd64*: 64-bit image for the VirtualBox virtualization tool
+-- *virtualbox-i386*: 32-bit image for the VirtualBox virtualization tool
++| target                | description |
++|-----------------------|-------------|
++| *a20-olinuxino-lime*	| A20 OLinuXino Lime's SD card |
++| *a20-olinuxino-lime2*	| A20 OLinuXino Lime2's SD card |
++| *a20-olinuxino-micro*	| A20 OLinuXino MICRO's SD card |
++| *amd64*		| Disk image for any machine with amd64 architecture |
++| *arm64*		| Disk image for any machine with arm64/aarch64 architecture |
++| *armhf*		| Disk image for any machine with arm32 architecture |
++| *banana-pro*		| Banana Pro's SD card |
++| *beaglebone*		| BeagleBone Black's SD card |
++| *cubieboard2*		| Cubieboard2's SD card |
++| *cubietruck*		| Cubietruck's SD card |
++| *i386*		| Disk image for any machine with i386 architecture |
++| *lamobo-r1*		| Lamobo R1 aka BananaPi Router SD card |
++| *orange-pi-zero*	| Orange Pi Zero's SD card |
++| *pcduino3*		| pcDuino3's SD card |
++| *pine64-lts*		| Pine64 LTS board's SD card |
++| *pine64-plus*		| Pine64+ board's SD card |
++| *qemu-amd64*		| 64-bit image for the Qemu virtualization tool |
++| *qemu-i386*		| 32-bit image for the Qemu virtualization tool |
++| *raspberry2*		| RasbperryPi 2's SD card |
++| *raspberry3*		| RasbperryPi 3's SD card |
++| *raspberry3-b-plus*	| RasbperryPi 3 Model B+'s SD card |
++| *test*		| build virtualbox i386 image and run diagnostics tests on it
++| *virtualbox-amd64*	| 64-bit image for the VirtualBox virtualization tool |
++| *virtualbox-i386*	| 32-bit image for the VirtualBox virtualization tool |
+ 
+ ## Running Build
+ 
+@@ -72,10 +73,12 @@ Freedom-maker supports building for the following targets:
+     to run "parted".
+ 
+     ```
+-    $ sudo python3 -m freedommaker a20-olinuxino-lime2
++    $ sudo python3 -m freedommaker <TARGET>
+     ```
++    where: &lt;TARGET&gt; is one of the 'Supported Targets' above.
++
+     Take a break from your computer - this takes some time. :)
+-    
++
+     To see the full list of options read the help-page:
+     ```
+     $ python3 -m freedommaker --help
+@@ -94,25 +97,48 @@ for this task. Otherwise follow the steps:
+ 
+     A. Unplug your card.
+ 
+-    B. Run "lsblk -p" to show which storage devices are connected to your system.
++    B. Run `lsblk -p` to show which storage devices are connected to your system.
++    For example, if your computer has one internal SATA storage device
++    (the most common configuration), it will be identified as */dev/sda*;
++    and the result may look similar to this:
++
++        $ lsblk -p
++        NAME        MAJ:MIN RM   SIZE RO TYPE MOUNTPOINTS
++        /dev/sda      8:0    0 119.2G  0 disk
++        ├─/dev/sda1   8:1    0     2G  0 part /boot
++        ├─/dev/sda2   8:2    0  22.5G  0 part /
++        └─/dev/sda3   8:3    0  94.8G  0 part /home
++
++    C. Plug in your SDcard and run `lsblk -p` again. Find the new device and note
++    the name. For example, if the SDcard is unformatted (empty), the result may
++    look similar to this:
++
++        $ lsblk -p
++        NAME        MAJ:MIN RM   SIZE RO TYPE MOUNTPOINTS
++        /dev/sda      8:0    0 119.2G  0 disk
++        ├─/dev/sda1   8:1    0     2G  0 part /boot
++        ├─/dev/sda2   8:2    0  22.5G  0 part /
++        └─/dev/sda3   8:3    0  94.8G  0 part /home
++        /dev/sdb      8:32   1  29.7G  0 disk
++
++    Or, if the SDcard is already formatted, it may look more like this:
++
+ 
+-    C. Plug your card in and run "lsblk -p" again. Find the new device and note
+-    the name.
+-    
+         $ lsblk -p
+-        NAME                                   MAJ:MIN RM   SIZE RO TYPE  MOUNTPOINT
+-        /dev/sdg                                 8:0    1  14.9G  0 disk  
+-        /dev/nvme0n1                           259:0    0   477G  0 disk  
+-        ├─/dev/nvme0n1p1                       259:1    0   512M  0 part  /boot/efi
+-        ├─/dev/nvme0n1p2                       259:2    0   244M  0 part  /boot
+-        └─/dev/nvme0n1p3                       259:3    0 476.2G  0 part  
+-          └─/dev/mapper/nvme0n1p3_crypt        253:0    0 476.2G  0 crypt 
+-            ├─/dev/mapper/mjw--t470--vg-root   253:1    0 468.4G  0 lvm   /
+-            └─/dev/mapper/mjw--t470--vg-swap_1 253:2    0   7.8G  0 lvm   [SWAP]
+-
+-    D. In the above case, the disk that is newly inserted is available
+-       as */dev/sdg*. You can also verify the size (16 GB in this example).
+-       Carefully note this and use it in the copying step below.
++        NAME        MAJ:MIN RM   SIZE RO TYPE MOUNTPOINTS
++        /dev/sda      8:0    0 119.2G  0 disk
++        ├─/dev/sda1   8:1    0     2G  0 part /boot
++        ├─/dev/sda2   8:2    0  22.5G  0 part /
++        └─/dev/sda3   8:3    0  94.8G  0 part /home
++        /dev/sdb      8:32   1  29.7G  0 disk
++        ├─/dev/sdb1   8:33   1   100M  0 part
++        └─/dev/sdb2   8:36   1  29.6G  0 part
++
++    D. In the above cases, the newly inserted SDcard is identified
++       as */dev/sdb*. To be more certain, you can compare the reported sizes
++       (approximately - the SDcard is 30 GB in this example - reported 29.7G).
++       Most importantly, */dev/sda*. is usually not the SDcard.
++       Carefully note this identifier and use it in the copying step below.
+ 
+ 2. Copy the image to your card.  Double check and make sure you don't
+    write to your computer's main storage (such as /dev/sda).  Also
+diff --git a/freedommaker/__main__.py b/freedommaker/__main__.py
+index 9b883f0..614fd20 100644
+--- a/freedommaker/__main__.py
++++ b/freedommaker/__main__.py
+@@ -4,7 +4,15 @@
+ Module to provide ability to run this freedommaker package.
+ 
+ Run the package as:
+-  python3 -m freedommaker
++  $ sudo python3 -m freedommaker <TARGET>
++where:
++  <TARGET> is one of:
++  $ grep -r 'machine = ' freedommaker/builders/ | cut -d '=' -f 2
++eg:
++  $ sudo python3 -m freedommaker a20-olinuxino-lime2
++
++To see the full list of options read the help-page:
++  $ python3 -m freedommaker --help
+ """
+ 
+ from .application import Application
