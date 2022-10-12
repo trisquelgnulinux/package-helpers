@@ -1,0 +1,148 @@
+diff -ru source/CommandNotFound/db/tests/test_db.py source/CommandNotFound/db/tests/test_db.py_fix
+--- source/CommandNotFound/db/tests/test_db.py	2021-12-08 04:53:19.000000000 -0600
++++ source/CommandNotFound/db/tests/test_db.py_fix	2022-08-26 01:26:06.984427040 -0500
+@@ -11,7 +11,7 @@
+ from CommandNotFound.db.creator import DbCreator
+ from CommandNotFound.db.db import SqliteDatabase
+ 
+-mock_commands_bionic_backports = """suite: bionic-backports
++mock_commands_etiona_backports = """suite: etiona-backports
+ component: main
+ arch: all
+ 
+@@ -20,7 +20,7 @@
+ commands: script,wall,new-stuff-only-in-backports
+ """
+ 
+-mock_commands_bionic_proposed = """suite: bionic-proposed
++mock_commands_etiona_proposed = """suite: etiona-proposed
+ component: main
+ arch: all
+ 
+@@ -29,7 +29,7 @@
+ commands: script,wall
+ """
+ 
+-mock_commands_bionic = """suite: bionic
++mock_commands_etiona = """suite: etiona
+ component: main
+ arch: all
+ 
+@@ -65,7 +65,7 @@
+ ignore-commands: ignore-me
+ """
+ 
+-mock_commands_bionic_universe = """suite: bionic
++mock_commands_etiona_universe = """suite: etiona
+ component: universe
+ arch: all
+ 
+@@ -84,7 +84,7 @@
+         shutil.rmtree(self.tmpdir)
+ 
+     def make_mock_commands_file(self, suite, content):
+-        path = os.path.join(self.tmpdir, "var", "lib", "apt", "lists", "archive.ubuntu.com_ubuntu_dists_%s_Commands-all" % suite)
++        path = os.path.join(self.tmpdir, "var", "lib", "apt", "lists", "archive.trisquel.org_trisquel_dists_%s_Commands-all" % suite)
+         try:
+             os.makedirs(os.path.dirname(path))
+         except OSError:
+@@ -95,7 +95,7 @@
+         
+     def test_create_trivial_db(self):
+         mock_commands_file = self.make_mock_commands_file(
+-            "bionic_main", mock_commands_bionic)
++            "etiona_main", mock_commands_etiona)
+         cre = DbCreator([mock_commands_file])
+         dbpath = os.path.join(self.tmpdir, "test.db")
+         cre.create(dbpath)
+@@ -108,9 +108,9 @@
+ 
+     def test_create_multiple_dbs(self):
+         mock_commands_1 = self.make_mock_commands_file(
+-            "bionic_main", mock_commands_bionic)
++            "etiona_main", mock_commands_etiona)
+         mock_commands_2 = self.make_mock_commands_file(
+-            "bionic-proposed_main", mock_commands_bionic_proposed)
++            "etiona-proposed_main", mock_commands_etiona_proposed)
+         cre = DbCreator([mock_commands_1, mock_commands_2])
+         dbpath = os.path.join(self.tmpdir, "test.db")
+         cre.create(dbpath)
+@@ -131,9 +131,9 @@
+ 
+     def test_create_backports_excluded_dbs(self):
+         mock_commands_1 = self.make_mock_commands_file(
+-            "bionic_main", mock_commands_bionic)
++            "etiona_main", mock_commands_etiona)
+         mock_commands_2 = self.make_mock_commands_file(
+-            "bionic-backports_main", mock_commands_bionic_backports)
++            "etiona-backports_main", mock_commands_etiona_backports)
+         cre = DbCreator([mock_commands_1, mock_commands_2])
+         dbpath = os.path.join(self.tmpdir, "test.db")
+         cre.create(dbpath)
+@@ -146,7 +146,7 @@
+ 
+     def test_create_no_versions_does_not_crash(self):
+         mock_commands = self.make_mock_commands_file(
+-            "bionic_main", mock_commands_bionic.replace("version: 1.0\n", ""))
++            "etiona_main", mock_commands_etiona.replace("version: 1.0\n", ""))
+         cre = DbCreator([mock_commands])
+         dbpath = os.path.join(self.tmpdir, "test.db")
+         cre.create(dbpath)
+@@ -157,11 +157,8 @@
+         
+     def test_create_priorities_work(self):
+         mock_commands_1 = self.make_mock_commands_file(
+-            "bionic_main", mock_commands_bionic)
+-        mock_commands_2 = self.make_mock_commands_file(
+-            "bionic_universe", mock_commands_bionic_universe)
+-        self.assertNotEqual(mock_commands_1, mock_commands_2)
+-        cre = DbCreator([mock_commands_1, mock_commands_2])
++            "etiona_main", mock_commands_etiona)
++        cre = DbCreator([mock_commands_1])
+         dbpath = os.path.join(self.tmpdir, "test.db")
+         cre.create(dbpath)
+         # validate content
+@@ -173,12 +170,11 @@
+                 db.lookup("bzr"), [
+                     ("bzr1", "1.0", "main"),
+                     ("bzr2", "2.7", "main"),
+-                    ("bzr-tng", "3.0", "universe"),
+                 ])
+ 
+     def test_priorities_bonus_works(self):
+         mock_commands_1 = self.make_mock_commands_file(
+-            "bionic_main", mock_commands_bionic)
++            "etiona_main", mock_commands_etiona)
+         cre = DbCreator([mock_commands_1])
+         dbpath = os.path.join(self.tmpdir, "test.db")
+         cre.create(dbpath)
+@@ -193,7 +189,7 @@
+ 
+     def test_visible_pkgname_works(self):
+         mock_commands_1 = self.make_mock_commands_file(
+-            "bionic_main", mock_commands_bionic)
++            "etiona_main", mock_commands_etiona)
+         cre = DbCreator([mock_commands_1])
+         dbpath = os.path.join(self.tmpdir, "test.db")
+         cre.create(dbpath)
+@@ -205,9 +201,9 @@
+ 
+     def test_create_multiple_no_unneeded_creates(self):
+         mock_commands_1 = self.make_mock_commands_file(
+-            "bionic_main", mock_commands_bionic)
++            "etiona_main", mock_commands_etiona)
+         mock_commands_2 = self.make_mock_commands_file(
+-            "bionic-proposed_main", mock_commands_bionic_proposed)
++            "etiona-proposed_main", mock_commands_etiona_proposed)
+         cre = DbCreator([mock_commands_1, mock_commands_2])
+         dbpath = os.path.join(self.tmpdir, "test.db")
+         cre.create(dbpath)
+@@ -220,7 +216,7 @@
+ 
+     def test_create_honors_ignore_comamnds(self):
+         mock_commands_file = self.make_mock_commands_file(
+-            "bionic_main", mock_commands_bionic)
++            "etiona_main", mock_commands_etiona)
+         cre = DbCreator([mock_commands_file])
+         dbpath = os.path.join(self.tmpdir, "test.db")
+         cre.create(dbpath)
