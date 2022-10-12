@@ -1,0 +1,108 @@
+## udeb repository
+
+Starting on trisquel 11.0, codename aramo, it is necessary to build all udeb packages related to debian-installer. Missing packages (like debian-installer itself) are fetched and built from Debian, and others are produced by rebuilding their source packages.
+
+Those new packages should be added on top of the helpers mentioned at: 
+[https://gitlab.trisquel.org/trisquel/package-helpers/-/tree/aramo#netinstall](https://gitlab.trisquel.org/trisquel/package-helpers/-/tree/aramo#netinstall)
+
+In order to make a list of all the source packages that would produce the required udeb binary packages, we look in these places:
+
+### 1) debian-installer pkg-list
+
+The debian-installer package has a fixed list of packages from which we can get the names, make sure to avoik the `gtk-common` file as we don't require graphical packages.
+
+```
+$ cd debian-installer-*/build/pkg-lists
+$ cat $(find . -type f ! -name 'gtk-common' -not -path "*/gtk/*") | \
+  grep -v "\#" | \
+  grep -v "\-\$" | \
+  grep -v "\?\$" | \
+  grep -v 'kernel:Version' | \
+  grep -v 'kfreebsd' | \
+  sed 's|\ \[linux\]||g' | \
+  awk 'NF' > ~/d-i_pkg-list
+
+```
+---
+**Dictionary**
+
+* *find* - `! -name 'gtk-common' -not -path "*/gtk/*"` - avoid file gtk-common and directories specific to gtk packages.
+* `grep -v "\#"` - remove comments on files
+* `grep -v "\-\$"` - remove unpromoted packages
+* `grep -v "\?\$"` - remove undefined packages
+* `grep -v 'kernel:Version'` - remove kernel packages, this should be taken care of by the kernel helper.
+* `grep -v 'kfreebsd'` - trisquel kernel is linux-libre based so removing other kernel specific packages.
+* `sed 's|\ \[linux\]||g'` - remove explicit linux(-libre) kernel definition, all should be linux(-libre) specific.
+* `awk 'NF'` - remove empty lines
+---
+
+
+Then we can parse the `d-i_pkg-list` using,
+
+```
+$ for i in $(cat ~/d-i_pkg-list) ; \
+  do apt-cache madison $i | \
+  grep Sources | awk '{print$1}' ; done | \
+  awk '!seen[$0]++' | sort
+```
+
+Note that as the list is a big one to parse, it will take some time.
+
+This will provide a list of source packages necessary to build for our udeb repository, be ware that some helpers for these source packages might already exist, errors finding the source package mean source packages are required from debian.
+
+### 2) anna list (nabia)
+
+The second place is from a dynamically generated list by anna (*anna's not nearly apt*) which is generated from the repository itself.
+
+For this list we relay on a previous release like a nabia netinstall. There is no *simple* way to get this list, as it requires a second system to serve as a **proxy cache server** or as a **tftp server** for it to get the output of the access.log (proxy server) or syslog (on the installed system) file.
+
+#### Proxy cache - squid
+The *"easiest"* way of getting a hand of such package list is to parse the output of a cache proxy like squid once a nabia netinstallation is complete.
+
+In this process a nabia system needs to be installed and on the *"Choose a mirror of the Triquel archive"* step set the address of the squid proxy cache server (e.g. *http://192.168.1.100:3128*) so the nabia installation fetches the packages through the proxy server for them to be logged at the `access.log` on the proxy server.
+
+We can parse the access.log on the proxy server or through ssh,
+
+```
+SQUID_LOG="/var/log/squid/access.log"
+
+# for i in $(cat $SQUID_LOG | \
+  awk '/htt.*udeb/{print$7}' | awk -F'[/_]' '{print$10}') ; \
+  do apt-cache madison $i | grep Sources | awk '{print$1}' ; done | \
+  awk '!seen[$0]++' | sort
+
+```
+* acces.log might will likely require sudo or root to read.
+
+#### tftp server - syslog
+
+Another way is to export the syslog of the netinstall through tftp to a server.
+
+While installing the nabia system at the kernel selection step, it is possible to chage the tty and send the syslog file to the tftp server (e.g. 192.168.1.100) for further parsing using tftp, as busybox has limited capabilities.
+
+```
+cd /var/log/
+tftp -l syslog -r syslog_netinstall -p 192.168.1.100
+```
+On the tftp server it will be possible to parse the package list just like the proxy cache one.
+
+```
+SYSLOG_NETINST="path-to/syslog_netinstall"
+# for i in $(cat $SYSLOG_NETINST | \
+  awk '/htt.*udeb/{print$7}' | awk -F'[/_]' '{print$10}') ; \
+  do apt-cache madison $i | grep Sources | awk '{print$1}' ; done | \
+  awk '!seen[$0]++' | sort
+
+```
+
+Just like before, this will provide a list of source packages necessary to build for our udeb repository, be ware that some helpers for these source packages might already exist, errors finding the source package mean source packages are required from debian.
+
+## Set upstream source
+
+Once finding source packages required from debian as several debian-installer packages has been droped from upstream Ubuntu, targeting the use of debian **stable** as source repository.
+
+After the pkg-list+anna list is cleaned from duplicated or existing helpers, that would result on a base packages list to rebuild the udeb required repository for aramo.
+
+Further packages could be added based on trial and error and further debian-installer developement.
+
+Debian's [netboot mailing list](https://lists.debian.org/debian-boot/) would be a good place to check further developement.
