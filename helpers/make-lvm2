@@ -23,10 +23,16 @@
 # or fetch such packages from Debian in order to build the required udeb packages.
 ##
 
-VERSION=0
+VERSION=1
 NETINST=true
+
 . ./config
 
+#Enable udeb path by default
+patch -p1 < $DATA/enable_udeb_build.patch
+
+#Fix udeb path usr/lib... instead of lib/...
+patch -p1 < $DATA/fix_path_on_udeb_files.patch
 
 changelog "Rebuild upstream to get udeb dependency for debian-installer."
 compile

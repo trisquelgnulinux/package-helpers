@@ -1,0 +1,28 @@
+diff -ru source/debian/rules source/debian/rules
+--- source/debian/rules	2021-10-06 04:31:36.000000000 -0500
++++ source/debian/rules	2022-08-18 22:47:15.148996989 -0500
+@@ -77,10 +77,7 @@
+ 
+ BUILDS :=
+ ifneq ($(filter lvm2,$(shell dh_listpackages)),)
+-BUILDS += deb
+-endif
+-ifneq ($(filter lvm2-udeb,$(shell dh_listpackages)),)
+-BUILDS += udeb
++BUILDS += deb udeb
+ endif
+ ifneq ($(filter lvm2-dbusd,$(shell dh_listpackages)),)
+ BUILDS += deb_all
+@@ -130,12 +127,10 @@
+ 		-- $(GENCONTROL_ARGS)
+ 
+ override_dh_install:
+-ifneq ($(filter lvm2-udeb,$(shell dh_listpackages)),)
+ 	dh_install --sourcedir=debian/build/install_udeb \
+ 		-pdmsetup-udeb \
+ 		-plibdevmapper$(DEVMAPPER_ABINAME)-udeb \
+ 		-plvm2-udeb
+-endif
+ 	dh_install --sourcedir=debian/build/install_deb_all \
+ 		-plvm2-dbusd
+ 	dh_install --sourcedir=debian/build/install_deb \

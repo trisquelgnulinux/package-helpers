@@ -1,0 +1,16 @@
+diff -Nru source/debian/dmsetup-udeb.install source_fix/debian/dmsetup-udeb.install
+--- source/debian/dmsetup-udeb.install	2021-05-19 17:33:13.000000000 +0000
++++ source_fix/debian/dmsetup-udeb.install	2022-09-11 22:22:13.806360893 +0000
+@@ -1,2 +1,2 @@
+-lib/udev/rules.d/*dm*.rules lib/udev/rules.d/
++usr/lib/udev/rules.d/*dm*.rules lib/udev/rules.d/
+ sbin/dmsetup
+diff -Nru source/debian/lvm2-udeb.install source_fix/debian/lvm2-udeb.install
+--- source/debian/lvm2-udeb.install	2021-05-19 17:33:13.000000000 +0000
++++ source_fix/debian/lvm2-udeb.install	2022-09-11 22:22:32.382314653 +0000
+@@ -1,4 +1,4 @@
+-lib/udev/rules.d/*-lvm*.rules
++usr/lib/udev/rules.d/*-lvm*.rules
+ etc/lvm/lvm.conf
+ sbin/lvchange
+ sbin/lvconvert
