@@ -19,14 +19,16 @@
 
 ##
 # This helper is part of a series of packages that are now droppped on upstream
-# Ubuntu, therefore in order to build a working debian-installer we now rebuild
-# or fetch such packages from Debian in order to build the required udeb packages.
+# Ubuntu, therefore in order to build a working debian-installer we now fetch
+# such packages from Debian in order to build the required udeb packages.
 ##
 
 VERSION=0
+EXTERNAL='deb-src http://ftp.debian.org/debian stable main'
+REPOKEY=648ACFD622F3D138
 NETINST=true
 . ./config
 
 
-changelog "Rebuild upstream to get udeb dependency for debian-installer."
+changelog "Fetch and build as udeb dependency for debian-installer."
 compile
