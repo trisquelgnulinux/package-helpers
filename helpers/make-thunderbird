@@ -1,5 +1,6 @@
 #!/bin/bash
 #
+#    Copyright (C) 2022  Luis Guzmán <ark@switnet.org>
 #    Copyright (C) 2020  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C) 2019  David Trudgian <dave@trudgian.net>
 #
@@ -18,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=15
+VERSION=17
 
 . ./config
 
@@ -117,7 +118,10 @@ EOF
 #cp toolkit/components/telemetry/healthreport-prefs.js mobile/android/chrome/content/healthreport-prefs.js
 # Browser legal page
 sed 's%https://www.mozilla.org/legal/privacy/%https://trisquel.info/legal%' -i ./browser/app/profile/firefox.js ./toolkit/content/aboutRights.xhtml
-sed -i 's|https://www.mozilla.org/thunderbird/legal/privacy/|https://trisquel.info/legal|' comm/mail/components/newmailaccount/content/accountProvisioner.js comm/mail/app/profile/all-thunderbird.js
+sed -i 's|https://www.mozilla.org/thunderbird/legal/privacy/|https://trisquel.info/legal|' comm/mail/app/profile/all-thunderbird.js
+sed -i 's|https://www.mozilla.org/en-US/privacy/thunderbird/|https://trisquel.info/legal|' comm/mail/app/profile/all-thunderbird.js
+sed -i 's|https://www.mozilla.org/privacy/|https://trisquel.info/legal|' comm/mail/components/newmailaccount/content/accountProvisioner.xhtml
+grep -rl https://www.mozilla.org/privacy/thunderbird/ | xargs sed -i 's|https://www.mozilla.org/privacy/thunderbird/|https://trisquel.info/legal|g'
 # Org branding
 sed 's/com.ubuntu/org.trisquel/' -i debian/config/mozconfig.in
 # Disable DRM support, armhf has no such option.
@@ -128,8 +132,6 @@ ac_add_options --disable-eme
 %%endif
 ARCH
 ########################################################
-sed "s_^Maintainer.*_Maintainer: $DEBFULLNAME <$DEBEMAIL>_g" -i debian/control.in
-
 sed '/^MOZ_PKG_NAME/s/.*/MOZ_PKG_NAME=icedove/' -i debian/build/config.mk
 
 cat << EOF >> debian/build/config.mk
@@ -168,8 +170,12 @@ find . -type f -not -iregex '.*changelog.*' -not -iregex '.*copyright.*' -not -i
 
 sed 's|https://www.icedove.net/features/|https://trisquel.info/wiki/icedove|' -i comm/mail/base/content/utilityOverlay.js
 sed 's|https://www.icedove.net/get-involved/|https://trisquel.info/wiki/|' -i comm/mail/base/content/utilityOverlay.js
-sed 's|https://donate.mozilla.org/.*help-menu|https://trisquel.info/donate/|' -i comm/mail/base/content/utilityOverlay.js
-sed 's|https://give.icedove.net/.*|https://trisquel.info/donate/"|' -i comm/mailnews/base/content/msgAccountCentral.xhtml
+sed 's|https://give.icedove.net/.*"|https://trisquel.info/donate/"|' -i comm/mail/base/content/utilityOverlay.js
+sed 's|https://www.icedove.net/.*/features/|https://trisquel.info/wiki/icedove|' -i comm/mailnews/base/content/msgAccountCentral.xhtml
+sed 's|https://give.icedove.net/.*"|https://trisquel.info/donate/"|' -i comm/mailnews/base/content/msgAccountCentral.xhtml
+sed 's|https://support.mozilla.org/products/icedove|https://trisquel.info/wiki/icedove|' -i comm/mailnews/base/content/msgAccountCentral.xhtml
+sed 's|https://www.icedove.net/.*/get-involved/|https://trisquel.info/wiki/|' -i comm/mailnews/base/content/msgAccountCentral.xhtml
+sed 's|https://developer.icedove.net/|https://gitlab.trisquel.org/trisquel|' -i comm/mailnews/base/content/msgAccountCentral.xhtml
 
 replace Daily Trisquel comm/mail/branding/
 sed '/.*<description.*communityExperimentalDesc/,/\/description/d' -i ./comm/mail/base/content/aboutDialog.xhtml
@@ -181,6 +187,10 @@ sed 's/Provides: mail-reader,/Provides: mail-reader, thunderbird,/' -i debian/co
 sed "s/Provides.*/Provides: icedove-locale-@LANGCODE@/" -i debian/control.langpacks
 
 #Manual fixes to allow rebranding processed through hash checks and other changes.
+# Restore wrong replacement module name.
+grep -rl IcedoveProfileImporter.jsm | xargs sed -i 's|IcedoveProfileImporter.jsm|ThunderbirdProfileImporter.jsm|g'
+grep -rl IcedoveImport.jsm | xargs sed -i 's|IcedoveImport.jsm|ThunderbirdImport.jsm|g'
+grep -rl IcedoveProfileMigrator.jsm | xargs sed -i 's|IcedoveProfileMigrator.jsm|ThunderbirdProfileMigrator.jsm|g'
 #Fix 1 character bigger than allowed yml line (81 > 80)
 sed -i 's|Abrowser is not running.  It|Abrowser is not running. It|' toolkit/mozapps/update/pings.yaml
 
@@ -189,19 +199,19 @@ sed -i \
 third_party/dump_syms/vendor/regex/.cargo-checksum.json
 
 sed -i \
-'s|af4ff013841da9bf00cf88ad3ae468f30c122b730ed37327d965d11b8e367459|a68c2df0024ff65f43efd5f5a48fe39a35d859ac459cce8695e4b09120cc1f35|' \
+'s|bcb4b59cfc5f48fbaba954b8ae4daa9eaecf9044afc89208a78a7e995c321b81|5f33885b0cc238abc78622e32bd56e6c550d90f1de419d5d7768c8da7f53f039|' \
 third_party/dump_syms/vendor/encoding_rs/.cargo-checksum.json
 
 sed -i \
-'s|eb9f00340e0f6ba3d01f4770356062ab2142e1646c7c2556c9b35348f90980f0|af2b7e2811c649615d4726c7dc4fd9b2e8aa35c229e8225c930e8e7d8e003fa2|' \
+'s|a64116a6d46ab30ce91deabdb4c5388f03be632326e8a00110bfb0c598474a0a|5cd020aae75fdcd21aca4799d302f1720075c9dd6fb12ba19e6403a8012970b2|' \
 third_party/dump_syms/vendor/encoding_rs/.cargo-checksum.json
 
 sed -i \
-'s|04fc9b146177e7bf615156b8570fa0f97b89f68a2c02b946778711728b81e81f|16221c6c37245cd078ffdb1bd314e45334ddf60098742fc38b821e733fc4c5ca|' \
+'s|fe4881780e8cd0181748a891102b2dd54c2060546d7648ec1b6435529bd0dcc2|40588888ea0d4b7e86bc1e184be9e667bd1b0480fe00406ebb828821f5080a07|' \
 third_party/dump_syms/vendor/h2/.cargo-checksum.json
 
 sed -i \
-'s|caabd31cbcb00172bb7f31a1398dbed27a3bf36b01d69729c3d6fbd9a4008e05|080cba5e2b65e6542f364aa4703a179c58b20e41489573d941ef68b9619a2734|' \
+'s|6f3be57dae549574569b812acab6213f4136ba9c4ad60a21848043d26e6aaece|07f28083516d3660082d9c46fe2349a1099720b4f30cc7431f1cc267690d6505|' \
 third_party/dump_syms/vendor/httparse/.cargo-checksum.json
 
 sed -i \
@@ -211,7 +221,26 @@ third_party/dump_syms/vendor/openssl/.cargo-checksum.json
 sed -i \
 's|82c82f8ef547f67f3f449a0b240e2df4ed538d976a379b07e53d5ce7cde2438c|01baa5e11aa7ec74360151d379ba8b5607abcd34132e69568c816c0116958a26|' \
 third_party/dump_syms/vendor/symbolic-minidump/.cargo-checksum.json
+
+sed -i \
+'s|6018b016930c86610953a88ca35e8cebffd2dbbd92f11502c2464ab4281e7bbc|04c8d6c8a498abac61ffb2725484c2732328270e25a7e3ed452657962ce76f4e|' \
+third_party/dump_syms/vendor/bitvec/.cargo-checksum.json
 #EO Manual fixing.
+
+# about: page mods, like rights.
+## Hide extra links in about box
+find -wholename '*/brand.dtd' |xargs /bin/sed 's/trademarkInfo.part1.*/trademarkInfo.part1 "">/' -i
+
+for STRING in rights-intro-point-2 rights-intro-point-3 rights-intro-point-4 rights-intro-point-5 rights-intro-point-6 rights-webservices rights-safebrowsing
+do
+ find -name aboutRights.ftl | xargs sed -i "s/^$STRING.*/$STRING = /"
+done
+##Remove invalid policy for trisquel.
+find -name aboutRights.ftl | xargs sed -i '/rights-intro-point-5/,$d'
+find -name aboutRights.xhtml |xargs sed -i "/rights-intro-point-5/d"
+find -name aboutRights.xhtml |xargs sed -i "/rights-intro-point-6/d"
+find -name aboutRights-unbranded.xhtml |xargs sed -i "/rights-intro-point-5/d"
+#EO about: mods.
 
 #Debbuging tools
 sed -i 's|this-firefox|this-abrowser|g' devtools/client/framework/test/browser_about-devtools-toolbox_reload.js
@@ -221,8 +250,7 @@ devtools/client/themes/images/aboutdebugging-fenix-nightly.svg \
 devtools/client/themes/images/aboutdebugging-firefox-aurora.svg \
 devtools/client/themes/images/aboutdebugging-firefox-beta.svg \
 devtools/client/themes/images/aboutdebugging-firefox-nightly.svg \
-devtools/client/themes/images/aboutdebugging-firefox-release.svg \
-devtools/startup/aboutdevtools/images/dev-edition-logo.svg" | xargs -n1 cp $DATA/debug_brand/debuglogo.svg
+devtools/client/themes/images/aboutdebugging-firefox-release.svg" | xargs -n1 cp $DATA/debug_brand/debuglogo.svg
 cp $DATA/debug_brand/debuglogo_gray.svg devtools/client/themes/images/aboutdebugging-firefox-logo.svg
 cp $DATA/debug_brand/about-logo.svg comm/mail/branding/icedove/TB-symbolic.svg
 cp $DATA/debug_brand/about-logo.svg comm/mail/themes/shared/mail/icons/aboutdebugging-logo.svg
