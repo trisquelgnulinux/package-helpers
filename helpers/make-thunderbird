@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=16
+VERSION=17
 
 . ./config
 
@@ -121,7 +121,7 @@ sed 's%https://www.mozilla.org/legal/privacy/%https://trisquel.info/legal%' -i .
 sed -i 's|https://www.mozilla.org/thunderbird/legal/privacy/|https://trisquel.info/legal|' comm/mail/app/profile/all-thunderbird.js
 sed -i 's|https://www.mozilla.org/en-US/privacy/thunderbird/|https://trisquel.info/legal|' comm/mail/app/profile/all-thunderbird.js
 sed -i 's|https://www.mozilla.org/privacy/|https://trisquel.info/legal|' comm/mail/components/newmailaccount/content/accountProvisioner.xhtml
-grep -rl https://www.mozilla.org/privacy/thunderbird/ | xargs sed -i 's|https://www.mozilla.org/privacy/thunderbird/|https://trisquel.info/legal|'
+grep -rl https://www.mozilla.org/privacy/thunderbird/ | xargs sed -i 's|https://www.mozilla.org/privacy/thunderbird/|https://trisquel.info/legal|g'
 # Org branding
 sed 's/com.ubuntu/org.trisquel/' -i debian/config/mozconfig.in
 # Disable DRM support, armhf has no such option.
@@ -174,9 +174,9 @@ find . -type f -not -iregex '.*changelog.*' -not -iregex '.*copyright.*' -not -i
 
 sed 's|https://www.icedove.net/features/|https://trisquel.info/wiki/icedove|' -i comm/mail/base/content/utilityOverlay.js
 sed 's|https://www.icedove.net/get-involved/|https://trisquel.info/wiki/|' -i comm/mail/base/content/utilityOverlay.js
-sed 's|https://give.icedove.net/.*|https://trisquel.info/donate/"|' -i comm/mail/base/content/utilityOverlay.js
+sed 's|https://give.icedove.net/.*"|https://trisquel.info/donate/"|' -i comm/mail/base/content/utilityOverlay.js
 sed 's|https://www.icedove.net/.*/features/|https://trisquel.info/wiki/icedove|' -i comm/mailnews/base/content/msgAccountCentral.xhtml
-sed 's|https://give.icedove.net/.*|https://trisquel.info/donate/"|' -i comm/mailnews/base/content/msgAccountCentral.xhtml
+sed 's|https://give.icedove.net/.*"|https://trisquel.info/donate/"|' -i comm/mailnews/base/content/msgAccountCentral.xhtml
 sed 's|https://support.mozilla.org/products/icedove|https://trisquel.info/wiki/icedove|' -i comm/mailnews/base/content/msgAccountCentral.xhtml
 sed 's|https://www.icedove.net/.*/get-involved/|https://trisquel.info/wiki/|' -i comm/mailnews/base/content/msgAccountCentral.xhtml
 sed 's|https://developer.icedove.net/|https://gitlab.trisquel.org/trisquel|' -i comm/mailnews/base/content/msgAccountCentral.xhtml
@@ -192,9 +192,9 @@ sed "s/Provides.*/Provides: icedove-locale-@LANGCODE@/" -i debian/control.langpa
 
 #Manual fixes to allow rebranding processed through hash checks and other changes.
 # Restore wrong replacement module name.
-grep -rl IcedoveProfileImporter.jsm | xargs sed -i 's|IcedoveProfileImporter.jsm|ThunderbirdProfileImporter.jsm|'
-grep -rl IcedoveImport.jsm | xargs sed -i 's|IcedoveImport.jsm|ThunderbirdImport.jsm|'
-grep -rl IcedoveProfileMigrator.jsm | xargs sed -i 's|IcedoveProfileMigrator.jsm|ThunderbirdProfileMigrator.jsm|'
+grep -rl IcedoveProfileImporter.jsm | xargs sed -i 's|IcedoveProfileImporter.jsm|ThunderbirdProfileImporter.jsm|g'
+grep -rl IcedoveImport.jsm | xargs sed -i 's|IcedoveImport.jsm|ThunderbirdImport.jsm|g'
+grep -rl IcedoveProfileMigrator.jsm | xargs sed -i 's|IcedoveProfileMigrator.jsm|ThunderbirdProfileMigrator.jsm|g'
 #Fix 1 character bigger than allowed yml line (81 > 80)
 sed -i 's|Abrowser is not running.  It|Abrowser is not running. It|' toolkit/mozapps/update/pings.yaml
 
