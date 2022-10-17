@@ -18,11 +18,13 @@
 #
 
 VERSION=1
+EXTERNAL='deb-src http://ftp.debian.org/debian stable main'
+REPOKEY=648ACFD622F3D138
 NETINST=true
 . ./config
 
-rpl Ubuntu Trisquel . -R
-rpl UBUNTU TRISQUEL . -R
+rpl Debian Trisquel . -R
+rpl DEBIAN TRISQUEL . -R
 
 changelog "Rebranded and adapted for Trisquel"
 compile
