@@ -19,9 +19,9 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-#Temporary fordward port from focal to aramo backports.
+#Backport from jammy kde neon to aramo backports.
 VERSION=1
-EXTERNAL='deb-src http://archive.neon.kde.org/user focal main'
+EXTERNAL='deb-src http://archive.neon.kde.org/user jammy main'
 REPOKEY="E6D4736255751E5D"
 BACKPORT=true
 
@@ -29,6 +29,6 @@ BACKPORT=true
 
 sed -i 's|kdevplatform-dev|kdevelop-dev|' debian/control
 
-changelog "Backport latest release from kde archive."
+changelog "Backport latest release from kde neon archive."
 
 compile
