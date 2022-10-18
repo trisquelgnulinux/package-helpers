@@ -18,10 +18,19 @@
 #
 
 VERSION=1
+EXTERNAL='deb-src http://ftp.debian.org/debian stable main'
+REPOKEY=648ACFD622F3D138
 NETINST=true
 . ./config
 
 replace "Ubuntu" "Trisquel" .
+replace "Debian Foundation" "Trisquel GNU/Linux" .
+replace "Debian" "Trisquel" .
+replace "deb.debian.org" "archive.trisquel.org" .
+
+# deb.debian.org > archive.trisquel.org in a two line arrangement.
+replace ' deb."' ' archive."' .
+replace '"debian.org' '"trisquel.org' .
 
 changelog "Rebranded and adapted for Trisquel"
 compile
