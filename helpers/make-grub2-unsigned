@@ -1,0 +1,63 @@
+#!/bin/sh
+#
+#    Copyright (C) 2011-2017  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2019  Mason Hock <mason@masonhock.com>
+#    Copyright (C) 2022  Luis Guzman <ark@switnet.org>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=6
+COMPONENT=main
+
+. ./config
+
+# http://grub.johnlane.ie/
+## updated to 2.04-1 on https://aur.archlinux.org/packages/grub-luks-keyfile/
+for i in $DATA/*.patch; do
+echo Applying patch $i
+patch -p1 < $i
+done
+
+#apt-get remove -y --force-yes dosfstools
+#sed '/dosfstools/d' -i debian/control
+sed '/mkfs.minix/s/-B $BLKSIZE//g' -i tests/util/grub-fs-tester.in
+
+for i in install-efi-ubuntu-flavours.patch mkconfig-ubuntu-distributor.patch; do
+    rm debian/patches/$i
+    sed /$i/d debian/patches/series -i
+done
+
+#Allow passwords https://bugs.launchpad.net/ubuntu/+source/grub2/+bug/1311302
+/bin/sed '/CLASS=/s/class os/class os --unrestricted/' -i util/grub.d/* debian/patches/mkconfig-other-inits.patch
+
+replace "with Linux" "with Linux-Libre" util
+replace "with Linux" "with Linux-Libre" debian
+replace "Linux" "Linux-Libre" po
+replace Ubuntu Trisquel .
+replace ubuntu trisquel .
+find |grep ubuntu|xargs rename s/ubuntu/trisquel/
+
+#Avoid the use of signed grub efi package
+sed -i '/Recommends:/s|grub-efi-amd64-signed|grub-efi-amd64|' debian/control
+
+# Allow Windows and MacOX entries to boot without a password
+sed 's/class osx/class osx --unrestricted/; s/class windows/class osx --unrestricted/;' -i ./util/grub.d/30_os-prober.in
+
+sed -i '/set -e/aexit 77' tests/grub_cmd_set_date.in
+
+changelog "skip test grub_cmd_set_date.in"
+
+compile
