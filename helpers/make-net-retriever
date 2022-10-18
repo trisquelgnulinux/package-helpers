@@ -18,16 +18,16 @@
 #
 
 VERSION=2
+EXTERNAL='deb-src http://ftp.debian.org/debian stable main'
+REPOKEY=648ACFD622F3D138
 NETINST=true
 . ./config
 
-sed -i s/security.ubuntu.com/security.trisquel.org/g net-retriever
-sed -i s/ports.ubuntu.com/archive.trisquel.org/g net-retriever
-sed -i s/ubuntu-keyring-udeb/trisquel-keyring-udeb/g debian/control
-sed -i s/ubuntu/trisquel/g  net-retriever
-sed -i 's/^Maintainer.*/Maintainer: Rubén Rodríguez <ruben@trisquel.info>/g' debian/control
-
-sed -i 's/main,.*/main/g' debian/net-retriever.templates
+#sed -i s/security.ubuntu.com/security.trisquel.org/g net-retriever
+#sed -i s/ports.ubuntu.com/archive.trisquel.org/g net-retriever
+sed -i s/debian-archive-keyring-udeb/trisquel-keyring-udeb/g debian/control
+#sed -i s/ubuntu/trisquel/g  net-retriever
+replace '/usr/share/keyrings/archive.gpg' '/usr/share/keyrings/trisquel-archive-keyring.gpg' .
 
 changelog "Rebranded and adapted for Trisquel"
 compile
