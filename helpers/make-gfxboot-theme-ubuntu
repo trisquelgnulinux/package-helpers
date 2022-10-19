@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 
 . ./config
 
@@ -100,8 +100,7 @@ diff -ru gfxboot-theme-ubuntu-0.13.3.orig/timeout.inc gfxboot-theme-ubuntu-0.13.
  
 EOF
 
-sed 's/gfxboot-theme-ubuntu/gfxboot-theme-trisquel/' debian/control -i
-sed '1s/gfxboot-theme-ubuntu/gfxboot-theme-trisquel/' debian/changelog -i
+sed '/Package:/s/gfxboot-theme-ubuntu/gfxboot-theme-trisquel/' debian/control -i
 mv debian/gfxboot-theme-ubuntu.install debian/gfxboot-theme-trisquel.install
 sed 's/ubuntu/trisquel/' debian/gfxboot-theme-trisquel.install -i
 
