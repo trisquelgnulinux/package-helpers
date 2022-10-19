@@ -1,5 +1,6 @@
 #!/bin/sh
 #
+#    Copyright (C) 2022 Luis Guzman <ark@switnet.org>
 #    Copyright (C) 2009-2017  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
@@ -18,6 +19,8 @@
 #
 
 VERSION=2
+EXTERNAL='deb-src http://ftp.debian.org/debian stable main'
+REPOKEY=648ACFD622F3D138
 NETINST=true
 . ./config
 
@@ -44,6 +47,7 @@ START=$(getline apt-setup/contrib debian/apt-mirror-setup.templates)
 END=$(getline "Please choose whether you want this software to be made available to you." debian/apt-mirror-setup.templates)
 sed ${START},${END}d debian/apt-mirror-setup.templates -i
 
+#Ubuntu legacy (udeb)
 /bin/sed '/canonical/d;
 /Canonical/d;
 s/main restricted universe multiverse/main/g;
@@ -57,11 +61,27 @@ s/universe/main/g;
 s/main main/main/g;
 s:help.trisquel.com/community/UpgradeNotes:trisquel.info/wiki/:g;' generators/* -i
 
+#Debian current (udeb)
+/bin/sed '/previously on backports.debian.org/d;
+/# To determine if non-free/,/done/d;
+s/dists non-free/dists/g;
+s/dists contrib/dists/g;
+s/Debian/Trisquel/g;
+s/debian/trisquel/g;' generators/* -i
+
+#Ubuntu legacy (udeb)
 replace "Default: /ubuntu" "Default: /trisquel" .
 replace "security.ubuntu.com" "archive.trisquel.org" .
 replace "archive.ubuntu.com" "archive.trisquel.org" .
 replace "Ubuntu" "Trisquel" .
 
+#Debian current (udeb)
+replace "Default: /debian" "Default: /trisquel" .
+replace "security.debian.org" "archive.trisquel.org" .
+replace "deb.debian.org" "archive.trisquel.org" .
+replace "Debian" "Trisquel" .
+
+mkdir release-files
 cd release-files
 rm -rf *
 for DIST in $CODENAME $CODENAME-security $CODENAME-updates $CODENAME-backports
@@ -188,7 +208,8 @@ apt-setup-signed-release archive.trisquel.org "$file"
 exit 0
 ' > generators/50mirror.trisquel
 
-sed '/The partner/,/^*/d; s/services-select-ubuntu/services-select-trisquel/' -i debian/apt-setup-udeb.templates
+#sed '/The partner/,/^*/d; s/services-select-ubuntu/services-select-trisquel/' -i debian/apt-setup-udeb.templates
+sed 's/services-select/services-select-trisquel/' -i debian/apt-setup-udeb.templates
 
 chmod 755 generators/50mirror.trisquel
 
