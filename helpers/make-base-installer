@@ -18,16 +18,81 @@
 #
 
 VERSION=3
+EXTERNAL='deb-src http://ftp.debian.org/debian stable main'
+REPOKEY=648ACFD622F3D138
 NETINST=true
 
 . ./config
 
-cp $DATA/* kernel/
+cp $DATA/archs/* kernel/
 
-sed s/KERNEL_PRIO=medium/KERNEL_PRIO=high/g library.sh -i
+#sed s/KERNEL_PRIO=medium/KERNEL_PRIO=high/g library.sh -i #already high
 
-sed 's/main,restricted/main/; s/ubuntu/trisquel/' -i library.sh ./debian/bootstrap-base.postinst
-sed 's/ubuntu-keyring/trisquel-keyring/' -i ./debian/control
+#sed 's/main,restricted/main/; s/ubuntu/trisquel/' -i library.sh ./debian/bootstrap-base.postinst
+sed 's/archive.gpg/trisquel-archive-keyring.gpg/' -i ./debian/bootstrap-base.postinst
+sed 's/debian-archive-keyring/trisquel-archive-keyring/' -i ./debian/control
+
+#Fix kernel detection
+patch -p1 < $DATA/kernel_update_list.patch
+cat << EOF > kernel/tests/amd64/cittagazze.test
+cpuinfo cittagazze.cpuinfo
+majors 2.6
+flavour amd64
+kernel-2.6 \
+  linux-generic \
+  linux-image-generic \
+  linux-generic-hwe-20.04 \
+  linux-image-generic-hwe-20.04 \
+  linux-lowlatency \
+  linux-image-lowlatency \
+  linux-lowlatency-hwe-20.04 \
+  linux-image-lowlatency-hwe-20.04 \
+  linux-oem-20.04 \
+  linux-image-oem-20.04 \
+  linux-virtual \
+  linux-image-virtual \
+  linux-image-extra-virtual \
+  linux-virtual-hwe-20.04 \
+  linux-image-virtual-hwe-20.04 \
+  linux-image-extra-virtual-hwe-20.04
+usable \
+  linux-generic \
+  linux-server \
+  linux-image-generic \
+  linux-image-server \
+  linux-image-2.6.20-15-generic \
+  linux-image-2.6.20-15-server
+EOF
+
+cat << EOF > kernel/tests/i386/cittagazze.test
+cpuinfo cittagazze.cpuinfo
+majors 2.6
+flavour 686-pae 686 586
+kernel-2.6 \
+  linux-generic \
+  linux-image-generic \
+  linux-virtual \
+  linux-image-virtual
+usable \
+  linux-generic \
+  linux-image-generic \
+  linux-image-586 \
+  linux-image-686 \
+  linux-image-686-pae \
+  linux-image-3.16-4-586 \
+  linux-image-2.6.25-1-686 \
+  linux-image-2.6.36-1-generic \
+  linux-image-2.6.38-1-686-pae
+unusable \
+  linux-image-amd64 \
+  linux-image-2.6.25-1-amd64 \
+  linux-image-686-pae-dbg \
+  linux-image-3.16-4-686-pae-dbg
+env KERNEL_FLAVOUR generic
+EOF
+
+#Temporary disable i386
+sed -i "/ARCHES =/s|i386 ||" kernel/Makefile
 
 changelog "Rebranded and adapted for Trisquel"
 compile

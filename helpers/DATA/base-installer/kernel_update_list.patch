@@ -1,0 +1,21 @@
+--- source/library.sh	2022-07-14 15:09:08.482389439 -0500
++++ source/library.sh_upd	2022-07-14 15:19:40.056073944 -0500
+@@ -345,9 +345,15 @@
+ 
+ kernel_update_list () {
+ 	# Use 'uniq' to avoid listing the same kernel more then once
+-	chroot /target apt-cache search "^(kernel|$KERNEL_NAME)-image" | \
+-	cut -d" " -f1 | grep -v "linux-image-2.6" | uniq > "$KERNEL_LIST.unfiltered"
+-	kernels=`sort -r "$KERNEL_LIST.unfiltered" | tr '\n' ' ' | sed -e 's/ $//'`
++	(set +e;
++	# Hack to get the metapackages in the right order; should be
++	# replaced by something better at some point.
++	chroot /target apt-cache search ^linux- | grep '^linux-\(amd64\|686\|k7\|generic\|lowlatency\|server\|virtual\|preempt\|rt\|xen\|oem-20.04\|power\|cell\|omap\|omap4\|keystone\)';
++	chroot /target apt-cache search ^linux-image- | grep -v '^linux-image-[2-9]\.';
++	chroot /target apt-cache search ^kfreebsd-image;
++	chroot /target apt-cache search ^gnumach-image) | \
++	cut -d" " -f1 | uniq > "$KERNEL_LIST.unfiltered"
++	kernels=`< "$KERNEL_LIST.unfiltered" tr '\n' ' ' | sed -e 's/ $//'`
+ 	for candidate in $kernels; do
+ 		if [ -n "$FLAVOUR" ]; then
+ 			if arch_check_usable_kernel "$candidate" "$FLAVOUR"; then
