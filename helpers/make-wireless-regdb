@@ -24,11 +24,12 @@
 ##
 
 VERSION=1
-EXTERNAL='deb-src http://ftp.debian.org/debian stable main'
+EXTERNAL='deb-src http://ftp.debian.org/debian testing main'
 REPOKEY=648ACFD622F3D138
 NETINST=true
 . ./config
 
+#Track testing 'til stable tracks version 2022.06.06-1
 
 changelog "Rebuild upstream to get udeb dependency for debian-installer."
 compile
