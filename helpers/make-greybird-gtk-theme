@@ -16,11 +16,8 @@
 #    along with this program; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
-VERSION=10
-
+VERSION=11
 . ./config
-
-sed '/debhelper-compat/s/13/12/' -i debian/control
 
 #correct gtk2 color syntax
 sed '/gtk-color-scheme/d' -i light/gtk-2.0/gtkrc dark/gtk-2.0/gtkrc
