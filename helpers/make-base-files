@@ -17,8 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=5
-
+VERSION=6
 . ./config
 
 CODENAMECAPS=$(echo $CODENAME | /bin/sed -e "s/\b\(.\)/\u\1/g")
@@ -112,14 +111,14 @@ VERSION_CODENAME="$CODENAME"
 UBUNTU_CODENAME="$UPSTREAM"
 HOME_URL="https://trisquel.info/"
 SUPPORT_URL="https://trisquel.info/wiki"
-BUG_REPORT_URL="https://trisquel.info/project/issues"
+BUG_REPORT_URL="https://gitlab.trisquel.org/trisquel"
 PRIVACY_POLICY_URL="https://trisquel.info/legal"
 EOF
 
 cat << EOF > origins/trisquel
 Vendor: Trisquel
 Vendor-URL: http://trisquel.info/
-Bugs: http://trisquel.info/project/issues
+Bugs: https://gitlab.trisquel.org/trisquel
 Parent: Ubuntu
 EOF
 
