@@ -1296,3 +1296,52 @@ diff -Nru linux-5.15.0a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/sw.c linu
  	err = request_firmware_nowait(THIS_MODULE, 1,
  				      wowlan_fw_name,
  				      rtlpriv->io.dev, GFP_KERNEL, hw,
+diff -ur source.bak/drivers/net/wireless/broadcom/brcm80211/brcmfmac/firmware.c source/drivers/net/wireless/broadcom/brcm80211/brcmfmac/firmware.c
+--- source.bak/drivers/net/wireless/broadcom/brcm80211/brcmfmac/firmware.c	2022-08-14 17:01:01.000000000 -0400
++++ source/drivers/net/wireless/broadcom/brcm80211/brcmfmac/firmware.c	2022-08-14 17:17:35.033981305 -0400
+@@ -763,9 +763,6 @@
+ 	if (!fwreq)
+ 		return NULL;
+ 
+-	brcmf_info("using %s for chip %s\n",
+-		   mapping_table[i].fw_base, chipname);
+-
+ 	mp_path = brcmf_mp_global.firmware_path;
+ 	mp_path_len = strnlen(mp_path, BRCMF_FW_ALTPATH_LEN);
+ 	if (mp_path_len)
+diff -ur source.bak/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c source/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c
+--- source.bak/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c	2022-08-14 17:01:01.000000000 -0400
++++ source/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c	2022-08-14 17:11:23.550247718 -0400
+@@ -1542,7 +1542,7 @@
+ 	if (err)
+ 		return err;
+ 
+-	brcmf_dbg(PCIE, "Download FW %s\n", devinfo->fw_name);
++	brcmf_dbg(PCIE, "Download FW\n");
+ 	memcpy_toio(devinfo->tcm + devinfo->ci->rambase,
+ 		    (void *)fw->data, fw->size);
+ 
+diff -ur source.bak/drivers/net/wireless/broadcom/brcm80211/brcmsmac/mac80211_if.c source/drivers/net/wireless/broadcom/brcm80211/brcmsmac/mac80211_if.c
+--- source.bak/drivers/net/wireless/broadcom/brcm80211/brcmsmac/mac80211_if.c	2021-10-31 16:53:10.000000000 -0400
++++ source/drivers/net/wireless/broadcom/brcm80211/brcmsmac/mac80211_if.c	2022-08-14 17:09:59.527120902 -0400
+@@ -377,16 +377,16 @@
+ 			UCODE_LOADER_API_VER);
+ 		status = request_firmware(&wl->fw.fw_bin[i], fw_name, device);
+ 		if (status) {
+-			wiphy_err(wl->wiphy, "%s: fail to load firmware %s\n",
+-				  KBUILD_MODNAME, fw_name);
++			wiphy_err(wl->wiphy, "%s: fail to load firmware\n",
++				  KBUILD_MODNAME);
+ 			return status;
+ 		}
+ 		sprintf(fw_name, "%s_hdr-%d.fw", brcms_firmwares[i],
+ 			UCODE_LOADER_API_VER);
+ 		status = request_firmware(&wl->fw.fw_hdr[i], fw_name, device);
+ 		if (status) {
+-			wiphy_err(wl->wiphy, "%s: fail to load firmware %s\n",
+-				  KBUILD_MODNAME, fw_name);
++			wiphy_err(wl->wiphy, "%s: fail to load firmware\n",
++				  KBUILD_MODNAME);
+ 			return status;
+ 		}
+ 		wl->fw.hdr_num_entries[i] =
