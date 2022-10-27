@@ -1,0 +1,67 @@
+--- a/debian/rules	2022-10-22 11:16:58.933510340 -0400
++++ b/debian/rules	2022-10-18 15:38:19.000000000 -0400
+@@ -125,12 +135,19 @@
+ 	dh_testroot
+ 	dh_clean
+ 
++	# d-i stuff
++	rm -rf $(DEBIAN)/d-i-$(arch)
++	# Generated on the fly.
++	rm -f $(DEBIAN)/d-i/firmware/$(arch)/kernel-image
++
+ 	# normal build junk
+ 	rm -rf $(DEBIAN)/abi/$(release)-$(revision)
+ 	rm -rf $(builddir)
+ 	rm -f $(stampdir)/stamp-*
+ 	rm -rf $(DEBIAN)/linux-*
+ 
++	# This gets rid of the d-i packages in control
++	cp -f $(DEBIAN)/control.stub $(DROOT)/control
+ 	cp $(DEBIAN)/changelog debian/changelog
+ 
+ 	# Install the copyright information.
+@@ -180,7 +197,6 @@
+ $(DEBIAN)/control.stub: 				\
+ 		$(DROOT)/scripts/control-create		\
+ 		$(control_files)			\
+-		$(DROOT)/control.d/flavour-module.stub	\
+ 		$(DEBIAN)/changelog			\
+ 		$(wildcard $(DEBIAN)/control.d/* $(DEBIAN)/sub-flavours/*.vars)
+ 	for i in $(control_files); do                                           \
+@@ -205,7 +221,13 @@
+ 
+ .PHONY: debian/control
+ debian/control: $(DEBIAN)/control.stub
++	echo "# placebo control.stub for kernel-wedge flow change" >debian/control.stub
+ 	cp $(DEBIAN)/control.stub debian/control
++	export KW_DEFCONFIG_DIR=$(DEBIAN)/d-i && \
++	export KW_CONFIG_DIR=$(DEBIAN)/d-i && \
++	LANG=C kernel-wedge gen-control $(release)-$(abinum) | \
++		perl -f $(DROOT)/scripts/misc/kernel-wedge-arch.pl $(arch) \
++		>>$(CURDIR)/debian/control
+ 
+ debian/canonical-certs.pem: $(wildcard $(DROOT)/certs/*-all.pem) $(wildcard $(DROOT)/certs/*-$(arch).pem) $(wildcard $(DEBIAN)/certs/*-all.pem) $(wildcard $(DEBIAN)/certs/*-$(arch).pem)
+ 	for cert in $(sort $(notdir $^));					\
+--- a/debian/rules.d/2-binary-arch.mk	2022-10-22 11:16:58.937510259 -0400
++++ b/debian/rules.d/2-binary-arch.mk	2022-10-18 15:38:19.000000000 -0400
+@@ -178,12 +176,14 @@
+ 		$(pkgdir)/boot/config-$(abi_release)-$*
+ 	install -m600 $(builddir)/build-$*/System.map \
+ 		$(pkgdir)/boot/System.map-$(abi_release)-$*
+-
+-ifeq ($(do_dtbs),true)
+-	$(build_cd) $(kmake) $(build_O) $(conc_level) dtbs_install \
+-		INSTALL_DTBS_PATH=$(pkgdir)/lib/firmware/$(abi_release)-$*/device-tree
+-endif
+-
++	if [ "$(filter true,$(do_dtbs))" ]; then \
++		$(build_cd) $(kmake) $(build_O) $(conc_level) dtbs_install \
++			INSTALL_DTBS_PATH=$(pkgdir)/lib/firmware/$(abi_release)-$*/device-tree; \
++		( cd $(pkgdir)/lib/firmware/$(abi_release)-$*/ && find device-tree -print ) | \
++		while read dtb_file; do \
++			echo "$$dtb_file ?" >> $(DEBIAN)/d-i/firmware/$(arch)/kernel-image; \
++		done; \
++	fi
+ ifeq ($(no_dumpfile),)
+ 	makedumpfile -g $(pkgdir)/boot/vmcoreinfo-$(abi_release)-$* \
+ 		-x $(builddir)/build-$*/vmlinux
