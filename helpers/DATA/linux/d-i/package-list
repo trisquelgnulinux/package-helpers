@@ -45,7 +45,7 @@ Description: Base filesystem modules
  This includes jfs, reiserfs and xfs.
 
 Package: fs-secondary-modules
-Depends: kernel-image, fat-modules
+Depends: kernel-image, fat-modules, cdrom-core-modules
 Priority: standard
 Provides: btrfs-modules, ntfs-modules, hfs-modules
 Description: Extra filesystem modules
@@ -114,12 +114,12 @@ Priority: standard
 Description: PPP (serial port) networking support
 
 Package: sata-modules
-Depends: kernel-image, storage-core-modules
+Depends: kernel-image, storage-core-modules, scsi-core-modules
 Priority: standard
 Description: SATA storage support
 
 Package: scsi-modules
-Depends: kernel-image, storage-core-modules
+Depends: kernel-image, storage-core-modules, scsi-core-modules
 Priority: standard
 Description: SCSI storage support
 
@@ -196,8 +196,26 @@ Priority: standard
 Description: ipmi modules
 
 Package: multipath-modules
-Depends: kernel-image
+Depends: kernel-image, scsi-core-modules
 Priority: extra
 Description: DM-Multipath support
   This package contains modules for device-mapper multipath support.
 
+Package: isofs-modules
+Depends: kernel-image, cdrom-core-modules
+Priority: standard
+Description: ISOFS filesystem support
+ This package contains the ISOFS filesystem module for the kernel.
+
+Package: usb-storage-modules
+Depends: kernel-image, scsi-core-modules, usb-modules
+Priority: standard
+Description: USB storage support
+ This package contains the USB storage driver for the kernel.
+
+Package: scsi-core-modules
+Depends: kernel-image
+Provides: cdrom-core-modules
+Priority: standard
+Description: Core SCSI subsystem
+ This package contains the core SCSI subsystem for the kernel.
