@@ -69,11 +69,7 @@ changelog(){
 head -n 1 debian/changelog | grep -q $UPSTREAM-security && REPO=$CODENAME-security || REPO=$CODENAME
 [ "$BACKPORT" = true ] || [ "$BACKPORTS" = true ] && REPO=${CODENAME}-backports
 #Name convention issue "+" breaking packages build like console-setup, using "-" instead.
-if [ "$NAME_CI" = true ];then
-echo | dch -D $REPO -v `pkgversion`-${REVISION}trisquel${VERSION} "$1"
-else
-echo | dch -D $REPO -v `pkgversion`+${REVISION}trisquel${VERSION} "$1"
-fi
+echo | dch -D $REPO -v $FULLVERSION "$1"
 
 # Make sure the changelog file is identical between archs
 /bin/sed "/-- Trisquel/s/.*/ -- Trisquel GNU\/Linux developers <trisquel-devel@listas.trisquel.info>  $DATE/" -i debian/changelog
@@ -171,8 +167,15 @@ dpkg-source --no-check -x --skip-patches *.dsc source
 find -maxdepth 1 -type f | xargs rm
 cd source
 
-#disable 3.0 deb source format
-[ -f debian/source/format ] && rm debian/source/format
+UPSTREAMVERSION=$(dpkg-parsechangelog --show-field Version)
+if echo $UPSTREAMVERSION | grep -q '-'; then
+    export FULLVERSION=$(dpkg-parsechangelog --show-field Version)+${REVISION}trisquel${VERSION}
+else
+    export FULLVERSION=$(dpkg-parsechangelog --show-field Version)-${REVISION}trisquel${VERSION}
+fi
+
+# Use 3.0 (native) deb source format
+[ -f debian/source/format ] && echo "3 (native)" > debian/source/format
 [ -f debian/source/options ] && rm debian/source/options
 
 grep -lr 'Maintainer:' debian*/control* | \
@@ -191,7 +194,8 @@ grep -qv '^#' debian/patches/series 2>/dev/null && quilt push -a
 fi
 
 cd ..
-dpkg-source -b source
+mv source $PACKAGE-$FULLVERSION
+dpkg-source -b $PACKAGE-$FULLVERSION
 rm -rf ${LOCAL_APT}
 echo "Trisquel source package built!"
 
