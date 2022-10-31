@@ -86,50 +86,36 @@ trap "rm -rf ${LOCAL_APT}" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
 
 mkdir -p ${LOCAL_APT}/var/lib/apt/partial
 mkdir -p ${LOCAL_APT}/var/cache/apt/archives/partial
-mkdir -p ${LOCAL_APT}/etc/
+mkdir -p ${LOCAL_APT}/etc/apt/trusted.gpg.d
 mkdir -p ${LOCAL_APT}/var/lib/dpkg
 touch ${LOCAL_APT}/var/lib/dpkg/status
-touch ${LOCAL_APT}/etc/trusted.gpg
 [ $UID = 0 ] && id _apt > /dev/null 2>&1 && chown _apt ${LOCAL_APT}  -R
 
 cat << EOF > ${LOCAL_APT}/etc/apt.conf
 Dir::State "${LOCAL_APT}/var/lib/apt";
 Dir::State::status "${LOCAL_APT}/var/lib/dpkg/status";
-Dir::Etc::SourceList "${LOCAL_APT}/etc/apt.sources.list";
+Dir::Etc::SourceList "${LOCAL_APT}/etc/apt/sources.list";
 Dir::Etc::SourceParts "";
 Dir::Cache "${LOCAL_APT}/var/cache/apt";
 pkgCacheGen::Essential "none";
-Dir::Etc::Trusted "${LOCAL_APT}/etc/trusted.gpg";
+Dir::Etc::Trusted "${LOCAL_APT}/etc/apt/trusted.gpg.d/keyring.gpg";
 Acquire::ForceIPv4 "true";
 EOF
 
-export TRUSTEDFILE=${LOCAL_APT}/etc/trusted.gpg
+fetchkey(){
+    echo Fetching key $1 from hkps://keyserver.ubuntu.com:443
+    if ! gpg -q --no-default-keyring --keyring gnupg-ring:${LOCAL_APT}/etc/apt/trusted.gpg.d/keyring.gpg --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys $1 ; then
+         echo "W: invalid key from keyserver.ubuntu.com, fetching from db.debian.org"
+         gpg -q --no-default-keyring --keyring gnupg-ring:${LOCAL_APT}/etc/apt/trusted.gpg.d/keyring.gpg --keyserver hkps://keyring.debian.org:443 --recv-keys $1
+    fi
+}
 
-if [ -f trusted.local.gpg ]
-then
-cp trusted.local.gpg "${LOCAL_APT}/etc/trusted.gpg"
-else
-# Trisquel key
-apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys B4EFB9F38D8AEBF1 > /dev/null
-apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys B138CA450C05112F > /dev/null
-# Ubuntu gpg keys
-apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys 40976EAF437D05B5 > /dev/null
-apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys 3B4FE6ACC0B21F32 > /dev/null
-apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys 871920D1991BC93C > /dev/null
-# Debian gpg keys
-apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys 9D6D8F6BC857C906 > /dev/null
-apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys 8B48AD6246925553 > /dev/null
-apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys DCC9EFBF77E11517 > /dev/null
-apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys 648ACFD622F3D138 > /dev/null
-apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys 54404762BBB6E853 > /dev/null
-# Tor gpg key
-apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --import DATA/tor/A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89.asc
-fi
+cp DATA/keyring.gpg ${LOCAL_APT}/etc/apt/trusted.gpg.d/keyring.gpg
 
 # Also import the repository key optionally listed in the helper
-[ "1$REPOKEY" != "1" ] && apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --recv-keys --keyserver hkps://keyserver.ubuntu.com:443 $REPOKEY
+[ "1$REPOKEY" != "1" ] && fetchkey $REPOKEY
 
-cat << EOF > ${LOCAL_APT}/etc/apt.sources.list
+cat << EOF > ${LOCAL_APT}/etc/apt/sources.list
 deb-src $MIRROR $UPSTREAM main universe
 deb-src $MIRROR $UPSTREAM-updates main universe
 deb-src $MIRROR $UPSTREAM-security main universe
@@ -171,14 +157,9 @@ fi
 # Verify it first
 if grep -q "BEGIN PGP SIGNATURE" *.dsc; then
   KEY=$(gpg2 --keyid-format 0xlong --verify  *.dsc  2>&1 | grep 0x | sed 's/.*0x//' || true)
-  [ -z "$KEY" ] && KEY=$(gpgv --keyring ${LOCAL_APT}/etc/trusted.gpg *.dsc 2>&1 | egrep ".SA key" | sed 's/.*.SA key //' || true)
-  if ! apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --recv-keys --keyserver hkps://keyserver.ubuntu.com:443 $KEY > /dev/null; then
-    echo "W: invalid key from keyserver.ubuntu.com, fetching from db.debian.org"
-    apt-key --keyring ${LOCAL_APT}/etc/trusted.gpg adv --recv-keys --keyserver hkps://keyring.debian.org:443 $KEY > /dev/null
-  fi
-  touch ${LOCAL_APT}/keyring.gpg
-  gpg2 --keyring ${LOCAL_APT}/keyring.gpg --import ${LOCAL_APT}/etc/trusted.gpg
-  gpg2 --verify --keyring ${LOCAL_APT}/etc/trusted.gpg *.dsc
+  [ -z "$KEY" ] && KEY=$(gpgv --keyring ${LOCAL_APT}/etc/apt/trusted.gpg.d/keyring *.dsc 2>&1 | egrep ".SA key" | sed 's/.*.SA key //' || true)
+  fetchkey $KEY
+  gpg2 --verify --keyring ${LOCAL_APT}/etc/apt/trusted.gpg.d/keyring.gpg *.dsc
   [ -n SCHROOT_COMMAND ] && gpgconf --kill gpg-agent
 else
   echo WARNING! The dsc file is not gpg signed!

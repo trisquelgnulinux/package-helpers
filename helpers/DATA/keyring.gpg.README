@@ -1,0 +1,5 @@
+keyring.gpg contains a PGP/GPG key public ring (v4) with the Trisquel, Ubuntu, Debian and Tor archive signing keys. To add a new key to the keyring use this command:
+
+gpg --no-default-keyring --keyring gnupg-ring:$PWD/helpers/DATA/keyring.gpg --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys $KEYID
+or
+gpg --no-default-keyring --keyring gnupg-ring:$PWD/helpers/DATA/keyring.gpg --import key.asc
