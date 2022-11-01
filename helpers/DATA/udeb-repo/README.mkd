@@ -97,6 +97,35 @@ SYSLOG_NETINST="path-to/syslog_netinstall"
 
 Just like before, this will provide a list of source packages necessary to build for our udeb repository, be ware that some helpers for these source packages might already exist, errors finding the source package mean source packages are required from debian.
 
+### 3) Secondary udeb dependencies
+
+This final set of packages derive from dependencies of the prior ones (1,2), this list is obtained from the sbuild log, it can be fetched by parsing the build log, for this example the `amd64` arch is used.
+On the build debian-directory we parse the failing build log, _*amd64.build_ for this example.
+
+Getting the udeb list
+```
+$ ls  *amd64.build
+debian-installer_20210731+deb11u5+11.0trisquel9_amd64.build
+
+$ sed -n '/The following packages have unmet dependencies:/,/Unable to correct problems, you have held broken packages/p' *amd64.build| \
+  awk -F 'Depends:' '{print$2}'| \
+  awk '{print$1}'|awk 'NF'| \
+  awk '!seen[$0]++'| \
+  sort
+```
+
+Getting the source packages names for the helper packages,
+```
+$ apt-cache madison $(sed -n '/The following packages have unmet dependencies:/,/Unable to correct problems, you have held broken packages/p' *amd64.build| \
+  awk -F 'Depends:' '{print$2}'| \
+  awk '{print$1}'|awk 'NF'| \
+  awk '!seen[$0]++'| \
+  sort)|grep aramo| \
+  awk '{print$1}'| \
+  awk '!seen[$0]++'| \
+  sort
+```
+
 ## Set upstream source
 
 Once finding source packages required from debian as several debian-installer packages has been droped from upstream Ubuntu, targeting the use of debian **stable** as source repository.
