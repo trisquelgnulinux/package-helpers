@@ -123,17 +123,17 @@ if [ "1$EXTERNAL" != "1" ]; then
  if eval echo "$EXTERNAL" | grep "archive.ubuntu.com" | grep -qv -e updates -e security -e backports; then
    RELNAME=$(eval echo "$EXTERNAL" | cut -d' ' -f 3)
    COMPONENTS=$(eval echo "$EXTERNAL" | cut -d' ' -f 4-)
-   echo "deb-src http://archive.ubuntu.com/ubuntu/ $RELNAME $COMPONENTS" > ${LOCAL_APT}/etc/apt.sources.list
-   echo "deb-src http://archive.ubuntu.com/ubuntu/ ${RELNAME}-updates $COMPONENTS" >> ${LOCAL_APT}/etc/apt.sources.list
-   echo "deb-src http://archive.ubuntu.com/ubuntu/ ${RELNAME}-security $COMPONENTS" >> ${LOCAL_APT}/etc/apt.sources.list
+   echo "deb-src http://archive.ubuntu.com/ubuntu/ $RELNAME $COMPONENTS" > ${LOCAL_APT}/etc/apt/sources.list
+   echo "deb-src http://archive.ubuntu.com/ubuntu/ ${RELNAME}-updates $COMPONENTS" >> ${LOCAL_APT}/etc/apt/sources.list
+   echo "deb-src http://archive.ubuntu.com/ubuntu/ ${RELNAME}-security $COMPONENTS" >> ${LOCAL_APT}/etc/apt/sources.list
  elif eval echo "$EXTERNAL" | grep "ftp.debian.org" |grep -qv -e updates -e security -e backports -e testing -e sid -e unstable -e experimental ; then
    RELNAME=$(eval echo "$EXTERNAL" | cut -d' ' -f 3)
    COMPONENTS=$(eval echo "$EXTERNAL" | cut -d' ' -f 4-)
-   echo "deb-src http://deb.debian.org/debian $RELNAME $COMPONENTS" > ${LOCAL_APT}/etc/apt.sources.list
-   echo "deb-src http://deb.debian.org/debian ${RELNAME}-updates $COMPONENTS" >> ${LOCAL_APT}/etc/apt.sources.list
-   echo "deb-src http://security.debian.org/debian-security/ ${RELNAME}-security $COMPONENTS" >> ${LOCAL_APT}/etc/apt.sources.list
+   echo "deb-src http://deb.debian.org/debian $RELNAME $COMPONENTS" > ${LOCAL_APT}/etc/apt/sources.list
+   echo "deb-src http://deb.debian.org/debian ${RELNAME}-updates $COMPONENTS" >> ${LOCAL_APT}/etc/apt/sources.list
+   echo "deb-src http://security.debian.org/debian-security/ ${RELNAME}-security $COMPONENTS" >> ${LOCAL_APT}/etc/apt/sources.list
  else
-   eval echo "$EXTERNAL" > ${LOCAL_APT}/etc/apt.sources.list
+   eval echo "$EXTERNAL" > ${LOCAL_APT}/etc/apt/sources.list
  fi
 fi
 
