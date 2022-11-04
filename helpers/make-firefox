@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#    Copyright (C) 2008-2021  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2008-2022  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C) 2015       Santiago Rodriguez <santi@trisquel.info>
 #    Copyright (C) 2022       Luis Guzman <ark@switnet.org>
 #
@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=91
+VERSION=93
 
 . ./config
 
@@ -52,6 +52,18 @@ sed '/"browser.privatebrowsing.vpnpromourl"/s/https.*"/"/' -i browser/app/profil
 
 sed '/network.connectivity-service.IPv/s/http.*success.txt?ipv[46]//' -i modules/libpref/init/all.js
 sed 's/accounts-static.cdn.mozilla.net.*sync.services.mozilla.com//' -i modules/libpref/init/all.js
+
+# Disable 106 firefox-view and other firefox-branded popups
+sed -i '/browser.urlbar.quicksuggest.shouldShowOnboardingDialog/s|true|false|' browser/app/profile/firefox.js
+sed -i '/services.sync.prefs.sync.browser.firefox-view.feature-tour/s|true|false|' browser/app/profile/firefox.js
+##disable firefox-view
+sed -i '/"browser.tabs.firefox-view"/s|true|false|' browser/app/profile/firefox.js
+##disable ui tour
+sed -i '/browser.uitour.enabled/s|true|false|' browser/app/profile/firefox.js
+##disable colorways closet
+sed -i '/browser.theme.colorway-closet/s|true|false|' browser/app/profile/firefox.js
+##disable newtab intro - check adjustment for versions greater than 106
+grep -rl browser.newtabpage.introShown |xargs sed -i '/browser.newtabpage.introShown/s|true|false|' || true
 
 # Replace ubufox recommendation
 sed 's/xul-ext-ubufox/xul-ext-youtube-html5-video-player/' -i debian/control.in
@@ -326,20 +338,20 @@ echo ".discopane-notice, .privacy-policy-link, #main header, #plugindeprecation-
 echo ".warning{display: none!important; } .addon[notification=warning]{background-image: none!important;}" >> toolkit/mozapps/extensions/content/extensions.css
 # Hide extra links in about box
 
+# about: page mods, like rights.
+## Hide extra links in about box
 find -wholename '*/brand.dtd' |xargs /bin/sed 's/trademarkInfo.part1.*/trademarkInfo.part1 "">/' -i
 
 for STRING in rights-intro-point-2 rights-intro-point-3 rights-intro-point-4 rights-intro-point-5 rights-intro-point-6 rights-webservices rights-safebrowsing
 do
  find -name aboutRights.ftl | xargs sed -i "s/^$STRING.*/$STRING = /"
 done
-#Remove invalid policy for trisquel.
+##Remove invalid policy for trisquel.
 find -name aboutRights.ftl | xargs sed -i '/rights-intro-point-5/,$d'
-delete_point() {
-sed -i "/$1/d" "$(find -name $2)"
-}
-delete_point rights-intro-point-5 aboutRights.xhtml
-delete_point rights-intro-point-6 aboutRights.xhtml
-delete_point rights-intro-point-5 aboutRights-unbranded.xhtml
+find -name aboutRights.xhtml |xargs sed -i "/rights-intro-point-5/d"
+find -name aboutRights.xhtml |xargs sed -i "/rights-intro-point-6/d"
+find -name aboutRights-unbranded.xhtml |xargs sed -i "/rights-intro-point-5/d"
+#EO about: mods.
 
 sed -i 's/<a\ href\=\"http\:\/\/www.mozilla.org\/\">Mozilla\ Project<\/a>/<a\ href\=\"http\:\/\/www.trisquel.info\/\"\>Trisquel\ Project<\/a>/g' browser/base/content/overrides/app-license.html
 
