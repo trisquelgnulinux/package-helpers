@@ -28,7 +28,7 @@ Priority: standard
 Description: Framebuffer modules
 
 Package: firewire-core-modules
-Depends: kernel-image, storage-core-modules
+Depends: kernel-image, storage-core-modules, crc-modules
 Priority: standard
 Description: Firewire (IEEE-1394) Support
 
@@ -52,7 +52,7 @@ Description: Extra filesystem modules
  This includes support for Windows NTFS and MacOS HFS/HFSPlus
 
 Package: input-modules
-Depends: kernel-image, usb-modules
+Depends: kernel-image, usb-modules, crc-modules
 Priority: standard
 Description: Support for various input methods
 
@@ -63,9 +63,16 @@ Provides: crypto-dm-modules
 Description: Multi-device support (raid, device-mapper, lvm)
 
 Package: nic-modules
-Depends: kernel-image, nic-shared-modules, virtio-modules
+Depends: kernel-image, nic-shared-modules, virtio-modules, crc-modules
 Priority: standard
 Description: Network interface support
+
+Package: nic-wireless-modules
+Depends: kernel-image, nic-shared-modules, usb-modules, pcmcia-modules, crc-modules, crypto-modules
+Priority: standard
+Description: Wireless NIC drivers
+ This package contains wireless NIC drivers for the kernel.
+ Includes crypto modules only needed for wireless (WEP, WPA).
 
 Package: nic-pcmcia-modules
 Depends: kernel-image, nic-shared-modules, nic-modules
@@ -109,7 +116,7 @@ Priority: standard
 Description: PLIP (parallel port) networking support
 
 Package: ppp-modules
-Depends: kernel-image, nic-shared-modules, serial-modules
+Depends: kernel-image, nic-shared-modules, serial-modules, crc-modules
 Priority: standard
 Description: PPP (serial port) networking support
 
@@ -160,6 +167,12 @@ Priority: standard
 Depends: kernel-image, storage-core-modules, scsi-modules
 Description: Fusion and i2o storage modules
  This package containes the fusion and i2o storage modules.
+
+Package: crc-modules
+Depends: kernel-image
+Priority: optional
+Description: CRC modules
+ This package contains CRC support modules.
 
 Package: crypto-modules
 Priority: extra
