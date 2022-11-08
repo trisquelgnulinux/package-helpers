@@ -168,11 +168,11 @@ find -maxdepth 1 -type f | xargs rm
 cd source
 
 UPSTREAMVERSION=$(dpkg-parsechangelog --show-field Version)
-#if echo $UPSTREAMVERSION | grep -q '-'; then
+if echo $UPSTREAMVERSION | grep -q '-'; then
     export FULLVERSION=$(dpkg-parsechangelog --show-field Version)+${REVISION}trisquel${VERSION}
-#else
-#    export FULLVERSION=$(dpkg-parsechangelog --show-field Version)-${REVISION}trisquel${VERSION}
-#fi
+else
+    export FULLVERSION=$(dpkg-parsechangelog --show-field Version)-${REVISION}trisquel${VERSION}
+fi
 
 # Use 3.0 (native) deb source format
 [ -f debian/source/format ] && echo "3 (native)" > debian/source/format
