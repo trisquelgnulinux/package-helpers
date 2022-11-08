@@ -126,6 +126,10 @@ $ apt-cache madison $(sed -n '/The following packages have unmet dependencies:/,
   sort
 ```
 
+### 4) debian-installer install time dependencies
+
+While running the debian-installer it's possible to find packages missing on the udeb repository on the syslog log, just like mentioned on the above details.
+
 ## Set upstream source
 
 Once finding source packages required from debian as several debian-installer packages has been droped from upstream Ubuntu, targeting the use of debian **stable** as source repository.

@@ -1,0 +1,35 @@
+#!/bin/sh
+#
+#    Copyright (C) 2022  Luis Guzmán <ark@switnet.org>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+##
+# This helper is part of a series of packages that are now droppped on upstream
+# Ubuntu, therefore in order to build a working debian-installer we now fetch
+# such packages from Debian in order to build the required udeb packages.
+##
+
+#Fixed version: Just like grub2 on nabia, bind9 and bind9-libs share the same
+#source package name but only referenced by the version of the package itself.
+VERSION=0
+FIXED_VER=1:9.11.19+dfsg-2.1ubuntu3
+NETINST=true
+. ./config
+
+
+changelog "Fetch and build as udeb dependency for debian-installer."
+compile
