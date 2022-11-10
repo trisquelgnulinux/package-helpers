@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 EXTERNAL='deb-src http://ftp.debian.org/debian stable main'
 REPOKEY=648ACFD622F3D138
 NETINST=true
@@ -203,7 +203,7 @@ ${COMMENT}deb $protocol://$hostname$directory $codename-backports main
 ${COMMENT}deb-src $protocol://$hostname$directory $codename-backports main
 EOF
 
-apt-setup-signed-release archive.trisquel.org "$file"
+#apt-setup-signed-release archive.trisquel.org "$file"
 
 exit 0
 ' > generators/50mirror.trisquel
