@@ -164,9 +164,9 @@ cd PACKAGES/$PACKAGE
 #Get package and uncompress it
 apt-get update -c $LOCAL_APT/etc/apt.conf
 if [ -n "$FIXED_VER" ]; then
-  apt-get source $PACKAGE=$FIXED_VER --download-only -c ${LOCAL_APT}/etc/apt.conf
+  apt-get source --only-source $PACKAGE=$FIXED_VER --download-only -c ${LOCAL_APT}/etc/apt.conf
 else
-  apt-get source $PACKAGE --download-only -c ${LOCAL_APT}/etc/apt.conf
+  apt-get source --only-source $PACKAGE --download-only -c ${LOCAL_APT}/etc/apt.conf
 fi
 # Verify it first
 if grep -q "BEGIN PGP SIGNATURE" *.dsc; then
