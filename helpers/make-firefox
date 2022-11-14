@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=93
+VERSION=94
 EXTERNAL='deb-src http://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu $UPSTREAM main'
 REPOKEY=9BDB3D89CE49EC21
 
@@ -66,6 +66,17 @@ sed -i '/browser.uitour.enabled/s|true|false|' browser/app/profile/firefox.js
 sed -i '/browser.theme.colorway-closet/s|true|false|' browser/app/profile/firefox.js
 ##disable newtab intro - check adjustment for versions greater than 106
 grep -rl browser.newtabpage.introShown |xargs sed -i '/browser.newtabpage.introShown/s|true|false|' || true
+
+# Remove .gitignore call as those files get cleaned out on dpkg tarball by default.
+remove_gitignore_from_json(){
+    jq . ${1} |sed '/.gitignore/d'|awk -v RS= '{$1=$1}1'|tr -d ' '|tee ${1}.new
+    mv ${1}.new ${1}
+}
+
+for json in $(find -name \.cargo-checksum.json|xargs grep -rl gitignore)
+do
+    remove_gitignore_from_json $json
+done
 
 # Replace ubufox recommendation
 sed 's/xul-ext-ubufox/xul-ext-youtube-html5-video-player/' -i debian/control.in
