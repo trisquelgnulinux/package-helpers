@@ -1,0 +1,39 @@
+#!/bin/sh
+#
+#    Copyright (C) 2022  Luis Guzmán <ark@switnet.org>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=1
+. ./config
+
+# Rebrand and tweak packages
+sed -i '/This package/s|Ubuntu desktop system|Trisquel GNOME desktop package|' debian/control
+sed -i 's|Ubuntu|Trisquel|g' debian/control
+sed -i '/^Package:/s|ubuntu-gnome-desktop|trisquel-gnome-desktop|' debian/control
+sed -i '/^Depends:/s|ubuntu-desktop|trisquel-gnome|' debian/control
+sed -i 's|pure GNOME experience until|pure (Trisquel) GNOME experience.|' debian/control
+sed -i '/Before.*17.10/,/\ ./d' debian/control
+sed -i '/after the 17.04 release/,/not be removed./d' debian/control
+
+# Remove deprecated packages
+grep -l ubuntu-drivers-common desktop*| xargs sed -i '/ubuntu-drivers-common/d'
+grep -l snapd desktop*| xargs sed -i '/snapd/d'
+replace 'ubuntu-release-upgrader-gtk' 'trisquel-release-upgrader-gtk'
+replace 'fonts-ubuntu' 'fonts-trisquel'
+
+changelog "Rebuild to drop non-available deprecated and non-free source packages."
+compile
