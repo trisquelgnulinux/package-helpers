@@ -25,7 +25,7 @@ NETINST=true
 
 rpl "Default: debian" "Default: trisquel" . -R
 sed -i '/client, template,/s/debian/trisquel/g' netcfg-common.c
-patch -p1 < $DATA/restore_networ-manager_management.patch
+patch -p1 < $DATA/restore_network-manager_management.patch
 
 changelog "Rebranded and adapted for Trisquel"
 compile
