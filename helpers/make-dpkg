@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
+VERSION=4
 COMPONENT=main
 
 . ./config
@@ -37,6 +37,9 @@ cp $DATA/Trisquel.pm scripts/Dpkg/Vendor/Trisquel.pm
 sed '/Ubuntu.pm/a\\tDpkg/Vendor/Trisquel.pm \\' -i scripts/Makefile.in scripts/Makefile.am
 sed '/Dpkg_BuildFlags_Ubuntu.t/a\\tt/Dpkg_BuildFlags_Trisquel.t \\' -i scripts/Makefile.in scripts/Makefile.am
 sed '/Dpkg_Changelog_Ubuntu.t/a\\tt/Dpkg_Changelog_Trisquel.t \\' -i scripts/Makefile.in scripts/Makefile.am
+
+# Trisquel.pm in now here, not at trisquel-base-data
+sed '/Package: libdpkg-perl/,/^$/s/Depends:/Replaces: trisquel-base-data\nDepends:/' -i debian/control
 
 changelog "Compiled for Trisquel"
 
