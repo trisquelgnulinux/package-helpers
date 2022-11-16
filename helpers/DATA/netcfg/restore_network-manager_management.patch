@@ -1,0 +1,18 @@
+diff -ru netcfg-1.176+11.0trisquel1/finish-install.d/55netcfg-copy-config netcfg-1.142ubuntu8+10.0trisquel1/finish-install.d/55netcfg-copy-config
+--- netcfg-1.176+11.0trisquel1/finish-install.d/55netcfg-copy-config	2018-08-10 14:23:07.000000000 -0500
++++ netcfg-1.142ubuntu8+10.0trisquel1/finish-install.d/55netcfg-copy-config	2017-05-16 23:21:18.000000000 -0500
+@@ -59,6 +59,14 @@
+ 	mkdir -p /target/$FILE_PATH_NM_CONFIG
+ 	cp /$FILE_PATH_NM_CONFIG/* /target/$FILE_PATH_NM_CONFIG/
+ 
++	# Write netplan config file to hand over management to NM
++	cat <<EOF > /target/etc/netplan/01-network-manager-all.yaml
++# Let NetworkManager manage all devices on this system
++network:
++  version: 2
++  renderer: NetworkManager
++EOF
++
+ 	# Rewrite /etc/network/interfaces to contain only loopback
+ 	netcfg write_loopback
+ 	;;
