@@ -23,12 +23,14 @@
 # such packages from Debian in order to build the required udeb packages.
 ##
 
-VERSION=0
+VERSION=1
 EXTERNAL='deb-src http://ftp.debian.org/debian stable main'
 REPOKEY=648ACFD622F3D138
 NETINST=true
 . ./config
 
+# Ensure that /run/systemd/resolve/stub-resolve.conf exists inside /target during in-target execution
+sed '/mount --bind \/run \/target\/run/amkdir -p /run/systemd/resolve; cp /etc/resolv.conf /run/systemd/resolve/stub-resolve.conf' -i chroot-setup.sh
 
 changelog "Fetch and build as udeb dependency for debian-installer."
 compile
