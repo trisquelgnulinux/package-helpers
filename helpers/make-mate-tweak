@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=10
+VERSION=11
 
 . ./config
 
@@ -32,28 +32,34 @@ sed 's/Icon=.*/Icon=mate-desktop-symbolic/' -i data/mate-tweak.desktop
 sed 's/Software Rasterizer/Accelerated: no/' -i mate-tweak
 
 # Corrects rendering delay on Pluma, possibly others
-sed '/--backend/s/\\/--xrender-sync-fence \\/' -i  marco-picom
+sed '/--backend/s/\\/--xrender-sync-fence \\/' -i  marco-wrapper
 
 # Shadow config
-sed -i '/shadow-radius/s|12|6|' marco-picom
-sed -i '/shadow-opacity/s|0.125|0.6|' marco-picom
-sed -i '/shadow-offset-x/s|-12|-9|' marco-picom
-sed -i '/shadow-offset-y/s|-12|-9|' marco-picom
+sed -i '/shadow-radius/s|12|15|' marco-wrapper
+sed -i '/shadow-opacity/s|0.125|0.5|' marco-wrapper
+sed -i '/shadow-offset-x/s|-12|-15|' marco-wrapper
+sed -i '/shadow-offset-y/s|-12|-15|' marco-wrapper
 
 # Transitional dummy marco-compton
+rm marco-compton
 cat << EOF > marco-compton
 #!/bin/sh
 
-# Compton has been replaced by picom, and should be handled by mate-wm
+# Compton has been replaced by picom (marco-xrender wrapper)
 
-WINDOW_MANAGER=\`gsettings get org.mate.session.required-components windowmanager 2> /dev/null | sed s/\'//g\`
+WINDOW_MANAGER=xterm
+[ -f /usr/bin/marco ] && WINDOW_MANAGER=marco
+[ -f /usr/bin/marco-no-composite ] && WINDOW_MANAGER=marco-no-composite
 
-if [ "\$WINDOW_MANAGER = "marco-compton" ]; then
-    gsettings set org.mate.session.required-components windowmanager mate-wm
+if glxinfo | grep -q Accelerated.*yes  && [ -f /usr/bin/picom ] && [ -f /usr/bin/marco-xrender ] ; then
+    WINDOW_MANAGER=marco-xrender
 fi
 
-exec /usr/bin/mate-wm
+gsettings set org.mate.session.required-components windowmanager \$WINDOW_MANAGER
+
+exec \$WINDOW_MANAGER
 EOF
+chmod 755 marco-compton
 
 # Add Trisquel to layout list
 sed 's/fedora/trisquel/g; s/Fedora/Trisquel/' -i mate-tweak
