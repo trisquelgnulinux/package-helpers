@@ -1,0 +1,42 @@
+#!/bin/sh
+#
+#    Copyright (C) 2022  Luis Guzmán <ark@switnet.org>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=1
+. ./config
+
+# Rebrand and tweak packages
+replace ubuntu trisquel
+replace Ubuntu Trisquel
+find -type d |xargs rename s/ubuntu/trisquel/g
+find -type f |xargs rename s/ubuntu/trisquel/g
+
+replace firefox abrowser
+find -type d |xargs rename s/firefox/abrowser/g
+find -type f |xargs rename s/firefox/abrowser/g
+
+# browser config
+sed -i "s|browser.startup.homepage=.*\"|browser.startup.homepage=about:home\"|" debian/abrowser/trisquelkylin.cfg
+sed -i "s|picture-filename=.*|picture-filename='/usr/share/backgrounds/nabia.jpg'|" debian/20_trisquelkylin-default-settings.gschema.override
+#Restore default naming whike keeping the maintainer details.
+sed -i '/trisquel.info/!s|trisquel|ubuntu|g' debian/control
+sed -i '/github.com/s|Trisquel|Ubuntu|g' debian/control
+sed -i 's|Trisquel Kylin|Kylin|g' debian/control
+
+changelog "Rebuild to drop non-available deprecated and non-free source packages."
+compile
