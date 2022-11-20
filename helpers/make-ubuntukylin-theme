@@ -1,0 +1,45 @@
+#!/bin/sh
+#
+#    Copyright (C) 2022 Luis Guzmán <ark@switnet.org>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=0
+
+. ./config
+
+# Change plymouth logo
+for ((i=1;i<=60;i++));
+do
+    rm usr/share/plymouth/themes/ubuntukylin-logo/$i.png
+    cp $DATA/logo-trisquel.png \
+        usr/share/plymouth/themes/ubuntukylin-logo/$i.png
+done
+rm usr/share/plymouth/themes/ubuntukylin-logo/uk.png
+sed -i 's|uk.png|tk.png|' \
+    usr/share/plymouth/themes/ubuntukylin-logo/ubuntukylin-logo.script
+cp $DATA/tk.png \
+   usr/share/plymouth/themes/ubuntukylin-logo/
+
+# Change plymouth text
+sed -i "s|title=.*|title=Trisquel Kylin $REVISION|" \
+    usr/share/plymouth/themes/ubuntukylin-text/ubuntukylin-text.plymouth
+sed -i "s|ubuntu-text|trisquel-text|g" \
+    usr/share/plymouth/themes/ubuntukylin-text/ubuntukylin-text.plymouth
+
+changelog "Rebranding for trisquel."
+
+compile
