@@ -1,0 +1,10 @@
+--- netcfg-1.176+11.0trisquel2/finish-install.d/55netcfg-copy-config	2022-11-21 19:21:58.138150737 -0600
++++ netcfg-1.176+11.0trisquel2/finish-install.d/55netcfg-copy-config__	2022-11-21 19:21:50.646130993 -0600
+@@ -22,6 +22,7 @@
+ 	NM_IS_INSTALLED=true
+ else
+ 	NM_IS_INSTALLED=false
++	in-target sh -c "apt-get -y install ifupdown"
+ fi
+ 
+ # The type of the connection used during installation

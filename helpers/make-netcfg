@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=2.1
 EXTERNAL='deb-src http://ftp.debian.org/debian stable main'
 REPOKEY=648ACFD622F3D138
 NETINST=true
@@ -26,6 +26,7 @@ NETINST=true
 rpl "Default: debian" "Default: trisquel" . -R
 sed -i '/client, template,/s/debian/trisquel/g' netcfg-common.c
 patch -p1 < $DATA/restore_network-manager_management.patch
+patch -p1 < $DATA/ifupdown.patch
 
 changelog "Rebranded and adapted for Trisquel"
 compile
