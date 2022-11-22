@@ -4,7 +4,7 @@
  	NM_IS_INSTALLED=true
  else
  	NM_IS_INSTALLED=false
-+	in-target sh -c "apt-get -y install ifupdown"
++	chroot /target apt-get -y install ifupdown
  fi
  
  # The type of the connection used during installation
