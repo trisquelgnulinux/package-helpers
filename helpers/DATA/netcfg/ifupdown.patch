@@ -16,7 +16,7 @@
  else
  	NM_IS_INSTALLED=false
 +	chroot /target apt-get -y install ifupdown
-+        if [ $NETCFG_CONNECTION_TYPE="wireless" ]; then
++        if [ "$NETCFG_CONNECTION_TYPE" = "wireless" ]; then
 +		chroot /target apt-get -y install wireless-tools
 +        fi
  fi
@@ -30,3 +30,16 @@
  # netcfg/target_network_config question values
  CONFIG_NM="nm_config"
  CONFIG_INTERFACES="ifupdown"
+@@ -43,11 +47,7 @@
+ 	if $NM_IS_INSTALLED; then
+ 		db_set netcfg/target_network_config $CONFIG_NM
+ 	else
+-		if [ "$NETCFG_CONNECTION_TYPE" = "wired" ]; then
+-			db_set netcfg/target_network_config $CONFIG_INTERFACES
+-		else # wireless
+-			db_set netcfg/target_network_config $CONFIG_LOOPBACK
+-		fi
++		db_set netcfg/target_network_config $CONFIG_INTERFACES
+ 	fi
+ fi
+ 
