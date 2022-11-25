@@ -81,6 +81,10 @@ rpl ubuntu-archive-keyring trisquel-archive-keyring . -R
 sed -i 's/.*SIGNED_IMAGE="$(KERNELNAME_ALT_SUFFIX)".*/'$'\t''efi-image $(TEMP_GRUB_EFI) x86_64-efi x64/' build/config/x86.cfg build/config/arm64.cfg
 /bin/sed -i '/KERNELNAME_ALT_SUFFIX = -$(KERNELVERSION)/d' build/config/*.cfg build/config/*/*.cfg
 
+# Fix mini.iso boot on EFI systems
+sed 's|/debian|/trisquel|' -i ./build/util/efi-image
+sed 's|EFI/debian|EFI/trisquel|' -i ./build/config/arm.cfg ./build/config/x86.cfg
+
 changelog "Rebranded and adapted for Trisquel"
 compile
 
