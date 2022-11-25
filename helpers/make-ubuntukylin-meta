@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 . ./config
 
 rm_pkg_line(){
@@ -39,6 +39,7 @@ rm_pkg_line ubuntu-settings
 #Rename package and fix map.
 sed -i "/^Package:/s|ubuntukylin-desktop$|kylin-desktop|" debian/control
 sed -i "s|ubuntukylin-|kylin-|g" metapackage-map
+sed -i "/^Recommends:/a Provides: ubuntukylin-desktop\nConflicts: ubuntukylin-desktop (<= 0.46+11.0trisquel1)" debian/control
 
 # Rebrand and tweak packages
 sed -i 's|Ubuntu|Trisquel|g' debian/control
