@@ -1,6 +1,7 @@
 #!/bin/sh
 #
 #    Copyright (C) 2021  Luis Guzman <ark@switnet.org>
+#    Copyright (C) 2022  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,13 +18,17 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 EXTERNAL='deb-src http://ftp.debian.org/debian stable main'
 REPOKEY=648ACFD622F3D138
+NETINST=true
 
 . ./config
 
 replace grub-efi-amd64-signed grub-efi-amd64
+
+sed 's/grub-pc$/grub-pc grub-gfxpayload-lists/' -i grub-installer
+sed 's/shim-signed/shim/' -i grub-installer
 
 changelog "Remove grub-efi-amd64-signed dependency."
 
