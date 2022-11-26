@@ -1,6 +1,7 @@
 #!/bin/sh
 #
 #    Copyright (C) 2022  Luis Guzmán <ark@switnet.org>
+#    Copyright (C) 2022  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -23,7 +24,7 @@
 # or fetch such packages from Debian in order to build the required udeb packages.
 ##
 
-VERSION=2
+VERSION=3
 EXTERNAL='deb-src http://ftp.debian.org/debian stable main'
 REPOKEY=648ACFD622F3D138
 NETINST=true
@@ -32,5 +33,8 @@ NETINST=true
 #Fix ftbfs on debian stable
 patch -p1 < $DATA/fix_1.205_ftbfs.patch
 
-changelog "Rebuild upstream to get udeb dependency for debian-installer."
+# Default to UTF-8
+sed 's/CHARMAP=ISO-8859-15/CHARMAP=UTF-8/' -i debian/console-setup.config
+
+changelog "Rebuild upstream to get udeb dependency for debian-installer. Default to UTF-8"
 compile
