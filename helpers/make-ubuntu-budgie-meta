@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 . ./config
 
 # Rebrand and tweak packages
@@ -30,6 +30,8 @@ sed -i '/budgie-desktop-raspi/,/it not be removed./d' debian/control
 grep -l ubuntu-drivers-common desktop*| xargs sed -i '/ubuntu-drivers-common/d'
 grep -l snapd desktop*| xargs sed -i '/snapd/d'
 grep -l ubuntu-budgie desktop*| xargs sed -i 's|ubuntu-budgie|trisquel-budgie|g'
+sed -i 's|ubuntu-budgie|trisquel-budgie|' metapackage-map
+
 replace 'ubuntu-release-upgrader-gtk' 'trisquel-release-upgrader-gtk'
 replace 'fonts-ubuntu' 'fonts-trisquel'
 # Remove raspimeta package components
