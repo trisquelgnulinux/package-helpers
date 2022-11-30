@@ -38,6 +38,8 @@ Dir::Etc::Trusted "${LOCAL_APT}/etc/trusted.gpg";
 Acquire::ForceIPv4 "true";
 EOF
 
+cp $DATA/../keyring.gpg ${LOCAL_APT}/etc/trusted.gpg
+
 cat << EOF > ${LOCAL_APT}/etc/apt.sources_${CODENAME}.list
 deb $LOCALMIRROR $CODENAME main
 deb $LOCALMIRROR $CODENAME-updates main
