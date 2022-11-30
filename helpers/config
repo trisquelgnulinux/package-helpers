@@ -46,7 +46,7 @@ export DOMAIN=trisquel.info
 export UPSTREAM=jammy
 export UPSTREAMRELEASE=22.04
 MIRROR=http://archive.ubuntu.com/ubuntu
-LOCALMIRROR=https://archive.trisquel.org/trisquel
+LOCALMIRROR=http://archive.trisquel.org/trisquel
 LOCAL_APT=`mktemp -d` 
 
 if [ -n "$BUILD_UNTIL" ] && (( $(echo "$BUILD_UNTIL $REVISION" | awk '{print ($1 > $2)}') )); then

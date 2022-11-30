@@ -1,0 +1,62 @@
+diff -Nru source/build/Makefile source_no_proposed/build/Makefile
+--- source/build/Makefile	2022-10-20 08:22:18.334230755 -0500
++++ source_no_proposed/build/Makefile	2022-10-20 08:25:19.346634640 -0500
+@@ -636,7 +636,7 @@
+ 			echo "deb $(MIRROR) unreleased $(UDEB_COMPONENTS)"; \
+ 		fi \
+ 	else \
+-		gen-sources.list.udeb "$(SYSTEM_SOURCES_LIST)" $(USE_UDEBS_FROM) $(UDEB_COMPONENTS) $(USE_PROPOSED_UPDATES); \
++		gen-sources.list.udeb "$(SYSTEM_SOURCES_LIST)" $(USE_UDEBS_FROM) $(UDEB_COMPONENTS); \
+ 		if [ "$(USE_UNRELEASED)" = 1 ]; then \
+ 			gen-sources.list.udeb "$(SYSTEM_SOURCES_LIST)" unreleased $(UDEB_COMPONENTS); \
+ 		fi \
+@@ -648,10 +648,6 @@
+ 		echo "Using generated $@:"; \
+ 		sed -n "/^[^#]/ s/^/   /p" $@; \
+ 	fi
+-	@if [ "$(USE_PROPOSED_UPDATES)" = 1 ] && ! grep -q proposed-updates $@; then \
+-		echo "ERROR: no valid source for $(USE_UDEBS_FROM)-proposed-updates"; \
+-		exit 1; \
+-	fi
+ 
+ # Font generation.
+ #
+diff -Nru source/build/util/gen-sources.list.udeb source_no_proposed/build/util/gen-sources.list.udeb
+--- source/build/util/gen-sources.list.udeb	2022-09-06 15:55:12.000000000 -0500
++++ source_no_proposed/build/util/gen-sources.list.udeb	2022-10-20 08:26:32.538801725 -0500
+@@ -8,7 +8,6 @@
+ SOURCES_LIST=$1
+ SUITE=$2
+ UDEB_COMPONENTS=$3
+-USE_PROPOSED_UPDATES=$4 # optional
+ 
+ # Set to 1 or 2 to see increasing debug info about mirror tests
+ # Use 0 for quiet (normal) operation
+@@ -84,16 +83,8 @@
+ 		else
+ 			echo "WARNING: mirror '$tmirror' appears to be invalid; skipping" >&2
+ 		fi
+-		if [ "$USE_PROPOSED_UPDATES" = 1 ] &&
+-		   test_url $tmirror/dists/$SUITE-proposed-updates/Release; then
+-			echo "$mirror $SUITE-proposed-updates $UDEB_COMPONENTS"
+-			echo "INFO: using '$tmirror' for $SUITE-proposed-updates" >&2
+-		fi
+ 	else
+ 		echo "$mirror $SUITE $UDEB_COMPONENTS"
+-		if [ "$USE_PROPOSED_UPDATES" = 1 ]; then
+-			echo "$mirror $SUITE-proposed-updates $UDEB_COMPONENTS"
+-		fi
+ 	fi
+ 
+ done | perl -ne 'print unless $seen{$_}; $seen{$_}=1'
+diff -Nru source/debian/rules source_no_proposed/debian/rules
+--- source/debian/rules	2022-10-20 08:22:18.318230720 -0500
++++ source_no_proposed/debian/rules	2022-10-20 08:26:53.702850378 -0500
+@@ -13,7 +13,6 @@
+ BOOTMENU_BEEP=n
+ else
+ USE_UDEBS_FROM=aramo
+-USE_PROPOSED_UPDATES=1
+ TRANSSTATUS=translation-status
+ BOOTMENU_BEEP=y
+ endif

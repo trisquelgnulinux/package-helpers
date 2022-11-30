@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 #    Copyright (C) 2009-2020 Ruben Rodriguez <ruben@trisquel.info>
-#    Copyright (C) 2021 Luis Guzman <ark@switnet.org>
+#    Copyright (C) 2022 Luis Guzman <ark@switnet.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -18,10 +18,14 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=9
+VERSION=10
+EXTERNAL='deb-src http://ftp.debian.org/debian stable main'
+REPOKEY=648ACFD622F3D138
 NETINST=true
-
 . ./config
+
+# Set complete name as BUILD_DATE
+sed -i "/DATE=/s/ | cut -d '.' -f 1//" debian/rules
 
 cat << EOF > ${LOCAL_APT}/etc/apt_${CODENAME}.conf
 Dir::State "${LOCAL_APT}/var/lib/apt";
@@ -43,13 +47,38 @@ EOF
 find build/pkg-lists -type f | xargs sed -i /media-retriever/d
 apt-get update -c ${LOCAL_APT}/etc/apt_${CODENAME}.conf
 LASTKERNEL=$(apt-cache show -c ${LOCAL_APT}/etc/apt_${CODENAME}.conf linux-libc-dev|grep ^Version |head -n1|cut -d" " -f2|cut -d. -f1,2,3)
-sed -i "s/^BASEVERSION.*/BASEVERSION = $LASTKERNEL/g" ./build/config/amd64.cfg
-sed -i "s/^MEDIUM_SUPPORTED.*/MEDIUM_SUPPORTED = cdrom netboot/g" ./build/config/amd64.cfg
+#sed -i "/# The version of the kernel to use./a BASEVERSION = $LASTKERNEL" ./build/config/amd64.cfg
+#sed -i "s/^KERNELVERSION = .*/KERNELVERSION = \$(BASEVERSION)-generic/g" ./build/config/amd64.cfg
+#sed -i "s/^MEDIUM_SUPPORTED.*/MEDIUM_SUPPORTED = cdrom netboot/g" ./build/config/amd64.cfg
+##Optional
+#sed -i '/KERNELNAME = vmlinuz/a #KERNELIMAGEVERSION = $(KERNELVERSION)' ./build/config/amd64.cfg
+for i in amd64 arm64 ppc64el
+do
+find build/config/ -name $i.cfg | xargs sed -i "/# The version of the kernel to use./a BASEVERSION = $LASTKERNEL"
+find build/config/ -name $i.cfg | xargs sed -i "s/^KERNELVERSION = .*/KERNELVERSION = \$(BASEVERSION)-generic/g"
+find build/config/ -name $i.cfg | xargs sed -i "s/^MEDIUM_SUPPORTED.*/MEDIUM_SUPPORTED = cdrom netboot/g"
+find build/config/ -name $i.cfg | xargs sed -i '/KERNELNAME = vmlinuz/a #KERNELIMAGEVERSION = $(KERNELVERSION)'
+done
 
-sed -i 's/shim-signed/shim/g' debian/control
+##TODO: fix the EFI bootloader image
+sed -i '/shim/s|signed|unsigned|g' debian/control
+sed -i 's|grub-efi-amd64-signed|grub-efi-amd64-bin|' debian/control
+sed -i 's|-signed||' debian/control
+sed -i '/win32-loader/d' debian/control
 
-cp $DATA/splash.png build/boot/x86/pics/trisquel.png
-sed -i 's/ubuntu.png/trisquel.png/g' build/config/x86.cfg
+#use unsigned shim
+grep -rl "efi\.signed" | xargs sed -i 's|efi\.signed|efi|g'
+#adjust path and name files from debian to trisquel | $arch-bin efi file (/usr/lib/grub/x86_64-efi/monolithic/grubx64.efi)
+sed -i 's|\$platform-signed/grub|\$platform/monolithic/grub|' build/util/efi-image
+sed -i 's|\$efi_name-installer.efi|\$efi_name.efi|' build/util/efi-image
+##EO-TODO
+
+rm -r build/boot/artwork/11-homeworld
+mkdir build/boot/artwork/trisquel/
+cp $DATA/splash.svg build/boot/artwork/trisquel/trisquel.svg
+sed -i 's|SPLASH_PNG=.*|SPLASH_PNG=boot/artwork/trisquel/trisquel.png|' build/config/x86.cfg
+grep -rl 'vshift 8' build/boot | xargs sed -i '/vshift/s|8|12|g'
+grep -rl 'rows 12' build/boot | xargs sed -i '/rows/s|12|10|g'
 
 cat << EOF > build/sources.list.udeb.local
 deb $LOCALMIRROR $CODENAME main/debian-installer
@@ -59,11 +88,11 @@ EOF
 
 #firmware-linux-free-udeb is missing
 cat << EOF >> build/pkg-lists/netboot/common
-open-ath9k-htc-firmware-udeb
+#open-ath9k-htc-firmware-udeb
 openfwwf-udeb
 EOF
 
-replace "2004-20.." "2004-20$(date +'%y')" . -R
+rpl "2004-20.." "2004-20$(date +'%y')" . -R
 rpl www.ubuntu.com trisquel.info . -R
 rpl ubuntu.com trisquel.info build/boot/ -R
 rpl www.ubuntu trisquel build/boot/ -R
@@ -78,8 +107,42 @@ rpl "Trisquel Ltd, and Rosetta" "Canonical Ltd, and Rosetta" . -R
 rpl ubuntu-keyring trisquel-keyring . -R
 rpl ubuntu-archive-keyring trisquel-archive-keyring . -R
 
-sed -i 's/.*SIGNED_IMAGE="$(KERNELNAME_ALT_SUFFIX)".*/'$'\t''efi-image $(TEMP_GRUB_EFI) x86_64-efi x64/' build/config/x86.cfg build/config/arm64.cfg
+rpl Debian Trisquel . -R
+rpl DEBIAN TRISQUEL . -R
+rpl http://ftp.debian.org/debian http://archive.trisquel.org/trisquel . -R
+rpl http://www.debian.org/ https://trisquel.info build/boot/ -R
+# Replace the debian release for the trisquel one.
+rpl bullseye $CODENAME . -R
+rpl debian-archive-keyring trisquel-keyring debian/control
+rpl debian-ports-archive-keyring trisquel-keyring debian/control
+rpl debian-archive-keyring.gpg trisquel-archive-keyring.gpg . -R
+rpl debian-ports-archive-keyring.gpg trisquel-archive-keyring.gpg . -R
+rpl debian-archive-keyring-udeb trisquel-keyring-udeb . -R
+rpl debian-ports-archive-keyring-udeb trisquel-keyring-udeb . -R
+
+# build/config/common
+grep -rl TRISQUEL_VERSION |xargs sed -i "s|TRISQUEL_VERSION =.*|TRISQUEL_VERSION = $REVISION ($CODENAME)|"
+
+# Disable proposed-updates patch
+patch -p1 < $DATA/remove-proposed-updates.patch
+
+echo "# (Test) Remove gtk related packages, not looking for graphical installer"
+rm $(find build/pkg-lists -type f  -path "*/gtk/*")
+echo "Remove unused modules from d-i pkg-list"
+grep -rl acpi-modules- build/pkg-lists/ |xargs sed -i '/acpi-modules-/d'
+grep -rl cdrom-core-modules- build/pkg-lists/ |xargs sed -i '/cdrom-core-modules-/d'
+grep -rl cdebconf-gtk-entropy build/config/ | xargs sed -i 's/cdebconf-gtk-entropy//'
+
+#sed -i 's/.*SIGNED_IMAGE="$(KERNELNAME_ALT_SUFFIX)".*/'$'\t''efi-image $(TEMP_GRUB_EFI) x86_64-efi x64/' build/config/x86.cfg build/config/arm64.cfg
 /bin/sed -i '/KERNELNAME_ALT_SUFFIX = -$(KERNELVERSION)/d' build/config/*.cfg build/config/*/*.cfg
+
+# Ensure that ld-linux is executable
+sed '/ifdef KERNELVERSION/a\\tchmod 755 $(TREE)\/lib\/$(DEB_HOST_MULTIARCH)\/ld-linux*' -i build/Makefile
+
+# HACK: include liblzma.so and liblz4.so from host into iso image, as runtime dependencies of zstd
+sed '/not packaged as a udeb/a\\tcp /lib/$(DEB_HOST_MULTIARCH)/liblzma.so.5* $(TREE)/lib/$(DEB_HOST_MULTIARCH)' -i build/Makefile
+sed '/not packaged as a udeb/a\\tcp /lib/$(DEB_HOST_MULTIARCH)/liblz4.so* $(TREE)/lib/$(DEB_HOST_MULTIARCH)' -i build/Makefile
+sed -i '/Build-Depends:/a\\tliblzma5, liblz4-1,' debian/control
 
 # Fix mini.iso boot on EFI systems
 sed 's|/debian|/trisquel|' -i ./build/util/efi-image
