@@ -18,12 +18,12 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=24
+VERSION=25
 
 . ./config
 
-#Patch python test after tzdata update.
-#sed 's/Canada/Bahamas/' -i ./tests/test_timezone.py
+#Set trisquel's console-setup version.
+sed -i "/console-setup/s|1.205ubuntu1|1.205-11.0trisquel3|" d-i/manifest d-i/source/console-setup/debian/changelog
 
 # Enable full disk encryption by default. Disabled, as it hinders a11y and sighted people can choose to enable it.
 #patch -p0 < $DATA/nabia_encrypt_by_default.patch
