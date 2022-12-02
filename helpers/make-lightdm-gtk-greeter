@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2014-2018  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2014-2022  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 COMPONENT=main
 
 . ./config
@@ -43,16 +43,30 @@ cat << EOF > debian/01_trisquel.conf
 # screensaver-timeout = Timeout (in seconds) until the screen blanks when the greeter is called as lockscreen
 #
 [greeter]
-background=/usr/share/backgrounds/flidas.jpg
-theme-name=Trisquel
-icon-theme-name=Trisquel
-font-name=Sans 10
-xft-antialias=true
-xft-dpi=96
-xft-hintstyle=slight
-xft-rgba=rgb
-indicators=~a11y;~language;~session;~power
+background=/usr/share/backgrounds/aramo.jpg
+theme-name=Trisquel-dark
+icon-theme-name=trisquel
+indicators = ~clock;~spacer;~host;~spacer;~a11y;~language;~session;~power
+default-user-image = /usr/share/pixmaps/trisquel.svg
+keyboard = onboard
+reader = orca-lightdm-wrapper
+a11y-states = keyboard;reader;contrast;font
+clock-format = %x %X
 EOF
+
+cat << EOF > orca-lightdm-wrapper
+#!/bin/sh
+
+# Make sure that pulseaudio is running and not muted. This prevents sound initialization errors in the lightdm session
+pulseaudio --start
+pactl set-sink-mute @DEFAULT_SINK@ true
+pactl set-sink-mute @DEFAULT_SINK@ false
+
+which espeak paplay >/dev/null && espeak "Trisquel login" --stdout|paplay
+exec orca \$@
+EOF
+chmod 755 orca-lightdm-wrapper
+echo orca-lightdm-wrapper /usr/bin >> debian/lightdm-gtk-greeter.install
 
 changelog "Trisquel themed"
 
