@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
+VERSION=4
 
 . ./config
 
@@ -26,6 +26,9 @@ patch -p0 < $DATA/add_trisquel_tools_py.patch
 patch -p0 < $DATA/README.Debian.patch
 
 cp $DATA/trisquel.csv  ./
+
+# The Breaks prevents upgrades
+sed '/Breaks:/d' -i debian/control
 
 changelog "Adding trisquel distro info."
 
