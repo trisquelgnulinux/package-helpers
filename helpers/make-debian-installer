@@ -54,12 +54,17 @@ LASTKERNEL=$(apt-cache show -c ${LOCAL_APT}/etc/apt_${CODENAME}.conf linux-libc-
 #sed -i "s/^MEDIUM_SUPPORTED.*/MEDIUM_SUPPORTED = cdrom netboot/g" ./build/config/amd64.cfg
 ##Optional
 #sed -i '/KERNELNAME = vmlinuz/a #KERNELIMAGEVERSION = $(KERNELVERSION)' ./build/config/amd64.cfg
-for i in amd64 arm64 ppc64el
+for i in amd64 arm64 armhf ppc64el
 do
 find build/config/ -name $i.cfg | xargs sed -i "/# The version of the kernel to use./a BASEVERSION = $LASTKERNEL"
 find build/config/ -name $i.cfg | xargs sed -i "s/^KERNELVERSION = .*/KERNELVERSION = \$(BASEVERSION)-generic/g"
 find build/config/ -name $i.cfg | xargs sed -i "s/^MEDIUM_SUPPORTED.*/MEDIUM_SUPPORTED = cdrom netboot/g"
 find build/config/ -name $i.cfg | xargs sed -i '/KERNELNAME = vmlinuz/a #KERNELIMAGEVERSION = $(KERNELVERSION)'
+done
+#Limit arm to u-boot
+for i in arm64 armhf
+do
+find build/config/ -name $i.cfg | xargs sed -i "s/^MEDIUM_SUPPORTED.*/MEDIUM_SUPPORTED = u-boot/g"
 done
 
 ##TODO: fix the EFI bootloader image
@@ -128,7 +133,7 @@ grep -rl TRISQUEL_VERSION |xargs sed -i "s|TRISQUEL_VERSION =.*|TRISQUEL_VERSION
 # Disable proposed-updates patch
 patch -p1 < $DATA/remove-proposed-updates.patch
 
-echo "# (Test) Remove gtk related packages, not looking for graphical installer"
+echo "# Remove gtk related packages, not looking for graphical installer"
 rm $(find build/pkg-lists -type f  -path "*/gtk/*")
 echo "Remove unused modules from d-i pkg-list"
 grep -rl acpi-modules- build/pkg-lists/ |xargs sed -i '/acpi-modules-/d'
@@ -150,6 +155,13 @@ sed -i '/Build-Depends:/a\\tliblzma5, liblz4-1,' debian/control
 sed 's|/debian|/trisquel|' -i ./build/util/efi-image
 sed 's|EFI/debian|EFI/trisquel|' -i ./build/config/arm.cfg ./build/config/x86.cfg
 
+## Set modules as optional
+### no arm support for netboot (yet?).
+#sed -i "/i2c-modules-/s|$| \?|" build/pkg-lists/netboot/armhf.cfg
+#sed -i "/mtd-modules-/s|$| \?|" build/pkg-lists/netboot/armhf.cfg
+
+#Fix u-boot naming debian>ubuntu
+sed -i 's|.imx|-dtb.imx|g' build/boot/arm/u-boot-image-config
+
 changelog "Rebranded and adapted for Trisquel"
 compile
-
