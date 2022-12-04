@@ -24,14 +24,9 @@
 # or fetch such packages from Debian in order to build the required udeb packages.
 ##
 
-VERSION=3
-EXTERNAL='deb-src http://ftp.debian.org/debian stable main'
-REPOKEY=648ACFD622F3D138
+VERSION=4
 NETINST=true
 . ./config
-
-#Fix ftbfs on debian stable
-patch -p1 < $DATA/fix_1.205_ftbfs.patch
 
 # Default to UTF-8
 sed 's/CHARMAP=ISO-8859-15/CHARMAP=UTF-8/' -i debian/console-setup.config
