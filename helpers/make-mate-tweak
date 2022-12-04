@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=11
+VERSION=12
 
 . ./config
 
@@ -51,8 +51,12 @@ WINDOW_MANAGER=xterm
 [ -f /usr/bin/marco ] && WINDOW_MANAGER=marco
 [ -f /usr/bin/marco-no-composite ] && WINDOW_MANAGER=marco-no-composite
 
-if glxinfo | grep -q Accelerated.*yes  && [ -f /usr/bin/picom ] && [ -f /usr/bin/marco-xrender ] ; then
-    WINDOW_MANAGER=marco-xrender
+if glxinfo -B | grep "OpenGL renderer string" | grep -qv llvmpipe ; then
+    if [ -f /usr/bin/picom ] && [ -f /usr/bin/marco-xrender ] ; then
+        WINDOW_MANAGER=marco-xrender
+    else
+        WINDOW_MANAGER=marco
+    fi
 fi
 
 gsettings set org.mate.session.required-components windowmanager \$WINDOW_MANAGER
