@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 
 . ./config
 
@@ -33,6 +33,34 @@ sed '/0001-ubuntu-sso-provider.patch/d' -i debian/patches/series
 sed '/0002-livepatch-auth.patch/d' -i debian/patches/series
 sed '/--enable-ubuntu-sso/d' -i debian/rules
 sed 's/--enable-foursquare \\/--enable-foursquare/' -i debian/rules
+
+
+## Avoid promote questionable online services via dconf,
+## still available for users who enable them.
+#https://help.gnome.org/admin/system-admin-guide/stable/lockdown-online-accounts.html.en
+cat << EO-GOA > debian/gnome-online-accounts.postinst
+#!/bin/sh
+# Customize services via dconf
+mkdir -p /etc/dconf/db/local.d/ /etc/dconf/db/local.db/locks
+
+cat << EOF > /etc/dconf/profile/user
+user-db:user
+system-db:local
+EOF
+
+cat << EOF > /etc/dconf/db/local.d/00-goa
+[org/gnome/online-accounts]
+whitelisted-providers= ['kerberos', 'owncloud', 'imap_smtp']
+
+EOF
+
+cat << EOF > /etc/dconf/db/local.db/locks/goa
+# Lock the list of providers that are allowed to be loaded
+/org/gnome/online-accounts/whitelisted-providers
+EOF
+
+dconf update
+EO-GOA
 
 changelog "Remove Snap build dependency"
 
