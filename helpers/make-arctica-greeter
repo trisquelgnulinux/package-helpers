@@ -17,8 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
-
+VERSION=2
 . ./config
 
 # Custom settings
@@ -79,6 +78,9 @@ exec orca --replace --no-setup --disable splash-window, \$@
 EOF
 chmod 755 orca-arctica-wrapper
 echo orca-arctica-wrapper /usr/bin >> debian/arctica-greeter.install
+
+# correct gsettings path
+sed 's/org.mate.settings-daemon.plugins/org.mate.SettingsDaemon.plugins/' -i src/settings-daemon.vala
 
 changelog "Adapted for Trisquel"
 
