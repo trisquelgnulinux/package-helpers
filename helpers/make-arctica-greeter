@@ -1,0 +1,86 @@
+#!/bin/sh
+#
+#    Copyright (C) 2012-2022  Ruben Rodriguez <ruben@trisquel.info>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=1
+
+. ./config
+
+# Custom settings
+cp $DATA/org.ArcticaProject.arctica-greeter.gschema.xml data
+
+# Change the sound theme
+cp $DATA/system-ready.ogg data/sounds/stereo/system-ready.ogg
+
+# Custom artwork
+sed '/logo-bare/d; /rm.*logo.png/d' -i debian/rules
+#sed '/paint_with_alpha/s/0.5/1.0/' -i src/background.vala
+cp $DATA/logo.png data/logo.png
+cp $DATA/logo.png .
+cp $DATA/logo-bare.png data/logo-bare.png
+cp $DATA/cof.png data
+cp $DATA/badge.png ./data/badges/trisquel_badge.png
+cp $DATA/badge.png data/badges/unknown_badge.png
+replace ubuntu_badge trisquel_badge .
+
+sed '/paint_with_alpha/s/0.4/0.7/' -i src/menubar.vala
+sed '/set_source_rgb/s/(0.1, 0.1, 0.1)/(0.0, 0.0, 0.0)/' -i src/menubar.vala
+sed '/set_source_rgba/s/(0.1, 0.1, 0.1, 0.4)/(0.0, 0.0, 0.0, 0.7)/' -i src/dash-box.vala
+
+sed 's/Cabin/Sans/g' -i debian/30_arctica*
+sed 's/Cantarell/Sans/g' -i src/shutdown-dialog.vala debian/patches/2002_shutdown-dialog-font.patch
+sed '/fonts-/d' -i debian/control
+
+# The high_contrast theme makes almost no difference, disabling
+sed '/high_contrast_item/d' -i src/menubar.vala
+
+# Fix selection highlight on toggle buttons
+cat << EOF | patch -p1
+--- a/src/toggle-box.vala	2022-12-05 19:49:25.898324331 -0500
++++ b/src/toggle-box.vala	2022-12-05 19:54:51.347291025 -0500
+@@ -99,6 +99,8 @@
+         {
+             selected_button.get_style_context ().remove_class ("selected");
+             set_normal_button_style (selected_button);
++            selected_button.relief = Gtk.ReliefStyle.NONE;
++            selected_button.override_background_color(Gtk.StateFlags.NORMAL, null);
+         }
+         selected_button = button;
+         selected_key = selected_button.get_data<string> ("toggle-list-key");
+EOF
+
+# Custom orca wrapper
+sed '/Shell.parse_argv/s/orca.*splash-window,/orca-arctica-wrapper/' -i src/menubar.vala
+cat << EOF > orca-arctica-wrapper
+#!/bin/sh
+
+# Make sure that pulseaudio is running and not muted. This prevents sound initialization errors in the lightdm session
+pulseaudio --start
+pactl set-sink-mute @DEFAULT_SINK@ true
+pactl set-sink-mute @DEFAULT_SINK@ false
+
+which espeak paplay >/dev/null && espeak "Trisquel login" --stdout|paplay
+exec orca --replace --no-setup --disable splash-window, \$@
+EOF
+chmod 755 orca-arctica-wrapper
+echo orca-arctica-wrapper /usr/bin >> debian/arctica-greeter.install
+
+changelog "Adapted for Trisquel"
+
+compile
+
