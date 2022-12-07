@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
+VERSION=4
 COMPONENT=main
 
 . ./config
@@ -57,13 +57,16 @@ EOF
 cat << EOF > orca-lightdm-wrapper
 #!/bin/sh
 
+# Make sure speech-dispatcher is not running
+pkill -9 speech-dispatcher
+
 # Make sure that pulseaudio is running and not muted. This prevents sound initialization errors in the lightdm session
 pulseaudio --start
 pactl set-sink-mute @DEFAULT_SINK@ true
 pactl set-sink-mute @DEFAULT_SINK@ false
 
 which espeak paplay >/dev/null && espeak "Trisquel login" --stdout|paplay
-exec orca \$@
+exec orca --replace --no-setup --disable splash-window, \$@
 EOF
 chmod 755 orca-lightdm-wrapper
 echo orca-lightdm-wrapper /usr/bin >> debian/lightdm-gtk-greeter.install
