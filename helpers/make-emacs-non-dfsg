@@ -18,13 +18,16 @@
 # emacs-non-dfsg is under GFDL but due to "invariant sections" is considered
 # problematic for Debian
 
-VERSION=1
+VERSION=2
 
 EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu $UPSTREAM multiverse'
 
 . ./config
 
-sed -i '/Package/s|emacs-common-non-dfsg|emacs-common-gfdl|' debian/control
+replace emacs-common-non-dfsg emacs-common-gfdl
+find -type d |xargs rename s/emacs-common-non-dfsg/emacs-common-gfdl/g
+find -type f |xargs rename s/emacs-common-non-dfsg/emacs-common-gfdl/g
+
 sed -i '/Section:/,/Priority:/s|non-free/editors|editors|' debian/control
 sed -i '/Description:/s|non-DFSG ||' debian/control
 sed -i '/GNU Emacs is the/,$d' debian/control
