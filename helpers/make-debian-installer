@@ -24,6 +24,8 @@ REPOKEY=648ACFD622F3D138
 NETINST=true
 . ./config
 
+#Manually disable 'any' other arch than amd64
+sed -i '/Architecture:/s|any|amd64|' debian/control
 # Set complete name as BUILD_DATE
 sed -i "/DATE=/s/ | cut -d '.' -f 1//" debian/rules
 
