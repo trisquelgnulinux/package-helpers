@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=4
+VERSION=5
 COMPONENT=main
 
 . ./config
@@ -70,6 +70,9 @@ exec orca --replace --no-setup --disable splash-window, \$@
 EOF
 chmod 755 orca-lightdm-wrapper
 echo orca-lightdm-wrapper /usr/bin >> debian/lightdm-gtk-greeter.install
+
+# Add dependency on lightdm, to simplify metapackages
+sed 's/Depends:/Depends: lightdm,\n/' -i debian/control
 
 changelog "Trisquel themed"
 
