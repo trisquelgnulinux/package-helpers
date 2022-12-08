@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2012-2021  Ruben Rodriguuez <ruben@trisquel.info>
+#    Copyright (C) 2012-2022  Ruben Rodriguuez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=11
+VERSION=12
 
 . ./config
 
@@ -35,6 +35,9 @@ sed '/gset org.gnome.desktop.interface toolkit-accessibility true/a \ \ \ \ \ \ 
 rm scripts/casper-premount/10driver_updates
 rm scripts/casper-bottom/33enable_apport_crashes
 
+# Add localechooser-data dependency
+
+sed 's/Depends:/Depends: localechooser-data,\n/' -i debian/control
 
 changelog "Compiled for Trisquel"
 
