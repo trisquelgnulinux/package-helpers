@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 . ./config
 
 # Custom settings
@@ -81,6 +81,9 @@ echo orca-arctica-wrapper /usr/bin >> debian/arctica-greeter.install
 
 # correct gsettings path
 sed 's/org.mate.settings-daemon.plugins/org.mate.SettingsDaemon.plugins/' -i src/settings-daemon.vala
+
+# Prevent lightdm failure on removal
+sed '/very serious/,/^$/d' -i debian/90-arctica-greeter.conf
 
 changelog "Adapted for Trisquel"
 
