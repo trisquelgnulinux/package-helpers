@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=12
+VERSION=13
 
 . ./config
 
@@ -36,8 +36,10 @@ rm scripts/casper-premount/10driver_updates
 rm scripts/casper-bottom/33enable_apport_crashes
 
 # Add localechooser-data dependency
-
 sed 's/Depends:/Depends: localechooser-data,\n/' -i debian/control
+
+# Fix error in lang2locale function
+sed "s/cut/cut -d: -f2- | cut/" -i scripts/casper-functions
 
 changelog "Compiled for Trisquel"
 
