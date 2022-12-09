@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2018 Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2018-2022 Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C) 2018 Pablo Correa Gómez <p.correag@member.fsf.org>
 #    Copyright (C) 2019 Mason Hock <mason@masonhock.com>
 #
@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 #
 
-VERSION=3
+VERSION=4
 
 . ./config
 
@@ -35,7 +35,7 @@ gamma=1:1:1
 ; automatically, but it will trigger background internet connections
 location-provider=manual
 ; location-provider=geoclue2
-adjustment-method=vidmode
+adjustment-method=randr
 
 ; The location provider and adjustment method settings
 ; are in their own sections.
@@ -50,6 +50,9 @@ screen=0
  
 EOF
 echo "debian/redshift.conf /etc" >> debian/redshift.install
+
+# Fix apparmor profile
+sed 's/+37,7/+37,8/; /redshift-shared/a+\  /etc/redshift.conf r,' -i debian/patches/Fix-AppArmor-profile-for-Wayland.patch
 
 changelog "Added default manual configuration"
 
