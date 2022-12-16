@@ -10,7 +10,7 @@ diff -Nru source/debian/lvm2-udeb.install source_fix/debian/lvm2-udeb.install
 +++ source_fix/debian/lvm2-udeb.install	2022-09-11 22:22:32.382314653 +0000
 @@ -1,4 +1,4 @@
 -lib/udev/rules.d/*-lvm*.rules
-+usr/lib/udev/rules.d/*-lvm*.rules
++usr/lib/udev/rules.d/*-lvm*.rules lib/udev/rules.d/
  etc/lvm/lvm.conf
  sbin/lvchange
  sbin/lvconvert
