@@ -1,6 +1,7 @@
 #!/bin/sh
 #
 #    Copyright (C) 2022  Luis Guzmán <ark@switnet.org>
+#    Copyright (C) 2022  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -23,7 +24,7 @@
 # or fetch such packages from Debian in order to build the required udeb packages.
 ##
 
-VERSION=3
+VERSION=4
 NETINST=true
 
 . ./config
@@ -33,6 +34,9 @@ patch -p1 < $DATA/enable_udeb_build.patch
 
 #Fix udeb path usr/lib... instead of lib/...
 patch -p1 < $DATA/fix_path_on_udeb_files.patch
+
+# dmsetup is needed for lvm work, the installer hangs without it
+sed '/Package: lvm2-udeb/,/^$/s/^Depends:/Depends: dmsetup-udeb,/' -i debian/control
 
 changelog "Rebuild upstream to get udeb dependency for debian-installer."
 compile
