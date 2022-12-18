@@ -1,19 +1,15 @@
-diff -Nru console-setup/console-setup-1.205ubuntu3-11.0trisquel5.1/debian/console-setup-udeb.base-installer console-setup_diff/console-setup-1.205ubuntu3-11.0trisquel5.1/debian/console-setup-udeb.base-installer
---- console-setup/console-setup-1.205ubuntu3-11.0trisquel5.1/debian/console-setup-udeb.base-installer	2021-07-23 22:45:19.000000000 -0500
-+++ console-setup_diff/console-setup-1.205ubuntu3-11.0trisquel5.1/debian/console-setup-udeb.base-installer	2022-12-17 13:30:51.204297663 -0600
-@@ -18,7 +18,6 @@
-     cp -a /etc/default/keyboard /target/etc/default/
-     LANG=C
-     export LANG
--    if ! db_get oem-config/enable || [ "$RET" != true ]; then
+diff -Nru console-setup/console-setup-1.205ubuntu3-11.0trisquel5.4/debian/console-setup-udeb.base-installer console-setup_diff/console-setup-1.205ubuntu3-11.0trisquel5.2/debian/console-setup-udeb.base-installer
+--- console-setup/console-setup-1.205ubuntu3-11.0trisquel5.4/debian/console-setup-udeb.base-installer	2021-07-23 22:45:19.000000000 -0500
++++ console-setup_diff/console-setup-1.205ubuntu3-11.0trisquel5.2/debian/console-setup-udeb.base-installer	2022-12-17 18:07:01.460681582 -0600
+@@ -21,9 +21,8 @@
+     if ! db_get oem-config/enable || [ "$RET" != true ]; then
  	# create the required templates
  	debconf-copydb -p "^keyboard-configuration/.*$" configdb target_configdb
- 
-@@ -27,7 +26,6 @@
+-
+-	# mark the questions as seen
+-	for template in \## SEEN TEMPLATES ## all templates of keyb-conf except alerts and ctrl_alt_bksp
++	for template in \
++## SEEN TEMPLATES ## all templates of keyb-conf except alerts and ctrl_alt_bksp
  	do
  	    echo keyboard-configuration $template seen true
  	done | chroot /target debconf-set-selections
--    fi
- ######################################################################
- 
-     apt-install keyboard-configuration || true
