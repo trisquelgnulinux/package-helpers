@@ -24,7 +24,7 @@
 # or fetch such packages from Debian in order to build the required udeb packages.
 ##
 
-VERSION=5.4
+VERSION=6
 NETINST=true
 . ./config
 
@@ -34,6 +34,7 @@ sed 's/CHARMAP=ISO-8859-15/CHARMAP=UTF-8/' -i debian/console-setup.config
 #Remove ubuntu's dependency.
 sed -i "s|cdebconf-newt-detect-keys, ||" debian/control
 
+#Fix 20console-setup script patch.
 patch -p2 < $DATA/modify_20console-setup.patch
 
 changelog "Rebuild upstream to get udeb dependency for debian-installer. Default to UTF-8"
