@@ -23,12 +23,13 @@
 # such packages from Debian in order to build the required udeb packages.
 ##
 
-VERSION=0
+VERSION=1
 EXTERNAL='deb-src http://ftp.debian.org/debian stable main'
 REPOKEY=648ACFD622F3D138
 NETINST=true
 . ./config
 
+patch -p1 < $DATA/fix_keyboard-configure-netinstall.patch
 
 changelog "Fetch and build as udeb dependency for debian-installer."
 compile

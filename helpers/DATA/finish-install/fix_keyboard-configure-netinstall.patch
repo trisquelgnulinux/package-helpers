@@ -1,0 +1,16 @@
+diff -Nru finish-install-2.104+11.0trisquel0/finish-install.d/10update-initramfs finish-install-2.104+11.0trisquel0/finish-install.d/10update-initramfs
+--- finish-install-2.104+11.0trisquel0/finish-install.d/10update-initramfs	2018-08-10 14:21:58.000000000 -0500
++++ finish-install-2.104+11.0trisquel0/finish-install.d/10update-initramfs	2022-12-18 17:56:21.817264252 -0600
+@@ -4,7 +4,11 @@
+ # update-initramfs to make sure one can type the passphrase
+ # (see #694156, workaround for #696773):
+ /bin/in-target \
+-    /bin/sh -c "dpkg-query -s cryptsetup >/dev/null 2>&1 && dpkg-query -s console-setup >/dev/null 2>&1"
++    /bin/sh -c "dpkg-query -s console-setup >/dev/null 2>&1"
++
++#Fix bug keyboard not using the selected layout.
++/bin/in-target \
++    dpkg-reconfigure -f noninteractive keyboard-configuration
+ 
+ if [ $? = 0 ]; then
+     echo "Encrypted LVM detected, refreshing initramfs"
