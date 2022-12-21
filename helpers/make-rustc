@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2022  Luis Guzmán <ark@switnet.org>
+#    Copyright (C) 2022 Luis Guzmán <ark@switnet.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,16 +17,17 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-
 ##
-# rustc 1.62 version to start build chain for rust 1.63/cargo 0.64
-#
-VERSION=0
-EXTERNAL='deb-src http://ppa.launchpadcontent.net/schopin/rustc-1.62/ubuntu $UPSTREAM main'
-REPOKEY=F8B13AAE84229B75
+# rustc 1.63+ version
+##
+
+VERSION=1
+EXTERNAL='deb-src http://ppa.launchpadcontent.net/ubuntu-mozilla-security/rust-updates/ubuntu $UPSTREAM main'
+REPOKEY=A6DCF7707EBC211F
 BACKPORTS=true
 . ./config
 
 
-changelog "Import as dependency of newer abrowser (deb) dependencies."
+changelog "Import as dependency of newer abrowser deb dependencies."
+
 compile
