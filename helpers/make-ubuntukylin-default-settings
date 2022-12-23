@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 . ./config
 
 # Rebrand and tweak packages
@@ -32,7 +32,7 @@ find -type f |xargs rename s/firefox/abrowser/g
 
 # browser config
 sed -i "s|browser.startup.homepage=.*\"|browser.startup.homepage=about:home\"|" debian/abrowser/trisquelkylin.cfg
-sed -i "s|picture-filename=.*|picture-filename='/usr/share/backgrounds/nabia.jpg'|" debian/20_trisquelkylin-default-settings.gschema.override
+sed -i "s|picture-filename=.*|picture-filename='/usr/share/backgrounds/$CODENAME.jpg'|" debian/20_trisquelkylin-default-settings.gschema.override
 #Restore default naming whike keeping the maintainer details.
 sed -i '/trisquel.info/!s|trisquel|ubuntu|g' debian/control
 sed -i '/github.com/s|Trisquel|Ubuntu|g' debian/control
