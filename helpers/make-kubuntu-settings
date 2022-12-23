@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=10
+VERSION=11
 
 . ./config
 
@@ -34,8 +34,6 @@ rename s/kubuntu/triskel/ debian/*
 find -type d -name '*kubuntu*' | xargs rename s/kubuntu/triskel/
 find -type f -name '*kubuntu*' | xargs rename s/kubuntu/triskel/
 rm desktop/etc/skel/.face
-
-sed 's|/usr/share/wallpapers/Next/contents/images/3200x2000.png|/usr/share/backgrounds/nabia.jpg|' -i ./debian/triskel-settings-desktop.postinst
 
 # customize main menu
 sed 's/kickoff/kicker/g' -i desktop/theme/layout-templates/org.triskel.desktop.defaultPanel/contents/layout.js
@@ -73,10 +71,10 @@ X-KDE-PluginInfo-EnabledByDefault=true
 X-Plasma-API=5.0
  
 [Wallpaper]
-defaultWallpaperTheme=Nabia
+defaultWallpaperTheme=Aramo
 defaultFileSuffix=.jpg
-defaultWidth=4494
-defaultHeight=3000
+defaultWidth=5120
+defaultHeight=2880
 
 [ContrastEffect]
 enabled=true
@@ -123,7 +121,7 @@ Theme=breeze
 name=Triskel
 
 [Wallpaper]
-Image=Nabia
+Image=Aramo
 
 [Desktop][org.kde.plasma.desktop]
 Containment=org.kde.plasma.folder
