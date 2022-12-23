@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 
 . ./config
 
@@ -25,7 +25,7 @@ VERSION=2
 sed -i 's/main.height \* 0.56 : main.height \* 0.71/main.height * 0.4 : main.height * 0.4/' applets/digital-clock/package/contents/ui/DigitalClock.qml
 
 # Use trisquel background
-sed 's|/Next/contents/images/5120x2880.jpg|/Nabia/contents/images/4494x3000.jpg|' -i sddm-theme/theme.conf.cmake
+sed 's|/Next/contents/images/5120x2880.jpg|/Aramo/contents/images/5120x2880.jpg|' -i sddm-theme/theme.conf.cmake
 
 changelog "Customized for Trisquel"
 
