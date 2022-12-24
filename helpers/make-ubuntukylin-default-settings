@@ -32,7 +32,10 @@ find -type f |xargs rename s/firefox/abrowser/g
 
 # browser config
 sed -i "s|browser.startup.homepage=.*\"|browser.startup.homepage=about:home\"|" debian/abrowser/trisquelkylin.cfg
+
+# note: the default wallpaper is actually at ubuntukylin-wallpapers: 30_ubuntukylin-wallpapers.gschema.override
 sed -i "s|picture-filename=.*|picture-filename='/usr/share/backgrounds/$CODENAME.jpg'|" debian/20_trisquelkylin-default-settings.gschema.override
+
 #Restore default naming whike keeping the maintainer details.
 sed -i '/trisquel.info/!s|trisquel|ubuntu|g' debian/control
 sed -i '/github.com/s|Trisquel|Ubuntu|g' debian/control
