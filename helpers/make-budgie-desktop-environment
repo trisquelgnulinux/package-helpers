@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=0
+VERSION=1
 . ./config
 
 #Set default trisquel wallpaper
@@ -25,13 +25,28 @@ BUDGIE_WALLP="usr/share/backgrounds/budgie/ubuntu_budgie_wallpaper1.jpg"
 TRISQUEL_WALLP="usr/share/backgrounds/$CODENAME.jpg"
 grep -lr "$BUDGIE_WALLP" | xargs sed -i "s|$BUDGIE_WALLP|$TRISQUEL_WALLP|g"
 
+#menu-icon
+cp $DATA/logo-trisquel.svg distrologo/trisquel-logo.svg
+
 #Tweak default handlers
 sed -i "s|thunderbird|icedove|g" etc/budgie-desktop/defaults.list
 sed -i "s|firefox|abrowser|g" etc/budgie-desktop/defaults.list
 sed -i "s|snap-store.*.desktop||g" etc/budgie-desktop/defaults.list
 
-sed -i "s|Launcher=.*|Launcher=|" home-folder/.config/plank/dock1/launchers/budgie-welcome.dockitem
+#Remove non-prefered usable dock items.
+rm home-folder/.config/plank/dock1/launchers/budgie-welcome.dockitem
+rm home-folder/.config/plank/dock1/launchers/org.gnome.Software.dockitem
+
+#light schema customization.
+sed -i "s|menu-icon=.*|menu-icon='trisquel-logo'|" schemas/25_budgie-desktop-environment.gschema.override
+sed -i "s|monospace-font-name=.*|monospace-font-name='Dejavu Sans Mono 10'|" schemas/25_budgie-desktop-environment.gschema.override
 sed -i "s|, 'ubuntu-budgie-welcome_budgie-welcome.desktop'||" schemas/25_budgie-desktop-environment.gschema.override
+sed -i "s|firefox_firefox.desktop|abrowser.desktop|" schemas/25_budgie-desktop-environment.gschema.override
+sed -i "s|org.gnome.Software.desktop|trisquel-app-install.desktop|" schemas/25_budgie-desktop-environment.gschema.override
+
+#Fix dependencies
+sed -i "s|plymouth-theme-ubuntu|plymouth-theme-trisquel|g" debian/control
+
 changelog "Tweak settings and names to match trisquel packages on budgie"
 
 compile
