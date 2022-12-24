@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 . ./config
 
 # Rebrand and tweak packages
@@ -32,11 +32,22 @@ grep -l snapd desktop*| xargs sed -i '/snapd/d'
 grep -l ubuntu-budgie desktop*| xargs sed -i 's|ubuntu-budgie|trisquel-budgie|g'
 sed -i 's|ubuntu-budgie|trisquel-budgie|' metapackage-map
 
+# Add custom trisquel packages
+grep -l thunderbird desktop* | xargs sed -i "/thunderbird/a abrowser"
+grep -l thunderbird desktop* | xargs sed -i "s|thunderbird|icedove|"
+grep -l gnome-software desktop* | xargs sed -i "s|gnome-software|trisquel-app-install|g"
+
 replace 'ubuntu-release-upgrader-gtk' 'trisquel-release-upgrader-gtk'
 replace 'fonts-ubuntu' 'fonts-trisquel'
 # Remove raspimeta package components
 find -name \*-raspi-\*|xargs rm
 rm update.cfg
+
+# Fix order names by sorting them out
+for i in $(ls desktop-*)
+do
+cat $i | sort -o $i
+done
 
 changelog "Rebuild to drop non-available deprecated and non-free source packages."
 compile
