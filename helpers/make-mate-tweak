@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=12
+VERSION=13
 
 . ./config
 
@@ -39,6 +39,8 @@ sed -i '/shadow-radius/s|12|15|' marco-wrapper
 sed -i '/shadow-opacity/s|0.125|0.5|' marco-wrapper
 sed -i '/shadow-offset-x/s|-12|-15|' marco-wrapper
 sed -i '/shadow-offset-y/s|-12|-15|' marco-wrapper
+sed -i 's/Firefox/abrowser/' marco-wrapper
+sed -i 's/Ulauncher/icedove/' marco-wrapper
 
 # Transitional dummy marco-compton
 rm marco-compton
@@ -52,8 +54,8 @@ WINDOW_MANAGER=xterm
 [ -f /usr/bin/marco-no-composite ] && WINDOW_MANAGER=marco-no-composite
 
 if glxinfo -B | grep "OpenGL renderer string" | grep -qv llvmpipe ; then
-    if [ -f /usr/bin/picom ] && [ -f /usr/bin/marco-xrender ] ; then
-        WINDOW_MANAGER=marco-xrender
+    if [ -f /usr/bin/picom ] && [ -f /usr/bin/marco-glx ] ; then
+        WINDOW_MANAGER=marco-glx
     else
         WINDOW_MANAGER=marco
     fi
