@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 . ./config
 
 # Rebrand and tweak
@@ -31,6 +31,13 @@ find -type f |xargs rename s/ubuntu/trisquel/g
 rm -r pocillo/IconRequests
 cp $DATA/logo-trisquel.svg qogir-theme/src/gnome-shell/logos/
 cp $DATA/logo-trisquel.svg qogir-theme/src/gtk/assets/logos/
+cp $DATA/trisquel-budgie-logo_128_alpha.png usr/share/plymouth/themes/trisquel-budgie-logo/trisquel-budgie-logo.png
+cp $DATA/trisquel-budgie-logo_128_solid.png usr/share/plymouth/themes/trisquel-budgie-logo/trisquel-budgie-logo16.png
+cp $DATA/trisquel-budgie-logo_200_solid.png usr/share/plymouth/themes/trisquel-budgie-logo/trisquel-budgie-logo16@2.png
+cp $DATA/trisquel-budgie-logo_200_alpha.png usr/share/plymouth/themes/trisquel-budgie-logo/trisquel-budgie-logo@2.png
+
+#Background
+sed -i "s|background=.*|background=\'/usr/share/backgrounds/$CODENAME.jpg\'|g" debian/budgie-lightdm-theme.gsettings-override
 
 changelog "Rebuild for trisquel"
 compile
