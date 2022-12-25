@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=28
+VERSION=29
 
 . ./config
 
@@ -302,8 +302,11 @@ sed '/Package: ubiquity-frontend-kde/,/Depends/s/Depends:/Depends: libkf5kdelibs
 sed 's/Trisquel/Trsql/' -i ubiquity/plugins/ubi-partman.py
 sed 's/Trisquel-Battersea/Ubuntu-Battersea/' -i  tests/test_gtkwidgets.py
 
-#Remove ubuntu-artwork dependency
+# Remove ubuntu-artwork dependency
 sed -i '/ubuntu-artwork,/d' debian/control
+
+# Only warn about missing efi partition when running on efi mode
+sed 's|/var/lib/partman/efi|/sys/firmware/efi|' -i d-i/source/partman-efi/check.d/efi
 
 changelog "Adapted for Trisquel"
 
