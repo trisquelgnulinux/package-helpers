@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=30
+VERSION=31
 
 . ./config
 
@@ -282,12 +282,13 @@ screen-reader=true
 " >> /target/usr/share/glib-2.0/schemas/99_accessibility.gschema.override
   chroot /target glib-compile-schemas /usr/share/glib-2.0/schemas
 
-mkdir -p /target/var/lib/lightdm/.cache/lightdm-gtk-greeter/
-echo "[a11y-states]
-reader=true" > /target/var/lib/lightdm/.cache/lightdm-gtk-greeter/state
-
-chroot /target chown ligthdm.lightdm /var/lib/lightdm/ -R
-chmod 750 /target/var/lib/lightdm/
+  if grep -q lightdm /target/etc/passwd; then
+    mkdir -p /target/var/lib/lightdm/.cache/lightdm-gtk-greeter/
+    echo "[a11y-states]
+    reader=true" > /target/var/lib/lightdm/.cache/lightdm-gtk-greeter/state
+    chroot /target chown lightdm.lightdm /var/lib/lightdm/ -R
+    chmod 750 /target/var/lib/lightdm/
+  fi
 
 else 
   echo "Accessibility profile set to none, disabling screen reader by default in target system"
