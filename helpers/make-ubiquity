@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=29
+VERSION=30
 
 . ./config
 
@@ -258,8 +258,8 @@ then
 fi
 
 # Hacks for accessibility
-if [ \$(gsettings get org.mate.applications-at screen-reader-enabled) = "true" ] || \
-   [ \$(gsettings get org.gnome.desktop.a11y.applications screen-reader-enabled) = "true" ]
+if [ \$(su trisquel -c "gsettings get org.mate.applications-at screen-reader-enabled") = "true" ] || \
+   [ \$(su trisquel -c "gsettings get org.gnome.desktop.a11y.applications screen-reader-enabled") = "true" ]
 then
   echo "Accessibility profile set to 'blindness', enabling screen reader by default in target system"
   echo "[org.mate.applications-at]
