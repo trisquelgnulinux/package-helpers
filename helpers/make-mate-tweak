@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=14
+VERSION=15
 
 . ./config
 
@@ -52,12 +52,14 @@ cat << EOF > marco-compton
 WINDOW_MANAGER=xterm
 [ -f /usr/bin/marco ] && WINDOW_MANAGER=marco
 [ -f /usr/bin/marco-no-composite ] && WINDOW_MANAGER=marco-no-composite
+gsettings set org.mate.Marco.general compositing-manager false
 
 # Check for hardware acceleration
 if glxinfo -B | grep "OpenGL renderer string" | grep -qv llvmpipe ; then
   WINDOW_MANAGER=marco
+  gsettings set org.mate.Marco.general compositing-manager true
   # Use marco-glx (picom) on non-intel gpu, if available
-  if glxinfo -B | grep -qiv vendor.*intel; then
+  if ! glxinfo -B | grep -qi vendor.*intel; then
     if [ -f /usr/bin/picom ] && [ -f /usr/bin/marco-glx ] ; then
             WINDOW_MANAGER=marco-glx
     fi
