@@ -25,6 +25,8 @@ VERSION=93
 
 rm debian/control
 
+# Etiona specific llvm workaround.
+sed -i "s/llvm-11-dev | //" debian/control.in
 # Disable remote settings antifeature.
 sed '/async fetchLatestChanges.*/areturn;' -i services/settings/Utils.jsm
 sed '/async download.*/areturn;' -i services/settings/RemoteSettingsClient.jsm services/settings/Attachments.jsm
