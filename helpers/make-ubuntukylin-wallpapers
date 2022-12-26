@@ -17,13 +17,14 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=0
+VERSION=1
 
 . ./config
 
 # Tune default background for kylin
 sed -i "s|background=.*|background=\"/usr/share/backgrounds/$CODENAME.jpg\"|" 30_ubuntukylin-wallpapers.gschema.override
 sed -i "s|picture-uri=.*|picture-uri=\'file:///usr/share/backgrounds/$CODENAME.jpg\'|" 30_ubuntukylin-wallpapers.gschema.override
+cp /usr/share/backgrounds/$CODENAME.jpg warty-final-ubuntukylin.jpg
 
 changelog "Rebranding for trisquel."
 
