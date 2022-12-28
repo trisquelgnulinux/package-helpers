@@ -11,22 +11,22 @@
 +
 +    QDomElement tnews = doc.createElement(QStringLiteral("outline"));
 +    tnews.setAttribute(QStringLiteral("text"), i18n("News"));
-+    tnews.setAttribute(QStringLiteral("xmlUrl"), QStringLiteral("http://trisquel.info/en/node/feed"));
++    tnews.setAttribute(QStringLiteral("xmlUrl"), QStringLiteral("https://trisquel.info/en/node/feed"));
 +    trisquelFolder.appendChild(tnews);
 +
 +    QDomElement relAnnounce = doc.createElement(QStringLiteral("outline"));
 +    relAnnounce.setAttribute(QStringLiteral("text"), i18n("Release announcements"));
-+    relAnnounce.setAttribute(QStringLiteral("xmlUrl"), QStringLiteral("http://trisquel.info/en/taxonomy/term/700/0/feed"));
++    relAnnounce.setAttribute(QStringLiteral("xmlUrl"), QStringLiteral("https://trisquel.info/en/taxonomy/term/700/0/feed"));
 +    trisquelFolder.appendChild(relAnnounce);
 +
 +    QDomElement enForum = doc.createElement(QStringLiteral("outline"));
 +    enForum.setAttribute(QStringLiteral("text"), i18n("Forum"));
-+    enForum.setAttribute(QStringLiteral("xmlUrl"), QStringLiteral("http://trisquel.info/en/taxonomy/term/50/0/feed"));
++    enForum.setAttribute(QStringLiteral("xmlUrl"), QStringLiteral("https://trisquel.info/en/taxonomy/term/50/0/feed"));
 +    trisquelFolder.appendChild(enForum);
 +
 +    QDomElement tReddit = doc.createElement(QStringLiteral("outline"));
 +    tReddit.setAttribute(QStringLiteral("text"), i18n("Trisquel at Reddit"));
-+    tReddit.setAttribute(QStringLiteral("xmlUrl"), QStringLiteral("http://www.reddit.com/r/trisquel/.rss"));
++    tReddit.setAttribute(QStringLiteral("xmlUrl"), QStringLiteral("https://www.reddit.com/r/trisquel/.rss"));
 +    trisquelFolder.appendChild(tReddit);
 +
 +// Free Software feeds
@@ -36,32 +36,32 @@
 +
 +    QDomElement newGNU = doc.createElement(QStringLiteral("outline"));
 +    newGNU.setAttribute(QStringLiteral("text"), i18n("What's New at GNU"));
-+    newGNU.setAttribute(QStringLiteral("xmlUrl"), QStringLiteral("http://www.reddit.com/r/trisquel/.rss"));
++    newGNU.setAttribute(QStringLiteral("xmlUrl"), QStringLiteral("https://www.reddit.com/r/trisquel/.rss"));
 +    fsFolder.appendChild(newGNU);
 +
 +    QDomElement fsfNews = doc.createElement(QStringLiteral("outline"));
 +    fsfNews.setAttribute(QStringLiteral("text"), i18n("FSF News"));
-+    fsfNews.setAttribute(QStringLiteral("xmlUrl"), QStringLiteral("http://static.fsf.org/fsforg/rss/news.xml"));
++    fsfNews.setAttribute(QStringLiteral("xmlUrl"), QStringLiteral("https://static.fsf.org/fsforg/rss/news.xml"));
 +    fsFolder.appendChild(fsfNews);
 +
 +    QDomElement fsfEvents = doc.createElement(QStringLiteral("outline"));
 +    fsfEvents.setAttribute(QStringLiteral("text"), i18n("FSF Events"));
-+    fsfEvents.setAttribute(QStringLiteral("xmlUrl"), QStringLiteral("http://static.fsf.org/fsforg/rss/events.xml"));
++    fsfEvents.setAttribute(QStringLiteral("xmlUrl"), QStringLiteral("https://static.fsf.org/fsforg/rss/events.xml"));
 +    fsFolder.appendChild(fsfEvents);
 +
 +    QDomElement fsfBlog = doc.createElement(QStringLiteral("outline"));
 +    fsfBlog.setAttribute(QStringLiteral("text"), i18n("FSF Blogs"));
-+    fsfBlog.setAttribute(QStringLiteral("xmlUrl"), QStringLiteral("http://static.fsf.org/fsforg/rss/blogs.xml"));
++    fsfBlog.setAttribute(QStringLiteral("xmlUrl"), QStringLiteral("https://static.fsf.org/fsforg/rss/blogs.xml"));
 +    fsFolder.appendChild(fsfBlog);
 +
 +    QDomElement fsDaily = doc.createElement(QStringLiteral("outline"));
 +    fsDaily.setAttribute(QStringLiteral("text"), i18n("fsdaily.com - Free Software News"));
-+    fsDaily.setAttribute(QStringLiteral("xmlUrl"), QStringLiteral("http://www.fsdaily.com/feed/published/All"));
++    fsDaily.setAttribute(QStringLiteral("xmlUrl"), QStringLiteral("https://www.fsdaily.com/feed/published/All"));
 +    fsFolder.appendChild(fsDaily);
 +
 +    QDomElement gnuReddit = doc.createElement(QStringLiteral("outline"));
 +    gnuReddit.setAttribute(QStringLiteral("text"), i18n("GNU at Reddit"));
-+    gnuReddit.setAttribute(QStringLiteral("xmlUrl"), QStringLiteral("http://www.reddit.com/r/gnu/.rss"));
++    gnuReddit.setAttribute(QStringLiteral("xmlUrl"), QStringLiteral("https://www.reddit.com/r/gnu/.rss"));
 +    fsFolder.appendChild(gnuReddit);
 +
      return doc;
