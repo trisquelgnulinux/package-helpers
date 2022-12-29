@@ -23,7 +23,7 @@ set -e
 set -o pipefail
 
 export LANG=C LC_TIME=C
-PACKAGE=$(echo $0 |/bin/sed s/make-//)
+PACKAGE=$(echo $0 |/bin/sed s/^make-//)
 
 export DATE=$(date +'%a, %d %b %Y %T %z')
 
