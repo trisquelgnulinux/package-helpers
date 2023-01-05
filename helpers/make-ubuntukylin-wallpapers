@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 
 . ./config
 
@@ -26,8 +26,25 @@ sed -i "s|background=.*|background=\"/usr/share/backgrounds/$CODENAME.jpg\"|" 30
 sed -i "s|picture-uri=.*|picture-uri=\'file:///usr/share/backgrounds/$CODENAME.jpg\'|" 30_ubuntukylin-wallpapers.gschema.override
 
 # Copy final artwork from trisquel-packages/$VERSION/trisquel-wallpapers repository.
-# Make sure to force helper fail on release update.
+# Make sure to force helper fail on release update, so it's fixed once the new artwork is released.
 cp $DATA/$CODENAME.jpg warty-final-ubuntukylin.jpg
+
+# Add current release wallpaper to any possible xml release kylin-wallpaper file.
+for i in $(find -name \*.xml.in)
+do
+sed -i '/<\/wallpapers>/,/^$/d' $i
+cat << EOF >> $i
+ <wallpaper>
+     <_name>Trisquel $REVISION - ${CODENAME^}</_name>
+     <filename>/usr/share/backgrounds/$CODENAME.jpg</filename>
+     <options>zoom</options>
+     <pcolor>#000000</pcolor>
+     <scolor>#000000</scolor>
+     <shade_type>solid</shade_type>
+ </wallpaper>
+</wallpapers>
+EOF
+done
 
 changelog "Rebranding for trisquel."
 
