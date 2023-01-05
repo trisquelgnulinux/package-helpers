@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
+VERSION=4
 . ./config
 
 rm_pkg_line(){
@@ -52,7 +52,10 @@ grep -rl plymouth-theme | xargs sed -i '/plymouth-theme/s|ubuntu|trisquel|g'
 grep -rl sounds | xargs sed -i '/sounds/s|ubuntu|trisquel|g'
 grep -rl ubuntu-keyring | xargs sed -i 's|ubuntu-keyring|trisquel-keyring|g'
 grep -l ubuntu-kylin-software-center desktop* | \
-    xargs sed -i "s|ubuntu-kylin-software-center|trisquel-app-install\nsynaptic|g"
+    xargs sed -i "s|ubuntu-kylin-software-center|trisquel-app-install|g"
+# Keep an eye on later versions as wayland might replace X.org dependencies.
+grep -l brltty desktop* | \
+    xargs sed -i "s|brltty|brltty\nbrltty-x11|g"
 
 # Remove raspimeta package components
 rm update.cfg
