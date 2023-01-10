@@ -36,6 +36,9 @@ done < debian/docs
 mv debian/docs.new debian/docs
 cat debian/docs
 
+# Prevent missing binary requirement due backported version.
+sed -i "s|gnome-pkg-tools.*|gnome-pkg-tools (< 0.21),|" debian/control
+
 changelog "Revert from using ubuntu-help to default gnome-help"
 compile
 
