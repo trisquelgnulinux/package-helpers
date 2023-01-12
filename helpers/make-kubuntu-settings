@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2021-2022  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2021-2023  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=11
+VERSION=12
 
 . ./config
 
@@ -118,7 +118,7 @@ ColorScheme=Breeze
 Theme=breeze
 
 [plasmarc][Theme]
-name=Triskel
+name=breeze-dark
 
 [Wallpaper]
 Image=Aramo
@@ -200,6 +200,9 @@ sed '1s/triskel/kubuntu/' -i debian/control
 
 cp $DATA/start.svgz desktop/theme/desktoptheme/triskel/icons/start.svgz
 cp $DATA/fullscreenpreview.jpg $DATA/preview.png desktop/theme/look-and-feel/org.triskel.desktop/contents/previews/
+
+# Use regular task manager instead of icon-only version
+sed 's/plasma.icontasks/plasma.taskmanager/' -i desktop/theme/layout-templates/org.triskel.desktop.defaultPanel/contents/layout.js
 
 changelog "Adapted for Triskel"
 
