@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2022 Luis Guzman <ark@switnet.org>
+#    Copyright (C) 2023 Luis Guzman <ark@switnet.org>
 #    Copyright (C) 2011-2022  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C) 2019 Mason Hock <mason@masonhock.com>
 #    Copyright (C) 2011  Carlos Pais <freemind@lavabit.com>
@@ -20,36 +20,9 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=9
+VERSION=11
 
 . ./config
-
-cat << EOF | patch -p1
---- source.orig/softwareproperties/SoftwareProperties.py        2014-04-14 17:10:58.000000000 +0200
-+++ source/softwareproperties/SoftwareProperties.py     2014-05-18 03:02:05.309290804 +0200
-@@ -722,8 +746,19 @@
-     site is in whitelist or the shortcut implementer adds it.
-     """
- 
--    deb_line = shortcut.SourceEntry().line
--    file = shortcut.sourceparts_file
-+    codenames = {}
-+    codenames["aramo"] = "jammy"
-+    codenames["nabia"] = "focal" 
-+    codenames["etiona"] = "bionic" 
-+    codenames["flidas"] = "xenial" 
-+    codenames["belenos"] = "trusty" 
-+    codenames["toutatis"] = "precise" 
-+    codenames["brigantia"] = "oneiric" 
-+    codenames["dagda"] = "natty"
-+    codenames["slaine"] = "maverick"
-+    codenames["taranis"] = "lucid"
-+    codenames["awen"] = "karmic" 
-+    (deb_line, file) = shortcut.expand(codename=codenames[self.distro.codename])
-     deb_line = self.expand_http_line(deb_line)
-     debsrc_entry_type = 'deb-src' if enable_source_code else '# deb-src'
-     debsrc_line = debsrc_entry_type + deb_line[3:]
-EOF
 
   #Temporary removal of livepatch LP:1965993
   #patch -p1 < $DATA/remove_livepatch_from_gtk_uiv1_1.patch
@@ -59,8 +32,8 @@ rm softwareproperties/gtk/UbuntuProPage.py
 patch --no-backup-if-mismatch -p0 < $DATA/remove_snap_label.patch
 
 #Python specific changes
-cp $DATA/trisquel_info.py softwareproperties/gtk/
-sed -i '/import softwareproperties.SoftwareProperties/a from softwareproperties.gtk.trisquel_info import trisquel_rel_desc, trisquel_eol' softwareproperties/gtk/SoftwarePropertiesGtk.py
+cp $DATA/trisquel_info.py softwareproperties/
+sed -i '/import softwareproperties.SoftwareProperties/a from softwareproperties.trisquel_info import trisquel_rel_desc, trisquel_eol' softwareproperties/gtk/SoftwarePropertiesGtk.py
 sed -i 's|eol_date = distro.eol|eol_date = trisquel_eol|' softwareproperties/gtk/SoftwarePropertiesGtk.py
 sed -i 's|eol_text = .*|eol_text = trisquel_rel_desc|' softwareproperties/gtk/SoftwarePropertiesGtk.py
 #Allow to start and remove drivers tab for qt flavor
@@ -109,8 +82,10 @@ sed -i '/init_ubuntu_pro/d' softwareproperties/gtk/SoftwarePropertiesGtk.py
 
 #Livepatch - aramo
 patch --no-backup-if-mismatch -p0 < $DATA/aramo_rm_livepatch.patch
+#Patch codename for PPAs
+patch --no-backup-if-mismatch -p1 < $DATA/fix_PPA_upstream_codename.patch
 
-changelog "Removed Ubuntu-specifc tests, Livepatch, Snap"
+changelog "Removed Ubuntu-specifc tests, Livepatch, Snap and fix PPA integration."
 
 compile
 
