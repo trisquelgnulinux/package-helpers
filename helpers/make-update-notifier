@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2012-2022 Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2012-2023 Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=5
+VERSION=6
 COMPONENT=main
 
 . ./config
@@ -35,6 +35,35 @@ echo "exit 0" > data/list-oem-metapackages
 
 # Prevent automated connections
 sed '/Update-Package-Lists/s/1/0/' -i debian/10periodic
+
+# Allow to run under KDE
+sed '/NotShowIn=KDE/d' -i data/update-notifier.desktop.in
+
+# Actually show the indicator icon
+cat << EOF | patch -p1
+diff --git a/src/update.c b/src/update.c
+index 588fa66..951a24f 100644
+--- a/src/update.c
++++ b/src/update.c
+@@ -687,7 +687,6 @@ update_check (TrayApplet *ta)
+ 
+       g_child_watch_add (pid, launch_update_manager, NULL);
+    }
+-   return TRUE;
+ 
+    // if we are already visible, skip the rest
+    if(tray_applet_ui_get_visible (ta))
+EOF
+
+# Custom icons
+cp $DATA/icons/* ./pixmaps/scalable
+rm ./pixmaps/{16x16,22x22,24x24,48x48}/ -rf
+echo "SUBDIRS = scalable" > pixmaps/Makefile.am
+sed '/pixmaps\/..x..\/Makefile/d' -i configure.ac
+sed '/usr\/share\/icons\/hicolor\/..x../d' -i debian/update-notifier.install
+
+# Disable livepatch
+sed '/livepatch/d' -i debian/update-notifier.install
 
 changelog "Disabled hp-firmware handling and ubuntu-drivers"
 
