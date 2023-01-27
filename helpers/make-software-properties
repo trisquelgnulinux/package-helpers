@@ -20,13 +20,13 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=11
+VERSION=12
 
 . ./config
 
-  #Temporary removal of livepatch LP:1965993
-  #patch -p1 < $DATA/remove_livepatch_from_gtk_uiv1_1.patch
-  #patch -p1 < $DATA/disable-livepatch.patch
+#Remove logo
+rm data/ubuntu-pro-logo*.svg
+sed -i '/ubuntu-pro-logo/d' debian/software-properties-gtk.install
 
 rm softwareproperties/gtk/UbuntuProPage.py
 patch --no-backup-if-mismatch -p0 < $DATA/remove_snap_label.patch
@@ -37,8 +37,6 @@ sed -i '/import softwareproperties.SoftwareProperties/a from softwareproperties.
 sed -i 's|eol_date = distro.eol|eol_date = trisquel_eol|' softwareproperties/gtk/SoftwarePropertiesGtk.py
 sed -i 's|eol_text = .*|eol_text = trisquel_rel_desc|' softwareproperties/gtk/SoftwarePropertiesGtk.py
 #Allow to start and remove drivers tab for qt flavor
-  #Temporary removal of livepatch LP:1965993
-  #sed -i '/info_bar_ubuntu_pro/d' softwareproperties/gtk/SoftwarePropertiesGtk.py
 sed -i '/UbuntuDrivers/d' softwareproperties/qt/SoftwarePropertiesQt.py
 sed -i '/tab_switched(self)/i \ \ \ \ self.userinterface.tabWidget.removeTab(4)' softwareproperties/qt/SoftwarePropertiesQt.py
 sed -i '/tab_switched(self)/,/self.button_revert.setVisible(True)/{//!d}' softwareproperties/qt/SoftwarePropertiesQt.py
@@ -62,10 +60,7 @@ replace "Trisquel-Gettext" "Ubuntu-Gettext" .
 sed '/test_suite/d' -i setup.py
 rm -rf tests
 
-sed '/gir1.2-snapd-1/d' -i debian/control
-  #Temporary removal of livepatch LP:1965993
-  #sed '/self.init_livepatch/d' -i softwareproperties/gtk/SoftwarePropertiesGtk.py
-  #sed 's/status = self.get_status()/status = Snapd.SnapStatus.UNKNOWN/' -i softwareproperties/LivepatchSnap.py
+sed -i '/ubuntu-advantage-tools/d' debian/control
 
 rm data/software-properties-drivers.desktop.in
 sed -i '/software-properties-drivers/d' po/POTFILES.in
@@ -81,7 +76,8 @@ sed -i '/TrisquelProPage/d' softwareproperties/gtk/SoftwarePropertiesGtk.py
 sed -i '/init_ubuntu_pro/d' softwareproperties/gtk/SoftwarePropertiesGtk.py
 
 #Livepatch - aramo
-patch --no-backup-if-mismatch -p0 < $DATA/aramo_rm_livepatch.patch
+patch --no-backup-if-mismatch -p1 < $DATA/remove_ubuntu_suscription_tab.patch
+patch --no-backup-if-mismatch -p1 < $DATA/remove_proposed_updates.patch
 #Patch codename for PPAs
 patch --no-backup-if-mismatch -p1 < $DATA/fix_PPA_upstream_codename.patch
 
