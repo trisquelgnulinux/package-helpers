@@ -52,6 +52,7 @@ replace TrisquelDistribution UbuntuDistribution .
 sed '/NoDisplay/d; s/Trisquel/Ubuntu/' -i data/software-properties-gtk.desktop.in
 
 sed '/ubuntu-drivers-common/d' -i debian/control
+sed '/ubuntu-advantage-tools/d' -i debian/control
 sed '/ubuntu-advantage-desktop-daemon/d' -i debian/control
 sed '/software-properties-drivers/d' -i debian/software-properties-gtk.install setup.cfg
 
@@ -59,8 +60,6 @@ replace "Trisquel-Gettext" "Ubuntu-Gettext" .
 
 sed '/test_suite/d' -i setup.py
 rm -rf tests
-
-sed -i '/ubuntu-advantage-tools/d' debian/control
 
 rm data/software-properties-drivers.desktop.in
 sed -i '/software-properties-drivers/d' po/POTFILES.in
