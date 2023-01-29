@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2022 Luis Guzman <ark@switnet.org>
+#    Copyright (C) 2023 Luis Guzman <ark@switnet.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
+VERSION=5
 
 . ./config
 
@@ -26,7 +26,10 @@ patch -p0 < $DATA/README.Debian.patch
 
 cp $DATA/trisquel.csv  ./
 
-changelog "Adding trisquel distro info."
+# The Breaks prevents upgrades
+sed '/Breaks:/d' -i debian/control
+
+changelog "Adding trisquel distro info and upstream equivalent."
 
 compile
 

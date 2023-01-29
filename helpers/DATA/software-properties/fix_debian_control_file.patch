@@ -1,0 +1,21 @@
+--- source/debian/control	2023-01-28 15:46:34.096208164 -0600
++++ source/debain/control_fix	2023-01-28 15:50:38.056941413 -0600
+@@ -75,9 +75,7 @@
+ 
+ Package: software-properties-gtk
+ Architecture: all
+-Depends: ubuntu-advantage-desktop-daemon,
+-         ubuntu-advantage-tools (>= 27.11~),
+-         gir1.2-gtk-3.0,
++Depends: gir1.2-gtk-3.0,
+          libgtk3-perl,
+          python3,
+          python3-dateutil,
+@@ -86,7 +84,6 @@
+          python3-requests-unixsocket,
+          python3-software-properties (= ${binary:Version}),
+          software-properties-common,
+-         ubuntu-drivers-common (>= 1:0.2.75),
+          ${misc:Depends},
+          ${python3:Depends}
+ Recommends: gnome-keyring,
