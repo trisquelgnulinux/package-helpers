@@ -1,0 +1,44 @@
+More info related to the change: https://hg.mozilla.org/mozilla-central/rev/5079bb7577182734823d6e4a3c468115d45a9dd9
+
+diff -Nru firefox-109.0.1+build1-0ubuntu0.22.04.1~mt1+11.0trisquel94/browser/components/search/extensions/ddg/manifest.json firefox-109.0+build2/browser/components/search/extensions/ddg/manifest.json
+--- firefox-109.0.1+build1-0ubuntu0.22.04.1~mt1+11.0trisquel94/browser/components/search/extensions/ddg/manifest.json	2023-01-29 00:04:37.557029994 -0600
++++ firefox-109.0+build2/browser/components/search/extensions/ddg/manifest.json	2023-01-14 12:40:57.000000000 -0600
+@@ -2,7 +2,7 @@
+   "name": "DuckDuckGo",
+   "description": "Search DuckDuckGo",
+   "manifest_version": 2,
+-  "version": "1.3",
++  "version": "1.2",
+   "browser_specific_settings": {
+     "gecko": {
+       "id": "ddg@search.mozilla.org"
+@@ -21,7 +21,7 @@
+       "name": "DuckDuckGo",
+       "search_url": "https://duckduckgo.com/",
+       "search_form": "https://duckduckgo.com/?q={searchTerms}",
+-      "search_url_get_params": "t=ffab&q={searchTerms}",
++      "search_url_get_params": "q={searchTerms}",
+       "suggest_url": "https://ac.duckduckgo.com/ac/",
+       "suggest_url_get_params": "q={searchTerms}&type=list"
+     }
+diff -Nru firefox-109.0.1+build1-0ubuntu0.22.04.1~mt1+11.0trisquel94/browser/components/search/extensions/ddg-html/manifest.json firefox-109.0+build2/browser/components/search/extensions/ddg-html/manifest.json
+--- firefox-109.0.1+build1-0ubuntu0.22.04.1~mt1+11.0trisquel94/browser/components/search/extensions/ddg-html/manifest.json	2023-01-29 00:04:37.509029685 -0600
++++ firefox-109.0+build2/browser/components/search/extensions/ddg-html/manifest.json	2023-01-14 12:40:57.000000000 -0600
+@@ -2,7 +2,7 @@
+   "name": "DuckDuckGo (HTML)",
+   "description": "Search DuckDuckGo (HTML)",
+   "manifest_version": 2,
+-  "version": "1.3",
++  "version": "1.2",
+   "browser_specific_settings": {
+     "gecko": {
+       "id": "ddg-html@search.mozilla.org"
+@@ -21,7 +21,7 @@
+       "name": "DuckDuckGo (HTML)",
+       "search_url": "https://html.duckduckgo.com/html/",
+       "search_form": "https://html.duckduckgo.com/html/?q={searchTerms}",
+-      "search_url_get_params": "t=ffab&q={searchTerms}",
++      "search_url_get_params": "q={searchTerms}",
+       "suggest_url": "https://ac.duckduckgo.com/ac/",
+       "suggest_url_get_params": "q={searchTerms}&type=list"
+     }
