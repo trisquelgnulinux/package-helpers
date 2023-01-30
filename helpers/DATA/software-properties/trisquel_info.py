@@ -3,7 +3,7 @@
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation; either version 2 of the License, or
+#    the Free Software Foundation; either version 3 of the License, or
 #    (at your option) any later version.
 #
 #    This program is distributed in the hope that it will be useful,
@@ -31,7 +31,14 @@ def trisquel_eol():
                                 eol_datetime = datetime.strptime(line['eol'], '%Y-%m-%d')
                                 eol_date = eol_datetime.date()
                                 return eol_date
+def trisquel_upstream():
+    with open('/usr/share/distro-info/trisquel.csv', 'r') as distro_data:
+                trisquel_distro_data = csv.DictReader(distro_data)
+                for line in trisquel_distro_data:
+                        if line['series'] == (release_name):
+                                codename_upstream = line['upstream']
+                                return(codename_upstream)
 
 trisquel_rel_desc = release_description
 trisquel_eol = trisquel_eol()
-
+trisquel_upstream_rel = trisquel_upstream()

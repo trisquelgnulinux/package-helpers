@@ -19,50 +19,24 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=6
+VERSION=7
 
 . ./config
 
-cat << EOF | patch -p1
---- source.orig/softwareproperties/SoftwareProperties.py        2014-04-14 17:10:58.000000000 +0200
-+++ source/softwareproperties/SoftwareProperties.py     2014-05-18 03:02:05.309290804 +0200
-@@ -725,8 +725,17 @@
-     site is in whitelist or the shortcut implementer adds it.
-     """
- 
-+    codenames = {}
-+    codenames["etiona"] = "bionic" 
-+    codenames["flidas"] = "xenial" 
-+    codenames["belenos"] = "trusty" 
-+    codenames["toutatis"] = "precise" 
-+    codenames["brigantia"] = "oneiric" 
-+    codenames["dagda"] = "natty"
-+    codenames["slaine"] = "maverick"
-+    codenames["taranis"] = "lucid"
-+    codenames["awen"] = "karmic" 
-+    (deb_line, file) = shortcut.expand(codename=codenames[self.distro.codename])
--    (deb_line, file) = shortcut.expand(
--        codename=self.distro.codename, distro=self.distro.id.lower())
-     deb_line = self.expand_http_line(deb_line)
-     debsrc_entry_type = 'deb-src' if enable_source_code else '# deb-src'
-     debsrc_line = debsrc_entry_type + deb_line[3:]
-EOF
+#Remove logo
+rm data/ubuntu-pro-logo*.svg
+sed -i '/ubuntu-pro-logo/d' debian/software-properties-gtk.install
 
-patch -p1 < $DATA/remove_livepatch_from_gtk_uiv1_1.patch
-patch -p1 < $DATA/disable-livepatch.patch
-patch -p0 < $DATA/remove_snap_label_etiona.patch
+rm softwareproperties/gtk/UbuntuProPage.py
+patch --no-backup-if-mismatch -p0 < $DATA/remove_snap_label_etiona.patch
 
 # Python specific changes
-cp $DATA/trisquel_info.py softwareproperties/gtk/
-sed -i '/import softwareproperties.SoftwareProperties/a from softwareproperties.gtk.trisquel_info import trisquel_rel_desc, trisquel_eol' softwareproperties/gtk/SoftwarePropertiesGtk.py
+cp $DATA/trisquel_info.py softwareproperties/
+sed -i '/import softwareproperties.SoftwareProperties/a from softwareproperties.trisquel_info import trisquel_rel_desc, trisquel_eol' softwareproperties/gtk/SoftwarePropertiesGtk.py
 sed -i 's|eol_date = distro.eol|eol_date = trisquel_eol|' softwareproperties/gtk/SoftwarePropertiesGtk.py
 sed -i 's|eol_text = .*|eol_text = trisquel_rel_desc|' softwareproperties/gtk/SoftwarePropertiesGtk.py
-# Allow to start and remove drivers tab for kde flavor
-sed -i '/info_bar_ubuntu_pro/d' softwareproperties/gtk/SoftwarePropertiesGtk.py
-
 
 sed '/UbuntuDrivers/d' -i softwareproperties/gtk/SoftwarePropertiesGtk.py
-
 sed '/vbox_drivers/,+1 s/True/False/' -i data/gtkbuilder/main.ui
 
 replace Kubuntu Triskel .
@@ -76,6 +50,8 @@ sed '/NoDisplay/d; s/Trisquel/Ubuntu/' -i data/software-properties-gtk.desktop.i
 sed -i 's|TrisquelDistroInfo|UbuntuDistroInfo|' softwareproperties/gtk/utils.py
 
 sed '/ubuntu-drivers-common/d' -i debian/control
+sed '/ubuntu-advantage-tools/d' -i debian/control
+sed '/ubuntu-advantage-desktop-daemon/d' -i debian/control
 sed '/software-properties-drivers/d' -i debian/software-properties-gtk.install setup.cfg
 
 replace "Trisquel-Gettext" "Ubuntu-Gettext" .
@@ -84,17 +60,25 @@ sed -i 's|UbuntuDistroInfo|TrisquelDistroInfo|g' softwareproperties/gtk/utils.py
 sed '/test_suite/d' -i setup.py
 rm -rf tests
 
-sed '/gir1.2-snapd-1/d' -i debian/control
-sed '/self.init_livepatch/d' -i softwareproperties/gtk/SoftwarePropertiesGtk.py
-sed 's/status = self.get_status()/status = Snapd.SnapStatus.UNKNOWN/' -i softwareproperties/LivepatchSnap.py
-
 rm data/software-properties-drivers.desktop.in
 sed -i '/software-properties-drivers/d' po/POTFILES.in
+sed -i '/TrisquelProPage/d' po/POTFILES.in
 
 rm data/software-properties-livepatch.desktop.in
 sed -i '/software-properties-livepatch.desktop.in/d' po/POTFILES.in
 sed -i '/software-properties-livepatch.desktop.in/d' setup.cfg
 sed -i '/software-properties-livepatch.desktop/s|^|#|' debian/software-properties-gtk.install
+
+#Remove ProPage
+sed -i '/TrisquelProPage/d' softwareproperties/gtk/SoftwarePropertiesGtk.py
+sed -i '/init_ubuntu_pro/d' softwareproperties/gtk/SoftwarePropertiesGtk.py
+
+#Livepatch
+patch --no-backup-if-mismatch -p1 < $DATA/remove_ubuntu_suscription_tab_etiona.patch
+patch --no-backup-if-mismatch -p1 < $DATA/remove_proposed_updates_etiona.patch
+
+#Patch codename for PPAs
+patch --no-backup-if-mismatch -p1 < $DATA/fix_PPA_upstream_codename.patch
 
 changelog "Removed Ubuntu-specifc tests, Livepatch, Snap"
 

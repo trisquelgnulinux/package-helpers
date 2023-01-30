@@ -1,0 +1,21 @@
+diff -Nru source/softwareproperties/ppa.py source_fix/softwareproperties/ppa.py
+--- source/softwareproperties/ppa.py	2023-01-28 16:19:59.142751924 -0600
++++ source_fix/softwareproperties/ppa.py	2023-01-28 16:53:52.630333755 -0600
+@@ -35,6 +35,8 @@
+ 
+ from softwareproperties.shortcuts import ShortcutException
+ 
++from softwareproperties.trisquel_info import trisquel_upstream_rel
++
+ try:
+     import urllib.request
+     from urllib.error import HTTPError, URLError
+@@ -445,7 +445,7 @@
+             # codename is not equal to the PPA's series.
+             # e.g. local:Foobar/xenial and ppa:Trisquel/xenial will use 'xenial'
+             #      local:Foobar/fluffy and ppa:Trisquel/xenial will use '$latest'
+-            codename = get_current_series_from_lp(self._info["distribution"])
++            codename = trisquel_upstream_rel
+         debline = "deb http://ppa.launchpad.net/%s/%s/%s %s main" % (
+             self._info["owner"][1:], self._info["name"],
+             self._info["distribution"], codename)

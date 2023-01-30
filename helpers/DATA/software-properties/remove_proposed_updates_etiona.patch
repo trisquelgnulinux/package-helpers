@@ -1,0 +1,129 @@
+diff -Nru source/data/gtkbuilder/main.ui source_fix/data/gtkbuilder/main.ui
+--- source/data/gtkbuilder/main.ui	2023-01-30 01:29:32.123860781 -0600
++++ source_fix/data/gtkbuilder/main.ui	2023-01-30 01:31:57.612123419 -0600
+@@ -1131,70 +1131,6 @@
+                 <property name="tab_fill">False</property>
+               </packing>
+             </child>
+-            <child>
+-              <object class="GtkBox" id="dev_options">
+-                <property name="visible">True</property>
+-                <property name="can_focus">False</property>
+-                <property name="border_width">12</property>
+-                <property name="orientation">vertical</property>
+-                <property name="spacing">6</property>
+-                <child>
+-                  <object class="GtkFrame" id="frame_children1">
+-                    <property name="visible">True</property>
+-                    <property name="can_focus">False</property>
+-                    <property name="label_xalign">0</property>
+-                    <property name="shadow_type">none</property>
+-                    <child>
+-                      <object class="GtkAlignment" id="alignment1">
+-                        <property name="visible">True</property>
+-                        <property name="can_focus">False</property>
+-                        <property name="top_padding">6</property>
+-                        <property name="left_padding">12</property>
+-                        <child>
+-                          <object class="GtkBox" id="dev_box">
+-                            <property name="visible">True</property>
+-                            <property name="can_focus">False</property>
+-                            <property name="orientation">vertical</property>
+-                            <child>
+-                              <placeholder/>
+-                            </child>
+-                          </object>
+-                        </child>
+-                      </object>
+-                    </child>
+-                    <child type="label">
+-                      <object class="GtkLabel" id="label_updates1">
+-                        <property name="visible">True</property>
+-                        <property name="can_focus">False</property>
+-                        <property name="label" translatable="yes">Use proposed updates if you’re willing to report bugs on any problems that occur.</property>
+-                        <property name="use_markup">True</property>
+-                        <property name="wrap">True</property>
+-                        <property name="max_width_chars">110</property>
+-                      </object>
+-                    </child>
+-                  </object>
+-                  <packing>
+-                    <property name="expand">False</property>
+-                    <property name="fill">True</property>
+-                    <property name="position">0</property>
+-                  </packing>
+-                </child>
+-              </object>
+-              <packing>
+-                <property name="position">5</property>
+-              </packing>
+-            </child>
+-            <child type="tab">
+-              <object class="GtkLabel">
+-                <property name="visible">True</property>
+-                <property name="can_focus">False</property>
+-                <property name="label">Trisquel Pro</property>
+-              </object>
+-              <packing>
+-                <property name="position">6</property>
+-                <property name="tab_fill">False</property>
+-              </packing>
+-            </child>
+           </object>
+           <packing>
+             <property name="expand">True</property>
+diff -Nru source/softwareproperties/gtk/SoftwarePropertiesGtk.py source_fix/softwareproperties/gtk/SoftwarePropertiesGtk.py
+--- source/softwareproperties/gtk/SoftwarePropertiesGtk.py	2023-01-30 01:51:49.254710649 -0600
++++ source_fix/softwareproperties/gtk/SoftwarePropertiesGtk.py	2023-01-30 02:07:42.788946367 -0600
+@@ -357,26 +357,6 @@
+         # Setup the checkbuttons for the child repos / updates
+         for checkbutton in self.vbox_updates.get_children():
+             self.vbox_updates.remove(checkbutton)
+-        for checkbutton in self.dev_box.get_children():
+-            self.dev_box.remove(checkbutton)
+-        if len(self.distro.source_template.children) < 1:
+-            self.frame_children.hide()
+-        for template in self.distro.source_template.children:
+-            # Do not show source entries in there
+-            if template.type == "deb-src":
+-                continue
+-
+-            checkbox = Gtk.CheckButton(label="%s (%s)" % (template.description,
+-                                                          template.name))
+-            checkbox.template = template
+-            self.handlers[checkbox] = checkbox.connect("toggled",
+-                                                   self.on_checkbutton_child_toggled,
+-                                                   template)
+-            if "proposed" in template.name:
+-                self.dev_box.add(checkbox)
+-            else:
+-                self.vbox_updates.add(checkbox)
+-            checkbox.show()
+ 
+         status = get_ua_status()
+         if not is_current_distro_lts():
+@@ -461,12 +441,6 @@
+             checkbox.set_active(active)
+             checkbox.set_inconsistent(inconsistent)
+ 
+-        # Enable or disable the child source checkbuttons
+-        for checkbox in self.dev_box.get_children():
+-            (active, inconsistent) = self.get_comp_child_state(checkbox.template)
+-            checkbox.set_active(active)
+-            checkbox.set_inconsistent(inconsistent)
+-
+         # Enable or disable the component checkbuttons
+         for checkbox in self.vbox_dist_comps.get_children():
+             # check if the comp is enabled
+@@ -478,11 +452,9 @@
+         # and source code
+         if len(self.distro.enabled_comps) < 1:
+             self.vbox_updates.set_sensitive(False)
+-            self.dev_box.set_sensitive(False)
+             self.checkbutton_source_code.set_sensitive(False)
+         else:
+             self.vbox_updates.set_sensitive(True)
+-            self.dev_box.set_sensitive(True)
+             self.checkbutton_source_code.set_sensitive(True)
+ 
+         # Check for source code sources
