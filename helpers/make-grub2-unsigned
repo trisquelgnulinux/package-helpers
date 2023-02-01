@@ -35,10 +35,7 @@ done
 #sed '/dosfstools/d' -i debian/control
 sed '/mkfs.minix/s/-B $BLKSIZE//g' -i tests/util/grub-fs-tester.in
 
-for i in install-efi-ubuntu-flavours.patch mkconfig-ubuntu-distributor.patch; do
-    rm debian/patches/$i
-    sed /$i/d debian/patches/series -i
-done
+remove_patch mkconfig-ubuntu-distributor.patch
 
 #Prevent to built grub2-unsigned on armhf and ppc64el arch
 sed -i "/Architecture:/s|any-arm$|armel|g;s|any-arm |armel|g" debian/control
@@ -51,9 +48,11 @@ sed -i '/Package: grub-common/,/Built-Using:/s|Architecture: any|Architecture: a
 replace "with Linux" "with Linux-Libre" util
 replace "with Linux" "with Linux-Libre" debian
 replace "Linux" "Linux-Libre" po
+replace Kubuntu Triskel .
 replace Ubuntu Trisquel .
+replace kubuntu triskel .
 replace ubuntu trisquel .
-find |grep ubuntu|xargs rename s/ubuntu/trisquel/
+find |grep ubuntu|xargs rename s/ubuntu/trisquel/g
 
 #Avoid the use of signed grub efi package
 sed -i '/Recommends:/s|grub-efi-amd64-signed|grub-efi-amd64|' debian/control
@@ -66,3 +65,4 @@ sed -i '/set -e/aexit 77' tests/grub_cmd_set_date.in
 changelog "skip test grub_cmd_set_date.in"
 
 compile
+
