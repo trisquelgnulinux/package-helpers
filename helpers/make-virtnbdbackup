@@ -21,9 +21,10 @@ VERSION=0
 EXTERNAL='deb-src http://ftp.us.debian.org/debian testing main'
 REPOKEY=04EE7237B7D453EC
 BACKPORTS=true
-
 . ./config
 
+# Set on a supported python version
+sed -i "s|X-Python3-Version:.*|X-Python3-Version: >= 3.10|" debian/control
 
 changelog "Imported into Trisquel"
 compile
