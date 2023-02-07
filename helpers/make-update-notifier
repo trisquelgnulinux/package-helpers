@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=6
+VERSION=7
 COMPONENT=main
 
 . ./config
@@ -64,6 +64,27 @@ sed '/usr\/share\/icons\/hicolor\/..x../d' -i debian/update-notifier.install
 
 # Disable livepatch
 sed '/livepatch/d' -i debian/update-notifier.install
+
+# Wayland compatibility
+cat << EOF | patch -p1
+--- a/src/update-notifier.c	2023-01-20 13:50:39.000000000 -0500
++++ b/src/update-notifier.c	2023-02-07 11:08:58.883996715 -0500
+@@ -168,7 +168,13 @@
+ 
+    // normal launch
+    context = gdk_display_get_app_launch_context (gdk_display_get_default ());
+-   guint32 timestamp =  gdk_x11_get_server_time (gtk_widget_get_window (w));
++   guint32 timestamp;
++#ifdef GDK_WINDOWING_X11
++   if (GDK_IS_X11_DISPLAY (gdk_display_get_default ()))
++      timestamp =  gdk_x11_get_server_time (gtk_widget_get_window (w));
++   else
++#endif
++   timestamp = (guint32) (g_get_monotonic_time () / 1000);
+    appinfo = g_app_info_create_from_commandline(cmd, 
+ 						cmd, 
+ 						G_APP_INFO_CREATE_NONE,
+EOF
 
 changelog "Disabled hp-firmware handling and ubuntu-drivers"
 
