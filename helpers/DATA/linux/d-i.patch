@@ -1,6 +1,6 @@
---- a/debian/rules	2022-10-22 11:16:58.933510340 -0400
-+++ b/debian/rules	2022-10-18 15:38:19.000000000 -0400
-@@ -125,12 +135,19 @@
+--- a/debian/rules	2023-02-10 11:40:38.000000000 -0600
++++ b/debian/rules	2023-02-10 11:53:56.313708852 -0600
+@@ -128,12 +128,19 @@
  	dh_testroot
  	dh_clean
  
@@ -20,15 +20,15 @@
  	cp $(DEBIAN)/changelog debian/changelog
  
  	# Install the copyright information.
-@@ -180,7 +197,6 @@
- $(DEBIAN)/control.stub: 				\
+@@ -184,7 +191,6 @@
  		$(DROOT)/scripts/control-create		\
  		$(control_files)			\
+ 		debian/canonical-revoked-certs.pem	\
 -		$(DROOT)/control.d/flavour-module.stub	\
  		$(DEBIAN)/changelog			\
  		$(wildcard $(DEBIAN)/control.d/* $(DEBIAN)/sub-flavours/*.vars)
  	for i in $(control_files); do                                           \
-@@ -205,7 +221,13 @@
+@@ -210,7 +216,13 @@
  
  .PHONY: debian/control
  debian/control: $(DEBIAN)/control.stub
@@ -42,9 +42,9 @@
  
  debian/canonical-certs.pem: $(wildcard $(DROOT)/certs/*-all.pem) $(wildcard $(DROOT)/certs/*-$(arch).pem) $(wildcard $(DEBIAN)/certs/*-all.pem) $(wildcard $(DEBIAN)/certs/*-$(arch).pem)
  	for cert in $(sort $(notdir $^));					\
---- a/debian/rules.d/2-binary-arch.mk	2022-10-22 11:16:58.937510259 -0400
-+++ b/debian/rules.d/2-binary-arch.mk	2022-10-18 15:38:19.000000000 -0400
-@@ -178,12 +176,14 @@
+--- a/debian/rules.d/2-binary-arch.mk	2023-02-10 11:40:38.000000000 -0600
++++ b/debian/rules.d/2-binary-arch.mk	2023-02-10 11:57:00.107737218 -0600
+@@ -178,12 +178,14 @@
  		$(pkgdir)/boot/config-$(abi_release)-$*
  	install -m600 $(builddir)/build-$*/System.map \
  		$(pkgdir)/boot/System.map-$(abi_release)-$*
