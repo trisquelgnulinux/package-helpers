@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=15
+VERSION=16
 
 . ./config
 
@@ -71,6 +71,30 @@ gsettings set org.mate.session.required-components windowmanager \$WINDOW_MANAGE
 exec \$WINDOW_MANAGER
 EOF
 chmod 755 marco-compton
+
+cat << EOF > data/marco-compton.desktop
+[Desktop Entry]
+Type=Application
+Name=Marco Compton
+Exec=marco-compton
+NoDisplay=true
+# name of loadable control center module
+X-MATE-WMSettingsModule=marco
+# name we put on the WM spec check window
+X-MATE-WMName=Marco
+# back compat only
+X-MateWMSettingsLibrary=marco
+X-MATE-Bugzilla-Bugzilla=MATE
+X-MATE-Bugzilla-Product=marco
+X-MATE-Bugzilla-Component=general
+X-GNOME-Autostart-Phase=WindowManager
+X-MATE-Autostart-Phase=WindowManager
+X-GNOME-Provides=windowmanager
+X-MATE-Provides=windowmanager
+X-GNOME-Autostart-Notify=true
+X-MATE-Autostart-Notify=true
+EOF
+sed "/marco-no-composite.desktop/a\ \ \ \ ('{prefix}/share/applications'.format(prefix=sys.prefix), ['data/marco-compton.desktop',])," -i setup.py
 
 # Add Trisquel to layout list
 sed 's/fedora/trisquel/g; s/Fedora/Trisquel/' -i mate-tweak
