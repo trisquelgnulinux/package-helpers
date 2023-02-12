@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2008-2020  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2008-2023  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C)      2014  Santiago Rodriguez <santi@trisquel.info>
 #    Copyright (C)      2019  Mason Hock <mason@masonhock.com>
 #
@@ -24,7 +24,7 @@
 # Also, don't forget to update the meta-release files at archive and packages.t.i
 # The "obsoletes" list from ubuntu has been removed
 
-VERSION=13
+VERSION=14
 
 . ./config
 
@@ -216,6 +216,8 @@ EOF
 rm data/mirrors.cfg
 #https://mirmon.trisquel.org/conf.txt
 cat << EOF > data/mirrors.cfg
+https://archive.trisquel.org/trisquel/
+https://archive.trisquel.info/trisquel/
 https://mirror.fsf.org/trisquel/
 https://mirror.cedia.org.ec/trisquel.packages/
 https://mirrors.ustc.edu.cn/trisquel/
@@ -235,6 +237,7 @@ EOF
 
 replace changelogs.ubuntu.com packages.trisquel.org .
 
+rpl ubuntu-archive-keyring.gpg trisquel-archive-keyring.gpg . -R
 rpl 11\.04 5\.0 DistUpgrade/*.ui
 rpl 11\.04 5\.0 po/* -R
 rpl 11\.10 5\.5 DistUpgrade/*.ui
@@ -287,7 +290,8 @@ mv kubuntu-devel-release-upgrade triskel-devel-release-upgrade
 mv tests/test-data-cdrom/ubuntu tests/test-data-cdrom/trisquel
 replace old-releases.ubuntu.com oldarchive.trisquel.org
 
-rpl "edubuntu" "trisquel-edu" . -R
+rpl "edubuntu" "trisquel-sugar" . -R
+rpl "xubuntu" "trisquel-mini" . -R
 rpl "kubuntu" "triskel" . -R
 rpl "Kubuntu" "Triskel" . -R
 rpl " Ubuntu " " Trisquel " . -R
