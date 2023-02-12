@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2008-2022  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2008-2023  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C)      2014  Santiago Rodriguez <santi@trisquel.info>
 #    Copyright (C)      2019  Mason Hock <mason@masonhock.com>
 #
@@ -24,7 +24,7 @@
 # Also, don't forget to update the meta-release files at archive and packages.t.i
 # The "obsoletes" list from ubuntu has been removed
 
-VERSION=13
+VERSION=14
 
 . ./config
 
@@ -200,7 +200,7 @@ perl $DATA/parsewiki DistUpgrade/ReleaseAnnouncement > DistUpgrade/ReleaseAnnoun
 perl $DATA/parsewiki DistUpgrade/DevelReleaseAnnouncement > DistUpgrade/DevelReleaseAnnouncement.html
 
 cat <<EOF > data/removal_denylist.cfg
-# blacklist of packages that should never be removed
+# list of packages that should never be removed
 trisquel-base
 trisquel-minimal
 trisquel-desktop-common
@@ -224,6 +224,8 @@ EOF
 rm data/mirrors.cfg
 #https://mirmon.trisquel.org/conf.txt
 cat << EOF > data/mirrors.cfg
+https://archive.trisquel.info/trisquel/
+https://archive.trisquel.org/trisquel/
 https://mirror.fsf.org/trisquel/
 https://mirror.cedia.org.ec/trisquel.packages/
 https://mirrors.ustc.edu.cn/trisquel/
@@ -239,11 +241,11 @@ https://mirrors.nju.edu.cn/trisquel/
 https://mirror.math.princeton.edu/pub/trisquel-packages/
 https://mirror.operationtulip.com/trisquel/packages/
 https://mirrors.dotsrc.org/trisquel/
-https://linkwithlinux.pw/trisquel-packages/
 EOF
 
 replace changelogs.ubuntu.com packages.trisquel.org .
 
+rpl ubuntu-archive-keyring.gpg trisquel-archive-keyring.gpg . -R
 rpl 11\.04 5\.0 DistUpgrade/*.ui
 rpl 11\.04 5\.0 po/* -R
 rpl 11\.10 5\.5 DistUpgrade/*.ui
@@ -262,7 +264,7 @@ replace '18.04' '9.0'
 rpl 20\.04 10\.0 po/* -R
 rpl 20\.04 10\.0 DistUpgrade/*.ui -R
 replace '20.04' '10.0'
-rpl $UPSTREAM $CODENAME . -R
+replace '22.04' '11.0'
 rpl oneiric brigantia . -R
 rpl natty dagda . -R
 rpl maverick slaine . -R
@@ -276,6 +278,7 @@ rpl trusty belenos . -R
 rpl xenial flidas . -R
 rpl bionic etiona . -R
 rpl focal nabia . -R
+rpl jammy aramo . -R
 
 rm data/DistUpgrade.cfg*
 cp $DATA/DistUpgrade.cfg* data/
@@ -296,7 +299,8 @@ mv kubuntu-devel-release-upgrade triskel-devel-release-upgrade
 #mv tests/test-data-cdrom/ubuntu tests/test-data-cdrom/trisquel
 replace old-releases.ubuntu.com oldarchive.trisquel.org
 
-rpl "edubuntu" "trisquel-edu" . -R
+rpl "edubuntu" "trisquel-sugar" . -R
+rpl "xubuntu" "trisquel-mini" . -R
 rpl "kubuntu" "triskel" . -R
 rpl "Kubuntu" "Triskel" . -R
 rpl " Ubuntu " " Trisquel " . -R
