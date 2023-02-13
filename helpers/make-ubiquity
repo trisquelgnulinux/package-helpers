@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2011-2022  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2011-2023  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C)      2019  Mason Hock <mason@masonhock.com>
 #
 #    This program is free software; you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=31
+VERSION=32
 
 . ./config
 
@@ -27,6 +27,10 @@ VERSION=31
 
 # Fix some gtk labels for Orca
 patch -p1 < $DATA/a11y.patch
+
+# Revert changes to advanced features page
+cp $DATA/stepPartAsk.ui gui/gtk/stepPartAsk.ui
+sed '/# Advanced features in new installs/,/^$/d' -i ubiquity/plugins/ubi-partman.py
 
 # Do not try to start orca on ubiquity-dm
 sed 's/osextras.find_on_path.*orca.*/False:  # Disabled by trisquel changes/' -i bin/ubiquity-dm
@@ -220,6 +224,7 @@ replace archive.ubuntu.com/ubuntu archive.trisquel.org/trisquel .
 replace security.ubuntu.com/trisquel archive.trisquel.org/trisquel .
 replace archive.ubuntu.com archive.trisquel.org .
 replace security.ubuntu.com archive.trisquel.org .
+replace help.ubuntu.com/bitlocker trisquel.info/en/wiki/bitlocker .
 #sed -i 's/apt-install/true #apt-install/' ubiquity/components/check_kernels.py
 sed -i 's/apt-install/true #apt-install/' scripts/check-kernels
 #sed -i '82s/True/False/g' gui/gtk/stepPrepare.ui
