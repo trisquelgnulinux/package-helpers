@@ -20,12 +20,8 @@
 #
 
 VERSION=15
-. ./config
 
-for PATCH in $DATA/*.patch ; do
-  echo $PATCH
-  patch --no-backup-if-mismatch -p1 < $PATCH
-done
+. ./config
 
 PRESERVEDIRS='
 drivers/gpu/drm/amd/amdgpu
@@ -58,11 +54,16 @@ for DIR in $PRESERVEDIRS; do
   cp $DIR $TMPDIR --parents -a
 done
 
-sh $DATA/deblob-5.15 --force
+sh $DATA/deblob-5.15
 
 echo "Reverting deblobbing for files patched by silent-accept-firmware"
 cp $TMPDIR/* . -av
 rm -rf $TMPDIR
+
+for PATCH in $DATA/*.patch ; do
+  echo $PATCH
+  patch --no-backup-if-mismatch -p1 < $PATCH
+done
 
 # Re-enable udebs
 cp $DATA/5-udebs.mk debian/rules.d
