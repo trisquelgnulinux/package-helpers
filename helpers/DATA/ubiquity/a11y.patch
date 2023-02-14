@@ -9,17 +9,6 @@ diff -ru source.orig/gui/gtk/stepKeyboardConf.ui source/gui/gtk/stepKeyboardConf
                    </object>
                    <packing>
                      <property name="expand">False</property>
-diff -ru source.orig/gui/gtk/stepPartAsk.ui source/gui/gtk/stepPartAsk.ui
---- source.orig/gui/gtk/stepPartAsk.ui	2021-11-22 14:53:55.028805021 -0500
-+++ source/gui/gtk/stepPartAsk.ui	2021-11-24 12:59:59.998653586 -0500
-@@ -184,6 +184,7 @@
-             <property name="label" translatable="yes">This computer currently has Trisquel 11.04 on it. What would you like to do?</property>
-             <property name="wrap">True</property>
-             <property name="width_chars">45</property>
-+            <property name="mnemonic_widget">use_device</property>
-           </object>
-           <packing>
-             <property name="left_attach">0</property>
 diff -ru source.orig/gui/gtk/stepPartAuto.ui source/gui/gtk/stepPartAuto.ui
 --- source.orig/gui/gtk/stepPartAuto.ui	2021-11-22 14:53:55.056804575 -0500
 +++ source/gui/gtk/stepPartAuto.ui	2021-11-24 14:24:32.143372256 -0500
