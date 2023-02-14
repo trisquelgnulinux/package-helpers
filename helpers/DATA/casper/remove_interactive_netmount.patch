@@ -1,0 +1,15 @@
+--- a/scripts/casper	2022-05-30 09:40:38.000000000 -0500
++++ b/scripts/casper	2023-02-13 23:47:27.515797105 -0600
+@@ -955,12 +955,6 @@
+             sleep 1
+             i="$(($i + 1))"
+         done
+-
+-        if [ -z "${livefs_root}" ]; then
+-            if do_interactive_netmount ; then
+-                livefs_root="${mountpoint}"
+-            fi
+-        fi
+     fi
+ 
+     if [ -z "${livefs_root}" ]; then
