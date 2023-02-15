@@ -34,20 +34,22 @@ done
 #sed '/dosfstools/d' -i debian/control
 sed '/mkfs.minix/s/-B $BLKSIZE//g' -i tests/util/grub-fs-tester.in
 
-for i in install-efi-ubuntu-flavours.patch mkconfig-ubuntu-distributor.patch; do
+for i in install_efi_ubuntu_flavours.patch mkconfig_ubuntu_distributor.patch ; do
     rm debian/patches/$i
     sed /$i/d debian/patches/series -i
 done
 
 #Allow passwords https://bugs.launchpad.net/ubuntu/+source/grub2/+bug/1311302
-/bin/sed '/CLASS=/s/class os/class os --unrestricted/' -i util/grub.d/* debian/patches/mkconfig-other-inits.patch
+/bin/sed '/CLASS=/s/class os/class os --unrestricted/' -i util/grub.d/* debian/patches/mkconfig_other_inits.patch
 
 replace "with Linux" "with Linux-Libre" util
 replace "with Linux" "with Linux-Libre" debian
 replace "Linux" "Linux-Libre" po
+replace Kubuntu Triskel .
 replace Ubuntu Trisquel .
+replace kubuntu triskel .
 replace ubuntu trisquel .
-find |grep ubuntu|xargs rename s/ubuntu/trisquel/
+find |grep ubuntu|xargs rename s/ubuntu/trisquel/g
 
 # Allow Windows and MacOX entries to boot without a password
 sed 's/class osx/class osx --unrestricted/; s/class windows/class osx --unrestricted/;' -i ./util/grub.d/30_os-prober.in
