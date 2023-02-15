@@ -23,10 +23,11 @@
 # or fetch such packages from Debian in order to build the required udeb packages.
 ##
 
-VERSION=1
+VERSION=2
 NETINST=true
 . ./config
 
+sed 's/fail-missing/list-missing/g' -i debian/rules
 
 changelog "Rebuild upstream to get udeb dependency for debian-installer."
 compile
