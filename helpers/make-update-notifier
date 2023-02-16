@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=7
+VERSION=8
 COMPONENT=main
 
 . ./config
@@ -84,6 +84,26 @@ cat << EOF | patch -p1
     appinfo = g_app_info_create_from_commandline(cmd, 
  						cmd, 
  						G_APP_INFO_CREATE_NONE,
+EOF
+
+# Removal of whoopsie & apport
+cat << EOF | patch -p1
+--- a/debian/control	2023-02-16 10:12:29.302592910 -0600
++++ b/debian/control	2023-02-16 10:15:08.276963044 -0600
+@@ -35,11 +35,9 @@
+          ubuntu-release-upgrader-gtk,
+          gnome-shell <!s390x> | notification-daemon <!s390x>,
+          policykit-1
+-Recommends: apport-gtk (>=2.8-0ubuntu3), 
+-            python3-aptdaemon.gtk3widgets | synaptic (>= 0.75.12), 
++Recommends: python3-aptdaemon.gtk3widgets | synaptic (>= 0.75.12), 
+             software-properties-gtk, 
+-            python3-aptdaemon,
+-            whoopsie (>= 0.2.77)
++            python3-aptdaemon
+ Description: Daemon which notifies about package updates
+  Puts an icon in the user's notification area when package updates are
+  available.
 EOF
 
 changelog "Disabled hp-firmware handling and ubuntu-drivers"
