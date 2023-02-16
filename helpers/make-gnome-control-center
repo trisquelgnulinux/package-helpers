@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2021 Luis Guzman <ark@switnet.org>
+#    Copyright (C) 2023 Luis Guzman <ark@switnet.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -15,14 +15,23 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-VERSION=1
+VERSION=2
 
 . ./config
 
-replace ubuntu-logo-icon TrisquelLogo
+# Replace icons
+for i in ubuntu-logo-icon ubuntu-logo-dark
+do
+    replace $i TrisquelLogo
+    rm debian/$i.png
+done
 cp $DATA/TrisquelLogo.png debian/TrisquelLogo.png
-rm debian/ubuntu-logo-icon.png
 
-changelog "Rebrand for trisquel."
+# Remove whoopsie/-preferences dependency from gnome-control-center
+sed -i '/whoopsie-preferences/d' debian/control*
+sed -i "/whoopsie/d" debian/rules
+remove_patch diagnostics-Add-Whoopsie-support.patch
+
+changelog "Rebrand for trisquel and remove whoopsie dependency."
 
 compile
