@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=4
+VERSION=5
 . ./config
 
 rm_pkg_line(){
@@ -28,6 +28,8 @@ grep -rl $1 | xargs sed -i "/$1/d"
 grep -l ubuntu-drivers-common desktop* | xargs sed -i '/ubuntu-drivers-common/d'
 grep -l snapd desktop* | xargs sed -i '/snapd/d'
 grep -l kylin-docs desktop* | xargs sed -i '/ubuntu-kylin-docs/d'
+grep -l whoopsie desktop* | xargs sed -i '/whoopsie/d'
+grep -l apport desktop* | xargs sed -i '/apport/d'
 rm_pkg_line xul-ext-ubufox
 rm_pkg_line branding-ubuntu
 rm_pkg_line ubuntu-advantage-tools
