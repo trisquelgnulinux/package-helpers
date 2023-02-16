@@ -262,7 +262,7 @@ fi
 }
 
 remove_patch(){
-  rm "$(find debian/patches -name "$1")"
+  rm "$(find */patches -name "$1")"
   sed -i "/$1/d" debian/patches/series
 }
 
