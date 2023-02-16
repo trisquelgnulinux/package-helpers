@@ -1,0 +1,63 @@
+#!/bin/sh
+#
+#    Copyright (C) 2023 Luis Guzman <ark@switnet.org>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+EXTERNAL='deb-src http://ftp.debian.org/debian unstable main'
+REPOKEY=04EE7237B7D453EC
+VERSION=2
+
+. ./config
+
+# Disbale ppc64el arch
+sed -i "/Architecture:/s|any|amd64 armhf arm64|g" debian/control
+
+# Add trisquel aramo's dependencies
+sed -i "/# Qt client/i # trisquel's aramo dependencies" debian/control
+for i in    "libgl1-mesa-dev" \
+            "libqt6opengl6-dev" \
+            "libvulkan-dev" \
+            "libxkbcommon-dev"
+do
+    sed -i "/# Qt client/i \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ $i," debian/control
+done
+
+
+# Add aramo's missing runtime dependencies
+for i in    "libqt6multimediaquick6" \
+            "libqt6quickshapes6" \
+            "libqt6quicktemplates2-6" \
+            "libqt6webenginecore6-bin [amd64 armhf arm64]" \
+            "qt6-qpa-plugins"
+do
+    sed -i "/jami-daemon (=/i \ \ \ \ \ \ \ \ \ $i," debian/control
+done
+
+# Remove not available qt libraries at Trisquel 11.0
+for i in 	qt6-5compat-dev \
+		qml6-module-qtquick3d-spatialaudio
+do
+    sed -i "/$i/d" debian/control
+done
+
+# Removing ffmpeg time_base feature req. from jami so it builds
+# against libavutil56 (ffmpeg 4.4). Can be removed on Trisquel 12
+patch -R -p1 < $DATA/ffmpeg_time_base_frame.patch
+
+changelog "Backport ring/jammi to aramo from debian testing"
+
+compile
