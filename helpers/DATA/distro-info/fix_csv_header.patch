@@ -1,0 +1,12 @@
+diff -Nru source/trisquel-distro-info.c source_fix/trisquel-distro-info.c
+--- source/trisquel-distro-info.c	2023-02-16 20:40:58.429813624 -0600
++++ source_fix/trisquel-distro-info.c	2023-02-16 20:41:38.201917247 -0600
+@@ -16,7 +16,7 @@
+ 
+ #define TRISQUEL
+ #define CSV_NAME "trisquel"
+-#define CSV_HEADER "version,codename,series,created,release,eol"
++#define CSV_HEADER "version,codename,series,created,release,eol,upstream"
+ #define DISTRO_NAME "Trisquel GNU/Linux"
+ #define NAME "trisquel-distro-info"
+ 
