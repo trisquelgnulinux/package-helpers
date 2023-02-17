@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2021 Luis Guzman <ark@switnet.org>
+#    Copyright (C) 2023 Luis Guzman <ark@switnet.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 
 . ./config
 
@@ -28,21 +28,23 @@ sed -i 's|Ubuntu|Trisquel GNU/Linux|g' trisquel-distro-info.c
 sed -i 's|UBUNTU|TRISQUEL|g' trisquel-distro-info.c
 sed -i 's|,eol-server,eol-esm||' trisquel-distro-info.c
 sed -i 's|Ubuntu|Trisquel GNU/Linux|' shell/ubuntu-distro-info.in
+patch --no-backup-if-mismatch -p1 < $DATA/fix_csv_header.patch
 
 # distro-info-util.c
-patch -p1 < $DATA/distro-info-util_c.patch
+patch --no-backup-if-mismatch -p1 < $DATA/distro-info-util_c.patch
 
 #test-ubuntu-distro-info
 cp $DATA/test-trisquel-distro-info .
 
 #python dir
-patch -p1 < $DATA/distro_info_py.patch
+patch --no-backup-if-mismatch -p1 < $DATA/distro_info_py.patch
 replace Ubuntu Trisquel
 replace ubuntu trisquel
 #Maybe too much
 #sed -i '/__init__/s|"Trisquel"|"Trisquel GNU/Linux"|' python/distro_info.py
 mv python/ubuntu-distro-info python/trisquel-distro-info
 cp $DATA/test_distro_info.py python/distro_info_test/
+rm python/distro_info_test/test_flake8.py
 
 #perl
 cp $DATA/test.pl perl/
