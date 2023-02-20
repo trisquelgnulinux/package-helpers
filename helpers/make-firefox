@@ -19,14 +19,12 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=94
+VERSION=95
 
 . ./config
 
 rm debian/control
 
-# Etiona specific llvm workaround.
-sed -i "s/llvm-11-dev | //" debian/control.in
 # Disable remote settings antifeature.
 sed '/async fetchLatestChanges.*/areturn;' -i services/settings/Utils.jsm
 sed '/async download.*/areturn;' -i services/settings/RemoteSettingsClient.jsm services/settings/Attachments.jsm
