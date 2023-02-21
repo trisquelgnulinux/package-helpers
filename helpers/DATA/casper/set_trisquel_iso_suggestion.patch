@@ -1,0 +1,27 @@
+--- a/scripts/casper    2023-02-13 23:53:18.908768968 -0600
++++ b/scripts/casper    2023-02-21 03:28:55.176581755 -0600
+@@ -376,18 +376,18 @@
+     # maybe make livecd-rootfs embed something in the casper initrd?
+     case $PRETTY_NAME in
+         *development*)
+-            server_url=http://cdimage.ubuntu.com/ubuntu-server/daily-live/current/$UBUNTU_CODENAME-live-server-$DPKG_ARCH.iso
+-            desktop_url=http://cdimage.ubuntu.com/daily-live/current/$UBUNTU_CODENAME-desktop-$DPKG_ARCH.iso
++            server_url=""
++            desktop_url=""
+             ;;
+         *)
+             case $DPKG_ARCH in
+                 amd64)
+-                    server_url=https://releases.ubuntu.com/$UBUNTU_CODENAME/ubuntu-$VERSION_ID-live-server-$DPKG_ARCH.iso
+-                    desktop_url=https://releases.ubuntu.com/$UBUNTU_CODENAME/ubuntu-$VERSION_ID-desktop-$DPKG_ARCH.iso
++                    server_url=http://cdimage.trisquel.org/trisquel-images/${ID}-netinst_${VERSION_ID}_${DPKG_ARCH}.iso
++                    desktop_url=http://cdimage.trisquel.org/trisquel-images/${ID}_${VERSION_ID}_${DPKG_ARCH}.iso
+                     ;;
+                 *)
+-                    server_url=http://cdimage.ubuntu.com/releases/$UBUNTU_CODENAME/release/ubuntu-$VERSION_ID-live-server-$DPKG_ARCH.iso
+-                    desktop_url=http://cdimage.ubuntu.com/releases/$UBUNTU_CODENAME/release/ubuntu-$VERSION_ID-desktop-$DPKG_ARCH.iso
++                    server_url=http://cdimage.trisquel.org/trisquel-images/${ID}-netinst_${VERSION_ID}_${DPKG_ARCH}.iso
++                    desktop_url=http://cdimage.trisquel.org/trisquel-images/${ID}_${VERSION_ID}_${DPKG_ARCH}.iso
+                     ;;
+             esac
+             ;;

@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=16
+VERSION=17
 
 . ./config
 
@@ -43,8 +43,8 @@ sed 's/Depends:/Depends: localechooser-data,\n/' -i debian/control
 sed "s/cut/cut -d: -f2- | cut/" -i scripts/casper-functions
 sed "s/head -n1/sed -n 1p/" -i scripts/casper-functions
 
-#Remove ubuntu's net images load on empty livefs.
-patch -p1 < $DATA/remove_interactive_netmount.patch
+# Set trisquel isos as default suggestion.
+patch --no-backup-if-mismatch -p1 < $DATA/set_trisquel_iso_suggestion.patch
 
 changelog "Compiled for Trisquel"
 
