@@ -1,0 +1,28 @@
+{
+  "name": "Trisquel Packages",
+  "description": "Search available software packages for Trisquel GNU/Linux",
+  "manifest_version": 2,
+  "version": "1.0",
+  "applications": {
+    "gecko": {
+      "id": "trisquel-packages@search.mozilla.org"
+    }
+  },
+  "hidden": true,
+  "icons": {
+    "16": "favicon.ico",
+    "32": "favicon.ico",
+    "48": "favicon.ico",
+    "256": "favicon.ico"
+  },
+  "web_accessible_resources": [
+    "favicon.ico"
+  ],
+  "chrome_settings_overrides": {
+    "search_provider": {
+      "name": "Trisquel Packages",
+      "search_url": "https://packages.trisquel.org/search?keywords={searchTerms}",
+      "search_form": "https://packages.trisquel.org/search?keywords={searchTerms}"
+    }
+  }
+}

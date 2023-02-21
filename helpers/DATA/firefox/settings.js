@@ -92,7 +92,7 @@ pref("network.protocol-handler.external.apt+http",true);
 // https://webdevelopmentaid.wordpress.com/2013/10/21/customize-privacy-settings-in-mozilla-firefox-part-1-aboutconfig/
 // https://panopticlick.eff.org
 // https://wiki.mozilla.org/Fingerprinting
-pref("browser.contentblocking.features.strict", "tp,tpPrivate,cookieBehavior1,cm,fp,stp");
+//pref("browser.contentblocking.features.strict", "tp,tpPrivate,cookieBehavior1,cm,fp,stp");
 pref("privacy.donottrackheader.enabled", true);
 pref("privacy.donottrackheader.value", 1);
 pref("dom.ipc.plugins.flash.subprocess.crashreporter.enabled", false);
@@ -232,7 +232,7 @@ pref("browser.onboarding.updatetour", "performance,library,singlesearch,customiz
 pref("browser.onboarding.enabled", false);
 
 // New tab settings
-pref("browser.newtabpage.activity-stream.default.sites", "https://trisquel.info/,https://www.gnu.org/,https://www.fsf.org/,https://directory.fsf.org,https://libreplanet.org/,https://fsfe.org,https://www.wikipedia.org/wiki/,https://www.h-node.org/");
+pref("browser.newtabpage.activity-stream.default.sites", "https://trisquel.info/,https://packages.trisquel.org,https://www.gnu.org/,https://www.fsf.org/,https://directory.fsf.org,https://libreplanet.org/,https://fsfe.org,https://www.wikipedia.org/wiki/,https://www.h-node.org/");
 pref("browser.newtabpage.activity-stream.showTopSites",true);
 pref("browser.newtabpage.activity-stream.feeds.section.topstories",false);
 pref("browser.newtabpage.activity-stream.feeds.snippets",false);

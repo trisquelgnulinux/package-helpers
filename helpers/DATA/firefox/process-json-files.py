@@ -176,6 +176,8 @@ class SearchConfig(RemoteSettings):
 
             if 'included' in specifier and 'everywhere' in specifier[
                     'included'] and specifier['included']['everywhere']:
+                if search_engine['webExtension']['id'] == cls._DUCKDUCKGO_SEARCH_ENGINE_ID:
+                    specifier['default'] = 'yes'
                 general_specifier = specifier
 
         if not general_specifier:

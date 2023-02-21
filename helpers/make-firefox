@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#    Copyright (C) 2008-2022  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2008-2023  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C) 2015       Santiago Rodriguez <santi@trisquel.info>
 #    Copyright (C) 2023       Luis Guzman <ark@switnet.org>
 #
@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=96
+VERSION=97
 EXTERNAL='deb-src http://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu $UPSTREAM main'
 REPOKEY=9BDB3D89CE49EC21
 
@@ -139,6 +139,11 @@ cat << EOF >> browser/components/newtab/data/content/tippytop/top_sites.json
     "favicon_url": "favicons/trisquel.ico"
   },
   {
+    "domains": ["packages.trisquel.org"],
+    "image_url": "images/trisquel-packages.png",
+    "favicon_url": "favicons/trisquel-packages.ico"
+  },
+  {
     "domains": ["gnu.org"],
     "image_url": "images/gnu.png",
     "favicon_url": "favicons/gnu.ico"
@@ -185,6 +190,13 @@ cat << TOP_JSON > services/settings/dumps/main/top-sites.json
       "order": 0,
       "title": "Trisquel",
       "id": "ec7f4843-6be5-5e86-870a-1c8383500a4b",
+      "last_modified": $(date +%s%N | cut -b1-13)
+    },
+    {
+      "url": "https://packages.trisquel.org/",
+      "order": 0,
+      "title": "Trisquel Packages",
+      "id": "27a9b035-0b8b-4472-97cb-b1866aba0740",
       "last_modified": $(date +%s%N | cut -b1-13)
     },
     {
