@@ -119,316 +119,6 @@ diff -Nru linux-5.15.0a/drivers/base/firmware_loader/main.c linux-5.15.0b/driver
  		if (nondirect)
  			ret = firmware_fallback_sysfs(fw, name, device,
  						      opt_flags, ret);
-diff -Nru linux-5.15.0a/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c linux-5.15.0b/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
---- linux-5.15.0a/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c	2021-10-31 14:53:10.000000000 -0600
-+++ linux-5.15.0b/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c	2022-05-12 17:55:12.377549557 -0500
-@@ -419,7 +419,7 @@
- 
- 			err = amdgpu_ucode_validate(adev->pm.fw);
- 			if (err) {
--				DRM_ERROR("Failed to load firmware \"%s\"", fw_name);
-+				DRM_ERROR("Failed to load firmware");
- 				release_firmware(adev->pm.fw);
- 				adev->pm.fw = NULL;
- 				return err;
-diff -Nru linux-5.15.0a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c linux-5.15.0b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
---- linux-5.15.0a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c	2022-05-12 15:51:56.000000000 -0500
-+++ linux-5.15.0b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c	2022-05-12 18:00:49.027791216 -0500
-@@ -1978,15 +1978,13 @@
- 	err = request_firmware(&adev->firmware.gpu_info_fw, fw_name, adev->dev);
- 	if (err) {
- 		dev_err(adev->dev,
--			"Failed to load gpu_info firmware \"%s\"\n",
--			fw_name);
-+			"Failed to load gpu_info firmware\n");
- 		goto out;
- 	}
- 	err = amdgpu_ucode_validate(adev->firmware.gpu_info_fw);
- 	if (err) {
- 		dev_err(adev->dev,
--			"Failed to validate gpu_info firmware \"%s\"\n",
--			fw_name);
-+			"Failed to validate gpu_info firmware\n");
- 		goto out;
- 	}
- 
-diff -Nru linux-5.15.0a/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c linux-5.15.0b/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c
---- linux-5.15.0a/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c	2021-10-31 14:53:10.000000000 -0600
-+++ linux-5.15.0b/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c	2022-05-12 18:02:08.384418664 -0500
-@@ -216,15 +216,13 @@
- 
- 	r = request_firmware(&adev->uvd.fw, fw_name, adev->dev);
- 	if (r) {
--		dev_err(adev->dev, "amdgpu_uvd: Can't load firmware \"%s\"\n",
--			fw_name);
-+		dev_err(adev->dev, "amdgpu_uvd: Can't load firmware\n");
- 		return r;
- 	}
- 
- 	r = amdgpu_ucode_validate(adev->uvd.fw);
- 	if (r) {
--		dev_err(adev->dev, "amdgpu_uvd: Can't validate firmware \"%s\"\n",
--			fw_name);
-+		dev_err(adev->dev, "amdgpu_uvd: Can't validate firmware\n");
- 		release_firmware(adev->uvd.fw);
- 		adev->uvd.fw = NULL;
- 		return r;
-diff -Nru linux-5.15.0a/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c linux-5.15.0b/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c
---- linux-5.15.0a/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c	2021-10-31 14:53:10.000000000 -0600
-+++ linux-5.15.0b/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c	2022-05-12 18:04:20.985348719 -0500
-@@ -160,15 +160,13 @@
- 
- 	r = request_firmware(&adev->vce.fw, fw_name, adev->dev);
- 	if (r) {
--		dev_err(adev->dev, "amdgpu_vce: Can't load firmware \"%s\"\n",
--			fw_name);
-+		dev_err(adev->dev, "amdgpu_vce: Can't load firmware\n");
- 		return r;
- 	}
- 
- 	r = amdgpu_ucode_validate(adev->vce.fw);
- 	if (r) {
--		dev_err(adev->dev, "amdgpu_vce: Can't validate firmware \"%s\"\n",
--			fw_name);
-+		dev_err(adev->dev, "amdgpu_vce: Can't validate firmware\n");
- 		release_firmware(adev->vce.fw);
- 		adev->vce.fw = NULL;
- 		return r;
-diff -Nru linux-5.15.0a/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c linux-5.15.0b/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c
---- linux-5.15.0a/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c	2021-10-31 14:53:10.000000000 -0600
-+++ linux-5.15.0b/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c	2022-05-12 18:09:17.867041073 -0500
-@@ -174,15 +174,13 @@
- 
- 	r = request_firmware(&adev->vcn.fw, fw_name, adev->dev);
- 	if (r) {
--		dev_err(adev->dev, "amdgpu_vcn: Can't load firmware \"%s\"\n",
--			fw_name);
-+		dev_err(adev->dev, "amdgpu_vcn: Can't load firmware\n");
- 		return r;
- 	}
- 
- 	r = amdgpu_ucode_validate(adev->vcn.fw);
- 	if (r) {
--		dev_err(adev->dev, "amdgpu_vcn: Can't validate firmware \"%s\"\n",
--			fw_name);
-+		dev_err(adev->dev, "amdgpu_vcn: Can't validate firmware\n");
- 		release_firmware(adev->vcn.fw);
- 		adev->vcn.fw = NULL;
- 		return r;
-diff -Nru linux-5.15.0a/drivers/gpu/drm/amd/amdgpu/cik_sdma.c linux-5.15.0b/drivers/gpu/drm/amd/amdgpu/cik_sdma.c
---- linux-5.15.0a/drivers/gpu/drm/amd/amdgpu/cik_sdma.c	2021-10-31 14:53:10.000000000 -0600
-+++ linux-5.15.0b/drivers/gpu/drm/amd/amdgpu/cik_sdma.c	2022-05-12 18:10:37.651430068 -0500
-@@ -144,7 +144,7 @@
- 	}
- out:
- 	if (err) {
--		pr_err("cik_sdma: Failed to load firmware \"%s\"\n", fw_name);
-+		pr_err("cik_sdma: Failed to load firmware\n");
- 		for (i = 0; i < adev->sdma.num_instances; i++) {
- 			release_firmware(adev->sdma.instance[i].fw);
- 			adev->sdma.instance[i].fw = NULL;
-diff -Nru linux-5.15.0a/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c linux-5.15.0b/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c
---- linux-5.15.0a/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c	2022-05-12 15:51:56.000000000 -0500
-+++ linux-5.15.0b/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c	2022-05-12 18:12:56.296059092 -0500
-@@ -4358,8 +4358,7 @@
- out:
- 	if (err) {
- 		dev_err(adev->dev,
--			"gfx10: Failed to load firmware \"%s\"\n",
--			fw_name);
-+			"gfx10: Failed to load firmware\n");
- 		release_firmware(adev->gfx.pfp_fw);
- 		adev->gfx.pfp_fw = NULL;
- 		release_firmware(adev->gfx.me_fw);
-diff -Nru linux-5.15.0a/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c linux-5.15.0b/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c
---- linux-5.15.0a/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c	2021-10-31 14:53:10.000000000 -0600
-+++ linux-5.15.0b/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c	2022-05-12 18:14:37.604488081 -0500
-@@ -381,7 +381,7 @@
- 
- out:
- 	if (err) {
--		pr_err("gfx6: Failed to load firmware \"%s\"\n", fw_name);
-+		pr_err("gfx6: Failed to load firmware\n");
- 		release_firmware(adev->gfx.pfp_fw);
- 		adev->gfx.pfp_fw = NULL;
- 		release_firmware(adev->gfx.me_fw);
-diff -Nru linux-5.15.0a/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c linux-5.15.0b/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c
---- linux-5.15.0a/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c	2021-10-31 14:53:10.000000000 -0600
-+++ linux-5.15.0b/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c	2022-05-12 18:23:32.482486029 -0500
-@@ -976,7 +976,7 @@
- 
- out:
- 	if (err) {
--		pr_err("gfx7: Failed to load firmware \"%s\"\n", fw_name);
-+		pr_err("gfx7: Failed to load firmware\n");
- 		release_firmware(adev->gfx.pfp_fw);
- 		adev->gfx.pfp_fw = NULL;
- 		release_firmware(adev->gfx.me_fw);
-diff -Nru linux-5.15.0a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c linux-5.15.0b/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
---- linux-5.15.0a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c	2021-10-31 14:53:10.000000000 -0600
-+++ linux-5.15.0b/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c	2022-05-12 18:25:03.922799575 -0500
-@@ -1231,8 +1231,7 @@
- out:
- 	if (err) {
- 		dev_err(adev->dev,
--			"gfx8: Failed to load firmware \"%s\"\n",
--			fw_name);
-+			"gfx8: Failed to load firmware\n");
- 		release_firmware(adev->gfx.pfp_fw);
- 		adev->gfx.pfp_fw = NULL;
- 		release_firmware(adev->gfx.me_fw);
-diff -Nru linux-5.15.0a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c linux-5.15.0b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
---- linux-5.15.0a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c	2022-05-12 15:51:56.000000000 -0500
-+++ linux-5.15.0b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c	2022-05-12 18:27:56.567378676 -0500
-@@ -1413,8 +1413,7 @@
- out:
- 	if (err) {
- 		dev_err(adev->dev,
--			"gfx9: Failed to load firmware \"%s\"\n",
--			fw_name);
-+			"gfx9: Failed to load firmware\n");
- 		release_firmware(adev->gfx.pfp_fw);
- 		adev->gfx.pfp_fw = NULL;
- 		release_firmware(adev->gfx.me_fw);
-@@ -1548,8 +1547,7 @@
- out:
- 	if (err) {
- 		dev_err(adev->dev,
--			"gfx9: Failed to load firmware \"%s\"\n",
--			fw_name);
-+			"gfx9: Failed to load firmware\n");
- 		release_firmware(adev->gfx.rlc_fw);
- 		adev->gfx.rlc_fw = NULL;
- 	}
-@@ -1651,8 +1649,7 @@
- 	gfx_v9_0_check_fw_write_wait(adev);
- 	if (err) {
- 		dev_err(adev->dev,
--			"gfx9: Failed to load firmware \"%s\"\n",
--			fw_name);
-+			"gfx9: Failed to load firmware\n");
- 		release_firmware(adev->gfx.mec_fw);
- 		adev->gfx.mec_fw = NULL;
- 		release_firmware(adev->gfx.mec2_fw);
-diff -Nru linux-5.15.0a/drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c linux-5.15.0b/drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c
---- linux-5.15.0a/drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c	2022-05-12 15:51:56.000000000 -0500
-+++ linux-5.15.0b/drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c	2022-05-12 18:28:50.171555720 -0500
-@@ -140,8 +140,7 @@
- out:
- 	if (err) {
- 		dev_err(adev->dev,
--		       "si_mc: Failed to load firmware \"%s\"\n",
--		       fw_name);
-+		       "si_mc: Failed to load firmware\n");
- 		release_firmware(adev->gmc.fw);
- 		adev->gmc.fw = NULL;
- 	}
-diff -Nru linux-5.15.0a/drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c linux-5.15.0b/drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c
---- linux-5.15.0a/drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c	2021-10-31 14:53:10.000000000 -0600
-+++ linux-5.15.0b/drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c	2022-05-12 18:29:48.251746244 -0500
-@@ -163,7 +163,7 @@
- 
- out:
- 	if (err) {
--		pr_err("cik_mc: Failed to load firmware \"%s\"\n", fw_name);
-+		pr_err("cik_mc: Failed to load firmware\n");
- 		release_firmware(adev->gmc.fw);
- 		adev->gmc.fw = NULL;
- 	}
-diff -Nru linux-5.15.0a/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c linux-5.15.0b/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c
---- linux-5.15.0a/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c	2022-05-12 15:51:56.000000000 -0500
-+++ linux-5.15.0b/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c	2022-05-12 18:30:35.683901025 -0500
-@@ -271,7 +271,7 @@
- 
- out:
- 	if (err) {
--		pr_err("mc: Failed to load firmware \"%s\"\n", fw_name);
-+		pr_err("mc: Failed to load firmware\n");
- 		release_firmware(adev->gmc.fw);
- 		adev->gmc.fw = NULL;
- 	}
-diff -Nru linux-5.15.0a/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c linux-5.15.0b/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c
---- linux-5.15.0a/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c	2021-10-31 14:53:10.000000000 -0600
-+++ linux-5.15.0b/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c	2022-05-12 18:33:10.524815263 -0500
-@@ -75,8 +75,7 @@
- 		release_firmware(adev->psp.ta_fw);
- 		adev->psp.ta_fw = NULL;
- 		dev_info(adev->dev,
--			 "psp v10.0: Failed to load firmware \"%s\"\n",
--			 fw_name);
-+			 "psp v10.0: Failed to load firmware\n");
- 	} else {
- 		err = amdgpu_ucode_validate(adev->psp.ta_fw);
- 		if (err)
-diff -Nru linux-5.15.0a/drivers/gpu/drm/amd/amdgpu/psp_v11_0.c linux-5.15.0b/drivers/gpu/drm/amd/amdgpu/psp_v11_0.c
---- linux-5.15.0a/drivers/gpu/drm/amd/amdgpu/psp_v11_0.c	2021-10-31 14:53:10.000000000 -0600
-+++ linux-5.15.0b/drivers/gpu/drm/amd/amdgpu/psp_v11_0.c	2022-05-12 18:34:24.925322575 -0500
-@@ -144,7 +144,7 @@
- 			release_firmware(adev->psp.ta_fw);
- 			adev->psp.ta_fw = NULL;
- 			dev_info(adev->dev,
--				 "psp v11.0: Failed to load firmware \"%s\"\n", fw_name);
-+				 "psp v11.0: Failed to load firmware\n");
- 		} else {
- 			err = amdgpu_ucode_validate(adev->psp.ta_fw);
- 			if (err)
-@@ -179,7 +179,7 @@
- 			release_firmware(adev->psp.ta_fw);
- 			adev->psp.ta_fw = NULL;
- 			dev_info(adev->dev,
--				 "psp v11.0: Failed to load firmware \"%s\"\n", fw_name);
-+				 "psp v11.0: Failed to load firmware\n");
- 		} else {
- 			err = amdgpu_ucode_validate(adev->psp.ta_fw);
- 			if (err)
-diff -Nru linux-5.15.0a/drivers/gpu/drm/amd/amdgpu/sdma_v2_4.c linux-5.15.0b/drivers/gpu/drm/amd/amdgpu/sdma_v2_4.c
---- linux-5.15.0a/drivers/gpu/drm/amd/amdgpu/sdma_v2_4.c	2021-10-31 14:53:10.000000000 -0600
-+++ linux-5.15.0b/drivers/gpu/drm/amd/amdgpu/sdma_v2_4.c	2022-05-12 18:40:02.495301516 -0500
-@@ -175,7 +175,7 @@
- 
- out:
- 	if (err) {
--		pr_err("sdma_v2_4: Failed to load firmware \"%s\"\n", fw_name);
-+		pr_err("sdma_v2_4: Failed to load firmware\n");
- 		for (i = 0; i < adev->sdma.num_instances; i++) {
- 			release_firmware(adev->sdma.instance[i].fw);
- 			adev->sdma.instance[i].fw = NULL;
-diff -Nru linux-5.15.0a/drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c linux-5.15.0b/drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c
---- linux-5.15.0a/drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c	2021-10-31 14:53:10.000000000 -0600
-+++ linux-5.15.0b/drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c	2022-05-12 18:45:57.373027739 -0500
-@@ -331,7 +331,7 @@
- 	}
- out:
- 	if (err) {
--		pr_err("sdma_v3_0: Failed to load firmware \"%s\"\n", fw_name);
-+		pr_err("sdma_v3_0: Failed to load firmware\n");
- 		for (i = 0; i < adev->sdma.num_instances; i++) {
- 			release_firmware(adev->sdma.instance[i].fw);
- 			adev->sdma.instance[i].fw = NULL;
-diff -Nru linux-5.15.0a/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c linux-5.15.0b/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c
---- linux-5.15.0a/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c	2022-05-12 15:51:56.000000000 -0500
-+++ linux-5.15.0b/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c	2022-05-12 18:47:06.221337571 -0500
-@@ -702,7 +702,7 @@
- 
- out:
- 	if (err) {
--		DRM_ERROR("sdma_v4_0: Failed to load firmware \"%s\"\n", fw_name);
-+		DRM_ERROR("sdma_v4_0: Failed to load firmware\n");
- 		sdma_v4_0_destroy_inst_ctx(adev);
- 	}
- 	return err;
-diff -Nru linux-5.15.0a/drivers/gpu/drm/amd/amdgpu/sdma_v5_0.c linux-5.15.0b/drivers/gpu/drm/amd/amdgpu/sdma_v5_0.c
---- linux-5.15.0a/drivers/gpu/drm/amd/amdgpu/sdma_v5_0.c	2021-10-31 14:53:10.000000000 -0600
-+++ linux-5.15.0b/drivers/gpu/drm/amd/amdgpu/sdma_v5_0.c	2022-05-12 18:48:15.981645559 -0500
-@@ -303,7 +303,7 @@
- 	}
- out:
- 	if (err) {
--		DRM_ERROR("sdma_v5_0: Failed to load firmware \"%s\"\n", fw_name);
-+		DRM_ERROR("sdma_v5_0: Failed to load firmware\n");
- 		for (i = 0; i < adev->sdma.num_instances; i++) {
- 			release_firmware(adev->sdma.instance[i].fw);
- 			adev->sdma.instance[i].fw = NULL;
 diff -Nru linux-5.15.0a/drivers/gpu/drm/amd/pm/powerplay/si_dpm.c linux-5.15.0b/drivers/gpu/drm/amd/pm/powerplay/si_dpm.c
 --- linux-5.15.0a/drivers/gpu/drm/amd/pm/powerplay/si_dpm.c	2021-10-31 14:53:10.000000000 -0600
 +++ linux-5.15.0b/drivers/gpu/drm/amd/pm/powerplay/si_dpm.c	2022-05-12 18:54:56.035329211 -0500
@@ -1345,3 +1035,64 @@ diff -ur source.bak/drivers/net/wireless/broadcom/brcm80211/brcmsmac/mac80211_if
  			return status;
  		}
  		wl->fw.hdr_num_entries[i] =
+diff -ru source.orig/drivers/gpu/drm/radeon/ni.c source/drivers/gpu/drm/radeon/ni.c
+--- source.orig/drivers/gpu/drm/radeon/ni.c	2023-02-22 14:24:28.539769273 -0500
++++ source/drivers/gpu/drm/radeon/ni.c	2023-02-22 14:31:24.013853164 -0500
+@@ -807,7 +807,7 @@
+ 		snprintf(fw_name, sizeof(fw_name), "radeon/%s_smc.bin", chip_name);
+ 		err = request_firmware(&rdev->smc_fw, fw_name, rdev->dev);
+ 		if (err) {
+-			pr_err("smc: error loading firmware \"%s\"\n", fw_name);
++			pr_err("smc: error loading firmware\n");
+ 			release_firmware(rdev->smc_fw);
+ 			rdev->smc_fw = NULL;
+ 			err = 0;
+@@ -821,8 +821,7 @@
+ out:
+ 	if (err) {
+ 		if (err != -EINVAL)
+-			pr_err("ni_cp: Failed to load firmware \"%s\"\n",
+-			       fw_name);
++			pr_err("ni_cp: Failed to load firmware\n");
+ 		release_firmware(rdev->pfp_fw);
+ 		rdev->pfp_fw = NULL;
+ 		release_firmware(rdev->me_fw);
+diff -ru source.orig/drivers/net/wireless/intel/ipw2x00/ipw2200.c source/drivers/net/wireless/intel/ipw2x00/ipw2200.c
+--- source.orig/drivers/net/wireless/intel/ipw2x00/ipw2200.c	2023-02-22 14:24:28.635767924 -0500
++++ source/drivers/net/wireless/intel/ipw2x00/ipw2200.c	2023-02-22 14:32:52.060558270 -0500
+@@ -3549,7 +3549,7 @@
+ 	/* DMA the initial boot firmware into the device */
+ 	rc = ipw_load_firmware(priv, boot_img, le32_to_cpu(fw->boot_size));
+ 	if (rc < 0) {
+-		IPW_ERROR("Unable to load boot firmware: %d\n", rc);
++		IPW_ERROR("Unable to load boot firmware\n");
+ 		goto error;
+ 	}
+ 
+@@ -3571,7 +3571,7 @@
+ 	/* DMA the ucode into the device */
+ 	rc = ipw_load_ucode(priv, ucode_img, le32_to_cpu(fw->ucode_size));
+ 	if (rc < 0) {
+-		IPW_ERROR("Unable to load ucode: %d\n", rc);
++		IPW_ERROR("Unable to load ucode\n");
+ 		goto error;
+ 	}
+ 
+@@ -3581,7 +3581,7 @@
+ 	/* DMA bss firmware into the device */
+ 	rc = ipw_load_firmware(priv, fw_img, le32_to_cpu(fw->fw_size));
+ 	if (rc < 0) {
+-		IPW_ERROR("Unable to load firmware: %d\n", rc);
++		IPW_ERROR("Unable to load firmware\n");
+ 		goto error;
+ 	}
+ #ifdef CONFIG_PM
+@@ -11177,7 +11177,7 @@
+ 		 * Also start the clocks. */
+ 		rc = ipw_load(priv);
+ 		if (rc) {
+-			IPW_ERROR("Unable to load firmware: %d\n", rc);
++			IPW_ERROR("Unable to load firmware\n");
+ 			return rc;
+ 		}
+ 

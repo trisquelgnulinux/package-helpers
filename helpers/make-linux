@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=15
+VERSION=16
 
 . ./config
 
@@ -64,6 +64,12 @@ for PATCH in $DATA/*.patch ; do
   echo $PATCH
   patch --no-backup-if-mismatch -p1 < $PATCH
 done
+
+# Simple test for finding missing cases of silent_accept_firmware method
+#for dir in $PRESERVEDIRS; do
+#  grep -i "load.*firmware.*%" $PRESERVEDIRS -r
+#  grep -i "load.*ucode.*%" $PRESERVEDIRS -r
+#done
 
 # Re-enable udebs
 cp $DATA/5-udebs.mk debian/rules.d
