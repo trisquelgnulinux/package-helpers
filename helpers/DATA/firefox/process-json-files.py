@@ -159,7 +159,10 @@ class SearchConfig(RemoteSettings):
     @classmethod
     def should_drop_record(cls, search_engine):
         return search_engine['webExtension']['id'] not in (
-            cls._DUCKDUCKGO_SEARCH_ENGINE_ID, 'wikipedia@search.mozilla.org')
+            cls._DUCKDUCKGO_SEARCH_ENGINE_ID, 'wikipedia@search.mozilla.org',
+            'trisquel@search.mozilla.org', 'trisquel-packages@@search.mozilla.org',
+            'wiktionary@search.mozilla.org', 'qwant@search.mozilla.org',
+            'ecosia@search.mozilla.org')
 
     @classmethod
     def process_record(cls, search_engine):

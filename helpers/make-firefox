@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=97
+VERSION=98
 EXTERNAL='deb-src http://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu $UPSTREAM main'
 REPOKEY=9BDB3D89CE49EC21
 
@@ -194,49 +194,49 @@ cat << TOP_JSON > services/settings/dumps/main/top-sites.json
     },
     {
       "url": "https://packages.trisquel.org/",
-      "order": 0,
+      "order": 1,
       "title": "Trisquel Packages",
       "id": "27a9b035-0b8b-4472-97cb-b1866aba0740",
       "last_modified": $(date +%s%N | cut -b1-13)
     },
     {
       "url": "https://www.gnu.org/",
-      "order": 1,
+      "order": 2,
       "title": "GNU",
       "id": "1baee931-751c-5993-b6fe-d86fbf78f9b0",
       "last_modified": $(date +%s%N | cut -b1-13)
     },
     {
       "url": "https://www.fsf.org/",
-      "order": 2,
+      "order": 3,
       "title": "FSF",
       "id": "fcc60dd8-4d97-5aca-8e5d-784652c75818",
       "last_modified": $(date +%s%N | cut -b1-13)
     },
     {
       "url": "https://directory.fsf.org/",
-      "order": 3,
+      "order": 4,
       "title": "FSF Directory",
       "id": "abe5bfb2-9487-5697-9f27-e0b782dfe006",
       "last_modified": $(date +%s%N | cut -b1-13)
     },
     {
       "url": "https://libreplanet.org/",
-      "order": 4,
+      "order": 5,
       "title": "LibrePlanet",
       "id": "e3d2cf88-a4dc-5d2e-9f9a-f3ea241d17d8",
       "last_modified": $(date +%s%N | cut -b1-13)
     },
     {
       "url": "https://www.wikipedia.org/",
-      "order": 5,
+      "order": 6,
       "title": "Wikipedia",
       "id": "02c295f5-54a8-5d29-8d1f-b619216b20c0",
       "last_modified": $(date +%s%N | cut -b1-13)
     },
     {
       "url": "https://h-node.org/",
-      "order": 6,
+      "order": 7,
       "title": "h-node",
       "id": "c426481f-8c3f-53b8-b23a-431a91a1c7b4",
       "last_modified": $(date +%s%N | cut -b1-13)
@@ -257,6 +257,11 @@ sed 's|ddg@|ddg-html@|' -i browser/components/search/extensions/ddg-html/manifes
 patch  --no-backup-if-mismatch -p1 < $DATA/rollback_ddg_firefox_partnership_codes.patch
 # disable ads, disable redirect
 #sed '/search/s|q=|k1=-1\&kd=-1\&ko=1\&q=|' -i browser/components/search/extensions/ddg/manifest.json
+
+#Trisquel custom search engines
+cp -a $DATA/searchplugins/* browser/components/search/extensions/
+/bin/sed "/\"data\": \[/ r $DATA/searchplugins/trisquel.json" -i ./services/settings/dumps/main/search-config.json
+/bin/sed "/\"data\": \[/ r $DATA/searchplugins/trisquel-packages.json" -i ./services/settings/dumps/main/search-config.json
 
 # Reprocess search preconfiguration dump
 python3 $DATA/process-json-files.py . browser/components/extensions/schemas/
@@ -337,9 +342,6 @@ rm -rf ./browser/metro ./addon-sdk/source/doc/static-files/media ./browser/theme
 
 #Trisquel custom bookmarks
 cp $DATA/default-bookmarks.html browser/base/content/default-bookmarks.html
-
-#Trisquel custom search engines
-cp -a $DATA/searchplugins/* browser/components/search/extensions/
 
 # install extensions
 for extension in $(ls -1 $DATA/extensions/); do
