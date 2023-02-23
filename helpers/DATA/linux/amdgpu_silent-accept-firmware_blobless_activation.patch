@@ -186,15 +186,6 @@ diff -ru a/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c b/drivers/gpu/drm/amd/amdgpu/g
  		release_firmware(adev->gfx.pfp_fw);
  		adev->gfx.pfp_fw = NULL;
  		release_firmware(adev->gfx.me_fw);
-@@ -4510,8 +4509,6 @@
- 	r = gfx_v10_0_init_microcode(adev);
- 	if (r)
- 		DRM_ERROR("Failed to load gfx firmware!\n");
--
--	return r;
- }
- 
- static int gfx_v10_0_mec_init(struct amdgpu_device *adev)
 diff -ru a/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c
 --- a/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c	2021-10-31 16:53:10.000000000 -0400
 +++ b/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c	2023-02-22 12:39:10.087598287 -0500
