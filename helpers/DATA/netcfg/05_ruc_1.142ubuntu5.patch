@@ -1,0 +1,188 @@
+From 6bbc857030b27f59d660674dd3795595f5caa9a7 Mon Sep 17 00:00:00 2001
+From: Mathieu Trudel-Lapierre <cyphermox@ubuntu.com>
+Date: Thu, 12 Oct 2017 09:31:02 -0400
+Subject: 1.142ubuntu5 (patches unapplied)
+
+Imported using git-ubuntu import.
+---
+ debian/changelog  |  8 ++++++++
+ dhcp.c            |  2 +-
+ netcfg-common.c   |  4 ++--
+ netcfg.h          |  2 +-
+ static.c          | 11 +++++++++--
+ write_interface.c | 41 +++++++++++++++++++++++++++++++----------
+ 6 files changed, 52 insertions(+), 16 deletions(-)
+
+diff --git a/dhcp.c b/dhcp.c
+index 8824580..baaa820 100644
+--- a/dhcp.c
++++ b/dhcp.c
+@@ -611,7 +611,7 @@ int netcfg_activate_dhcp (struct debconfclient *client, struct netcfg_interface
+                 di_debug("Network config complete");
+                 netcfg_write_common("", hostname, domain);
+                 netcfg_write_loopback();
+-                netcfg_write_interface(client, interface);
++                netcfg_write_interface(client, interface, domain);
+                 netcfg_write_resolv(domain, interface);
+ #if !defined(__FreeBSD_kernel__)
+                 kill_dhcp_client();
+diff --git a/netcfg-common.c b/netcfg-common.c
+index 8afe70d..378a873 100644
+--- a/netcfg-common.c
++++ b/netcfg-common.c
+@@ -1133,8 +1133,8 @@ void netcfg_write_loopback (void)
+     lo.name = LO_IF;
+     lo.loopback = 1;
+     
+-    netcfg_write_interface(NULL, NULL);
+-    netcfg_write_interface(NULL, &lo);
++    netcfg_write_interface(NULL, NULL, NULL);
++    netcfg_write_interface(NULL, &lo, NULL);
+ }
+ 
+ /*
+diff --git a/netcfg.h b/netcfg.h
+index 437c87e..3588886 100644
+--- a/netcfg.h
++++ b/netcfg.h
+@@ -270,7 +270,7 @@ extern int nc_v6_interface_configured(const struct netcfg_interface *interface,
+ extern int nc_v6_get_config_flags(struct debconfclient *client, struct netcfg_interface *interface);
+ 
+ /* write_interfaces.c */
+-extern int netcfg_write_interface(struct debconfclient *client, const struct netcfg_interface *interface);
++extern int netcfg_write_interface(struct debconfclient *client, const struct netcfg_interface *interface, const char *domain);
+ 
+ /* rdnssd.c */
+ extern int start_rdnssd(struct debconfclient *client);
+diff --git a/static.c b/static.c
+index b73b785..ab7bd52 100644
+--- a/static.c
++++ b/static.c
+@@ -680,8 +680,15 @@ int netcfg_get_static(struct debconfclient *client, struct netcfg_interface *ifa
+                 }
+                 netcfg_write_common(iface->ipaddress, hostname, domain);
+                 netcfg_write_loopback();
+-                netcfg_write_interface(client, iface);
+-                netcfg_write_resolvconf_options(domain, iface);
++                netcfg_write_interface(client, iface, domain);
++
++                debconf_get(client,"netcfg/do_not_use_netplan");
++                /* If this undocumented debconf key is set to true, skip netplan
++                 * and fallback to /e/n/i as before. Otherwise we're done.
++                 */
++                if (!empty_str(client->value) && strcmp(client->value, "true") == 0) {
++                    netcfg_write_resolvconf_options(domain, iface);
++                }
+                 netcfg_write_resolv(domain, iface);
+             }
+             return 0;
+diff --git a/write_interface.c b/write_interface.c
+index 14d36e1..d261f76 100644
+--- a/write_interface.c
++++ b/write_interface.c
+@@ -164,6 +164,27 @@ static int nc_wi_slaac(const struct netcfg_interface *interface, FILE *fd)
+ 	return 1;
+ }
+ 
++/* Write nameservers for netplan
++ */
++static int nc_wi_netplan_write_nameservers(const struct netcfg_interface *interface, FILE *fd, const char *domain)
++{
++	int i;
++
++	if (empty_str(domain))
++		return 1;
++
++	fprintf(fd, "      nameservers:\n");
++	fprintf(fd, "          search: [ %s ]\n", domain);
++	fprintf(fd, "          addresses:\n");
++	for (i = 0; i < NETCFG_NAMESERVERS_MAX; i++) {
++		if (!empty_str(interface->nameservers[i])) {
++			fprintf(fd, "              - %s\n", interface->nameservers[i]);
++		}
++	}
++
++	return 1;
++}
++
+ /* Write out a static IPv4 config stanza for the given interface
+  */
+ static int nc_wi_static_ipv4(const struct netcfg_interface *interface, FILE *fd)
+@@ -182,7 +203,7 @@ static int nc_wi_static_ipv4(const struct netcfg_interface *interface, FILE *fd)
+ 	return 1;
+ }
+ 
+-static int nc_wi_netplan_static_ipv4(const struct netcfg_interface *interface, FILE *fd)
++static int nc_wi_netplan_static_ipv4(const struct netcfg_interface *interface, FILE *fd, const char *domain)
+ {
+ 	fprintf(fd, "      addresses: [ %s/%i ]\n", interface->ipaddress,
+ 	        empty_str(interface->pointopoint) ? interface->masklen : 32);
+@@ -190,7 +211,7 @@ static int nc_wi_netplan_static_ipv4(const struct netcfg_interface *interface, F
+ 		fprintf(fd, "      gateway4: %s\n",
+ 		        empty_str(interface->pointopoint) ? interface->gateway : interface->pointopoint);
+ 
+-	return 1;
++	return nc_wi_netplan_write_nameservers(interface, fd, domain);
+ }
+ 
+ /* Write out a static IPv6 config stanza for the given interface
+@@ -207,13 +228,13 @@ static int nc_wi_static_ipv6(const struct netcfg_interface *interface, FILE *fd)
+ 	return 1;
+ }
+ 
+-static int nc_wi_netplan_static_ipv6(const struct netcfg_interface *interface, FILE *fd)
++static int nc_wi_netplan_static_ipv6(const struct netcfg_interface *interface, FILE *fd, const char *domain)
+ {
+ 	fprintf(fd, "      addresses: [ %s/%i ]\n", interface->ipaddress, interface->masklen);
+ 	if (!empty_str(interface->gateway))
+ 		fprintf(fd, "      gateway6: %s\n", interface->gateway);
+ 
+-	return 1;
++	return nc_wi_netplan_write_nameservers(interface, fd, domain);
+ }
+ 
+ static int nc_wi_write_eni(const struct netcfg_interface *interface, FILE *fd)
+@@ -258,7 +279,7 @@ static int nc_wi_write_eni(const struct netcfg_interface *interface, FILE *fd)
+ 	return rv;
+ }
+ 
+-static int nc_wi_write_netplan_yaml(const struct netcfg_interface *interface, FILE *fd, off_t size)
++static int nc_wi_write_netplan_yaml(const struct netcfg_interface *interface, FILE *fd, off_t size, const char *domain)
+ {
+ 	int rv;
+ 
+@@ -310,10 +331,10 @@ static int nc_wi_write_netplan_yaml(const struct netcfg_interface *interface, FI
+ 	/* Write all other static addresses */
+ 	if (interface->address_family == AF_INET) {
+ 		di_debug("Writing static IPv4 stanza for %s", interface->name);
+-		rv = nc_wi_netplan_static_ipv4(interface, fd);
+-	} else if (interface->address_family == AF_INET) {
++		rv = nc_wi_netplan_static_ipv4(interface, fd, domain);
++	} else if (interface->address_family == AF_INET6) {
+ 		di_debug("Writing static IPv6 stanza for %s", interface->name);
+-		rv = nc_wi_netplan_static_ipv6(interface, fd);
++		rv = nc_wi_netplan_static_ipv6(interface, fd, domain);
+ 	}
+ 
+ 	if (rv && interface && is_wireless_iface(interface->name)) {
+@@ -346,7 +367,7 @@ void unlink_config_tmp_file(int use_netplan)
+  * returned, the interfaces file will not have been modified, and errno will
+  * contain the details.
+  */
+-int netcfg_write_interface(struct debconfclient *client, const struct netcfg_interface *interface)
++int netcfg_write_interface(struct debconfclient *client, const struct netcfg_interface *interface, const char *domain)
+ {
+ 	FILE *fd;
+ 	int rv;
+@@ -449,7 +470,7 @@ int netcfg_write_interface(struct debconfclient *client, const struct netcfg_int
+ 	rv = 1;
+ 
+ 	if (use_netplan) {
+-		rv = nc_wi_write_netplan_yaml(interface, fd, stat_buf.st_size);
++		rv = nc_wi_write_netplan_yaml(interface, fd, stat_buf.st_size, domain);
+ 	} else {
+ 		rv = nc_wi_write_eni(interface, fd);
+ 	}
+-- 
+cgit v1.1
+

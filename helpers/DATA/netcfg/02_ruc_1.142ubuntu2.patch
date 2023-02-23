@@ -1,0 +1,521 @@
+From 54942477d5d0066b7d37650420e2d7f834dd1d9e Mon Sep 17 00:00:00 2001
+From: Mathieu Trudel-Lapierre <cyphermox@ubuntu.com>
+Date: Fri, 26 May 2017 15:29:16 -0400
+Subject: 1.142ubuntu2 (patches unapplied)
+
+Imported using git-ubuntu import.
+---
+ base-installer.d/40netcfg      |   4 +-
+ debian/changelog               |   8 ++
+ debian/netcfg-common.templates |   6 +
+ debian/netcfg.dirs             |   1 +
+ dhcp.c                         |   2 +-
+ netcfg-common.c                |   4 +-
+ netcfg.h                       |   3 +-
+ static.c                       |   2 +-
+ write_interface.c              | 290 +++++++++++++++++++++++++++++++++--------
+ 9 files changed, 262 insertions(+), 58 deletions(-)
+
+diff --git a/base-installer.d/40netcfg b/base-installer.d/40netcfg
+index 0bbffd5..6ce418a 100755
+--- a/base-installer.d/40netcfg
++++ b/base-installer.d/40netcfg
+@@ -1,11 +1,11 @@
+ #!/bin/sh -e
+ # Copy all relevant networking-related files to /target.
+ 
+-if [ ! -f /etc/network/interfaces ]; then
++if [ ! -f /etc/network/interfaces ] && [ ! -f /etc/netplan/*.yaml ]; then
+ 	netcfg write_loopback
+ fi
+ 
+-for file in /etc/network/interfaces /etc/networks /etc/hostname /etc/hosts; do
++for file in /etc/network/interfaces /etc/networks /etc/hostname /etc/hosts /etc/netplan/*.yaml; do
+ 	if [ -f "$file" ]; then
+ 		mkdir /target/$(dirname $file) -p
+ 		cp $file /target/$file
+diff --git a/debian/netcfg-common.templates b/debian/netcfg-common.templates
+index 0ca1ec7..6e42847 100644
+--- a/debian/netcfg-common.templates
++++ b/debian/netcfg-common.templates
+@@ -415,3 +415,9 @@ _Choices: ${essid_list} Enter ESSID manually
+ _Description: Wireless network:
+  Select the wireless network to use during the installation process.
+ 
++Template: netcfg/do_not_use_netplan
++Type: boolean
++Default: false
++Description: for internal use; can be preseeded
++ Set to false to fallback to ifupdown.
++
+diff --git a/debian/netcfg.dirs b/debian/netcfg.dirs
+index dad6088..d548c6e 100644
+--- a/debian/netcfg.dirs
++++ b/debian/netcfg.dirs
+@@ -1,5 +1,6 @@
+ bin
+ etc/network
++etc/netplan
+ usr/lib/base-installer.d
+ usr/lib/post-base-installer.d
+ lib/netcfg
+diff --git a/dhcp.c b/dhcp.c
+index b72a805..8824580 100644
+--- a/dhcp.c
++++ b/dhcp.c
+@@ -611,7 +611,7 @@ int netcfg_activate_dhcp (struct debconfclient *client, struct netcfg_interface
+                 di_debug("Network config complete");
+                 netcfg_write_common("", hostname, domain);
+                 netcfg_write_loopback();
+-                netcfg_write_interface(interface);
++                netcfg_write_interface(client, interface);
+                 netcfg_write_resolv(domain, interface);
+ #if !defined(__FreeBSD_kernel__)
+                 kill_dhcp_client();
+diff --git a/netcfg-common.c b/netcfg-common.c
+index dafbf1a..d747450 100644
+--- a/netcfg-common.c
++++ b/netcfg-common.c
+@@ -1133,8 +1133,8 @@ void netcfg_write_loopback (void)
+     lo.name = LO_IF;
+     lo.loopback = 1;
+     
+-    netcfg_write_interface(NULL);
+-    netcfg_write_interface(&lo);
++    netcfg_write_interface(NULL, NULL);
++    netcfg_write_interface(NULL, &lo);
+ }
+ 
+ /*
+diff --git a/netcfg.h b/netcfg.h
+index 19fe710..ae3f34c 100644
+--- a/netcfg.h
++++ b/netcfg.h
+@@ -2,6 +2,7 @@
+ #define _NETCFG_H_
+ 
+ #define INTERFACES_FILE "/etc/network/interfaces"
++#define NETPLAN_YAML    "/etc/netplan/01-netcfg.yaml"
+ #define HOSTS_FILE      "/etc/hosts"
+ #define HOSTNAME_FILE   "/etc/hostname"
+ #define NETWORKS_FILE   "/etc/networks"
+@@ -267,7 +268,7 @@ extern int nc_v6_interface_configured(const struct netcfg_interface *interface,
+ extern int nc_v6_get_config_flags(struct debconfclient *client, struct netcfg_interface *interface);
+ 
+ /* write_interfaces.c */
+-extern int netcfg_write_interface(const struct netcfg_interface *interface);
++extern int netcfg_write_interface(struct debconfclient *client, const struct netcfg_interface *interface);
+ 
+ /* rdnssd.c */
+ extern int start_rdnssd(struct debconfclient *client);
+diff --git a/static.c b/static.c
+index e375dd4..b73b785 100644
+--- a/static.c
++++ b/static.c
+@@ -680,7 +680,7 @@ int netcfg_get_static(struct debconfclient *client, struct netcfg_interface *ifa
+                 }
+                 netcfg_write_common(iface->ipaddress, hostname, domain);
+                 netcfg_write_loopback();
+-                netcfg_write_interface(iface);
++                netcfg_write_interface(client, iface);
+                 netcfg_write_resolvconf_options(domain, iface);
+                 netcfg_write_resolv(domain, iface);
+             }
+diff --git a/write_interface.c b/write_interface.c
+index 012ffb7..14d36e1 100644
+--- a/write_interface.c
++++ b/write_interface.c
+@@ -24,8 +24,20 @@
+ #include <sys/stat.h>
+ #include <unistd.h>
+ #include <fcntl.h>
++#include <cdebconf/debconfclient.h>
+ #include <debian-installer.h>
+ 
++static int nc_wi_netplan_header(FILE *fd)
++{
++	fprintf(fd, "# This file describes the network interfaces available on your system\n");
++	fprintf(fd, "# For more information, see netplan(5).\n");
++	fprintf(fd, "network:\n");
++	fprintf(fd, "  version: 2\n");
++	fprintf(fd, "  renderer: networkd\n");
++
++	return 1;
++}
++
+ static int nc_wi_header(FILE *fd)
+ {
+ 	fprintf(fd, "# This file describes the network interfaces available on your system\n");
+@@ -57,6 +69,19 @@ static int nc_wi_vlan(const struct netcfg_interface *interface, FILE *fd)
+ 	return rv;
+ }
+ 
++static int nc_wi_netplan_vlan(const struct netcfg_interface *interface, FILE *fd)
++{
++	int rv;
++	rv = 1;
++
++        fprintf(fd, "  vlans:\n");
++        fprintf(fd, "    %s:\n", interface->name);
++	fprintf(fd, "      link: %s\n", interface->parentif);
++	fprintf(fd, "      id: %d\n", interface->vlanid);
++
++	return rv;
++}
++
+ 
+ static int nc_wi_wireless_options(const struct netcfg_interface *interface, FILE *fd)
+ {
+@@ -83,6 +108,29 @@ static int nc_wi_wireless_options(const struct netcfg_interface *interface, FILE
+ 	return 1;
+ }
+ 
++static int nc_wi_netplan_wireless_aps(const struct netcfg_interface *interface, FILE *fd)
++{
++	fprintf(fd, "      access-points:\n");
++
++	if (interface->essid && *interface->essid) {
++		fprintf(fd, "        %s:\n", interface->essid);
++	} else {
++		fprintf(fd, "        any:\n");
++	}
++
++	if (interface->wpa_supplicant_status == WPA_QUEUED) {
++		fprintf(fd, "          password: %s\n", interface->passphrase);
++	} else {
++		fprintf(fd, "          mode: %s\n",
++			(interface->mode == MANAGED) ? "infrastructure" : "adhoc");
++
++		if (interface->wepkey != NULL)
++			fprintf(fd, "          password: %s\n", interface->wepkey);
++	}
++
++	return 1;
++}
++
+ /* Write out a DHCP stanza for the given interface
+  */
+ static int nc_wi_dhcp(const struct netcfg_interface *interface, FILE *fd)
+@@ -134,6 +182,17 @@ static int nc_wi_static_ipv4(const struct netcfg_interface *interface, FILE *fd)
+ 	return 1;
+ }
+ 
++static int nc_wi_netplan_static_ipv4(const struct netcfg_interface *interface, FILE *fd)
++{
++	fprintf(fd, "      addresses: [ %s/%i ]\n", interface->ipaddress,
++	        empty_str(interface->pointopoint) ? interface->masklen : 32);
++	if (!empty_str(interface->gateway))
++		fprintf(fd, "      gateway4: %s\n",
++		        empty_str(interface->pointopoint) ? interface->gateway : interface->pointopoint);
++
++	return 1;
++}
++
+ /* Write out a static IPv6 config stanza for the given interface
+  */
+ static int nc_wi_static_ipv6(const struct netcfg_interface *interface, FILE *fd)
+@@ -148,6 +207,131 @@ static int nc_wi_static_ipv6(const struct netcfg_interface *interface, FILE *fd)
+ 	return 1;
+ }
+ 
++static int nc_wi_netplan_static_ipv6(const struct netcfg_interface *interface, FILE *fd)
++{
++	fprintf(fd, "      addresses: [ %s/%i ]\n", interface->ipaddress, interface->masklen);
++	if (!empty_str(interface->gateway))
++		fprintf(fd, "      gateway6: %s\n", interface->gateway);
++
++	return 1;
++}
++
++static int nc_wi_write_eni(const struct netcfg_interface *interface, FILE *fd)
++{
++	int rv;
++
++        rv = 1;
++
++	di_debug("Using /etc/network/interfaces for network config");
++
++	if (!interface) {
++		di_debug("Writing informative header");
++		rv = nc_wi_header(fd);
++	} else if (interface->loopback == 1) {
++		di_debug("Writing loopback interface");
++		rv = nc_wi_loopback(interface, fd);
++	} else if (interface->dhcp == 1 || interface->slaac == 1) {
++		if (interface->dhcp == 1) {
++			di_debug("Writing DHCP stanza for %s", interface->name);
++			rv = nc_wi_dhcp(interface, fd);
++		}
++		if (interface->slaac == 1) {
++			di_debug("Writing SLAAC stanza for %s", interface->name);
++			rv = nc_wi_slaac(interface, fd);
++		}
++	} else if (interface->address_family == AF_INET) {
++		di_debug("Writing static IPv4 stanza for %s", interface->name);
++		rv = nc_wi_static_ipv4(interface, fd);
++	} else if (interface->address_family == AF_INET6) {
++		di_debug("Writing static IPv6 stanza for %s", interface->name);
++		rv = nc_wi_static_ipv6(interface, fd);
++	}
++	if (rv && interface && interface->parentif) {
++		di_debug("Writing VLAN: %s", interface->name);
++		rv = nc_wi_vlan(interface, fd);
++	}
++	if (rv && interface && is_wireless_iface(interface->name)) {
++		di_debug("Writing wireless options for %s", interface->name);
++		rv = nc_wi_wireless_options(interface, fd);
++	}
++
++	return rv;
++}
++
++static int nc_wi_write_netplan_yaml(const struct netcfg_interface *interface, FILE *fd, off_t size)
++{
++	int rv;
++
++        rv = 1;
++
++	di_warning("Using netplan for network config");
++
++	if (size <= 0)
++		rv = nc_wi_netplan_header(fd);
++
++	/* No interface given, just clear the file */
++	if (!interface)
++		return rv;
++
++	/* With netplan, let loopback alone */
++	if (interface->loopback == 1)
++		return rv;
++
++	if (is_wireless_iface(interface->name)) {
++		fprintf(fd, "  wifis:\n");
++	} else {
++		fprintf(fd, "  ethernets:\n");
++	}
++
++	/* Take care of handling VLANs correctly */
++	fprintf(fd, "    %s:\n", interface->parentif ? interface->parentif : interface->name);
++
++	if (rv && interface && interface->parentif) {
++		/* Make sure our parent doesn't get an IP */
++		fprintf(fd, "      dhcp4: no\n");
++		fprintf(fd, "      dhcp6: no\n");
++
++		di_debug("Writing VLAN: %s", interface->name);
++		rv = nc_wi_netplan_vlan(interface, fd);
++	}
++
++	if (interface->dhcp == 1 || interface->slaac == 1) {
++		if (interface->dhcp == 1) {
++			di_debug("Writing DHCP stanza for %s", interface->name);
++			fprintf(fd, "      dhcp4: yes\n");
++		}
++		if (interface->slaac == 1) {
++			di_debug("Writing SLAAC stanza for %s", interface->name);
++			fprintf(fd, "      dhcp6: yes\n");
++		}
++
++	}
++
++	/* Write all other static addresses */
++	if (interface->address_family == AF_INET) {
++		di_debug("Writing static IPv4 stanza for %s", interface->name);
++		rv = nc_wi_netplan_static_ipv4(interface, fd);
++	} else if (interface->address_family == AF_INET) {
++		di_debug("Writing static IPv6 stanza for %s", interface->name);
++		rv = nc_wi_netplan_static_ipv6(interface, fd);
++	}
++
++	if (rv && interface && is_wireless_iface(interface->name)) {
++		di_debug("Writing wireless options for %s", interface->name);
++		rv = nc_wi_netplan_wireless_aps(interface, fd);
++	}
++
++	return rv;
++}
++
++void unlink_config_tmp_file(int use_netplan)
++{
++	if (use_netplan)
++		unlink(NETPLAN_YAML ".tmp");
++	else
++		unlink(INTERFACES_FILE ".tmp");
++}
++
+ /* The main function for writing things to INTERFACES_FILE (aka
+  * /etc/network/interfaces).
+  *
+@@ -162,24 +346,48 @@ static int nc_wi_static_ipv6(const struct netcfg_interface *interface, FILE *fd)
+  * returned, the interfaces file will not have been modified, and errno will
+  * contain the details.
+  */
+-int netcfg_write_interface(const struct netcfg_interface *interface)
++int netcfg_write_interface(struct debconfclient *client, const struct netcfg_interface *interface)
+ {
+ 	FILE *fd;
+ 	int rv;
+ 	struct stat stat_buf;
+-	
++	int use_netplan;
++	char *config_file_path;
++
++	use_netplan = 1;
++
++	if (client) {
++        	debconf_get(client,"netcfg/do_not_use_netplan");
++	}
++
++	/* If this undocumented debconf key is set to true, skip netplan
++	 * and fallback to /e/n/i as before.
++	 */
++	if (!client || !strcmp(client->value, "false")) {
++		config_file_path = NETPLAN_YAML;
++	} else {
++		use_netplan = 0;
++		config_file_path = INTERFACES_FILE;
++	}
++
++	di_warning("Using %s", config_file_path);
++
+ 	if (!interface) {
+-		di_debug("No interface given; clearing " INTERFACES_FILE);
+-		rv = unlink(INTERFACES_FILE);
++		di_debug("No interface given; clearing %s", config_file_path);
++		rv = unlink(config_file_path);
+ 		if (rv < 0 && errno != ENOENT) {
+-			di_info("Error clearing %s: %s", INTERFACES_FILE, strerror(errno));
++			di_info("Error clearing %s: %s", config_file_path, strerror(errno));
+ 			return 0;
+ 		}
+ 	}
+ 	
+-	fd = file_open(INTERFACES_FILE ".tmp", "w");
++	if (use_netplan)
++		fd = file_open(NETPLAN_YAML ".tmp", "w");
++	else
++		fd = file_open(INTERFACES_FILE ".tmp", "w");
++
+ 	if (!fd) {
+-		di_warning("Failed to open %s.tmp: %s", INTERFACES_FILE, strerror(errno));
++		di_warning("Failed to open %s.tmp: %s", config_file_path, strerror(errno));
+ 		return 0;
+ 	}
+ 
+@@ -188,45 +396,45 @@ int netcfg_write_interface(const struct netcfg_interface *interface)
+ 	 * so we can add our new stuff to it.  Bloody longwinded way of doing
+ 	 * it, I'm sure you'll agree.
+ 	 */
+-	rv = stat(INTERFACES_FILE, &stat_buf);
++	rv = stat(config_file_path, &stat_buf);
+ 	if (rv < 0 && errno != ENOENT) {
+-		di_warning("Failed to stat %s: %s", INTERFACES_FILE, strerror(errno));
+-		unlink(INTERFACES_FILE ".tmp");
++		di_warning("Failed to stat %s: %s", config_file_path, strerror(errno));
++		unlink_config_tmp_file(use_netplan);
+ 		return 0;
+ 	}
+ 	if (rv == 0) {
+ 		char *tmpbuf = malloc(stat_buf.st_size + 1);
+ 		int origfd;
+-		origfd = open(INTERFACES_FILE, O_RDONLY);
++		origfd = open(config_file_path, O_RDONLY);
+ 		if (origfd < 0) {
+-			di_warning("Failed to open %s: %s", INTERFACES_FILE, strerror(errno));
++			di_warning("Failed to open %s: %s", config_file_path, strerror(errno));
+ 			fclose(fd);
+-			unlink(INTERFACES_FILE ".tmp");
++			unlink_config_tmp_file(use_netplan);
+ 			free(tmpbuf);
+ 			return 0;
+ 		}
+ 		rv = read(origfd, tmpbuf, stat_buf.st_size);
+ 		if (rv < 0) {
+-			di_warning("Failed to read %s: %s", INTERFACES_FILE, strerror(errno));
++			di_warning("Failed to read %s: %s", config_file_path, strerror(errno));
+ 			fclose(fd);
+-			unlink(INTERFACES_FILE ".tmp");
++			unlink_config_tmp_file(use_netplan);
+ 			free(tmpbuf);
+ 			close(origfd);
+ 			return 0;
+ 		}
+ 		if (rv != stat_buf.st_size) {
+-			di_warning("Short read on %s", INTERFACES_FILE);
++			di_warning("Short read on %s", config_file_path);
+ 			fclose(fd);
+-			unlink(INTERFACES_FILE ".tmp");
++			unlink_config_tmp_file(use_netplan);
+ 			free(tmpbuf);
+ 			close(origfd);
+ 			return 0;
+ 		}
+ 		rv = fwrite(tmpbuf, sizeof(char), stat_buf.st_size, fd);
+ 		if (rv != (int)stat_buf.st_size) {
+-			di_warning("Short write on %s.tmp", INTERFACES_FILE);
++			di_warning("Short write on %s.tmp", config_file_path);
+ 			fclose(fd);
+-			unlink(INTERFACES_FILE ".tmp");
++			unlink_config_tmp_file(use_netplan);
+ 			free(tmpbuf);
+ 			close(origfd);
+ 			return 0;
+@@ -240,43 +448,23 @@ int netcfg_write_interface(const struct netcfg_interface *interface)
+ 	 * freaking interfaces file entry */
+ 	rv = 1;
+ 
+-	if (!interface) {
+-		di_debug("Writing informative header");
+-		rv = nc_wi_header(fd);
+-	} else if (interface->loopback == 1) {
+-		di_debug("Writing loopback interface");
+-		rv = nc_wi_loopback(interface, fd);
+-	} else if (interface->dhcp == 1 || interface->slaac == 1) {
+-		if (interface->dhcp == 1) {
+-			di_debug("Writing DHCP stanza for %s", interface->name);
+-			rv = nc_wi_dhcp(interface, fd);
+-		}
+-		if (interface->slaac == 1) {
+-			di_debug("Writing SLAAC stanza for %s", interface->name);
+-			rv = nc_wi_slaac(interface, fd);
+-		}
+-	} else if (interface->address_family == AF_INET) {
+-		di_debug("Writing static IPv4 stanza for %s", interface->name);
+-		rv = nc_wi_static_ipv4(interface, fd);
+-	} else if (interface->address_family == AF_INET6) {
+-		di_debug("Writing static IPv6 stanza for %s", interface->name);
+-		rv = nc_wi_static_ipv6(interface, fd);
+-	}
+-	if (rv && interface && interface->parentif) {
+-		di_debug("Writing VLAN: %s", interface->name);
+-		rv = nc_wi_vlan(interface, fd);
+-	}
+-	if (rv && interface && is_wireless_iface(interface->name)) {
+-		di_debug("Writing wireless options for %s", interface->name);
+-		rv = nc_wi_wireless_options(interface, fd);
++	if (use_netplan) {
++		rv = nc_wi_write_netplan_yaml(interface, fd, stat_buf.st_size);
++	} else {
++		rv = nc_wi_write_eni(interface, fd);
+ 	}
+ 
+-	if (rv) {
++	if (rv)
+ 		di_debug("Success!");
++
++	if (use_netplan)
++		rename(NETPLAN_YAML ".tmp", NETPLAN_YAML);
++	else
+ 		rename(INTERFACES_FILE ".tmp", INTERFACES_FILE);
+-	}
+ 
+ 	fclose(fd);
+-	unlink(INTERFACES_FILE ".tmp");
++
++	unlink_config_tmp_file(use_netplan);
++
+ 	return rv;
+ }
+-- 
+cgit v1.1
+

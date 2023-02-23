@@ -1,0 +1,26 @@
+From 79924426783a58228102737ce9e2f22c631e5a09 Mon Sep 17 00:00:00 2001
+From: Mathieu Trudel-Lapierre <cyphermox@ubuntu.com>
+Date: Fri, 15 Feb 2019 14:35:12 -0500
+Subject: 1.142ubuntu8 (patches unapplied)
+
+Imported using git-ubuntu import.
+---
+ debian/changelog  | 8 ++++++++
+ write_interface.c | 1 +
+ 2 files changed, 9 insertions(+)
+
+diff --git a/write_interface.c b/write_interface.c
+index 67d2977..344b419 100644
+--- a/write_interface.c
++++ b/write_interface.c
+@@ -390,6 +390,7 @@ int netcfg_write_interface(struct debconfclient *client, const struct netcfg_int
+ 	} else {
+ 		use_netplan = 0;
+ 		config_file_path = INTERFACES_FILE;
++		di_exec_shell_log("apt-install ifupdown");
+ 	}
+ 
+ 	di_warning("Using %s", config_file_path);
+-- 
+cgit v1.1
+

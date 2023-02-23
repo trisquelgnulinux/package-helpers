@@ -17,16 +17,19 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
+VERSION=4
 EXTERNAL='deb-src http://ftp.debian.org/debian stable main'
 REPOKEY=648ACFD622F3D138
 NETINST=true
 . ./config
 
-rpl "Default: debian" "Default: trisquel" . -R
-sed -i '/client, template,/s/debian/trisquel/g' netcfg-common.c
-patch -p1 < $DATA/restore_network-manager_management.patch
-patch -p1 < $DATA/ifupdown.patch
+# Re apply upstream behavior and configuration features from last release (focal).
+# https://git.launchpad.net/ubuntu/+source/netcfg/log/?h=ubuntu/focal
+for patch in $(ls -v ${DATA}/*.patch)
+do
+echo "Applying $patch"
+patch -Np1 < $patch
+done
 
 changelog "Rebranded and adapted for Trisquel"
 compile

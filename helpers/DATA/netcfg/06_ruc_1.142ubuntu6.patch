@@ -1,0 +1,39 @@
+From d3e289ae492c744eabc1db189fbecce8f2de1d2d Mon Sep 17 00:00:00 2001
+From: Mathieu Trudel-Lapierre <cyphermox@ubuntu.com>
+Date: Sun, 18 Mar 2018 21:24:47 -0400
+Subject: 1.142ubuntu6 (patches unapplied)
+
+Imported using git-ubuntu import.
+---
+ debian/changelog  | 7 +++++++
+ write_interface.c | 6 +++---
+ 2 files changed, 10 insertions(+), 3 deletions(-)
+
+diff --git a/write_interface.c b/write_interface.c
+index d261f76..5ca1cc0 100644
+--- a/write_interface.c
++++ b/write_interface.c
+@@ -178,7 +178,7 @@ static int nc_wi_netplan_write_nameservers(const struct netcfg_interface *interf
+ 	fprintf(fd, "          addresses:\n");
+ 	for (i = 0; i < NETCFG_NAMESERVERS_MAX; i++) {
+ 		if (!empty_str(interface->nameservers[i])) {
+-			fprintf(fd, "              - %s\n", interface->nameservers[i]);
++			fprintf(fd, "              - \"%s\"\n", interface->nameservers[i]);
+ 		}
+ 	}
+ 
+@@ -230,9 +230,9 @@ static int nc_wi_static_ipv6(const struct netcfg_interface *interface, FILE *fd)
+ 
+ static int nc_wi_netplan_static_ipv6(const struct netcfg_interface *interface, FILE *fd, const char *domain)
+ {
+-	fprintf(fd, "      addresses: [ %s/%i ]\n", interface->ipaddress, interface->masklen);
++	fprintf(fd, "      addresses: [ \"%s/%i\" ]\n", interface->ipaddress, interface->masklen);
+ 	if (!empty_str(interface->gateway))
+-		fprintf(fd, "      gateway6: %s\n", interface->gateway);
++		fprintf(fd, "      gateway6: \"%s\"\n", interface->gateway);
+ 
+ 	return nc_wi_netplan_write_nameservers(interface, fd, domain);
+ }
+-- 
+cgit v1.1
+

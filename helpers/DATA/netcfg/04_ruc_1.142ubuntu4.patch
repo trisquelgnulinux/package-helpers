@@ -1,0 +1,83 @@
+From a015330a3b16ec2c79c06b65f449c7f367b6599f Mon Sep 17 00:00:00 2001
+From: Dimitri John Ledkov <xnox@ubuntu.com>
+Date: Wed, 20 Sep 2017 09:52:03 +0100
+Subject: 1.142ubuntu4 (patches unapplied)
+
+Imported using git-ubuntu import.
+---
+ debian/changelog               |  6 ++++++
+ netcfg-common.c                | 18 +++++++++++++++++-
+ netcfg.h                       |  2 ++
+ post-base-installer.d/40netcfg |  6 ++++++
+ 4 files changed, 31 insertions(+), 1 deletion(-)
+
+diff --git a/netcfg-common.c b/netcfg-common.c
+index d747450..8afe70d 100644
+--- a/netcfg-common.c
++++ b/netcfg-common.c
+@@ -1403,7 +1403,8 @@ void reap_old_files (void)
+         unlink(*ptr++);
+ 
+     if (!is_resolvconf_used())
+-        unlink(RESOLV_FILE);
++	    if (!is_resolved_used())
++		unlink(RESOLV_FILE);
+ }
+ 
+ /* Convert a space-separated list of nameservers in a single string (as might
+@@ -1816,3 +1817,18 @@ int is_resolvconf_used()
+ 
+ 	return resolvconf_used;
+ }
++
++/* Check if /etc/resolv.conf symlinks to /run/systemd/resolve/stub-resolv.conf. */
++int is_resolved_used()
++{
++	int resolved_used = 0;
++
++	char *path = realpath(RESOLV_FILE, NULL);
++
++	if (path) {
++		resolved_used = !strcmp(path, RESOLVED_FILE);
++		free(path);
++	}
++
++	return resolved_used;
++}
+diff --git a/netcfg.h b/netcfg.h
+index ae3f34c..437c87e 100644
+--- a/netcfg.h
++++ b/netcfg.h
+@@ -8,6 +8,7 @@
+ #define NETWORKS_FILE   "/etc/networks"
+ #define RESOLV_FILE     "/etc/resolv.conf"
+ #define RESOLVCONF_FILE "/run/resolvconf/resolv.conf"
++#define RESOLVED_FILE   "/run/systemd/resolve/stub-resolv.conf"
+ #define DHCLIENT_CONF   "/etc/dhclient.conf"
+ #define DOMAIN_FILE     "/tmp/domain_name"
+ #define NTP_SERVER_FILE "/tmp/dhcp-ntp-servers"
+@@ -203,6 +204,7 @@ extern int nameserver_count (const struct netcfg_interface *interface);
+ 
+ extern int read_resolv_conf_nameservers (char *resolv_conf_file, struct netcfg_interface *interface);
+ extern int is_resolvconf_used();
++extern int is_resolved_used();
+ 
+ extern void sigchld_handler (int sig __attribute__ ((unused)));
+ 
+diff --git a/post-base-installer.d/40netcfg b/post-base-installer.d/40netcfg
+index 9d19e33..ee717c2 100755
+--- a/post-base-installer.d/40netcfg
++++ b/post-base-installer.d/40netcfg
+@@ -5,3 +5,9 @@ if [ -L /target/etc/resolv.conf ] && [ -f /target/run/resolvconf/resolv.conf ];
+ 	mkdir -p /run/resolvconf
+ 	cp /target/run/resolvconf/resolv.conf /run/resolvconf/resolv.conf
+ fi
++
++# Make sure resolved will still work with bind-mounted /run
++if [ -L /target/etc/resolv.conf ] && [ -f /target/run/systemd/resolve/stub-resolv.conf ]; then
++	mkdir -p /run/systemd/resolve/
++	cp /target/run/systemd/resolve/stub-resolv.conf /run/systemd/resolve/stub-resolv.conf
++fi
+-- 
+cgit v1.1
+

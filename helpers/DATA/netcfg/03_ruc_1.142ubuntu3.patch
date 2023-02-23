@@ -1,0 +1,30 @@
+From b5ec27c44aec207a84f49ab8a0bf700ef89ad175 Mon Sep 17 00:00:00 2001
+From: dann frazier <dannf@ubuntu.com>
+Date: Wed, 19 Jul 2017 13:09:36 -0400
+Subject: 1.142ubuntu3 (patches unapplied)
+
+Imported using git-ubuntu import.
+---
+ debian/changelog               | 6 ++++++
+ debian/netcfg-common.templates | 5 +++++
+ 2 files changed, 11 insertions(+)
+
+diff --git a/debian/netcfg-common.templates b/debian/netcfg-common.templates
+index 6e42847..f508422 100644
+--- a/debian/netcfg-common.templates
++++ b/debian/netcfg-common.templates
+@@ -290,6 +290,11 @@ Type: text
+ # :sl2:
+ _Description: Ethernet CCW bus
+ 
++Template: netcfg/internal-ena
++Type: text
++# :sl2:
++_Description: Ethernet Onboard
++
+ Template: netcfg/internal-enP
+ Type: text
+ # :sl2:
+-- 
+cgit v1.1
+
