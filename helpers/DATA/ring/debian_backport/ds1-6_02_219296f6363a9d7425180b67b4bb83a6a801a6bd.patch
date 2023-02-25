@@ -1,0 +1,53 @@
+From 219296f6363a9d7425180b67b4bb83a6a801a6bd Mon Sep 17 00:00:00 2001
+From: Petter Reinholdtsen <pere@debian.org>
+Date: Tue, 21 Feb 2023 04:13:52 +0100
+Subject: [PATCH] Added 1000-appstream-categories.patch to fix warning from
+ appstream generator.
+
+---
+ .../patches/1000-appstream-categories.patch   | 23 +++++++++++++++++++
+ debian/patches/series                         |  1 +
+ 2 files changed, 24 insertions(+)
+ create mode 100644 debian/patches/1000-appstream-categories.patch
+
+diff --git a/debian/patches/1000-appstream-categories.patch b/debian/patches/1000-appstream-categories.patch
+new file mode 100644
+index 00000000..404f5c02
+--- /dev/null
++++ b/debian/patches/1000-appstream-categories.patch
+@@ -0,0 +1,23 @@
++Description: Remove appstream metadata categories not recognized by validator
++ The Communication and Productivity categories are not listed in the
++ XDG Menu Specification.
++Author: Petter Reinholdtsen
++Forwarded: no
++
++diff --git a/daemon/net.jami.daemon.metainfo.xml.in b/daemon/net.jami.daemon.metainfo.xml.in
++index f30a8ac6..99c70f7a 100644
++--- a/daemon/net.jami.daemon.metainfo.xml.in
+++++ b/daemon/net.jami.daemon.metainfo.xml.in
++@@ -67,12 +67,10 @@
++  <!-- https://specifications.freedesktop.org/menu-spec/latest/apas02.html -->
++  <categories>
++   <category>Chat</category>
++-  <category>Communication</category>
++   <category>FileTransfer</category>
++   <category>InstantMessaging</category>
++   <category>Network</category>
++   <category>P2P</category>
++-  <category>Productivity</category>
++  </categories>
++ 
++  <content_rating type="oars-1.1">
+diff --git a/debian/patches/series b/debian/patches/series
+index 997c9a39..ea657633 100644
+--- a/debian/patches/series
++++ b/debian/patches/series
+@@ -1,3 +1,4 @@
++1000-appstream-categories.patch
+ 2000-jsoncpp-rename.patch
+ 2010-dont-build-gnutls.patch
+ 2020-dont-build-msgpack.patch
+-- 
+GitLab
+

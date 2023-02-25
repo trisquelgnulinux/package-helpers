@@ -19,7 +19,7 @@
 
 EXTERNAL='deb-src http://ftp.debian.org/debian unstable main'
 REPOKEY=04EE7237B7D453EC
-VERSION=2
+VERSION=3
 
 . ./config
 
@@ -57,6 +57,14 @@ done
 # Removing ffmpeg time_base feature req. from jami so it builds
 # against libavutil56 (ffmpeg 4.4). Can be removed on Trisquel 12
 patch -R -p1 < $DATA/ffmpeg_time_base_frame.patch
+
+# Backport latest changes required at experimental - Remove once package
+# keep up with changes at testing or unstable release.
+for patch in $(ls -v ${DATA}/debian_backport/*.patch)
+do
+echo "Applying $patch"
+patch -Np1 < $patch
+done
 
 changelog "Backport ring/jammi to aramo from debian testing"
 

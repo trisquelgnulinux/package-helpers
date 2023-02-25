@@ -1,0 +1,65 @@
+From 4d64f33d99d8a2521bcb4ff7d06a5b1dabb2621e Mon Sep 17 00:00:00 2001
+From: Amin Bandali <bandali@gnu.org>
+Date: Mon, 20 Feb 2023 19:31:40 -0500
+Subject: [PATCH] Add missing libqt6sql6-sqlite dependency, fix some lintian
+ warnings/errors
+
+---
+ debian/changelog                | 11 +++++++++++
+ debian/control                  |  1 +
+ debian/copyright                |  8 --------
+ debian/source/lintian-overrides |  5 +++--
+ 4 files changed, 15 insertions(+), 10 deletions(-)
+
+diff --git a/debian/control b/debian/control
+index 0b486037..ac39eaa6 100644
+--- a/debian/control
++++ b/debian/control
+@@ -95,6 +95,7 @@ Architecture: any
+ Depends: ${shlibs:Depends},
+          ${misc:Depends},
+          jami-daemon (=${binary:Version}),
++         libqt6sql6-sqlite,
+          qml6-module-qt-labs-platform,
+          qml6-module-qt-labs-qmlmodels,
+          qml6-module-qt5compat-graphicaleffects,
+diff --git a/debian/copyright b/debian/copyright
+index e5b88470..59cca73f 100644
+--- a/debian/copyright
++++ b/debian/copyright
+@@ -76,13 +76,6 @@ License: Expat
+ 
+ # Jami daemon
+ 
+-Files: daemon/doc/dbus-api/tools/devhelp.xsl
+-       daemon/doc/dbus-api/tools/doc-generator.py
+-       daemon/doc/dbus-api/tools/doc-generator.xsl
+-       daemon/doc/dbus-api/tools/specparser.py
+-Copyright: 2009 Collabora Ltd.
+-License: LGPL-2.1+
+-
+ Files: daemon/compat/msvc/dlfcn.h
+        daemon/compat/msvc/dlfcn.c
+ Copyright: 2007 Ramiro Polla
+@@ -113,7 +106,6 @@ Copyright: 2003-2011 the VideoLAN team
+ License: GPL-2+
+ 
+ Files: daemon/m4/ax_cxx_compile_stdcxx.m4
+-       daemon/m4/dolt.m4
+ Copyright: 2008 Benjamin Kosnik <bkoz@redhat.com>
+            2012 Zack Weinberg <zackw@panix.com>
+            2013 Roy Stogner <roystgnr@ices.utexas.edu>
+diff --git a/debian/source/lintian-overrides b/debian/source/lintian-overrides
+index 0339fc0c..93f5703f 100644
+--- a/debian/source/lintian-overrides
++++ b/debian/source/lintian-overrides
+@@ -1,3 +1,4 @@
+ # The full commented source is there.
+-source-is-missing lrc/src/web-chatview/linkify.js *
+-source-is-missing lrc/src/web-chatview/jed.js *
++source-is-missing [src/libclient/web-chatview/linkify.j]
++source-is-missing [src/libclient/web-chatview/jed.js]
++source-is-missing [3rdparty/SortFilterProxyModel/docs/*.html]
+-- 
+GitLab
+

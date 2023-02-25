@@ -1,0 +1,28 @@
+From 27da2eb5717b33acdf27457b11d4bc98e8cc35de Mon Sep 17 00:00:00 2001
+From: Amin Bandali <bandali@gnu.org>
+Date: Tue, 21 Feb 2023 01:08:08 -0500
+Subject: [PATCH] * debian/rules: Remove usr/lib/pkgconfig/jami.pc.
+
+We currently don't ship the Jami daemon as a library, so it doesn't
+make much sense to ship the jami.pc pkg-config file either.
+---
+ debian/changelog | 4 +++-
+ debian/rules     | 2 ++
+ 2 files changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/debian/rules b/debian/rules
+index 621d0cec..08ae06aa 100755
+--- a/debian/rules
++++ b/debian/rules
+@@ -132,6 +132,8 @@ override_dh_auto_install:
+ 	rm -rfv $(CURDIR)/debian/jami-daemon/usr/include
+ 	rm -rfv $(CURDIR)/debian/jami-daemon/usr/lib/*.a
+ 	rm -rfv $(CURDIR)/debian/jami-daemon/usr/lib/*.la
++	rm -rfv $(CURDIR)/debian/jami-daemon/usr/lib/pkgconfig
++	rm -rv  $(CURDIR)/debian/jami-daemon/usr/lib
+ # CMake files
+ 	rm -rfv $(CURDIR)/debian/jami/usr/lib/cmake
+ 
+-- 
+GitLab
+
