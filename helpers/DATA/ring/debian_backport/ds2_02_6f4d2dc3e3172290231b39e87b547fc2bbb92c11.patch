@@ -1,0 +1,34 @@
+From 6f4d2dc3e3172290231b39e87b547fc2bbb92c11 Mon Sep 17 00:00:00 2001
+From: Amin Bandali <bandali@gnu.org>
+Date: Sat, 25 Feb 2023 12:40:53 -0500
+Subject: [PATCH] Use the right Debian Source (ds) number in orig tarball name
+
+---
+ debian/rules | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/debian/rules b/debian/rules
+index 41170fc2..f414d029 100755
+--- a/debian/rules
++++ b/debian/rules
+@@ -135,6 +135,8 @@ override_dh_auto_install:
+ tmp_dir := $(shell mktemp -d)
+ version := $(shell dpkg-parsechangelog -ldebian/changelog | perl -ne \
+                    'print $$1 if m{^Version:\s+(?:\d+:)?(\d.*)(?:\~ds.+)(?:\-\d+.*)};')
++ds := $(shell dpkg-parsechangelog -ldebian/changelog | perl -ne \
++              'print $$1 if m{^Version:\s+(?:\d+:)?(?:\d.*)(\~ds.+)(?:\-\d+.*)};')
+ pj := $(tmp_dir)/jami-*/daemon/contrib/tarballs-unpacked/pjproject-*/pjproject-*
+ 
+ # Work around dak not liking files with timestamps too far in the past
+@@ -194,7 +196,7 @@ get-orig-source:
+ # Create the new tarball
+ 	cd $(tmp_dir) && \
+ 	  tar -czf \
+-	    $(CURDIR)/../ring_$(version)~ds1.orig.tar.gz \
++	    $(CURDIR)/../ring_$(version)$(ds).orig.tar.gz \
+ 	    jami-*
+ 
+ # Remove the temporary directory
+-- 
+GitLab
+

@@ -19,12 +19,9 @@
 
 EXTERNAL='deb-src http://ftp.debian.org/debian unstable main'
 REPOKEY=04EE7237B7D453EC
-VERSION=3
+VERSION=4
 
 . ./config
-
-# Disbale ppc64el arch
-sed -i "/Architecture:/s|any|amd64 armhf arm64|g" debian/control
 
 # Add trisquel aramo's dependencies
 sed -i "/# Qt client/i # trisquel's aramo dependencies" debian/control
@@ -66,6 +63,6 @@ echo "Applying $patch"
 patch -Np1 < $patch
 done
 
-changelog "Backport ring/jammi to aramo from debian testing"
+changelog "Backport ring/jammi to aramo from debian: 20230206.0~ds2"
 
 compile
