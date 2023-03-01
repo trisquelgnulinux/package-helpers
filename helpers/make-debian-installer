@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=11
+VERSION=12
 EXTERNAL='deb-src http://ftp.debian.org/debian stable main'
 REPOKEY=648ACFD622F3D138
 NETINST=true
@@ -50,7 +50,8 @@ EOF
 
 find build/pkg-lists -type f | xargs sed -i /media-retriever/d
 apt-get update -c ${LOCAL_APT}/etc/apt_${CODENAME}.conf
-LASTKERNEL=$(apt-cache show -c ${LOCAL_APT}/etc/apt_${CODENAME}.conf linux-libc-dev|grep ^Version |head -n1|cut -d" " -f2|cut -d. -f1,2,3)
+# Get available kernel at release/main packages.
+LASTKERNEL="$(apt-cache madison -c ${LOCAL_APT}/etc/apt_${CODENAME}.conf linux-libc-dev|grep ${CODENAME}/main|awk '{print$3}'|head -n1|cut -d. -f1,2,3)"
 #sed -i "/# The version of the kernel to use./a BASEVERSION = $LASTKERNEL" ./build/config/amd64.cfg
 #sed -i "s/^KERNELVERSION = .*/KERNELVERSION = \$(BASEVERSION)-generic/g" ./build/config/amd64.cfg
 #sed -i "s/^MEDIUM_SUPPORTED.*/MEDIUM_SUPPORTED = cdrom netboot/g" ./build/config/amd64.cfg
