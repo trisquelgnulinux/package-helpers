@@ -19,7 +19,7 @@
 
 EXTERNAL='deb-src http://ftp.debian.org/debian unstable main'
 REPOKEY=04EE7237B7D453EC
-VERSION=4
+VERSION=1
 
 . ./config
 
@@ -38,7 +38,6 @@ done
 for i in    "libqt6multimediaquick6" \
             "libqt6quickshapes6" \
             "libqt6quicktemplates2-6" \
-            "libqt6webenginecore6-bin [amd64 armhf arm64]" \
             "qt6-qpa-plugins"
 do
     sed -i "/jami-daemon (=/i \ \ \ \ \ \ \ \ \ $i," debian/control
@@ -63,6 +62,6 @@ echo "Applying $patch"
 patch -Np1 < $patch
 done
 
-changelog "Backport ring/jammi to aramo from debian: 20230206.0~ds2"
+changelog "Backport ring/jammi to aramo from debian unstable"
 
 compile
