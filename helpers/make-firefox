@@ -67,7 +67,7 @@ sed -i '/browser.theme.colorway-closet/s|true|false|' browser/app/profile/firefo
 ##disable newtab intro - check adjustment for versions greater than 106
 grep -rl browser.newtabpage.introShown |xargs sed -i '/browser.newtabpage.introShown/s|true|false|' || true
 ##Remove mailto handlers. 110
-sed -i '/kHandlerList = {/,/^ };/{/^  /d}' uriloader_/exthandler/HandlerList.sys.mjs
+sed -i '/kHandlerList = {/,/^ };/{/^  /d}' uriloader/exthandler/HandlerList.sys.mjs
 
 # Remove .gitignore call as those files get cleaned out on dpkg tarball by default.
 remove_gitignore_from_json(){
