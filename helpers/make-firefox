@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=98
+VERSION=99
 EXTERNAL='deb-src http://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu $UPSTREAM main'
 REPOKEY=9BDB3D89CE49EC21
 
@@ -66,6 +66,8 @@ sed -i '/browser.uitour.enabled/s|true|false|' browser/app/profile/firefox.js
 sed -i '/browser.theme.colorway-closet/s|true|false|' browser/app/profile/firefox.js
 ##disable newtab intro - check adjustment for versions greater than 106
 grep -rl browser.newtabpage.introShown |xargs sed -i '/browser.newtabpage.introShown/s|true|false|' || true
+##Remove mailto handlers. 110
+sed -i '/kHandlerList = {/,/^ };/{/^  /d}' uriloader_/exthandler/HandlerList.sys.mjs
 
 # Remove .gitignore call as those files get cleaned out on dpkg tarball by default.
 remove_gitignore_from_json(){
@@ -391,7 +393,7 @@ sed '/Provides/s/abrowser-locale/firefox-locale/' -i debian/control.langpacks
 cat $DATA/settings.js >> debian/vendor-firefox.js
 
 # set contentblocking to strict by default
-patch -p1 < $DATA/default-strict.patch
+patch --no-backup-if-mismatch -p1 < $DATA/default-strict.patch
 #sed '/this._trackSlowStartup/s/$/\n\n if (! Services.prefs.prefHasUserValue("browser.contentblocking.category")) { Services.prefs.setStringPref("browser.contentblocking.category", "strict"); this._updateCBCategory; }/' -i ./browser/components/BrowserGlue.jsm
 
 #################
@@ -426,7 +428,7 @@ cp -a $DATA/android/res/main/* mobile/android/geckoview/src/main/res
 
 #Fixes by patch on source.
 ##Firefox v100, based on parabola 9004-FSDG-misc.patch
-patch -p1 < $DATA/patch_changes/Remove_moreFromMozilla_Focus_and_Klar.patch
+patch --no-backup-if-mismatch -p1 < $DATA/patch_changes/Remove_moreFromMozilla_Focus_and_Klar.patch
 
 # Postinst script to manage profile migration and system links
 echo '
