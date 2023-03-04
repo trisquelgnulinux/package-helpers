@@ -1,0 +1,76 @@
+#!/bin/sh
+#
+#    Copyright (C) 2023  Ruben Rodriguez <ruben@trisquel.info>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=1
+
+. ./config
+
+cat << EOF > conf/10-radeon.conf
+# These configurations are required to correct issues with AMD graphics cards when
+# they are run without firmware (as is the case in Trisquel). If you were
+# to install the nonfree firmware, comment out the first block and uncomment
+# the second, to revert to default settings.
+#
+# You may also need to check/edit /etc/modprobe.d/blacklist-amdgpu.conf
+# More info: https://libreplanet.org/wiki/Group:Hardware/research/gpu/radeon
+#            https://en.wikipedia.org/wiki/List_of_AMD_graphics_processing_units
+#
+# == More information on AMD graphics cards drivers in Trisquel ==
+# 
+#  * Cards using the /drm/radeon kernel module:
+#    - Models released between ~2000 and ~2013
+#    - Product names: Radeon 7000-9000, X700-X1000, HD2000-HD7000, and Radeon 200
+#    - Use the "radeon" kernel module. This module works in Trisquel 11 or newer even
+#      without nonfree firmware blobs, although those are required for 3D/2D acceleration.
+#    - These cards don't initialize correctly if the radeon kernel module were to be disabled,
+#      unless the kernel parameter 'nomodeset' is used to disable modesetting. In that case,
+#      the non-accelerated vesa driver is used. The radeon module is enabled in Trisquel >= 11
+#
+#  * Cards using the /drm/amdgpu kernel module:
+#    - Models released starting 2015
+#    - Product names: Radeon 200-600, Radeon RX Vega, Radeon VII, Radeon RX 5000 or newer
+#    - Use the "amdgpu" kernel module. This module does not work without nonfree firmware
+#      so it is disabled in Trisquel at /etc/modprobe.d/blacklist-amdgpu.conf
+#    - Those cards seem to work correctly without the amdgpu module, and they revert to
+#      using the vesa driver without the need to use kernel parameters.
+
+
+Section "OutputClass"
+	Identifier "Radeon"
+        MatchDriver "radeon"
+	Driver "modesetting"
+	Option "AccelMethod" "none"
+	Option "SWCursor" "True"
+EndSection
+
+
+#Section "OutputClass"
+#	Identifier "Radeon"
+#	MatchDriver "radeon"
+#	Driver "radeon"
+#EndSection
+EOF
+
+# Install the configuration file to /etc so user edits are permanent
+sed 's|usr/share/X11/xorg.conf.d|etc/X11/xorg.conf.d|' -i debian/xserver-xorg-video-radeon.install
+sed 's|--libdir=/usr/lib|--libdir=/usr/lib --with-xorg-conf-dir=/etc/X11/xorg.conf.d|' -i debian/rules
+
+changelog "Custom config file to work without nonfree firmware"
+
+compile
