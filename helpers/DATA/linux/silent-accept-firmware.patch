@@ -1096,3 +1096,408 @@ diff -ru source.orig/drivers/net/wireless/intel/ipw2x00/ipw2200.c source/drivers
  			return rc;
  		}
  
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
+index f1a050379190..073962db13bd 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
+@@ -419,7 +419,7 @@ static int amdgpu_cgs_get_firmware_info(struct cgs_device *cgs_device,
+ 
+ 			err = amdgpu_ucode_validate(adev->pm.fw);
+ 			if (err) {
+-				DRM_ERROR("Failed to load firmware \"%s\"", fw_name);
++				DRM_ERROR("Failed to load firmware\n");
+ 				release_firmware(adev->pm.fw);
+ 				adev->pm.fw = NULL;
+ 				return err;
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+index af9bdf16eefd..8029aad01d10 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+@@ -1978,15 +1978,13 @@ static int amdgpu_device_parse_gpu_info_fw(struct amdgpu_device *adev)
+ 	err = request_firmware(&adev->firmware.gpu_info_fw, fw_name, adev->dev);
+ 	if (err) {
+ 		dev_err(adev->dev,
+-			"Failed to load gpu_info firmware \"%s\"\n",
+-			fw_name);
++			"Failed to load gpu_info firmware\n");
+ 		goto out;
+ 	}
+ 	err = amdgpu_ucode_validate(adev->firmware.gpu_info_fw);
+ 	if (err) {
+ 		dev_err(adev->dev,
+-			"Failed to validate gpu_info firmware \"%s\"\n",
+-			fw_name);
++			"Failed to validate gpu_info firmware\n");
+ 		goto out;
+ 	}
+ 
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
+index 7e45640fbee0..ac42d8fb50c5 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
+@@ -1552,8 +1552,8 @@ static int amdgpu_debugfs_firmware_info_show(struct seq_file *m, void *unused)
+ 		if (ret)
+ 			continue;
+ 
+-		seq_printf(m, "TA %s feature version: 0x%08x, firmware version: 0x%08x\n",
+-			   ta_fw_name[i], fw_info.feature, fw_info.ver);
++		seq_printf(m, "TA feature version: 0x%08x, firmware version: 0x%08x\n",
++			   fw_info.feature, fw_info.ver);
+ 	}
+ 
+ 	/* SMC */
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c
+index 9b41cb8c3de5..b31e948d1f61 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c
+@@ -469,8 +469,7 @@ psp_cmd_submit_buf(struct psp_context *psp,
+ 	 */
+ 	if (!skip_unsupport && (psp->cmd_buf_mem->resp.status || !timeout) && !ras_intr) {
+ 		if (ucode)
+-			DRM_WARN("failed to load ucode %s(0x%X) ",
+-				  amdgpu_ucode_name(ucode->ucode_id), ucode->ucode_id);
++			DRM_WARN("failed to load ucode");
+ 		DRM_WARN("psp gfx command %s(0x%X) failed and response status is (0x%X)\n",
+ 			 psp_gfx_cmd_name(psp->cmd_buf_mem->cmd_id), psp->cmd_buf_mem->cmd_id,
+ 			 psp->cmd_buf_mem->resp.status);
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c
+index d451c359606a..c22c4aab7aab 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c
+@@ -216,15 +216,13 @@ int amdgpu_uvd_sw_init(struct amdgpu_device *adev)
+ 
+ 	r = request_firmware(&adev->uvd.fw, fw_name, adev->dev);
+ 	if (r) {
+-		dev_err(adev->dev, "amdgpu_uvd: Can't load firmware \"%s\"\n",
+-			fw_name);
++		dev_err(adev->dev, "amdgpu_uvd: Can't load firmware\n");
+ 		return r;
+ 	}
+ 
+ 	r = amdgpu_ucode_validate(adev->uvd.fw);
+ 	if (r) {
+-		dev_err(adev->dev, "amdgpu_uvd: Can't validate firmware \"%s\"\n",
+-			fw_name);
++		dev_err(adev->dev, "amdgpu_uvd: Can't validate firmware\n");
+ 		release_firmware(adev->uvd.fw);
+ 		adev->uvd.fw = NULL;
+ 		return r;
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c
+index 8e8dee9fac9f..d86834b5e41f 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c
+@@ -160,14 +160,13 @@ int amdgpu_vce_sw_init(struct amdgpu_device *adev, unsigned long size)
+ 
+ 	r = request_firmware(&adev->vce.fw, fw_name, adev->dev);
+ 	if (r) {
+-		dev_err(adev->dev, "amdgpu_vce: Can't load firmware \"%s\"\n",
+-			fw_name);
++		dev_err(adev->dev, "amdgpu_vce: Can't load firmware\n");
+ 		return r;
+ 	}
+ 
+ 	r = amdgpu_ucode_validate(adev->vce.fw);
+ 	if (r) {
+-		dev_err(adev->dev, "amdgpu_vce: Can't validate firmware \"%s\"\n",
++		dev_err(adev->dev, "amdgpu_vce: Can't validate firmware\n",
+ 			fw_name);
+ 		release_firmware(adev->vce.fw);
+ 		adev->vce.fw = NULL;
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c
+index 008a308a4eca..31238078bf56 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c
+@@ -174,15 +174,13 @@ int amdgpu_vcn_sw_init(struct amdgpu_device *adev)
+ 
+ 	r = request_firmware(&adev->vcn.fw, fw_name, adev->dev);
+ 	if (r) {
+-		dev_err(adev->dev, "amdgpu_vcn: Can't load firmware \"%s\"\n",
+-			fw_name);
++		dev_err(adev->dev, "amdgpu_vcn: Can't load firmware\n");
+ 		return r;
+ 	}
+ 
+ 	r = amdgpu_ucode_validate(adev->vcn.fw);
+ 	if (r) {
+-		dev_err(adev->dev, "amdgpu_vcn: Can't validate firmware \"%s\"\n",
+-			fw_name);
++		dev_err(adev->dev, "amdgpu_vcn: Can't validate firmware\n");
+ 		release_firmware(adev->vcn.fw);
+ 		adev->vcn.fw = NULL;
+ 		return r;
+diff --git a/drivers/gpu/drm/amd/amdgpu/cik_sdma.c b/drivers/gpu/drm/amd/amdgpu/cik_sdma.c
+index c8ebd108548d..f9bc1da8128f 100644
+--- a/drivers/gpu/drm/amd/amdgpu/cik_sdma.c
++++ b/drivers/gpu/drm/amd/amdgpu/cik_sdma.c
+@@ -144,7 +144,7 @@ static int cik_sdma_init_microcode(struct amdgpu_device *adev)
+ 	}
+ out:
+ 	if (err) {
+-		pr_err("cik_sdma: Failed to load firmware \"%s\"\n", fw_name);
++		pr_err("cik_sdma: Failed to load firmware\n");
+ 		for (i = 0; i < adev->sdma.num_instances; i++) {
+ 			release_firmware(adev->sdma.instance[i].fw);
+ 			adev->sdma.instance[i].fw = NULL;
+diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c
+index 16dbe593cba2..0f25109b8c02 100644
+--- a/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c
+@@ -4358,8 +4358,7 @@ static int gfx_v10_0_init_microcode(struct amdgpu_device *adev)
+ out:
+ 	if (err) {
+ 		dev_err(adev->dev,
+-			"gfx10: Failed to load firmware \"%s\"\n",
+-			fw_name);
++			"gfx10: Failed to load firmware\n");
+ 		release_firmware(adev->gfx.pfp_fw);
+ 		adev->gfx.pfp_fw = NULL;
+ 		release_firmware(adev->gfx.me_fw);
+diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c
+index 6a8dadea40f9..640940830bad 100644
+--- a/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c
+@@ -381,7 +381,7 @@ static int gfx_v6_0_init_microcode(struct amdgpu_device *adev)
+ 
+ out:
+ 	if (err) {
+-		pr_err("gfx6: Failed to load firmware \"%s\"\n", fw_name);
++		pr_err("gfx6: Failed to load firmware\n");
+ 		release_firmware(adev->gfx.pfp_fw);
+ 		adev->gfx.pfp_fw = NULL;
+ 		release_firmware(adev->gfx.me_fw);
+diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c
+index 37b4a3db6360..3a172220fc5d 100644
+--- a/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c
+@@ -976,7 +976,7 @@ static int gfx_v7_0_init_microcode(struct amdgpu_device *adev)
+ 
+ out:
+ 	if (err) {
+-		pr_err("gfx7: Failed to load firmware \"%s\"\n", fw_name);
++		pr_err("gfx7: Failed to load firmware\n");
+ 		release_firmware(adev->gfx.pfp_fw);
+ 		adev->gfx.pfp_fw = NULL;
+ 		release_firmware(adev->gfx.me_fw);
+diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
+index e0302c23e9a7..aac155fae920 100644
+--- a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
+@@ -1231,8 +1231,7 @@ static int gfx_v8_0_init_microcode(struct amdgpu_device *adev)
+ out:
+ 	if (err) {
+ 		dev_err(adev->dev,
+-			"gfx8: Failed to load firmware \"%s\"\n",
+-			fw_name);
++			"gfx8: Failed to load firmware\n");
+ 		release_firmware(adev->gfx.pfp_fw);
+ 		adev->gfx.pfp_fw = NULL;
+ 		release_firmware(adev->gfx.me_fw);
+diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
+index 025184a556ee..0af58255971f 100644
+--- a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
+@@ -1408,8 +1408,7 @@ static int gfx_v9_0_init_cp_gfx_microcode(struct amdgpu_device *adev,
+ out:
+ 	if (err) {
+ 		dev_err(adev->dev,
+-			"gfx9: Failed to load firmware \"%s\"\n",
+-			fw_name);
++			"gfx9: Failed to load firmware\n");
+ 		release_firmware(adev->gfx.pfp_fw);
+ 		adev->gfx.pfp_fw = NULL;
+ 		release_firmware(adev->gfx.me_fw);
+@@ -1543,8 +1542,7 @@ static int gfx_v9_0_init_rlc_microcode(struct amdgpu_device *adev,
+ out:
+ 	if (err) {
+ 		dev_err(adev->dev,
+-			"gfx9: Failed to load firmware \"%s\"\n",
+-			fw_name);
++			"gfx9: Failed to load firmware\n");
+ 		release_firmware(adev->gfx.rlc_fw);
+ 		adev->gfx.rlc_fw = NULL;
+ 	}
+@@ -1646,8 +1644,7 @@ static int gfx_v9_0_init_cp_compute_microcode(struct amdgpu_device *adev,
+ 	gfx_v9_0_check_fw_write_wait(adev);
+ 	if (err) {
+ 		dev_err(adev->dev,
+-			"gfx9: Failed to load firmware \"%s\"\n",
+-			fw_name);
++			"gfx9: Failed to load firmware\n");
+ 		release_firmware(adev->gfx.mec_fw);
+ 		adev->gfx.mec_fw = NULL;
+ 		release_firmware(adev->gfx.mec2_fw);
+diff --git a/drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c b/drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c
+index 0e81e03e9b49..fe09b62bae69 100644
+--- a/drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c
+@@ -140,8 +140,7 @@ static int gmc_v6_0_init_microcode(struct amdgpu_device *adev)
+ out:
+ 	if (err) {
+ 		dev_err(adev->dev,
+-		       "si_mc: Failed to load firmware \"%s\"\n",
+-		       fw_name);
++		       "si_mc: Failed to load firmware\n");
+ 		release_firmware(adev->gmc.fw);
+ 		adev->gmc.fw = NULL;
+ 	}
+diff --git a/drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c b/drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c
+index 0a50fdaced7e..e529fd9b36e2 100644
+--- a/drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c
+@@ -163,7 +163,7 @@ static int gmc_v7_0_init_microcode(struct amdgpu_device *adev)
+ 
+ out:
+ 	if (err) {
+-		pr_err("cik_mc: Failed to load firmware \"%s\"\n", fw_name);
++		pr_err("cik_mc: Failed to load firmware\n");
+ 		release_firmware(adev->gmc.fw);
+ 		adev->gmc.fw = NULL;
+ 	}
+diff --git a/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c b/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c
+index 492ebed2915b..7029642f7abc 100644
+--- a/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c
+@@ -271,7 +271,7 @@ static int gmc_v8_0_init_microcode(struct amdgpu_device *adev)
+ 
+ out:
+ 	if (err) {
+-		pr_err("mc: Failed to load firmware \"%s\"\n", fw_name);
++		pr_err("mc: Failed to load firmware\n");
+ 		release_firmware(adev->gmc.fw);
+ 		adev->gmc.fw = NULL;
+ 	}
+diff --git a/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c b/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c
+index 5872d68ed13d..19368f360168 100644
+--- a/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c
+@@ -75,8 +75,7 @@ static int psp_v10_0_init_microcode(struct psp_context *psp)
+ 		release_firmware(adev->psp.ta_fw);
+ 		adev->psp.ta_fw = NULL;
+ 		dev_info(adev->dev,
+-			 "psp v10.0: Failed to load firmware \"%s\"\n",
+-			 fw_name);
++			 "psp v10.0: Failed to load firmware\n");
+ 	} else {
+ 		err = amdgpu_ucode_validate(adev->psp.ta_fw);
+ 		if (err)
+@@ -119,8 +118,7 @@ static int psp_v10_0_init_microcode(struct psp_context *psp)
+ out:
+ 	if (err) {
+ 		dev_err(adev->dev,
+-			"psp v10.0: Failed to load firmware \"%s\"\n",
+-			fw_name);
++			"psp v10.0: Failed to load firmware\n");
+ 	}
+ 
+ 	return err;
+diff --git a/drivers/gpu/drm/amd/amdgpu/psp_v11_0.c b/drivers/gpu/drm/amd/amdgpu/psp_v11_0.c
+index 29bf9f09944b..0ba7c73cc4d8 100644
+--- a/drivers/gpu/drm/amd/amdgpu/psp_v11_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/psp_v11_0.c
+@@ -144,7 +144,7 @@ static int psp_v11_0_init_microcode(struct psp_context *psp)
+ 			release_firmware(adev->psp.ta_fw);
+ 			adev->psp.ta_fw = NULL;
+ 			dev_info(adev->dev,
+-				 "psp v11.0: Failed to load firmware \"%s\"\n", fw_name);
++				 "psp v11.0: Failed to load firmware\n");
+ 		} else {
+ 			err = amdgpu_ucode_validate(adev->psp.ta_fw);
+ 			if (err)
+@@ -179,7 +179,7 @@ static int psp_v11_0_init_microcode(struct psp_context *psp)
+ 			release_firmware(adev->psp.ta_fw);
+ 			adev->psp.ta_fw = NULL;
+ 			dev_info(adev->dev,
+-				 "psp v11.0: Failed to load firmware \"%s\"\n", fw_name);
++				 "psp v11.0: Failed to load firmware\n");
+ 		} else {
+ 			err = amdgpu_ucode_validate(adev->psp.ta_fw);
+ 			if (err)
+diff --git a/drivers/gpu/drm/amd/amdgpu/psp_v12_0.c b/drivers/gpu/drm/amd/amdgpu/psp_v12_0.c
+index cc649406234b..44cced561704 100644
+--- a/drivers/gpu/drm/amd/amdgpu/psp_v12_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/psp_v12_0.c
+@@ -75,8 +75,7 @@ static int psp_v12_0_init_microcode(struct psp_context *psp)
+ 		release_firmware(adev->psp.ta_fw);
+ 		adev->psp.ta_fw = NULL;
+ 		dev_info(adev->dev,
+-			 "psp v12.0: Failed to load firmware \"%s\"\n",
+-			 fw_name);
++			 "psp v12.0: Failed to load firmware\n");
+ 	} else {
+ 		err = amdgpu_ucode_validate(adev->psp.ta_fw);
+ 		if (err)
+@@ -110,8 +109,7 @@ static int psp_v12_0_init_microcode(struct psp_context *psp)
+ 	adev->psp.ta_fw = NULL;
+ 	if (err) {
+ 		dev_err(adev->dev,
+-			"psp v12.0: Failed to load firmware \"%s\"\n",
+-			fw_name);
++			"psp v12.0: Failed to load firmware\n");
+ 	}
+ 
+ 	return err;
+diff --git a/drivers/gpu/drm/amd/amdgpu/sdma_v2_4.c b/drivers/gpu/drm/amd/amdgpu/sdma_v2_4.c
+index 4509bd4cce2d..d275daaad31f 100644
+--- a/drivers/gpu/drm/amd/amdgpu/sdma_v2_4.c
++++ b/drivers/gpu/drm/amd/amdgpu/sdma_v2_4.c
+@@ -175,7 +175,7 @@ static int sdma_v2_4_init_microcode(struct amdgpu_device *adev)
+ 
+ out:
+ 	if (err) {
+-		pr_err("sdma_v2_4: Failed to load firmware \"%s\"\n", fw_name);
++		pr_err("sdma_v2_4: Failed to load firmware\n");
+ 		for (i = 0; i < adev->sdma.num_instances; i++) {
+ 			release_firmware(adev->sdma.instance[i].fw);
+ 			adev->sdma.instance[i].fw = NULL;
+diff --git a/drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c b/drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c
+index 135727b59c41..898775832e7b 100644
+--- a/drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c
+@@ -331,7 +331,7 @@ static int sdma_v3_0_init_microcode(struct amdgpu_device *adev)
+ 	}
+ out:
+ 	if (err) {
+-		pr_err("sdma_v3_0: Failed to load firmware \"%s\"\n", fw_name);
++		pr_err("sdma_v3_0: Failed to load firmware\n");
+ 		for (i = 0; i < adev->sdma.num_instances; i++) {
+ 			release_firmware(adev->sdma.instance[i].fw);
+ 			adev->sdma.instance[i].fw = NULL;
+diff --git a/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c b/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c
+index 8931000dcd41..4e49b0c05744 100644
+--- a/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c
+@@ -702,7 +702,7 @@ static int sdma_v4_0_init_microcode(struct amdgpu_device *adev)
+ 
+ out:
+ 	if (err) {
+-		DRM_ERROR("sdma_v4_0: Failed to load firmware \"%s\"\n", fw_name);
++		DRM_ERROR("sdma_v4_0: Failed to load firmware\n");
+ 		sdma_v4_0_destroy_inst_ctx(adev);
+ 	}
+ 	return err;
+diff --git a/drivers/gpu/drm/amd/amdgpu/sdma_v5_0.c b/drivers/gpu/drm/amd/amdgpu/sdma_v5_0.c
+index 50bf3b71bc93..fab683ad8a1d 100644
+--- a/drivers/gpu/drm/amd/amdgpu/sdma_v5_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/sdma_v5_0.c
+@@ -303,7 +303,7 @@ static int sdma_v5_0_init_microcode(struct amdgpu_device *adev)
+ 	}
+ out:
+ 	if (err) {
+-		DRM_ERROR("sdma_v5_0: Failed to load firmware \"%s\"\n", fw_name);
++		DRM_ERROR("sdma_v5_0: Failed to load firmware\n");
+ 		for (i = 0; i < adev->sdma.num_instances; i++) {
+ 			release_firmware(adev->sdma.instance[i].fw);
+ 			adev->sdma.instance[i].fw = NULL;
+diff --git a/drivers/gpu/drm/amd/amdgpu/sdma_v5_2.c b/drivers/gpu/drm/amd/amdgpu/sdma_v5_2.c
+index e32efcfb0c8b..67f25238b787 100644
+--- a/drivers/gpu/drm/amd/amdgpu/sdma_v5_2.c
++++ b/drivers/gpu/drm/amd/amdgpu/sdma_v5_2.c
+@@ -193,7 +193,7 @@ static int sdma_v5_2_init_microcode(struct amdgpu_device *adev)
+ 
+ out:
+ 	if (err) {
+-		DRM_ERROR("sdma_v5_2: Failed to load firmware \"%s\"\n", fw_name);
++		DRM_ERROR("sdma_v5_2: Failed to load firmware\n");
+ 		sdma_v5_2_destroy_inst_ctx(adev);
+ 	}
+ 	return err;
