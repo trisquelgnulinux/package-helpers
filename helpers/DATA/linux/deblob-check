@@ -10,13 +10,21 @@
 #        modified with 2022-03-20 r18637
 #        modified with 2022-04-20 r18680
 #        modified with 2022-05-09 r18697
+#        modified with 2022-06-09 r18767
+#        modified with 2022-06-16 r18782
+#        modified with 2022-07-10 r18820 (partial)
+#        modified with 2022-08-25 r18881
+#        modified with 2022-09-11 r18905
+#        modified with 2022-11-16 r18984
+#        modified with 2022-11-27 r18997 (partial)
+#        modified with 2023-02-01 r19031
 # Inspired in gNewSense's find-firmware script.
 # Written by Alexandre Oliva <lxoliva@fsfla.org>
 
 # Check http://www.fsfla.org/svn/fsfla/software/linux-libre for newer
 # versions.
 
-# Copyright 2008-2022 Alexandre Oliva <lxoliva@fsfla.org>
+# Copyright 2008-2023 Alexandre Oliva <lxoliva@fsfla.org>
 #
 # This program is part of GNU Linux-libre, a GNU project that
 # publishes scripts to clean up Linux so as to make it suitable for
@@ -6325,6 +6333,12 @@ set_except () {
     defsnc 'static[ ]const[ ]u32[ ]____cacheline_aligned[ ]ck\[32\][ ]=' lib/crypto/sm4.c
     defsnc 'static[ ]const[ ]u8[ ]____cacheline_aligned[ ]sbox\[256\][ ]=' lib/crypto/sm4.c
 
+    # Trisquel changes for Aramo
+    blobname 'mediatek[/]WIFI_RAM_CODE_MT7922_1\.bin' drivers/net/wireless/mediatek/mt76/mt7921/mt7921.h
+    blobname 'mediatek[/]WIFI_MT7922_patch_mcu_1_1_hdr\.bin' drivers/net/wireless/mediatek/mt76/mt7921/mt7921.h
+    blobname 'qca[/]nvm_usb_%08x\.bin' drivers/bluetooth/btusb.c
+    blobname 'qca[/]nvm_usb_%08x%s_%04x\.bin' drivers/bluetooth/btusb.c
+
     # New in 5.16.3, 5.15.17, 5.10.94, 5.4.174, 4.19.226, 4.14.263.
     accept 'static[ ]struct[ ]dvb_usb_device_properties[ ]\(p1100\|s660\|p7500\)_properties[ ]=[ ][{][\n]\([	]\.\(caps\|usb_ctrl\|size_of_priv\)[ ]*=[ ][^",]*,[\n]*\)*[	]\.firmware[ ]*=[ ]' drivers/media/usb/dvb-usb/dw2102.c
 
@@ -6353,11 +6367,30 @@ set_except () {
     # New in 5.17.6, 5.15.38, 5.10.114, 5.4.192.
     accept '[ ][*][ ]microcode_bsp_resume[ ]-[ ]Update[ ]boot[ ]CPU[ ]microcode[ ]during[ ]resume' arch/x86/kernel/cpu/microcode/core.c
 
-    # Trisquel changes for Aramo
-    blobname 'mediatek[/]WIFI_RAM_CODE_MT7922_1\.bin' drivers/net/wireless/mediatek/mt76/mt7921/mt7921.h
-    blobname 'mediatek[/]WIFI_MT7922_patch_mcu_1_1_hdr\.bin' drivers/net/wireless/mediatek/mt76/mt7921/mt7921.h
-    blobname 'qca[/]nvm_usb_%08x\.bin' drivers/bluetooth/btusb.c
-    blobname 'qca[/]nvm_usb_%08x%s_%04x\.bin' drivers/bluetooth/btusb.c
+    # New in 5.18.3, 5.17.14, 5.15.46, 5.10.121.
+    accept 'MODULE_FIRMWARE[(]["]regulatory\.db\(\.p7s\)\?["][)][;]' net/wireless/reg.c
+
+    # New in 5.18.5, 5.15.48, 5.10.123, 5.4.199, 4.19.248, 4.14.284, 4.9.319.
+    accept 'combination[ ]with[ ]a[ ]microcode[ ]update[.][ ]The[ ]microcode[ ]clears' Documentation/admin-guide/hw-vuln/processor_mmio_stale_data.rst
+
+    # New in 5.18.18, 5.15.61.
+    defsnc '[\t]static[ ]u8[ ]p\[\]\[2\][ ]=' drivers/tty/serial/8250/8250_pci.c
+
+    # New in 5.19.4, 5.15.63.
+    accept '[\t]if[ ][(]!request_firmware_direct[(][&]fw[,][ ]kpu_profile[,][ ]rvu->dev[)][)]' drivers/net/ethernet/marvell/octeontx2/af/rvu_npc.c
+
+    # New in 6.0-rc5, 5.19.9, 5.15.68.
+    defsnc '[\t]unsigned[ ]char[ ]modified_gray_code\[\][ ]=' arch/arm/mach-at91/pm.c
+
+    # New in 6.0.9, 5.15.79, and 5.10.155.
+    accept '[\t]err[ ]=[ ]request_firmware_nowait[(]THIS_MODULE[,][ ]true[,][ ]["]regulatory\.db["][,]' net/wireless/reg.c
+
+    # New in 6.1-rc, 6.0.11, 5.15.81, 5.10.157.
+    blobname 'gsl1680-rca-cambio-w101-v2\.fw' drivers/platform/x86/touchscreen_dmi.c
+
+    # New in 6.1.9, 5.15.91, 5.10.166.
+    blobname 'gsl1680-csl-panther-tab-hd\.fw' drivers/platform/x86/touchscreen_dmi.c
+
     ;;
 
   */*freedo*.patch | */*logo*.patch)
