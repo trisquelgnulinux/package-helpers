@@ -1,0 +1,16 @@
+diff --git a/ubiquity/plugins/ubi-partman.py b/ubiquity/plugins/ubi-partman.py
+index fc3f8c2a9e..c441f59cad 100644
+--- a/ubiquity/plugins/ubi-partman.py
++++ b/ubiquity/plugins/ubi-partman.py
+@@ -3421,6 +3421,11 @@ class Page(plugin.Plugin):
+         elif question.startswith('partman/confirm'):
+             description = self.extended_description(question)
+ 
++            self.preseed(question, 'true', seen=False)
++            self.succeeded = True
++            self.done = True
++            return True
++
+             if hasattr(self.ui, "use_zfs"):
+                 if (self.ui.use_zfs.get_active() and self.ui.use_device.get_active()):
+                     description = self.update_zfs_description(self.extended_description(question))

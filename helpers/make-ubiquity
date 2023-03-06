@@ -18,12 +18,12 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=32
+VERSION=33
 
 . ./config
 
-# Enable full disk encryption by default. Disabled, as it hinders a11y and sighted people can choose to enable it.
-#patch -p0 < $DATA/nabia_encrypt_by_default.patch
+# Disable confirmation popups, as they are innacurate and buggy
+patch -p1 < $DATA/no_confrirmation_when_crypto.patch
 
 # Fix some gtk labels for Orca
 patch -p1 < $DATA/a11y.patch
