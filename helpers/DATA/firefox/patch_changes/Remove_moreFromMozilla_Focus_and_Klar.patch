@@ -387,7 +387,7 @@ diff -Nru source/browser/components/newtab/lib/OnboardingMessageProvider.jsm sou
 diff -Nru source/browser/components/newtab/lib/PanelTestProvider.jsm source/browser/components/newtab/lib/PanelTestProvider.jsm_fix
 --- source/browser/components/newtab/lib/PanelTestProvider.jsm	2022-10-16 05:35:50.835203327 -0500
 +++ source/browser/components/newtab/lib/PanelTestProvider.jsm_fix	2022-10-16 06:24:48.095827505 -0500
-@@ -557,87 +557,6 @@
+@@ -377,87 +377,6 @@
      trigger: { id: "defaultBrowserCheck" },
    },
    {
@@ -414,7 +414,7 @@ diff -Nru source/browser/components/newtab/lib/PanelTestProvider.jsm source/brow
 -            },
 -            dismiss_button: {
 -              action: {
--                navigate: true,
+-                dismiss: true,
 -              },
 -            },
 -            ios: {
