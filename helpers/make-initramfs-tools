@@ -21,8 +21,10 @@ VERSION=1
 
 . ./config
 
-sed '/Possible missing firmware/s/echo.*/true/' -i hook-functions 
+patch --no-backup-if-mismatch -p1 < $DATA/no-warn-firmware.patch
 
 changelog "Do not warn of missing firmware"
 
 compile
+
+ 
