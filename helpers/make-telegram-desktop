@@ -24,6 +24,9 @@ BACKPORT=true
 
 . ./config
 
-changelog "Backported from debian testing"
+#Remove stable backport workaround to keep using libmsgsl-dev 3.0
+sed -i 's|\-I\$(CURDIR)/debian||' debian/rules
+
+changelog "Backported from debian stable-backports"
 
 compile
