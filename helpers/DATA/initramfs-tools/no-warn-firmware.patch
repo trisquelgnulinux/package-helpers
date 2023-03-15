@@ -1,43 +1,5 @@
 diff -ru a/hook-functions b/hook-functions
 --- a/hook-functions	2022-10-27 13:44:07.000000000 -0400
-+++ b/hook-functions	2023-03-15 14:53:24.367175779 -0400
-@@ -118,22 +118,7 @@
- 
- 		# Add required firmware
- 		for firmware in $(modinfo -k "${version}" -F firmware "${kmod}"); do
--			# Only print warning for missing fw of loaded module
--			# or forced loaded module
--			if ! add_firmware "$firmware"; then
--				# Only warn about missing firmware if
--				# /proc/modules exists
--				if [ ! -e /proc/modules ] ; then
--					continue
--				fi
--
--				kmod_modname="${kmod##*/}"
--				kmod_modname="${kmod_modname%%.*}"
--				if grep -q "^$kmod_modname\\>" /proc/modules "${CONFDIR}/modules"; then
--					echo "W: Possible missing firmware /lib/firmware/${firmware} for module ${kmod_modname}" >&2
--				fi
--				continue
--			fi
-+			add_firmware "$firmware" || true
- 		done
- 	done
- }
-@@ -157,9 +142,7 @@
- 	fi
- 
- 	tr '\0' '\n' < "$builtin_modinfo_path" | grep -E '^[^=]*\.firmware=' | sed -n 's/\.firmware=/\t/p' | while read -r builtin_modname firmware; do
--		if ! add_firmware "$firmware"; then
--			echo "W: Possible missing firmware /lib/firmware/${firmware} for built-in driver ${builtin_modname}" >&2
--		fi
-+		add_firmware "$firmware" || true
- 	done
- }
- 
-diff -ru a/hook-functions b/hook-functions
---- a/hook-functions	2022-10-27 13:44:07.000000000 -0400
 +++ b/hook-functions	2023-03-15 15:48:30.390326951 -0400
 @@ -118,22 +118,7 @@
  
