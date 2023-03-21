@@ -18,12 +18,12 @@
 #
 
 VERSION=4
-EXTERNAL='deb-src http://ftp.debian.org/debian stable-backports main'
+EXTERNAL='deb-src http://ftp.debian.org/debian bullseye-backports main'
 REPOKEY=648ACFD622F3D138
 BACKPORT=true
 
 . ./config
 
-changelog "Backported from debian testing as dependency for telegram-desktop"
+changelog "Backported from debian bullseye as dependency for telegram-desktop"
 
 compile
