@@ -429,8 +429,7 @@ cp -a $DATA/android/res/main/* mobile/android/geckoview/src/main/res
 #Fixes by patch on source.
 ##Firefox v100, based on parabola 9004-FSDG-misc.patch
 patch --no-backup-if-mismatch -p1 < $DATA/patch_changes/Remove_moreFromMozilla_Focus_and_Klar.patch
-##Path 111.0 build2 aramo source
-patch --no-backup-if-mismatch -p0 < $DATA/patch_changes/1615_1614.patch
+
 # Postinst script to manage profile migration and system links
 echo '
 
