@@ -1,0 +1,1862 @@
+diff -ru po/es.po po_/es.po
+--- po/es.po	2023-03-22 22:34:59.422578000 -0600
++++ po_/es.po	2023-03-22 23:30:23.027653057 -0600
+@@ -6,14 +6,13 @@
+ # Jorge Bernal <koke@sindominio.net>, 2005.
+ # Paco Molinero <paco@byasl.com>, 2011.
+ #
+-#: ../UpdateManager/UpdatesAvailable.py:847
+ msgid ""
+ msgstr ""
+ "Project-Id-Version: es\n"
+ "Report-Msgid-Bugs-To: sebastian.heinlein@web.de\n"
+ "POT-Creation-Date: 2021-12-07 16:54-0800\n"
+-"PO-Revision-Date: 2012-03-20 20:23+0000\n"
+-"Last-Translator: Fitoschido <fitoschido@gmail.com>\n"
++"PO-Revision-Date: 2023-03-22 23:23-0600\n"
++"Last-Translator: Luis Guzman <ark@switnet.org>\n"
+ "Language-Team: Spanish <traductores@gnome.org>\n"
+ "Language: es\n"
+ "MIME-Version: 1.0\n"
+@@ -21,7 +20,7 @@
+ "Content-Transfer-Encoding: 8bit\n"
+ "Plural-Forms: nplurals=2; plural=n != 1;\n"
+ "X-Launchpad-Export-Date: 2012-04-17 13:41+0000\n"
+-"X-Generator: Launchpad (build 15099)\n"
++"X-Generator: Poedit 3.0.1\n"
+ 
+ #: ../UpdateManager/backend/InstallBackendAptdaemon.py:150
+ #, fuzzy
+@@ -69,12 +68,8 @@
+ 
+ #: ../UpdateManager/backend/__init__.py:325
+ #, fuzzy
+-msgid ""
+-"An error occurred while updating snaps. Please check your network connection."
+-msgstr ""
+-"Ocurrió un problema durante la actualización. Normalmente es debido a algún "
+-"tipo de problema en la red, por lo que le recomendamos que compruebe su "
+-"conexión de red y vuelva a intentarlo."
++msgid "An error occurred while updating snaps. Please check your network connection."
++msgstr "Ocurrió un problema durante la actualización. Normalmente es debido a algún tipo de problema en la red, por lo que le recomendamos que compruebe su conexión de red y vuelva a intentarlo."
+ 
+ #: ../UpdateManager/ChangelogViewer.py:83
+ msgid "Open Link in Browser"
+@@ -90,9 +85,7 @@
+ msgstr "_Configuración..."
+ 
+ #: ../UpdateManager/Dialogs.py:171
+-msgid ""
+-"<b>Tip:</b> You can use Livepatch to keep your computer more secure between "
+-"restarts."
++msgid "<b>Tip:</b> You can use Livepatch to keep your computer more secure between restarts."
+ msgstr ""
+ 
+ #: ../UpdateManager/Dialogs.py:174
+@@ -173,13 +166,11 @@
+ #, python-format
+ msgid ""
+ "\n"
+-"There will not be any further Trisquel releases for this system's '%s' "
+-"architecture.\n"
++"There will not be any further Trisquel releases for this system's '%s' architecture.\n"
+ "\n"
+ "Updates for Trisquel %s will continue until 2023-04-26.\n"
+ "\n"
+-"If you reinstall Trisquel from ubuntu.com/download, future upgrades will be "
+-"available."
++"If you reinstall Trisquel from ubuntu.com/download, future upgrades will be available."
+ msgstr ""
+ 
+ #: ../UpdateManager/Dialogs.py:325
+@@ -198,8 +189,7 @@
+ "     * Unofficial software packages not provided by Trisquel\n"
+ "     * Normal changes of a pre-release version of Trisquel"
+ msgstr ""
+-"Ejecutar una actualización parcial, para instalar tantas actualizaciones "
+-"como sea posible. \n"
++"Ejecutar una actualización parcial, para instalar tantas actualizaciones como sea posible. \n"
+ "\n"
+ "Esto puede ser debido a:\n"
+ " * Una actualización anterior que no se ha completado\n"
+@@ -217,14 +207,12 @@
+ 
+ #: ../UpdateManager/Dialogs.py:372
+ msgid "_Try Again"
+-msgstr ""
++msgstr "Intentar de nuevo"
+ 
+ #: ../UpdateManager/Dialogs.py:386
+ #, fuzzy
+ msgid "The computer needs to restart to finish installing updates."
+-msgstr ""
+-"El equipo necesita reiniciarse para finalizar la actualización. Guarde su "
+-"trabajo antes de continuar."
++msgstr "El equipo necesita reiniciarse para finalizar la actualización. Guarde su trabajo antes de continuar."
+ 
+ #: ../UpdateManager/Dialogs.py:388
+ #, fuzzy
+@@ -256,14 +244,8 @@
+ msgstr "El índice de software está dañado"
+ 
+ #: ../UpdateManager/UpdateManager.py:401
+-msgid ""
+-"It is impossible to install or remove any software. Please use the package "
+-"manager \"Synaptic\" or run \"sudo apt-get install -f\" in a terminal to fix "
+-"this issue at first."
+-msgstr ""
+-"Es imposible instalar o desinstalar ningún programa. Use primero el gestor "
+-"de paquetes «Synaptic» (o ejecute «sudo apt-get install -f» en una "
+-"terminal), para corregir este problema."
++msgid "It is impossible to install or remove any software. Please use the package manager \"Synaptic\" or run \"sudo apt-get install -f\" in a terminal to fix this issue at first."
++msgstr "Es imposible instalar o desinstalar ningún programa. Use primero el gestor de paquetes «Synaptic» (o ejecute «sudo apt-get install -f» en una terminal), para corregir este problema."
+ 
+ #: ../UpdateManager/UpdateManager.py:408
+ msgid "Could not initialize the package information"
+@@ -271,17 +253,13 @@
+ 
+ #: ../UpdateManager/UpdateManager.py:409
+ msgid ""
+-"An unresolvable problem occurred while initializing the package "
+-"information.\n"
++"An unresolvable problem occurred while initializing the package information.\n"
+ "\n"
+-"Please report this bug against the 'update-manager' package and include the "
+-"following error message:\n"
++"Please report this bug against the 'update-manager' package and include the following error message:\n"
+ msgstr ""
+-"Ha ocurrido un problema imposible de corregir cuando se inicializaba la "
+-"información de los paquetes.\n"
++"Ha ocurrido un problema imposible de corregir cuando se inicializaba la información de los paquetes.\n"
+ "\n"
+-"Por favor, informe de esto como un fallo en el paquete «update-manager» e "
+-"incluya el siguiente mensaje de error:\n"
++"Por favor, informe de esto como un fallo en el paquete «update-manager» e incluya el siguiente mensaje de error:\n"
+ 
+ #: ../UpdateManager/UpdateManager.py:437
+ msgid "Could not calculate the upgrade"
+@@ -292,19 +270,15 @@
+ msgid ""
+ "An unresolvable problem occurred while calculating the upgrade.\n"
+ "\n"
+-"Please report this bug against the 'update-manager' package and include the "
+-"following error message:\n"
++"Please report this bug against the 'update-manager' package and include the following error message:\n"
+ msgstr ""
+-"Ha ocurrido un problema imposible de corregir cuando se calculaba la "
+-"actualización.\n"
++"Ha ocurrido un problema imposible de corregir cuando se calculaba la actualización.\n"
+ "\n"
+-"Por favor, informe de esto como un fallo en el paquete «update-manager» e "
+-"incluya el siguiente mensaje de error:"
++"Por favor, informe de esto como un fallo en el paquete «update-manager» e incluya el siguiente mensaje de error:"
+ 
+ #: ../UpdateManager/UpdatesAvailable.py:252
+-#, fuzzy
+ msgid "Install Now"
+-msgstr "Instalar"
++msgstr "Instalar ahora"
+ 
+ #: ../UpdateManager/UpdatesAvailable.py:285
+ #, fuzzy
+@@ -327,11 +301,8 @@
+ msgstr "Versión %s: \n"
+ 
+ #: ../UpdateManager/UpdatesAvailable.py:580
+-msgid ""
+-"No network connection detected, you can not download changelog information."
+-msgstr ""
+-"No se han detectado conexiones de red, no puede descargar la información del "
+-"registro de cambios."
++msgid "No network connection detected, you can not download changelog information."
++msgstr "No se han detectado conexiones de red, no puede descargar la información del registro de cambios."
+ 
+ #: ../UpdateManager/UpdatesAvailable.py:590
+ msgid "Downloading list of changes..."
+@@ -367,24 +338,17 @@
+ 
+ #: ../UpdateManager/UpdatesAvailable.py:792
+ #, python-format
+-msgid ""
+-"Updated software has been issued since %s %s was released. Do you want to "
+-"install it now?"
++msgid "Updated software has been issued since %s %s was released. Do you want to install it now?"
+ msgstr ""
+ 
+ #: ../UpdateManager/UpdatesAvailable.py:797
+-msgid ""
+-"Updated software is available for this computer. Do you want to install it "
+-"now?"
++msgid "Updated software is available for this computer. Do you want to install it now?"
+ msgstr ""
+ 
+ #: ../UpdateManager/UpdatesAvailable.py:800
+ #, fuzzy
+-msgid ""
+-"The computer also needs to restart to finish installing previous updates."
+-msgstr ""
+-"El equipo necesita reiniciarse para finalizar la actualización. Guarde su "
+-"trabajo antes de continuar."
++msgid "The computer also needs to restart to finish installing previous updates."
++msgstr "El equipo necesita reiniciarse para finalizar la actualización. Guarde su trabajo antes de continuar."
+ 
+ #. print("on_button_install_clicked")
+ #: ../UpdateManager/UpdatesAvailable.py:830
+@@ -393,42 +357,26 @@
+ 
+ #: ../UpdateManager/UpdatesAvailable.py:831
+ #, fuzzy, python-format
+-msgid ""
+-"The upgrade needs a total of %s free space on disk '%s'. Please free at "
+-"least an additional %s of disk space on '%s'. %s"
+-msgstr ""
+-"La actualización necesita un total de %s de espacio libre en el disco «%s». "
+-"Libere al menos %s adicionales de espacio de disco en «%s». Vacíe su "
+-"papelera y elimine paquetes temporales de instalaciones anteriores usando "
+-"«sudo apt-get clean»."
++msgid "The upgrade needs a total of %s free space on disk '%s'. Please free at least an additional %s of disk space on '%s'. %s"
++msgstr "La actualización necesita un total de %s de espacio libre en el disco «%s». Libere al menos %s adicionales de espacio de disco en «%s». Vacíe su papelera y elimine paquetes temporales de instalaciones anteriores usando «sudo apt-get clean»."
+ 
+ #. specific ways to resolve lack of free space
+ #: ../UpdateManager/UpdatesAvailable.py:836
+-msgid ""
+-"Remove temporary packages of former installations using 'sudo apt clean'."
++msgid "Remove temporary packages of former installations using 'sudo apt clean'."
+ msgstr ""
+ 
+ #: ../UpdateManager/UpdatesAvailable.py:838
+-msgid ""
+-"You can remove old kernels using 'sudo apt autoremove', and you could also "
+-"set COMPRESS=xz in /etc/initramfs-tools/initramfs.conf to reduce the size of "
+-"your initramfs."
++msgid "You can remove old kernels using 'sudo apt autoremove', and you could also set COMPRESS=xz in /etc/initramfs-tools/initramfs.conf to reduce the size of your initramfs."
+ msgstr ""
+ 
+ #: ../UpdateManager/UpdatesAvailable.py:843
+ #, fuzzy
+-msgid ""
+-"Empty your trash and remove temporary packages of former installations using "
+-"'sudo apt clean'."
+-msgstr ""
+-"La actualización necesita un total de %s de espacio libre en el disco «%s». "
+-"Libere al menos %s adicionales de espacio de disco en «%s». Vacíe su "
+-"papelera y elimine paquetes temporales de instalaciones anteriores usando "
+-"«sudo apt-get clean»."
++msgid "Empty your trash and remove temporary packages of former installations using 'sudo apt clean'."
++msgstr "La actualización necesita un total de %s de espacio libre en el disco «%s». Libere al menos %s adicionales de espacio de disco en «%s». Vacíe su papelera y elimine paquetes temporales de instalaciones anteriores usando «sudo apt-get clean»."
+ 
+ #: ../UpdateManager/UpdatesAvailable.py:846
+ msgid "Reboot to clean up files in /tmp."
+-msgstr ""
++msgstr "Reinicie para limpiar archivos en /tmp."
+ 
+ #: ../UpdateManager/UpdatesAvailable.py:888
+ msgid "Connecting..."
+@@ -436,9 +384,7 @@
+ 
+ #: ../UpdateManager/UpdatesAvailable.py:904
+ msgid "You may not be able to check for updates or download new updates."
+-msgstr ""
+-"Puede que no sea capaz de comprobar actualizaciones o de descargar nuevas "
+-"actualizaciones."
++msgstr "Puede que no sea capaz de comprobar actualizaciones o de descargar nuevas actualizaciones."
+ 
+ #: ../UpdateManager/UpdatesAvailable.py:1056
+ msgid "Improved hardware support"
+@@ -459,7 +405,7 @@
+ 
+ #: ../UpdateManager/UpdatesAvailable.py:1072
+ msgid "Unused kernel updates to be removed"
+-msgstr ""
++msgstr "Actualizaciones de núcleo a ser eliminadas"
+ 
+ #: ../UpdateManager/UpdatesAvailable.py:1077
+ #, fuzzy
+@@ -472,8 +418,7 @@
+ 
+ #: ../UpdateManager/Core/MyCache.py:417
+ msgid "This update does not come from a source that supports changelogs."
+-msgstr ""
+-"Esta actualización no procede de una fuente que soporte registro de cambios."
++msgstr "Esta actualización no procede de una fuente que soporte registro de cambios."
+ 
+ #: ../UpdateManager/Core/MyCache.py:423 ../UpdateManager/Core/MyCache.py:458
+ msgid ""
+@@ -556,9 +501,8 @@
+ msgstr "Descripción"
+ 
+ #: ../data/gtkbuilder/UpdateManager.ui.h:4
+-#, fuzzy
+ msgid "Technical description"
+-msgstr "Descripción"
++msgstr "Descripción técnica"
+ 
+ #: ../data/gtkbuilder/UpdateManager.ui.h:5
+ #, fuzzy
+@@ -570,22 +514,16 @@
+ msgstr ""
+ 
+ #: ../data/gtkbuilder/UpdateManager.ui.h:7
+-msgid ""
+-"You are connected via roaming and may be charged for the data consumed by "
+-"this update."
+-msgstr ""
+-"Ahora está conectado en itinerancia y puede tener cargos por los datos "
+-"consumidos en esta actualización."
++msgid "You are connected via roaming and may be charged for the data consumed by this update."
++msgstr "Ahora está conectado en itinerancia y puede tener cargos por los datos consumidos en esta actualización."
+ 
+ #: ../data/gtkbuilder/UpdateManager.ui.h:8
+-msgid ""
+-"You may want to wait until you’re not using a mobile broadband connection."
++msgid "You may want to wait until you’re not using a mobile broadband connection."
+ msgstr ""
+ 
+ #: ../data/gtkbuilder/UpdateManager.ui.h:9
+ msgid "It’s safer to connect the computer to AC power before updating."
+-msgstr ""
+-"Es más seguro enchufar el equipo a la toma de corriente antes de actualizar."
++msgstr "Es más seguro enchufar el equipo a la toma de corriente antes de actualizar."
+ 
+ #: ../data/update-manager.desktop.in.h:2
+ msgid "Software Updates"
+@@ -597,9 +535,7 @@
+ msgstr "Mostrar e instalar las actualizaciones disponibles"
+ 
+ #: ../data/update-manager.appdata.xml.in.h:3
+-msgid ""
+-"Software Updater checks for updates using apt and let you choose which "
+-"updates to install."
++msgid "Software Updater checks for updates using apt and let you choose which updates to install."
+ msgstr ""
+ 
+ #: ../update-manager:71
+@@ -615,14 +551,12 @@
+ msgstr "Verificar si hay una nueva versión de Trisquel disponible"
+ 
+ #: ../update-manager:80
+-msgid ""
+-"If using the latest supported release, upgrade to the development release"
++msgid "If using the latest supported release, upgrade to the development release"
+ msgstr ""
+ 
+ #: ../update-manager:84
+ msgid "Upgrade using the latest proposed version of the release upgrader"
+-msgstr ""
+-"Actualizar usando la versión más reciente propuesta por el actualizador"
++msgstr "Actualizar usando la versión más reciente propuesta por el actualizador"
+ 
+ #. TRANSLATORS: this describes the "focus-on-map" gtk
+ #. property that controls if a new window takes the
+@@ -671,12 +605,8 @@
+ msgstr "Se debe marcar %s como instalado manualmente."
+ 
+ #: ../janitor/plugincore/plugins/kdelibs4to5_plugin.py:50
+-msgid ""
+-"When upgrading, if kdelibs4-dev is installed, kdelibs5-dev needs to be "
+-"installed. See bugs.launchpad.net, bug #279621 for details."
+-msgstr ""
+-"Al actualizar. Sí  kdelibs4-dev esta instalado hay que instalar kdelibs5-"
+-"dev. Vea bugs.launchpad.net , bug #279621 para más detalles"
++msgid "When upgrading, if kdelibs4-dev is installed, kdelibs5-dev needs to be installed. See bugs.launchpad.net, bug #279621 for details."
++msgstr "Al actualizar. Sí  kdelibs4-dev esta instalado hay que instalar kdelibs5-dev. Vea bugs.launchpad.net , bug #279621 para más detalles"
+ 
+ #: ../janitor/plugincore/plugins/dpkg_status_plugin.py:45
+ #, python-format
+@@ -694,9 +624,28 @@
+ 
+ #: ../janitor/plugincore/plugins/remove_lilo_plugin.py:43
+ msgid "Remove lilo since grub is also installed.(See bug #314004 for details.)"
++msgstr "Se elimina LILO ya que GRUB también está instalado (Consulte el bug #314004 para más información.)"
++
++msgid ""
++"To prevent unwanted connections to the Internet\n"
++"Trisquel will not automatically check for updates\n"
++"unless you say so in the Settings panel."
+ msgstr ""
+-"Se elimina LILO ya que GRUB también está instalado (Consulte el bug #314004 "
+-"para más información.)"
++"Para prevenir conexiones inesperadas a Internet\n"
++"Trisquel no descargará actualizaciones automáticamente\n"
++"salvo que lo indiques en el panel de Configuración."
++
++#: UpdateManager/Dialogs.py:177
++msgid "Include latest updates from the Internet?"
++msgstr "¿Incluir las últimas actualizaciones desde Internet?"
++
++#: UpdateManager/Dialogs.py:182
++msgid "Check for Updates"
++msgstr "Buscar actualizaciones"
++
++#: UpdateManager/Dialogs.py:183
++msgid "Ask Me Later"
++msgstr "Preguntarme más tarde"
+ 
+ #, python-format
+ #~ msgid "Server for %s"
+@@ -711,27 +660,20 @@
+ #~ msgid "Could not calculate sources.list entry"
+ #~ msgstr "No se puede calcular la entrada en sources.list"
+ 
+-#~ msgid ""
+-#~ "Unable to locate any package files, perhaps this is not a Trisquel Disc or "
+-#~ "the wrong architecture?"
+-#~ msgstr ""
+-#~ "No se pudo localizar ningún paquete, quizá no es un disco de Trisquel o no "
+-#~ "es la arquitectura correcta."
++#~ msgid "Unable to locate any package files, perhaps this is not a Trisquel Disc or the wrong architecture?"
++#~ msgstr "No se pudo localizar ningún paquete, quizá no es un disco de Trisquel o no es la arquitectura correcta."
+ 
+ #~ msgid "Failed to add the CD"
+ #~ msgstr "Error al añadir el CD"
+ 
+ #, python-format
+ #~ msgid ""
+-#~ "There was a error adding the CD, the upgrade will abort. Please report "
+-#~ "this as a bug if this is a valid Trisquel CD.\n"
++#~ "There was a error adding the CD, the upgrade will abort. Please report this as a bug if this is a valid Trisquel CD.\n"
+ #~ "\n"
+ #~ "The error message was:\n"
+ #~ "'%s'"
+ #~ msgstr ""
+-#~ "Ha habido un error al añadir el CD; se ha interrumpido la actualización. "
+-#~ "Por favor, informe de esto como un fallo si este es un CD válido de "
+-#~ "Trisquel.\n"
++#~ "Ha habido un error al añadir el CD; se ha interrumpido la actualización. Por favor, informe de esto como un fallo si este es un CD válido de Trisquel.\n"
+ #~ "\n"
+ #~ "El mensaje de error fue:\n"
+ #~ "«%s»"
+@@ -742,22 +684,10 @@
+ #~ msgstr[1] "Desinstalar paquetes en mal estado"
+ 
+ #, python-format
+-#~ msgid ""
+-#~ "The package '%s' is in an inconsistent state and needs to be reinstalled, "
+-#~ "but no archive can be found for it. Do you want to remove this package "
+-#~ "now to continue?"
+-#~ msgid_plural ""
+-#~ "The packages '%s' are in an inconsistent state and need to be "
+-#~ "reinstalled, but no archives can be found for them. Do you want to remove "
+-#~ "these packages now to continue?"
+-#~ msgstr[0] ""
+-#~ "El paquete «%s» está en un estado inconsistente y debe reinstalarse, pero "
+-#~ "no se encuentra en ningún repositorio. ¿Quiere desinstalar este paquete "
+-#~ "ahora para continuar?"
+-#~ msgstr[1] ""
+-#~ "Los paquetes «%s» están en un estado inconsistente y deben reinstalarse, "
+-#~ "pero no se encuentran en ningún repositorio. ¿Quiere desinstalar estos "
+-#~ "paquetes ahora para continuar?"
++#~ msgid "The package '%s' is in an inconsistent state and needs to be reinstalled, but no archive can be found for it. Do you want to remove this package now to continue?"
++#~ msgid_plural "The packages '%s' are in an inconsistent state and need to be reinstalled, but no archives can be found for them. Do you want to remove these packages now to continue?"
++#~ msgstr[0] "El paquete «%s» está en un estado inconsistente y debe reinstalarse, pero no se encuentra en ningún repositorio. ¿Quiere desinstalar este paquete ahora para continuar?"
++#~ msgstr[1] "Los paquetes «%s» están en un estado inconsistente y deben reinstalarse, pero no se encuentran en ningún repositorio. ¿Quiere desinstalar estos paquetes ahora para continuar?"
+ 
+ #~ msgid "The server may be overloaded"
+ #~ msgstr "El servidor puede estar sobrecargado"
+@@ -765,14 +695,8 @@
+ #~ msgid "Broken packages"
+ #~ msgstr "Paquetes rotos"
+ 
+-#~ msgid ""
+-#~ "Your system contains broken packages that couldn't be fixed with this "
+-#~ "software. Please fix them first using synaptic or apt-get before "
+-#~ "proceeding."
+-#~ msgstr ""
+-#~ "Su sistema contiene paquetes rotos que no pueden ser arreglados con este "
+-#~ "software. Por favor, arréglelos primero usando Synaptic o apt-get antes "
+-#~ "de continuar."
++#~ msgid "Your system contains broken packages that couldn't be fixed with this software. Please fix them first using synaptic or apt-get before proceeding."
++#~ msgstr "Su sistema contiene paquetes rotos que no pueden ser arreglados con este software. Por favor, arréglelos primero usando Synaptic o apt-get antes de continuar."
+ 
+ #, python-format
+ #~ msgid ""
+@@ -795,34 +719,20 @@
+ #~ "\n"
+ 
+ #~ msgid "This is most likely a transient problem, please try again later."
+-#~ msgstr ""
+-#~ "Probablemente sea un problema transitorio, inténtelo de nuevo más tarde."
++#~ msgstr "Probablemente sea un problema transitorio, inténtelo de nuevo más tarde."
+ 
+-#~ msgid ""
+-#~ "If none of this applies, then please report this bug using the command "
+-#~ "'ubuntu-bug update-manager' in a terminal."
+-#~ msgstr ""
+-#~ "Si ninguna de estas aplica, entonces informe de este fallo usando la "
+-#~ "orden «ubuntu-bug update-manager» en una terminal."
++#~ msgid "If none of this applies, then please report this bug using the command 'ubuntu-bug update-manager' in a terminal."
++#~ msgstr "Si ninguna de estas aplica, entonces informe de este fallo usando la orden «ubuntu-bug update-manager» en una terminal."
+ 
+ #~ msgid "Error authenticating some packages"
+ #~ msgstr "Error al autenticar algunos paquetes"
+ 
+-#~ msgid ""
+-#~ "It was not possible to authenticate some packages. This may be a "
+-#~ "transient network problem. You may want to try again later. See below for "
+-#~ "a list of unauthenticated packages."
+-#~ msgstr ""
+-#~ "No ha sido posible autenticar algunos paquetes. Esto puede ser debido a "
+-#~ "un problema transitorio en la red. Pruebe de nuevo más tarde. Vea abajo "
+-#~ "una lista de los paquetes no autenticados."
++#~ msgid "It was not possible to authenticate some packages. This may be a transient network problem. You may want to try again later. See below for a list of unauthenticated packages."
++#~ msgstr "No ha sido posible autenticar algunos paquetes. Esto puede ser debido a un problema transitorio en la red. Pruebe de nuevo más tarde. Vea abajo una lista de los paquetes no autenticados."
+ 
+ #, python-format
+-#~ msgid ""
+-#~ "The package '%s' is marked for removal but it is in the removal blacklist."
+-#~ msgstr ""
+-#~ "El paquete «%s» está marcado para desinstalarse pero está en la lista "
+-#~ "negra de desinstalación."
++#~ msgid "The package '%s' is marked for removal but it is in the removal blacklist."
++#~ msgstr "El paquete «%s» está marcado para desinstalarse pero está en la lista negra de desinstalación."
+ 
+ #, python-format
+ #~ msgid "The essential package '%s' is marked for removal."
+@@ -836,28 +746,18 @@
+ #~ msgid "Can't install '%s'"
+ #~ msgstr "No se ha podido instalar «%s»"
+ 
+-#~ msgid ""
+-#~ "It was impossible to install a required package. Please report this as a "
+-#~ "bug using 'ubuntu-bug update-manager' in a terminal."
+-#~ msgstr ""
+-#~ "Fue imposible instalar el paquete requerido. Informe de este fallo usando "
+-#~ "«ubuntu-bug update-manager» en una terminal."
++#~ msgid "It was impossible to install a required package. Please report this as a bug using 'ubuntu-bug update-manager' in a terminal."
++#~ msgstr "Fue imposible instalar el paquete requerido. Informe de este fallo usando «ubuntu-bug update-manager» en una terminal."
+ 
+ #~ msgid "Can't guess meta-package"
+ #~ msgstr "No se ha podido determinar el metapaquete"
+ 
+ #~ msgid ""
+-#~ "Your system does not contain a trisquel, ktrisquel, xubuntu-"
+-#~ "desktop or edtrisquel package and it was not possible to detect "
+-#~ "which version of Trisquel you are running.\n"
+-#~ " Please install one of the packages above first using synaptic or apt-get "
+-#~ "before proceeding."
+-#~ msgstr ""
+-#~ "Su sistema no contiene el paquete trisquel,  ktrisquel, "
+-#~ "xtrisquel o edtrisquel, y no ha sido posible detectar qué "
+-#~ "versión de Trisquel está ejecutando.\n"
+-#~ " Por favor, instale uno de los paquetes anteriores usando Synaptic o apt-"
+-#~ "get antes de proceder."
++#~ "Your system does not contain a trisquel, ktrisquel, xubuntu-desktop or edtrisquel package and it was not possible to detect which version of Trisquel you are running.\n"
++#~ " Please install one of the packages above first using synaptic or apt-get before proceeding."
++#~ msgstr ""
++#~ "Su sistema no contiene el paquete trisquel,  ktrisquel, xtrisquel o edtrisquel, y no ha sido posible detectar qué versión de Trisquel está ejecutando.\n"
++#~ " Por favor, instale uno de los paquetes anteriores usando Synaptic o apt-get antes de proceder."
+ 
+ #~ msgid "Reading cache"
+ #~ msgstr "Leyendo caché"
+@@ -865,27 +765,18 @@
+ #~ msgid "Unable to get exclusive lock"
+ #~ msgstr "No se ha podido obtener un bloqueo exclusivo"
+ 
+-#~ msgid ""
+-#~ "This usually means that another package management application (like apt-"
+-#~ "get or aptitude) already running. Please close that application first."
+-#~ msgstr ""
+-#~ "Esto normalmente significa que ya se está ejecutando otra aplicación de "
+-#~ "gestión de paquetes (como apt-get o aptitude). Por favor, cierre esa "
+-#~ "aplicación primero."
++#~ msgid "This usually means that another package management application (like apt-get or aptitude) already running. Please close that application first."
++#~ msgstr "Esto normalmente significa que ya se está ejecutando otra aplicación de gestión de paquetes (como apt-get o aptitude). Por favor, cierre esa aplicación primero."
+ 
+ #~ msgid "Upgrading over remote connection not supported"
+ #~ msgstr "Actualizando sobre conexión remota no soportada"
+ 
+ #~ msgid ""
+-#~ "You are running the upgrade over a remote ssh connection with a frontend "
+-#~ "that does not support this. Please try a text mode upgrade with 'do-"
+-#~ "release-upgrade'.\n"
++#~ "You are running the upgrade over a remote ssh connection with a frontend that does not support this. Please try a text mode upgrade with 'do-release-upgrade'.\n"
+ #~ "\n"
+ #~ "The upgrade will abort now. Please try without ssh."
+ #~ msgstr ""
+-#~ "Está ejecutando la actualización sobre una conexión ssh remota con una "
+-#~ "interfaz de usuario que no lo permite. Intente actualizar en modo texto "
+-#~ "con «do-release-upgrade».\n"
++#~ "Está ejecutando la actualización sobre una conexión ssh remota con una interfaz de usuario que no lo permite. Intente actualizar en modo texto con «do-release-upgrade».\n"
+ #~ "\n"
+ #~ "La actualización se detendrá ahora. Intente sin ssh."
+ 
+@@ -894,16 +785,12 @@
+ 
+ #, python-format
+ #~ msgid ""
+-#~ "This session appears to be running under ssh. It is not recommended to "
+-#~ "perform a upgrade over ssh currently because in case of failure it is "
+-#~ "harder to recover.\n"
++#~ "This session appears to be running under ssh. It is not recommended to perform a upgrade over ssh currently because in case of failure it is harder to recover.\n"
+ #~ "\n"
+ #~ "If you continue, an additional ssh daemon will be started at port '%s'.\n"
+ #~ "Do you want to continue?"
+ #~ msgstr ""
+-#~ "Esta sesión parece estar ejecutándose bajo ssh. No es recomendable hacer "
+-#~ "una actualización sobre ssh actualmente, porque en caso de fallo es muy "
+-#~ "difícil recuperarla.\n"
++#~ "Esta sesión parece estar ejecutándose bajo ssh. No es recomendable hacer una actualización sobre ssh actualmente, porque en caso de fallo es muy difícil recuperarla.\n"
+ #~ "\n"
+ #~ "Si continua, se iniciará un demonio ssh adicional en el puerto «%s».\n"
+ #~ "¿Quiere continuar?"
+@@ -912,25 +799,15 @@
+ #~ msgstr "Iniciando sshd adicional"
+ 
+ #, python-format
+-#~ msgid ""
+-#~ "To make recovery in case of failure easier, an additional sshd will be "
+-#~ "started on port '%s'. If anything goes wrong with the running ssh you can "
+-#~ "still connect to the additional one.\n"
+-#~ msgstr ""
+-#~ "Para facilitar la recuperación en caso de fallo, se iniciará un sshd "
+-#~ "adicional en el puerto «%s». Si algo va mal con el ssh en ejecución, aún "
+-#~ "podrá conectarse al adicional.\n"
++#~ msgid "To make recovery in case of failure easier, an additional sshd will be started on port '%s'. If anything goes wrong with the running ssh you can still connect to the additional one.\n"
++#~ msgstr "Para facilitar la recuperación en caso de fallo, se iniciará un sshd adicional en el puerto «%s». Si algo va mal con el ssh en ejecución, aún podrá conectarse al adicional.\n"
+ 
+ #, python-format
+ #~ msgid ""
+-#~ "If you run a firewall, you may need to temporarily open this port. As "
+-#~ "this is potentially dangerous it's not done automatically. You can open "
+-#~ "the port with e.g.:\n"
++#~ "If you run a firewall, you may need to temporarily open this port. As this is potentially dangerous it's not done automatically. You can open the port with e.g.:\n"
+ #~ "'%s'"
+ #~ msgstr ""
+-#~ "Si ejecuta un cortafuegos, puede necesitar abrir este puerto "
+-#~ "temporalmente. Como esto es potencialmente peligroso, no se hace "
+-#~ "automáticamente. Puede abrir el puerto con:\n"
++#~ "Si ejecuta un cortafuegos, puede necesitar abrir este puerto temporalmente. Como esto es potencialmente peligroso, no se hace automáticamente. Puede abrir el puerto con:\n"
+ #~ "«%s»"
+ 
+ #~ msgid "Can not upgrade"
+@@ -951,37 +828,26 @@
+ 
+ #, python-format
+ #~ msgid ""
+-#~ "This upgrade is running in sandbox (test) mode. All changes are written "
+-#~ "to '%s' and will be lost on the next reboot.\n"
++#~ "This upgrade is running in sandbox (test) mode. All changes are written to '%s' and will be lost on the next reboot.\n"
+ #~ "\n"
+-#~ "*No* changes written to a system directory from now until the next reboot "
+-#~ "are permanent."
++#~ "*No* changes written to a system directory from now until the next reboot are permanent."
+ #~ msgstr ""
+-#~ "Esta actualización se esta realizando en el modo (prueba) «sandbox». "
+-#~ "Todos los cambios se escriben en «%s» y se perderán en el siguiente "
+-#~ "arranque.\n"
++#~ "Esta actualización se esta realizando en el modo (prueba) «sandbox». Todos los cambios se escriben en «%s» y se perderán en el siguiente arranque.\n"
+ #~ "\n"
+-#~ "*Ninguno* de los cambios escritos en el directorio de sistema desde ahora "
+-#~ "hasta el siguiente arranque son permanentes."
++#~ "*Ninguno* de los cambios escritos en el directorio de sistema desde ahora hasta el siguiente arranque son permanentes."
+ 
+-#~ msgid ""
+-#~ "Your python install is corrupted. Please fix the '/usr/bin/python' "
+-#~ "symlink."
+-#~ msgstr ""
+-#~ "Su instalación de python está dañada. Por favor, repare el enlace "
+-#~ "simbólico «/usr/bin/python»."
++#~ msgid "Your python install is corrupted. Please fix the '/usr/bin/python' symlink."
++#~ msgstr "Su instalación de python está dañada. Por favor, repare el enlace simbólico «/usr/bin/python»."
+ 
+ #~ msgid "Package 'debsig-verify' is installed"
+ #~ msgstr "El paquete «debsig-verify» esta instalado"
+ 
+ #~ msgid ""
+ #~ "The upgrade can not continue with that package installed.\n"
+-#~ "Please remove it with synaptic or 'apt-get remove debsig-verify' first "
+-#~ "and run the upgrade again."
++#~ "Please remove it with synaptic or 'apt-get remove debsig-verify' first and run the upgrade again."
+ #~ msgstr ""
+ #~ "La actualización no puede continuar con ese paquete instalado.\n"
+-#~ "Desinstálelo con synaptic o «apt-get remove debsig-verify» primero y "
+-#~ "luego intente actualizar nuevamente."
++#~ "Desinstálelo con synaptic o «apt-get remove debsig-verify» primero y luego intente actualizar nuevamente."
+ 
+ #, python-format
+ #~ msgid "Can not write to '%s'"
+@@ -989,36 +855,21 @@
+ 
+ #, python-format
+ #~ msgid ""
+-#~ "Its not possible to write to the system directory '%s' on your system. "
+-#~ "The upgrade can not continue.\n"
++#~ "Its not possible to write to the system directory '%s' on your system. The upgrade can not continue.\n"
+ #~ "Please make sure that the system directory is writable."
+ #~ msgstr ""
+-#~ "No es posible escribir el directorio de sistema «%s» en su sistema. La "
+-#~ "actualización no puede continuar.\n"
++#~ "No es posible escribir el directorio de sistema «%s» en su sistema. La actualización no puede continuar.\n"
+ #~ "Asegúrese de que el directorio de sistema permite escribir."
+ 
+-#~ msgid "Include latest updates from the Internet?"
+-#~ msgstr "¿Incluir las últimas actualizaciones desde Internet?"
+-
+ #~ msgid ""
+-#~ "The upgrade system can use the Internet to automatically download the "
+-#~ "latest updates and install them during the upgrade.  If you have a "
+-#~ "network connection this is highly recommended.\n"
++#~ "The upgrade system can use the Internet to automatically download the latest updates and install them during the upgrade.  If you have a network connection this is highly recommended.\n"
+ #~ "\n"
+-#~ "The upgrade will take longer, but when it is complete, your system will "
+-#~ "be fully up to date.  You can choose not to do this, but you should "
+-#~ "install the latest updates soon after upgrading.\n"
++#~ "The upgrade will take longer, but when it is complete, your system will be fully up to date.  You can choose not to do this, but you should install the latest updates soon after upgrading.\n"
+ #~ "If you answer 'no' here, the network is not used at all."
+ #~ msgstr ""
+-#~ "El sistema de actualización a una nueva versión puede usar Internet para "
+-#~ "descargar automáticamente las actualizaciones más recientes e instalarlas "
+-#~ "durante el proceso. Si dispone de una conexión a la red, esto es muy "
+-#~ "recomendable.\n"
+-#~ "\n"
+-#~ "La actualización llevará más tiempo, pero una vez terminada, el sistema "
+-#~ "estará completamente actualizado. Puede elegir no hacerlo, pero deberá "
+-#~ "instalar las nuevas actualizaciones inmediatamente después de pasar a la "
+-#~ "nueva versión.\n"
++#~ "El sistema de actualización a una nueva versión puede usar Internet para descargar automáticamente las actualizaciones más recientes e instalarlas durante el proceso. Si dispone de una conexión a la red, esto es muy recomendable.\n"
++#~ "\n"
++#~ "La actualización llevará más tiempo, pero una vez terminada, el sistema estará completamente actualizado. Puede elegir no hacerlo, pero deberá instalar las nuevas actualizaciones inmediatamente después de pasar a la nueva versión.\n"
+ #~ "Si responde «no» ahora, la red no se usará para nada."
+ 
+ #, python-format
+@@ -1030,21 +881,14 @@
+ 
+ #, python-format
+ #~ msgid ""
+-#~ "While scanning your repository information no mirror entry for the "
+-#~ "upgrade was found. This can happen if you run a internal mirror or if the "
+-#~ "mirror information is out of date.\n"
++#~ "While scanning your repository information no mirror entry for the upgrade was found. This can happen if you run a internal mirror or if the mirror information is out of date.\n"
+ #~ "\n"
+-#~ "Do you want to rewrite your 'sources.list' file anyway? If you choose "
+-#~ "'Yes' here it will update all '%s' to '%s' entries.\n"
++#~ "Do you want to rewrite your 'sources.list' file anyway? If you choose 'Yes' here it will update all '%s' to '%s' entries.\n"
+ #~ "If you select 'No' the upgrade will cancel."
+ #~ msgstr ""
+-#~ "Mientras se exploraba la información de su repositorio, no se encontró "
+-#~ "ninguna entrada para la réplica de la actualización. Esto puede ocurrir "
+-#~ "si corre una réplica interna o si la información de la réplica es "
+-#~ "antigua.\n"
++#~ "Mientras se exploraba la información de su repositorio, no se encontró ninguna entrada para la réplica de la actualización. Esto puede ocurrir si corre una réplica interna o si la información de la réplica es antigua.\n"
+ #~ "\n"
+-#~ "¿Quiere reescribir su archivo «sources.list» de todos modos? Si elige "
+-#~ "«Sí» se actualizarán todas las entradas «%s» a «%s».\n"
++#~ "¿Quiere reescribir su archivo «sources.list» de todos modos? Si elige «Sí» se actualizarán todas las entradas «%s» a «%s».\n"
+ #~ "Si selecciona «No» la actualización se cancelará."
+ 
+ #~ msgid "Generate default sources?"
+@@ -1054,37 +898,23 @@
+ #~ msgid ""
+ #~ "After scanning your 'sources.list' no valid entry for '%s' was found.\n"
+ #~ "\n"
+-#~ "Should default entries for '%s' be added? If you select 'No', the upgrade "
+-#~ "will cancel."
++#~ "Should default entries for '%s' be added? If you select 'No', the upgrade will cancel."
+ #~ msgstr ""
+-#~ "Después de explorar su «sources.list» no se encontraron entradas válidas "
+-#~ "para «%s».\n"
++#~ "Después de explorar su «sources.list» no se encontraron entradas válidas para «%s».\n"
+ #~ "\n"
+-#~ "¿Se deben añadir entradas predeterminadas para «%s»? Si selecciona «No», "
+-#~ "la actualización se cancelará."
++#~ "¿Se deben añadir entradas predeterminadas para «%s»? Si selecciona «No», la actualización se cancelará."
+ 
+ #~ msgid "Repository information invalid"
+ #~ msgstr "Información de repositorio no válida"
+ 
+-#~ msgid ""
+-#~ "Upgrading the repository information resulted in a invalid file so a bug "
+-#~ "reporting process is being started."
+-#~ msgstr ""
+-#~ "La actualización de la información del repositorio dio como resultado un "
+-#~ "archivo inválido por lo que se está iniciando un proceso de notificación "
+-#~ "de errores."
++#~ msgid "Upgrading the repository information resulted in a invalid file so a bug reporting process is being started."
++#~ msgstr "La actualización de la información del repositorio dio como resultado un archivo inválido por lo que se está iniciando un proceso de notificación de errores."
+ 
+ #~ msgid "Third party sources disabled"
+ #~ msgstr "Desactivados los orígenes de terceros"
+ 
+-#~ msgid ""
+-#~ "Some third party entries in your sources.list were disabled. You can re-"
+-#~ "enable them after the upgrade with the 'software-properties' tool or your "
+-#~ "package manager."
+-#~ msgstr ""
+-#~ "Se han desactivado algunas entradas de otros proveedores en su «sources."
+-#~ "list». Puede volver a activarlas tras la actualización con la herramienta "
+-#~ "«Orígenes del software», o con su gestor de paquetes."
++#~ msgid "Some third party entries in your sources.list were disabled. You can re-enable them after the upgrade with the 'software-properties' tool or your package manager."
++#~ msgstr "Se han desactivado algunas entradas de otros proveedores en su «sources.list». Puede volver a activarlas tras la actualización con la herramienta «Orígenes del software», o con su gestor de paquetes."
+ 
+ #~ msgid "Package in inconsistent state"
+ #~ msgid_plural "Packages in inconsistent state"
+@@ -1092,37 +922,17 @@
+ #~ msgstr[1] "Paquetes en un estado inconsistente"
+ 
+ #, python-format
+-#~ msgid ""
+-#~ "The package '%s' is in an inconsistent state and needs to be reinstalled, "
+-#~ "but no archive can be found for it. Please reinstall the package manually "
+-#~ "or remove it from the system."
+-#~ msgid_plural ""
+-#~ "The packages '%s' are in an inconsistent state and need to be "
+-#~ "reinstalled, but no archive can be found for them. Please reinstall the "
+-#~ "packages manually or remove them from the system."
+-#~ msgstr[0] ""
+-#~ "El paquete «%s» está en un estado inconsistente y debe reinstalarse, pero "
+-#~ "no se encuentra en ningún repositorio. Por favor, reinstale el paquete "
+-#~ "manualmente o desinstálelo del sistema."
+-#~ msgstr[1] ""
+-#~ "Los paquetes «%s» están en un estado inconsistente y deben reinstalarse, "
+-#~ "pero no se encuentran en ningún repositorio. Por favor, reinstale los "
+-#~ "paquetes manualmente o desinstálelos del sistema."
++#~ msgid "The package '%s' is in an inconsistent state and needs to be reinstalled, but no archive can be found for it. Please reinstall the package manually or remove it from the system."
++#~ msgid_plural "The packages '%s' are in an inconsistent state and need to be reinstalled, but no archive can be found for them. Please reinstall the packages manually or remove them from the system."
++#~ msgstr[0] "El paquete «%s» está en un estado inconsistente y debe reinstalarse, pero no se encuentra en ningún repositorio. Por favor, reinstale el paquete manualmente o desinstálelo del sistema."
++#~ msgstr[1] "Los paquetes «%s» están en un estado inconsistente y deben reinstalarse, pero no se encuentran en ningún repositorio. Por favor, reinstale los paquetes manualmente o desinstálelos del sistema."
+ 
+ #~ msgid "Error during update"
+ #~ msgstr "Error durante la actualización"
+ 
+ #, python-format
+-#~ msgid ""
+-#~ "The upgrade has aborted. The upgrade needs a total of %s free space on "
+-#~ "disk '%s'. Please free at least an additional %s of disk space on '%s'. "
+-#~ "Empty your trash and remove temporary packages of former installations "
+-#~ "using 'sudo apt-get clean'."
+-#~ msgstr ""
+-#~ "La actualización se canceló. La actualización necesita un total de %s de "
+-#~ "espacio libre en el disco «%s». Libere al menos %s de espacio en el disco "
+-#~ "«%s». Pruebe vaciando su papelera y borrando paquetes temporales de "
+-#~ "antiguas instalaciones usando la orden «sudo apt-get clean»."
++#~ msgid "The upgrade has aborted. The upgrade needs a total of %s free space on disk '%s'. Please free at least an additional %s of disk space on '%s'. Empty your trash and remove temporary packages of former installations using 'sudo apt-get clean'."
++#~ msgstr "La actualización se canceló. La actualización necesita un total de %s de espacio libre en el disco «%s». Libere al menos %s de espacio en el disco «%s». Pruebe vaciando su papelera y borrando paquetes temporales de antiguas instalaciones usando la orden «sudo apt-get clean»."
+ 
+ #~ msgid "Calculating the changes"
+ #~ msgstr "Calculando los cambios"
+@@ -1133,24 +943,14 @@
+ #~ msgid "Upgrade canceled"
+ #~ msgstr "Actualización cancelada"
+ 
+-#~ msgid ""
+-#~ "The upgrade will cancel now and the original system state will be "
+-#~ "restored. You can resume the upgrade at a later time."
+-#~ msgstr ""
+-#~ "La actualización se cancelará ahora y el sistema volverá a su estado "
+-#~ "original. Puede reanudar la actualización posteriormente."
++#~ msgid "The upgrade will cancel now and the original system state will be restored. You can resume the upgrade at a later time."
++#~ msgstr "La actualización se cancelará ahora y el sistema volverá a su estado original. Puede reanudar la actualización posteriormente."
+ 
+ #~ msgid "Could not download the upgrades"
+ #~ msgstr "No se han podido descargar las actualizaciones"
+ 
+-#~ msgid ""
+-#~ "The upgrade has aborted. Please check your Internet connection or "
+-#~ "installation media and try again. All files downloaded so far have been "
+-#~ "kept."
+-#~ msgstr ""
+-#~ "La actualización se ha anulado. Compruebe su conexión a Internet o los "
+-#~ "medios de instalación y vuelva a intentarlo. Todos los archivos "
+-#~ "descargados hasta el momento se han mantenido."
++#~ msgid "The upgrade has aborted. Please check your Internet connection or installation media and try again. All files downloaded so far have been kept."
++#~ msgstr "La actualización se ha anulado. Compruebe su conexión a Internet o los medios de instalación y vuelva a intentarlo. Todos los archivos descargados hasta el momento se han mantenido."
+ 
+ #~ msgid "Error during commit"
+ #~ msgstr "Error durante la confirmación"
+@@ -1161,36 +961,23 @@
+ #~ msgid "Could not install the upgrades"
+ #~ msgstr "No se han podido instalar las actualizaciones"
+ 
+-#~ msgid ""
+-#~ "The upgrade has aborted. Your system could be in an unusable state. A "
+-#~ "recovery will run now (dpkg --configure -a)."
+-#~ msgstr ""
+-#~ "La actualización ha sido cancelada. Su sistema podría haber quedado en un "
+-#~ "estado no utilizable. Ahora se llevará a cabo una recuperación (dpkg --"
+-#~ "configure -a)."
++#~ msgid "The upgrade has aborted. Your system could be in an unusable state. A recovery will run now (dpkg --configure -a)."
++#~ msgstr "La actualización ha sido cancelada. Su sistema podría haber quedado en un estado no utilizable. Ahora se llevará a cabo una recuperación (dpkg --configure -a)."
+ 
+ #, python-format
+ #~ msgid ""
+ #~ "\n"
+ #~ "\n"
+-#~ "Please report this bug in a browser at http://bugs.launchpad.net/ubuntu/"
+-#~ "+source/update-manager/+filebug and attach the files in /var/log/dist-"
+-#~ "upgrade/ to the bug report.\n"
++#~ "Please report this bug in a browser at http://bugs.launchpad.net/ubuntu/+source/update-manager/+filebug and attach the files in /var/log/dist-upgrade/ to the bug report.\n"
+ #~ "%s"
+ #~ msgstr ""
+ #~ "\n"
+ #~ "\n"
+-#~ "Informe de este error en un navegador en http://bugs.launchpad.net/ubuntu/"
+-#~ "+source/update-manager/+filebug y adjunte los archivos en /var/log/dist-"
+-#~ "upgrade al informe de error.\n"
++#~ "Informe de este error en un navegador en http://bugs.launchpad.net/ubuntu/+source/update-manager/+filebug y adjunte los archivos en /var/log/dist-upgrade al informe de error.\n"
+ #~ "%s"
+ 
+-#~ msgid ""
+-#~ "The upgrade has aborted. Please check your Internet connection or "
+-#~ "installation media and try again. "
+-#~ msgstr ""
+-#~ "La actualización ha sido cancelada. Por favor, compruebe su conexión a "
+-#~ "Internet o el soporte de instalación y vuelva a intentarlo. "
++#~ msgid "The upgrade has aborted. Please check your Internet connection or installation media and try again. "
++#~ msgstr "La actualización ha sido cancelada. Por favor, compruebe su conexión a Internet o el soporte de instalación y vuelva a intentarlo. "
+ 
+ #~ msgid "Remove obsolete packages?"
+ #~ msgstr "¿Desinstalar los paquetes obsoletos?"
+@@ -1201,12 +988,8 @@
+ #~ msgid "_Remove"
+ #~ msgstr "_Eliminar"
+ 
+-#~ msgid ""
+-#~ "A problem occurred during the clean-up. Please see the below message for "
+-#~ "more information. "
+-#~ msgstr ""
+-#~ "Ha ocurrido algún problema durante el limpiado. Por favor, lea el mensaje "
+-#~ "siguiente para más información. "
++#~ msgid "A problem occurred during the clean-up. Please see the below message for more information. "
++#~ msgstr "Ha ocurrido algún problema durante el limpiado. Por favor, lea el mensaje siguiente para más información. "
+ 
+ #~ msgid "Required depends is not installed"
+ #~ msgstr "La dependencia requerida no está instalada"
+@@ -1221,26 +1004,18 @@
+ #~ msgid "Preparing the upgrade failed"
+ #~ msgstr "Falló la preparación de la actualización"
+ 
+-#~ msgid ""
+-#~ "Preparing the system for the upgrade failed so a bug reporting process is "
+-#~ "being started."
+-#~ msgstr ""
+-#~ "Falló la preparación del sistema para actualizarse, de manera que se ha "
+-#~ "iniciado el proceso de informe de errores."
++#~ msgid "Preparing the system for the upgrade failed so a bug reporting process is being started."
++#~ msgstr "Falló la preparación del sistema para actualizarse, de manera que se ha iniciado el proceso de informe de errores."
+ 
+ #~ msgid "Getting upgrade prerequisites failed"
+-#~ msgstr ""
+-#~ "Ha fallado la obtención de los requisitos previos de la actualización"
++#~ msgstr "Ha fallado la obtención de los requisitos previos de la actualización"
+ 
+ #~ msgid ""
+-#~ "The system was unable to get the prerequisites for the upgrade. The "
+-#~ "upgrade will abort now and restore the original system state.\n"
++#~ "The system was unable to get the prerequisites for the upgrade. The upgrade will abort now and restore the original system state.\n"
+ #~ "\n"
+ #~ "Additionally, a bug reporting process is being started."
+ #~ msgstr ""
+-#~ "El sistema fue incapaz de obtener los requisitos previos para la "
+-#~ "actualización. La actualización se interrumpirá ahora y se restaurará el "
+-#~ "estado original del sistema.\n"
++#~ "El sistema fue incapaz de obtener los requisitos previos para la actualización. La actualización se interrumpirá ahora y se restaurará el estado original del sistema.\n"
+ #~ "\n"
+ #~ "Adicionalmente, se está iniciando un proceso de notificación de errores."
+ 
+@@ -1262,9 +1037,7 @@
+ #~ msgid "Upgrading"
+ #~ msgstr "Actualizando"
+ 
+-#~ msgid ""
+-#~ "The upgrade has completed but there were errors during the upgrade "
+-#~ "process."
++#~ msgid "The upgrade has completed but there were errors during the upgrade process."
+ #~ msgstr "La actualización se completó pero hubo errores durante el proceso."
+ 
+ #~ msgid "Searching for obsolete software"
+@@ -1279,108 +1052,57 @@
+ #~ msgid "evms in use"
+ #~ msgstr "Se está usando «evms»"
+ 
+-#~ msgid ""
+-#~ "Your system uses the 'evms' volume manager in /proc/mounts. The 'evms' "
+-#~ "software is no longer supported, please switch it off and run the upgrade "
+-#~ "again when this is done."
+-#~ msgstr ""
+-#~ "Su sistema está usando el gestor de volúmenes «evms» en /proc/mounts. El "
+-#~ "software «evms» ya no está soportado; por favor, desactívelo y vuelva a "
+-#~ "ejecutar de nuevo la actualización."
++#~ msgid "Your system uses the 'evms' volume manager in /proc/mounts. The 'evms' software is no longer supported, please switch it off and run the upgrade again when this is done."
++#~ msgstr "Su sistema está usando el gestor de volúmenes «evms» en /proc/mounts. El software «evms» ya no está soportado; por favor, desactívelo y vuelva a ejecutar de nuevo la actualización."
+ 
+-#~ msgid ""
+-#~ "Your graphics hardware may not be fully supported in Trisquel 12.04 LTS."
+-#~ msgstr ""
+-#~ "Su hardware de gráficos no es plenamente compatible con Trisquel 12.04 LTS."
++#~ msgid "Your graphics hardware may not be fully supported in Trisquel 12.04 LTS."
++#~ msgstr "Su hardware de gráficos no es plenamente compatible con Trisquel 12.04 LTS."
+ 
+-#~ msgid ""
+-#~ "The support in Trisquel 12.04 LTS for your Intel graphics hardware is "
+-#~ "limited and you may encounter problems after the upgrade. For more "
+-#~ "information see https://wiki.ubuntu.com/X/Bugs/"
+-#~ "UpdateManagerWarningForI8xx Do you want to continue with the upgrade?"
+-#~ msgstr ""
+-#~ "La compatibilidad en Trisquel 12.04 LTS para su hardware de gráficos Intel "
+-#~ "está limitada y puede encontrar problemas tras la actualización. Para "
+-#~ "tener más información vea https://wiki.ubuntu.com/X/Bugs/"
+-#~ "UpdateManagerWarningForI8xx ¿Quiere continuar con la actualización?"
++#~ msgid "The support in Trisquel 12.04 LTS for your Intel graphics hardware is limited and you may encounter problems after the upgrade. For more information see https://wiki.ubuntu.com/X/Bugs/UpdateManagerWarningForI8xx Do you want to continue with the upgrade?"
++#~ msgstr "La compatibilidad en Trisquel 12.04 LTS para su hardware de gráficos Intel está limitada y puede encontrar problemas tras la actualización. Para tener más información vea https://wiki.ubuntu.com/X/Bugs/UpdateManagerWarningForI8xx ¿Quiere continuar con la actualización?"
+ 
+-#~ msgid ""
+-#~ "Upgrading may reduce desktop effects, and performance in games and other "
+-#~ "graphically intensive programs."
+-#~ msgstr ""
+-#~ "La actualización puede reducir los efectos de escritorio, así como el "
+-#~ "rendimiento de los juegos y otros programas que usen gráficos de forma "
+-#~ "intensiva."
++#~ msgid "Upgrading may reduce desktop effects, and performance in games and other graphically intensive programs."
++#~ msgstr "La actualización puede reducir los efectos de escritorio, así como el rendimiento de los juegos y otros programas que usen gráficos de forma intensiva."
+ 
+ #~ msgid ""
+-#~ "This computer is currently using the NVIDIA 'nvidia' graphics driver. No "
+-#~ "version of this driver is available that works with your video card in "
+-#~ "Trisquel 10.04 LTS.\n"
++#~ "This computer is currently using the NVIDIA 'nvidia' graphics driver. No version of this driver is available that works with your video card in Trisquel 10.04 LTS.\n"
+ #~ "\n"
+ #~ "Do you want to continue?"
+ #~ msgstr ""
+-#~ "Este equipo está usando el controlador gráfico  «nvidia» de NVIDIA. No se "
+-#~ "encuentra disponible en Trisquel 10.04 LTS una versión de este controlador "
+-#~ "que funcione con su hardware.\n"
++#~ "Este equipo está usando el controlador gráfico  «nvidia» de NVIDIA. No se encuentra disponible en Trisquel 10.04 LTS una versión de este controlador que funcione con su hardware.\n"
+ #~ "\n"
+ #~ "¿Quiere continuar?"
+ 
+ #~ msgid ""
+-#~ "This computer is currently using the AMD 'fglrx' graphics driver. No "
+-#~ "version of this driver is available that works with your hardware in "
+-#~ "Trisquel 10.04 LTS.\n"
++#~ "This computer is currently using the AMD 'fglrx' graphics driver. No version of this driver is available that works with your hardware in Trisquel 10.04 LTS.\n"
+ #~ "\n"
+ #~ "Do you want to continue?"
+ #~ msgstr ""
+-#~ "Este equipo está usando el controlador gráfico  «fglrx» de AMD. No se "
+-#~ "encuentra disponible en Trisquel 10.04 LTS una versión de este controlador "
+-#~ "que funcione con su hardware.\n"
++#~ "Este equipo está usando el controlador gráfico  «fglrx» de AMD. No se encuentra disponible en Trisquel 10.04 LTS una versión de este controlador que funcione con su hardware.\n"
+ #~ "\n"
+ #~ "¿Quiere continuar?"
+ 
+ #~ msgid "No i686 CPU"
+ #~ msgstr "Sin CPU i686"
+ 
+-#~ msgid ""
+-#~ "Your system uses an i586 CPU or a CPU that does not have the 'cmov' "
+-#~ "extension. All packages were built with optimizations requiring i686 as "
+-#~ "the minimal architecture. It is not possible to upgrade your system to a "
+-#~ "new Trisquel release with this hardware."
+-#~ msgstr ""
+-#~ "Su sistema usa una CPU i586 CPU o  una CPU que no tiene la extensión "
+-#~ "«cmov». Todos los paquetes se han construido con optimizaciones que "
+-#~ "requieren i686 como arquitectura mínima. No es posible actualizar su "
+-#~ "sistema a la nueva versión de Trisquel con este hardware."
++#~ msgid "Your system uses an i586 CPU or a CPU that does not have the 'cmov' extension. All packages were built with optimizations requiring i686 as the minimal architecture. It is not possible to upgrade your system to a new Trisquel release with this hardware."
++#~ msgstr "Su sistema usa una CPU i586 CPU o  una CPU que no tiene la extensión «cmov». Todos los paquetes se han construido con optimizaciones que requieren i686 como arquitectura mínima. No es posible actualizar su sistema a la nueva versión de Trisquel con este hardware."
+ 
+ #~ msgid "No ARMv6 CPU"
+ #~ msgstr "No hay CPU ARMv6"
+ 
+-#~ msgid ""
+-#~ "Your system uses an ARM CPU that is older than the ARMv6 architecture. "
+-#~ "All packages in karmic were built with optimizations requiring ARMv6 as "
+-#~ "the minimal architecture. It is not possible to upgrade your system to a "
+-#~ "new Trisquel release with this hardware."
+-#~ msgstr ""
+-#~ "Su sistema usa una CPU ARM que es más antigua que la arquitectura ARMv6. "
+-#~ "Todos los paquetes en karmic han sido construidos con optimizaciones que "
+-#~ "requieren ARMv6 como arquitectura mínima. No es posible actualizar sus "
+-#~ "sistema a la nueva versión de Trisquel con este hardware."
++#~ msgid "Your system uses an ARM CPU that is older than the ARMv6 architecture. All packages in karmic were built with optimizations requiring ARMv6 as the minimal architecture. It is not possible to upgrade your system to a new Trisquel release with this hardware."
++#~ msgstr "Su sistema usa una CPU ARM que es más antigua que la arquitectura ARMv6. Todos los paquetes en karmic han sido construidos con optimizaciones que requieren ARMv6 como arquitectura mínima. No es posible actualizar sus sistema a la nueva versión de Trisquel con este hardware."
+ 
+ #~ msgid "No init available"
+ #~ msgstr "El demonio init no está disponible"
+ 
+ #~ msgid ""
+-#~ "Your system appears to be a virtualised environment without an init "
+-#~ "daemon, e.g. Linux-VServer. Trisquel 10.04 LTS cannot function within this "
+-#~ "type of environment, requiring an update to your virtual machine "
+-#~ "configuration first.\n"
++#~ "Your system appears to be a virtualised environment without an init daemon, e.g. Linux-VServer. Trisquel 10.04 LTS cannot function within this type of environment, requiring an update to your virtual machine configuration first.\n"
+ #~ "\n"
+ #~ "Are you sure you want to continue?"
+ #~ msgstr ""
+-#~ "Parece que su sistema es un entorno virtualizado sin un demonio init (un "
+-#~ "Linux-VServer, p.ej.). Trisquel 10.04 LTS no puede funcionar en este tipo "
+-#~ "de entorno, por lo que primero se requiere una actualización de la "
+-#~ "configuración de su máquina virtual.\n"
++#~ "Parece que su sistema es un entorno virtualizado sin un demonio init (un Linux-VServer, p.ej.). Trisquel 10.04 LTS no puede funcionar en este tipo de entorno, por lo que primero se requiere una actualización de la configuración de su máquina virtual.\n"
+ #~ "\n"
+ #~ "¿Está seguro de que quiere continuar?"
+ 
+@@ -1401,9 +1123,7 @@
+ #~ msgstr "*OBSOLETO* esta opción se ignorará"
+ 
+ #~ msgid "Perform a partial upgrade only (no sources.list rewriting)"
+-#~ msgstr ""
+-#~ "Realizar solo una actualización parcial (no se reescribirá el «sources."
+-#~ "list»)"
++#~ msgstr "Realizar solo una actualización parcial (no se reescribirá el «sources.list»)"
+ 
+ #~ msgid "Disable GNU screen support"
+ #~ msgstr "Desactive el soporte de pantalla GNU"
+@@ -1441,13 +1161,8 @@
+ #~ msgstr "No se ha podido instalar «%s»"
+ 
+ #, python-format
+-#~ msgid ""
+-#~ "The upgrade will continue but the '%s' package may not be in a working "
+-#~ "state. Please consider submitting a bug report about it."
+-#~ msgstr ""
+-#~ "La actualización continuará, pero es posible que el paquete «%s» no se "
+-#~ "encuentre en un estado funcional. Considere la posibilidad de enviar un "
+-#~ "informe de error acerca de esto."
++#~ msgid "The upgrade will continue but the '%s' package may not be in a working state. Please consider submitting a bug report about it."
++#~ msgstr "La actualización continuará, pero es posible que el paquete «%s» no se encuentre en un estado funcional. Considere la posibilidad de enviar un informe de error acerca de esto."
+ 
+ #, python-format
+ #~ msgid ""
+@@ -1457,12 +1172,8 @@
+ #~ "¿Quiere sustituir el archivo de configuración modificado\n"
+ #~ "«%s»?"
+ 
+-#~ msgid ""
+-#~ "You will lose any changes you have made to this configuration file if you "
+-#~ "choose to replace it with a newer version."
+-#~ msgstr ""
+-#~ "Perderá todos los cambios que haya realizado en este archivo de "
+-#~ "configuración si decide sustituirlo por una nueva versión."
++#~ msgid "You will lose any changes you have made to this configuration file if you choose to replace it with a newer version."
++#~ msgstr "Perderá todos los cambios que haya realizado en este archivo de configuración si decide sustituirlo por una nueva versión."
+ 
+ #~ msgid "The 'diff' command was not found"
+ #~ msgstr "No se ha encontrado la orden «diff»"
+@@ -1471,31 +1182,20 @@
+ #~ msgstr "Ha ocurrido un error fatal"
+ 
+ #~ msgid ""
+-#~ "Please report this as a bug (if you haven't already) and include the "
+-#~ "files /var/log/dist-upgrade/main.log and /var/log/dist-upgrade/apt.log in "
+-#~ "your report. The upgrade has aborted.\n"
++#~ "Please report this as a bug (if you haven't already) and include the files /var/log/dist-upgrade/main.log and /var/log/dist-upgrade/apt.log in your report. The upgrade has aborted.\n"
+ #~ "Your original sources.list was saved in /etc/apt/sources.list.distUpgrade."
+ #~ msgstr ""
+-#~ "Informe de este fallo (si todavía no lo ha hecho) e incluya los archivos /"
+-#~ "var/log/dist-upgrade/main.log y /var/log/dist-upgrade/apt.log en el "
+-#~ "informe. La actualización ha sido cancelada.\n"
+-#~ "Su archivo sources.list original se guardó en /etc/apt/sources.list."
+-#~ "distUpgrade."
++#~ "Informe de este fallo (si todavía no lo ha hecho) e incluya los archivos /var/log/dist-upgrade/main.log y /var/log/dist-upgrade/apt.log en el informe. La actualización ha sido cancelada.\n"
++#~ "Su archivo sources.list original se guardó en /etc/apt/sources.list.distUpgrade."
+ 
+ #~ msgid "Ctrl-c pressed"
+ #~ msgstr "Se ha pulsado Ctrl-C"
+ 
+-#~ msgid ""
+-#~ "This will abort the operation and may leave the system in a broken state. "
+-#~ "Are you sure you want to do that?"
+-#~ msgstr ""
+-#~ "Esto cancelará la operación y puede dejar al sistema en un estado "
+-#~ "defectuoso. ¿Seguro que desea hacer eso?"
++#~ msgid "This will abort the operation and may leave the system in a broken state. Are you sure you want to do that?"
++#~ msgstr "Esto cancelará la operación y puede dejar al sistema en un estado defectuoso. ¿Seguro que desea hacer eso?"
+ 
+ #~ msgid "To prevent data loss close all open applications and documents."
+-#~ msgstr ""
+-#~ "Para prevenir la pérdida de datos, cierre todas las aplicaciones y "
+-#~ "documentos."
++#~ msgstr "Para prevenir la pérdida de datos, cierre todas las aplicaciones y documentos."
+ 
+ #, python-format
+ #~ msgid "No longer supported by Canonical (%s)"
+@@ -1564,20 +1264,16 @@
+ #~ msgstr "Actualizar %s"
+ 
+ #~ msgid "<b><big>Restart the system to complete the upgrade</big></b>"
+-#~ msgstr ""
+-#~ "<b><big>Reinicie el sistema para completar la actualización</big></b>"
++#~ msgstr "<b><big>Reinicie el sistema para completar la actualización</big></b>"
+ 
+ #~ msgid ""
+ #~ "<b><big>Cancel the running upgrade?</big></b>\n"
+ #~ "\n"
+-#~ "The system could be in an unusable state if you cancel the upgrade. You "
+-#~ "are strongly advised to resume the upgrade."
++#~ "The system could be in an unusable state if you cancel the upgrade. You are strongly advised to resume the upgrade."
+ #~ msgstr ""
+ #~ "<b><big>¿Cancelar la actualización en curso?</big></b>\n"
+ #~ "\n"
+-#~ "El sistema podría quedar en un estado no utilizable si cancela la "
+-#~ "actualización. Le recomendamos encarecidamente que continúe la "
+-#~ "actualización."
++#~ "El sistema podría quedar en un estado no utilizable si cancela la actualización. Le recomendamos encarecidamente que continúe la actualización."
+ 
+ #~ msgid "Cancel Upgrade?"
+ #~ msgstr "¿Cancelar la actualización?"
+@@ -1615,12 +1311,8 @@
+ #~ msgstr "%(str_hours)s %(str_minutes)s"
+ 
+ #, python-format
+-#~ msgid ""
+-#~ "This download will take about %s with a 1Mbit DSL connection and about %s "
+-#~ "with a 56k modem."
+-#~ msgstr ""
+-#~ "Esta descarga tardará %s aproximadamente con una conexión DSL de 1Mbit y "
+-#~ "%s aproximadamente con un módem de 56k."
++#~ msgid "This download will take about %s with a 1Mbit DSL connection and about %s with a 56k modem."
++#~ msgstr "Esta descarga tardará %s aproximadamente con una conexión DSL de 1Mbit y %s aproximadamente con un módem de 56k."
+ 
+ #, python-format
+ #~ msgid "This download will take about %s with your connection. "
+@@ -1642,18 +1334,10 @@
+ #~ msgstr "Limpiando"
+ 
+ #, python-format
+-#~ msgid ""
+-#~ "%(amount)d installed package is no longer supported by Canonical. You can "
+-#~ "still get support from the community."
+-#~ msgid_plural ""
+-#~ "%(amount)d installed packages are no longer supported by Canonical. You "
+-#~ "can still get support from the community."
+-#~ msgstr[0] ""
+-#~ "%(amount)d paquete instalado ya no está soportado por Canonical. Puede "
+-#~ "seguir obteniendo soporte de la comunidad."
+-#~ msgstr[1] ""
+-#~ "%(amount)d paquetes instalados ya no están soportados por Canonical. "
+-#~ "Puede seguir obteniendo soporte de la comunidad."
++#~ msgid "%(amount)d installed package is no longer supported by Canonical. You can still get support from the community."
++#~ msgid_plural "%(amount)d installed packages are no longer supported by Canonical. You can still get support from the community."
++#~ msgstr[0] "%(amount)d paquete instalado ya no está soportado por Canonical. Puede seguir obteniendo soporte de la comunidad."
++#~ msgstr[1] "%(amount)d paquetes instalados ya no están soportados por Canonical. Puede seguir obteniendo soporte de la comunidad."
+ 
+ #, python-format
+ #~ msgid "%d new package is going to be installed."
+@@ -1677,39 +1361,23 @@
+ #~ "\n"
+ #~ "Debe descargar un total de %s. "
+ 
+-#~ msgid ""
+-#~ "Installing the upgrade can take several hours. Once the download has "
+-#~ "finished, the process cannot be canceled."
+-#~ msgstr ""
+-#~ "Esta actualización puede tardar varias horas. Una vez finalice la "
+-#~ "descarga, el proceso no podrá ser cancelado."
++#~ msgid "Installing the upgrade can take several hours. Once the download has finished, the process cannot be canceled."
++#~ msgstr "Esta actualización puede tardar varias horas. Una vez finalice la descarga, el proceso no podrá ser cancelado."
+ 
+-#~ msgid ""
+-#~ "Fetching and installing the upgrade can take several hours. Once the "
+-#~ "download has finished, the process cannot be canceled."
+-#~ msgstr ""
+-#~ "Recoger e instalar la actualización puede llevar varias horas. Una vez "
+-#~ "que la descarga haya terminado, el proceso no se puede cancelar."
++#~ msgid "Fetching and installing the upgrade can take several hours. Once the download has finished, the process cannot be canceled."
++#~ msgstr "Recoger e instalar la actualización puede llevar varias horas. Una vez que la descarga haya terminado, el proceso no se puede cancelar."
+ 
+ #~ msgid "Removing the packages can take several hours. "
+ #~ msgstr "La desinstalación de los paquetes puede tardar varias horas. "
+ 
+-#~ msgid ""
+-#~ "There are no upgrades available for your system. The upgrade will now be "
+-#~ "canceled."
+-#~ msgstr ""
+-#~ "No hay actualizaciones disponibles para su sistema. Se ha cancelado la "
+-#~ "actualización."
++#~ msgid "There are no upgrades available for your system. The upgrade will now be canceled."
++#~ msgstr "No hay actualizaciones disponibles para su sistema. Se ha cancelado la actualización."
+ 
+ #~ msgid "Reboot required"
+ #~ msgstr "Se requiere reiniciar el equipo"
+ 
+-#~ msgid ""
+-#~ "The upgrade is finished and a reboot is required. Do you want to do this "
+-#~ "now?"
+-#~ msgstr ""
+-#~ "La actualización ha finalizado y se necesita reiniciar el equipo. ¿Quiere "
+-#~ "hacerlo ahora?"
++#~ msgid "The upgrade is finished and a reboot is required. Do you want to do this now?"
++#~ msgstr "La actualización ha finalizado y se necesita reiniciar el equipo. ¿Quiere hacerlo ahora?"
+ 
+ #, python-format
+ #~ msgid "authenticate '%(file)s' against '%(signature)s' "
+@@ -1722,12 +1390,8 @@
+ #~ msgid "Could not run the upgrade tool"
+ #~ msgstr "No se ha podido ejecutar la herramienta de actualización"
+ 
+-#~ msgid ""
+-#~ "This is most likely a bug in the upgrade tool. Please report it as a bug "
+-#~ "using the command 'ubuntu-bug update-manager'."
+-#~ msgstr ""
+-#~ "Esto parece ser un fallo en la herramienta de actualización. Informe de "
+-#~ "este fallo usando la orden «ubuntu-bug update-manager»."
++#~ msgid "This is most likely a bug in the upgrade tool. Please report it as a bug using the command 'ubuntu-bug update-manager'."
++#~ msgstr "Esto parece ser un fallo en la herramienta de actualización. Informe de este fallo usando la orden «ubuntu-bug update-manager»."
+ 
+ #~ msgid "Upgrade tool signature"
+ #~ msgstr "Firma de la herramienta de actualización"
+@@ -1739,66 +1403,42 @@
+ #~ msgstr "Error al descargar"
+ 
+ #~ msgid "Fetching the upgrade failed. There may be a network problem. "
+-#~ msgstr ""
+-#~ "Ha fallado la descarga de la actualización. Puede haber un problema con "
+-#~ "la red. "
++#~ msgstr "Ha fallado la descarga de la actualización. Puede haber un problema con la red. "
+ 
+ #~ msgid "Authentication failed"
+ #~ msgstr "Error de autenticación"
+ 
+-#~ msgid ""
+-#~ "Authenticating the upgrade failed. There may be a problem with the "
+-#~ "network or with the server. "
+-#~ msgstr ""
+-#~ "Ha fallado la autenticación de la actualización. Es posible que exista un "
+-#~ "problema con la red o el servidor. "
++#~ msgid "Authenticating the upgrade failed. There may be a problem with the network or with the server. "
++#~ msgstr "Ha fallado la autenticación de la actualización. Es posible que exista un problema con la red o el servidor. "
+ 
+ #~ msgid "Failed to extract"
+ #~ msgstr "Error al extraer"
+ 
+-#~ msgid ""
+-#~ "Extracting the upgrade failed. There may be a problem with the network or "
+-#~ "with the server. "
+-#~ msgstr ""
+-#~ "Ha fallado la extracción de la actualización. Puede haber un problema con "
+-#~ "la red o el servidor. "
++#~ msgid "Extracting the upgrade failed. There may be a problem with the network or with the server. "
++#~ msgstr "Ha fallado la extracción de la actualización. Puede haber un problema con la red o el servidor. "
+ 
+ #~ msgid "Verification failed"
+ #~ msgstr "Falló la verificación"
+ 
+-#~ msgid ""
+-#~ "Verifying the upgrade failed.  There may be a problem with the network or "
+-#~ "with the server. "
+-#~ msgstr ""
+-#~ "Ha fallado la verificación de la actualización. Puede haber un problema "
+-#~ "con la red o con el servidor. "
++#~ msgid "Verifying the upgrade failed.  There may be a problem with the network or with the server. "
++#~ msgstr "Ha fallado la verificación de la actualización. Puede haber un problema con la red o con el servidor. "
+ 
+ #~ msgid "Can not run the upgrade"
+ #~ msgstr "No se ha podido ejecutar la actualización"
+ 
+-#~ msgid ""
+-#~ "This usually is caused by a system where /tmp is mounted noexec. Please "
+-#~ "remount without noexec and run the upgrade again."
+-#~ msgstr ""
+-#~ "Esto normalmente está causado por un sistema donde /tmp se ha montado "
+-#~ "como no ejecutable. Vuelva a montarlo sin «noexec» y ejecute de nuevo la "
+-#~ "actualización."
++#~ msgid "This usually is caused by a system where /tmp is mounted noexec. Please remount without noexec and run the upgrade again."
++#~ msgstr "Esto normalmente está causado por un sistema donde /tmp se ha montado como no ejecutable. Vuelva a montarlo sin «noexec» y ejecute de nuevo la actualización."
+ 
+ #, python-format
+ #~ msgid "The error message is '%s'."
+ #~ msgstr "El mensaje de error es «%s»"
+ 
+ #~ msgid ""
+-#~ "Please report this as a bug and include the files /var/log/dist-upgrade/"
+-#~ "main.log and /var/log/dist-upgrade/apt.log in your report. The upgrade "
+-#~ "has aborted.\n"
++#~ "Please report this as a bug and include the files /var/log/dist-upgrade/main.log and /var/log/dist-upgrade/apt.log in your report. The upgrade has aborted.\n"
+ #~ "Your original sources.list was saved in /etc/apt/sources.list.distUpgrade."
+ #~ msgstr ""
+-#~ "Informe de este fallo e incluya los archivos /var/log/dist-upgrade/main."
+-#~ "log y /var/log/dist-upgrade/apt.log en el informe. La actualización ha "
+-#~ "sido cancelada.\n"
+-#~ "Su archivo sources.list original se guardó en /etc/apt/sources.list."
+-#~ "distUpgrade."
++#~ "Informe de este fallo e incluya los archivos /var/log/dist-upgrade/main.log y /var/log/dist-upgrade/apt.log en el informe. La actualización ha sido cancelada.\n"
++#~ "Su archivo sources.list original se guardó en /etc/apt/sources.list.distUpgrade."
+ 
+ #~ msgid "Aborting"
+ #~ msgstr "Cancelando"
+@@ -1859,14 +1499,11 @@
+ #~ msgid ""
+ #~ "<b><big>Cancel the running upgrade?</big></b>\n"
+ #~ "\n"
+-#~ "The system could be in an unusable state if you cancel the upgrade. You "
+-#~ "are strongly adviced to resume the upgrade."
++#~ "The system could be in an unusable state if you cancel the upgrade. You are strongly adviced to resume the upgrade."
+ #~ msgstr ""
+ #~ "<b><big>¿Cancelar la actualización en curso?</big></b>\n"
+ #~ "\n"
+-#~ "El sistema podría quedar en un estado no utilizable si cancela la "
+-#~ "actualización. Le recomendamos encarecidamente que continúe la "
+-#~ "actualización."
++#~ "El sistema podría quedar en un estado no utilizable si cancela la actualización. Le recomendamos encarecidamente que continúe la actualización."
+ 
+ #~ msgid "_Start Upgrade"
+ #~ msgstr "_Iniciar la actualización"
+@@ -1948,12 +1585,8 @@
+ #~ msgid "Your Trisquel release is not supported anymore."
+ #~ msgstr "Su versión de Trisquel ya no tiene soporte."
+ 
+-#~ msgid ""
+-#~ "You will not get any further security fixes or critical updates. Please "
+-#~ "upgrade to a later version of Trisquel."
+-#~ msgstr ""
+-#~ "No recibirá más correcciones de seguridad o actualizaciones críticas. "
+-#~ "Actualice a una versión posterior de Trisquel."
++#~ msgid "You will not get any further security fixes or critical updates. Please upgrade to a later version of Trisquel."
++#~ msgstr "No recibirá más correcciones de seguridad o actualizaciones críticas. Actualice a una versión posterior de Trisquel."
+ 
+ #~ msgid "Upgrade information"
+ #~ msgstr "Información de actualización"
+@@ -1961,42 +1594,28 @@
+ #~ msgid "Name"
+ #~ msgstr "Nombre"
+ 
+-#~ msgid ""
+-#~ "It is unknown when the package information was updated last. Please click "
+-#~ "the 'Check' button to update the information."
+-#~ msgstr ""
+-#~ "No se sabe cuando se ha actualizado por última vez la información del "
+-#~ "paquete. Pulse el botón «Comprobar» para actualizar la información."
++#~ msgid "It is unknown when the package information was updated last. Please click the 'Check' button to update the information."
++#~ msgstr "No se sabe cuando se ha actualizado por última vez la información del paquete. Pulse el botón «Comprobar» para actualizar la información."
+ 
+ #, python-format
+ #~ msgid ""
+ #~ "The package information was last updated %(days_ago)s days ago.\n"
+ #~ "Press the 'Check' button below to check for new software updates."
+ #~ msgstr ""
+-#~ "La información de los paquetes ha sido actualizada por última vez hace "
+-#~ "%(days_ago)s días.\n"
+-#~ "Pulse el botón «Comprobar» más abajo para buscar nuevas actualizaciones "
+-#~ "de software."
++#~ "La información de los paquetes ha sido actualizada por última vez hace %(days_ago)s días.\n"
++#~ "Pulse el botón «Comprobar» más abajo para buscar nuevas actualizaciones de software."
+ 
+ #, python-format
+ #~ msgid "The package information was last updated %(days_ago)s day ago."
+-#~ msgid_plural ""
+-#~ "The package information was last updated %(days_ago)s days ago."
+-#~ msgstr[0] ""
+-#~ "La información del paquete fue actualizada hace %(days_ago)s día."
+-#~ msgstr[1] ""
+-#~ "La información del paquete fue actualizada hace %(days_ago)s días."
++#~ msgid_plural "The package information was last updated %(days_ago)s days ago."
++#~ msgstr[0] "La información del paquete fue actualizada hace %(days_ago)s día."
++#~ msgstr[1] "La información del paquete fue actualizada hace %(days_ago)s días."
+ 
+ #, python-format
+ #~ msgid "The package information was last updated %(hours_ago)s hour ago."
+-#~ msgid_plural ""
+-#~ "The package information was last updated %(hours_ago)s hours ago."
+-#~ msgstr[0] ""
+-#~ "La información de los paquetes se actualizó por última vez hace "
+-#~ "%(hours_ago)s hora."
+-#~ msgstr[1] ""
+-#~ "La información de los paquetes se actualizó por última vez hace "
+-#~ "%(hours_ago)s horas."
++#~ msgid_plural "The package information was last updated %(hours_ago)s hours ago."
++#~ msgstr[0] "La información de los paquetes se actualizó por última vez hace %(hours_ago)s hora."
++#~ msgstr[1] "La información de los paquetes se actualizó por última vez hace %(hours_ago)s horas."
+ 
+ #, python-format
+ #~ msgid "The package information was last updated about %s minutes ago."
+@@ -2030,12 +1649,8 @@
+ #~ msgstr "La actualización de versión no es posible en este momento"
+ 
+ #, c-format, python-format
+-#~ msgid ""
+-#~ "The release upgrade can not be performed currently, please try again "
+-#~ "later. The server reported: '%s'"
+-#~ msgstr ""
+-#~ "La actualización de versión no se puede realizar en este momento, "
+-#~ "inténtelo de nuevo después. El servidor informó: «%s»"
++#~ msgid "The release upgrade can not be performed currently, please try again later. The server reported: '%s'"
++#~ msgstr "La actualización de versión no se puede realizar en este momento, inténtelo de nuevo después. El servidor informó: «%s»"
+ 
+ #~ msgid "Downloading the release upgrade tool"
+ #~ msgstr "Descargando la herramienta de actualización de la versión"
+@@ -2088,8 +1703,7 @@
+ 
+ #, python-format
+ #~ msgid "A error '%s' occurred while checking what system you are using."
+-#~ msgstr ""
+-#~ "Ha ocurrido un error «%s» mientras se comprobaba qué sistema está usando."
++#~ msgstr "Ha ocurrido un error «%s» mientras se comprobaba qué sistema está usando."
+ 
+ #~ msgid "Recommended updates"
+ #~ msgstr "Actualizaciones recomendadas"
+@@ -2107,12 +1721,8 @@
+ #~ msgid "<big><b>Starting Software Updater</b></big>"
+ #~ msgstr "<big><b>Iniciando el gestor de actualizaciones</b></big>"
+ 
+-#~ msgid ""
+-#~ "Software updates correct errors, eliminate security vulnerabilities and "
+-#~ "provide new features."
+-#~ msgstr ""
+-#~ "Las actualizaciones de software corrigen errores, eliminan fallos de "
+-#~ "seguridad y proporcionan nuevas funcionalidades."
++#~ msgid "Software updates correct errors, eliminate security vulnerabilities and provide new features."
++#~ msgstr "Las actualizaciones de software corrigen errores, eliminan fallos de seguridad y proporcionan nuevas funcionalidades."
+ 
+ #~ msgid "Chec_k"
+ #~ msgstr "C_omprobar"
+@@ -2120,14 +1730,11 @@
+ #~ msgid ""
+ #~ "<b><big>You must check for updates manually</big></b>\n"
+ #~ "\n"
+-#~ "Your system does not check for updates automatically. You can configure "
+-#~ "this behavior in <i>Software Sources</i> on the <i>Updates</i> tab."
++#~ "Your system does not check for updates automatically. You can configure this behavior in <i>Software Sources</i> on the <i>Updates</i> tab."
+ #~ msgstr ""
+ #~ "<b><big>Debe comprobar las actualizaciones manualmente</big></b>\n"
+ #~ "\n"
+-#~ "Su sistema no comprueba automáticamente si existen actualizaciones. Puede "
+-#~ "configurar este comportamiento en <i>Orígenes del software</i>, en la "
+-#~ "solapa <i>Actualizaciones</i>."
++#~ "Su sistema no comprueba automáticamente si existen actualizaciones. Puede configurar este comportamiento en <i>Orígenes del software</i>, en la solapa <i>Actualizaciones</i>."
+ 
+ #~ msgid "_Hide this information in the future"
+ #~ msgstr "_Ocultar esta información en el futuro"
+@@ -2138,11 +1745,8 @@
+ #~ msgid "<big><b>Running on battery</b></big>"
+ #~ msgstr "<big><b>Alimentado por baterías</b></big>"
+ 
+-#~ msgid ""
+-#~ "Your system is running on battery. Are you sure you want to continue?"
+-#~ msgstr ""
+-#~ "Su sistema está ejecutándose con baterías. ¿Está seguro de que quiere "
+-#~ "continuar?"
++#~ msgid "Your system is running on battery. Are you sure you want to continue?"
++#~ msgstr "Su sistema está ejecutándose con baterías. ¿Está seguro de que quiere continuar?"
+ 
+ #~ msgid "_Upgrade"
+ #~ msgstr "_Actualizar"
+@@ -2157,11 +1761,8 @@
+ #~ msgid "U_pgrade"
+ #~ msgstr "_Actualizar"
+ 
+-#~ msgid ""
+-#~ "<b>A new version of Trisquel is available. Would you like to upgrade?</b>"
+-#~ msgstr ""
+-#~ "<b>Está disponible una nueva versión de Trisquel. ¿Le gustaría actualizar?</"
+-#~ "b>"
++#~ msgid "<b>A new version of Trisquel is available. Would you like to upgrade?</b>"
++#~ msgstr "<b>Está disponible una nueva versión de Trisquel. ¿Le gustaría actualizar?</b>"
+ 
+ #~ msgid "Don't Upgrade"
+ #~ msgstr "No actualizar"
+@@ -2173,16 +1774,11 @@
+ #~ msgstr "Ha decidido no actualizarse a la nueva versión de Trisquel"
+ 
+ #, fuzzy
+-#~ msgid ""
+-#~ "You can upgrade at a later time by opening Software Updater and click on "
+-#~ "\"Upgrade\"."
+-#~ msgstr ""
+-#~ "Puede actualizar más adelante abriendo el Gestor de actualizaciones y "
+-#~ "pulsando en «Actualizar»."
++#~ msgid "You can upgrade at a later time by opening Software Updater and click on \"Upgrade\"."
++#~ msgstr "Puede actualizar más adelante abriendo el Gestor de actualizaciones y pulsando en «Actualizar»."
+ 
+ #~ msgid "Check if upgrading to the latest devel release is possible"
+-#~ msgstr ""
+-#~ "Comprobar si es posible actualizar a la última versión de desarrollo"
++#~ msgstr "Comprobar si es posible actualizar a la última versión de desarrollo"
+ 
+ #~ msgid "Try to run a dist-upgrade"
+ #~ msgstr "Intente ejecutar dist-upgrade"
+@@ -2196,31 +1792,21 @@
+ #~ msgid "Show description of the package instead of the changelog"
+ #~ msgstr "Mostrar la descripción del paquete en lugar de la lista de cambios"
+ 
+-#~ msgid ""
+-#~ "Try upgrading to the latest release using the upgrader from $distro-"
+-#~ "proposed"
+-#~ msgstr ""
+-#~ "Intente actualizar a la última versión usando el actualizador de $distro-"
+-#~ "proposed"
++#~ msgid "Try upgrading to the latest release using the upgrader from $distro-proposed"
++#~ msgstr "Intente actualizar a la última versión usando el actualizador de $distro-proposed"
+ 
+ #~ msgid ""
+ #~ "Run in a special upgrade mode.\n"
+-#~ "Currently 'desktop' for regular upgrades of a desktop system and 'server' "
+-#~ "for server systems are supported."
++#~ "Currently 'desktop' for regular upgrades of a desktop system and 'server' for server systems are supported."
+ #~ msgstr ""
+ #~ "Ejecutar en un modo especial de actualización.\n"
+-#~ "Actualmente se soportan los modos «desktop» (para actualizaciones "
+-#~ "normales de un sistema de escritorio) y «server» (para servidores)."
++#~ "Actualmente se soportan los modos «desktop» (para actualizaciones normales de un sistema de escritorio) y «server» (para servidores)."
+ 
+ #~ msgid "Run the specified frontend"
+ #~ msgstr "Ejecutar la interfaz especificada"
+ 
+-#~ msgid ""
+-#~ "Check only if a new distribution release is available and report the "
+-#~ "result via the exit code"
+-#~ msgstr ""
+-#~ "Comprueba únicamente si está disponible una nueva versión de la "
+-#~ "distribución e informa del resultado mediante un código de salida"
++#~ msgid "Check only if a new distribution release is available and report the result via the exit code"
++#~ msgstr "Comprueba únicamente si está disponible una nueva versión de la distribución e informa del resultado mediante un código de salida"
+ 
+ #~ msgid "Checking for a new Trisquel release"
+ #~ msgstr "Comprobar si hay una nueva versión de Trisquel"
+@@ -2271,21 +1857,14 @@
+ #~ msgid "You have %(num)s packages (%(percent).1f%%) supported until %(time)s"
+ #~ msgstr "Tiene %(num)s paquetes (%(percent).1f%%) con soporte hasta %(time)s"
+ 
+-#~ msgid ""
+-#~ "You have %(num)s packages (%(percent).1f%%) that can not/no-longer be "
+-#~ "downloaded"
+-#~ msgstr ""
+-#~ "Tiene %(num)s paquetes (%(percent).1f%%) que no pueden descargarse más"
++#~ msgid "You have %(num)s packages (%(percent).1f%%) that can not/no-longer be downloaded"
++#~ msgstr "Tiene %(num)s paquetes (%(percent).1f%%) que no pueden descargarse más"
+ 
+ #~ msgid "You have %(num)s packages (%(percent).1f%%) that are unsupported"
+ #~ msgstr "Tiene %(num)s paquetes (%(percent).1f%%) sin soporte"
+ 
+-#~ msgid ""
+-#~ "Run with --show-unsupported, --show-supported or --show-all to see more "
+-#~ "details"
+-#~ msgstr ""
+-#~ "Ejecute con --show-unsupported, --show-supported o --show-all para ver "
+-#~ "más detalles"
++#~ msgid "Run with --show-unsupported, --show-supported or --show-all to see more details"
++#~ msgstr "Ejecute con --show-unsupported, --show-supported o --show-all para ver más detalles"
+ 
+ #~ msgid "No longer downloadable:"
+ #~ msgstr "No se pueden descargar más:"
+@@ -2300,13 +1879,8 @@
+ #~ msgid "Unsupported"
+ #~ msgstr "Sin soporte"
+ 
+-#~ msgid ""
+-#~ "After your package information was updated the essential package '%s' can "
+-#~ "not be found anymore so a bug reporting process is being started."
+-#~ msgstr ""
+-#~ "Después de que su información del paquete fuese actualizada el paquete "
+-#~ "esencial «%s» no se encuentra, por lo que se está iniciando un proceso de "
+-#~ "notificación de errores."
++#~ msgid "After your package information was updated the essential package '%s' can not be found anymore so a bug reporting process is being started."
++#~ msgstr "Después de que su información del paquete fuese actualizada el paquete esencial «%s» no se encuentra, por lo que se está iniciando un proceso de notificación de errores."
+ 
+ #~ msgid "<b><big>Upgrading Trisquel to version 12.04</big></b>"
+ #~ msgstr "<b><big>Actualizando Trisquel a la versión 12.04</big></b>"
+@@ -2322,12 +1896,8 @@
+ #~ msgid "Welcome to Trisquel"
+ #~ msgstr "Bienvenido/a a Trisquel"
+ 
+-#~ msgid ""
+-#~ "These software updates have been issued since this version of Trisquel was "
+-#~ "released."
+-#~ msgstr ""
+-#~ "Estas actualizaciones de software se publicaron desde el lanzamiento de "
+-#~ "esta versión de Trisquel."
++#~ msgid "These software updates have been issued since this version of Trisquel was released."
++#~ msgstr "Estas actualizaciones de software se publicaron desde el lanzamiento de esta versión de Trisquel."
+ 
+ #~ msgid "Update Manager"
+ #~ msgstr "Gestor de actualizaciones"
+@@ -2345,35 +1915,22 @@
+ #~ msgstr "Su sistema está actualizado"
+ 
+ #~ msgid ""
+-#~ "This upgrade is running in sandbox (test) mode. All changes are written "
+-#~ "to '%s' and will be lost on the next reboot.\n"
++#~ "This upgrade is running in sandbox (test) mode. All changes are written to '%s' and will be lost on the next reboot.\n"
+ #~ "\n"
+-#~ "*No* changes written to a systemdir from now until the next reboot are "
+-#~ "permanent."
++#~ "*No* changes written to a systemdir from now until the next reboot are permanent."
+ #~ msgstr ""
+-#~ "Esta actualización está ejecutándose en un modo caja de arena (test). "
+-#~ "Todos los cambios se escriben en «%s» y se perderán en el próximo "
+-#~ "reinicio.\n"
++#~ "Esta actualización está ejecutándose en un modo caja de arena (test). Todos los cambios se escriben en «%s» y se perderán en el próximo reinicio.\n"
+ #~ "\n"
+-#~ "*No* se escribirán cambios permanentes a una carpeta de sistema desde "
+-#~ "ahora hasta el próximo reinicio."
++#~ "*No* se escribirán cambios permanentes a una carpeta de sistema desde ahora hasta el próximo reinicio."
+ 
+-#~ msgid ""
+-#~ "If you don't want to install them now, choose \"Update Manager\" from the "
+-#~ "Administration menu later."
+-#~ msgstr ""
+-#~ "Si no desea instalarlas ahora, hágalo luego usando el «Gestor de "
+-#~ "actualizaciones» del menú Administración."
++#~ msgid "If you don't want to install them now, choose \"Update Manager\" from the Administration menu later."
++#~ msgstr "Si no desea instalarlas ahora, hágalo luego usando el «Gestor de actualizaciones» del menú Administración."
+ 
+ #~ msgid "Software updates are available for this computer"
+ #~ msgstr "Hay actualizaciones disponibles para este equipo"
+ 
+-#~ msgid ""
+-#~ "Fetching and installing the upgrade can take several hours. Once the "
+-#~ "download has finished, the process cannot be cancelled."
+-#~ msgstr ""
+-#~ "Descargar e instalar la actualización puede llevar varias horas. Una vez "
+-#~ "finalizada la descarga, el proceso no podrá cancelarse."
++#~ msgid "Fetching and installing the upgrade can take several hours. Once the download has finished, the process cannot be cancelled."
++#~ msgstr "Descargar e instalar la actualización puede llevar varias horas. Una vez finalizada la descarga, el proceso no podrá cancelarse."
+ 
+ #~ msgid "There are no updates to install"
+ #~ msgstr "No hay actualizaciones para instalar"
+@@ -2383,95 +1940,50 @@
+ #~ msgstr[0] "La actualización ya se descargó, pero no se instaló"
+ #~ msgstr[1] "Las actualizaciones ya se descargaron, pero no se instalaron"
+ 
+-#~ msgid ""
+-#~ "You will not get any further security fixes or critical updates. Please "
+-#~ "upgrade to a later version of Trisquel Linux."
+-#~ msgstr ""
+-#~ "No obtendrá más actualizaciones de seguridad o actualizaciones críticas. "
+-#~ "Actualice a una versión más reciente de Trisquel Linux."
++#~ msgid "You will not get any further security fixes or critical updates. Please upgrade to a later version of Trisquel Linux."
++#~ msgstr "No obtendrá más actualizaciones de seguridad o actualizaciones críticas. Actualice a una versión más reciente de Trisquel Linux."
+ 
+-#~ msgid ""
+-#~ "If you don't want to install them now, choose \"Update Manager\" from "
+-#~ "Applications later."
+-#~ msgstr ""
+-#~ "Si no desea instalarlas ahora, seleccione más tarde el «Gestor de "
+-#~ "actualizaciones» en el menú Aplicaciones."
++#~ msgid "If you don't want to install them now, choose \"Update Manager\" from Applications later."
++#~ msgstr "Si no desea instalarlas ahora, seleccione más tarde el «Gestor de actualizaciones» en el menú Aplicaciones."
+ 
+ #~ msgid "Your graphics hardware may not be fully supported in Trisquel 11.04."
+-#~ msgstr ""
+-#~ "Parece que su hardware gráfico no tiene soporte completo en Trisquel 11.04."
++#~ msgstr "Parece que su hardware gráfico no tiene soporte completo en Trisquel 11.04."
+ 
+-#~ msgid ""
+-#~ "The support in Trisquel 11.04 for your intel graphics hardware is limited "
+-#~ "and you may encounter problems after the upgrade. Do you want to continue "
+-#~ "with the upgrade?"
+-#~ msgstr ""
+-#~ "El soporte en Trisquel 11.04. para su hardaware gráfico de intel es "
+-#~ "limitado y es posible que sucedan errores después de la actualización. "
+-#~ "¿Quiere continuar con la actualización?"
++#~ msgid "The support in Trisquel 11.04 for your intel graphics hardware is limited and you may encounter problems after the upgrade. Do you want to continue with the upgrade?"
++#~ msgstr "El soporte en Trisquel 11.04. para su hardaware gráfico de intel es limitado y es posible que sucedan errores después de la actualización. ¿Quiere continuar con la actualización?"
+ 
+-#~ msgid ""
+-#~ "Preparing the system for the upgrade failed. Please report this using the "
+-#~ "command 'ubuntu-bug update-manager' in a terminal and include the files "
+-#~ "in /var/log/dist-upgrade/ in the bug report."
+-#~ msgstr ""
+-#~ "La preparación del sistema para la actualización falló. Informe de este "
+-#~ "fallo usando la orden «'ubuntu-bug update-manager» en una terminal e "
+-#~ "incluya los archivos presentes en /var/log/dist-upgrade/ en su informe de "
+-#~ "fallos."
++#~ msgid "Preparing the system for the upgrade failed. Please report this using the command 'ubuntu-bug update-manager' in a terminal and include the files in /var/log/dist-upgrade/ in the bug report."
++#~ msgstr "La preparación del sistema para la actualización falló. Informe de este fallo usando la orden «'ubuntu-bug update-manager» en una terminal e incluya los archivos presentes en /var/log/dist-upgrade/ en su informe de fallos."
+ 
+-#~ msgid ""
+-#~ "Upgrading the repository information resulted in a invalid file. Please "
+-#~ "report this as a bug using the command 'ubuntu-bug update-manager' in a "
+-#~ "terminal."
+-#~ msgstr ""
+-#~ "La actualización de la información del repositorio dio como resultado un "
+-#~ "archivo inválido. Informe de este fallo usando la orden «ubuntu-bug "
+-#~ "update-manager» en una terminal."
++#~ msgid "Upgrading the repository information resulted in a invalid file. Please report this as a bug using the command 'ubuntu-bug update-manager' in a terminal."
++#~ msgstr "La actualización de la información del repositorio dio como resultado un archivo inválido. Informe de este fallo usando la orden «ubuntu-bug update-manager» en una terminal."
+ 
+ #~ msgid ""
+ #~ "\n"
+ #~ "\n"
+-#~ "Please report this bug using the command 'ubuntu-bug update-manager' in a "
+-#~ "terminal and include the files in /var/log/dist-upgrade/ in the bug "
+-#~ "report.\n"
++#~ "Please report this bug using the command 'ubuntu-bug update-manager' in a terminal and include the files in /var/log/dist-upgrade/ in the bug report.\n"
+ #~ "%s"
+ #~ msgstr ""
+ #~ "\n"
+ #~ "\n"
+-#~ "Informe de este error mediante la orden «ubuntu-bug update-manager» en "
+-#~ "una terminal e incluya los archivos de /var/log/dist-upgrade/ en el "
+-#~ "informe de error.\n"
++#~ "Informe de este error mediante la orden «ubuntu-bug update-manager» en una terminal e incluya los archivos de /var/log/dist-upgrade/ en el informe de error.\n"
+ #~ "%s"
+ 
+ #~ msgid ""
+-#~ "The system was unable to get the prerequisites for the upgrade. The "
+-#~ "upgrade will abort now and restore the original system state.\n"
++#~ "The system was unable to get the prerequisites for the upgrade. The upgrade will abort now and restore the original system state.\n"
+ #~ "\n"
+-#~ "Please report this as a bug using the command 'ubuntu-bug update-manager' "
+-#~ "in a terminal and include the files in /var/log/dist-upgrade/ in the bug "
+-#~ "report."
+-#~ msgstr ""
+-#~ "El sistema fue incapaz de conseguir las condiciones necesarias para la "
+-#~ "actualización. La actualización se interrumpirá ahora y restaurar el "
+-#~ "estado original del sistema.\n"
+-#~ "\n"
+-#~ "Informe de este error mediante la orden «ubuntu-bug update-manager» en "
+-#~ "una terminal e incluya los archivos de /var/log/dist-upgrade/ en el "
+-#~ "informe de error."
+-
+-#~ msgid ""
+-#~ "After your package information was updated the essential package '%s' can "
+-#~ "not be found anymore.\n"
+-#~ "This indicates a serious error, please report this bug using the command "
+-#~ "'ubuntu-bug update-manager' in a terminal and include the files in /var/"
+-#~ "log/dist-upgrade/ in the bug report."
+-#~ msgstr ""
+-#~ "Después de que la información de su paquete se actualice el paquete "
+-#~ "esencial «%s» ya no se encuentra.\n"
+-#~ "Esto indica un error grave, informe de esto usando la orden «ubuntu-bug "
+-#~ "update-manager» en una terminal e incluya los archivos de /var/log/dist-"
+-#~ "upgrade/ en el informe de error."
++#~ "Please report this as a bug using the command 'ubuntu-bug update-manager' in a terminal and include the files in /var/log/dist-upgrade/ in the bug report."
++#~ msgstr ""
++#~ "El sistema fue incapaz de conseguir las condiciones necesarias para la actualización. La actualización se interrumpirá ahora y restaurar el estado original del sistema.\n"
++#~ "\n"
++#~ "Informe de este error mediante la orden «ubuntu-bug update-manager» en una terminal e incluya los archivos de /var/log/dist-upgrade/ en el informe de error."
++
++#~ msgid ""
++#~ "After your package information was updated the essential package '%s' can not be found anymore.\n"
++#~ "This indicates a serious error, please report this bug using the command 'ubuntu-bug update-manager' in a terminal and include the files in /var/log/dist-upgrade/ in the bug report."
++#~ msgstr ""
++#~ "Después de que la información de su paquete se actualice el paquete esencial «%s» ya no se encuentra.\n"
++#~ "Esto indica un error grave, informe de esto usando la orden «ubuntu-bug update-manager» en una terminal e incluya los archivos de /var/log/dist-upgrade/ en el informe de error."
+ 
+ #~ msgid "1 kB"
+ #~ msgstr "1 kB"
+@@ -2482,29 +1994,8 @@
+ #~ msgid "%.0f kB"
+ #~ msgstr "%.0f kB"
+ 
+-#~ msgid ""
+-#~ "These software updates have been issued since this version of Trisquel was "
+-#~ "released. If you don't want to install them now, choose \"Update Manager"
+-#~ "\" from Applications later."
+-#~ msgstr ""
+-#~ "Estas actualizaciones de software se publicaron después del lanzamiento "
+-#~ "de esta versión de Trisquel. Si no quiere instalarlas ahora, abra más tarde "
+-#~ "el Gestor de actualizaciones desde Aplicaciones."
+-
+-#~ msgid ""
+-#~ "These software updates have been issued since this version of Trisquel was "
+-#~ "released. If you don't want to install them now, choose \"Update Manager"
+-#~ "\" from the Administration Menu later."
+-#~ msgstr ""
+-#~ "Estas actualizaciones de software se publicaron después del lanzamiento "
+-#~ "de esta versión de Trisquel. Si no quiere instalarlas ahora, abra más tarde "
+-#~ "el Gestor de actualizaciones desde el menú Administración."
++#~ msgid "These software updates have been issued since this version of Trisquel was released. If you don't want to install them now, choose \"Update Manager\" from Applications later."
++#~ msgstr "Estas actualizaciones de software se publicaron después del lanzamiento de esta versión de Trisquel. Si no quiere instalarlas ahora, abra más tarde el Gestor de actualizaciones desde Aplicaciones."
+ 
+-msgid ""
+-"To prevent unwanted connections to the Internet\n"
+-"Trisquel will not automatically check for updates\n"
+-"unless you say so in the Settings panel."
+-msgstr ""
+-"Para prevenir conexiones inesperadas a Internet\n"
+-"Trisquel no descargará actualizaciones automáticamente\n"
+-"salvo que lo indiques en el panel de Configuración."
++#~ msgid "These software updates have been issued since this version of Trisquel was released. If you don't want to install them now, choose \"Update Manager\" from the Administration Menu later."
++#~ msgstr "Estas actualizaciones de software se publicaron después del lanzamiento de esta versión de Trisquel. Si no quiere instalarlas ahora, abra más tarde el Gestor de actualizaciones desde el menú Administración."
