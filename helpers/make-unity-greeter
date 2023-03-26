@@ -17,12 +17,15 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=5
+VERSION=6
 
 . ./config
 
 # Custom settings
 cp $DATA/com.canonical.unity-greeter.gschema.xml data
+
+# Change the background wallpaper correspondingly to the new release along with extension.
+sed -i "s|CODENAME|$CODENAME.jpg|" data/com.canonical.unity-greeter.gschema.xml
 
 # Change the sound theme
 sed s/ubuntu/freedesktop/g src/unity-greeter.vala -i
