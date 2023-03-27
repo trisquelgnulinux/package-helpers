@@ -1,0 +1,75 @@
+diff --git a/browser/components/preferences/sync.inc.xhtml b/browser/components/preferences/sync.inc.xhtml
+index 7d37d26..4ebbc06 100644
+--- a/browser/components/preferences/sync.inc.xhtml
++++ b/browser/components/preferences/sync.inc.xhtml
+@@ -35,22 +35,6 @@
+         </hbox>
+       </vbox>
+     </hbox>
+-    <label class="fxaMobilePromo" data-l10n-id="sync-mobile-promo">
+-      <html:img
+-        src="chrome://browser/skin/logo-android.svg"
+-        data-l10n-name="android-icon"
+-        class="androidIcon"/>
+-      <html:a
+-        data-l10n-name="android-link"
+-        class="fxaMobilePromo-android text-link" target="_blank"/>
+-      <html:img
+-        src="chrome://browser/skin/logo-ios.svg"
+-        data-l10n-name="ios-icon"
+-        class="iOSIcon"/>
+-      <html:a
+-        data-l10n-name="ios-link"
+-        class="fxaMobilePromo-ios text-link" target="_blank"/>
+-    </label>
+   </groupbox>
+ 
+   <vbox id="hasFxaAccount">
+diff --git a/browser/locales/en-US/browser/preferences/preferences.ftl b/browser/locales/en-US/browser/preferences/preferences.ftl
+index 1b29e8d..6f7566c 100644
+--- a/browser/locales/en-US/browser/preferences/preferences.ftl
++++ b/browser/locales/en-US/browser/preferences/preferences.ftl
+@@ -714,16 +714,6 @@ sync-signedout-account-signin2 =
+     .label = Sign in to { -sync-brand-short-name }…
+     .accesskey = i
+ 
+-# This message contains two links and two icon images.
+-#   `<img data-l10n-name="android-icon"/>` - Android logo icon
+-#   `<a data-l10n-name="android-link">` - Link to Android Download
+-#   `<img data-l10n-name="ios-icon">` - iOS logo icon
+-#   `<a data-l10n-name="ios-link">` - Link to iOS Download
+-#
+-# They can be moved within the sentence as needed to adapt
+-# to your language, but should not be changed or translated.
+-sync-mobile-promo = Download Firefox for <img data-l10n-name="android-icon"/> <a data-l10n-name="android-link">Android</a> or <img data-l10n-name="ios-icon"/> <a data-l10n-name="ios-link">iOS</a> to sync with your mobile device.
+-
+ ## Sync Account - Signed in
+ 
+ sync-profile-picture =
+diff --git a/browser/components/protections/content/vpn-card.mjs b/browser/components/protections/content/vpn-card.mjs
+index 2417f1a641..698c48ccc3 100644
+--- a/browser/components/protections/content/vpn-card.mjs
++++ b/browser/components/protections/content/vpn-card.mjs
+@@ -23,22 +23,6 @@ export default class VPNCard {
+     vpnLink.addEventListener("click", () => {
+       this.doc.sendTelemetryEvent("click", "vpn_card_link");
+     });
+-    let androidVPNAppLink = document.getElementById(
+-      "vpn-google-playstore-link"
+-    );
+-    androidVPNAppLink.href = RPMGetStringPref(
+-      "browser.contentblocking.report.vpn-android.url"
+-    );
+-    androidVPNAppLink.addEventListener("click", () => {
+-      document.sendTelemetryEvent("click", "vpn_app_link_android");
+-    });
+-    let iosVPNAppLink = document.getElementById("vpn-app-store-link");
+-    iosVPNAppLink.href = RPMGetStringPref(
+-      "browser.contentblocking.report.vpn-ios.url"
+-    );
+-    iosVPNAppLink.addEventListener("click", () => {
+-      document.sendTelemetryEvent("click", "vpn_app_link_ios");
+-    });
+ 
+     const vpnBanner = this.doc.querySelector(".vpn-banner");
+     const exitIcon = vpnBanner.querySelector(".exit-icon");
