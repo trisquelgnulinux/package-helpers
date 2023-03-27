@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=100
+VERSION=101
 EXTERNAL='deb-src http://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu $UPSTREAM main'
 REPOKEY=9BDB3D89CE49EC21
 
@@ -429,6 +429,7 @@ cp -a $DATA/android/res/main/* mobile/android/geckoview/src/main/res
 #Fixes by patch on source.
 ##Firefox v100, based on parabola 9004-FSDG-misc.patch
 patch --no-backup-if-mismatch -p1 < $DATA/patch_changes/Remove_moreFromMozilla_Focus_and_Klar.patch
+patch --no-backup-if-mismatch -p1 < $DATA/patch_changes/Remove_Andoir_and_iOS_promotion.patch
 
 # Postinst script to manage profile migration and system links
 echo '
