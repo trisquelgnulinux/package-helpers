@@ -19,7 +19,7 @@
 #
 
 VERSION=0
-EXTERNAL='deb-src http://ftp.us.debian.org/debian oldstable main'
+EXTERNAL='deb-src http://ftp.us.debian.org/debian buster main'
 REPOKEY=648ACFD622F3D138
 BUILD_UNTIL=10.0
 
@@ -28,6 +28,6 @@ BUILD_UNTIL=10.0
 #This helper is for nabia only
 sed -i '/texlive-generic/d' debian/control
 
-changelog "Backported from oldstable due to lack of packaging upstream."
+changelog "Backported from buster due to lack of packaging upstream."
 
 compile

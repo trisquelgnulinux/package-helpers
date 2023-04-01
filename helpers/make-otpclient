@@ -18,13 +18,13 @@
 #
 
 VERSION=1
-EXTERNAL='deb-src http://ftp.debian.org/debian stable main'
+EXTERNAL='deb-src http://ftp.debian.org/debian bullseye main'
 REPOKEY="648ACFD622F3D138"
 BACKPORT=true
 BUILD_UNTIL=10.0
 
 . ./config
 
-changelog "Backported optclient from Debian stable into Trisquel"
+changelog "Backported optclient from Debian bullseye into Trisquel"
 
 compile

@@ -18,13 +18,13 @@
 #
 
 VERSION=2
-EXTERNAL='deb-src http://ftp.debian.org/debian oldstable-backports-sloppy main'
+EXTERNAL='deb-src http://ftp.debian.org/debian buster-backports-sloppy main'
 REPOKEY=648ACFD622F3D138
 BACKPORT=true
 BUILD_UNTIL=10.0
 
 . ./config
 
-changelog "Backported from debian oldstable-backports-sloppy"
+changelog "Backported from debian buster-backports-sloppy"
 
 compile
