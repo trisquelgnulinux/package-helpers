@@ -18,11 +18,18 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
+VERSION=4
 EXTERNAL='deb-src http://ftp.debian.org/debian bookworm main'
 REPOKEY=648ACFD622F3D138
 . ./config
 
+SUPPORTED_SITES="https://ytdl-org.github.io/youtube-dl/supportedsites.html"
+LAST_SUPPORTED="$(tail -n1 debian/control|sed 's|^ ||')"
+
+sed -i "/Currently supported/s|are:|are at:|" debian/control
+/bin/sed -n -i '/Currently supported/{p;:a;N;/'$LAST_SUPPORTED'/!ba;s| .*| '$SUPPORTED_SITES'\n|};p' -i debian/control
+# Make sure it fails if we don't get the wanted output.
+[ "$SUPPORTED_SITES" != "$(tail -n2 debian/control|awk NF|sed 's|^ ||')" ] && echo -e ">>>Site replacement needs fixing, exiting...<<<\n" && exit
 
 changelog "Imported into Trisquel"
 
