@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 #
 
-VERSION=4
+VERSION=5
 
 . ./config
 
@@ -53,6 +53,9 @@ echo "debian/redshift.conf /etc" >> debian/redshift.install
 
 # Fix apparmor profile
 sed 's/+37,7/+37,8/; /redshift-shared/a+\  /etc/redshift.conf r,' -i debian/patches/Fix-AppArmor-profile-for-Wayland.patch
+
+# Remove geoclue daemon dependency
+sed -i '/geoclue-2.0/d' debian/control
 
 changelog "Added default manual configuration"
 
