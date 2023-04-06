@@ -71,7 +71,7 @@ cat << EOF | patch -p1
 --- a/src/update-notifier.c	2023-01-20 13:50:39.000000000 -0500
 +++ b/src/update-notifier.c	2023-02-07 11:08:58.883996715 -0500
 @@ -168,7 +168,13 @@
-
+ 
     // normal launch
     context = gdk_display_get_app_launch_context (gdk_display_get_default ());
 -   guint32 timestamp =  gdk_x11_get_server_time (gtk_widget_get_window (w));
@@ -82,23 +82,23 @@ cat << EOF | patch -p1
 +   else
 +#endif
 +   timestamp = (guint32) (g_get_monotonic_time () / 1000);
-    appinfo = g_app_info_create_from_commandline(cmd,
- 						cmd,
+    appinfo = g_app_info_create_from_commandline(cmd, 
+ 						cmd, 
  						G_APP_INFO_CREATE_NONE,
 EOF
 
 # Removal of whoopsie & apport
 cat << EOF | patch -p1
---- a/debian/control	2023-02-16 10:12:29.302592910 -0600
-+++ b/debian/control	2023-02-16 10:15:08.276963044 -0600
-@@ -35,11 +35,9 @@
+--- a/debian/control	2023-04-06 12:43:17.147156435 -0600
++++ b/debian/control	2023-04-06 12:46:32.883071182 -0600
+@@ -34,11 +34,9 @@
           ubuntu-release-upgrader-gtk,
           gnome-shell <!s390x> | notification-daemon <!s390x>,
           policykit-1
--Recommends: apport-gtk (>=2.8-0ubuntu3),
--            python3-aptdaemon.gtk3widgets | synaptic (>= 0.75.12),
-+Recommends: python3-aptdaemon.gtk3widgets | synaptic (>= 0.75.12),
-             software-properties-gtk,
+-Recommends: apport-gtk (>=2.8-0ubuntu3), 
+-            python3-aptdaemon.gtk3widgets | synaptic (>= 0.75.12), 
++Recommends: python3-aptdaemon.gtk3widgets | synaptic (>= 0.75.12), 
+             software-properties-gtk, 
 -            python3-aptdaemon,
 -            whoopsie (>= 0.2.77)
 +            python3-aptdaemon
