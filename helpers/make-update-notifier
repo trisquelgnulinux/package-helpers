@@ -1,6 +1,7 @@
 #!/bin/sh
 #
 #    Copyright (C) 2012-2023 Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2023 Luis Guzmán <ark@switnet.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=8
+VERSION=9
 COMPONENT=main
 
 . ./config
@@ -70,7 +71,7 @@ cat << EOF | patch -p1
 --- a/src/update-notifier.c	2023-01-20 13:50:39.000000000 -0500
 +++ b/src/update-notifier.c	2023-02-07 11:08:58.883996715 -0500
 @@ -168,7 +168,13 @@
- 
+
     // normal launch
     context = gdk_display_get_app_launch_context (gdk_display_get_default ());
 -   guint32 timestamp =  gdk_x11_get_server_time (gtk_widget_get_window (w));
@@ -81,8 +82,8 @@ cat << EOF | patch -p1
 +   else
 +#endif
 +   timestamp = (guint32) (g_get_monotonic_time () / 1000);
-    appinfo = g_app_info_create_from_commandline(cmd, 
- 						cmd, 
+    appinfo = g_app_info_create_from_commandline(cmd,
+ 						cmd,
  						G_APP_INFO_CREATE_NONE,
 EOF
 
@@ -94,10 +95,10 @@ cat << EOF | patch -p1
           ubuntu-release-upgrader-gtk,
           gnome-shell <!s390x> | notification-daemon <!s390x>,
           policykit-1
--Recommends: apport-gtk (>=2.8-0ubuntu3), 
--            python3-aptdaemon.gtk3widgets | synaptic (>= 0.75.12), 
-+Recommends: python3-aptdaemon.gtk3widgets | synaptic (>= 0.75.12), 
-             software-properties-gtk, 
+-Recommends: apport-gtk (>=2.8-0ubuntu3),
+-            python3-aptdaemon.gtk3widgets | synaptic (>= 0.75.12),
++Recommends: python3-aptdaemon.gtk3widgets | synaptic (>= 0.75.12),
+             software-properties-gtk,
 -            python3-aptdaemon,
 -            whoopsie (>= 0.2.77)
 +            python3-aptdaemon
@@ -105,6 +106,24 @@ cat << EOF | patch -p1
   Puts an icon in the user's notification area when package updates are
   available.
 EOF
+
+# Removal daemons from ubuntu-advantage
+truncate -s 0 data/ubuntu-advantage-notification.desktop.in
+sed -i '/ubuntu-advantage-notification/d' debian/update-notifier.install
+sed -i '/ubuntu-advantage-notification.desktop.in.h/,+2d' po/*.po po/*.pot
+
+# Remove ubuntu-advantage services
+cat << EOF >> debian/postrm
+# Remove previosly installed ubuntu-advantage-notification
+rm -rf /usr/lib/update-notifier/ubuntu-advantage-notification && \
+rm -rf /etc/xdg/autostart/ubuntu-advantage-notification.desktop
+
+#DEBHELPER#
+EOF
+
+# Force removal of old services on previous version.
+sed -i '/Description: Daemon/i Breaks: update-notifier-common (<= 3.192.54.6+11.0trisquel8)' debian/control
+sed -i '/Suggests: policykit-1/i Breaks: update-notifier-common (<= 3.192.54.6+11.0trisquel8)' debian/control
 
 changelog "Disabled hp-firmware handling and ubuntu-drivers"
 
