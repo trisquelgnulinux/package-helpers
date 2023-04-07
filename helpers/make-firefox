@@ -27,7 +27,7 @@ rm debian/control
 
 # Disable remote settings antifeature.
 sed '/async fetchLatestChanges.*/areturn;' -i services/settings/Utils.jsm
-sed '/async download.*/areturn;' -i services/settings/RemoteSettingsClient.jsm services/settings/Attachments.jsm
+sed '/async download.*/areturn;' -i services/settings/RemoteSettingsClient.sys.mjs services/settings/Attachments.sys.mjs
 
 # Disable activity-stream antifeatures.
 # These are not condensed into a single sed script to make it fail on individual commands that didn't change the source
