@@ -123,7 +123,8 @@ EOF
 
 sed '/include.*2-binary-arch.mk/a\\n# Rules for building the udebs ($(DEBIAN)-installer)\ninclude $(DROOT)/rules.d/5-udebs.mk' -i debian/rules
 sed 's/+= binary-debs/+= binary-udebs/' -i debian/rules.d/2-binary-arch.mk
-sed '/Build-Depends:/a\ kernel-wedge <!stage1>,' -i debian.master/control.stub.in
+sed '/Build-Depends:/a\ kernel-wedge <!stage1>,' -i 	debian/control \
+							debian.master/control.stub.in
 
 # Wipe dkms-versions
 # lists zfs / v4l2loopback versions
