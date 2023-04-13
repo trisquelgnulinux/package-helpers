@@ -241,7 +241,7 @@ find -name aboutRights.xhtml |xargs sed -i "/rights-intro-point-5/d"
 find -name aboutRights.xhtml |xargs sed -i "/rights-intro-point-6/d"
 find -name aboutRights-unbranded.xhtml |xargs sed -i "/rights-intro-point-5/d"
 
-sed -i 's/<a\ href\=\"http\:\/\/www.icedove.net\/\">Icedove\ Project<\/a>/<a\ href\=\"http\:\/\/www.trisquel.info\/\"\>Trisquel\ Project<\/a>/g' \
+sed -i 's/<a\ href\=\"https\:\/\/www.icedove.net\/\">Icedove\ Project<\/a>/<a\ href\=\"https\:\/\/www.trisquel.info\/\"\>Trisquel\ Project<\/a>/g' \
     comm/mail/base/content/overrides/app-license.html
 #EO about: mods.
 
