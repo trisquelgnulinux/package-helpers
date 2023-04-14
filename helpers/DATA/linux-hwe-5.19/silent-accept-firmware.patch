@@ -4,10 +4,10 @@ An alternative solution is to preserve the loading functionality and remove the 
 This method is done by a patch (silent-accept-firmware.patch) that removes all the instances where the blob filenames are printed to the user (via kernel logs), and a section on the package helper that takes care of preventing the deblob script from acting on the files modified by the patch. This is done manually, for individual drivers (usually those for very common devices). It needs to be reviewed on any new major release, checking that no new lines were added to the upstream driver in where it prints the blob filename on the log.
 Printing the blob filename on success operations (that is, when the blob file is present) is acceptable. If in doubt, all instances of printing the blob filenames should be removed.
 
-diff -ru a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
---- a/arch/x86/kernel/cpu/microcode/amd.c	2021-06-14 01:15:29.636702258 +0200
-+++ b/arch/x86/kernel/cpu/microcode/amd.c	2021-06-14 01:16:26.456820658 +0200
-@@ -902,7 +902,7 @@
+diff --color -Nru a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
+--- a/arch/x86/kernel/cpu/microcode/amd.c	2023-03-09 11:48:45.000000000 -0600
++++ b/arch/x86/kernel/cpu/microcode/amd.c	2023-03-09 11:53:09.989441841 -0600
+@@ -918,7 +918,7 @@
  		snprintf(fw_name, sizeof(fw_name), "amd-ucode/microcode_amd_fam%.2xh.bin", c->x86);
  
  	if (request_firmware_direct(&fw, (const char *)fw_name, device)) {
@@ -16,10 +16,10 @@ diff -ru a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/a
  		goto out;
  	}
  
-diff -ru a/arch/x86/kernel/cpu/microcode/intel.c b/arch/x86/kernel/cpu/microcode/intel.c
---- a/arch/x86/kernel/cpu/microcode/intel.c	2021-06-14 01:15:29.636702258 +0200
-+++ b/arch/x86/kernel/cpu/microcode/intel.c	2021-06-14 01:16:26.456820658 +0200
-@@ -940,7 +940,7 @@
+diff --color -Nru a/arch/x86/kernel/cpu/microcode/intel.c b/arch/x86/kernel/cpu/microcode/intel.c
+--- a/arch/x86/kernel/cpu/microcode/intel.c	2022-07-31 16:03:01.000000000 -0500
++++ b/arch/x86/kernel/cpu/microcode/intel.c	2023-03-09 11:53:09.989441841 -0600
+@@ -902,7 +902,7 @@
  		c->x86, c->x86_model, c->x86_stepping);
  
  	if (request_firmware_direct(&firmware, name, device)) {
@@ -28,11 +28,11 @@ diff -ru a/arch/x86/kernel/cpu/microcode/intel.c b/arch/x86/kernel/cpu/microcode
  		return UCODE_NFOUND;
  	}
  
-diff -ru a/drivers/base/firmware_loader/fallback.c b/drivers/base/firmware_loader/fallback.c
---- a/drivers/base/firmware_loader/fallback.c	2021-06-14 01:15:29.876702766 +0200
-+++ b/drivers/base/firmware_loader/fallback.c	2021-06-14 01:16:26.460820667 +0200
-@@ -521,7 +521,7 @@
- 	if (opt_flags & FW_OPT_UEVENT) {
+diff --color -Nru a/drivers/base/firmware_loader/fallback.c b/drivers/base/firmware_loader/fallback.c
+--- a/drivers/base/firmware_loader/fallback.c	2022-07-31 16:03:01.000000000 -0500
++++ b/drivers/base/firmware_loader/fallback.c	2023-03-09 11:53:09.989441841 -0600
+@@ -97,7 +97,7 @@
+ 	if (fw_priv->opt_flags & FW_OPT_UEVENT) {
  		fw_priv->need_uevent = true;
  		dev_set_uevent_suppress(f_dev, false);
 -		dev_dbg(f_dev, "firmware: requesting %s\n", fw_priv->fw_name);
@@ -40,7 +40,7 @@ diff -ru a/drivers/base/firmware_loader/fallback.c b/drivers/base/firmware_loade
  		kobject_uevent(&fw_sysfs->dev.kobj, KOBJ_ADD);
  	} else {
  		timeout = MAX_JIFFY_OFFSET;
-@@ -560,15 +560,13 @@
+@@ -135,15 +135,13 @@
  	if (opt_flags & FW_OPT_NOWAIT) {
  		timeout = usermodehelper_read_lock_wait(timeout);
  		if (!timeout) {
@@ -58,7 +58,7 @@ diff -ru a/drivers/base/firmware_loader/fallback.c b/drivers/base/firmware_loade
  			return ret;
  		}
  	}
-@@ -650,10 +648,8 @@
+@@ -226,10 +224,8 @@
  		return ret;
  
  	if (!(opt_flags & FW_OPT_NO_WARN))
@@ -71,10 +71,10 @@ diff -ru a/drivers/base/firmware_loader/fallback.c b/drivers/base/firmware_loade
 +		dev_dbg(device, "Falling back to sysfs fallback\n");
  	return fw_load_from_user_helper(fw, name, device, opt_flags);
  }
-diff -ru a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
---- a/drivers/base/firmware_loader/main.c	2021-06-14 01:15:29.876702766 +0200
-+++ b/drivers/base/firmware_loader/main.c	2021-06-14 01:16:26.460820667 +0200
-@@ -538,20 +538,18 @@
+diff --color -Nru a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
+--- a/drivers/base/firmware_loader/main.c	2022-07-31 16:03:01.000000000 -0500
++++ b/drivers/base/firmware_loader/main.c	2023-03-09 11:53:09.989441841 -0600
+@@ -542,11 +542,10 @@
  						       READING_FIRMWARE);
  		if (rc < 0) {
  			if (rc != -ENOENT)
@@ -89,18 +89,7 @@ diff -ru a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/ma
  			continue;
  		}
  		size = rc;
- 		rc = 0;
- 
--		dev_dbg(device, "Loading firmware from %s\n", path);
-+		dev_dbg(device, "Loading firmware\n");
- 		if (decompress) {
--			dev_dbg(device, "f/w decompressing %s\n",
--				fw_priv->fw_name);
-+			dev_dbg(device, "f/w decompressing\n");
- 			rc = decompress(device, fw_priv, size, buffer);
- 			/* discard the superfluous original content */
- 			vfree(buffer);
-@@ -561,8 +559,7 @@
+@@ -565,8 +564,7 @@
  				continue;
  			}
  		} else {
@@ -110,42 +99,42 @@ diff -ru a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/ma
  			if (!fw_priv->data)
  				fw_priv->data = buffer;
  			fw_priv->size = size;
-@@ -737,7 +734,7 @@
+@@ -741,7 +739,7 @@
  	}
  
- 	if (fw_get_builtin_firmware(firmware, name, dbuf, size)) {
+ 	if (firmware_request_builtin_buf(firmware, name, dbuf, size)) {
 -		dev_dbg(device, "using built-in %s\n", name);
 +		dev_dbg(device, "using built-in\n");
  		return 0; /* assigned */
  	}
  
-@@ -827,8 +824,8 @@
+@@ -850,8 +848,8 @@
  	if (ret) {
  		if (!(opt_flags & FW_OPT_NO_WARN))
  			dev_warn(device,
 -				 "Direct firmware load for %s failed with error %d\n",
 -				 name, ret);
-+				 "Direct firmware load failed with error %d\n",
++				 "Direct firmware load for failed with error %d\n",
 +				 ret);
  		if (nondirect)
  			ret = firmware_fallback_sysfs(fw, name, device,
  						      opt_flags, ret);
-diff -ru a/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c	2021-06-14 01:15:30.504704095 +0200
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c	2021-06-14 01:16:26.460820667 +0200
-@@ -443,7 +443,7 @@
+diff --color -Nru a/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c	2022-07-31 16:03:01.000000000 -0500
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c	2023-03-09 19:28:13.650922651 -0600
+@@ -419,7 +419,7 @@
  
  			err = amdgpu_ucode_validate(adev->pm.fw);
  			if (err) {
 -				DRM_ERROR("Failed to load firmware \"%s\"", fw_name);
-+				DRM_ERROR("Failed to load firmware");
++				DRM_ERROR("Failed to load firmware\n");
  				release_firmware(adev->pm.fw);
  				adev->pm.fw = NULL;
  				return err;
-diff -ru a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c	2021-06-14 01:15:30.540704172 +0200
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c	2021-06-14 01:16:26.464820675 +0200
-@@ -1598,15 +1598,13 @@
+diff --color -Nru a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c	2023-03-09 11:48:45.000000000 -0600
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c	2023-03-09 19:29:28.335287765 -0600
+@@ -2002,15 +2002,13 @@
  	err = request_firmware(&adev->firmware.gpu_info_fw, fw_name, adev->dev);
  	if (err) {
  		dev_err(adev->dev,
@@ -163,10 +152,37 @@ diff -ru a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdg
  		goto out;
  	}
  
-diff -ru a/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c	2021-06-14 01:15:30.512704112 +0200
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c	2021-06-14 01:26:26.857914676 +0200
-@@ -189,15 +189,13 @@
+diff --color -Nru a/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c	2022-07-31 16:03:01.000000000 -0500
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c	2023-03-09 19:32:35.648203491 -0600
+@@ -1500,8 +1500,8 @@
+ 		if (ret)
+ 			continue;
+ 
+-		seq_printf(m, "TA %s feature version: 0x%08x, firmware version: 0x%08x\n",
+-			   ta_fw_name[i], fw_info.feature, fw_info.ver);
++		seq_printf(m, "TA feature version: 0x%08x, firmware version: 0x%08x\n",
++			   fw_info.feature, fw_info.ver);
+ 	}
+ 
+ 	/* SMC */
+diff --color -Nru a/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c	2023-03-09 11:48:45.000000000 -0600
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c	2023-03-09 19:35:41.949114270 -0600
+@@ -627,8 +627,7 @@
+ 	 */
+ 	if (!skip_unsupport && (psp->cmd_buf_mem->resp.status || !timeout) && !ras_intr) {
+ 		if (ucode)
+-			DRM_WARN("failed to load ucode %s(0x%X) ",
+-				  amdgpu_ucode_name(ucode->ucode_id), ucode->ucode_id);
++			DRM_WARN("failed to load ucode");
+ 		DRM_WARN("psp gfx command %s(0x%X) failed and response status is (0x%X)\n",
+ 			 psp_gfx_cmd_name(psp->cmd_buf_mem->cmd_id), psp->cmd_buf_mem->cmd_id,
+ 			 psp->cmd_buf_mem->resp.status);
+diff --color -Nru a/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c	2022-07-31 16:03:01.000000000 -0500
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c	2023-03-09 19:38:05.801817530 -0600
+@@ -262,15 +262,13 @@
  
  	r = request_firmware(&adev->uvd.fw, fw_name, adev->dev);
  	if (r) {
@@ -184,10 +200,10 @@ diff -ru a/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c b/drivers/gpu/drm/amd/amdgpu/
  		release_firmware(adev->uvd.fw);
  		adev->uvd.fw = NULL;
  		return r;
-diff -ru a/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c	2021-06-14 01:15:30.512704112 +0200
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c	2021-06-14 01:27:11.405988585 +0200
-@@ -158,15 +158,13 @@
+diff --color -Nru a/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c	2022-07-31 16:03:01.000000000 -0500
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c	2023-03-09 19:40:03.778394288 -0600
+@@ -160,15 +160,13 @@
  
  	r = request_firmware(&adev->vce.fw, fw_name, adev->dev);
  	if (r) {
@@ -205,10 +221,10 @@ diff -ru a/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c b/drivers/gpu/drm/amd/amdgpu/
  		release_firmware(adev->vce.fw);
  		adev->vce.fw = NULL;
  		return r;
-diff -ru a/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c	2021-06-14 01:15:30.544704180 +0200
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c	2021-06-14 01:31:27.674403292 +0200
-@@ -112,15 +112,13 @@
+diff --color -Nru a/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c	2023-03-09 11:48:45.000000000 -0600
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c	2023-03-09 19:41:58.842956810 -0600
+@@ -200,15 +200,13 @@
  
  	r = request_firmware(&adev->vcn.fw, fw_name, adev->dev);
  	if (r) {
@@ -226,9 +242,9 @@ diff -ru a/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c b/drivers/gpu/drm/amd/amdgpu/
  		release_firmware(adev->vcn.fw);
  		adev->vcn.fw = NULL;
  		return r;
-diff -ru a/drivers/gpu/drm/amd/amdgpu/cik_sdma.c b/drivers/gpu/drm/amd/amdgpu/cik_sdma.c
---- a/drivers/gpu/drm/amd/amdgpu/cik_sdma.c	2021-06-14 01:15:30.544704180 +0200
-+++ b/drivers/gpu/drm/amd/amdgpu/cik_sdma.c	2021-06-14 01:16:26.464820675 +0200
+diff --color -Nru a/drivers/gpu/drm/amd/amdgpu/cik_sdma.c b/drivers/gpu/drm/amd/amdgpu/cik_sdma.c
+--- a/drivers/gpu/drm/amd/amdgpu/cik_sdma.c	2022-07-31 16:03:01.000000000 -0500
++++ b/drivers/gpu/drm/amd/amdgpu/cik_sdma.c	2023-03-09 19:44:48.183784675 -0600
 @@ -144,7 +144,7 @@
  	}
  out:
@@ -238,10 +254,10 @@ diff -ru a/drivers/gpu/drm/amd/amdgpu/cik_sdma.c b/drivers/gpu/drm/amd/amdgpu/ci
  		for (i = 0; i < adev->sdma.num_instances; i++) {
  			release_firmware(adev->sdma.instance[i].fw);
  			adev->sdma.instance[i].fw = NULL;
-diff -ru a/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c
---- a/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c	2021-06-14 01:15:30.544704180 +0200
-+++ b/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c	2021-06-14 01:19:58.765234735 +0200
-@@ -3675,8 +3675,7 @@
+diff --color -Nru a/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c
+--- a/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c	2023-03-09 11:48:45.000000000 -0600
++++ b/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c	2023-03-09 19:45:40.492040397 -0600
+@@ -4291,8 +4291,7 @@
  out:
  	if (err) {
  		dev_err(adev->dev,
@@ -251,9 +267,9 @@ diff -ru a/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c b/drivers/gpu/drm/amd/amdgpu/g
  		release_firmware(adev->gfx.pfp_fw);
  		adev->gfx.pfp_fw = NULL;
  		release_firmware(adev->gfx.me_fw);
-diff -ru a/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c
---- a/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c	2021-06-14 01:15:30.520704129 +0200
-+++ b/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c	2021-06-14 01:16:26.464820675 +0200
+diff --color -Nru a/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c
+--- a/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c	2022-07-31 16:03:01.000000000 -0500
++++ b/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c	2023-03-09 19:48:18.700813841 -0600
 @@ -381,7 +381,7 @@
  
  out:
@@ -263,9 +279,9 @@ diff -ru a/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c b/drivers/gpu/drm/amd/amdgpu/gf
  		release_firmware(adev->gfx.pfp_fw);
  		adev->gfx.pfp_fw = NULL;
  		release_firmware(adev->gfx.me_fw);
-diff -ru a/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c
---- a/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c	2021-06-14 01:15:30.520704129 +0200
-+++ b/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c	2021-06-14 01:16:26.464820675 +0200
+diff --color -Nru a/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c
+--- a/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c	2022-07-31 16:03:01.000000000 -0500
++++ b/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c	2023-03-09 19:49:39.717209910 -0600
 @@ -976,7 +976,7 @@
  
  out:
@@ -275,10 +291,10 @@ diff -ru a/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c b/drivers/gpu/drm/amd/amdgpu/gf
  		release_firmware(adev->gfx.pfp_fw);
  		adev->gfx.pfp_fw = NULL;
  		release_firmware(adev->gfx.me_fw);
-diff -ru a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
---- a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c	2021-06-14 01:15:30.544704180 +0200
-+++ b/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c	2021-06-14 01:16:26.468820683 +0200
-@@ -1222,8 +1222,7 @@
+diff --color -Nru a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
+--- a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c	2022-07-31 16:03:01.000000000 -0500
++++ b/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c	2023-03-09 19:52:22.738006878 -0600
+@@ -1217,8 +1217,7 @@
  out:
  	if (err) {
  		dev_err(adev->dev,
@@ -288,10 +304,10 @@ diff -ru a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c b/drivers/gpu/drm/amd/amdgpu/gf
  		release_firmware(adev->gfx.pfp_fw);
  		adev->gfx.pfp_fw = NULL;
  		release_firmware(adev->gfx.me_fw);
-diff -ru a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
---- a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c	2021-06-14 01:15:30.544704180 +0200
-+++ b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c	2021-06-14 01:32:32.298505650 +0200
-@@ -1366,8 +1366,7 @@
+diff --color -Nru a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
+--- a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c	2023-03-09 11:48:45.000000000 -0600
++++ b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c	2023-03-09 19:57:30.143509707 -0600
+@@ -1334,8 +1334,7 @@
  out:
  	if (err) {
  		dev_err(adev->dev,
@@ -301,7 +317,7 @@ diff -ru a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c b/drivers/gpu/drm/amd/amdgpu/gf
  		release_firmware(adev->gfx.pfp_fw);
  		adev->gfx.pfp_fw = NULL;
  		release_firmware(adev->gfx.me_fw);
-@@ -1501,8 +1500,7 @@
+@@ -1469,8 +1468,7 @@
  out:
  	if (err) {
  		dev_err(adev->dev,
@@ -311,7 +327,7 @@ diff -ru a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c b/drivers/gpu/drm/amd/amdgpu/gf
  		release_firmware(adev->gfx.rlc_fw);
  		adev->gfx.rlc_fw = NULL;
  	}
-@@ -1590,8 +1588,7 @@
+@@ -1572,8 +1570,7 @@
  	gfx_v9_0_check_fw_write_wait(adev);
  	if (err) {
  		dev_err(adev->dev,
@@ -321,9 +337,9 @@ diff -ru a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c b/drivers/gpu/drm/amd/amdgpu/gf
  		release_firmware(adev->gfx.mec_fw);
  		adev->gfx.mec_fw = NULL;
  		release_firmware(adev->gfx.mec2_fw);
-diff -ru a/drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c b/drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c
---- a/drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c	2021-06-14 01:15:30.524704138 +0200
-+++ b/drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c	2021-06-14 01:32:45.474436916 +0200
+diff --color -Nru a/drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c b/drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c
+--- a/drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c	2022-07-31 16:03:01.000000000 -0500
++++ b/drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c	2023-03-09 19:58:54.279921029 -0600
 @@ -140,8 +140,7 @@
  out:
  	if (err) {
@@ -334,9 +350,9 @@ diff -ru a/drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c b/drivers/gpu/drm/amd/amdgpu/gm
  		release_firmware(adev->gmc.fw);
  		adev->gmc.fw = NULL;
  	}
-diff -ru a/drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c b/drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c
---- a/drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c	2021-06-14 01:15:30.524704138 +0200
-+++ b/drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c	2021-06-14 01:16:26.472820691 +0200
+diff --color -Nru a/drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c b/drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c
+--- a/drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c	2022-07-31 16:03:01.000000000 -0500
++++ b/drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c	2023-03-09 20:00:00.496244744 -0600
 @@ -163,7 +163,7 @@
  
  out:
@@ -346,10 +362,10 @@ diff -ru a/drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c b/drivers/gpu/drm/amd/amdgpu/gm
  		release_firmware(adev->gmc.fw);
  		adev->gmc.fw = NULL;
  	}
-diff -ru a/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c b/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c
---- a/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c	2021-06-14 01:15:30.524704138 +0200
-+++ b/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c	2021-06-14 01:16:26.472820691 +0200
-@@ -280,7 +280,7 @@
+diff --color -Nru a/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c b/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c
+--- a/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c	2022-07-31 16:03:01.000000000 -0500
++++ b/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c	2023-03-09 20:01:46.768764284 -0600
+@@ -271,7 +271,7 @@
  
  out:
  	if (err) {
@@ -358,9 +374,9 @@ diff -ru a/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c b/drivers/gpu/drm/amd/amdgpu/gm
  		release_firmware(adev->gmc.fw);
  		adev->gmc.fw = NULL;
  	}
-diff -ru a/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c b/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c
---- a/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c	2021-06-14 01:15:30.532704155 +0200
-+++ b/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c	2021-06-14 01:21:32.609406505 +0200
+diff --color -Nru a/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c b/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c
+--- a/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c	2022-07-31 16:03:01.000000000 -0500
++++ b/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c	2023-03-09 20:04:55.509686991 -0600
 @@ -75,8 +75,7 @@
  		release_firmware(adev->psp.ta_fw);
  		adev->psp.ta_fw = NULL;
@@ -371,7 +387,7 @@ diff -ru a/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c b/drivers/gpu/drm/amd/amdgpu/p
  	} else {
  		err = amdgpu_ucode_validate(adev->psp.ta_fw);
  		if (err)
-@@ -111,8 +110,7 @@
+@@ -119,8 +118,7 @@
  out:
  	if (err) {
  		dev_err(adev->dev,
@@ -381,10 +397,10 @@ diff -ru a/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c b/drivers/gpu/drm/amd/amdgpu/p
  	}
  
  	return err;
-diff -ru a/drivers/gpu/drm/amd/amdgpu/psp_v11_0.c b/drivers/gpu/drm/amd/amdgpu/psp_v11_0.c
---- a/drivers/gpu/drm/amd/amdgpu/psp_v11_0.c	2021-06-14 01:15:30.532704155 +0200
-+++ b/drivers/gpu/drm/amd/amdgpu/psp_v11_0.c	2021-06-14 01:21:51.357440156 +0200
-@@ -116,7 +116,7 @@
+diff --color -Nru a/drivers/gpu/drm/amd/amdgpu/psp_v11_0.c b/drivers/gpu/drm/amd/amdgpu/psp_v11_0.c
+--- a/drivers/gpu/drm/amd/amdgpu/psp_v11_0.c	2022-07-31 16:03:01.000000000 -0500
++++ b/drivers/gpu/drm/amd/amdgpu/psp_v11_0.c	2023-03-09 20:09:20.270981343 -0600
+@@ -146,7 +146,7 @@
  			release_firmware(adev->psp.ta_fw);
  			adev->psp.ta_fw = NULL;
  			dev_info(adev->dev,
@@ -393,7 +409,7 @@ diff -ru a/drivers/gpu/drm/amd/amdgpu/psp_v11_0.c b/drivers/gpu/drm/amd/amdgpu/p
  		} else {
  			err = amdgpu_ucode_validate(adev->psp.ta_fw);
  			if (err)
-@@ -145,7 +145,7 @@
+@@ -185,7 +185,7 @@
  			release_firmware(adev->psp.ta_fw);
  			adev->psp.ta_fw = NULL;
  			dev_info(adev->dev,
@@ -402,9 +418,32 @@ diff -ru a/drivers/gpu/drm/amd/amdgpu/psp_v11_0.c b/drivers/gpu/drm/amd/amdgpu/p
  		} else {
  			err = amdgpu_ucode_validate(adev->psp.ta_fw);
  			if (err)
-diff -ru a/drivers/gpu/drm/amd/amdgpu/sdma_v2_4.c b/drivers/gpu/drm/amd/amdgpu/sdma_v2_4.c
---- a/drivers/gpu/drm/amd/amdgpu/sdma_v2_4.c	2021-06-14 01:15:30.532704155 +0200
-+++ b/drivers/gpu/drm/amd/amdgpu/sdma_v2_4.c	2021-06-14 01:16:26.472820691 +0200
+diff --color -Nru a/drivers/gpu/drm/amd/amdgpu/psp_v12_0.c b/drivers/gpu/drm/amd/amdgpu/psp_v12_0.c
+--- a/drivers/gpu/drm/amd/amdgpu/psp_v12_0.c	2023-03-09 11:48:45.000000000 -0600
++++ b/drivers/gpu/drm/amd/amdgpu/psp_v12_0.c	2023-03-09 20:15:18.748733852 -0600
+@@ -75,8 +75,7 @@
+ 		release_firmware(adev->psp.ta_fw);
+ 		adev->psp.ta_fw = NULL;
+ 		dev_info(adev->dev,
+-			 "psp v12.0: Failed to load firmware \"%s\"\n",
+-			 fw_name);
++			 "psp v12.0: Failed to load firmware\n");
+ 	} else {
+ 		err = amdgpu_ucode_validate(adev->psp.ta_fw);
+ 		if (err)
+@@ -120,8 +119,7 @@
+ 	adev->psp.ta_fw = NULL;
+ 	if (err) {
+ 		dev_err(adev->dev,
+-			"psp v12.0: Failed to load firmware \"%s\"\n",
+-			fw_name);
++			"psp v12.0: Failed to load firmware\n");
+ 	}
+ 
+ 	return err;
+diff --color -Nru a/drivers/gpu/drm/amd/amdgpu/sdma_v2_4.c b/drivers/gpu/drm/amd/amdgpu/sdma_v2_4.c
+--- a/drivers/gpu/drm/amd/amdgpu/sdma_v2_4.c	2022-07-31 16:03:01.000000000 -0500
++++ b/drivers/gpu/drm/amd/amdgpu/sdma_v2_4.c	2023-03-09 20:16:41.561138701 -0600
 @@ -175,7 +175,7 @@
  
  out:
@@ -414,9 +453,9 @@ diff -ru a/drivers/gpu/drm/amd/amdgpu/sdma_v2_4.c b/drivers/gpu/drm/amd/amdgpu/s
  		for (i = 0; i < adev->sdma.num_instances; i++) {
  			release_firmware(adev->sdma.instance[i].fw);
  			adev->sdma.instance[i].fw = NULL;
-diff -ru a/drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c b/drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c
---- a/drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c	2021-06-14 01:15:30.532704155 +0200
-+++ b/drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c	2021-06-14 01:16:26.472820691 +0200
+diff --color -Nru a/drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c b/drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c
+--- a/drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c	2022-07-31 16:03:01.000000000 -0500
++++ b/drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c	2023-03-09 20:17:54.125493450 -0600
 @@ -331,7 +331,7 @@
  	}
  out:
@@ -426,10 +465,10 @@ diff -ru a/drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c b/drivers/gpu/drm/amd/amdgpu/s
  		for (i = 0; i < adev->sdma.num_instances; i++) {
  			release_firmware(adev->sdma.instance[i].fw);
  			adev->sdma.instance[i].fw = NULL;
-diff -ru a/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c b/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c
---- a/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c	2021-06-14 01:15:30.532704155 +0200
-+++ b/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c	2021-06-14 01:16:26.472820691 +0200
-@@ -639,7 +639,7 @@
+diff --color -Nru a/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c b/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c
+--- a/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c	2022-07-31 16:03:01.000000000 -0500
++++ b/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c	2023-03-09 20:18:38.785711783 -0600
+@@ -704,7 +704,7 @@
  
  out:
  	if (err) {
@@ -438,10 +477,10 @@ diff -ru a/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c b/drivers/gpu/drm/amd/amdgpu/s
  		sdma_v4_0_destroy_inst_ctx(adev);
  	}
  	return err;
-diff -ru a/drivers/gpu/drm/amd/amdgpu/sdma_v5_0.c b/drivers/gpu/drm/amd/amdgpu/sdma_v5_0.c
---- a/drivers/gpu/drm/amd/amdgpu/sdma_v5_0.c	2021-06-14 01:15:30.532704155 +0200
-+++ b/drivers/gpu/drm/amd/amdgpu/sdma_v5_0.c	2021-06-14 01:20:49.889329026 +0200
-@@ -248,7 +248,7 @@
+diff --color -Nru a/drivers/gpu/drm/amd/amdgpu/sdma_v5_0.c b/drivers/gpu/drm/amd/amdgpu/sdma_v5_0.c
+--- a/drivers/gpu/drm/amd/amdgpu/sdma_v5_0.c	2022-07-31 16:03:01.000000000 -0500
++++ b/drivers/gpu/drm/amd/amdgpu/sdma_v5_0.c	2023-03-09 20:21:16.870484620 -0600
+@@ -297,7 +297,7 @@
  	}
  out:
  	if (err) {
@@ -450,10 +489,22 @@ diff -ru a/drivers/gpu/drm/amd/amdgpu/sdma_v5_0.c b/drivers/gpu/drm/amd/amdgpu/s
  		for (i = 0; i < adev->sdma.num_instances; i++) {
  			release_firmware(adev->sdma.instance[i].fw);
  			adev->sdma.instance[i].fw = NULL;
-diff -ru a/drivers/gpu/drm/amd/amdgpu/si_dpm.c b/drivers/gpu/drm/amd/amdgpu/si_dpm.c
---- a/drivers/gpu/drm/amd/pm/powerplay/si_dpm.c	2021-06-14 01:15:30.536704163 +0200
-+++ b/drivers/gpu/drm/amd/pm/powerplay/si_dpm.c	2021-06-14 01:16:26.476820699 +0200
-@@ -7655,8 +7655,8 @@
+diff --color -Nru a/drivers/gpu/drm/amd/amdgpu/sdma_v5_2.c b/drivers/gpu/drm/amd/amdgpu/sdma_v5_2.c
+--- a/drivers/gpu/drm/amd/amdgpu/sdma_v5_2.c	2022-07-31 16:03:01.000000000 -0500
++++ b/drivers/gpu/drm/amd/amdgpu/sdma_v5_2.c	2023-03-09 20:23:00.390990706 -0600
+@@ -201,7 +201,7 @@
+ 
+ out:
+ 	if (err) {
+-		DRM_ERROR("sdma_v5_2: Failed to load firmware \"%s\"\n", fw_name);
++		DRM_ERROR("sdma_v5_2: Failed to load firmware\n");
+ 		sdma_v5_2_destroy_inst_ctx(adev);
+ 	}
+ 	return err;
+diff --color -Nru a/drivers/gpu/drm/amd/pm/legacy-dpm/si_dpm.c b/drivers/gpu/drm/amd/pm/legacy-dpm/si_dpm.c
+--- a/drivers/gpu/drm/amd/pm/legacy-dpm/si_dpm.c	2022-07-31 16:03:01.000000000 -0500
++++ b/drivers/gpu/drm/amd/pm/legacy-dpm/si_dpm.c	2023-03-09 11:53:09.993441860 -0600
+@@ -7721,8 +7721,8 @@
  
  out:
  	if (err) {
@@ -464,10 +515,18 @@ diff -ru a/drivers/gpu/drm/amd/amdgpu/si_dpm.c b/drivers/gpu/drm/amd/amdgpu/si_d
  		release_firmware(adev->pm.fw);
  		adev->pm.fw = NULL;
  	}
-diff -ru a/drivers/gpu/drm/drm_edid_load.c b/drivers/gpu/drm/drm_edid_load.c
---- a/drivers/gpu/drm/drm_edid_load.c	2021-06-14 01:15:31.428706050 +0200
-+++ b/drivers/gpu/drm/drm_edid_load.c	2021-06-14 01:16:26.476820699 +0200
-@@ -195,8 +195,8 @@
+diff --color -Nru a/drivers/gpu/drm/drm_edid_load.c b/drivers/gpu/drm/drm_edid_load.c
+--- a/drivers/gpu/drm/drm_edid_load.c	2022-07-31 16:03:01.000000000 -0500
++++ b/drivers/gpu/drm/drm_edid_load.c	2023-03-09 11:53:09.993441860 -0600
+@@ -188,15 +188,15 @@
+ 		pdev = platform_device_register_simple(connector_name, -1, NULL, 0);
+ 		if (IS_ERR(pdev)) {
+ 			DRM_ERROR("Failed to register EDID firmware platform device "
+-				  "for connector \"%s\"\n", connector_name);
++				  "for connector\n");
+ 			return ERR_CAST(pdev);
+ 		}
+ 
  		err = request_firmware(&fw, name, &pdev->dev);
  		platform_device_unregister(pdev);
  		if (err) {
@@ -478,10 +537,31 @@ diff -ru a/drivers/gpu/drm/drm_edid_load.c b/drivers/gpu/drm/drm_edid_load.c
  			return ERR_PTR(err);
  		}
  
-diff -ru a/drivers/gpu/drm/r128/r128_cce.c b/drivers/gpu/drm/r128/r128_cce.c
---- a/drivers/gpu/drm/r128/r128_cce.c	2021-06-14 01:15:31.724706676 +0200
-+++ b/drivers/gpu/drm/r128/r128_cce.c	2021-06-14 01:16:26.476820699 +0200
-@@ -163,14 +163,13 @@
+@@ -205,8 +205,8 @@
+ 	}
+ 
+ 	if (edid_size(fwdata, fwsize) != fwsize) {
+-		DRM_ERROR("Size of EDID firmware \"%s\" is invalid "
+-			  "(expected %d, got %d\n", name,
++		DRM_ERROR("Size of EDID firmware is invalid "
++			  "(expected %d, got %d\n",
+ 			  edid_size(fwdata, fwsize), (int)fwsize);
+ 		edid = ERR_PTR(-EINVAL);
+ 		goto out;
+@@ -221,8 +221,7 @@
+ 	if (!drm_edid_block_valid(edid, 0, print_bad_edid,
+ 				  &connector->edid_corrupt)) {
+ 		connector->bad_edid_counter++;
+-		DRM_ERROR("Base block of EDID firmware \"%s\" is invalid ",
+-		    name);
++		DRM_ERROR("Base block of EDID firmware is invalid ");
+ 		kfree(edid);
+ 		edid = ERR_PTR(-EINVAL);
+ 		goto out;
+diff --color -Nru a/drivers/gpu/drm/r128/r128_cce.c b/drivers/gpu/drm/r128/r128_cce.c
+--- a/drivers/gpu/drm/r128/r128_cce.c	2022-07-31 16:03:01.000000000 -0500
++++ b/drivers/gpu/drm/r128/r128_cce.c	2023-03-09 16:40:53.689839779 -0600
+@@ -162,14 +162,13 @@
  	rc = request_firmware(&fw, FIRMWARE_NAME, &pdev->dev);
  	platform_device_unregister(pdev);
  	if (rc) {
@@ -499,10 +579,10 @@ diff -ru a/drivers/gpu/drm/r128/r128_cce.c b/drivers/gpu/drm/r128/r128_cce.c
  		rc = -EINVAL;
  		goto out_release;
  	}
-diff -ru a/drivers/gpu/drm/radeon/cik.c b/drivers/gpu/drm/radeon/cik.c
---- a/drivers/gpu/drm/radeon/cik.c	2021-06-14 01:15:31.732706693 +0200
-+++ b/drivers/gpu/drm/radeon/cik.c	2021-06-14 01:16:26.476820699 +0200
-@@ -2058,7 +2058,7 @@
+diff --color -Nru a/drivers/gpu/drm/radeon/cik.c b/drivers/gpu/drm/radeon/cik.c
+--- a/drivers/gpu/drm/radeon/cik.c	2022-07-31 16:03:01.000000000 -0500
++++ b/drivers/gpu/drm/radeon/cik.c	2023-03-09 18:09:31.511837288 -0600
+@@ -2049,7 +2049,7 @@
  	default: BUG();
  	}
  
@@ -511,7 +591,7 @@ diff -ru a/drivers/gpu/drm/radeon/cik.c b/drivers/gpu/drm/radeon/cik.c
  
  	snprintf(fw_name, sizeof(fw_name), "radeon/%s_pfp.bin", new_chip_name);
  	err = request_firmware(&rdev->pfp_fw, fw_name, rdev->dev);
-@@ -2068,16 +2068,15 @@
+@@ -2059,16 +2059,15 @@
  		if (err)
  			goto out;
  		if (rdev->pfp_fw->size != pfp_req_size) {
@@ -531,7 +611,7 @@ diff -ru a/drivers/gpu/drm/radeon/cik.c b/drivers/gpu/drm/radeon/cik.c
  			goto out;
  		} else {
  			new_fw++;
-@@ -2092,15 +2091,14 @@
+@@ -2083,15 +2082,14 @@
  		if (err)
  			goto out;
  		if (rdev->me_fw->size != me_req_size) {
@@ -550,7 +630,7 @@ diff -ru a/drivers/gpu/drm/radeon/cik.c b/drivers/gpu/drm/radeon/cik.c
  			goto out;
  		} else {
  			new_fw++;
-@@ -2115,15 +2113,14 @@
+@@ -2106,15 +2104,14 @@
  		if (err)
  			goto out;
  		if (rdev->ce_fw->size != ce_req_size) {
@@ -569,7 +649,7 @@ diff -ru a/drivers/gpu/drm/radeon/cik.c b/drivers/gpu/drm/radeon/cik.c
  			goto out;
  		} else {
  			new_fw++;
-@@ -2138,15 +2135,14 @@
+@@ -2129,15 +2126,14 @@
  		if (err)
  			goto out;
  		if (rdev->mec_fw->size != mec_req_size) {
@@ -588,7 +668,7 @@ diff -ru a/drivers/gpu/drm/radeon/cik.c b/drivers/gpu/drm/radeon/cik.c
  			goto out;
  		} else {
  			new_fw++;
-@@ -2176,15 +2172,14 @@
+@@ -2167,15 +2163,14 @@
  		if (err)
  			goto out;
  		if (rdev->rlc_fw->size != rlc_req_size) {
@@ -607,14 +687,14 @@ diff -ru a/drivers/gpu/drm/radeon/cik.c b/drivers/gpu/drm/radeon/cik.c
  			goto out;
  		} else {
  			new_fw++;
-@@ -2199,15 +2194,14 @@
+@@ -2190,15 +2185,14 @@
  		if (err)
  			goto out;
  		if (rdev->sdma_fw->size != sdma_req_size) {
 -			pr_err("cik_sdma: Bogus length %zu in firmware \"%s\"\n",
 -			       rdev->sdma_fw->size, fw_name);
 +			pr_err("cik_sdma: Bogus length %zu in firmware\n",
-+ 			       rdev->sdma_fw->size);
++			       rdev->sdma_fw->size);
  			err = -EINVAL;
  		}
  	} else {
@@ -626,7 +706,7 @@ diff -ru a/drivers/gpu/drm/radeon/cik.c b/drivers/gpu/drm/radeon/cik.c
  			goto out;
  		} else {
  			new_fw++;
-@@ -2229,16 +2223,15 @@
+@@ -2220,16 +2214,15 @@
  			}
  			if ((rdev->mc_fw->size != mc_req_size) &&
  			    (rdev->mc_fw->size != mc2_req_size)){
@@ -646,14 +726,7 @@ diff -ru a/drivers/gpu/drm/radeon/cik.c b/drivers/gpu/drm/radeon/cik.c
  				goto out;
  			} else {
  				new_fw++;
-@@ -2254,21 +2247,19 @@
- 			snprintf(fw_name, sizeof(fw_name), "radeon/%s_smc.bin", chip_name);
- 			err = request_firmware(&rdev->smc_fw, fw_name, rdev->dev);
- 			if (err) {
--				pr_err("smc: error loading firmware \"%s\"\n",
--				       fw_name);
-+				pr_err("smc: error loading firmware\n");
- 				release_firmware(rdev->smc_fw);
+@@ -2251,15 +2244,14 @@
  				rdev->smc_fw = NULL;
  				err = 0;
  			} else if (rdev->smc_fw->size != smc_req_size) {
@@ -672,7 +745,7 @@ diff -ru a/drivers/gpu/drm/radeon/cik.c b/drivers/gpu/drm/radeon/cik.c
  				goto out;
  			} else {
  				new_fw++;
-@@ -2288,8 +2279,7 @@
+@@ -2279,8 +2271,7 @@
  out:
  	if (err) {
  		if (err != -EINVAL)
@@ -682,10 +755,79 @@ diff -ru a/drivers/gpu/drm/radeon/cik.c b/drivers/gpu/drm/radeon/cik.c
  		release_firmware(rdev->pfp_fw);
  		rdev->pfp_fw = NULL;
  		release_firmware(rdev->me_fw);
-diff -ru a/drivers/gpu/drm/radeon/r100.c b/drivers/gpu/drm/radeon/r100.c
---- a/drivers/gpu/drm/radeon/r100.c	2021-06-14 01:15:31.736706702 +0200
-+++ b/drivers/gpu/drm/radeon/r100.c	2021-06-14 01:37:19.785010983 +0200
-@@ -1048,10 +1048,10 @@
+diff --color -Nru a/drivers/gpu/drm/radeon/ni.c b/drivers/gpu/drm/radeon/ni.c
+--- a/drivers/gpu/drm/radeon/ni.c	2022-07-31 16:03:01.000000000 -0500
++++ b/drivers/gpu/drm/radeon/ni.c	2023-03-09 11:53:09.993441860 -0600
+@@ -807,7 +807,7 @@
+ 		snprintf(fw_name, sizeof(fw_name), "radeon/%s_smc.bin", chip_name);
+ 		err = request_firmware(&rdev->smc_fw, fw_name, rdev->dev);
+ 		if (err) {
+-			pr_err("smc: error loading firmware \"%s\"\n", fw_name);
++			pr_err("smc: error loading firmware\n");
+ 			release_firmware(rdev->smc_fw);
+ 			rdev->smc_fw = NULL;
+ 			err = 0;
+@@ -821,8 +821,7 @@
+ out:
+ 	if (err) {
+ 		if (err != -EINVAL)
+-			pr_err("ni_cp: Failed to load firmware \"%s\"\n",
+-			       fw_name);
++			pr_err("ni_cp: Failed to load firmware\n");
+ 		release_firmware(rdev->pfp_fw);
+ 		rdev->pfp_fw = NULL;
+ 		release_firmware(rdev->me_fw);
+diff --color -Nru a/drivers/gpu/drm/radeon/r100.c b/drivers/gpu/drm/radeon/r100.c
+--- a/drivers/gpu/drm/radeon/r100.c	2022-07-31 16:03:01.000000000 -0500
++++ b/drivers/gpu/drm/radeon/r100.c	2023-03-09 11:53:09.993441860 -0600
+@@ -1017,13 +1017,13 @@
+ 	if ((rdev->family == CHIP_R100) || (rdev->family == CHIP_RV100) ||
+ 	    (rdev->family == CHIP_RV200) || (rdev->family == CHIP_RS100) ||
+ 	    (rdev->family == CHIP_RS200)) {
+-		DRM_INFO("Loading R100 Microcode\n");
++		DRM_INFO("Loading Microcode\n");
+ 		fw_name = FIRMWARE_R100;
+ 	} else if ((rdev->family == CHIP_R200) ||
+ 		   (rdev->family == CHIP_RV250) ||
+ 		   (rdev->family == CHIP_RV280) ||
+ 		   (rdev->family == CHIP_RS300)) {
+-		DRM_INFO("Loading R200 Microcode\n");
++		DRM_INFO("Loading Microcode\n");
+ 		fw_name = FIRMWARE_R200;
+ 	} else if ((rdev->family == CHIP_R300) ||
+ 		   (rdev->family == CHIP_R350) ||
+@@ -1031,19 +1031,19 @@
+ 		   (rdev->family == CHIP_RV380) ||
+ 		   (rdev->family == CHIP_RS400) ||
+ 		   (rdev->family == CHIP_RS480)) {
+-		DRM_INFO("Loading R300 Microcode\n");
++		DRM_INFO("Loading Microcode\n");
+ 		fw_name = FIRMWARE_R300;
+ 	} else if ((rdev->family == CHIP_R420) ||
+ 		   (rdev->family == CHIP_R423) ||
+ 		   (rdev->family == CHIP_RV410)) {
+-		DRM_INFO("Loading R400 Microcode\n");
++		DRM_INFO("Loading Microcode\n");
+ 		fw_name = FIRMWARE_R420;
+ 	} else if ((rdev->family == CHIP_RS690) ||
+ 		   (rdev->family == CHIP_RS740)) {
+-		DRM_INFO("Loading RS690/RS740 Microcode\n");
++		DRM_INFO("Loading Microcode\n");
+ 		fw_name = FIRMWARE_RS690;
+ 	} else if (rdev->family == CHIP_RS600) {
+-		DRM_INFO("Loading RS600 Microcode\n");
++		DRM_INFO("Loading Microcode\n");
+ 		fw_name = FIRMWARE_RS600;
+ 	} else if ((rdev->family == CHIP_RV515) ||
+ 		   (rdev->family == CHIP_R520) ||
+@@ -1051,16 +1051,16 @@
+ 		   (rdev->family == CHIP_R580) ||
+ 		   (rdev->family == CHIP_RV560) ||
+ 		   (rdev->family == CHIP_RV570)) {
+-		DRM_INFO("Loading R500 Microcode\n");
++		DRM_INFO("Loading Microcode\n");
+ 		fw_name = FIRMWARE_R520;
+ 	}
  
  	err = request_firmware(&rdev->me_fw, fw_name, rdev->dev);
  	if (err) {
@@ -699,10 +841,10 @@ diff -ru a/drivers/gpu/drm/radeon/r100.c b/drivers/gpu/drm/radeon/r100.c
  		err = -EINVAL;
  		release_firmware(rdev->me_fw);
  		rdev->me_fw = NULL;
-diff -ru a/drivers/gpu/drm/radeon/r600.c b/drivers/gpu/drm/radeon/r600.c
---- a/drivers/gpu/drm/radeon/r600.c	2021-06-14 01:15:31.740706710 +0200
-+++ b/drivers/gpu/drm/radeon/r600.c	2021-06-14 01:16:26.484820716 +0200
-@@ -2549,15 +2549,15 @@
+diff --color -Nru a/drivers/gpu/drm/radeon/r600.c b/drivers/gpu/drm/radeon/r600.c
+--- a/drivers/gpu/drm/radeon/r600.c	2022-07-31 16:03:01.000000000 -0500
++++ b/drivers/gpu/drm/radeon/r600.c	2023-03-09 11:53:09.993441860 -0600
+@@ -2548,15 +2548,15 @@
  		rlc_req_size = R600_RLC_UCODE_SIZE * 4;
  	}
  
@@ -721,7 +863,7 @@ diff -ru a/drivers/gpu/drm/radeon/r600.c b/drivers/gpu/drm/radeon/r600.c
  		err = -EINVAL;
  		goto out;
  	}
-@@ -2567,8 +2567,8 @@
+@@ -2566,8 +2566,8 @@
  	if (err)
  		goto out;
  	if (rdev->me_fw->size != me_req_size) {
@@ -730,8 +872,8 @@ diff -ru a/drivers/gpu/drm/radeon/r600.c b/drivers/gpu/drm/radeon/r600.c
 +		pr_err("r600_cp: Bogus length %zu in firmware\n",
 +		       rdev->me_fw->size);
  		err = -EINVAL;
+ 		goto out;
  	}
- 
 @@ -2577,8 +2577,8 @@
  	if (err)
  		goto out;
@@ -741,9 +883,9 @@ diff -ru a/drivers/gpu/drm/radeon/r600.c b/drivers/gpu/drm/radeon/r600.c
 +		pr_err("r600_rlc: Bogus length %zu in firmware\n",
 +		       rdev->rlc_fw->size);
  		err = -EINVAL;
+ 		goto out;
  	}
- 
-@@ -2586,13 +2586,13 @@
+@@ -2587,13 +2587,13 @@
  		snprintf(fw_name, sizeof(fw_name), "radeon/%s_smc.bin", smc_chip_name);
  		err = request_firmware(&rdev->smc_fw, fw_name, rdev->dev);
  		if (err) {
@@ -760,7 +902,7 @@ diff -ru a/drivers/gpu/drm/radeon/r600.c b/drivers/gpu/drm/radeon/r600.c
  			err = -EINVAL;
  		}
  	}
-@@ -2600,8 +2600,7 @@
+@@ -2601,8 +2601,7 @@
  out:
  	if (err) {
  		if (err != -EINVAL)
@@ -770,9 +912,9 @@ diff -ru a/drivers/gpu/drm/radeon/r600.c b/drivers/gpu/drm/radeon/r600.c
  		release_firmware(rdev->pfp_fw);
  		rdev->pfp_fw = NULL;
  		release_firmware(rdev->me_fw);
-diff -ru a/drivers/gpu/drm/radeon/radeon_uvd.c b/drivers/gpu/drm/radeon/radeon_uvd.c
---- a/drivers/gpu/drm/radeon/radeon_uvd.c	2021-06-14 01:15:31.752706735 +0200
-+++ b/drivers/gpu/drm/radeon/radeon_uvd.c	2021-06-14 01:16:26.484820716 +0200
+diff --color -Nru a/drivers/gpu/drm/radeon/radeon_uvd.c b/drivers/gpu/drm/radeon/radeon_uvd.c
+--- a/drivers/gpu/drm/radeon/radeon_uvd.c	2022-07-31 16:03:01.000000000 -0500
++++ b/drivers/gpu/drm/radeon/radeon_uvd.c	2023-03-09 11:53:09.993441860 -0600
 @@ -140,8 +140,7 @@
  		/* Let's try to load the newer firmware first */
  		r = request_firmware(&rdev->uvd_fw, fw_name, rdev->dev);
@@ -783,7 +925,7 @@ diff -ru a/drivers/gpu/drm/radeon/radeon_uvd.c b/drivers/gpu/drm/radeon/radeon_u
  		} else {
  			struct common_firmware_header *hdr = (void *)rdev->uvd_fw->data;
  			unsigned version_major, version_minor, family_id;
-@@ -175,8 +174,7 @@
+@@ -177,8 +176,7 @@
  	if (!fw_name || r) {
  		r = request_firmware(&rdev->uvd_fw, legacy_fw_name, rdev->dev);
  		if (r) {
@@ -793,10 +935,10 @@ diff -ru a/drivers/gpu/drm/radeon/radeon_uvd.c b/drivers/gpu/drm/radeon/radeon_u
  			return r;
  		}
  	}
-diff -ru a/drivers/gpu/drm/radeon/radeon_vce.c b/drivers/gpu/drm/radeon/radeon_vce.c
---- a/drivers/gpu/drm/radeon/radeon_vce.c	2021-06-14 01:15:31.752706735 +0200
-+++ b/drivers/gpu/drm/radeon/radeon_vce.c	2021-06-14 01:16:26.484820716 +0200
-@@ -87,8 +87,7 @@
+diff --color -Nru a/drivers/gpu/drm/radeon/radeon_vce.c b/drivers/gpu/drm/radeon/radeon_vce.c
+--- a/drivers/gpu/drm/radeon/radeon_vce.c	2022-07-31 16:03:01.000000000 -0500
++++ b/drivers/gpu/drm/radeon/radeon_vce.c	2023-03-09 11:53:09.993441860 -0600
+@@ -86,8 +86,7 @@
  
  	r = request_firmware(&rdev->vce_fw, fw_name, rdev->dev);
  	if (r) {
@@ -806,10 +948,10 @@ diff -ru a/drivers/gpu/drm/radeon/radeon_vce.c b/drivers/gpu/drm/radeon/radeon_v
  		return r;
  	}
  
-diff -ru a/drivers/gpu/drm/radeon/si.c b/drivers/gpu/drm/radeon/si.c
---- a/drivers/gpu/drm/radeon/si.c	2021-06-14 01:15:31.756706744 +0200
-+++ b/drivers/gpu/drm/radeon/si.c	2021-06-14 01:16:26.484820716 +0200
-@@ -1780,7 +1780,7 @@
+diff --color -Nru a/drivers/gpu/drm/radeon/si.c b/drivers/gpu/drm/radeon/si.c
+--- a/drivers/gpu/drm/radeon/si.c	2022-07-31 16:03:01.000000000 -0500
++++ b/drivers/gpu/drm/radeon/si.c	2023-03-09 11:53:09.993441860 -0600
+@@ -1775,7 +1775,7 @@
  	if (((RREG32(MC_SEQ_MISC0) & 0xff000000) >> 24) == 0x58)
  		si58_fw = true;
  
@@ -818,7 +960,7 @@ diff -ru a/drivers/gpu/drm/radeon/si.c b/drivers/gpu/drm/radeon/si.c
  
  	snprintf(fw_name, sizeof(fw_name), "radeon/%s_pfp.bin", new_chip_name);
  	err = request_firmware(&rdev->pfp_fw, fw_name, rdev->dev);
-@@ -1790,16 +1790,15 @@
+@@ -1785,16 +1785,15 @@
  		if (err)
  			goto out;
  		if (rdev->pfp_fw->size != pfp_req_size) {
@@ -838,7 +980,7 @@ diff -ru a/drivers/gpu/drm/radeon/si.c b/drivers/gpu/drm/radeon/si.c
  			goto out;
  		} else {
  			new_fw++;
-@@ -1814,15 +1813,14 @@
+@@ -1809,15 +1808,14 @@
  		if (err)
  			goto out;
  		if (rdev->me_fw->size != me_req_size) {
@@ -857,7 +999,7 @@ diff -ru a/drivers/gpu/drm/radeon/si.c b/drivers/gpu/drm/radeon/si.c
  			goto out;
  		} else {
  			new_fw++;
-@@ -1837,15 +1835,14 @@
+@@ -1832,15 +1830,14 @@
  		if (err)
  			goto out;
  		if (rdev->ce_fw->size != ce_req_size) {
@@ -876,7 +1018,7 @@ diff -ru a/drivers/gpu/drm/radeon/si.c b/drivers/gpu/drm/radeon/si.c
  			goto out;
  		} else {
  			new_fw++;
-@@ -1860,15 +1857,14 @@
+@@ -1855,15 +1852,14 @@
  		if (err)
  			goto out;
  		if (rdev->rlc_fw->size != rlc_req_size) {
@@ -895,7 +1037,7 @@ diff -ru a/drivers/gpu/drm/radeon/si.c b/drivers/gpu/drm/radeon/si.c
  			goto out;
  		} else {
  			new_fw++;
-@@ -1891,16 +1887,15 @@
+@@ -1886,16 +1882,15 @@
  		}
  		if ((rdev->mc_fw->size != mc_req_size) &&
  		    (rdev->mc_fw->size != mc2_req_size)) {
@@ -915,7 +1057,7 @@ diff -ru a/drivers/gpu/drm/radeon/si.c b/drivers/gpu/drm/radeon/si.c
  			goto out;
  		} else {
  			new_fw++;
-@@ -1918,20 +1913,19 @@
+@@ -1913,20 +1908,19 @@
  		snprintf(fw_name, sizeof(fw_name), "radeon/%s_smc.bin", chip_name);
  		err = request_firmware(&rdev->smc_fw, fw_name, rdev->dev);
  		if (err) {
@@ -940,7 +1082,7 @@ diff -ru a/drivers/gpu/drm/radeon/si.c b/drivers/gpu/drm/radeon/si.c
  			goto out;
  		} else {
  			new_fw++;
-@@ -1949,8 +1943,7 @@
+@@ -1944,8 +1938,7 @@
  out:
  	if (err) {
  		if (err != -EINVAL)
@@ -950,10 +1092,59 @@ diff -ru a/drivers/gpu/drm/radeon/si.c b/drivers/gpu/drm/radeon/si.c
  		release_firmware(rdev->pfp_fw);
  		rdev->pfp_fw = NULL;
  		release_firmware(rdev->me_fw);
-diff -ru a/drivers/net/wireless/intel/ipw2x00/ipw2100.c b/drivers/net/wireless/intel/ipw2x00/ipw2100.c
---- a/drivers/net/wireless/intel/ipw2x00/ipw2100.c	2021-06-14 01:15:34.020711528 +0200
-+++ b/drivers/net/wireless/intel/ipw2x00/ipw2100.c	2021-06-14 01:16:26.488820724 +0200
-@@ -8394,8 +8394,8 @@
+diff --color -Nru a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/firmware.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/firmware.c
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/firmware.c	2022-07-31 16:03:01.000000000 -0500
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/firmware.c	2023-03-09 11:53:09.993441860 -0600
+@@ -763,9 +763,6 @@
+ 	if (!fwreq)
+ 		return NULL;
+ 
+-	brcmf_info("using %s for chip %s\n",
+-		   mapping_table[i].fw_base, chipname);
+-
+ 	mp_path = brcmf_mp_global.firmware_path;
+ 	mp_path_len = strnlen(mp_path, BRCMF_FW_ALTPATH_LEN);
+ 	if (mp_path_len)
+diff --color -Nru a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c	2022-07-31 16:03:01.000000000 -0500
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c	2023-03-09 11:53:09.993441860 -0600
+@@ -1545,7 +1545,7 @@
+ 	if (err)
+ 		return err;
+ 
+-	brcmf_dbg(PCIE, "Download FW %s\n", devinfo->fw_name);
++	brcmf_dbg(PCIE, "Download FW\n");
+ 	memcpy_toio(devinfo->tcm + devinfo->ci->rambase,
+ 		    (void *)fw->data, fw->size);
+ 
+diff --color -Nru a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/mac80211_if.c b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/mac80211_if.c
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/mac80211_if.c	2022-07-31 16:03:01.000000000 -0500
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/mac80211_if.c	2023-03-09 11:53:09.993441860 -0600
+@@ -377,16 +377,16 @@
+ 			UCODE_LOADER_API_VER);
+ 		status = request_firmware(&wl->fw.fw_bin[i], fw_name, device);
+ 		if (status) {
+-			wiphy_err(wl->wiphy, "%s: fail to load firmware %s\n",
+-				  KBUILD_MODNAME, fw_name);
++			wiphy_err(wl->wiphy, "%s: fail to load firmware\n",
++				  KBUILD_MODNAME);
+ 			return status;
+ 		}
+ 		sprintf(fw_name, "%s_hdr-%d.fw", brcms_firmwares[i],
+ 			UCODE_LOADER_API_VER);
+ 		status = request_firmware(&wl->fw.fw_hdr[i], fw_name, device);
+ 		if (status) {
+-			wiphy_err(wl->wiphy, "%s: fail to load firmware %s\n",
+-				  KBUILD_MODNAME, fw_name);
++			wiphy_err(wl->wiphy, "%s: fail to load firmware\n",
++				  KBUILD_MODNAME);
+ 			return status;
+ 		}
+ 		wl->fw.hdr_num_entries[i] =
+diff --color -Nru a/drivers/net/wireless/intel/ipw2x00/ipw2100.c b/drivers/net/wireless/intel/ipw2x00/ipw2100.c
+--- a/drivers/net/wireless/intel/ipw2x00/ipw2100.c	2022-07-31 16:03:01.000000000 -0500
++++ b/drivers/net/wireless/intel/ipw2x00/ipw2100.c	2023-03-09 11:53:09.997441880 -0600
+@@ -8372,8 +8372,8 @@
  
  	if (rc < 0) {
  		printk(KERN_ERR DRV_NAME ": "
@@ -964,10 +1155,10 @@ diff -ru a/drivers/net/wireless/intel/ipw2x00/ipw2100.c b/drivers/net/wireless/i
  		return rc;
  	}
  	IPW_DEBUG_INFO("firmware data %p size %zd\n", fw->fw_entry->data,
-diff -ru a/drivers/net/wireless/intel/ipw2x00/ipw2200.c b/drivers/net/wireless/intel/ipw2x00/ipw2200.c
---- a/drivers/net/wireless/intel/ipw2x00/ipw2200.c	2021-06-14 01:15:34.020711528 +0200
-+++ b/drivers/net/wireless/intel/ipw2x00/ipw2200.c	2021-06-14 01:16:26.488820724 +0200
-@@ -3398,12 +3398,12 @@
+diff --color -Nru a/drivers/net/wireless/intel/ipw2x00/ipw2200.c b/drivers/net/wireless/intel/ipw2x00/ipw2200.c
+--- a/drivers/net/wireless/intel/ipw2x00/ipw2200.c	2022-07-31 16:03:01.000000000 -0500
++++ b/drivers/net/wireless/intel/ipw2x00/ipw2200.c	2023-03-09 19:21:02.780816235 -0600
+@@ -3394,12 +3394,12 @@
  	/* ask firmware_class module to get the boot firmware off disk */
  	rc = request_firmware(raw, name, &priv->pci_dev->dev);
  	if (rc < 0) {
@@ -982,7 +1173,7 @@ diff -ru a/drivers/net/wireless/intel/ipw2x00/ipw2200.c b/drivers/net/wireless/i
  		return -EINVAL;
  	}
  
-@@ -3411,13 +3411,12 @@
+@@ -3407,13 +3407,12 @@
  
  	if ((*raw)->size < sizeof(*fw) + le32_to_cpu(fw->boot_size) +
  	    le32_to_cpu(fw->ucode_size) + le32_to_cpu(fw->fw_size)) {
@@ -999,10 +1190,46 @@ diff -ru a/drivers/net/wireless/intel/ipw2x00/ipw2200.c b/drivers/net/wireless/i
  		       le32_to_cpu(fw->ver) >> 16,
  		       le32_to_cpu(fw->ver) & 0xff,
  		       (*raw)->size - sizeof(*fw));
-diff -ru a/drivers/net/wireless/intel/iwlegacy/3945-mac.c b/drivers/net/wireless/intel/iwlegacy/3945-mac.c
---- a/drivers/net/wireless/intel/iwlegacy/3945-mac.c	2021-06-14 01:15:34.024711537 +0200
-+++ b/drivers/net/wireless/intel/iwlegacy/3945-mac.c	2021-06-14 01:16:26.488820724 +0200
-@@ -1837,7 +1837,7 @@
+@@ -3547,7 +3546,7 @@
+ 	/* DMA the initial boot firmware into the device */
+ 	rc = ipw_load_firmware(priv, boot_img, le32_to_cpu(fw->boot_size));
+ 	if (rc < 0) {
+-		IPW_ERROR("Unable to load boot firmware: %d\n", rc);
++		IPW_ERROR("Unable to load boot firmware\n");
+ 		goto error;
+ 	}
+ 
+@@ -3569,7 +3568,7 @@
+ 	/* DMA the ucode into the device */
+ 	rc = ipw_load_ucode(priv, ucode_img, le32_to_cpu(fw->ucode_size));
+ 	if (rc < 0) {
+-		IPW_ERROR("Unable to load ucode: %d\n", rc);
++		IPW_ERROR("Unable to load ucode\n");
+ 		goto error;
+ 	}
+ 
+@@ -3579,7 +3578,7 @@
+ 	/* DMA bss firmware into the device */
+ 	rc = ipw_load_firmware(priv, fw_img, le32_to_cpu(fw->fw_size));
+ 	if (rc < 0) {
+-		IPW_ERROR("Unable to load firmware: %d\n", rc);
++		IPW_ERROR("Unable to load firmware\n");
+ 		goto error;
+ 	}
+ #ifdef CONFIG_PM
+@@ -11175,7 +11174,7 @@
+ 		 * Also start the clocks. */
+ 		rc = ipw_load(priv);
+ 		if (rc) {
+-			IPW_ERROR("Unable to load firmware: %d\n", rc);
++			IPW_ERROR("Unable to load firmware\n");
+ 			return rc;
+ 		}
+ 
+diff --color -Nru a/drivers/net/wireless/intel/iwlegacy/3945-mac.c b/drivers/net/wireless/intel/iwlegacy/3945-mac.c
+--- a/drivers/net/wireless/intel/iwlegacy/3945-mac.c	2022-07-31 16:03:01.000000000 -0500
++++ b/drivers/net/wireless/intel/iwlegacy/3945-mac.c	2023-03-09 18:19:33.326779411 -0600
+@@ -1835,19 +1835,19 @@
  		sprintf(buf, "%s%u%s", name_pre, idx, ".ucode");
  		ret = request_firmware(&ucode_raw, buf, &il->pci_dev->dev);
  		if (ret < 0) {
@@ -1011,7 +1238,23 @@ diff -ru a/drivers/net/wireless/intel/iwlegacy/3945-mac.c b/drivers/net/wireless
  			if (ret == -ENOENT)
  				continue;
  			else
-@@ -3698,7 +3697,7 @@
+ 				goto error;
+ 		} else {
+ 			if (idx < api_max)
+-				IL_ERR("Loaded firmware %s, "
++				IL_ERR("Loaded firmware, "
+ 				       "which is deprecated. "
+-				       " Please use API v%u instead.\n", buf,
++				       " Please use API v%u instead.\n",
+ 				       api_max);
+-			D_INFO("Got firmware '%s' file "
+-			       "(%zd bytes) from disk\n", buf, ucode_raw->size);
++			D_INFO("Got firmware file "
++			       "(%zd bytes) from disk\n", ucode_raw->size);
+ 			break;
+ 		}
+ 	}
+@@ -3692,7 +3692,7 @@
  		goto out_unset_hw_params;
  	}
  
@@ -1020,10 +1263,10 @@ diff -ru a/drivers/net/wireless/intel/iwlegacy/3945-mac.c b/drivers/net/wireless
  
  	/***********************
  	 * 7. Setup Services
-diff -ru a/drivers/net/wireless/intel/iwlegacy/4965-mac.c b/drivers/net/wireless/intel/iwlegacy/4965-mac.c
---- a/drivers/net/wireless/intel/iwlegacy/4965-mac.c	2021-06-14 01:15:34.024711537 +0200
-+++ b/drivers/net/wireless/intel/iwlegacy/4965-mac.c	2021-06-14 01:16:26.488820724 +0200
-@@ -4690,7 +4690,7 @@
+diff --color -Nru a/drivers/net/wireless/intel/iwlegacy/4965-mac.c b/drivers/net/wireless/intel/iwlegacy/4965-mac.c
+--- a/drivers/net/wireless/intel/iwlegacy/4965-mac.c	2022-07-31 16:03:01.000000000 -0500
++++ b/drivers/net/wireless/intel/iwlegacy/4965-mac.c	2023-03-09 11:53:09.997441880 -0600
+@@ -4684,7 +4684,7 @@
  
  	sprintf(il->firmware_name, "%s%s%s", name_pre, tag, ".ucode");
  
@@ -1032,20 +1275,26 @@ diff -ru a/drivers/net/wireless/intel/iwlegacy/4965-mac.c b/drivers/net/wireless
  
  	return request_firmware_nowait(THIS_MODULE, 1, il->firmware_name,
  				       &il->pci_dev->dev, GFP_KERNEL, il,
-@@ -4780,8 +4780,7 @@
+@@ -4774,13 +4774,11 @@
  
  	if (!ucode_raw) {
  		if (il->fw_idx <= il->cfg->ucode_api_max)
 -			IL_ERR("request for firmware file '%s' failed.\n",
 -			       il->firmware_name);
-+			IL_ERR("request for firmware failed.\n");
++			IL_ERR("request for firmware file failed.\n");
  		goto try_again;
  	}
  
-diff -ru a/drivers/net/wireless/intel/iwlwifi/dvm/main.c b/drivers/net/wireless/intel/iwlwifi/dvm/main.c
---- a/drivers/net/wireless/intel/iwlwifi/dvm/main.c	2021-06-14 01:15:34.032711554 +0200
-+++ b/drivers/net/wireless/intel/iwlwifi/dvm/main.c	2021-06-14 01:16:26.492820732 +0200
-@@ -1254,7 +1254,7 @@
+-	D_INFO("Loaded firmware file '%s' (%zd bytes).\n", il->firmware_name,
+-	       ucode_raw->size);
++	D_INFO("Loaded firmware file (%zd bytes).\n", ucode_raw->size);
+ 
+ 	/* Make sure that we got at least the API version number */
+ 	if (ucode_raw->size < 4) {
+diff --color -Nru a/drivers/net/wireless/intel/iwlwifi/dvm/main.c b/drivers/net/wireless/intel/iwlwifi/dvm/main.c
+--- a/drivers/net/wireless/intel/iwlwifi/dvm/main.c	2022-07-31 16:03:01.000000000 -0500
++++ b/drivers/net/wireless/intel/iwlwifi/dvm/main.c	2023-03-09 11:53:09.997441880 -0600
+@@ -1248,7 +1248,7 @@
  	 ************************/
  	hw = iwl_alloc_all();
  	if (!hw) {
@@ -1054,7 +1303,7 @@ diff -ru a/drivers/net/wireless/intel/iwlwifi/dvm/main.c b/drivers/net/wireless/
  		goto out;
  	}
  
-@@ -1382,8 +1382,7 @@
+@@ -1376,8 +1376,7 @@
  	/***********************
  	 * 2. Read REV register
  	 ***********************/
@@ -1064,10 +1313,29 @@ diff -ru a/drivers/net/wireless/intel/iwlwifi/dvm/main.c b/drivers/net/wireless/
  
  	if (iwl_trans_start_hw(priv->trans))
  		goto out_free_hw;
-diff -ru a/drivers/net/wireless/intel/iwlwifi/iwl-drv.c b/drivers/net/wireless/intel/iwlwifi/iwl-drv.c
---- a/drivers/net/wireless/intel/iwlwifi/iwl-drv.c	2021-06-14 01:15:34.040711570 +0200
-+++ b/drivers/net/wireless/intel/iwlwifi/iwl-drv.c	2021-06-14 01:16:26.492820732 +0200
-@@ -251,7 +251,6 @@
+diff --color -Nru a/drivers/net/wireless/intel/iwlwifi/iwl-drv.c b/drivers/net/wireless/intel/iwlwifi/iwl-drv.c
+--- a/drivers/net/wireless/intel/iwlwifi/iwl-drv.c	2022-07-31 16:03:01.000000000 -0500
++++ b/drivers/net/wireless/intel/iwlwifi/iwl-drv.c	2023-03-09 11:53:09.997441880 -0600
+@@ -184,27 +184,13 @@
+ 
+ 	if (drv->fw_index < cfg->ucode_api_min) {
+ 		IWL_ERR(drv, "no suitable firmware found!\n");
+-
+-		if (cfg->ucode_api_min == cfg->ucode_api_max) {
+-			IWL_ERR(drv, "%s%d is required\n", cfg->fw_name_pre,
+-				cfg->ucode_api_max);
+-		} else {
+-			IWL_ERR(drv, "minimum version required: %s%d\n",
+-				cfg->fw_name_pre, cfg->ucode_api_min);
+-			IWL_ERR(drv, "maximum version supported: %s%d\n",
+-				cfg->fw_name_pre, cfg->ucode_api_max);
+-		}
+-
+-		IWL_ERR(drv,
+-			"check git://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git\n");
+ 		return -ENOENT;
+ 	}
+ 
  	snprintf(drv->firmware_name, sizeof(drv->firmware_name), "%s%s.ucode",
  		 cfg->fw_name_pre, tag);
  
@@ -1076,24 +1344,30 @@ diff -ru a/drivers/net/wireless/intel/iwlwifi/iwl-drv.c b/drivers/net/wireless/i
 +	IWL_DEBUG_FW_INFO(drv, "attempting to load firmware\n");
  
  	return request_firmware_nowait(THIS_MODULE, 1, drv->firmware_name,
-diff -ru a/drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.c b/drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.c
---- a/drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.c	2021-06-14 01:15:34.040711570 +0200
-+++ b/drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.c	2021-06-14 01:16:26.492820732 +0200
-@@ -1321,8 +1321,8 @@
+ 				       drv->trans->dev,
+diff --color -Nru a/drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.c b/drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.c
+--- a/drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.c	2022-07-31 16:03:01.000000000 -0500
++++ b/drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.c	2023-03-09 11:53:09.997441880 -0600
+@@ -1583,13 +1583,11 @@
  	 */
  	ret = request_firmware(&fw_entry, nvm_file_name, trans->dev);
  	if (ret) {
 -		IWL_ERR(trans, "ERROR: %s isn't available %d\n",
 -			nvm_file_name, ret);
-+		IWL_ERR(trans, "ERROR: firmware isn't available %d\n",
-+			ret);
++		IWL_ERR(trans, "ERROR: firmware isn't available %d\n", ret);
  		return ret;
  	}
  
-diff -ru a/drivers/net/wireless/intel/iwlwifi/mvm/ops.c b/drivers/net/wireless/intel/iwlwifi/mvm/ops.c
---- a/drivers/net/wireless/intel/iwlwifi/mvm/ops.c	2021-06-14 01:15:34.048711587 +0200
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/ops.c	2021-06-14 01:16:26.492820732 +0200
-@@ -809,8 +809,7 @@
+-	IWL_INFO(trans, "Loaded NVM file %s (%zu bytes)\n",
+-		 nvm_file_name, fw_entry->size);
++	IWL_INFO(trans, "Loaded NVM file (%zu bytes)\n", fw_entry->size);
+ 
+ 	if (fw_entry->size > MAX_NVM_FILE_LEN) {
+ 		IWL_ERR(trans, "NVM file too large\n");
+diff --color -Nru a/drivers/net/wireless/intel/iwlwifi/mvm/ops.c b/drivers/net/wireless/intel/iwlwifi/mvm/ops.c
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/ops.c	2022-07-31 16:03:01.000000000 -0500
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/ops.c	2023-03-09 11:53:09.997441880 -0600
+@@ -1285,8 +1285,7 @@
  		goto out_free;
  	}
  
@@ -1103,10 +1377,10 @@ diff -ru a/drivers/net/wireless/intel/iwlwifi/mvm/ops.c b/drivers/net/wireless/i
  
  	if (iwlwifi_mod_params.nvm_file)
  		mvm->nvm_file_name = iwlwifi_mod_params.nvm_file;
-diff -ru a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
---- a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c	2021-06-14 01:15:34.116711731 +0200
-+++ b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c	2021-06-14 01:16:26.492820732 +0200
-@@ -2069,9 +2069,9 @@
+diff --color -Nru a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
+--- a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c	2023-03-09 11:48:45.000000000 -0600
++++ b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c	2023-03-09 11:53:09.997441880 -0600
+@@ -2073,9 +2073,9 @@
  	int ret = 0;
  	u16 signature;
  
@@ -1118,9 +1392,9 @@ diff -ru a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c b/drivers/net/w
  		ret = -EAGAIN;
  		goto exit;
  	}
-diff -ru a/drivers/net/wireless/realtek/rtlwifi/core.c b/drivers/net/wireless/realtek/rtlwifi/core.c
---- a/drivers/net/wireless/realtek/rtlwifi/core.c	2021-06-14 01:15:34.156711815 +0200
-+++ b/drivers/net/wireless/realtek/rtlwifi/core.c	2021-06-14 01:16:26.492820732 +0200
+diff --color -Nru a/drivers/net/wireless/realtek/rtlwifi/core.c b/drivers/net/wireless/realtek/rtlwifi/core.c
+--- a/drivers/net/wireless/realtek/rtlwifi/core.c	2022-07-31 16:03:01.000000000 -0500
++++ b/drivers/net/wireless/realtek/rtlwifi/core.c	2023-03-09 11:53:09.997441880 -0600
 @@ -83,8 +83,7 @@
  			err = request_firmware(&firmware,
  					       rtlpriv->cfg->alt_fw_name,
@@ -1131,9 +1405,9 @@ diff -ru a/drivers/net/wireless/realtek/rtlwifi/core.c b/drivers/net/wireless/re
  			if (!err)
  				goto found_alt;
  		}
-diff -ru a/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/sw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/sw.c
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/sw.c	2021-06-14 01:15:34.124711748 +0200
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/sw.c	2021-06-14 01:16:26.492820732 +0200
+diff --color -Nru a/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/sw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/sw.c
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/sw.c	2022-07-31 16:03:01.000000000 -0500
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/sw.c	2023-03-09 11:53:09.997441880 -0600
 @@ -143,7 +143,7 @@
  
  	fw_name = "rtlwifi/rtl8188efw.bin";
@@ -1143,9 +1417,9 @@ diff -ru a/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/sw.c b/drivers/net/wir
  	err = request_firmware_nowait(THIS_MODULE, 1, fw_name,
  				      rtlpriv->io.dev, GFP_KERNEL, hw,
  				      rtl_fw_cb);
-diff -ru a/drivers/net/wireless/realtek/rtlwifi/rtl8192ce/sw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192ce/sw.c
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8192ce/sw.c	2021-06-14 01:15:34.128711756 +0200
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192ce/sw.c	2021-06-14 01:16:26.492820732 +0200
+diff --color -Nru a/drivers/net/wireless/realtek/rtlwifi/rtl8192ce/sw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192ce/sw.c
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8192ce/sw.c	2022-07-31 16:03:01.000000000 -0500
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192ce/sw.c	2023-03-09 11:53:09.997441880 -0600
 @@ -146,7 +146,7 @@
  		fw_name = "rtlwifi/rtl8192cfw.bin";
  
@@ -1155,9 +1429,9 @@ diff -ru a/drivers/net/wireless/realtek/rtlwifi/rtl8192ce/sw.c b/drivers/net/wir
  	err = request_firmware_nowait(THIS_MODULE, 1, fw_name,
  				      rtlpriv->io.dev, GFP_KERNEL, hw,
  				      rtl_fw_cb);
-diff -ru a/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/sw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/sw.c
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/sw.c	2021-06-14 01:15:34.132711765 +0200
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/sw.c	2021-06-14 01:16:26.492820732 +0200
+diff --color -Nru a/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/sw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/sw.c
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/sw.c	2022-07-31 16:03:01.000000000 -0500
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/sw.c	2023-03-09 11:53:09.997441880 -0600
 @@ -55,7 +55,7 @@
  	}
  	/* provide name of alternative file */
@@ -1167,21 +1441,21 @@ diff -ru a/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/sw.c b/drivers/net/wir
  	rtlpriv->max_fw_size = 0x4000;
  	err = request_firmware_nowait(THIS_MODULE, 1,
  				      fw_name, rtlpriv->io.dev,
-diff -ru a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/sw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/sw.c
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/sw.c	2021-06-14 01:15:34.132711765 +0200
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/sw.c	2021-06-14 01:16:26.492820732 +0200
+diff --color -Nru a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/sw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/sw.c
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/sw.c	2022-07-31 16:03:01.000000000 -0500
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/sw.c	2023-03-09 11:53:10.001441899 -0600
 @@ -154,7 +154,7 @@
  
  	rtlpriv->max_fw_size = 0x8000;
  	pr_info("Driver for Realtek RTL8192DE WLAN interface\n");
 -	pr_info("Loading firmware file %s\n", fw_name);
-+	pr_info("Loading firmware\n");
++	pr_info("Loading firmware file\n");
  
  	/* request fw */
  	err = request_firmware_nowait(THIS_MODULE, 1, fw_name,
-diff -ru a/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/sw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/sw.c
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/sw.c	2021-06-14 01:15:34.136711773 +0200
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/sw.c	2021-06-14 01:16:26.492820732 +0200
+diff --color -Nru a/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/sw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/sw.c
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/sw.c	2022-07-31 16:03:01.000000000 -0500
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/sw.c	2023-03-09 11:53:10.001441899 -0600
 @@ -149,7 +149,7 @@
  	fw_name = "rtlwifi/rtl8192eefw.bin";
  
@@ -1191,11 +1465,11 @@ diff -ru a/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/sw.c b/drivers/net/wir
  	err = request_firmware_nowait(THIS_MODULE, 1, fw_name,
  				      rtlpriv->io.dev, GFP_KERNEL, hw,
  				      rtl_fw_cb);
-diff -ru a/drivers/net/wireless/realtek/rtlwifi/rtl8192se/sw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192se/sw.c
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8192se/sw.c	2021-06-14 01:15:34.140711782 +0200
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192se/sw.c	2021-06-14 01:16:26.492820732 +0200
+diff --color -Nru a/drivers/net/wireless/realtek/rtlwifi/rtl8192se/sw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192se/sw.c
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8192se/sw.c	2022-07-31 16:03:01.000000000 -0500
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192se/sw.c	2023-03-09 11:53:10.001441899 -0600
 @@ -69,7 +69,7 @@
- 			 "Firmware callback routine entered!\n");
+ 		"Firmware callback routine entered!\n");
  	complete(&rtlpriv->firmware_loading_complete);
  	if (!firmware) {
 -		pr_err("Firmware %s not available\n", fw_name);
@@ -1212,9 +1486,9 @@ diff -ru a/drivers/net/wireless/realtek/rtlwifi/rtl8192se/sw.c b/drivers/net/wir
  	/* request fw */
  	err = request_firmware_nowait(THIS_MODULE, 1, fw_name,
  				      rtlpriv->io.dev, GFP_KERNEL, hw,
-diff -ru a/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/sw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/sw.c
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/sw.c	2021-06-14 01:15:34.144711790 +0200
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/sw.c	2021-06-14 01:16:26.492820732 +0200
+diff --color -Nru a/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/sw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/sw.c
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/sw.c	2022-07-31 16:03:01.000000000 -0500
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/sw.c	2023-03-09 11:53:10.001441899 -0600
 @@ -152,7 +152,7 @@
  		fw_name = "rtlwifi/rtl8723fw_B.bin";
  
@@ -1224,9 +1498,9 @@ diff -ru a/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/sw.c b/drivers/net/wir
  	err = request_firmware_nowait(THIS_MODULE, 1, fw_name,
  				      rtlpriv->io.dev, GFP_KERNEL, hw,
  				      rtl_fw_cb);
-diff -ru a/drivers/net/wireless/realtek/rtlwifi/rtl8723be/sw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8723be/sw.c
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8723be/sw.c	2021-06-14 01:15:34.148711798 +0200
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8723be/sw.c	2021-06-14 01:16:26.492820732 +0200
+diff --color -Nru a/drivers/net/wireless/realtek/rtlwifi/rtl8723be/sw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8723be/sw.c
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8723be/sw.c	2022-07-31 16:03:01.000000000 -0500
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8723be/sw.c	2023-03-09 11:53:10.001441899 -0600
 @@ -156,7 +156,7 @@
  	}
  
@@ -1236,9 +1510,9 @@ diff -ru a/drivers/net/wireless/realtek/rtlwifi/rtl8723be/sw.c b/drivers/net/wir
  	err = request_firmware_nowait(THIS_MODULE, 1, fw_name,
  				      rtlpriv->io.dev, GFP_KERNEL, hw,
  				      rtl_fw_cb);
-diff -ru a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/sw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/sw.c
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/sw.c	2021-06-14 01:15:34.152711807 +0200
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/sw.c	2021-06-14 01:16:26.492820732 +0200
+diff --color -Nru a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/sw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/sw.c
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/sw.c	2022-07-31 16:03:01.000000000 -0500
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/sw.c	2023-03-09 11:53:10.001441899 -0600
 @@ -185,7 +185,7 @@
  
  	rtlpriv->max_fw_size = 0x8000;
@@ -1257,254 +1531,106 @@ diff -ru a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/sw.c b/drivers/net/wir
  	err = request_firmware_nowait(THIS_MODULE, 1,
  				      wowlan_fw_name,
  				      rtlpriv->io.dev, GFP_KERNEL, hw,
-diff -r -u linux-hwe-5.13-5.13.0.orig/drivers/bluetooth/ath3k.c linux-hwe-5.13-5.13.0/drivers/bluetooth/ath3k.c
---- linux-hwe-5.13-5.13.0.orig/drivers/bluetooth/ath3k.c	2021-06-27 18:21:11.000000000 -0400
-+++ linux-hwe-5.13-5.13.0/drivers/bluetooth/ath3k.c	2022-01-06 14:02:09.005670683 -0500
-@@ -383,7 +383,7 @@
+diff -Nru --color a/drivers/gpu/drm/amd/amdgpu/amdgpu_discovery.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_discovery.c
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_discovery.c	2023-03-13 07:14:05.000000000 +0000
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_discovery.c	2023-03-13 07:46:23.778827386 +0000
+@@ -223,8 +223,7 @@
  
- 	ret = request_firmware(&firmware, filename, &udev->dev);
- 	if (ret < 0) {
--		BT_ERR("Patch file not found %s", filename);
-+		BT_ERR("Patch file not found");
- 		return ret;
+ 	r = request_firmware(&fw, fw_name, adev->dev);
+ 	if (r) {
+-		dev_err(adev->dev, "can't load firmware \"%s\"\n",
+-			fw_name);
++		dev_err(adev->dev, "can't load firmware\n", fw_name);
+ 		return r;
  	}
  
-@@ -446,7 +446,7 @@
- 
- 	ret = request_firmware(&firmware, filename, &udev->dev);
- 	if (ret < 0) {
--		BT_ERR("Configuration file not found %s", filename);
-+		BT_ERR("Configuration file not found");
- 		return ret;
- 	}
- 
-@@ -505,11 +505,10 @@
- 	ret = request_firmware(&firmware, ATH3K_FIRMWARE, &udev->dev);
- 	if (ret < 0) {
- 		if (ret == -ENOENT)
--			BT_ERR("Firmware file \"%s\" not found",
--							ATH3K_FIRMWARE);
-+			BT_ERR("Firmware file not found");
- 		else
--			BT_ERR("Firmware file \"%s\" request failed (err=%d)",
--							ATH3K_FIRMWARE, ret);
-+			BT_ERR("Firmware file request failed (err=%d)",
-+							ret);
- 		return ret;
- 	}
- 
-diff -r -u linux-hwe-5.13-5.13.0.orig/drivers/bluetooth/btintel.c linux-hwe-5.13-5.13.0/drivers/bluetooth/btintel.c
---- linux-hwe-5.13-5.13.0.orig/drivers/bluetooth/btintel.c	2021-06-27 18:21:11.000000000 -0400
-+++ linux-hwe-5.13-5.13.0/drivers/bluetooth/btintel.c	2022-01-06 13:52:00.284072017 -0500
-@@ -304,8 +304,8 @@
- 
- 	err = request_firmware_direct(&fw, ddc_name, &hdev->dev);
- 	if (err < 0) {
--		bt_dev_err(hdev, "Failed to load Intel DDC file %s (%d)",
--			   ddc_name, err);
-+		bt_dev_err(hdev, "Failed to load Intel DDC file (%d)",
-+			   err);
- 		return err;
- 	}
- 
-diff -r -u linux-hwe-5.13-5.13.0.orig/drivers/bluetooth/btqca.c linux-hwe-5.13-5.13.0/drivers/bluetooth/btqca.c
---- linux-hwe-5.13-5.13.0.orig/drivers/bluetooth/btqca.c	2022-01-06 13:31:26.000000000 -0500
-+++ linux-hwe-5.13-5.13.0/drivers/bluetooth/btqca.c	2022-01-06 14:19:24.164456053 -0500
-@@ -394,20 +394,19 @@
- 	const u8 *segment;
- 	int ret, size, remain, i = 0;
- 
--	bt_dev_info(hdev, "QCA Downloading %s", config->fwname);
-+	bt_dev_info(hdev, "QCA loading");
- 
- 	ret = request_firmware(&fw, config->fwname, &hdev->dev);
- 	if (ret) {
--		bt_dev_err(hdev, "QCA Failed to request file: %s (%d)",
--			   config->fwname, ret);
-+		bt_dev_err(hdev, "QCA Failed to request file (%d)",
-+			   ret);
- 		return ret;
- 	}
- 
- 	size = fw->size;
- 	data = vmalloc(fw->size);
- 	if (!data) {
--		bt_dev_err(hdev, "QCA Failed to allocate memory for file: %s",
--			   config->fwname);
-+		bt_dev_err(hdev, "QCA Failed to allocate memory for file");
- 		release_firmware(fw);
- 		return -ENOMEM;
- 	}
-diff -r -u linux-hwe-5.13-5.13.0.orig/drivers/bluetooth/btrtl.c linux-hwe-5.13-5.13.0/drivers/bluetooth/btrtl.c
---- linux-hwe-5.13-5.13.0.orig/drivers/bluetooth/btrtl.c	2021-06-27 18:21:11.000000000 -0400
-+++ linux-hwe-5.13-5.13.0/drivers/bluetooth/btrtl.c	2022-01-06 14:04:09.911642928 -0500
-@@ -475,7 +475,7 @@
- 	const struct firmware *fw;
- 	int ret;
- 
--	rtl_dev_info(hdev, "loading %s", name);
-+	rtl_dev_info(hdev, "loading firmware");
- 	ret = request_firmware(&fw, name, &hdev->dev);
- 	if (ret < 0)
- 		return ret;
-@@ -649,8 +649,7 @@
- 	btrtl_dev->fw_len = rtl_load_file(hdev, btrtl_dev->ic_info->fw_name,
- 					  &btrtl_dev->fw_data);
- 	if (btrtl_dev->fw_len < 0) {
--		rtl_dev_err(hdev, "firmware file %s not found",
--			    btrtl_dev->ic_info->fw_name);
-+		rtl_dev_err(hdev, "firmware file not found");
- 		ret = btrtl_dev->fw_len;
- 		goto err_free;
- 	}
-@@ -667,8 +666,7 @@
- 						   &btrtl_dev->cfg_data);
- 		if (btrtl_dev->ic_info->config_needed &&
- 		    btrtl_dev->cfg_len <= 0) {
--			rtl_dev_err(hdev, "mandatory config file %s not found",
--				    btrtl_dev->ic_info->cfg_name);
-+			rtl_dev_err(hdev, "mandatory config file not found");
- 			ret = btrtl_dev->cfg_len;
- 			goto err_free;
- 		}
-diff -r -u linux-hwe-5.13-5.13.0.orig/drivers/bluetooth/btusb.c linux-hwe-5.13-5.13.0/drivers/bluetooth/btusb.c
---- linux-hwe-5.13-5.13.0.orig/drivers/bluetooth/btusb.c	2022-01-06 13:31:26.000000000 -0500
-+++ linux-hwe-5.13-5.13.0/drivers/bluetooth/btusb.c	2022-01-06 13:47:17.680749780 -0500
-@@ -1995,8 +1995,8 @@
- 			return NULL;
- 		}
- 
--		bt_dev_err(hdev, "failed to open Intel firmware file: %s (%d)",
--			   fwname, ret);
-+		bt_dev_err(hdev, "failed to open Intel firmware file (%d)",
-+			   ret);
- 
- 		/* If the correct firmware patch file is not found, use the
- 		 * default firmware patch file instead
-@@ -2004,8 +2004,7 @@
- 		snprintf(fwname, sizeof(fwname), "intel/ibt-hw-%x.%x.bseq",
- 			 ver->hw_platform, ver->hw_variant);
- 		if (request_firmware(&fw, fwname, &hdev->dev) < 0) {
--			bt_dev_err(hdev, "failed to open default fw file: %s",
--				   fwname);
-+			bt_dev_err(hdev, "failed to open default fw file");
- 			return NULL;
- 		}
- 	}
-@@ -2581,7 +2580,7 @@
- 		}
- 
- 		bt_dev_err(hdev, "Failed to load Intel firmware file %s (%d)",
--			   fwname, err);
-+			   err);
- 
- 		return err;
- 	}
-@@ -2750,8 +2749,8 @@
- 			return 0;
- 		}
- 
--		bt_dev_err(hdev, "Failed to load Intel firmware file %s (%d)",
--			   fwname, err);
-+		bt_dev_err(hdev, "Failed to load Intel firmware file (%d)",
-+			   err);
- 		return err;
- 	}
- 
-@@ -4191,8 +4190,8 @@
- 
- 	err = request_firmware(&fw, fwname, &hdev->dev);
+diff -Nru --color a/drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c
+--- a/drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c2023-03-13 07:14:05.000000000 +0000
++++ b/drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c	2023-03-13 07:43:14.487511703 +0000
+@@ -821,8 +821,7 @@
+ out:
  	if (err) {
--		bt_dev_err(hdev, "failed to request rampatch file: %s (%d)",
--			   fwname, err);
-+		bt_dev_err(hdev, "failed to request rampatch file (%d)",
-+			   err);
- 		return err;
- 	}
- 
-@@ -4252,8 +4251,8 @@
- 
- 	err = request_firmware(&fw, fwname, &hdev->dev);
+ 		dev_err(adev->dev,
+-			"gfx11: Failed to load firmware \"%s\"\n",
+-			fw_name);
++			"gfx11: Failed to load firmware\n", fw_name);
+ 		release_firmware(adev->gfx.pfp_fw);
+ 		adev->gfx.pfp_fw = NULL;
+ 		release_firmware(adev->gfx.me_fw);
+diff -Nru --color a/drivers/gpu/drm/amd/amdgpu/imu_v11_0.c b/drivers/gpu/drm/amd/amdgpu/imu_v11_0.c
+--- a/drivers/gpu/drm/amd/amdgpu/imu_v11_0.c2022-07-31 21:03:01.000000000 +0000
++++ b/drivers/gpu/drm/amd/amdgpu/imu_v11_0.c	2023-03-13 07:45:31.295016045 +0000
+@@ -71,8 +71,7 @@
+ out:
  	if (err) {
--		bt_dev_err(hdev, "failed to request NVM file: %s (%d)",
--			   fwname, err);
-+		bt_dev_err(hdev, "failed to request NVM file (%d)",
-+			   err);
- 		return err;
+ 		dev_err(adev->dev,
+-			"gfx11: Failed to load firmware \"%s\"\n",
+-			fw_name);
++			"gfx11: Failed to load firmware\n");
+ 		release_firmware(adev->gfx.imu_fw);
  	}
  
-diff -r -u linux-hwe-5.13-5.13.0.orig/drivers/bluetooth/hci_ag6xx.c linux-hwe-5.13-5.13.0/drivers/bluetooth/hci_ag6xx.c
---- linux-hwe-5.13-5.13.0.orig/drivers/bluetooth/hci_ag6xx.c	2021-06-27 18:21:11.000000000 -0400
-+++ linux-hwe-5.13-5.13.0/drivers/bluetooth/hci_ag6xx.c	2022-01-06 13:56:48.375097181 -0500
-@@ -195,13 +195,13 @@
+diff -Nru --color a/drivers/gpu/drm/amd/amdgpu/sdma_v6_0.c b/drivers/gpu/drm/amd/amdgpu/sdma_v6_0.c
+--- a/drivers/gpu/drm/amd/amdgpu/sdma_v6_0.c	2023-03-13 07:14:05.000000000 +0000
++++ b/drivers/gpu/drm/amd/amdgpu/sdma_v6_0.c	2023-03-13 07:44:37.099211678 +0000
+@@ -162,7 +162,7 @@
  
- 	err = request_firmware(&fw, fwname, &hdev->dev);
- 	if (err < 0) {
--		bt_dev_err(hdev, "Failed to open Intel bddata file: %s (%d)",
--			   fwname, err);
-+		bt_dev_err(hdev, "Failed to open Intel bddata file (%d)",
-+			   err);
- 		goto patch;
+ out:
+ 	if (err) {
+-		DRM_ERROR("sdma_v6_0: Failed to load firmware \"%s\"\n", fw_name);
++		DRM_ERROR("sdma_v6_0: Failed to load firmware\n");
+ 		sdma_v6_0_destroy_inst_ctx(adev);
  	}
- 	fw_ptr = fw->data;
- 
--	bt_dev_info(hdev, "Applying bddata (%s)", fwname);
-+	bt_dev_info(hdev, "Applying bddata");
- 
- 	skb = __hci_cmd_sync_ev(hdev, 0xfc2f, fw->size, fw->data,
- 				HCI_EV_CMD_STATUS, HCI_CMD_TIMEOUT);
-@@ -233,13 +233,13 @@
- 
- 	err = request_firmware(&fw, fwname, &hdev->dev);
- 	if (err < 0) {
--		bt_dev_err(hdev, "Failed to open Intel patch file: %s(%d)",
--			   fwname, err);
-+		bt_dev_err(hdev, "Failed to open Intel patch file(%d)",
-+			   err);
- 		goto complete;
+ 	return err;
+diff -Nru --color a/drivers/gpu/drm/radeon/cik.c b/drivers/gpu/drm/radeon/cik.c
+--- a/drivers/gpu/drm/radeon/cik.c	2023-03-13 07:30:35.362282308 +0000
++++ b/drivers/gpu/drm/radeon/cik.c	2023-03-13 07:47:11.750655564 +0000
+@@ -2238,8 +2238,7 @@
+ 			snprintf(fw_name, sizeof(fw_name), "radeon/%s_smc.bin", chip_name);
+ 			err = request_firmware(&rdev->smc_fw, fw_name, rdev->dev);
+ 			if (err) {
+-				pr_err("smc: error loading firmware \"%s\"\n",
+-				       fw_name);
++				pr_err("smc: error loading firmware\n");
+ 				release_firmware(rdev->smc_fw);
+ 				rdev->smc_fw = NULL;
+ 				err = 0;
+diff -Nru --color a/drivers/net/wireless/intel/ipw2x00/ipw2100.c b/drivers/net/wireless/intel/ipw2x00/ipw2100.c
+--- a/drivers/net/wireless/intel/ipw2x00/ipw2100.c	2023-03-13 07:30:35.446282020 +0000
++++ b/drivers/net/wireless/intel/ipw2x00/ipw2100.c	2023-03-13 07:48:46.790316692 +0000
+@@ -1058,8 +1058,8 @@
+ 	/* load f/w */
+ 	err = ipw2100_fw_download(priv, &ipw2100_firmware);
+ 	if (err) {
+-		IPW_DEBUG_ERROR("%s: Error loading firmware: %d\n",
+-				priv->net_dev->name, err);
++		IPW_DEBUG_ERROR("%s: Error loading firmware\n",
++				priv->net_dev->name);
+ 		goto fail;
  	}
- 	fw_ptr = fw->data;
+ #ifndef CONFIG_PM
+diff -Nru --color a/drivers/net/wireless/intel/iwlwifi/iwl-drv.c b/drivers/net/wireless/intel/iwlwifi/iwl-drv.c
+--- a/drivers/net/wireless/intel/iwlwifi/iwl-drv.c	2023-03-13 07:30:35.554281653 +0000
++++ b/drivers/net/wireless/intel/iwlwifi/iwl-drv.c	2023-03-13 07:55:50.464823615 +0000
+@@ -1402,8 +1402,8 @@
+ 	if (!ucode_raw)
+ 		goto try_again;
  
--	bt_dev_info(hdev, "Patching firmware file (%s)", fwname);
-+	bt_dev_info(hdev, "Patching firmware file");
+-	IWL_DEBUG_FW_INFO(drv, "Loaded firmware file '%s' (%zd bytes).\n",
+-			  drv->firmware_name, ucode_raw->size);
++	IWL_DEBUG_FW_INFO(drv, "Loaded firmware file (%zd bytes).\n",
++			  ucode_raw->size);
  
- 	/* PBN patch file contains a list of binary patches to be applied on top
- 	 * of the embedded firmware. Each patch entry header contains the target
-diff -r -u linux-hwe-5.13-5.13.0.orig/drivers/bluetooth/hci_intel.c linux-hwe-5.13-5.13.0/drivers/bluetooth/hci_intel.c
---- linux-hwe-5.13-5.13.0.orig/drivers/bluetooth/hci_intel.c	2021-06-27 18:21:11.000000000 -0400
-+++ linux-hwe-5.13-5.13.0/drivers/bluetooth/hci_intel.c	2022-01-06 13:55:26.408500469 -0500
-@@ -706,7 +706,7 @@
- 		return err;
- 	}
- 
--	bt_dev_info(hdev, "Found device firmware: %s", fwname);
-+	bt_dev_info(hdev, "Found device firmware");
- 
- 	/* Save the DDC file name for later */
- 	switch (ver.hw_variant) {
-diff -r -u linux-hwe-5.13-5.13.0.orig/drivers/bluetooth/hci_ll.c linux-hwe-5.13-5.13.0/drivers/bluetooth/hci_ll.c
---- linux-hwe-5.13-5.13.0.orig/drivers/bluetooth/hci_ll.c	2021-06-27 18:21:11.000000000 -0400
-+++ linux-hwe-5.13-5.13.0/drivers/bluetooth/hci_ll.c	2022-01-06 14:21:46.930095575 -0500
-@@ -539,8 +539,8 @@
- 
- 	err = request_firmware(&fw, bts_scr_name, &lldev->serdev->dev);
- 	if (err || !fw->data || !fw->size) {
--		bt_dev_err(lldev->hu.hdev, "request_firmware failed(errno %d) for %s",
--			   err, bts_scr_name);
-+		bt_dev_err(lldev->hu.hdev, "request_firmware failed(errno %d)",
-+			   err);
- 		return -EINVAL;
- 	}
- 	ptr = (void *)fw->data;
-diff -r -u linux-hwe-5.13-5.13.0.orig/drivers/bluetooth/hci_mrvl.c linux-hwe-5.13-5.13.0/drivers/bluetooth/hci_mrvl.c
---- linux-hwe-5.13-5.13.0.orig/drivers/bluetooth/hci_mrvl.c	2021-06-27 18:21:11.000000000 -0400
-+++ linux-hwe-5.13-5.13.0/drivers/bluetooth/hci_mrvl.c	2022-01-06 14:22:37.877253532 -0500
-@@ -277,7 +277,7 @@
- 
- 	err = request_firmware(&fw, name, &hdev->dev);
- 	if (err < 0) {
--		bt_dev_err(hdev, "Failed to load firmware file %s", name);
-+		bt_dev_err(hdev, "Failed to load firmware file");
- 		return err;
+ 	/* Make sure that we got at least the API version number */
+ 	if (ucode_raw->size < 4) {
+@@ -1616,8 +1616,8 @@
+ 		break;
  	}
  
+-	IWL_INFO(drv, "loaded firmware version %s op_mode %s\n",
+-		 drv->fw.fw_version, op->name);
++	IWL_INFO(drv, "loaded firmware version %s\n",
++		 drv->fw.fw_version);
+ 
+ 	/* add this device to the list of devices using this op_mode */
+ 	list_add_tail(&drv->list, &op->drv);

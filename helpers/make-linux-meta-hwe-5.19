@@ -1,7 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2017-2020  Ruben Rodriguez <ruben@trisquel.info>
-#    Copyright (C) 2021  Luis Guzman <ark@switnet.org>
+#    Copyright (C) 2017-2018  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -18,22 +17,18 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
-
+VERSION=6
 . ./config
 
-find debian/control.d/ -type f | grep -v -e '/generic$' -e '/lowlatency$' -e '/virtual$' |xargs rm
-
-cat debian/control.d/* >> debian/control
-sed 's/${variant:suffix}/-20.04/' -i debian/control
-
-/bin/sed 's/linux-firmware/firmware-linux-free/' -i debian/control ./debian/control.d/*
+sed 's/22.04/11.0/g' -i debian/control
+sed 's/20.04/10.0/g' -i debian/control
+#sed 's/Xenial/Flidas/; s/Bionic/Etiona/' -i debian/control
+sed 's/linux-firmware/firmware-linux-free/' -i debian/control ./debian/control.d/generic*
 sed 's/Ubuntu/upstream/' -i debian/control
-sed 's/Linux/Linux-libre/g' -i debian/control ./debian/control.d/generic debian/control.d/lowlatency
-sed 's/, intel-microcode \[amd64\]//; s/, amd64-microcode \[amd64\]//;' debian/control debian/control.d/generic debian/control.d/lowlatency -i
+sed 's/Linux/Linux-libre/g' -i debian/control ./debian/control.d/generic*
+sed 's/, intel-microcode \[amd64\]//; s/, amd64-microcode \[amd64\]//;' -i debian/control debian/control.d/generic
 
-echo '-hwe-20.04' > debian/variants
 
-changelog "Removed nonfree kernel variants, renamed release for Trisquel"
+changelog "Removed linux-firmware dependency, renamed release for Trisquel"
 
 compile
