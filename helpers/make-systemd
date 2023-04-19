@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 NETINST=true
 . ./config
 
@@ -25,6 +25,9 @@ NETINST=true
 sed -i '0,/systemd-timesyncd/{/systemd-timesyncd/d;}' debian/control
 sed -i '/Suggests: systemd-container,/a\ \ \ \ \ \ \ \ \ \ systemd-timesyncd | time-daemon,' \
         debian/control
+
+# Set DNSSEC no by default
+sed -i '/value :/s|allow-downgrade|no|' meson_options.txt
 
 changelog "Rebuild upstream to get udeb dependency for debian-installer."
 compile
