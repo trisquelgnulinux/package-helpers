@@ -1,0 +1,37 @@
+diff -ru a/hook-functions b/hook-functions
+--- a/hook-functions	2021-03-18 12:48:17.000000000 -0600
++++ b/hook-functions	2023-04-26 13:22:32.785212721 -0600
+@@ -83,33 +83,6 @@
+ 
+ 		# Add required firmware
+ 		for firmware in $(modinfo -k "${version}" -F firmware "${kmod}"); do
+-			if [ -e "${DESTDIR}/lib/firmware/${firmware}" ] \
+-			   || [ -e "${DESTDIR}/lib/firmware/${version}/${firmware}" ] \
+-			   || [ -e "${DESTDIR}/lib/firmware/updates/${firmware}" ] \
+-			   || [ -e "${DESTDIR}/lib/firmware/updates/${version}/${firmware}" ]; then
+-				continue
+-			fi
+-
+-			# Only print warning for missing fw of loaded module
+-			# or forced loaded module
+-			if [ ! -e "/lib/firmware/${firmware}" ] \
+-			   && [ ! -e "/lib/firmware/${version}/${firmware}" ] \
+-			   && [ ! -e "/lib/firmware/updates/${firmware}" ] \
+-			   && [ ! -e "/lib/firmware/updates/${version}/${firmware}" ]; then
+-				# Only warn about missing firmware if
+-				# /proc/modules exists
+-				if [ ! -e /proc/modules ] ; then
+-					continue
+-				fi
+-
+-				kmod_modname="${kmod##*/}"
+-				kmod_modname="${kmod_modname%%.*}"
+-				if grep -q "^$kmod_modname\\>" /proc/modules "${CONFDIR}/modules"; then
+-					echo "W: Possible missing firmware /lib/firmware/${firmware} for module ${kmod_modname}" >&2
+-				fi
+-				continue
+-			fi
+-
+ 			for fwloc in "/lib/firmware/updates/${version}/${firmware}" \
+ 				"/lib/firmware/updates/${firmware}" \
+ 				"/lib/firmware/${version}/${firmware}" \
