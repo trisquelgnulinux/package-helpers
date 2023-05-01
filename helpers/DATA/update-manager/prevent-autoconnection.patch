@@ -37,7 +37,7 @@ diff -ru source.orig/UpdateManager/UpdateManager.py source/UpdateManager/UpdateM
              self.start_available()
  
      def start_update(self):
-+        if apt_pkg.config.find_i("APT::Periodic::Update-Package-Lists") == 0:
++        if not self.options.no_check_screen and apt_pkg.config.find_i("APT::Periodic::Update-Package-Lists") == 0:
 +            self._start_pane(ShouldUpdateDialog(self))
 +            return
 +        if self.options.no_update:
@@ -51,3 +51,16 @@ diff -ru source.orig/UpdateManager/UpdateManager.py source/UpdateManager/UpdateM
          if self.options.no_update:
              self.start_available()
              return
+diff -ru source.orig/update-manager source/update-manager
+--- source.orig/update-manager	2023-04-30 19:59:16.611564826 -0400
++++ source/update-manager	2023-04-30 20:10:25.515512178 -0400
+@@ -92,6 +92,9 @@
+   parser.add_option ("--no-update", action="store_true",
+                      dest="no_update", default=False,
+                      help=_("Do not check for updates when starting"))
++  parser.add_option ("--no-check-screen", action="store_true",
++                     dest="no_check_screen", default=True,
++                     help=_("Don't show screen preventing unwanted connections to the Internet"))
+   parser.add_option ("", "--debug", action="store_true", default=False,
+                      help=_("Show debug messages"))
+ 
