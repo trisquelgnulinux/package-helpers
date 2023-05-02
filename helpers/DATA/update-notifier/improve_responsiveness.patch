@@ -34,15 +34,6 @@ diff -ru source.orig/src/update-notifier.c source/src/update-notifier.c
 diff -ru source.orig/src/update.c source/src/update.c
 --- source.orig/src/update.c	2023-05-01 14:30:39.889778059 -0400
 +++ source/src/update.c	2023-05-01 18:05:21.754318730 -0400
-@@ -547,7 +547,7 @@
-       return;
-    }
- 
--   g_spawn_command_line_async("nice ionice -c3 update-manager "
-+   g_spawn_command_line_async("sleep 5; nice ionice -c3 update-manager "
-                               "--no-update --no-focus-on-map", NULL);
- }
- 
 @@ -702,7 +702,8 @@
  
     // show the notification with some delay. otherwise on a login
