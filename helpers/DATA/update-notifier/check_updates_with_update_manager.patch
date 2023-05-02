@@ -1,0 +1,61 @@
+diff -ru source.bak/data/backend_helper.py source/data/backend_helper.py
+--- source.bak/data/backend_helper.py	2023-04-30 21:20:07.986410268 -0400
++++ source/data/backend_helper.py	2023-04-30 21:35:59.442841302 -0400
+@@ -58,35 +58,14 @@
+         return _install_all_updates_synaptic()
+ 
+ 
+-# check updates
+-def _check_updates_aptdaemon():
+-    from gi.repository import Gtk
+-    from aptdaemon import client, enums
+-    from aptdaemon.gtk3widgets import AptProgressDialog
+-    client = client.AptClient()
+-    trans = client.update_cache()
+-    dia = AptProgressDialog(trans)
+-    dia.connect("finished", Gtk.main_quit)
+-    dia.run()
+-    Gtk.main()
+-    return trans.exit == enums.EXIT_SUCCESS
+-
+-
+-def _check_updates_gtk():
+-    cmd = ["/usr/bin/synaptic-pkexec",
+-           "--update-at-startup",
+-           "--non-interactive",
+-           "--hide-main-window",
+-           ]
+-    subprocess.call(cmd)
+-
+-
+ def check_updates():
+-    """ check for updates either with aptdaemon or synaptic """
+-    if HAVE_APTDAEMON:
+-        return _check_updates_aptdaemon()
++    """ check and show updates using update-manager """
++    if os.path.exists("/usr/bin/update-manager"):
++        cmd = ["update-manager", "--no-check-screen"]
++        res = subprocess.call(cmd)
++        return (res == 0)
+     else:
+-        return _check_updates_gtk()
++        logging.error("update-manager is not installed")
+ 
+ 
+ # start packagemanager
+diff -ru source.orig/data/backend_helper.py source/data/backend_helper.py
+--- source.orig/data/backend_helper.py	2023-05-01 10:18:12.941023681 -0400
++++ source/data/backend_helper.py	2023-05-01 10:27:12.724396819 -0400
+@@ -53,9 +53,10 @@
+ def install_all_updates():
+     """ install all updates either with synaptic or aptdaemon """
+     if HAVE_APTDAEMON:
+-        return _install_all_updates_aptdaemon()
++        _install_all_updates_aptdaemon()
+     else:
+-        return _install_all_updates_synaptic()
++        _install_all_updates_synaptic()
++    return show_updates()
+ 
+ 
+ def check_updates():
