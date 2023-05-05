@@ -5,7 +5,7 @@
      # Second, grab first installed one from DistUpgrade.cfg.
      # Lastly, fallback to ubuntu-desktop again.
 -    meta_pkgs = ['ubuntu-desktop']
-+    meta_pkgs = ['trisquel','trisquel-mini','trisquel-sugar']
++    meta_pkgs = ['trisquel','trisquel-mini','trisquel-sugar', 'triskel', 'trisquel-gnome']
  
      try:
          meta_pkgs.extend(sorted(_load_meta_pkg_list()))

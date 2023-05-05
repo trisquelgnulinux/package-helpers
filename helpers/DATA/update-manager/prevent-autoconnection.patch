@@ -53,6 +53,19 @@ diff -ru source.orig/UpdateManager/UpdateManager.py source/UpdateManager/UpdateM
              self.start_available()
              return
 diff -ru source.orig/update-manager source/update-manager
+--- source.orig/update-manager	2023-05-04 19:26:47.710184166 -0400
++++ source/update-manager	2023-05-04 19:29:09.884636731 -0400
+@@ -79,7 +79,7 @@
+                      default="/usr/share/update-manager/",
+                      help=_("Directory that contains the data files"))
+   parser.add_option ("-c", "--check-dist-upgrades", action="store_true",
+-                     dest="check_dist_upgrades", default=False,
++                     dest="check_dist_upgrades", default=True,
+                      help=_("Check if a new Ubuntu release is available"))
+   parser.add_option ("-d", "--devel-release", action="store_true",
+                      dest="devel_release", default=False,
+
+diff -ru source.orig/update-manager source/update-manager
 --- source.orig/update-manager	2023-04-30 19:59:16.611564826 -0400
 +++ source/update-manager	2023-04-30 20:10:25.515512178 -0400
 @@ -92,6 +92,9 @@
