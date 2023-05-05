@@ -59,3 +59,54 @@ diff -ru source.orig/data/backend_helper.py source/data/backend_helper.py
  
  
  def check_updates():
+diff -ru source.orig/data/backend_helper.py source/data/backend_helper.py
+--- source.orig/data/backend_helper.py	2023-05-04 20:33:23.000867005 -0400
++++ source/data/backend_helper.py	2023-05-04 20:37:57.616904543 -0400
+@@ -5,6 +5,7 @@
+ import os
+ import subprocess
+ import sys
++import apt_pkg
+ 
+ HAVE_APTDAEMON = False
+ try:
+@@ -69,6 +70,16 @@
+         logging.error("update-manager is not installed")
+ 
+ 
++def reminder_check():
++    """ check and show updates using update-manager """
++    if os.path.exists("/usr/bin/update-manager"):
++        cmd = ["update-manager", "--check-dist-upgrades", "--no-focus-on-map"]
++        res = subprocess.call(cmd)
++        return (res == 0)
++    else:
++        logging.error("update-manager is not installed")
++
++
+ # start packagemanager
+ def start_packagemanager():
+     if os.path.exists("/usr/bin/synaptic-pkexec"):
+@@ -127,6 +138,9 @@
+     # check_updates - synaptic --reload/aptdaemon reload
+     command = subparser.add_parser("check_updates")
+     command.set_defaults(command="check_updates")
++    # reminder_check
++    command = subparser.add_parser("reminder_check")
++    command.set_defaults(command="reminder_check")
+     # start_pkgmanager
+     command = subparser.add_parser("start_packagemanager")
+     command.set_defaults(command="start_packagemanager")
+@@ -141,6 +155,12 @@
+     else:
+         logging.basicConfig(level=logging.INFO)
+ 
++    # we show a "do you want to check for updates" every 2 weeks, if auto-update is off
++    if args.command == "reminder_check":
++        apt_pkg.init()
++        if apt_pkg.config.find_i("APT::Periodic::Update-Package-Lists") != 0:
++            sys.exit(0)
++
+     func_name = args.command
+     f_kwargs = {}
+     f = globals()[func_name]

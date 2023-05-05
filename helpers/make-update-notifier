@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=11
+VERSION=12
 COMPONENT=main
 
 . ./config
@@ -31,8 +31,8 @@ sed '/client.upgrade_system/s/safe_mode=True/safe_mode=False/' -i data/backend_h
 patch -p1 < $DATA/check_updates_with_update_manager.patch
 # Shorter check times for apt task ending
 sed '/TIMEOUT_APT_RUN/s/600/60/g' -i src/update-notifier.c
-# Use update-manager to checks for dist-upgrades
-sed '/RELEASE_UPGRADE_CHECKER/s|/usr/lib/ubuntu-release-upgrader/check-new-release-gtk|sleep 5; nice ionice -c3 /usr/bin/update-manager --check-dist-upgrades --no-update --no-focus-on-map|' -i src/update-notifier.h
+# Use update-manager to checks for dist-upgrades.
+sed '/RELEASE_UPGRADE_CHECKER/s|/usr/lib/ubuntu-release-upgrader/check-new-release-gtk|sleep 5; nice ionice -c3 /usr/lib/update-notifier/backend_helper.py reminder_check|' -i src/update-notifier.h
 
 # Reduce the timeout to refresh the status of the tray icon
 patch -p1 < $DATA/improve_responsiveness.patch
@@ -138,6 +138,9 @@ EOF
 # Force removal of old services on previous version.
 sed -i '/Description: Daemon/i Breaks: update-notifier-common (<= 3.192.54.6+11.0trisquel8)' debian/control
 sed -i '/Suggests: policykit-1/i Breaks: update-notifier-common (<= 3.192.54.6+11.0trisquel8)' debian/control
+
+# Improve gtk dependency
+sed '/Package: update-notifier$/,/^$/s/policykit-1/policykit-1, python3-aptdaemon.gtk3widgets/' -i debian/control
 
 changelog "Disabled hp-firmware handling and ubuntu-drivers"
 
