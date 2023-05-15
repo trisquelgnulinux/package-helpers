@@ -1,0 +1,3585 @@
+diff --git a/kernel-wedge-2.96ubuntu3/README b/kernel-wedge-2.96ubuntu3/README
+new file mode 100644
+index 0000000..5d7d329
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/README
+@@ -0,0 +1,195 @@
++This is kernel-wedge, an industrial strength kernel splitting tool.
++It is used to generate kernel module udebs for the debian installer.
++
++To use kernel-wedge, you need a source package, which will become the
++"source" for the generated udebs. Your source package will be very simple,
++looking something like this:
++
++  debian/copyright
++  debian/changelog
++  debian/rules
++  debian/control.stub
++
++  kernel-versions
++  modules/<arch>/*
++  exclude-packages
++  package-list
++
++The second group of files may be placed in a subdirectory, in which
++case the environment variable $KW_CONFIG_DIR must be set to the
++subdirectory name.
++
++Let's get the easy files out of the way. The changelog is a changelog, like
++any other, as is the copyright. The debian/rules can be something as simple
++as this:
++
++  #!/usr/bin/make -f
++  include /usr/share/kernel-wedge/generic-rules
++
++Or you can use the kernel-wedge command directly in your own rules file.
++Run it for some semblance of usage help.
++
++debian/control.stub is the top of a control file. Something like this:
++
++  Source: linux-kernel-di-i386
++  Section: debian-installer
++  Priority: optional
++  Maintainer: Debian Install System Team <debian-boot@lists.debian.org>
++  Build-Depends: kernel-wedge
++
++The rest of the control file will be generated for you.
++
++The kernel-versions file lists the kernel versions to produce packages for.
++There are 6 whitespace separated fields per line, and it looks something
++like this:
++
++# arch   version  flavour       installedname        suffix    build-depends
++i386     2.4.25-1 386           2.4.25-1-386         -         kernel-image-2.4.25-1-386, kernel-pcmcia-modules-2.4.25-1-386
++i386     2.4.24   speakup       2.4.24-speakup       -         kernel-image-2.4.24-speakup
++
++In this case we are building two different flavours of i386 kernels.
++We could just as easily be building kernels for different architectures.
++
++The version is the kernel version, or can be "-", in which case a 
++version must be specified when running the gen-control and install-files
++commands.
++
++The installedname column gives the directory/filename that the kernel and
++modules are installed using in the kernel .deb. If it is "-", it's
++generated from the version and flavor.
++
++The suffix column is either y, - or -$suffix; if it is y then the kernel
++image inside the udeb will include the version and flavour in its name, if
++it is -$suffix then it will include this. (So will the System.map). 
++
++The build-depends are the package that is split up by kernel-wedge.
++If it's "-", kernel-wedge is being used inside the kernel's source
++package.
++
++Finally, you need a modules/<arch> directory, or directories. These are
++used to list the modules that go in a kernel. For example, for i386, we
++want to have some nic drivers, so we create a modules/i386/nic-modules
++listing them:
++
++# My short list of nic modules.
++8139too
++e100
++natsemi
++ne2k-pci
++tulip
++winbond-840
++3c59x
++
++Suppose we want a different set of modules in the speakup flavored kernel.
++Then create a modules/<arch>-<flavor>/nic-modules instead, it will be used
++by preference. One udeb will be created for each modules list file,
++containing the listed modules. The names of the files should match the
++names of the various modules listed in the package-list file in the
++default-configuration directory.
++
++The default-configuration directory is specified by the environment
++variable $KW_DEFCONFIG_DIR.
++
++You will also want a special modules list file for the kernel-image udeb.
++If you need to include no modules with your kernel, it can be an empty file.
++but you should have a modules/<arch>/kernel.
++
++kernel-wedge will copy the listed modules into each package. If a listed 
++module does not exist, it will fail by default. Sometimes you might want to
++make a module be included but it's not fatal for it not to be available.
++To indicate this, follow the module with a space and a "?".
++
++Module list files can also include other module lists by reference. This
++works similar to cpp includes, and can be used to include module lists
++distributed as part of kernel-wedge, or others. For example:
++
++# kernel-wedge's standard set of cdrom modules
++#include <cdrom-core-modules>
++# my own list
++#include "../../includes/cdrom-modules"
++
++The <name> syntax includes a file from the modules subdirectory of the
++default-configuration directory.
++
++A final capability of the module list files is the ability to include a
++module list and then override parts of it. Follow a module name with " -" to
++remove it from the list if it was previously listed, as by an include:
++
++# kernel-wedge's standard set of cdrom modules
++#include <cdrom-core-modules>
++# but not this one
++sr_mod -
++
++The udebs are named with the version of the kernel in their package name,
++since that can be useful during kernel transitions. The string -di is
++appended to prevent any posible collisions in names with real debs.
++
++A few other, optional files:
++
++The package-list file can be used to override and/or suppliment values from
++kernel-wedge's own /usr/share/kernel-wedge/package-list file. New packages
++can be defined in this file using the same format, or partial entries can
++be used to override a field or fields of a previously defined package. For
++example:
++
++# This file is used to build up the control file. The kernel version and
++# "-di" are appended to the package names. Section can be left out. So can
++# architecture, which is derived from the files in the modules directory.
++# It overwrites specifications from /usr/share/kernel-wedge/package-list.
++Package: fat-modules
++Priority: standard
++
++Package: nic-modules
++Depends: kernel-image, nic-shared-modules, core-modules, firewire-core-modules
++
++Package: other-modules
++Depends: kernel-image
++Description: some other modules I like to have in the installer
++
++Note that dependencies that are not built are omitted from the control file
++generated by the union of the package-list files. If you don't want that to
++happen for a particular dependency, follow it by a "!"
++
++Depends: some-third-party-module!
++
++The exclude-packages file is an optional file that lists any udebs (by
++full package name) that would normally be built, but that you want to
++skip.
++
++Building:
++
++Once you have your source package set up, run:
++	kernel-wedge gen-control > debian/control
++You only need to do this once. Then build it like any other package. Be
++amazed at the sheer quantities of udebs that are spit out with no effort.
++Note that you will have to have the kernels listed as build dependencies
++installed normally; but see "kernel-wedge help build-all" for an
++alternative.
++
++Misc other info:
++
++The "kernel-wedge copy-modules" command does the actual copying of modules
++to the temp dirs that are used to build the package. It is complicated by
++the need to make sure that all of a module's dependencies are included in
++its package, or in a package on which it depends. If necessary, extra
++modules will be added to a package to make sure the dependencies are
++satisfied.
++
++The dependency information from modules.dep is compared with the output of
++the "kernel-wedge gen-deps" command, which extracts dependency information
++from package-lists, and formats it in a form used by tsort. If any
++additional modules are needed to meet dependencies of modules in the udebs,
++they will automatically be added. Since that might result in modules being
++copied to multiple udebs, the "kernel-wedge find-dups" command is used to
++scan for duplicates of modules. When you have duplicates, you need to find
++(or make) a package that both packages depend on, and move the duplicate
++modules to it. Alternatively, as a quick hack you can just touch a file
++named ignore-dups in the root of your package and duplicate modules will
++stop being a fatal error.
++
++SOURCEDIR can be set to a directory containing a tree of kernel modules and
++kernel image, and it will be used instead of the usual tree. That directory
++will need to have a modules.dep file already generated for this to work
++though -- but the modules.dep can even be copied from another system and
++it'll work. This can be useful if you cannot install the required
++kernel-image package, or are cross-compiling.
+diff --git a/kernel-wedge-2.104ubuntu1/README.md b/kernel-wedge-2.104ubuntu1/README.md
+deleted file mode 100644
+index 06d5d3c..0000000
+--- a/kernel-wedge-2.104ubuntu1/README.md
++++ /dev/null
+@@ -1,224 +0,0 @@
+-# kernel-wedge, an industrial strength kernel splitting tool
+-
+-kernel-wedge is used to generate kernel module udebs for the debian
+-installer.
+-
+-kernel-wedge is now used as part of the build process of the linux and
+-kfreebsd-* source packages, but can also be used separately.
+-
+-## Configuration directory layout
+-
+-The default-configuration directory contains the following files:
+-
+-modules/*<BR>
+-package-list
+-
+-The environment variable `$KW_DEFCONFIG_DIR` must be set, naming the
+-default-configuration directory.
+-
+-Each configuration directory contains the following files:
+-
+-kernel-versions<BR>
+-modules/*arch*/\*<BR>
+-exclude-packages (optional)<BR>
+-package-list
+-
+-The environment variable `$KW_CONFIG_DIR` may be set, naming the
+-configuration directory; otherwise the default value is "`.`".
+-Typically there is a separate configuration directory per
+-architecture, but this is not required.  The configuration directory
+-may be the same as the default-configuration directory.
+-
+-## Use in a kernel source package
+-
+-### Configuration files
+-
+-The kernel-versions file lists the kernel flavours to produce packages
+-for.  There are 6 whitespace separated fields per line, and it looks
+-something like this:
+-
+-    # arch version flavour installedname suffix build-depends
+-    i386   -       686     -             -      -
+-    i386   -       686-pae -             -      -
+-
+-The arch column must be set to the target Debian architecture and the
+-flavour to the kernel flavour name that appears in the package and
+-file names.
+-
+-The version, installedname and build-depends columns must all be set
+-to "`-`" in this case.
+-
+-The suffix column is either `y`, `-` or `-`*suffix*; if it is `y` then
+-the kernel image inside the udeb will include the version and flavour
+-in its name, if it is `-`*suffix* then it will include this. (So will
+-the System.map).
+-
+-The udebs are named with the version of the kernel in their package name,
+-since that can be useful during kernel transitions. The string `-di` is
+-appended to prevent any posible collisions in names with real debs.
+-
+-The package-list and (optional) exclude-packages configuration files
+-are used by `gen-control`, as explained in its online help.
+-
+-Finally, you need a modules/*arch* directory, or directories. These are
+-used to list the modules that go in a package. For example, for i386, we
+-want to have some nic drivers, so we create a modules/i386/nic-modules
+-listing them:
+-
+-    # My short list of nic modules.
+-    8139too
+-    e100
+-    natsemi
+-    ne2k-pci
+-    tulip
+-    winbond-840
+-    3c59x
+-
+-But for Linux, drivers are organised into subdirectories by type, and
+-we can instead include (most) Ethernet drivers using a wildcard:
+-
+-    drivers/net/ethernet/**
+-
+-Suppose we want a different set of modules in the 686 flavour kernel.
+-Then create a `modules/`*arch*-*flavour*`/nic-modules` instead, and it
+-will be used by preference. One udeb will be created for each modules
+-list file, containing the listed modules. The names of the files
+-should match the names of the various modules listed in the
+-package-list file in the default-configuration directory.
+-
+-You will also want a special modules list file for the kernel-image udeb.
+-If you need to include no modules with your kernel, it can be an empty file.
+-but you should have a modules/*arch*/kernel-image.
+-
+-`kernel-wedge` will copy the listed modules into each package. If a listed 
+-module does not exist, it will fail by default. Sometimes you might want to
+-make a module be included but it's not fatal for it not to be available.
+-To indicate this, follow the module with a space and a "`?`".
+-
+-Module list files can also include other module lists by reference. This
+-works similar to cpp includes, and can be used to include module lists
+-distributed as part of kernel-wedge, or others. For example:
+-
+-    # kernel-wedge's standard set of cdrom modules
+-    #include <cdrom-core-modules>
+-    # my own list
+-    #include "../../includes/cdrom-modules"
+-
+-The `<name>` syntax includes a file from the modules subdirectory of the
+-default-configuration directory.
+-
+-A final capability of the module list files is the ability to include a
+-module list and then override parts of it. Follow a module name with " `-`" to
+-remove it from the list if it was previously listed, as by an include:
+-
+-    # kernel-wedge's standard set of cdrom modules
+-    #include <cdrom-core-modules>
+-    # but not this one
+-    sr_mod -
+-
+-### Debian directory
+-
+-To add the udeb packages to the control file, run for each
+-architecture:
+-
+-`kernel-wedge gen-control `*version*` >> debian/control`
+-
+-Where *version* is the kernel ABI/version that appears in package
+-names.
+-
+-In case you use the same kernel flavour name on multiple
+-architectures, you will need to merge the output from multiple
+-invocations of `kernel-wedge gen-control`.
+-
+-## Use in a separate source package
+-
+-### Configuration files
+-
+-The kernel-versions file looks something like this:
+-
+-    # arch   version  flavour       installedname        suffix    build-depends
+-    i386     2.4.25-1 386           2.4.25-1-386         -         kernel-image-2.4.25-1-386, kernel-pcmcia-modules-2.4.25-1-386
+-    i386     2.4.24   speakup       2.4.24-speakup       -         kernel-image-2.4.24-speakup
+-
+-In this case we are building two different flavours of i386 kernels.
+-We could just as easily be building kernels for different architectures.
+-
+-The arch, flavour and suffix columns are set as above.
+-
+-The version is the kernel version, or can be "`-`", in which case a
+-version must be specified when running the `gen-control` and
+-`install-files` commands.
+-
+-The installedname column gives the directory/filename that the kernel and
+-modules are installed using in the kernel `.deb`. If it is "`-`", it's
+-generated from the version and flavor.
+-
+-The build-depends are the package that is split up by kernel-wedge.
+-
+-The other configuration files are set in the same way as normal.
+-
+-### Debian directory
+-
+-Your source package will be very simple, looking something like this:
+-
+-debian/copyright<BR>
+-debian/changelog<BR>
+-debian/rules<BR>
+-debian/control.stub
+-
+-Let's get the easy files out of the way. The changelog is a
+-changelog, like any other, as is the copyright. The debian/rules
+-can be something as simple as this:
+-
+-    #!/usr/bin/make -f
+-    include /usr/share/kernel-wedge/generic-rules
+-
+-Or you can use the `kernel-wedge` command directly in your own rules file.
+-Run it for some semblance of usage help.
+-
+-`debian/control.stub` is the top of a control file. Something like this:
+-
+-    Source: linux-kernel-di-i386
+-    Section: debian-installer
+-    Priority: optional
+-    Maintainer: Debian Install System Team <debian-boot@lists.debian.org>
+-    Build-Depends: kernel-wedge
+-
+-The rest of the control file will be generated for you.
+-
+-Once you have your source package set up, run:
+-
+-	kernel-wedge gen-control > debian/control
+-
+-You only need to do this once. Then build it like any other package.
+-Note that you will have to have the kernels listed as build dependencies
+-installed normally; but see "`kernel-wedge help build-all`" for an
+-alternative.
+-
+-## Misc other info
+-
+-The "`kernel-wedge copy-modules`" command does the actual copying of modules
+-to the temp dirs that are used to build the package. It is complicated by
+-the need to make sure that all of a module's dependencies are included in
+-its package, or in a package on which it depends. If necessary, extra
+-modules will be added to a package to make sure the dependencies are
+-satisfied.
+-
+-The dependency information from modules.dep is compared with the output of
+-the "`kernel-wedge gen-deps`" command, which extracts dependency information
+-from package-lists, and formats it in a form used by tsort. If any
+-additional modules are needed to meet dependencies of modules in the udebs,
+-they will automatically be added. Since that might result in modules being
+-copied to multiple udebs, the "`kernel-wedge find-dups`" command is used to
+-scan for duplicates of modules. When you have duplicates, you need to find
+-(or make) a package that both packages depend on, and move the duplicate
+-modules to it. Alternatively, as a quick hack you can just touch a file
+-named ignore-dups in the root of your package and duplicate modules will
+-stop being a fatal error.
+-
+-`SOURCEDIR` can be set to a directory containing a tree of kernel modules and
+-kernel image, and it will be used instead of the usual tree. That directory
+-will need to have a modules.dep file already generated for this to work
+-though -- but the modules.dep can even be copied from another system and
+-it'll work. This can be useful if you cannot install the required
+-kernel-image package, or are cross-compiling.
+diff --git a/kernel-wedge-2.104ubuntu1/TODO b/kernel-wedge-2.96ubuntu3/TODO
+index 5c8df11..2c98bc5 100644
+--- a/kernel-wedge-2.104ubuntu1/TODO
++++ b/kernel-wedge-2.96ubuntu3/TODO
+@@ -1,2 +1,4 @@
+ * Better docs for making a custom modules package, or using a different or
+   custom kernel.
++* Support Depends_subarch in package-lists, not currently supported in
++  gen-deps or gen-control.
+diff --git a/kernel-wedge-2.96ubuntu3/commands/build-all.txt b/kernel-wedge-2.96ubuntu3/commands/build-all.txt
+new file mode 100644
+index 0000000..225ba1b
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/commands/build-all.txt
+@@ -0,0 +1,10 @@
++build-all
++
++This is a wrapper script that can be used to build all architectures.
++
++The script builds all architectures listed in kernel-versions.
++It expects to have the unpacked kernel packages for various arches in
++../alpha, etc. modules.dep files have to be put in there too if they are
++not shipped in the .deb (varies)
++
++dpkg-cross must be installed, but you do not need a cross compiler.
+diff --git a/kernel-wedge-2.104ubuntu1/commands/build-arch b/kernel-wedge-2.96ubuntu3/commands/build-arch
+index 5b910ab..4a9b21f 100755
+--- a/kernel-wedge-2.104ubuntu1/commands/build-arch
++++ b/kernel-wedge-2.96ubuntu3/commands/build-arch
+@@ -21,7 +21,9 @@ buildpackage -S
+ # Directory for stubs, added to PATH.
+ arch="$1"
+ trap 'rm -rf $tmpdir' EXIT 
+-tmpdir=$(mktemp -d)
++tmpdir=$(tempfile)
++rm $tmpdir
++mkdir $tmpdir
+ PATH=$PATH:$tmpdir
+ export PATH
+ 
+diff --git a/kernel-wedge-2.96ubuntu3/commands/build-arch.txt b/kernel-wedge-2.96ubuntu3/commands/build-arch.txt
+new file mode 100644
+index 0000000..ee82b24
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/commands/build-arch.txt
+@@ -0,0 +1,11 @@
++build-arch
++
++This is a wrapper script to build a specific architecture.
++
++It takes the architecture to be built as parameter and that architecture
++needs to be listed in kernel-versions.  
++It expects to have the unpacked kernel packages for the architecture in
++e.g. ../alpha. modules.dep files have to be put in there too if they are
++not shipped in the .deb (varies)
++
++dpkg-cross must be installed, but you do not need a cross compiler.
+diff --git a/kernel-wedge-2.96ubuntu3/commands/check.txt b/kernel-wedge-2.96ubuntu3/commands/check.txt
+new file mode 100644
+index 0000000..df4722a
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/commands/check.txt
+@@ -0,0 +1,6 @@
++check
++
++Check for various problems in the packages.
++
++Return 1 if any problems are found, unless $KW_CHECK_NONFATAL is
++non-empty.
+diff --git a/kernel-wedge-2.96ubuntu3/commands/copy-firmware b/kernel-wedge-2.96ubuntu3/commands/copy-firmware
+new file mode 100755
+index 0000000..d8a3f1e
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/commands/copy-firmware
+@@ -0,0 +1,118 @@
++#!/bin/sh
++#
++# Copy firmware into the right directories in preparation for building udebs.
++#
++# Copyright (c) 2001-2002 Herbert Xu <herbert@debian.org>
++# Copyright (c) 2004 Canonical Ltd. Adapted for firmware by Colin Watson.
++#
++# Usage: copy-firmware version flavour installedname
++
++set -e
++
++processfirmware() {
++	local list=$1
++	local fwdir=$2
++	
++	local code=0
++	cp $list $tmpdir/work
++	(
++		code=0
++		while read firmware; do
++			# Question mark suffixed firmware files are optional.
++			# Support dash prefixing for backwards compatibility.
++			if [ "${firmware#-}" != "$firmware" ] || \
++			   [ "${firmware% \?}" != "$firmware" ]; then
++				optional=1
++				firmware=${firmware% \?}
++				firmware=${firmware#-}
++			else
++				optional=0
++			fi
++
++			if [ -e $fwdir/$firmware ]; then
++				echo $firmware
++			else
++				if [ "$optional" = 0 ]; then
++					echo "missing firmware $firmware" >&2
++					if [ -z "$KW_CHECK_NONFATAL" ]; then
++						code=1
++					fi
++				fi
++			fi
++		done
++		exit $code
++	) < $tmpdir/work > $list.new || code=$?
++	sort < $list.new > $list
++	rm -f $list.new
++	return $code
++}
++
++version=$1-$2
++flavour=$2
++installedname=$3
++configdir=$(readlink -f ${KW_CONFIG_DIR:-.})
++arch=$(dpkg-architecture -qDEB_HOST_ARCH)
++home=$PWD
++
++trap 'rm -rf $tmpdir' EXIT
++tmpdir=$(tempfile)
++rm $tmpdir
++mkdir $tmpdir
++
++# SOURCEDIR may be set externally to control where to copy from.
++if [ -n "$SOURCEDIR" ]; then
++	fwdir=$SOURCEDIR/lib/firmware/$installedname
++else
++	fwdir=/lib/firmware/$installedname
++fi
++
++if [ ! -d $fwdir ] || [ ! -d $configdir/firmware ]; then
++	exit 0
++fi
++
++# The directory of firmware lists to use.
++if [ -d $configdir/firmware/$arch-$flavour ]; then
++	fwlistdir=$configdir/firmware/$arch-$flavour
++elif [ -d $configdir/firmware/$flavour ]; then
++	fwlistdir=$configdir/firmware/$flavour
++else
++	fwlistdir=$configdir/firmware/$arch
++fi
++
++mkdir $tmpdir/firmware-list
++
++code=0
++# loop over all udebs
++for i in $(
++	find $fwlistdir/ -maxdepth 1 \( -type f -or -type l \) -not -name '*.lnk' -printf "%f\t%f\n"
++); do
++	# preprocess file, handle includes and excludes and sort so that
++	# the joins work, no matter what the order of the input.
++	kernel-wedge preprocess $fwlistdir/$i $fwdir | sort > $tmpdir/firmware-list/$i
++
++	# deal with firmware marked as optional and other transformations
++	processfirmware $tmpdir/firmware-list/$i $fwdir || code=$?
++
++	if [ -s $tmpdir/firmware-list/$i ] && dh_listpackages | grep -qx "$i-$version-di"; then
++		# copy firmware to package build dir
++		cd $fwdir
++		ret=$( ( (
++			set +e
++			tar cfT - $tmpdir/firmware-list/$i
++			printf $? >&3
++		) | (
++			set +e
++			dir=$home/debian/$i-$version-di/lib/firmware/$installedname
++			mkdir -p $dir
++			cd $dir
++			tar xf -
++			printf $? >&3
++		) ) 3>&1)
++		if [ "$ret" != "00" ]; then
++			echo "tar failed" >&2
++			exit $ret
++		fi
++		cd $home
++	fi
++done
++exit $code
+diff --git a/kernel-wedge-2.96ubuntu3/commands/copy-firmware.txt b/kernel-wedge-2.96ubuntu3/commands/copy-firmware.txt
+new file mode 100644
+index 0000000..600e534
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/commands/copy-firmware.txt
+@@ -0,0 +1,6 @@
++copy-firmware version flavour installedname
++
++Copy firmware into the right directories in preparation for building udebs.
++
++Return 1 if a required module is missing, unless $KW_CHECK_NONFATAL is
++non-empty.
+diff --git a/kernel-wedge-2.104ubuntu1/commands/copy-modules b/kernel-wedge-2.96ubuntu3/commands/copy-modules
+index 30f9dc5..276267a 100755
+--- a/kernel-wedge-2.104ubuntu1/commands/copy-modules
++++ b/kernel-wedge-2.96ubuntu3/commands/copy-modules
+@@ -32,6 +32,59 @@ deplist() {
+ 	done
+ }
+ 
++processmodules() {
++	local list=$1
++	local moddir=$2
++	
++	local code=0
++	cp $list $tmpdir/work
++	(
++		code=0
++		while read module; do
++			# Question mark suffixed modules are optional.
++			if [ "${module% \?}" != "$module" ]; then
++				optional=1
++				module=${module% \?}
++			else
++				optional=0
++			fi
++
++			module=${module##*/} # remove path info
++			module=${module%.*}  # remove extension
++
++			# Skip Linux modules that are really built-in.
++			if [ "$os" = "linux" ] && \
++			    [ -f $moddir/modules.builtin ] && \
++			    grep -q "/$module\\.ko\$" $moddir/modules.builtin
++			then
++			    continue
++			fi
++			
++			# Prefer modules in the kernel subdir, but failing
++			# that search the whole thing, to find third-party,
++			# etc modules.
++			match="$(find `ls -d $moddir/kernel 2>/dev/null` $moddir/ \
++			            -name $module.o -or -name $module.ko \
++				| head -n 1 | sed "s!$moddir/!!")"
++			
++			if [ -n "$match" ]; then
++				echo $match
++			else
++				if [ "$optional" = 0 ]; then
++					echo "missing module $module" >&2
++					if [ -z "$KW_CHECK_NONFATAL" ]; then
++						code=1
++					fi
++				fi
++			fi
++		done
++		exit $code
++	) < $tmpdir/work > $list.new || code=$?
++	sort < $list.new > $list
++	rm -f $list.new
++	return $code
++}
++
+ version=$1-$2
+ flavour=$2
+ installedname=$3
+@@ -41,7 +94,9 @@ os=$(dpkg-architecture -qDEB_HOST_ARCH_OS)
+ home=$PWD
+ 
+ trap 'rm -rf $tmpdir' EXIT
+-tmpdir=$(mktemp -d)
++tmpdir=$(tempfile)
++rm $tmpdir
++mkdir $tmpdir
+ 
+ # SOURCEDIR may be set externally to control where to copy from.
+ if [ -n "$SOURCEDIR" ]; then
+@@ -50,7 +105,7 @@ else
+ 	moddir=/lib/modules/$installedname
+ fi
+ 
+-if [ ! -d $moddir ]; then
++if [ ! -d $moddir ] || [ ! -d $configdir/modules ]; then
+ 	exit 0
+ fi
+ 	
+@@ -64,16 +119,13 @@ else
+ fi
+ 
+ if [ "$os" = "linux" ] ; then
+-	if [ "$SOURCEDIR" ]; then
++	if [ -e "$moddir/modules.dep" ]; then
++		modulesdep=$moddir/modules.dep
++	else
+ 		modulesdep=$tmpdir/modules.dep
+ 		PATH="/usr/sbin:/sbin:$PATH" depmod \
+-			-b $SOURCEDIR $installedname -n \
++			${SOURCEDIR:+-b $SOURCEDIR} $installedname -n \
+ 			| sed '/^#/d; /^alias /,$d' >$modulesdep
+-	elif [ -e "$moddir/modules.dep" ]; then
+-		modulesdep=$moddir/modules.dep
+-	else
+-		echo "Installed kernel package is missing $moddir/modules.dep" >&2
+-		exit 1
+ 	fi
+ 
+ 	# get module dependencies from modules.dep
+@@ -132,6 +184,9 @@ for i in $(
+ 	join -o 2.1,2.2 -2 2 -v 2 $tmpdir/exclude $tmpdir/deps |
+ 		sort -k 1,1 > $tmpdir/tmpdeps
+ 
++	# deal with modules marked as optional and other transformations
++	processmodules $tmpdir/module-list/$i $moddir || code=$?
++
+ 	# include dependent modules which are not in a
+ 	# dependent udeb into module-list/$i
+ 	deplist $tmpdir/tmpdeps $tmpdir/module-list/$i
+@@ -156,13 +211,6 @@ for i in $(
+ 			exit $ret
+ 		fi
+ 		cd $home
+-
+-		if [ "$os" = linux ]; then
+-			cat >"debian/$i-$version-di.postinst" <<EOF
+-#!/bin/sh -e
+-depmod $installedname
+-EOF
+-		fi
+ 	fi
+ done
+ exit $code
+diff --git a/kernel-wedge-2.96ubuntu3/commands/copy-modules.txt b/kernel-wedge-2.96ubuntu3/commands/copy-modules.txt
+new file mode 100644
+index 0000000..f719caf
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/commands/copy-modules.txt
+@@ -0,0 +1,6 @@
++copy-modules version flavour installedname
++
++Copy modules into the right directories in preparation for building udebs.
++
++Return 1 if a required module is missing, unless $KW_CHECK_NONFATAL is
++non-empty.
+diff --git a/kernel-wedge-2.104ubuntu1/commands/find-dups b/kernel-wedge-2.96ubuntu3/commands/find-dups
+index 7c4d45a..ea34572 100755
+--- a/kernel-wedge-2.104ubuntu1/commands/find-dups
++++ b/kernel-wedge-2.96ubuntu3/commands/find-dups
+@@ -3,7 +3,7 @@
+ kernel=$1
+ (
+ 	shopt -s nullglob
+-	for dir in debian/*-modules-$kernel-di; do
++	for dir in $(find debian -maxdepth 1 -type d \( -name \*-modules-$kernel-di -or -name \*-firmware-$kernel-di \)); do
+ 		cd $dir
+ 		find lib -type f -printf "$dir %p\n"
+ 		cd ../..
+diff --git a/kernel-wedge-2.96ubuntu3/commands/find-dups.txt b/kernel-wedge-2.96ubuntu3/commands/find-dups.txt
+new file mode 100644
+index 0000000..6ff3462
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/commands/find-dups.txt
+@@ -0,0 +1,6 @@
++find-dups kernel-name
++
++Find duplicate modules. Pass the kernel name.
++
++Return 1 if any duplicates are found, unless $KW_CHECK_NONFATAL is
++non-empty or the configuration file 'ignore-dups' exists.
+diff --git a/kernel-wedge-2.96ubuntu3/commands/find-unpackaged.txt b/kernel-wedge-2.96ubuntu3/commands/find-unpackaged.txt
+new file mode 100644
+index 0000000..5aae086
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/commands/find-unpackaged.txt
+@@ -0,0 +1,5 @@
++find-unpackaged kernel-name
++
++List modules that are not packaged in a udeb. Pass the kernel name.
++
++Always return 0.
+diff --git a/kernel-wedge-2.104ubuntu1/commands/gen-control b/kernel-wedge-2.96ubuntu3/commands/gen-control
+index 67922d8..417930e 100755
+--- a/kernel-wedge-2.104ubuntu1/commands/gen-control
++++ b/kernel-wedge-2.96ubuntu3/commands/gen-control
+@@ -4,15 +4,22 @@
+ use strict;
+ use warnings;
+ 
+-use KernelWedge qw(CONFIG_DIR CONTROL_FIELDS read_kernel_versions
+-		   read_package_lists for_each_package);
+-
++my @controlfields=qw(Package Package-Type Provides Depends Architecture Kernel-Version Section Priority Description);
++my @versions;
++my @packages;
++my %packages;
+ my @builddeps;
+ my %excluded;
+ 
++my $defconfigdir = $ENV{KW_DEFCONFIG_DIR};
++if (!defined($defconfigdir)) {
++	die "Required environment variable \$KW_DEFCONFIG_DIR is not defined";
++}
++my $configdir = ($ENV{KW_CONFIG_DIR} || '.');
++
+ my $fixkernelversion = $ARGV[0];
+ 
+-if (open(EXCLUDED, CONFIG_DIR . "/exclude-packages")) {
++if (open(EXCLUDED, "$configdir/exclude-packages")) {
+ 	while (<EXCLUDED>) {
+ 		chomp;
+ 		$excluded{$_}=1;
+@@ -20,23 +27,29 @@ if (open(EXCLUDED, CONFIG_DIR . "/exclude-packages")) {
+ 	close EXCLUDED;
+ }
+ 
+-my $versions = read_kernel_versions($fixkernelversion);
+-
+-for my $ver (@$versions) {
+-	(my $arch, my $kernelversion, undef, undef, undef, my $builddep) =
+-		@$ver;
++open(KVERS, "$configdir/kernel-versions") || die "kernel-versions: $!";
++while (<KVERS>) {
++	chomp;
++	next if /^#/ || ! length;
++	
++	my ($arch, $kernelversion, $flavour, $installedname, $multkern, $builddep)=split(' ', $_, 6);
++	if (! length $arch || ! length $kernelversion || ! length $flavour) {
++		die "parse error";
++	}
+ 	if (defined($fixkernelversion)) {
+-		$ver->[1] = $fixkernelversion;
++		$kernelversion = $fixkernelversion;
+ 	}
+ 	elsif ($kernelversion eq "-") {
+ 		die "kernel version not set in file or on command line";
+ 	}
++	push @versions, [ $arch, $kernelversion, $flavour ];
+ 	if ($builddep ne "-") {
+ 		foreach my $pkg (split(", ", $builddep)) {
+ 			push @builddeps, "$pkg [$arch]";
+ 		}
+ 	}
+ }
++close KVERS;
+ 
+ # Building with installed kernel package, or as part of a package?
+ if (@builddeps) {
+@@ -51,48 +64,143 @@ if (@builddeps) {
+ 	close STUB;
+ }
+ 
+-my $packages = read_package_lists();
++sub read_package_list
++{
++	sub merge_package
++	{
++		my %pkg = %{$_[0]};
++		if (not exists $packages{$pkg{Package}}) {
++			push @packages, $pkg{Package};
++			$packages{$pkg{Package}} = \%pkg;
++		}
++		else {
++			my %real_pkg = %{$packages{$pkg{Package}}};
++			foreach (keys(%pkg)) {
++				$real_pkg{$_} = $pkg{$_};
++			}
++			$packages{$pkg{Package}} = \%real_pkg;
++		}
++	}
++
++	my $file = shift;
++	open(LIST, $file) || die "package-list: $!";
++	my $field;
++	my %pkg;
++	while (<LIST>) {
++		chomp;
++		next if /^#/;
++		
++		if (/^(\S+):\s*(.*)/) {
++			$field=$1;
++			my $val=$2;
++			if (! grep { $field =~ /^\Q$_\E(_.+)?$/ } @controlfields) {
++				die "unknown field, $field";
++			}
++			$pkg{$field}=$val;
++		}
++		elsif (/^$/) {
++			if (%pkg) {
++				merge_package(\%pkg);
++				%pkg=();
++			}
++		}
++		elsif (/^(\s+.*)/) {
++			# continued field
++			$pkg{$field}.="\n".$1;
++		}
++	}
++	if (%pkg) {
++		merge_package(\%pkg);
++	}
++	close LIST;
++}
++read_package_list("$defconfigdir/package-list");
++read_package_list("$configdir/package-list");
++
++foreach my $ver (@versions) {
++	my ($arch, $kernelversion, $flavour) = @$ver;
++	foreach my $pkg_name (@packages) {
++		my %pkg = %{$packages{$pkg_name}};
++
++		# Used to get a field of the package, looking first for
++		# architecture-specific fields.
++		my $package = sub {
++			my $field=shift;
++			return $pkg{$field."_".$flavour}
++				if exists $pkg{$field."_".$flavour};
++			return $pkg{$field."_".$arch."_".$flavour}
++				if exists $pkg{$field."_".$arch."_".$flavour};
++			return $pkg{$field."_".$arch}
++				if exists $pkg{$field."_".$arch};
++			return $pkg{$field}
++				if exists $pkg{$field};
++			return undef;
++		};
++
++		# Check for a modules list file for this architecture and
++		# package.
++		my $modlistdir="";
++		if (-d "$configdir/modules/$arch-$flavour") {
++			$modlistdir = "$configdir/modules/$arch-$flavour";
++		}
++		elsif (-d "$configdir/modules/$flavour") {
++			$modlistdir = "$configdir/modules/$flavour";
++		}
++		else {
++			$modlistdir = "$configdir/modules/$arch";
++		}
++		
++		my $fwlistdir="";
++		if (-d "$configdir/firmware/$arch-$flavour") {
++			$fwlistdir="$configdir/firmware/$arch-$flavour";
++		}
++		elsif (-d "$configdir/firmware/$flavour") {
++			$fwlistdir="$configdir/firmware/$flavour";
++		}
++		else {
++			$fwlistdir="$configdir/firmware/$arch";
++		}
+ 
+-for_each_package($packages, $versions, sub {
+-	my ($arch, $kernelversion, $flavour, $modlistdir, $template) = @_;
++		next unless -e "$modlistdir/".$package->("Package") or -e "$fwlistdir/".$package->("Package");
+ 
+-	my %override;
+-	$override{Architecture}=$arch;
+-	$override{Package}=$template->("Package")."-".$kernelversion."-".$flavour."-di";
+-	$override{'Package-Type'}="udeb";
+-	$override{'Kernel-Version'}=$kernelversion."-".$flavour;
++		$pkg{Architecture}=$arch;
++		$pkg{orig_package}=$package->("Package");
++		$pkg{Package}=$package->("Package")."-".$kernelversion."-".$flavour."-di";
++		$pkg{'Package-Type'}="udeb";
++		$pkg{'Kernel-Version'}=$kernelversion."-".$flavour;
+ 
+-	return if $excluded{$override{Package}};
++		next if $excluded{$pkg{Package}};
+ 		
+-	print "\n";
++		print "\n";
+ 		
+-	if (! defined $template->("Section") || $template->("Section") !~ /debian-installer$/) {
+-		$override{Section}="debian-installer";
+-	}
++		if (! defined $package->("Section") || $package->("Section") !~ /debian-installer$/) {
++			$pkg{Section}="debian-installer";
++		}
+ 
+-	if (defined $template->("Depends")) {
+-		$override{Depends}=join(", ",
+-				   map { $_."-".$kernelversion."-".$flavour."-di" }
+-				   # Remove force marker.
+-				   map { s/!$//; $_ }
+-				   # If the dep is not built for this arch,
+-				   # skip it, unless it's forced.
+-				   grep { -e "$modlistdir/$_" || /!$/ }
+-				   split(", ", $template->("Depends")));
+-	}
++		if (defined $package->("Depends")) {
++			$pkg{Depends}=join(", ",
++				map { $_."-".$kernelversion."-".$flavour."-di" }
++				# Remove force marker.
++				map { s/!$//; $_ }
++				# If the dep is not built for this arch,
++				# skip it, unless it's forced.
++				grep { -e "$modlistdir/$_" || -e "$fwlistdir/$_" || /!$/ }
++				split(", ", $package->("Depends")));
++		}
+ 		
+-	foreach my $field (CONTROL_FIELDS) {
+-		my $value = $override{$field} || $template->($field);
+-		if ($field eq 'Provides') {
+-			if (defined $value) {
+-				print $field.": ".$template->("Package").", ".$value."\n";
++		foreach my $field (@controlfields) {
++			if ($field eq 'Provides') {
++				if (defined $package->("Provides")) {
++					print $field.": ".$package->("orig_package").", ".$package->("Provides")."\n";
++				}
++				else {
++					print $field.": ".$package->("orig_package")."\n";
++				}
+ 			}
+ 			else {
+-				print $field.": ".$template->("Package")."\n";
++				print $field.": ".$package->($field)."\n"
++					if defined $package->($field);
+ 			}
+ 		}
+-		else {
+-			print $field.": ".$value."\n" if defined $value;
+-		}
+ 	}
+-});
++}
+diff --git a/kernel-wedge-2.96ubuntu3/commands/gen-control.txt b/kernel-wedge-2.96ubuntu3/commands/gen-control.txt
+new file mode 100644
+index 0000000..da85997
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/commands/gen-control.txt
+@@ -0,0 +1,4 @@
++gen-control
++
++Generate a debian/control from the control stub, the kernel-versions
++files, and the package-list.
+diff --git a/kernel-wedge-2.104ubuntu1/commands/gen-deps b/kernel-wedge-2.96ubuntu3/commands/gen-deps
+index 3a1a90c..71101ef 100755
+--- a/kernel-wedge-2.104ubuntu1/commands/gen-deps
++++ b/kernel-wedge-2.96ubuntu3/commands/gen-deps
+@@ -1,35 +1,74 @@
+ #!/usr/bin/perl
+-# Generates from debian/control a dependency file, suitable to be fed to
++# Generates from the package-list a dependency file, suitable to be fed to
+ # tsort. The file has the base package name on the left, and the package it
+ # depends on is on the right. It is sorted.
+-use strict;
+-use warnings;
+-
+-use KernelWedge qw(read_kernel_versions read_package_lists for_each_package);
+ 
+ my $arch=`dpkg-architecture -qDEB_HOST_ARCH`;
+ chomp $arch;
+ 
++my $defconfigdir = $ENV{KW_DEFCONFIG_DIR};
++if (!defined($defconfigdir)) {
++	die "Required environment variable \$KW_DEFCONFIG_DIR is not defined";
++}
++my $configdir = ($ENV{KW_CONFIG_DIR} || '.');
++
+ my $flavour=$ARGV[0];
+ 
+ my @out;
+ 
+-my $versions = [[$arch, '-', $flavour]];
+-my $packages = read_package_lists();
++sub read_package_list
++{
++	my $file = shift;
++	open(LIST, $file) || die "package-list: $!";
++	my $package;
++	while (<LIST>) {
++		chomp;
++		next if /^#/;
++
++		if (/^Package:\s*(.*)/) {
++			$package=$1;
++		}
++		elsif (/Depends:\s*(.*)/) {
++			my @depends=split(", ", $1);
++			# Skip packages that are not built for this architecture.
++			my $modlistdir="";
++			if (-d "$configdir/modules/$arch-$flavour") {
++				$modlistdir = "$configdir/modules/$arch-$flavour";
++			}
++			elsif (-d "$configdir/modules/$flavour") {
++				$modlistdir = "$configdir/modules/$flavour";
++			}
++			else {
++				$modlistdir = "$configdir/modules/$arch";
++			}
++
++			my $fwlistdir="";
++			if (-d "$configdir/firmware/$arch-$flavour") {
++				$fwlistdir="$configdir/firmware/$arch-$flavour";
++			}
++			elsif (-d "$configdir/firmware/$flavour") {
++				$fwlistdir="$configdir/firmware/$flavour";
++			}
++			else {
++				$fwlistdir="$configdir/firmware/$arch";
++			}
+ 
+-for_each_package($packages, $versions, sub {
+-	my ($arch, $kernelversion, $flavour, $modlistdir, $package) = @_;
+-	my $pkg_name = $package->("Package");
+-	my @depends = split(", ", $package->("Depends") || "");
++			next unless -e "$modlistdir/$package" or -e "$fwlistdir/$package";
+ 
+-	@out = grep(!/^$pkg_name\t/, @out);
++			# Override previously defined dependencies
++			@out = grep(!/^$package\t/, @out);
+ 
+-	foreach my $dep (@depends) {
+-		# Skip depends that are not built for this
+-		# architecture.
+-		next unless -e "$modlistdir/$dep";
+-		push @out, "$pkg_name\t$dep\n";
++			foreach my $dep (@depends) {
++				# Skip depends that are not built for this
++				# architecture.
++				next unless -e "$modlistdir/$dep" or -e "$fwlistdir/$dep";
++				push @out, "$package\t$dep\n";
++			}
++		}
+ 	}
+-});
++	close LIST;
++}
+ 
++read_package_list("$defconfigdir/package-list");
++read_package_list("$configdir/package-list");
+ print sort @out;
+diff --git a/kernel-wedge-2.96ubuntu3/commands/gen-deps.txt b/kernel-wedge-2.96ubuntu3/commands/gen-deps.txt
+new file mode 100644
+index 0000000..937485d
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/commands/gen-deps.txt
+@@ -0,0 +1,6 @@
++gen-deps flavour
++
++Generates from the package-list a dependency file for the given kernel
++flavour, suitable to be fed to tsort. The file has the base package name on
++the left, and the package it depends on is on the right. It is sorted.
++
+diff --git a/kernel-wedge-2.104ubuntu1/commands/help b/kernel-wedge-2.96ubuntu3/commands/help
+index 4a7a73f..ba04853 100755
+--- a/kernel-wedge-2.104ubuntu1/commands/help
++++ b/kernel-wedge-2.96ubuntu3/commands/help
+@@ -9,4 +9,8 @@ if [ ! -x "$LIBDIR/$command" ]; then
+ 	echo "No such command."
+ 	exit 1
+ fi
+-exec man 1 "kernel-wedge-$command"
++if [ ! -e $LIBDIR/$command.txt ]; then
++	echo "Undocumented command."
++	exit
++fi
++cat $LIBDIR/$command.txt
+diff --git a/kernel-wedge-2.96ubuntu3/commands/help.txt b/kernel-wedge-2.96ubuntu3/commands/help.txt
+new file mode 100644
+index 0000000..06b4d90
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/commands/help.txt
+@@ -0,0 +1,4 @@
++help command
++
++The help command displays help for another command (or in the case of this
++help text, for itself).
+diff --git a/kernel-wedge-2.104ubuntu1/commands/install-files b/kernel-wedge-2.96ubuntu3/commands/install-files
+index c88e29a..2def509 100755
+--- a/kernel-wedge-2.104ubuntu1/commands/install-files
++++ b/kernel-wedge-2.96ubuntu3/commands/install-files
+@@ -45,7 +45,6 @@ while (<KVERS>) {
+ 	}
+ 
+ 	my $sourcedir;
+-	my $bootwrapper_sourcedir;
+ 	if (defined $fixsourcedir) {
+ 		$sourcedir = $fixsourcedir;
+ 	}
+@@ -59,11 +58,7 @@ while (<KVERS>) {
+ 			$sourcedir = "debian/kfreebsd-image-$installedname";
+ 		}
+ 		else {
+-			($sourcedir) = grep {-d}
+-				("debian/linux-image-$installedname",
+-				 "debian/linux-image-$installedname-unsigned");
+-			($bootwrapper_sourcedir) = grep {-d}
+-				"debian/linux-bootwrapper-$kernelversion";
++			$sourcedir = "debian/linux-image-$installedname";
+ 		}
+ 		# Set SOURCEDIR for copy-modules
+ 		$ENV{SOURCEDIR} = $sourcedir;
+@@ -131,40 +126,26 @@ while (<KVERS>) {
+ 	# Include extra files to help the d-i build process build kernels
+ 	# for certain subarchitectures. This is powerpc-specific at the
+ 	# moment.
+-	if (-d "$sourcedir/usr/lib/linux-image-$kernelversion-$flavour") {
+-		my $installdir =
+-			"debian/kernel-image-$kernelversion-$flavour-di" .
+-			"/usr/lib/linux-image-$installedname";
++	my $libdir;
++	if (-d "$sourcedir/usr/lib/kernel-image-$kernelversion-$flavour") {
++		$libdir = "kernel-image";
++	}
++	elsif (-d "$sourcedir/usr/lib/linux-image-$kernelversion-$flavour") {
++		$libdir = "linux-image";
++	}
+ 
++	if (defined $libdir) {
+ 		doit("install", "-d",
+ 			"debian/kernel-image-$kernelversion-$flavour-di/usr/lib");
+ 		doit("cp", "-a",
+-			"$sourcedir/usr/lib/linux-image-$kernelversion-$flavour",
+-			$installdir);
+-
+-		# Replace symlinks into linux-bootwrapper with the target
+-		# files, rather than building yet another udeb.
+-		if (defined($bootwrapper_sourcedir)) {
+-			opendir(my $dh, $installdir)
+-				or die "opendir: $installdir: $!";
+-			for my $name (readdir($dh)) {
+-				my $fullname = "$installdir/$name";
+-				my $target = readlink($fullname);
+-				next unless defined($target) &&
+-					$target eq "../linux-bootwrapper-$kernelversion/$name";
+-				unlink($fullname)
+-					or die "unlink: $fullname: $!";
+-				doit("cp", "-a",
+-					$bootwrapper_sourcedir .
+-					"/usr/lib/linux-bootwrapper-$kernelversion/$name",
+-					$fullname);
+-			}
+-			closedir($dh);
+-		}
++			"$sourcedir/usr/lib/$libdir-$kernelversion-$flavour",
++			"debian/kernel-image-$kernelversion-$flavour-di/usr/lib/$libdir-$installedname");
+ 	}
+ 
+ 	doit("kernel-wedge", "copy-modules", $kernelversion, $flavour, $installedname);
++	doit("kernel-wedge", "copy-firmware", $kernelversion, $flavour, $installedname);
+ 	doit("kernel-wedge", "find-dups", "$kernelversion-$flavour");
+ 	doit("kernel-wedge", "find-unpackaged", "$kernelversion-$flavour", $installedname);
++	doit("kernel-wedge", "strip-modules", "$kernelversion-$flavour");
+ }
+ close KVERS;
+diff --git a/kernel-wedge-2.96ubuntu3/commands/install-files.txt b/kernel-wedge-2.96ubuntu3/commands/install-files.txt
+new file mode 100644
+index 0000000..6a5309e
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/commands/install-files.txt
+@@ -0,0 +1,4 @@
++install-files
++
++Create and populate the package build directories.
++
+diff --git a/kernel-wedge-2.96ubuntu3/commands/mass-build b/kernel-wedge-2.96ubuntu3/commands/mass-build
+new file mode 100755
+index 0000000..301dded
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/commands/mass-build
+@@ -0,0 +1,10 @@
++#!/bin/sh
++set -e
++pwd=$(pwd)
++for dir in linux-kernel-di*; do
++	if [ -d "$dir" ]; then
++		cd $dir
++		kernel-wedge build-all
++		cd $pwd
++	fi
++done
+diff --git a/kernel-wedge-2.96ubuntu3/commands/mass-build.txt b/kernel-wedge-2.96ubuntu3/commands/mass-build.txt
+new file mode 100644
+index 0000000..9e906dd
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/commands/mass-build.txt
+@@ -0,0 +1,4 @@
++mass-build
++
++Runs the build-all command in every linux-kernel-di directory in the
++working directory.
+diff --git a/kernel-wedge-2.104ubuntu1/commands/preprocess b/kernel-wedge-2.96ubuntu3/commands/preprocess
+index 0c77e52..045903b 100755
+--- a/kernel-wedge-2.104ubuntu1/commands/preprocess
++++ b/kernel-wedge-2.96ubuntu3/commands/preprocess
+@@ -2,53 +2,51 @@
+ use strict;
+ use warnings;
+ use File::Find ();
+-use File::Spec ();
+-
+-# Dummy filename for when we find that a module is actually built-in
+-use constant BUILTIN => "<builtin>";
+ 
+ my $defconfigdir = $ENV{KW_DEFCONFIG_DIR};
+ if (!defined($defconfigdir)) {
+-	print STDERR "$0: Required environment variable \$KW_DEFCONFIG_DIR is not defined\n";
+-	exit 2;
++	die "Required environment variable \$KW_DEFCONFIG_DIR is not defined";
+ }
+ my $sysdir="$defconfigdir/modules/";
+-my $os = `dpkg-architecture -qDEB_HOST_ARCH_OS`;
+-chomp $os;
+ 
+-my @module_files;
+-my @modules_builtin;
+ my %modules;
+-my %missing;
+ my %loaded;
+ 
+-sub find_all_modules {
+-	my ($moddir) = @_;
++sub expandwildcards {
++	my ($moddir, $line) = @_;
++	my ($pattern, $checkdir);
+ 
+-	File::Find::find({
+-		follow => 1, # If $moddir is a symlink, follow it.
+-		wanted => sub {
+-			if (/\.ko$/) {
+-				push @module_files,
+-				    File::Spec->abs2rel($File::Find::name,
+-							$moddir);
+-			}
+-		}
+-	}, $moddir);
++	if ($line =~ /^(.*) [-?]$/) {
++		($pattern, $checkdir) = ($1, 0);
++	} else {
++		($pattern, $checkdir) = ($line, 1);
++	}
+ 
+-	if ($os eq 'linux') {
+-		if (open(my $builtin, "$moddir/modules.builtin")) {
+-			while (<$builtin>) {
+-				chomp;
+-				push @modules_builtin, $_;
++	# If pattern doesn't include a wildcard, return it unchanged, including
++	# an optional-include suffix (but not an exclude suffix)
++	if ($pattern !~ /[?*]/) {
++		return $pattern . ($line =~ / \?$/ ? ' ?' : '');
++	}
++
++	# Find directory to start search at, and full pattern
++	my ($searchdir, $fullpattern);
++	if ($pattern =~ m|^([^?*]*)/(.*)|) {
++		my $subdir = $1;
++		if (! -d "$moddir/$subdir") {
++			if (-d "$moddir/kernel/$subdir") {
++				$subdir = "kernel/$subdir";
++			} elsif ($checkdir) {
++				die "pattern $pattern refers to nonexistent subdirectory";
++			} else {
++				return ();
+ 			}
+-			close($builtin);
+ 		}
++		$searchdir = "$moddir/$subdir";
++		$fullpattern = "$searchdir/$2";
++	} else {
++		$searchdir = $moddir;
++		$fullpattern = $pattern;
+ 	}
+-}
+-
+-sub wildcard_to_regexp {
+-	my ($pattern) = @_;
+ 
+ 	# Convert to regexp syntax.  We handle '**' as a recursive
+ 	# match-all.  We don't bother to handle '\' or '[...]'.
+@@ -56,81 +54,30 @@ sub wildcard_to_regexp {
+ 		       '*'  => '[^/]*',
+ 		       '**' => '.*',
+ 		       ''   => '');
+-	my $extra_wild;
+-	if ($os eq 'linux') {
+-		# Linux treats '-' and '_' as equivalent, and neither
+-		# is used consistently.  So let each match the other.
+-		$glob_re{'-'} = $glob_re{'_'} = '[-_]';
+-		$extra_wild = '|[-_]';
+-	} else {
+-		$extra_wild = '';
+-	}
+-	$pattern =~ s/(.*?)(\*\*|[?*]$extra_wild|)/
+-                      quotemeta($1) . $glob_re{$2}/eg;
+-
+-	return $pattern;
+-}
++	$fullpattern =~ s/(.*?)(\*\*|[?*]|)/quotemeta($1) . $glob_re{$2}/eg;
+ 
+-sub is_really_wild {
+-	my ($pattern) = @_;
+-
+-	return scalar($pattern =~ /[?*]/);
+-}
+-
+-sub find_modules {
+-	my ($moddir, $pattern, $optional) = @_;
+-	my $wild = is_really_wild($pattern);
+-
+-	my @regexps;
+-	if ($wild) {
+-		my $re;
+-		if ($pattern =~ m|^([^?*]*)/(.*)|) {
+-			my $subdir = $1;
+-			if (! -d "$moddir/$subdir") {
+-				if (-d "$moddir/kernel/$subdir") {
+-					$subdir = "kernel/$subdir";
+-				} elsif (!$optional) {
+-					print STDERR "pattern $pattern refers to nonexistent subdirectory\n";
+-					unless ($ENV{KW_CHECK_NONFATAL}) {
+-						$! = 1;
+-						die;
+-					}
+-				} else {
+-					return ();
+-				}
+-			}
+-			$re = quotemeta($subdir) . '/' . wildcard_to_regexp($2);
+-		} else {
+-			$re = wildcard_to_regexp($pattern);
+-		}
++	# Add module suffix; anchor at start and end of string
++	$fullpattern = '^' . $fullpattern . '\.(?:ko|o)$';
+ 
+-		# Add module suffix; anchor at start and end of string
+-		@regexps = ('^' . $re . '\.ko$');
+-	} else {
+-		# If pattern doesn't include a wildcard, find the
+-		# module in any subdir, but prefer a module in the
+-		# kernel subdir.  We still do wildcard processing
+-		# to handle equivalence of '-' and '_' for Linux.
+-		my $re = wildcard_to_regexp($pattern);
+-		@regexps = ('^kernel/(?:.*/)?' . $re . '\.ko$',
+-			    '(?:^|/)' . $re . '\.ko$');
+-	}
++	# We need to recurse only if the pattern contains '**' or a
++	# directory separator after any wildcard.  We could optimise
++	# this further, but it doesn't seem worthwhile.
++	my $recurse = ($pattern =~ /\*\*/ || $pattern =~ m|[?*].*/|);
+ 
+ 	my @modules;
+-      regexp_loop:
+-	for my $re (@regexps) {
+-		for (@module_files) {
+-			if (/$re/) {
++	File::Find::find(
++		sub {
++			if (-d) {
++				$File::Find::prune =
++					($File::Find::name ne $searchdir &&
++					 !$recurse);
++			} elsif ($File::Find::name =~ /$fullpattern/) {
++				# We yield just the basename, as usual
++				s/\.(?:ko|o)$//;
+ 				push @modules, $_;
+-				last regexp_loop unless $wild;
+ 			}
+-		}
+-		if (!$wild && grep(/$re/, @modules_builtin)) {
+-			push @modules, BUILTIN;
+-			last;
+-		}
+-	}
+-
++		},
++		$searchdir);
+ 	return @modules;
+ }
+ 
+@@ -138,16 +85,12 @@ sub loadlist {
+ 	my ($list, $moddir) = @_;
+ 	
+ 	if ($loaded{$list}) {
+-		$! = 1;
+ 		die "include loop detected loading $list\n";
+ 	}
+ 	$loaded{$list}=1;
+ 	
+ 	my $fh;
+-	unless (open($fh, $list)) {
+-		$! = 1;
+-		die "cannot read $list\n";
+-	}
++	open ($fh, $list) || die "cannot read $list\n";
+ 	while (<$fh>) {
+ 		s/^\s*//;
+ 		s/\s*$//;
+@@ -166,59 +109,27 @@ sub loadlist {
+ 		elsif (/^#/) {
+ 			next;
+ 		}
+-		elsif (/^(.*) -$/) {
+-			# If this was explicitly included and is missing,
+-			# we no longer care
+-			delete $missing{$1};
+-
+-			for (find_modules($moddir, $1, 1)) {
++		elsif (/ -$/) {
++			for (expandwildcards($moddir, $_)) {
+ 				delete $modules{$_};
++				delete $modules{"$_ ?"};
+ 			}
+ 		}
+ 		else {
+-			my ($pattern, $optional, @found);
+-
+-			if (/^(.*) \?$/) {
+-				($pattern, $optional) = ($1, 1);
+-			}
+ 			# Support dash prefixing for backwards compatibility.
+-			elsif (/^-(.*)/) {
+-				($pattern, $optional) = ($1, 1);
+-			} else {
+-				($pattern, $optional) = ($_, 0);
+-			}
+-
+-			@found = find_modules($moddir, $pattern, $optional);
+-			for (@found) {
+-				$modules{$_} = 1 unless $_ eq BUILTIN;
+-			}
++			s/^-(.*)/$1 ?/;
+ 
+-			# Check for missing required module.  This is not
+-			# yet an error as it might be excluded later.
+-			if (!is_really_wild($pattern) && !$optional
+-			    && !@found) {
+-				$missing{$pattern} = 1;
++			for (expandwildcards($moddir, $_)) {
++				$modules{$_}=1;
+ 			}
+ 		}
+ 	}
+ 	close $fh;
+ }
+ 
+-if (@ARGV < 2) {
+-	print STDERR "$0: Required parameters missing\n";
+-	exit 2;
+-}
+-my ($file, $moddir) = @ARGV;
+-find_all_modules($moddir);
++my $file=shift || die "no input file given";
++my $moddir=shift || die "no module directory specified";
+ loadlist($file, $moddir);
+-
+-if (keys %missing) {
+-	for (keys %missing) {
+-		print STDERR "missing module $_\n";
+-	}
+-	exit 1 unless $ENV{'KW_CHECK_NONFATAL'};
+-}
+-
+ foreach my $m (sort keys %modules) {
+ 	print "$m\n";
+ }
+diff --git a/kernel-wedge-2.96ubuntu3/commands/preprocess.txt b/kernel-wedge-2.96ubuntu3/commands/preprocess.txt
+new file mode 100644
+index 0000000..833bbe7
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/commands/preprocess.txt
+@@ -0,0 +1,11 @@
++preprocess module-list module-dir
++
++Preprocesses the module-list, performing excludes and excludes, removing
++blank lines and comments, and expanding wildcards. Emits a list of
++modules to stdout.
++
++The supported wildcards are:
++
++?  Match a single character within a path component
++*  Match any number of characters within a path component
++** Match any number of characters including multiple path components
+diff --git a/kernel-wedge-2.96ubuntu3/commands/strip-modules b/kernel-wedge-2.96ubuntu3/commands/strip-modules
+new file mode 100755
+index 0000000..fdc682b
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/commands/strip-modules
+@@ -0,0 +1,10 @@
++#!/bin/bash -e
++exit 0 # temporarily disabled, turn on after etch rc2 release
++# Remove debugging symbols from kernel modules. Pass the kernel name.
++kernel=$1
++set -e
++for dir in debian/*-modules-$kernel-di; do
++	for module in `find $dir/lib/modules/ -name '*.o' -or -name '*.ko'`; do
++		strip -R .comment -R .note -g --strip-unneeded $module
++	done
++done
+diff --git a/kernel-wedge-2.96ubuntu3/commands/strip-modules.txt b/kernel-wedge-2.96ubuntu3/commands/strip-modules.txt
+new file mode 100644
+index 0000000..39d9ede
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/commands/strip-modules.txt
+@@ -0,0 +1,3 @@
++strip-modules kernel-name
++
++Remove debugging symbols from kernel modules. Pass the kernel name.
+diff --git a/kernel-wedge-2.96ubuntu3/debian/compat b/kernel-wedge-2.96ubuntu3/debian/compat
+new file mode 100644
+index 0000000..ec63514
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/debian/compat
+@@ -0,0 +1 @@
++9
+diff --git a/kernel-wedge-2.104ubuntu1/debian/control b/kernel-wedge-2.96ubuntu3/debian/control
+index 442e4a7..8a3213a 100644
+--- a/kernel-wedge-2.104ubuntu1/debian/control
++++ b/kernel-wedge-2.96ubuntu3/debian/control
+@@ -3,12 +3,11 @@ Section: utils
+ Priority: optional
+ Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+ XSBC-Original-Maintainer: Debian Install System Team <debian-boot@lists.debian.org>
+-Uploaders: Steve Langasek <vorlon@debian.org>, Ben Hutchings <benh@debian.org>
+-Build-Depends: debhelper-compat (= 12)
+-Rules-Requires-Root: no
+-Standards-Version: 4.4.1
+-Vcs-Browser: https://salsa.debian.org/installer-team/kernel-wedge
+-Vcs-Git: https://salsa.debian.org/installer-team/kernel-wedge.git
++Uploaders: Steve Langasek <vorlon@debian.org>, Ben Hutchings <ben@decadent.org.uk>, Christian Perrier <bubulle@debian.org>
++Build-Depends: debhelper (>= 9)
++Standards-Version: 3.9.4
++Vcs-Browser: https://anonscm.debian.org/cgit/d-i/kernel-wedge.git
++Vcs-Git: https://anonscm.debian.org/git/d-i/kernel-wedge.git
+ 
+ Package: kernel-wedge
+ Architecture: all
+diff --git a/kernel-wedge-2.104ubuntu1/debian/copyright b/kernel-wedge-2.96ubuntu3/debian/copyright
+index 3982c68..168f437 100644
+--- a/kernel-wedge-2.104ubuntu1/debian/copyright
++++ b/kernel-wedge-2.96ubuntu3/debian/copyright
+@@ -1,27 +1,5 @@
+-Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
++This package is Copyright (c) 2001-2002 Herbert Xu <herbert@debian.org>
++and Copyright 2001-2005 by Joey Hess <joeyh@debian.org>.
+ 
+-Files: *
+-Copyright: 2001-2002 Herbert Xu <herbert@debian.org>
+-           2001-2005 Joey Hess <joeyh@debian.org>
+-           2011-2012, 2014, 2016, 2018-2019 Ben Hutchings <ben@decadent.org.uk>
+-License: GPL-2+
+- This program is free software; you can redistribute it
+- and/or modify it under the terms of the GNU General Public
+- License as published by the Free Software Foundation;
+- either version 2 of the License, or (at your option) any
+- later version.
+- .
+- This program is distributed in the hope that it will be
+- useful, but WITHOUT ANY WARRANTY; without even the implied
+- warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+- PURPOSE.  See the GNU General Public License for more
+- details.
+- .
+- You should have received a copy of the GNU General Public
+- License along with this package; if not, write to the Free
+- Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+- Boston, MA  02110-1301 USA
+- .
+- On Debian systems, the full text of the GNU General Public
+- License version 2 can be found in the file
+- `/usr/share/common-licenses/GPL-2'.
++It is licensed under the terms of the GNU GPL, see
++/usr/share/common-licenses/GPL
+diff --git a/kernel-wedge-2.104ubuntu1/debian/docs b/kernel-wedge-2.96ubuntu3/debian/docs
+index 6f77277..724e084 100644
+--- a/kernel-wedge-2.104ubuntu1/debian/docs
++++ b/kernel-wedge-2.96ubuntu3/debian/docs
+@@ -1,2 +1,2 @@
+-README.md
++README
+ TODO
+diff --git a/kernel-wedge-2.104ubuntu1/debian/install b/kernel-wedge-2.96ubuntu3/debian/install
+index 7b23e42..8b11304 100644
+--- a/kernel-wedge-2.104ubuntu1/debian/install
++++ b/kernel-wedge-2.96ubuntu3/debian/install
+@@ -1,3 +1,2 @@
+ kernel-wedge usr/bin
+ generic-rules commands usr/share/kernel-wedge
+-lib/KernelWedge.pm usr/share/perl5
+diff --git a/kernel-wedge-2.104ubuntu1/debian/kernel-wedge.lintian-overrides b/kernel-wedge-2.104ubuntu1/debian/kernel-wedge.lintian-overrides
+deleted file mode 100644
+index 1406034..0000000
+--- a/kernel-wedge-2.104ubuntu1/debian/kernel-wedge.lintian-overrides
++++ /dev/null
+@@ -1 +0,0 @@
+-kernel-wedge: binary-package-depends-on-toolchain-package Depends: debhelper (>= 9)
+diff --git a/kernel-wedge-2.104ubuntu1/debian/manpages b/kernel-wedge-2.96ubuntu3/debian/manpages
+index bf519d7..85cd183 100644
+--- a/kernel-wedge-2.104ubuntu1/debian/manpages
++++ b/kernel-wedge-2.96ubuntu3/debian/manpages
+@@ -1 +1 @@
+-man/*.1
++kernel-wedge.1
+diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/control b/kernel-wedge-2.104ubuntu1/debian/tests/control
+deleted file mode 100644
+index 9a56926..0000000
+--- a/kernel-wedge-2.104ubuntu1/debian/tests/control
++++ /dev/null
+@@ -1,3 +0,0 @@
+-Tests: preprocess
+-# We don't use gcc but need it to avoid #945772
+-Depends: diffutils, gcc
+diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess
+deleted file mode 100755
+index 3106f75..0000000
+--- a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess
++++ /dev/null
+@@ -1,57 +0,0 @@
+-#!/bin/sh -eu
+-
+-datadir="debian/tests/preprocess-data"
+-moddir="$AUTOPKGTEST_TMP/modules"
+-
+-# Create dummy module files and modules.builtin
+-while read -r filename; do
+-    mkdir -p "$moddir/$(dirname "$filename")"
+-    touch "$moddir/$filename"
+-done < "$datadir/filelist"
+-cp "$datadir/modules.builtin" "$moddir/"
+-
+-# Access $moddir via a symlink, to test for Debian Bug #955210
+-ln -nsf "$moddir" "${moddir}.symlink"
+-moddir="${moddir}.symlink"
+-
+-my_rc=0
+-
+-export KW_DEFCONFIG_DIR="$PWD/$datadir"
+-for input in "$datadir"/*.in; do
+-    name="$(basename "${input%.in}")"
+-    echo "I: Testing preprocess case $name"
+-
+-    output="$AUTOPKGTEST_TMP/$name.out"
+-    error="$AUTOPKGTEST_TMP/$name.err"
+-    rc=0; commands/preprocess "$input" "$moddir" >"$output" 2>"$error" || rc=$?
+-
+-    # Replace source locations in error messages, so expected error
+-    # messages don't need to be updated for every change of line no.
+-    sed -i 's/at [^ ]* line [0-9]*/at SOMEWHERE/' "$error"
+-
+-    # Find expected output, error messages and exit code
+-    exp_output="$datadir/$name.out"
+-    if [ -f "$datadir/$name.err" ]; then
+-	exp_error="$datadir/$name.err"
+-    else
+-	exp_error=/dev/null
+-    fi
+-    if [ -f "$datadir/$name.rc" ]; then
+-	exp_rc="$(cat "$datadir/$name.rc")"
+-    else
+-	exp_rc=0
+-    fi
+-
+-    # Compare actual with expected
+-    if diff -q "$exp_output" "$output" && diff -q "$exp_error" "$error" \
+-       && [ "$rc" = "$exp_rc" ]; then
+-	echo "I: pass"
+-    else
+-	diff -u "$exp_output" "$output" || true
+-	diff -u "$exp_error" "$error" || true
+-	echo "E: rc=$rc"
+-	my_rc=1
+-    fi
+-done
+-
+-exit "$my_rc"
+diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/builtin.in b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/builtin.in
+deleted file mode 100644
+index 6a13e96..0000000
+--- a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/builtin.in
++++ /dev/null
+@@ -1 +0,0 @@
+-builtin
+diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/builtin.out b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/builtin.out
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/excludemissing.in b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/excludemissing.in
+deleted file mode 100644
+index 4d71975..0000000
+--- a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/excludemissing.in
++++ /dev/null
+@@ -1,3 +0,0 @@
+-does-not-exist
+-foo
+-does-not-exist -
+diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/excludemissing.out b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/excludemissing.out
+deleted file mode 100644
+index a476456..0000000
+--- a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/excludemissing.out
++++ /dev/null
+@@ -1 +0,0 @@
+-kernel/drivers/foo.ko
+diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/filelist b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/filelist
+deleted file mode 100644
+index 2a6fbf3..0000000
+--- a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/filelist
++++ /dev/null
+@@ -1,18 +0,0 @@
+-extra/foo.ko
+-extra/hyp-hen.ko
+-extra/under_score.ko
+-kernel/drivers/foo.ko
+-kernel/drivers/hyp-hen.ko
+-kernel/drivers/under_score.ko
+-kernel/drivers/subdir/bar.ko
+-kernel/drivers/subdir/baz.ko
+-modules.alias
+-modules.alias.bin
+-modules.builtin.bin
+-modules.dep
+-modules.dep.bin
+-modules.devname
+-modules.order
+-modules.softdep
+-modules.symbols
+-modules.symbols.bin
+diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/hyphen.in b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/hyphen.in
+deleted file mode 100644
+index 3645353..0000000
+--- a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/hyphen.in
++++ /dev/null
+@@ -1,2 +0,0 @@
+-hyp-hen
+-under-score
+diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/hyphen.out b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/hyphen.out
+deleted file mode 100644
+index 001fbd3..0000000
+--- a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/hyphen.out
++++ /dev/null
+@@ -1,2 +0,0 @@
+-kernel/drivers/hyp-hen.ko
+-kernel/drivers/under_score.ko
+diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/include.in b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/include.in
+deleted file mode 100644
+index 8645503..0000000
+--- a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/include.in
++++ /dev/null
+@@ -1,2 +0,0 @@
+-#include <common>
+-foo
+diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/include.out b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/include.out
+deleted file mode 100644
+index 09ca089..0000000
+--- a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/include.out
++++ /dev/null
+@@ -1,2 +0,0 @@
+-kernel/drivers/foo.ko
+-kernel/drivers/subdir/bar.ko
+diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/missing.err b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/missing.err
+deleted file mode 100644
+index c9f581c..0000000
+--- a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/missing.err
++++ /dev/null
+@@ -1 +0,0 @@
+-missing module does-not-exist
+diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/missing.in b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/missing.in
+deleted file mode 100644
+index 6702195..0000000
+--- a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/missing.in
++++ /dev/null
+@@ -1 +0,0 @@
+-does-not-exist
+diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/missing.out b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/missing.out
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/missing.rc b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/missing.rc
+deleted file mode 100644
+index d00491f..0000000
+--- a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/missing.rc
++++ /dev/null
+@@ -1 +0,0 @@
+-1
+diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/missingdir.err b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/missingdir.err
+deleted file mode 100644
+index aad5c3a..0000000
+--- a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/missingdir.err
++++ /dev/null
+@@ -1,2 +0,0 @@
+-pattern missing/dir/* refers to nonexistent subdirectory
+-Died at SOMEWHERE, <$fh> line 1.
+diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/missingdir.in b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/missingdir.in
+deleted file mode 100644
+index 3af1147..0000000
+--- a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/missingdir.in
++++ /dev/null
+@@ -1 +0,0 @@
+-missing/dir/*
+diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/missingdir.out b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/missingdir.out
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/missingdir.rc b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/missingdir.rc
+deleted file mode 100644
+index d00491f..0000000
+--- a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/missingdir.rc
++++ /dev/null
+@@ -1 +0,0 @@
+-1
+diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/modules/common b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/modules/common
+deleted file mode 100644
+index 5716ca5..0000000
+--- a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/modules/common
++++ /dev/null
+@@ -1 +0,0 @@
+-bar
+diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/modules.builtin b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/modules.builtin
+deleted file mode 100644
+index 4f01ad9..0000000
+--- a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/modules.builtin
++++ /dev/null
+@@ -1 +0,0 @@
+-kernel/blah/builtin.ko
+diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/simple.in b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/simple.in
+deleted file mode 100644
+index 257cc56..0000000
+--- a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/simple.in
++++ /dev/null
+@@ -1 +0,0 @@
+-foo
+diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/simple.out b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/simple.out
+deleted file mode 100644
+index a476456..0000000
+--- a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/simple.out
++++ /dev/null
+@@ -1 +0,0 @@
+-kernel/drivers/foo.ko
+diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/underscore.in b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/underscore.in
+deleted file mode 100644
+index 15f1fb8..0000000
+--- a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/underscore.in
++++ /dev/null
+@@ -1,2 +0,0 @@
+-hyp_hen
+-under_score
+diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/underscore.out b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/underscore.out
+deleted file mode 100644
+index 001fbd3..0000000
+--- a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/underscore.out
++++ /dev/null
+@@ -1,2 +0,0 @@
+-kernel/drivers/hyp-hen.ko
+-kernel/drivers/under_score.ko
+diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/wilddoublestar.in b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/wilddoublestar.in
+deleted file mode 100644
+index e1d26f4..0000000
+--- a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/wilddoublestar.in
++++ /dev/null
+@@ -1 +0,0 @@
+-kernel/drivers/**
+diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/wilddoublestar.out b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/wilddoublestar.out
+deleted file mode 100644
+index ccd912a..0000000
+--- a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/wilddoublestar.out
++++ /dev/null
+@@ -1,5 +0,0 @@
+-kernel/drivers/foo.ko
+-kernel/drivers/hyp-hen.ko
+-kernel/drivers/subdir/bar.ko
+-kernel/drivers/subdir/baz.ko
+-kernel/drivers/under_score.ko
+diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/wildstar.in b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/wildstar.in
+deleted file mode 100644
+index a68e216..0000000
+--- a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/wildstar.in
++++ /dev/null
+@@ -1 +0,0 @@
+-kernel/drivers/*
+diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/wildstar.out b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/wildstar.out
+deleted file mode 100644
+index ad33cd5..0000000
+--- a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/wildstar.out
++++ /dev/null
+@@ -1,3 +0,0 @@
+-kernel/drivers/foo.ko
+-kernel/drivers/hyp-hen.ko
+-kernel/drivers/under_score.ko
+diff --git a/kernel-wedge-2.104ubuntu1/generic-rules b/kernel-wedge-2.96ubuntu3/generic-rules
+index 6ef8263..0bbfe32 100755
+--- a/kernel-wedge-2.104ubuntu1/generic-rules
++++ b/kernel-wedge-2.96ubuntu3/generic-rules
+@@ -12,7 +12,7 @@ build: debian/control
+ 
+ clean: debian/control
+ 	dh_testdir
+-	dh_clean `find modules -type l`
++	dh_clean `find modules firmware -type l 2>/dev/null`
+ 
+ binary-indep:
+ 
+diff --git a/kernel-wedge-2.104ubuntu1/kernel-wedge b/kernel-wedge-2.96ubuntu3/kernel-wedge
+index 24cd2f5..75758c2 100755
+--- a/kernel-wedge-2.104ubuntu1/kernel-wedge
++++ b/kernel-wedge-2.96ubuntu3/kernel-wedge
+@@ -3,8 +3,9 @@ LIBDIR=/usr/share/kernel-wedge/commands
+ usage () {
+ 	echo "Usage: kernel-wedge command options"
+ 	echo "Commands:"
+-	for file in $LIBDIR/*; do
+-		printf "	%s\n" "${file##*/}"
++	for file in $LIBDIR/*.txt; do
++		echo -n "	"
++		head -n 1 $file
+ 	done
+ 	exit 1
+ }
+diff --git a/kernel-wedge-2.96ubuntu3/kernel-wedge.1 b/kernel-wedge-2.96ubuntu3/kernel-wedge.1
+new file mode 100644
+index 0000000..ec52db6
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/kernel-wedge.1
+@@ -0,0 +1,15 @@
++.TH NAME 1
++.SH NAME
++kernel-wedge \- industrial strength kernel splitter
++.SH SYNOPSIS
++.B kernel-wedge
++.I "subcommand [options]"
++.SH "DESCRIPTION"
++.BR kernel-wedge
++is used to generate kernel module udebs for the debian installer.
++Type "kernel-wedge" without any parameters for a list of subcommands, 
++and use "kernel-wedge help subcommand" for details on the usage of a
++particular subcommand.
++See /usr/share/doc/kernel-wedge/README.gz for detailed documentation.
++.SH AUTHOR
++Joey Hess <joey@kitenet.net>
+diff --git a/kernel-wedge-2.104ubuntu1/lib/KernelWedge.pm b/kernel-wedge-2.104ubuntu1/lib/KernelWedge.pm
+deleted file mode 100644
+index a171dfb..0000000
+--- a/kernel-wedge-2.104ubuntu1/lib/KernelWedge.pm
++++ /dev/null
+@@ -1,148 +0,0 @@
+-package KernelWedge;
+-
+-use strict;
+-use warnings;
+-
+-BEGIN {
+-	use Exporter ();
+-	our @ISA = qw(Exporter);
+-	our @EXPORT_OK = qw(CONTROL_FIELDS CONFIG_DIR DEFCONFIG_DIR
+-			    read_package_lists read_kernel_versions
+-			    for_each_package);
+-}
+-
+-use constant CONTROL_FIELDS => qw(
+-	Package Package-Type Provides Depends Architecture Kernel-Version
+-	Section Priority Description
+-);
+-
+-use constant DEFCONFIG_DIR => $ENV{KW_DEFCONFIG_DIR};
+-if (!defined(DEFCONFIG_DIR)) {
+-	die "Required environment variable \$KW_DEFCONFIG_DIR is not defined";
+-}
+-use constant CONFIG_DIR => ($ENV{KW_CONFIG_DIR} || '.');
+-
+-sub read_package_list
+-{
+-	my ($packages, $order, $file) = @_;
+-
+-	sub merge_package
+-	{
+-		my ($packages, $order, $pkg) = @_;
+-		if (not exists $packages->{$pkg->{Package}}) {
+-			$packages->{$pkg->{Package}} = {};
+-			push @$order, $pkg->{Package};
+-		}
+-		my $real_pkg = $packages->{$pkg->{Package}};
+-		foreach (keys(%$pkg)) {
+-			$real_pkg->{$_} = $pkg->{$_};
+-		}
+-	}
+-
+-	open(LIST, $file) || die "package-list: $!";
+-	my $field;
+-	my %pkg;
+-	while (<LIST>) {
+-		chomp;
+-		next if /^#/;
+-
+-		if (/^(\S+):\s*(.*)/) {
+-			$field=$1;
+-			my $val=$2;
+-			if (! grep { $field =~ /^\Q$_\E(_.+)?$/ } CONTROL_FIELDS) {
+-				die "unknown field, $field";
+-			}
+-			$pkg{$field}=$val;
+-		}
+-		elsif (/^$/) {
+-			if (%pkg) {
+-				merge_package($packages, $order, \%pkg);
+-				%pkg=();
+-			}
+-		}
+-		elsif (/^(\s+.*)/) {
+-			# continued field
+-			$pkg{$field}.="\n".$1;
+-		}
+-	}
+-	if (%pkg) {
+-		merge_package($packages, $order, \%pkg);
+-	}
+-	close LIST;
+-}
+-
+-sub read_package_lists {
+-	my %packages;
+-	my @order;
+-
+-	read_package_list(\%packages, \@order, DEFCONFIG_DIR . "/package-list")
+-		unless DEFCONFIG_DIR eq CONFIG_DIR;
+-	read_package_list(\%packages, \@order, CONFIG_DIR . "/package-list");
+-
+-	return [map {$packages{$_}} @order];
+-}
+-
+-sub read_kernel_versions {
+-	my ($fixkernelversion) = @_;
+-	my @versions;
+-
+-	open(KVERS, CONFIG_DIR . "/kernel-versions") || die "kernel-versions: $!";
+-	while (<KVERS>) {
+-		chomp;
+-		next if /^#/ || ! length;
+-
+-		my @fields = split(' ', $_, 6);
+-		my ($arch, $kernelversion, $flavour) = @fields;
+-		if (! length $arch || ! length $kernelversion || ! length $flavour) {
+-			die "parse error";
+-		}
+-		push @versions, \@fields;
+-	}
+-	close KVERS;
+-
+-	return \@versions;
+-}
+-
+-sub for_each_package {
+-	my ($packages, $versions, $fn) = @_;
+-
+-	foreach my $ver (@$versions) {
+-		my ($arch, $kernelversion, $flavour) = @$ver;
+-		foreach my $pkg (@$packages) {
+-			# Used to get a field of the package, looking first for
+-			# architecture-specific fields.
+-			my $package = sub {
+-				my $field=shift;
+-				return $pkg->{$field."_".$flavour}
+-				if exists $pkg->{$field."_".$flavour};
+-				return $pkg->{$field."_".$arch."_".$flavour}
+-				if exists $pkg->{$field."_".$arch."_".$flavour};
+-				return $pkg->{$field."_".$arch}
+-				if exists $pkg->{$field."_".$arch};
+-				return $pkg->{$field}
+-				if exists $pkg->{$field};
+-				return undef;
+-			};
+-
+-			# Check for a modules list file for this architecture and
+-			# package.
+-			my $modlistdir="";
+-			if (-d (CONFIG_DIR . "/modules/$arch-$flavour")) {
+-				$modlistdir = CONFIG_DIR . "/modules/$arch-$flavour";
+-			}
+-			elsif (-d (CONFIG_DIR . "/modules/$flavour")) {
+-				$modlistdir = CONFIG_DIR . "/modules/$flavour";
+-			}
+-			else {
+-				$modlistdir = CONFIG_DIR . "/modules/$arch";
+-			}
+-
+-			next unless -e "$modlistdir/".$package->("Package");
+-
+-			$fn->($arch, $kernelversion, $flavour, $modlistdir,
+-			      $package);
+-		}
+-	}
+-}
+-
+-1;
+diff --git a/kernel-wedge-2.104ubuntu1/man/kernel-wedge-build-all.1 b/kernel-wedge-2.104ubuntu1/man/kernel-wedge-build-all.1
+deleted file mode 100644
+index 4cfb5ea..0000000
+--- a/kernel-wedge-2.104ubuntu1/man/kernel-wedge-build-all.1
++++ /dev/null
+@@ -1,16 +0,0 @@
+-.TH KERNEL\-WEDGE\-BUILD\-ALL 1 "June 2019" "Kernel-wedge"
+-.SH NAME
+-kernel\-wedge\-build\-all \- build udebs for all architectures
+-.SH SYNOPSIS
+-.B kernel\-wedge build\-all
+-.SH DESCRIPTION
+-This is a wrapper script that can be used to build all architectures.
+-
+-The script builds all architectures listed in kernel\-versions.
+-It expects to have the unpacked kernel packages for various arches in
+-\a../alpha, etc. modules.dep files have to be put in there too if they are
+-not shipped in the .deb (varies)
+-
+-\fBdpkg\-cross\fR must be installed, but you do not need a cross compiler.
+-.SH AUTHOR
+-Joey Hess
+diff --git a/kernel-wedge-2.104ubuntu1/man/kernel-wedge-build-arch.1 b/kernel-wedge-2.104ubuntu1/man/kernel-wedge-build-arch.1
+deleted file mode 100644
+index 87255c8..0000000
+--- a/kernel-wedge-2.104ubuntu1/man/kernel-wedge-build-arch.1
++++ /dev/null
+@@ -1,18 +0,0 @@
+-.TH KERNEL\-WEDGE\-BUILD\-ARCH 1 "June 2019" "Kernel-wedge"
+-.SH NAME
+-kernel\-wedge\-build\-arch \- build udebs for a single architecture
+-.SH SYNOPSIS
+-.B kernel\-wedge build\-arch
+-.I architecture
+-.SH DESCRIPTION
+-This is a wrapper script to build a specific architecture.
+-
+-It takes the architecture to be built as parameter and that architecture
+-needs to be listed in kernel-versions.
+-It expects to have the unpacked kernel packages for the architecture in
+-e.g. ../alpha. modules.dep files have to be put in there too if they are
+-not shipped in the .deb (varies)
+-
+-\fBdpkg-cross\fR must be installed, but you do not need a cross compiler.
+-.SH AUTHOR
+-Frans Pop
+diff --git a/kernel-wedge-2.104ubuntu1/man/kernel-wedge-check.1 b/kernel-wedge-2.104ubuntu1/man/kernel-wedge-check.1
+deleted file mode 100644
+index 03864f2..0000000
+--- a/kernel-wedge-2.104ubuntu1/man/kernel-wedge-check.1
++++ /dev/null
+@@ -1,12 +0,0 @@
+-.TH KERNEL\-WEDGE\-CHECK 1 "June 2019" "Kernel-wedge"
+-.SH NAME
+-kernel\-wedge\-check \- check files installed in package directories
+-.SH SYNOPSIS
+-.B kernel\-wedge check
+-.SH DESCRIPTION
+-Check for various problems in the packages.
+-
+-Return 1 if any problems are found, unless $KW_CHECK_NONFATAL is
+-non-empty.
+-.SH AUTHOR
+-Joey Hess
+diff --git a/kernel-wedge-2.104ubuntu1/man/kernel-wedge-copy-modules.1 b/kernel-wedge-2.104ubuntu1/man/kernel-wedge-copy-modules.1
+deleted file mode 100644
+index a52fa0d..0000000
+--- a/kernel-wedge-2.104ubuntu1/man/kernel-wedge-copy-modules.1
++++ /dev/null
+@@ -1,13 +0,0 @@
+-.TH KERNEL\-WEDGE\-COPY\-MODULES 1 "June 2019" "Kernel-wedge"
+-.SH NAME
+-kernel\-wedge\-copy\-modules \- install modules into package directories
+-.SH SYNOPSIS
+-.B kernel\-wedge copy\-modules
+-.I version flavour installedname
+-.SH DESCRIPTION
+-Copy modules into the right directories in preparation for building udebs.
+-
+-Return 1 if a required module is missing, unless $KW_CHECK_NONFATAL is
+-non-empty.
+-.SH AUTHOR
+-Joey Hess
+diff --git a/kernel-wedge-2.104ubuntu1/man/kernel-wedge-find-dups.1 b/kernel-wedge-2.104ubuntu1/man/kernel-wedge-find-dups.1
+deleted file mode 100644
+index 450c69b..0000000
+--- a/kernel-wedge-2.104ubuntu1/man/kernel-wedge-find-dups.1
++++ /dev/null
+@@ -1,13 +0,0 @@
+-.TH KERNEL\-WEDGE\-FIND\-DUPS 1 "June 2019" "Kernel-wedge"
+-.SH NAME
+-kernel\-wedge\-find\-dups \- find duplicate modules in package directories
+-.SH SYNOPSIS
+-.B kernel\-wedge find\-dups
+-.I kernel-name
+-.SH DESCRIPTION
+-Find duplicate modules. Pass the kernel name.
+-
+-Return 1 if any duplicates are found, unless $KW_CHECK_NONFATAL is
+-non-empty or the configuration file 'ignore\-dups' exists.
+-.SH AUTHOR
+-Joey Hess
+diff --git a/kernel-wedge-2.104ubuntu1/man/kernel-wedge-find-unpackaged.1 b/kernel-wedge-2.104ubuntu1/man/kernel-wedge-find-unpackaged.1
+deleted file mode 100644
+index fd53b2a..0000000
+--- a/kernel-wedge-2.104ubuntu1/man/kernel-wedge-find-unpackaged.1
++++ /dev/null
+@@ -1,12 +0,0 @@
+-.TH KERNEL\-WEDGE\-FIND\-UNPACKAGED 1 "June 2019" "Kernel-wedge"
+-.SH NAME
+-kernel\-wedge\-find\-unpackaged - list modules not packaged in a udeb
+-.SH SYNOPSIS
+-.B kernel\-wedge find\-unpackaged
+-.I kernel\-name
+-.SH DESCRIPTION
+-List modules that are not packaged in a udeb. Pass the kernel name.
+-
+-Always return 0.
+-.SH AUTHOR
+-Ben Hutchings <ben@decadent.org.uk>
+diff --git a/kernel-wedge-2.104ubuntu1/man/kernel-wedge-gen-control.1 b/kernel-wedge-2.104ubuntu1/man/kernel-wedge-gen-control.1
+deleted file mode 100644
+index 49b4707..0000000
+--- a/kernel-wedge-2.104ubuntu1/man/kernel-wedge-gen-control.1
++++ /dev/null
+@@ -1,64 +0,0 @@
+-.TH KERNEL\-WEDGE\-GEN\-CONTROL 1 "June 2019" "Kernel-wedge"
+-.SH NAME
+-kernel\-wedge\-gen\-control \- generate debian/control file
+-.SH SYNOPSIS
+-.B kernel\-wedge gen\-control
+-.SH DESCRIPTION
+-Generate a debian/control from the control stub, the kernel\-versions
+-files, and the package\-list files.
+-
+-For each kernel version and flavour, and for each module list defined
+-for that flavour, \fBgen\-control\fR will create a binary package control
+-paragraph.  This is normally based on a template in the package\-list
+-in the default-configuration directory.
+-
+-Templates are processed as follows:
+-
+-.IP 1. 4
+-For each standard control field \fIname\fR, copy the template control
+-field \fIname\fR_\fIflavour\fR, \fIname\fR_\fIarch\fR_\fIflavour\fR,
+-\fIname\fR_\fIarch\fR, or \fIname\fR (in descending order of priority).
+-.IP 2. 4
+-Append the kernel version and flavour to package names in the
+-Package and Depends fields.
+-.IP 3. 4
+-Stop processing the package if it has been excluded.
+-.IP 4. 4
+-Set the Architecture, Package\-Type, Kernel\-Version, and Section
+-fields automatically.
+-.IP 5. 4
+-Remove any package that is not going to be built from the Depends
+-field.  This can be overridden by adding a "!" to the dependency
+-name.
+-.IP 6. 4
+-Add the original (unsuffixed) package name to the Provides field.
+-.IP 7. 4
+-Emit the processed control paragraph.
+-.RE
+-
+-The package\-list in the configuration directory may add new package
+-templates or override template field values.  For example:
+-
+-.RS 4
+-.EX
+-# This file is used to build up the control file. The kernel version and
+-# "\-di" are appended to the package names. Section can be left out. So can
+-# architecture, which is derived from the files in the modules directory.
+-# It overwrites specifications from /usr/share/kernel\-wedge/package\-list.
+-Package: fat\-modules
+-Priority: standard
+-
+-Package: nic\-modules
+-Depends: kernel\-image, nic\-shared\-modules, core\-modules, firewire\-core\-modules
+-
+-Package: other\-modules
+-Depends: kernel\-image
+-Description: some other modules I like to have in the installer
+-.EE
+-.RE
+-
+-The configuration directory may have an exclude\-packages file that
+-lists any udebs (by full package name) that would normally be built,
+-but should be excluded from the control file.
+-.SH AUTHOR
+-Joey Hess, Ben Hutchings <ben@decadent.org.uk>
+diff --git a/kernel-wedge-2.104ubuntu1/man/kernel-wedge-gen-deps.1 b/kernel-wedge-2.104ubuntu1/man/kernel-wedge-gen-deps.1
+deleted file mode 100644
+index c9bf9d8..0000000
+--- a/kernel-wedge-2.104ubuntu1/man/kernel-wedge-gen-deps.1
++++ /dev/null
+@@ -1,12 +0,0 @@
+-.TH KERNEL\-WEDGE\-GEN\-DEPS 1 "June 2019" "Kernel-wedge"
+-.SH NAME
+-kernel\-wedge\-gen\-deps \- generate package dependency list
+-.SH SYNOPSIS
+-.B kernel\-wedge gen\-deps
+-.I flavour
+-.SH DESCRIPTION
+-Generates from the package\-list a dependency file for the given kernel
+-flavour, suitable to be fed to tsort. The file has the base package name on
+-the left, and the package it depends on is on the right. It is sorted.
+-.SH AUTHOR
+-Joey Hess
+diff --git a/kernel-wedge-2.104ubuntu1/man/kernel-wedge-help.1 b/kernel-wedge-2.104ubuntu1/man/kernel-wedge-help.1
+deleted file mode 100644
+index 3f7a246..0000000
+--- a/kernel-wedge-2.104ubuntu1/man/kernel-wedge-help.1
++++ /dev/null
+@@ -1,11 +0,0 @@
+-.TH KERNEL\-WEDGE\-HELP 1 "June 2019" "Kernel-wedge"
+-.SH NAME
+-kernel\-wedge\-help \- display online help
+-.SH SYNOPSIS
+-.B kernel\-wedge help
+-.I command
+-.SH DESCRIPTION
+-The \fBhelp\fR command displays the manual page for a \fBkernel-wedge\fR
+-command.
+-.SH AUTHOR
+-Joey Hess
+diff --git a/kernel-wedge-2.104ubuntu1/man/kernel-wedge-install-files.1 b/kernel-wedge-2.104ubuntu1/man/kernel-wedge-install-files.1
+deleted file mode 100644
+index d0d5da9..0000000
+--- a/kernel-wedge-2.104ubuntu1/man/kernel-wedge-install-files.1
++++ /dev/null
+@@ -1,9 +0,0 @@
+-.TH KERNEL\-WEDGE\-INSTALL\-FILES 1 "June 2019" "Kernel-wedge"
+-.SH NAME
+-kernel\-wedge\-install\-files \- install files into package directories
+-.SH SYNOPSIS
+-.B kernel\-wedge install\-files
+-.SH DESCRIPTION
+-Create and populate the package build directories.
+-.SH AUTHOR
+-Joey Hess
+diff --git a/kernel-wedge-2.104ubuntu1/man/kernel-wedge-preprocess.1 b/kernel-wedge-2.104ubuntu1/man/kernel-wedge-preprocess.1
+deleted file mode 100644
+index ea26e8b..0000000
+--- a/kernel-wedge-2.104ubuntu1/man/kernel-wedge-preprocess.1
++++ /dev/null
+@@ -1,28 +0,0 @@
+-.TH KERNEL\-WEDGE\-PREPROCESS 1 "June 2019" "Kernel-wedge"
+-.SH NAME
+-kernel\-wedge\-preprocess \- process a module list file
+-.SH SYNOPSIS
+-.B kernel\-wedge preprocess
+-.I module-list module-dir
+-.SH DESCRIPTION
+-Preprocesses the \fImodule-list\fR, performing list includes and module
+-excludes, removing blank lines and comments, and expanding wildcards.
+-Emits a list of filenames to stdout.
+-
+-Return 1 if a required module or directory is missing, unless
+-$KW_CHECK_NONFATAL is non-empty.
+-
+-The supported wildcards are:
+-
+-.TS
+-nokeep;
+-lB	l.
+-?	Match a single character within a path component
+-*	Match any number of characters within a path component
+-**	Match any number of characters including multiple path components
+-.TE
+-
+-On Linux, '\-' and '_' also match each other since the kernel and kmod
+-treat them as equivalent in module names.
+-.SH AUTHOR
+-Joey Hess, Ben Hutchings <ben@decadent.org.uk>
+diff --git a/kernel-wedge-2.104ubuntu1/man/kernel-wedge.1 b/kernel-wedge-2.104ubuntu1/man/kernel-wedge.1
+deleted file mode 100644
+index ba482e4..0000000
+--- a/kernel-wedge-2.104ubuntu1/man/kernel-wedge.1
++++ /dev/null
+@@ -1,15 +0,0 @@
+-.TH KERNEL\-WEDGE 1 "June 2019" "Kernel-wedge"
+-.SH NAME
+-kernel\-wedge \- industrial strength kernel splitter
+-.SH SYNOPSIS
+-.B kernel\-wedge
+-.IR "subcommand " [ options ]
+-.SH "DESCRIPTION"
+-.B kernel\-wedge
+-is used to generate kernel module udebs for the debian installer.
+-Type \fBkernel\-wedge\fR without any parameters for a list of subcommands,
+-and use \fBkernel\-wedge help\fR \fIsubcommand\fR for details on the usage of a
+-particular subcommand.
+-See /usr/share/doc/kernel-wedge/README.md.gz for detailed documentation.
+-.SH AUTHOR
+-Joey Hess
+diff --git a/kernel-wedge-2.96ubuntu3/modules/acpi-modules b/kernel-wedge-2.96ubuntu3/modules/acpi-modules
+new file mode 100644
+index 0000000..d4723a1
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/acpi-modules
+@@ -0,0 +1,2 @@
++fan
++thermal
+diff --git a/kernel-wedge-2.96ubuntu3/modules/affs-modules b/kernel-wedge-2.96ubuntu3/modules/affs-modules
+new file mode 100644
+index 0000000..ac28259
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/affs-modules
+@@ -0,0 +1 @@
++affs
+diff --git a/kernel-wedge-2.96ubuntu3/modules/ata-modules b/kernel-wedge-2.96ubuntu3/modules/ata-modules
+new file mode 100644
+index 0000000..6ca33ce
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/ata-modules
+@@ -0,0 +1,2 @@
++libata
++ata_generic
+diff --git a/kernel-wedge-2.96ubuntu3/modules/brltty-modules b/kernel-wedge-2.96ubuntu3/modules/brltty-modules
+new file mode 100644
+index 0000000..4345566
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/brltty-modules
+@@ -0,0 +1 @@
++brlvger
+diff --git a/kernel-wedge-2.96ubuntu3/modules/btrfs-modules b/kernel-wedge-2.96ubuntu3/modules/btrfs-modules
+new file mode 100644
+index 0000000..00531f6
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/btrfs-modules
+@@ -0,0 +1 @@
++btrfs
+diff --git a/kernel-wedge-2.96ubuntu3/modules/cdrom-core-modules b/kernel-wedge-2.96ubuntu3/modules/cdrom-core-modules
+new file mode 100644
+index 0000000..07d1178
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/cdrom-core-modules
+@@ -0,0 +1,3 @@
++cdrom ?
++sr_mod ?
++ide-cd_mod ?
+diff --git a/kernel-wedge-2.96ubuntu3/modules/core-modules b/kernel-wedge-2.96ubuntu3/modules/core-modules
+new file mode 100644
+index 0000000..d06c2be
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/core-modules
+@@ -0,0 +1,2 @@
++bitrev ?
++led-class ?
+diff --git a/kernel-wedge-2.96ubuntu3/modules/crc-modules b/kernel-wedge-2.96ubuntu3/modules/crc-modules
+new file mode 100644
+index 0000000..0b8ec0a
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/crc-modules
+@@ -0,0 +1,3 @@
++crc-ccitt
++libcrc32c
++crc32c
+diff --git a/kernel-wedge-2.96ubuntu3/modules/crypto-dm-modules b/kernel-wedge-2.96ubuntu3/modules/crypto-dm-modules
+new file mode 100644
+index 0000000..189131f
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/crypto-dm-modules
+@@ -0,0 +1 @@
++dm-crypt
+diff --git a/kernel-wedge-2.96ubuntu3/modules/crypto-modules b/kernel-wedge-2.96ubuntu3/modules/crypto-modules
+new file mode 100644
+index 0000000..b443ec1
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/crypto-modules
+@@ -0,0 +1,6 @@
++aes_generic
++blowfish
++twofish
++serpent
++sha256_generic
++cbc ?
+diff --git a/kernel-wedge-2.96ubuntu3/modules/efi-modules b/kernel-wedge-2.96ubuntu3/modules/efi-modules
+new file mode 100644
+index 0000000..9173272
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/efi-modules
+@@ -0,0 +1 @@
++efivars
+diff --git a/kernel-wedge-2.96ubuntu3/modules/event-modules b/kernel-wedge-2.96ubuntu3/modules/event-modules
+new file mode 100644
+index 0000000..97a5e58
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/event-modules
+@@ -0,0 +1 @@
++evdev
+diff --git a/kernel-wedge-2.96ubuntu3/modules/ext2-modules b/kernel-wedge-2.96ubuntu3/modules/ext2-modules
+new file mode 100644
+index 0000000..43d7af3
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/ext2-modules
+@@ -0,0 +1 @@
++ext2
+diff --git a/kernel-wedge-2.96ubuntu3/modules/ext3-modules b/kernel-wedge-2.96ubuntu3/modules/ext3-modules
+new file mode 100644
+index 0000000..1c28572
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/ext3-modules
+@@ -0,0 +1,2 @@
++ext3
++jbd
+diff --git a/kernel-wedge-2.96ubuntu3/modules/ext4-modules b/kernel-wedge-2.96ubuntu3/modules/ext4-modules
+new file mode 100644
+index 0000000..6100342
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/ext4-modules
+@@ -0,0 +1,2 @@
++ext4
++jbd2
+diff --git a/kernel-wedge-2.96ubuntu3/modules/fat-modules b/kernel-wedge-2.96ubuntu3/modules/fat-modules
+new file mode 100644
+index 0000000..37e6d05
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/fat-modules
+@@ -0,0 +1,6 @@
++fat ?
++vfat
++# the default codepage for fat (as of 2.6.8)
++nls_cp437 ?
++# the default i/o character set for fat (as of 2.6.25)
++nls_utf8 ?
+diff --git a/kernel-wedge-2.96ubuntu3/modules/firewire-core-modules b/kernel-wedge-2.96ubuntu3/modules/firewire-core-modules
+new file mode 100644
+index 0000000..ebfcb22
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/firewire-core-modules
+@@ -0,0 +1,5 @@
++ieee1394 ?
++ohci1394 ?
++sbp2 ?
++firewire-ohci ?
++firewire-sbp2 ?
+diff --git a/kernel-wedge-2.96ubuntu3/modules/floppy-modules b/kernel-wedge-2.96ubuntu3/modules/floppy-modules
+new file mode 100644
+index 0000000..8b54ec8
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/floppy-modules
+@@ -0,0 +1 @@
++floppy
+diff --git a/kernel-wedge-2.96ubuntu3/modules/hfs-modules b/kernel-wedge-2.96ubuntu3/modules/hfs-modules
+new file mode 100644
+index 0000000..4a31155
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/hfs-modules
+@@ -0,0 +1,2 @@
++hfs
++hfsplus
+diff --git a/kernel-wedge-2.96ubuntu3/modules/i2c-modules b/kernel-wedge-2.96ubuntu3/modules/i2c-modules
+new file mode 100644
+index 0000000..8c51c24
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/i2c-modules
+@@ -0,0 +1 @@
++i2c-core
+diff --git a/kernel-wedge-2.96ubuntu3/modules/ide-core-modules b/kernel-wedge-2.96ubuntu3/modules/ide-core-modules
+new file mode 100644
+index 0000000..96284d1
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/ide-core-modules
+@@ -0,0 +1 @@
++ide-core
+diff --git a/kernel-wedge-2.96ubuntu3/modules/ide-modules b/kernel-wedge-2.96ubuntu3/modules/ide-modules
+new file mode 100644
+index 0000000..c8ad937
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/ide-modules
+@@ -0,0 +1,32 @@
++ide-generic ?
++ide-gd_mod ?
++aec62xx ?
++alim15x3 ?
++amd74xx ?
++atiixp ?
++cmd640 ?
++cmd64x ?
++cs5520 ?
++cs5530 ?
++cs5535 ?
++cy82c693 ?
++it821x ?
++it8213 ?
++jmicron ?
++hpt366 ?
++ns87415 ?
++opti621 ?
++pdc202xx_new ?
++pdc202xx_old ?
++piix ?
++rz1000 ?
++sc1200 ?
++serverworks ?
++siimage ?
++sis5513 ?
++slc90e66 ?
++triflex ?
++trm290 ?
++via82cxxx ?
++delkin_cb ?
++tc86c001 ?
+diff --git a/kernel-wedge-2.96ubuntu3/modules/input-modules b/kernel-wedge-2.96ubuntu3/modules/input-modules
+new file mode 100644
+index 0000000..8134eee
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/input-modules
+@@ -0,0 +1,8 @@
++usbhid
++hid-apple ?
++hid-belkin ?
++hid-microsoft ?
++hid-logitech ?
++hid-monterey ?
++hid-sunplus ?
++hid-cherry ?
+diff --git a/kernel-wedge-2.96ubuntu3/modules/ipv6-modules b/kernel-wedge-2.96ubuntu3/modules/ipv6-modules
+new file mode 100644
+index 0000000..13ac34b
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/ipv6-modules
+@@ -0,0 +1 @@
++ipv6
+diff --git a/kernel-wedge-2.96ubuntu3/modules/isofs-modules b/kernel-wedge-2.96ubuntu3/modules/isofs-modules
+new file mode 100644
+index 0000000..0f41779
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/isofs-modules
+@@ -0,0 +1 @@
++isofs
+diff --git a/kernel-wedge-2.96ubuntu3/modules/jffs2-modules b/kernel-wedge-2.96ubuntu3/modules/jffs2-modules
+new file mode 100644
+index 0000000..19f4e10
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/jffs2-modules
+@@ -0,0 +1 @@
++jffs2
+diff --git a/kernel-wedge-2.96ubuntu3/modules/jfs-modules b/kernel-wedge-2.96ubuntu3/modules/jfs-modules
+new file mode 100644
+index 0000000..aa604c4
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/jfs-modules
+@@ -0,0 +1 @@
++jfs
+diff --git a/kernel-wedge-2.96ubuntu3/modules/loop-aes-modules b/kernel-wedge-2.96ubuntu3/modules/loop-aes-modules
+new file mode 100644
+index 0000000..c51e8dc
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/loop-aes-modules
+@@ -0,0 +1,4 @@
++loop-aes
++loop_twofish
++loop_blowfish
++loop_serpent
+diff --git a/kernel-wedge-2.96ubuntu3/modules/loop-modules b/kernel-wedge-2.96ubuntu3/modules/loop-modules
+new file mode 100644
+index 0000000..5281728
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/loop-modules
+@@ -0,0 +1,2 @@
++loop
++cloop ?
+diff --git a/kernel-wedge-2.96ubuntu3/modules/md-modules b/kernel-wedge-2.96ubuntu3/modules/md-modules
+new file mode 100644
+index 0000000..83f3925
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/md-modules
+@@ -0,0 +1,11 @@
++linear
++md-mod
++dm-mod
++multipath
++raid0
++raid1
++raid456
++raid10
++xor
++dm-mirror
++dm-snapshot
+diff --git a/kernel-wedge-2.96ubuntu3/modules/minix-modules b/kernel-wedge-2.96ubuntu3/modules/minix-modules
+new file mode 100644
+index 0000000..aa6ca5d
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/minix-modules
+@@ -0,0 +1 @@
++minix
+diff --git a/kernel-wedge-2.96ubuntu3/modules/mmc-core-modules b/kernel-wedge-2.96ubuntu3/modules/mmc-core-modules
+new file mode 100644
+index 0000000..67128ea
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/mmc-core-modules
+@@ -0,0 +1 @@
++mmc_core
+diff --git a/kernel-wedge-2.96ubuntu3/modules/mmc-modules b/kernel-wedge-2.96ubuntu3/modules/mmc-modules
+new file mode 100644
+index 0000000..7d98f69
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/mmc-modules
+@@ -0,0 +1,4 @@
++mmc_block
++sdhci
++ricoh_mmc ?
++tifm_sd
+diff --git a/kernel-wedge-2.96ubuntu3/modules/mouse-modules b/kernel-wedge-2.96ubuntu3/modules/mouse-modules
+new file mode 100644
+index 0000000..8d65ba4
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/mouse-modules
+@@ -0,0 +1 @@
++psmouse
+diff --git a/kernel-wedge-2.96ubuntu3/modules/multipath-modules b/kernel-wedge-2.96ubuntu3/modules/multipath-modules
+new file mode 100644
+index 0000000..5fa964c
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/multipath-modules
+@@ -0,0 +1,2 @@
++dm-multipath
++dm-round-robin
+diff --git a/kernel-wedge-2.96ubuntu3/modules/nbd-modules b/kernel-wedge-2.96ubuntu3/modules/nbd-modules
+new file mode 100644
+index 0000000..cb3ca60
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/nbd-modules
+@@ -0,0 +1 @@
++nbd
+diff --git a/kernel-wedge-2.96ubuntu3/modules/nfs-modules b/kernel-wedge-2.96ubuntu3/modules/nfs-modules
+new file mode 100644
+index 0000000..a5bfd2c
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/nfs-modules
+@@ -0,0 +1,3 @@
++nfs
++lockd
++sunrpc
+diff --git a/kernel-wedge-2.96ubuntu3/modules/nic-extra-modules b/kernel-wedge-2.96ubuntu3/modules/nic-extra-modules
+new file mode 100644
+index 0000000..157b5c8
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/nic-extra-modules
+@@ -0,0 +1,122 @@
++# Note that this is an incomplete list that tries to be a common subset
++# that is right for most kernels. Suppliment with any others.
++82596 ?
++abyss ?
++ac3200 ?
++amd8111e
++at1700 ?
++cs89x0 ?
++depca ?
++dl2k
++dmfe
++e2100 ?
++eepro ?
++enc28j60
++forcedeth
++hamachi
++hp-plus ?
++hp100 ?
++ibmtr ?
++igb
++ipg ?
++lance ?
++lanstreamer ?
++lne390 ?
++lp486e ?
++ne ?
++ne2 ?
++ni5010 ?
++ni52 ?
++ni65 ?
++niu ?
++r8169
++rrunner ?
++skfp
++sky2
++skge
++smc-ultra ?
++tlan ?
++tmspci ?
++typhoon
++yellowfin
++3c501 ?
++3c503 ?
++3c505 ?
++3c507 ?
++3c509 ?
++3c515 ?
++3c523 ?
++3c527 ?
++8139cp
++eexpress ?
++epic100
++es3210 ?
++eth16i ?
++ewrk3 ?
++fealnx
++ns83820
++smc-ultra32 ?
++smc9194 ?
++starfire
++sundance
++olympic
++arlan ?
++de2104x ?
++de600 ?
++de620 ?
++defxx ?
++e1000 ?
++e1000e ?
++hp ?
++ixgb ?
++ixgbe ?
++ne3210 ?
++pcnet32 ?
++s2io ?
++sis190 ?
++sis900 ?
++via-rhine ?
++via-velocity ?
++wd ?
++znet ?
++bnx2 ?
++bnx2x ?
++cassini ?
++cxgb ?
++sis190 ?
++skge ?
++uli526x ?
++sky2 ?
++acenic ?
++netxen_nic ?
++qla3xxx ?
++cxgb3 ?
++atl1 ?
++atl1c ?
++atl1e ?
++atl2 ?
++r6040
++sfc
++jme ?
++enic ?
++be2net ?
++myri10ge ?
++sc92031 ?
++inet_lro ?
++qlcnic ?
++
++# phy drivers
++broadcom ?
++cicada ?
++davicom ?
++et1011c ?
++icplus ?
++lxt ?
++marvell ?
++mdio-bitbang ?
++national ?
++qsemi ?
++realtek ?
++smsc ?
++ste10Xp ?
++vitesse ?
+diff --git a/kernel-wedge-2.96ubuntu3/modules/nic-modules b/kernel-wedge-2.96ubuntu3/modules/nic-modules
+new file mode 100644
+index 0000000..16f0d8c
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/nic-modules
+@@ -0,0 +1,11 @@
++# Some very common nic modules.
++3c59x
++8139too
++e100
++natsemi
++ne2k-pci
++tg3 ?
++tulip
++winbond-840
++eth1394 ?
++xen-netfront ?
+diff --git a/kernel-wedge-2.96ubuntu3/modules/nic-pcmcia-modules b/kernel-wedge-2.96ubuntu3/modules/nic-pcmcia-modules
+new file mode 100644
+index 0000000..53b32b2
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/nic-pcmcia-modules
+@@ -0,0 +1,20 @@
++# Common pcmcia nic modules.
++3c574_cs
++3c589_cs
++airo_cs ?
++axnet_cs
++b44 ?
++com20020_cs ?
++fmvj18x_cs ?
++ibmtr_cs ?
++netwave_cs
++nmclan_cs
++orinoco_cs
++pcnet_cs
++ray_cs
++smc91c92_cs
++wavelan_cs
++xirc2ps_cs
++xircom_cb
++atmel_cs ?
++wl3501_cs ?
+diff --git a/kernel-wedge-2.96ubuntu3/modules/nic-usb-modules b/kernel-wedge-2.96ubuntu3/modules/nic-usb-modules
+new file mode 100644
+index 0000000..064b926
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/nic-usb-modules
+@@ -0,0 +1,16 @@
++catc
++kaweth
++pegasus
++rtl8150
++usbnet
++# New in 2.6
++asix ?
++zd1201 ?
++cdc_ether ?
++mcs7830 ?
++dm9601 ?
++zd1211rw ?
++rndis_wlan ?
++rtl8180 ?
++rtl8187 ?
++g_ether ?
+diff --git a/kernel-wedge-2.96ubuntu3/modules/nic-wireless-modules b/kernel-wedge-2.96ubuntu3/modules/nic-wireless-modules
+new file mode 100644
+index 0000000..d965067
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/nic-wireless-modules
+@@ -0,0 +1,31 @@
++ieee80211_crypt_wep ?
++atmel_pci ?
++hermes ?
++ipw2100 ?
++ipw2200 ?
++orinoco
++orinoco_pci
++orinoco_plx
++orinoco_nortel ?
++orinoco_tmd ?
++prism54 ?
++p54pci
++p54usb
++wavelan ?
++usb8xxx ?
++ath5k ?
++ath9k ?
++iwlagn ?
++iwl3945 ?
++b43 ?
++
++# rt2x00 drivers
++rt2500pci ?
++rt2500usb ?
++rt2400pci ?
++# rt61pci - needs firmware
++# rt73usb - needs firmware
++
++# Crypto modules needed for ieee80211 WEP support
++ecb ?
++arc4 ?
+diff --git a/kernel-wedge-2.96ubuntu3/modules/nls-core-modules b/kernel-wedge-2.96ubuntu3/modules/nls-core-modules
+new file mode 100644
+index 0000000..a38fab7
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/nls-core-modules
+@@ -0,0 +1 @@
++nls_base
+diff --git a/kernel-wedge-2.96ubuntu3/modules/parport-modules b/kernel-wedge-2.96ubuntu3/modules/parport-modules
+new file mode 100644
+index 0000000..2d9f698
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/parport-modules
+@@ -0,0 +1,2 @@
++parport
++parport_pc
+diff --git a/kernel-wedge-2.96ubuntu3/modules/pata-modules b/kernel-wedge-2.96ubuntu3/modules/pata-modules
+new file mode 100644
+index 0000000..4df22e0
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/pata-modules
+@@ -0,0 +1,38 @@
++pata_ali ?
++pata_amd ?
++pata_artop ?
++pata_atiixp ?
++pata_cmd64x ?
++pata_cs5520 ?
++pata_cs5530 ?
++pata_cs5535 ?
++pata_cypress ?
++pata_efar ?
++pata_hpt366 ?
++pata_hpt37x ?
++pata_hpt3x2n ?
++pata_hpt3x3 ?
++pata_isapnp ?
++pata_it821x ?
++pata_jmicron ?
++pata_legacy ?
++pata_marvell ?
++pata_mpiix ?
++pata_netcell ?
++pata_ns87410 ?
++pata_oldpiix ?
++pata_opti ?
++pata_optidma ?
++pata_pdc2027x ?
++pata_pdc202xx_old ?
++pata_qdi ?
++pata_radisys ?
++pata_rz1000 ?
++pata_sc1200 ?
++pata_serverworks ?
++pata_sil680 ?
++pata_sch ?
++pata_sl82c105 ?
++pata_triflex ?
++pata_via ?
++pata_winbond ?
+diff --git a/kernel-wedge-2.96ubuntu3/modules/pcmcia-modules b/kernel-wedge-2.96ubuntu3/modules/pcmcia-modules
+new file mode 100644
+index 0000000..ab5b4b2
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/pcmcia-modules
+@@ -0,0 +1,8 @@
++pcmcia
++
++i82092
++i82365 ?
++pcmcia_core
++tcic ?
++yenta_socket
++pd6729 ?
+diff --git a/kernel-wedge-2.96ubuntu3/modules/pcmcia-storage-modules b/kernel-wedge-2.96ubuntu3/modules/pcmcia-storage-modules
+new file mode 100644
+index 0000000..69849ef
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/pcmcia-storage-modules
+@@ -0,0 +1,2 @@
++ide-cs
++pata_pcmcia ?
+diff --git a/kernel-wedge-2.96ubuntu3/modules/plip-modules b/kernel-wedge-2.96ubuntu3/modules/plip-modules
+new file mode 100644
+index 0000000..bcb0ea8
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/plip-modules
+@@ -0,0 +1 @@
++plip
+diff --git a/kernel-wedge-2.96ubuntu3/modules/ppp-modules b/kernel-wedge-2.96ubuntu3/modules/ppp-modules
+new file mode 100644
+index 0000000..0dd77f0
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/ppp-modules
+@@ -0,0 +1,5 @@
++ppp_async ?
++ppp_deflate
++ppp_synctty ?
++pppoe
++pppox
+diff --git a/kernel-wedge-2.96ubuntu3/modules/qnx4-modules b/kernel-wedge-2.96ubuntu3/modules/qnx4-modules
+new file mode 100644
+index 0000000..05d4adc
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/qnx4-modules
+@@ -0,0 +1 @@
++qnx4
+diff --git a/kernel-wedge-2.96ubuntu3/modules/reiserfs-modules b/kernel-wedge-2.96ubuntu3/modules/reiserfs-modules
+new file mode 100644
+index 0000000..5a01360
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/reiserfs-modules
+@@ -0,0 +1 @@
++reiserfs
+diff --git a/kernel-wedge-2.96ubuntu3/modules/rtc-modules b/kernel-wedge-2.96ubuntu3/modules/rtc-modules
+new file mode 100644
+index 0000000..0a78e78
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/rtc-modules
+@@ -0,0 +1,2 @@
++rtc ?
++rtc-cmos
+diff --git a/kernel-wedge-2.96ubuntu3/modules/sata-modules b/kernel-wedge-2.96ubuntu3/modules/sata-modules
+new file mode 100644
+index 0000000..119f13f
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/sata-modules
+@@ -0,0 +1,20 @@
++ata_piix ?
++sata_nv ?
++sata_promise ?
++sata_sil ?
++sata_sis ?
++# sata-sis depends on pata-sis; avoid a dependency
++pata_sis ?
++sata_sil24 ?
++sata_svw ?
++sata_sx4 ?
++sata_via ?
++sata_vsc ?
++sata_qstor ?
++sata_uli ?
++ahci ?
++sx8 ?
++sata_sx4 ?
++sata_mv ?
++pdc_adma ?
++sata_inic162x ?
+diff --git a/kernel-wedge-2.96ubuntu3/modules/scsi-common-modules b/kernel-wedge-2.96ubuntu3/modules/scsi-common-modules
+new file mode 100644
+index 0000000..9baefe5
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/scsi-common-modules
+@@ -0,0 +1,5 @@
++aic79xx
++aic7xxx
++BusLogic ?
++sym53c8xx
++sym53c8xx_2 ?
+diff --git a/kernel-wedge-2.96ubuntu3/modules/scsi-core-modules b/kernel-wedge-2.96ubuntu3/modules/scsi-core-modules
+new file mode 100644
+index 0000000..372fed5
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/scsi-core-modules
+@@ -0,0 +1,3 @@
++scsi_dh
++scsi_mod
++sd_mod
+diff --git a/kernel-wedge-2.96ubuntu3/modules/scsi-extra-modules b/kernel-wedge-2.96ubuntu3/modules/scsi-extra-modules
+new file mode 100644
+index 0000000..8443e16
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/scsi-extra-modules
+@@ -0,0 +1,35 @@
++3w-xxxx
++DAC960
++aacraid
++aha152x ?
++aic7xxx_old
++cciss
++cpqarray ?
++i2o_block ?
++dtc ?
++eata ?
++fdomain ?
++gdth ?
++ibmmca ?
++ips
++megaraid ?
++megaraid_mbox ?
++megaraid_mm ?
++megaraid_sas ?
++mptbase
++mptscsih
++mptspi ?
++mptsas ?
++mpt2sas ?
++mptfc ?
++mvsas
++3w-9xxx ?
++3w-sas ?
++lpfc ?
++osst
++st
++sym53c416 ?
++arcmsr ?
++hptiop ?
++qla4xxx ?
++qla2xxx ?
+diff --git a/kernel-wedge-2.96ubuntu3/modules/scsi-modules b/kernel-wedge-2.96ubuntu3/modules/scsi-modules
+new file mode 100644
+index 0000000..32e606c
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/scsi-modules
+@@ -0,0 +1,28 @@
++NCR53c406a ?
++advansys ?
++aha1542 ?
++aha1740 ?
++atp870u ?
++dmx3191d
++fd_mcs ?
++g_NCR5380 ?
++imm
++in2000 ?
++pas16 ?
++ppa
++qla1280
++qlogicfas ?
++sg
++sim710 ?
++t128 ?
++tmscsim
++u14-34f ?
++ultrastor ?
++wd7000 ?
++initio ?
++ipr ?
++qlogicfas408 ?
++dc395x ?
++aic94xx ?
++stex ?
++xen-blkfront ?
+diff --git a/kernel-wedge-2.96ubuntu3/modules/serial-modules b/kernel-wedge-2.96ubuntu3/modules/serial-modules
+new file mode 100644
+index 0000000..4756752
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/serial-modules
+@@ -0,0 +1 @@
++serial_cs
+diff --git a/kernel-wedge-2.96ubuntu3/modules/sound-modules b/kernel-wedge-2.96ubuntu3/modules/sound-modules
+new file mode 100644
+index 0000000..0e0e7c9
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/sound-modules
+@@ -0,0 +1,143 @@
++snd-aaci ?
++snd-ad1816a ?
++snd-ad1848 ?
++snd-ad1889 ?
++snd-aica ?
++snd-ak4114 ?
++snd-ak4117 ?
++snd-ak4xxx-adda ?
++snd-ali5451 ?
++snd-als100 ?
++snd-als300 ?
++snd-als4000 ?
++snd-aoa-codec-onyx ?
++snd-aoa-codec-tas ?
++snd-aoa-codec-toonie ?
++snd-aoa-fabric-layout ?
++snd-aoa-i2sbus ?
++snd-aoa ?
++snd-at73c213 ?
++snd-atiixp ?
++snd-atmel-abdac ?
++snd-atmel-ac97c ?
++snd-au1x00 ?
++snd-au8810 ?
++snd-au8820 ?
++snd-au8830 ?
++snd-aw2 ?
++snd-azt2320 ?
++snd-azt3328 ?
++snd-bt87x ?
++snd-ca0106 ?
++snd-cmi8330 ?
++snd-cmipci ?
++snd-cs4231 ?
++snd-cs4236 ?
++snd-cs4281 ?
++snd-cs46xx ?
++snd-cs5530 ?
++snd-cs5535audio ?
++snd-cs8427 ?
++snd-ctxfi ?
++snd-darla20 ?
++snd-darla24 ?
++snd-dt019x ?
++snd-echo3g ?
++snd-emu10k1 ?
++snd-emu10k1x ?
++snd-ens1370 ?
++snd-ens1371 ?
++snd-es1688 ?
++snd-es18xx ?
++snd-es1938 ?
++snd-es1968 ?
++snd-es968 ?
++snd-fm801 ?
++snd-gina20 ?
++snd-gina24 ?
++snd-gusclassic ?
++snd-gusextreme ?
++snd-gusmax ?
++snd-harmony ?
++snd-hda-codec-analog ?
++snd-hda-codec-atihdmi ?
++snd-hda-codec-ca0110 ?
++snd-hda-codec-cirrus ?
++snd-hda-codec-cmedia ?
++snd-hda-codec-conexant ?
++snd-hda-codec-idt ?
++snd-hda-codec-intelhdmi ?
++snd-hda-codec-nvhdmi ?
++snd-hda-codec-realtek ?
++snd-hda-codec-si3054 ?
++snd-hda-codec-via ?
++snd-hda-codec ?
++snd-hda-intel ?
++snd-hdsp ?
++snd-hdspm ?
++snd-hifier ?
++snd-ice1712 ?
++snd-ice1724 ?
++snd-ice17xx-ak4xxx ?
++snd-indigo ?
++snd-indigodj ?
++snd-indigodjx ?
++snd-indigoio ?
++snd-indigoiox ?
++snd-intel8x0 ?
++snd-interwave-stb ?
++snd-interwave ?
++snd-korg1212 ?
++snd-layla20 ?
++snd-layla24 ?
++snd-lx6464es ?
++snd-maestro3 ?
++snd-mia ?
++snd-miro ?
++snd-mixart ?
++snd-ml403-ac97cr ?
++snd-mona ?
++snd-msnd-classic ?
++snd-msnd-pinnacle ?
++snd-nm256 ?
++snd-opl3sa2 ?
++snd-opti92x-ad1848 ?
++snd-opti92x-cs4231 ?
++snd-opti93x ?
++snd-oxygen ?
++snd-pcsp ?
++snd-pcxhr ?
++snd-pdaudiocf ?
++snd-powermac ?
++snd-pt2258 ?
++snd-pxa2xx-ac97 ?
++snd-pxa2xx-pcm ?
++snd-riptide ?
++snd-rme32 ?
++snd-rme96 ?
++snd-rme9652 ?
++snd-sb16 ?
++snd-sb8 ?
++snd-sbawe ?
++snd-sc6000 ?
++snd-sgalaxy ?
++snd-sgi-hal2 ?
++snd-sgi-o2 ?
++snd-sis7019 ?
++snd-sonicvibes ?
++snd-sscape ?
++snd-sun-amd7930 ?
++snd-sun-cs4231 ?
++snd-sun-dbri ?
++snd-trident ?
++snd-usb-audio ?
++snd-usb-caiaq ?
++snd-usb-us122l ?
++snd-usb-usx2y ?
++snd-via82xx ?
++snd-virtuoso ?
++snd-vx222 ?
++snd-vxpocket ?
++snd-wavefront ?
++snd-ymfpci ?
++snd_ps3 ?
+diff --git a/kernel-wedge-2.96ubuntu3/modules/speakup-modules b/kernel-wedge-2.96ubuntu3/modules/speakup-modules
+new file mode 100644
+index 0000000..59e3f9e
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/speakup-modules
+@@ -0,0 +1,15 @@
++speakup
++speakup_acntpc
++speakup_acntsa
++speakup_apollo
++speakup_audptr
++speakup_bns
++speakup_decext
++speakup_dectlk
++speakup_dtlk
++speakup_dummy
++speakup_keypc
++speakup_ltlk
++speakup_soft
++speakup_spkout
++speakup_txprt
+diff --git a/kernel-wedge-2.96ubuntu3/modules/squashfs-modules b/kernel-wedge-2.96ubuntu3/modules/squashfs-modules
+new file mode 100644
+index 0000000..7c1157f
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/squashfs-modules
+@@ -0,0 +1 @@
++squashfs
+diff --git a/kernel-wedge-2.96ubuntu3/modules/ufs-modules b/kernel-wedge-2.96ubuntu3/modules/ufs-modules
+new file mode 100644
+index 0000000..19173e9
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/ufs-modules
+@@ -0,0 +1 @@
++ufs
+diff --git a/kernel-wedge-2.96ubuntu3/modules/uinput-modules b/kernel-wedge-2.96ubuntu3/modules/uinput-modules
+new file mode 100644
+index 0000000..42bc005
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/uinput-modules
+@@ -0,0 +1 @@
++uinput
+diff --git a/kernel-wedge-2.96ubuntu3/modules/usb-modules b/kernel-wedge-2.96ubuntu3/modules/usb-modules
+new file mode 100644
+index 0000000..ac99de2
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/usb-modules
+@@ -0,0 +1,4 @@
++ehci-hcd ?
++ohci-hcd ?
++uhci-hcd ?
++usbcore ?
+diff --git a/kernel-wedge-2.96ubuntu3/modules/usb-serial-modules b/kernel-wedge-2.96ubuntu3/modules/usb-serial-modules
+new file mode 100644
+index 0000000..7726ac5
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/usb-serial-modules
+@@ -0,0 +1,7 @@
++usbserial
++belkin_sa ?
++digi_acceleport ?
++ftdi_sio ?
++mct_u232 ?
++pl2303 ?
++spcp8x5 ?
+diff --git a/kernel-wedge-2.96ubuntu3/modules/usb-storage-modules b/kernel-wedge-2.96ubuntu3/modules/usb-storage-modules
+new file mode 100644
+index 0000000..b87ec0a
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/usb-storage-modules
+@@ -0,0 +1,12 @@
++usb-storage
++ums-jumpshot ?
++ums-onetouch ?
++ums-freecom ?
++ums-karma ?
++ums-alauda ?
++ums-datafab ?
++ums-isd200 ?
++ums-sddr09 ?
++ums-cypress ?
++ums-usbat ?
++ums-sddr55 ?
+diff --git a/kernel-wedge-2.96ubuntu3/modules/virtio-modules b/kernel-wedge-2.96ubuntu3/modules/virtio-modules
+new file mode 100644
+index 0000000..84d09e4
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/virtio-modules
+@@ -0,0 +1,6 @@
++virtio_net
++virtio_blk
++virtio_balloon
++
++# Some architectures do not have PCI bus
++virtio_pci ?
+diff --git a/kernel-wedge-2.96ubuntu3/modules/xfs-modules b/kernel-wedge-2.96ubuntu3/modules/xfs-modules
+new file mode 100644
+index 0000000..7bd8fb2
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/xfs-modules
+@@ -0,0 +1,2 @@
++# Not available currently on all kernel versions, so marked optional.
++xfs ?
+diff --git a/kernel-wedge-2.96ubuntu3/modules/zlib-modules b/kernel-wedge-2.96ubuntu3/modules/zlib-modules
+new file mode 100644
+index 0000000..322c546
+--- /dev/null
++++ b/kernel-wedge-2.96ubuntu3/modules/zlib-modules
+@@ -0,0 +1 @@
++zlib_deflate
