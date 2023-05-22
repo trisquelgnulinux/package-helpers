@@ -1,0 +1,52 @@
+From 99dc628f9a606921968d8433facf3ded0461384f Mon Sep 17 00:00:00 2001
+From: Victor Toso <victortoso@redhat.com>
+Date: Mon, 3 Apr 2023 15:05:36 +0200
+Subject: [PATCH] trisquel9: fix broken links
+
+Trisquel already released versions 10 and 11 and has removed from its
+site the iso images. Remove the urls from the database.
+
+Signed-off-by: Victor Toso <victortoso@redhat.com>
+---
+ data/os/trisquel.info/trisquel-9.xml.in | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/data/os/trisquel.info/trisquel-9.xml.in b/data/os/trisquel.info/trisquel-9.xml.in
+index 9ff6f1a5e..ba94fad9d 100644
+--- a/data/os/trisquel.info/trisquel-9.xml.in
++++ b/data/os/trisquel.info/trisquel-9.xml.in
+@@ -28,7 +28,6 @@
+     <!-- x86_64 -->
+     <media arch="x86_64" live="true" installer-script="false">
+       <variant id="trisquel"/>
+-      <url>https://cdimage.trisquel.info/trisquel-images/trisquel_9.0.2_amd64.iso</url>
+       <iso>
+         <volume-id>trisquel 9.0.(\d) amd64.*</volume-id>
+       </iso>
+@@ -37,7 +36,6 @@
+     </media>
+     <media arch="x86_64" live="true" installer-script="false">
+       <variant id="mini"/>
+-      <url>https://cdimage.trisquel.info/trisquel-images/trisquel-mini_9.0.2_amd64.iso</url>
+       <iso>
+         <volume-id>trisquel-mini 9.0.(\d) amd64.*</volume-id>
+       </iso>
+@@ -46,7 +44,6 @@
+     </media>
+     <media arch="x86_64" live="true" installer-script="false">
+       <variant id="sugar-toast"/>
+-      <url>https://cdimage.trisquel.info/trisquel-images/trisquel-sugar_9.0.2_amd64.iso</url>
+       <iso>
+         <volume-id>trisquel-sugar 9.0.(\d) amd64.*</volume-id>
+       </iso>
+@@ -55,7 +52,6 @@
+     </media>
+     <media arch="x86_64" live="true" installer-script="false">
+       <variant id="triskel"/>
+-      <url>https://cdimage.trisquel.info/trisquel-images/triskel_9.0.2_amd64.iso</url>
+       <iso>
+         <volume-id>triskel 9.0.(\d) amd64.*</volume-id>
+       </iso>
+-- 
+GitLab
+
