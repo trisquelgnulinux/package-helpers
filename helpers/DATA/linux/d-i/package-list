@@ -2,7 +2,7 @@ Package: kernel-image
 Provides: ext3-modules, ext4-modules, squashfs-modules
 Provides_amd64: efi-modules, ext3-modules, ext4-modules, squashfs-modules
 Provides_i386: efi-modules, ext3-modules, ext4-modules, squashfs-modules
-Provides_ppc64el: ext3-modules, ext4-modules, fat-modules, squashfs-modules
+Provides_ppc64el: ext3-modules, ext4-modules, fat-modules, squashfs-modules, i2c-modules
 Provides_s390x: ext3-modules, ext4-modules, ppp-modules, squashfs-modules
 Description: kernel image and system map
 
@@ -18,12 +18,14 @@ Description: DASD storage support -- extras
 
 Package: fat-modules
 Depends: kernel-image
-Priority: standard
+Priority: optional
+Priority_amd64: standard
+Priority_i386: standard
 Description: FAT filesystem support
  This includes Windows FAT and VFAT support.
 
 Package: fb-modules
-Depends: kernel-image
+Depends: kernel-image, i2c-modules
 Priority: standard
 Description: Framebuffer modules
 
@@ -52,7 +54,7 @@ Description: Extra filesystem modules
  This includes support for Windows NTFS and MacOS HFS/HFSPlus
 
 Package: input-modules
-Depends: kernel-image, usb-modules, crc-modules
+Depends: kernel-image, usb-modules, crc-modules, i2c-modules
 Priority: standard
 Description: Support for various input methods
 
@@ -63,7 +65,7 @@ Provides: crypto-dm-modules
 Description: Multi-device support (raid, device-mapper, lvm)
 
 Package: nic-modules
-Depends: kernel-image, nic-shared-modules, virtio-modules, crc-modules
+Depends: kernel-image, nic-shared-modules, virtio-modules, i2c-modules, crc-modules, mtd-core-modules
 Priority: standard
 Description: Network interface support
 
@@ -131,7 +133,7 @@ Priority: standard
 Description: SCSI storage support
 
 Package: serial-modules
-Depends: kernel-image
+Depends: kernel-image, pcmcia-modules
 Priority: standard
 Description: Serial port support
 
@@ -232,3 +234,22 @@ Provides: cdrom-core-modules
 Priority: standard
 Description: Core SCSI subsystem
  This package contains the core SCSI subsystem for the kernel.
+
+Package: i2c-modules
+Depends: kernel-image
+Priority: optional
+Description: i2c support modules
+ This package contains basic i2c support modules
+
+Package: mtd-modules
+Depends: kernel-image, mtd-core-modules
+Priority: optional
+Description: MTD driver modules
+ This package contains MTD driver modules.
+
+Package: mtd-core-modules
+Depends: kernel-image
+Priority: optional
+Description: MTD core
+ This package contains the MTD core.
+
