@@ -39,7 +39,7 @@ Those are the steps done by the helpers:
 
 * You don't need to use sudo in order to run those scripts, but some extra packages are needed:
 
-     `sudo apt-get install cdbs devscripts dpkg-dev git gnupg gnupg2 patch quilt rename rpl sed python3-jsonschema`
+     `sudo apt-get install cdbs devscripts dpkg-dev git gnupg gnupg2 patch python2 quilt rename rpl sed python3-jsonschema`
 
 * Take care to use the right sourcePackageName, many source packages produce
 several binary packages. `apt-cache showsrc binary-package` can help you.
