@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 
 EXTERNAL='deb-src http://ftp.us.debian.org/debian bookworm main'
 REPOKEY=04EE7237B7D453EC
@@ -43,13 +43,14 @@ do
 done
 for a in $(ls data/os/)
 do
-    # Remove os references
-    for b in $(grep -rl $a debian/patches/|sed 's|debian/patches/||')
+    # Remove patches for non-free references.
+    for b in $(grep -rl b/data/.*/$a debian/patches/|rev|awk -F '/' '{print$1}'|rev)
     do
         echo "Check for $b ..."
         sed -i "/$b/d" debian/patches/series
-        rm debian/patches/$b
+        rm -f debian/patches/$b
     done
+    rm -f $(grep -rl "\"os\", \"$a\"" scripts/updates/)
 done
 rm -rf data/os
 mv $TMPDIR data/os
@@ -64,8 +65,12 @@ do
     # Remove references to non-free containers
     for a in $(ls tests/isodata/)
     do
-        rm $(grep -rl $a ci/containers/) || true
-        rm $(grep -rl $a ci/buildenv/) || true
+        for b in $(grep -rl "ci/containers/$a" debian/patches/|rev|awk -F '/' '{print$1}'|rev)
+        do
+            rm -f debian/patches/$b
+            sed -i "/$b/d" debian/patches/series || true
+        done
+        rm -f $(ls ci/containers/$a*)
     done
 done
 rm -rf tests/isodata
@@ -83,14 +88,13 @@ rm -rf data/install-script
 mv $TMPDIR4 data/install-script
 
 # Avoid test error out.
-rm tests/test_treeinfo.py \
-   tests/test_related.py
+[ $(ls -A tests/treeinfodata)] || rm tests/test_treeinfo.py tests/test_related.py
 
 #Apply changes for new fully free distros availbale at libosinfo.
 # trisquel.info
 sed -i '/derives-from/d' data/os/trisquel.info/trisquel-9.xml.in
 sed -i '/release-date/a \ \ \ \ <codename>Etiona</codename>' data/os/trisquel.info/trisquel-9.xml.in
 
-changelog "Remove non-free suggestions from db osinfo."
+changelog "Remove non-free suggestions from osinfo-db."
 
 compile
