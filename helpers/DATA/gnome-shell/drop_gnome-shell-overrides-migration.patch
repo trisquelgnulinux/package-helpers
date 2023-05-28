@@ -1,0 +1,127 @@
+From a9e6e44ef898671229388938cc3ed511fa394dfc Mon Sep 17 00:00:00 2001
+From: Philip Withnall <pwithnall@endlessos.org>
+Date: Mon, 23 Jan 2023 16:38:36 +0000
+Subject: [PATCH] tools: Drop gnome-shell-overrides-migration.sh
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The tool was added in 2018 to migrate to per-desktop overrides from the
+old overrides system.
+
+5 years later, everyone who’s going to migrate probably has migrated, so
+we can delete the script and remove a process running on every login.
+
+Signed-off-by: Philip Withnall <pwithnall@endlessos.org>
+Part-of: <https://gitlab.gnome.org/GNOME/gnome-shell/-/merge_requests/2611>
+---
+ ...gnome-shell-overrides-migration.desktop.in |  5 ---
+ data/meson.build                              |  9 -----
+ meson.build                                   |  1 -
+ tools/gnome-shell-overrides-migration.sh      | 38 -------------------
+ tools/meson.build                             |  4 --
+ 5 files changed, 57 deletions(-)
+ delete mode 100644 data/gnome-shell-overrides-migration.desktop.in
+ delete mode 100755 tools/gnome-shell-overrides-migration.sh
+ delete mode 100644 tools/meson.build
+
+diff --git a/data/gnome-shell-overrides-migration.desktop.in b/data/gnome-shell-overrides-migration.desktop.in
+deleted file mode 100644
+index 99452e6ec1..0000000000
+--- a/data/gnome-shell-overrides-migration.desktop.in
++++ /dev/null
+@@ -1,5 +0,0 @@
+-[Desktop Entry]
+-Type=Application
+-Name=GNOME settings overrides migration
+-NoDisplay=true
+-Exec=@libexecdir@/gnome-shell-overrides-migration.sh
+diff --git a/data/meson.build b/data/meson.build
+index 7fa7f15ffb..a31efcc794 100644
+--- a/data/meson.build
++++ b/data/meson.build
+@@ -99,15 +99,6 @@ schema = configure_file(
+ )
+ install_data('00_org.gnome.shell.gschema.override', install_dir: schemadir)
+ 
+-overrides_migration_conf = configuration_data()
+-overrides_migration_conf.set('libexecdir', libexecdir)
+-overrides_migration = configure_file(
+-  input: 'gnome-shell-overrides-migration.desktop.in',
+-  output: 'gnome-shell-overrides-migration.desktop',
+-  configuration: overrides_migration_conf,
+-  install_dir: autostartdir
+-)
+-
+ if have_systemd
+   unitconf = configuration_data()
+   unitconf.set('bindir', bindir)
+diff --git a/meson.build b/meson.build
+index 791ec2e64e..6cd40cefa8 100644
+--- a/meson.build
++++ b/meson.build
+@@ -283,7 +283,6 @@ subdir('js')
+ subdir('src')
+ subdir('po')
+ subdir('data')
+-subdir('tools')
+ 
+ if get_option('tests')
+   subdir('tests')
+diff --git a/tools/gnome-shell-overrides-migration.sh b/tools/gnome-shell-overrides-migration.sh
+deleted file mode 100755
+index a1b4cb6331..0000000000
+--- a/tools/gnome-shell-overrides-migration.sh
++++ /dev/null
+@@ -1,38 +0,0 @@
+-#!/bin/sh
+-
+-PKG_DATA_DIR=${XDG_DATA_HOME:-$HOME/.local/share}/gnome-shell
+-
+-MIGRATION_GUARD=$PKG_DATA_DIR/gnome-overrides-migrated
+-OVERRIDE_SCHEMA=
+-
+-if [ -f $MIGRATION_GUARD ]; then
+-  exit # already migrated
+-fi
+-
+-# Find the right session
+-if echo $XDG_CURRENT_DESKTOP | grep -q -v GNOME; then
+-  exit # not a GNOME session
+-fi
+-
+-if echo $XDG_CURRENT_DESKTOP | grep -q Classic; then
+-  OVERRIDE_SCHEMA=org.gnome.shell.extensions.classic-overrides
+-else
+-  OVERRIDE_SCHEMA=org.gnome.shell.overrides
+-fi
+-
+-mkdir -p $PKG_DATA_DIR
+-
+-for k in `gsettings list-keys $OVERRIDE_SCHEMA`
+-do
+-  if [ $k = button-layout ]; then
+-    orig_schema=org.gnome.desktop.wm.preferences
+-  else
+-    orig_schema=org.gnome.mutter
+-  fi
+-
+-  oldValue=`gsettings get $OVERRIDE_SCHEMA $k`
+-  curValue=`gsettings get $orig_schema $k`
+-  if [ $oldValue != $curValue ]; then
+-    gsettings set $orig_schema $k $oldValue
+-  fi
+-done && touch $MIGRATION_GUARD
+diff --git a/tools/meson.build b/tools/meson.build
+deleted file mode 100644
+index d8e217cc44..0000000000
+--- a/tools/meson.build
++++ /dev/null
+@@ -1,4 +0,0 @@
+-install_data('gnome-shell-overrides-migration.sh',
+-  install_dir: libexecdir,
+-  install_mode: 'rwxr-xr-x'
+-)
+-- 
+GitLab
+
