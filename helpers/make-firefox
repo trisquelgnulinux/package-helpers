@@ -28,7 +28,7 @@ REPOKEY=9BDB3D89CE49EC21
 rm debian/control
 
 # Disable remote settings antifeature.
-sed '/async fetchLatestChanges.*/areturn;' -i services/settings/Utils.jsm
+sed '/async fetchLatestChanges.*/areturn;' -i services/settings/Utils.sys.mjs
 sed '/async download.*/areturn;' -i services/settings/RemoteSettingsClient.sys.mjs services/settings/Attachments.sys.mjs
 
 # Disable activity-stream antifeatures.
