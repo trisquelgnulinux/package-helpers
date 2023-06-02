@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 
 . ./config
 
@@ -47,6 +47,9 @@ cat << recommended-os > data/recommended-downloads.xml
   <os_id>http://pureos.net/pureos/8</os_id>
 </list>
 recommended-os
+
+# Remove gnome recommendation.
+grep -rl "<url>.*.iso.*</url>" data/osinfo/|xargs sed -i "/.iso/d"
 
 changelog "Replace recommended downloads."
 
