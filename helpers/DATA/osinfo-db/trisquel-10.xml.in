@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+<libosinfo version="0.0.1">
+  <!-- Licensed under the GNU General Public License version 2 or later.
+     See http://www.gnu.org/licenses/ for a copy of the license text -->
+  <os id="http://trisquel.info/trisquel/10">
+    <short-id>trisquel10</short-id>
+    <short-id>trisquel-nabia</short-id>
+    <name>Trisquel</name>
+    <version>10</version>
+    <vendor>The Trisquel Project</vendor>
+    <family>linux</family>
+    <distro>trisquel</distro>
+    <codename>Nabia</codename>
+    <derives-from id="http://ubuntu.com/ubuntu/20.04"/>
+
+    <release-date>2021-05-26</release-date>
+
+    <variant id="trisquel">
+      <name>Trisquel 10</name>
+    </variant>
+    <variant id="triskel">
+      <name>Triskel 10</name>
+    </variant>
+    <variant id="mini">
+      <name>Trisquel 10 Mini</name>
+    </variant>
+    <variant id="sugar-toast">
+      <name>Trisquel 10 Sugar Toast</name>
+    </variant>
+
+    <!-- x86_64 -->
+    <media arch="x86_64" live="true" installer-script="false">
+      <variant id="trisquel"/>
+      <url>https://cdimage.trisquel.info/trisquel-images/trisquel_10.0.1_amd64.iso</url>
+      <iso>
+        <volume-id>trisquel 10.0.1 amd64.*</volume-id>
+      </iso>
+      <kernel>casper/vmlinuz</kernel>
+      <initrd>casper/initrd</initrd>
+    </media>
+    <media arch="x86_64" live="true" installer-script="false">
+      <variant id="mini"/>
+      <url>https://cdimage.trisquel.info/trisquel-images/trisquel-mini_10.0.1_amd64.iso</url>
+      <iso>
+        <volume-id>trisquel-mini 10.0.1 amd64.*</volume-id>
+      </iso>
+      <kernel>casper/vmlinuz</kernel>
+      <initrd>casper/initrd</initrd>
+    </media>
+    <media arch="x86_64" live="true" installer-script="false">
+      <variant id="sugar-toast"/>
+      <url>https://cdimage.trisquel.info/trisquel-images/trisquel-sugar_10.0.1_amd64.iso</url>
+      <iso>
+        <volume-id>trisquel-sugar 10.0.1 amd64.*</volume-id>
+      </iso>
+      <kernel>casper/vmlinuz</kernel>
+      <initrd>casper/initrd</initrd>
+    </media>
+    <media arch="x86_64" live="true" installer-script="false">
+      <variant id="triskel"/>
+      <url>https://cdimage.trisquel.info/trisquel-images/triskel_10.0.1_amd64.iso</url>
+      <iso>
+        <volume-id>triskel 10.0.1 amd64.*</volume-id>
+      </iso>
+      <kernel>casper/vmlinuz</kernel>
+      <initrd>casper/initrd</initrd>
+    </media>
+
+
+    <resources arch="all">
+      <minimum>
+        <cpu>1000000000</cpu>
+        <n-cpus>1</n-cpus>
+        <ram>2147483648</ram>
+        <storage>5368709120</storage>
+      </minimum>
+      <recommended>
+        <cpu>2000000000</cpu>
+        <ram>4294967296</ram>
+        <storage>26843545600</storage>
+      </recommended>
+    </resources>
+
+  </os>
+</libosinfo>
