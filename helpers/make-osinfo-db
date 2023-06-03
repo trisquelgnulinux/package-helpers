@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=4
+VERSION=5
 
 EXTERNAL='deb-src http://ftp.us.debian.org/debian bookworm main'
 REPOKEY=04EE7237B7D453EC
@@ -34,6 +34,10 @@ do
     patch --no-backup-if-mismatch -Np1 < $patch
 done
 
+# Manually add trisquel current data
+cp $DATA/trisquel-1*.xml.in data/os/trisquel.info/
+cp -R $DATA/testdata/* tests/isodata/trisquel/
+
 # Remove non-free distros references.
 TMPDIR=$(mktemp -d os-XXXX)
 for i in "${rd_domain[@]}"
@@ -47,9 +51,8 @@ mv $TMPDIR/* data/os/
 # Remove tests that will fail from previos iso url removal.
 rm tests/test_isoinfo.py tests/test_schema.py
 
-#Apply changes for new fully free distros availbale at libosinfo.
-# trisquel.info
-sed -i '/derives-from/d' data/os/trisquel.info/trisquel-9.xml.in
+# Remove ubuntu's artwork to prevent any trademark issue.
+sed -i '/derives-from/d' data/os/trisquel.info/trisquel-*.xml.in
 sed -i '/release-date/a \ \ \ \ <codename>Etiona</codename>' data/os/trisquel.info/trisquel-9.xml.in
 
 changelog "Remove links to non-free distros suggestion from osinfo-db."
