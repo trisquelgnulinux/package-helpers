@@ -1501,3 +1501,283 @@ index e32efcfb0c8b..67f25238b787 100644
  		sdma_v5_2_destroy_inst_ctx(adev);
  	}
  	return err;
+diff -ru source.orig/drivers/bluetooth/ath3k.c source/drivers/bluetooth/ath3k.c
+--- source.orig/drivers/bluetooth/ath3k.c	2021-10-31 16:53:10.000000000 -0400
++++ source/drivers/bluetooth/ath3k.c	2023-06-07 10:05:23.230828642 -0400
+@@ -383,7 +383,7 @@
+ 
+ 	ret = request_firmware(&firmware, filename, &udev->dev);
+ 	if (ret < 0) {
+-		BT_ERR("Patch file not found %s", filename);
++		BT_ERR("Patch file not found");
+ 		return ret;
+ 	}
+ 
+@@ -446,7 +446,7 @@
+ 
+ 	ret = request_firmware(&firmware, filename, &udev->dev);
+ 	if (ret < 0) {
+-		BT_ERR("Configuration file not found %s", filename);
++		BT_ERR("Configuration file not found");
+ 		return ret;
+ 	}
+ 
+@@ -505,8 +505,7 @@
+ 	ret = request_firmware(&firmware, ATH3K_FIRMWARE, &udev->dev);
+ 	if (ret < 0) {
+ 		if (ret == -ENOENT)
+-			BT_ERR("Firmware file \"%s\" not found",
+-							ATH3K_FIRMWARE);
++			BT_ERR("Firmware file not found");
+ 		else
+ 			BT_ERR("Firmware file \"%s\" request failed (err=%d)",
+ 							ATH3K_FIRMWARE, ret);
+diff -ru source.orig/drivers/bluetooth/btbcm.c source/drivers/bluetooth/btbcm.c
+--- source.orig/drivers/bluetooth/btbcm.c	2023-06-07 09:29:12.000000000 -0400
++++ source/drivers/bluetooth/btbcm.c	2023-06-07 10:07:36.541063483 -0400
+@@ -577,9 +577,7 @@
+ 
+ 		release_firmware(fw);
+ 	} else {
+-		bt_dev_err(hdev, "BCM: firmware Patch file not found, tried:");
+-		for (i = 0; i < fw_name_count; i++)
+-			bt_dev_err(hdev, "BCM: '%s'", fw_name[i]);
++		bt_dev_err(hdev, "BCM: firmware Patch file not found");
+ 	}
+ 
+ 	kfree(fw_name);
+diff -ru source.orig/drivers/bluetooth/btintel.c source/drivers/bluetooth/btintel.c
+--- source.orig/drivers/bluetooth/btintel.c	2023-06-07 09:29:12.000000000 -0400
++++ source/drivers/bluetooth/btintel.c	2023-06-07 10:10:25.838752300 -0400
+@@ -346,8 +346,8 @@
+ 
+ 	err = request_firmware_direct(&fw, ddc_name, &hdev->dev);
+ 	if (err < 0) {
+-		bt_dev_err(hdev, "Failed to load Intel DDC file %s (%d)",
+-			   ddc_name, err);
++		bt_dev_err(hdev, "Failed to load Intel DDC file(%d)",
++			   err);
+ 		return err;
+ 	}
+ 
+@@ -1329,8 +1329,8 @@
+ 			return NULL;
+ 		}
+ 
+-		bt_dev_err(hdev, "failed to open Intel firmware file: %s (%d)",
+-			   fwname, ret);
++		bt_dev_err(hdev, "failed to open Intel firmware file(%d)",
++			   ret);
+ 
+ 		/* If the correct firmware patch file is not found, use the
+ 		 * default firmware patch file instead
+@@ -1338,8 +1338,7 @@
+ 		snprintf(fwname, sizeof(fwname), "intel/ibt-hw-%x.%x.bseq",
+ 			 ver->hw_platform, ver->hw_variant);
+ 		if (request_firmware(&fw, fwname, &hdev->dev) < 0) {
+-			bt_dev_err(hdev, "failed to open default fw file: %s",
+-				   fwname);
++			bt_dev_err(hdev, "failed to open default fw file");
+ 			return NULL;
+ 		}
+ 	}
+@@ -1830,8 +1829,8 @@
+ 			return 0;
+ 		}
+ 
+-		bt_dev_err(hdev, "Failed to load Intel firmware file %s (%d)",
+-			   fwname, err);
++		bt_dev_err(hdev, "Failed to load Intel firmware file (%d)",
++			   err);
+ 		return err;
+ 	}
+ 
+@@ -2025,8 +2024,8 @@
+ 			return 0;
+ 		}
+ 
+-		bt_dev_err(hdev, "Failed to load Intel firmware file %s (%d)",
+-			   fwname, err);
++		bt_dev_err(hdev, "Failed to load Intel firmware file (%d)",
++			   err);
+ 
+ 		return err;
+ 	}
+diff -ru source.orig/drivers/bluetooth/btrtl.c source/drivers/bluetooth/btrtl.c
+--- source.orig/drivers/bluetooth/btrtl.c	2021-10-31 16:53:10.000000000 -0400
++++ source/drivers/bluetooth/btrtl.c	2023-06-07 10:12:42.272847241 -0400
+@@ -656,8 +656,7 @@
+ 	btrtl_dev->fw_len = rtl_load_file(hdev, btrtl_dev->ic_info->fw_name,
+ 					  &btrtl_dev->fw_data);
+ 	if (btrtl_dev->fw_len < 0) {
+-		rtl_dev_err(hdev, "firmware file %s not found",
+-			    btrtl_dev->ic_info->fw_name);
++		rtl_dev_err(hdev, "firmware not found");
+ 		ret = btrtl_dev->fw_len;
+ 		goto err_free;
+ 	}
+@@ -674,8 +673,7 @@
+ 						   &btrtl_dev->cfg_data);
+ 		if (btrtl_dev->ic_info->config_needed &&
+ 		    btrtl_dev->cfg_len <= 0) {
+-			rtl_dev_err(hdev, "mandatory config file %s not found",
+-				    btrtl_dev->ic_info->cfg_name);
++			rtl_dev_err(hdev, "mandatory config file not found");
+ 			ret = btrtl_dev->cfg_len;
+ 			goto err_free;
+ 		}
+diff -ru source.orig/drivers/bluetooth/btusb.c source/drivers/bluetooth/btusb.c
+--- source.orig/drivers/bluetooth/btusb.c	2023-06-07 09:29:12.000000000 -0400
++++ source/drivers/bluetooth/btusb.c	2023-06-07 10:14:25.791382438 -0400
+@@ -3521,8 +3521,8 @@
+ 
+ 	err = request_firmware(&fw, fwname, &hdev->dev);
+ 	if (err) {
+-		bt_dev_err(hdev, "failed to request NVM file: %s (%d)",
+-			   fwname, err);
++		bt_dev_err(hdev, "failed to request NVM file (%d)",
++			   err);
+ 		return err;
+ 	}
+ 
+diff -ru source.orig/drivers/bluetooth/hci_ag6xx.c source/drivers/bluetooth/hci_ag6xx.c
+--- source.orig/drivers/bluetooth/hci_ag6xx.c	2021-10-31 16:53:10.000000000 -0400
++++ source/drivers/bluetooth/hci_ag6xx.c	2023-06-07 10:11:38.309744380 -0400
+@@ -195,8 +195,8 @@
+ 
+ 	err = request_firmware(&fw, fwname, &hdev->dev);
+ 	if (err < 0) {
+-		bt_dev_err(hdev, "Failed to open Intel bddata file: %s (%d)",
+-			   fwname, err);
++		bt_dev_err(hdev, "Failed to open Intel bddata file (%d)",
++			   err);
+ 		goto patch;
+ 	}
+ 
+@@ -232,8 +232,8 @@
+ 
+ 	err = request_firmware(&fw, fwname, &hdev->dev);
+ 	if (err < 0) {
+-		bt_dev_err(hdev, "Failed to open Intel patch file: %s(%d)",
+-			   fwname, err);
++		bt_dev_err(hdev, "Failed to open Intel patch file (%d)",
++			   err);
+ 		goto complete;
+ 	}
+ 	fw_ptr = fw->data;
+diff -ru source.orig/drivers/bluetooth/hci_ll.c source/drivers/bluetooth/hci_ll.c
+--- source.orig/drivers/bluetooth/hci_ll.c	2023-06-07 09:29:12.000000000 -0400
++++ source/drivers/bluetooth/hci_ll.c	2023-06-07 10:16:54.469255963 -0400
+@@ -539,7 +539,7 @@
+ 
+ 	err = request_firmware(&fw, bts_scr_name, &lldev->serdev->dev);
+ 	if (err || !fw->data || !fw->size) {
+-		bt_dev_err(lldev->hu.hdev, "request_firmware failed(errno %d) for %s",
++		bt_dev_err(lldev->hu.hdev, "request_firmware failed (errno %d) for %s",
+ 			   err, bts_scr_name);
+ 		return -EINVAL;
+ 	}
+diff -ru source.orig/drivers/bluetooth/hci_mrvl.c source/drivers/bluetooth/hci_mrvl.c
+--- source.orig/drivers/bluetooth/hci_mrvl.c	2021-10-31 16:53:10.000000000 -0400
++++ source/drivers/bluetooth/hci_mrvl.c	2023-06-07 10:17:17.868919257 -0400
+@@ -277,7 +277,7 @@
+ 
+ 	err = request_firmware(&fw, name, &hdev->dev);
+ 	if (err < 0) {
+-		bt_dev_err(hdev, "Failed to load firmware file %s", name);
++		bt_dev_err(hdev, "Failed to load firmware");
+ 		return err;
+ 	}
+ 
+diff -ru source.orig/drivers/gpu/drm/i915/display/intel_dmc.c source/drivers/gpu/drm/i915/display/intel_dmc.c
+--- source.orig/drivers/gpu/drm/i915/display/intel_dmc.c	2023-06-07 09:29:12.000000000 -0400
++++ source/drivers/gpu/drm/i915/display/intel_dmc.c	2023-06-07 09:37:13.039233908 -0400
+@@ -697,11 +697,8 @@
+ 			 DMC_VERSION_MINOR(dmc->version));
+ 	} else {
+ 		drm_notice(&dev_priv->drm,
+-			   "Failed to load DMC firmware %s."
+-			   " Disabling runtime power management.\n",
+-			   dmc->fw_path);
+-		drm_notice(&dev_priv->drm, "DMC firmware homepage: %s",
+-			   INTEL_UC_FIRMWARE_URL);
++			   "Failed to load DMC firmware."
++			   " Disabling runtime power management.\n");
+ 	}
+ 
+ 	release_firmware(fw);
+diff -ru source.orig/drivers/gpu/drm/i915/display/intel_opregion.c source/drivers/gpu/drm/i915/display/intel_opregion.c
+--- source.orig/drivers/gpu/drm/i915/display/intel_opregion.c	2023-06-07 09:29:12.000000000 -0400
++++ source/drivers/gpu/drm/i915/display/intel_opregion.c	2023-06-07 09:45:25.068035455 -0400
+@@ -824,8 +824,8 @@
+ 	ret = request_firmware(&fw, name, dev_priv->drm.dev);
+ 	if (ret) {
+ 		drm_err(&dev_priv->drm,
+-			"Requesting VBT firmware \"%s\" failed (%d)\n",
+-			name, ret);
++			"Requesting VBT firmware failed (%d)\n",
++			ret);
+ 		return ret;
+ 	}
+ 
+@@ -841,8 +841,7 @@
+ 			ret = -ENOMEM;
+ 		}
+ 	} else {
+-		drm_dbg_kms(&dev_priv->drm, "Invalid VBT firmware \"%s\"\n",
+-			    name);
++		drm_dbg_kms(&dev_priv->drm, "Invalid VBT firmware\n");
+ 		ret = -EINVAL;
+ 	}
+ 
+diff -ru source.orig/drivers/gpu/drm/i915/gt/uc/intel_uc_fw.c source/drivers/gpu/drm/i915/gt/uc/intel_uc_fw.c
+--- source.orig/drivers/gpu/drm/i915/gt/uc/intel_uc_fw.c	2023-06-07 09:29:12.000000000 -0400
++++ source/drivers/gpu/drm/i915/gt/uc/intel_uc_fw.c	2023-06-07 09:41:29.003526353 -0400
+@@ -388,10 +388,8 @@
+ 				  INTEL_UC_FIRMWARE_MISSING :
+ 				  INTEL_UC_FIRMWARE_ERROR);
+ 
+-	drm_notice(&i915->drm, "%s firmware %s: fetch failed with error %d\n",
+-		   intel_uc_fw_type_repr(uc_fw->type), uc_fw->path, err);
+-	drm_info(&i915->drm, "%s firmware(s) can be downloaded from %s\n",
+-		 intel_uc_fw_type_repr(uc_fw->type), INTEL_UC_FIRMWARE_URL);
++	drm_notice(&i915->drm, "%s firmware: fetch failed with error %d\n",
++		   intel_uc_fw_type_repr(uc_fw->type), err);
+ 
+ 	release_firmware(fw);		/* OK even if fw is NULL */
+ 	return err;
+@@ -523,9 +521,8 @@
+ 	return 0;
+ 
+ fail:
+-	i915_probe_error(gt->i915, "Failed to load %s firmware %s (%d)\n",
+-			 intel_uc_fw_type_repr(uc_fw->type), uc_fw->path,
+-			 err);
++	i915_probe_error(gt->i915, "Failed to load %s firmware (%d)\n",
++			 intel_uc_fw_type_repr(uc_fw->type), err);
+ 	intel_uc_fw_change_status(uc_fw, INTEL_UC_FIRMWARE_LOAD_FAIL);
+ 	return err;
+ }
+diff -ru source.orig/drivers/gpu/drm/i915/gvt/firmware.c source/drivers/gpu/drm/i915/gvt/firmware.c
+--- source.orig/drivers/gpu/drm/i915/gvt/firmware.c	2021-10-31 16:53:10.000000000 -0400
++++ source/drivers/gpu/drm/i915/gvt/firmware.c	2023-06-07 09:46:33.759010803 -0400
+@@ -190,8 +190,8 @@
+ 	return 0;
+ 
+ invalid_firmware:
+-	gvt_dbg_core("Invalid firmware: %s [file] 0x%llx [request] 0x%llx\n",
+-		     item, file, request);
++	gvt_dbg_core("Invalid firmware [request] 0x%llx\n",
++		     request);
+ 	return -EINVAL;
+ }
+ 
+@@ -238,7 +238,7 @@
+ 		 GVT_FIRMWARE_PATH, pdev->vendor, pdev->device,
+ 		 pdev->revision);
+ 
+-	gvt_dbg_core("request hw state firmware %s...\n", path);
++	gvt_dbg_core("request hw state firmware\n");
+ 
+ 	ret = request_firmware(&fw, path, gvt->gt->i915->drm.dev);
+ 	kfree(path);
