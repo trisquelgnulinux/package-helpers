@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=10
+VERSION=11
 NETINST=true
 
 . ./config
@@ -42,7 +42,11 @@ EOF
 
 find build/pkg-lists -type f | xargs sed -i /media-retriever/d
 apt-get update -c ${LOCAL_APT}/etc/apt_${CODENAME}.conf
-LASTKERNEL=$(apt-cache show -c ${LOCAL_APT}/etc/apt_${CODENAME}.conf linux-libc-dev|grep ^Version |head -n1|cut -d" " -f2|cut -d. -f1,2,3)
+LASTKERNEL="$(apt-cache madison -c ${LOCAL_APT}/etc/apt_${CODENAME}.conf linux-hwe-5.13-tools-common|\
+              grep ${CODENAME}/main|\
+              tail -n1|\
+              awk '{print$3}'|\
+              cut -d. -f1,2,3)"
 sed -i "s/^BASEVERSION.*/BASEVERSION = $LASTKERNEL/g" ./build/config/amd64.cfg
 sed -i "s/^MEDIUM_SUPPORTED.*/MEDIUM_SUPPORTED = cdrom netboot/g" ./build/config/amd64.cfg
 
