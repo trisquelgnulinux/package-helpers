@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 
 . ./config
 
@@ -45,8 +45,11 @@ sed -i '/snapd/d' debian/control
 #Remove update-from-web
 rm update-from-web.sh
 
-#Patch test
+#Patch the test suite
 patch -p1 < $DATA/fix_test.patch
+
+#Do not recommend extra repositories
+patch -p1 < $DATA/no_extra_repositories.patch
 
 changelog "Removed references to non-free software"
 
