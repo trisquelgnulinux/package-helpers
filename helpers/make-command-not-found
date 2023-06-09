@@ -49,7 +49,7 @@ rm update-from-web.sh
 patch -p1 < $DATA/fix_test.patch
 
 #Do not recommend extra repositories
-patch -p1 < $DATA/no_extra_repositories.patch
+patch -p1 < $DATA/no_extra_repos.patch
 
 changelog "Removed references to non-free software"
 
