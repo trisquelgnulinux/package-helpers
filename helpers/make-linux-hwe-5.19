@@ -19,11 +19,13 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=19
+VERSION=20
 
 . ./config
 
 PRESERVEDIRS='
+drivers/bluetooth
+drivers/gpu/drm/i915
 drivers/gpu/drm/amd/amdgpu
 drivers/gpu/drm/amd/pm/powerplay
 drivers/gpu/drm/r128
