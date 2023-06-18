@@ -216,6 +216,8 @@ sed -i "/CONFIG_FW_LOADER_USER_HELPER_FALLBACK/s|'ppc64el': 'n',|'ppc64el': '-',
 
 # Disable aaeon.
 sed -i "/AAEON/d" debian.master/config/annotations
+# Disable ubuntu ODM drivers
+sed -i "/CONFIG_UBUNTU_ODM_DRIVERS/d" debian.master/config/annotations
 
 cp debian.master/config debian.hwe -a
 
