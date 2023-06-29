@@ -112,9 +112,7 @@ Description: Metapackage depending on kernel udebs
  for easier version and migration tracking.
 EOF
 
-for i in debian.master debian.hwe-$HWEKR
-do
-cat << EOF >> $i/control.d/flavour-control.stub
+cat << EOF >> debian.hwe-$HWEKR/control.d/flavour-control.stub
 Package: SRCPKGNAME-udebs-FLAVOUR
 Build-Profiles: <!stage1> <!noudeb> <!cross> <!autopkgtest>
 XC-Package-Type: udeb
@@ -125,13 +123,14 @@ Description: Metapackage depending on kernel udebs
  This package depends on the all udebs that the kernel build generated,
  for easier version and migration tracking.
 EOF
-done
 
 sed '/include.*2-binary-arch.mk/a\\n# Rules for building the udebs ($(DEBIAN)-installer)\ninclude $(DROOT)/rules.d/5-udebs.mk' -i debian/rules
 sed 's/+= binary-debs/+= binary-udebs/' -i debian/rules.d/2-binary-arch.mk
-sed '/Build-Depends:/a\ kernel-wedge <!stage1>,' -i 	debian/control \
-							debian.master/control.stub.in \
-							debian.hwe-$HWEKR/control.stub.in
+for i in dctrl-tools kernel-wedge
+do
+    sed "/Build-Depends:/a\ $i <\!stage1> <\!noudeb> <\!cross> <\!autopkgtest>," -i	debian/control \
+											debian.hwe-$HWEKR/control.stub.in
+done
 
 # Wipe dkms-versions
 # lists zfs / v4l2loopback versions
