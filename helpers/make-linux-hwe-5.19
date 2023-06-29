@@ -78,7 +78,6 @@ done
 # Re-enable udebs
 cp $DATA/5-udebs.mk debian/rules.d
 cp -a $DATA/d-i debian.hwe-$HWEKR
-cp $DATA/kernel-wedge-arch.pl debian/scripts/misc/
 
 cat << EOF >> debian/control
 Package: linux-hwe-$HWEKR-udebs-generic
