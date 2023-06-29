@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=23
+VERSION=24
 
 . ./config
 
@@ -76,7 +76,6 @@ done
 # Re-enable udebs
 cp $DATA/5-udebs.mk debian/rules.d
 cp -a $DATA/d-i debian.master
-/bin/sed 's/\.ko//' -i debian.master/d-i/modules/*-modules
 cp $DATA/kernel-wedge-arch.pl debian/scripts/misc/
 
 cat << EOF >> debian/control
