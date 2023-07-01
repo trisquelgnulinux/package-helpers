@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2022 Luis Guzmán <ark@switnet.org>
+#    Copyright (C) 2023 Luis Guzmán <ark@switnet.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
 #
 
 VERSION=1
-EXTERNAL='deb-src http://ppa.launchpadcontent.net/ubuntu-mozilla-security/rust-updates/ubuntu $UPSTREAM main'
-REPOKEY=A6DCF7707EBC211F
+EXTERNAL='deb-src http://ppa.launchpadcontent.net/mozillateam/build-support/ubuntu $UPSTREAM main'
+REPOKEY=9BDB3D89CE49EC21
 BACKPORTS=true
 . ./config
 
