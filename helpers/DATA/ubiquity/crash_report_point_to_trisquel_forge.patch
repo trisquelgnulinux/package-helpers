@@ -1,0 +1,29 @@
+diff --git a/debian/ubiquity.templates b/debian/ubiquity.templates
+index 8b459bf..4f66e46 100644
+--- a/debian/ubiquity.templates
++++ b/debian/ubiquity.templates
+@@ -335,11 +335,19 @@ _Description: Installer crashed
+ Template: ubiquity/text/crash_text_label
+ Type: text
+ _Description:
+- We're sorry; the installer crashed. After you close this window, we'll
+- allow you to file a bug report using the integrated bug reporting tool.
+- This will gather information about your system and your installation
+- process. The details will be sent to our bug tracker and a developer
+- will attend to the problem as soon as possible.
++ We're sorry; the installer crashed. Please open an issue at
++ <a href="https://gitlab.trisquel.org/groups/trisquel/-/issues">
++ Trisquel's bug tracker</a> with as much details as posible to follow
++ up by the development team.
++ .
++ The suggested directory to gather information is /var/log, specially:
++ .
++ syslog,
++ dmesg,
++ installer,
++ partman
++ .
++ Thank you for your collaboration.
+ 
+ Template: ubiquity/text/a11y_high_contrast
+ Type: text

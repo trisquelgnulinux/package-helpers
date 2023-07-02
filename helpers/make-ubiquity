@@ -18,15 +18,21 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=33
+VERSION=34
 
 . ./config
 
 # Disable confirmation popups, as they are innacurate and buggy
-patch -p1 < $DATA/no_confrirmation_when_crypto.patch
+patch --no-backup-if-mismatch -p1 < $DATA/no_confrirmation_when_crypto.patch
 
 # Fix some gtk labels for Orca
-patch -p1 < $DATA/a11y.patch
+patch --no-backup-if-mismatch -p1 < $DATA/a11y.patch
+
+# Point ubiquity crash to trisquel's forge.
+patch --no-backup-if-mismatch -p1 < $DATA/crash_report_point_to_trisquel_forge.patch
+
+# Remove test_timezone to prevent error out future builds on different daylight time.
+rm tests/test_timezone.py
 
 # Revert changes to advanced features page
 cp $DATA/stepPartAsk.ui gui/gtk/stepPartAsk.ui
