@@ -29,8 +29,8 @@ diff --git a/browser/locales/en-US/browser/preferences/preferences.ftl b/browser
 index 1b29e8d..6f7566c 100644
 --- a/browser/locales/en-US/browser/preferences/preferences.ftl
 +++ b/browser/locales/en-US/browser/preferences/preferences.ftl
-@@ -714,16 +714,6 @@ sync-signedout-account-signin2 =
-     .label = Sign in to { -sync-brand-short-name }…
+@@ -838,17 +838,7 @@ sync-signedout-account-signin3 =
+     .label = Sign in to sync…
      .accesskey = i
  
 -# This message contains two links and two icon images.
@@ -43,9 +43,11 @@ index 1b29e8d..6f7566c 100644
 -# to your language, but should not be changed or translated.
 -sync-mobile-promo = Download Firefox for <img data-l10n-name="android-icon"/> <a data-l10n-name="android-link">Android</a> or <img data-l10n-name="ios-icon"/> <a data-l10n-name="ios-link">iOS</a> to sync with your mobile device.
 -
- ## Sync Account - Signed in
+-## Firefox account - Signed in
++## Sync Account - Signed in
  
  sync-profile-picture =
+     .tooltiptext = Change profile picture
 diff --git a/browser/components/protections/content/vpn-card.mjs b/browser/components/protections/content/vpn-card.mjs
 index 2417f1a641..698c48ccc3 100644
 --- a/browser/components/protections/content/vpn-card.mjs
