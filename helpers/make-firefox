@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=97
+VERSION=98
 
 . ./config
 
@@ -32,7 +32,7 @@ sed '/async download.*/areturn;' -i services/settings/RemoteSettingsClient.sys.m
 # Disable activity-stream antifeatures.
 # These are not condensed into a single sed script to make it fail on individual commands that didn't change the source
 ActivityStream=browser/components/newtab/lib/ActivityStream.jsm
-sed '/^const DEFAULT_SITES/,/^])\;/c const DEFAULT_SITES = new Map\([[""]]\);' -i browser/components/newtab/lib/DefaultSites.jsm
+sed '/^const DEFAULT_SITES/,/^])\;/c const DEFAULT_SITES = new Map\([[""]]\);' -i browser/components/newtab/lib/DefaultSites.sys.mjs
 sed '/"showSponsored"/,/value/s/value: true/value: false/' -i $ActivityStream
 sed '/"telemetry"/,/value/s/value: true/value: false/' -i $ActivityStream
 sed '/"section.highlights.includePocket"/,/value/s/value: true/value: false/' -i $ActivityStream
@@ -42,7 +42,7 @@ sed '/stories_endpoint/s/getpocket.cdn.mozilla.net/127.0.0.1/' -i $ActivityStrea
 sed '/stories_referrer/s/http.*/",/' -i $ActivityStream
 sed '/topics_endpoint/s/getpocket.cdn.mozilla.net/127.0.0.1/' -i $ActivityStream
 sed 's/preffedRegions.includes.geo. .. ..locales .. locales.includes.locale./false/' -i $ActivityStream
-sed 's/.Ubuntu., //' -i browser/components/newtab/css/activity-stream*.css
+sed 's/Ubuntu, //' -i browser/components/newtab/css/activity-stream*.css
 echo "#header-asrouter-container{display: none!important;}" >> browser/components/newtab/css/activity-stream-linux.css
 #Disable «Sponsored tiles on the New Tab page» - firefox 92+94
 sed '/"showSponsoredTopSites"/,/value/s/value: true/value: false/' -i $ActivityStream
