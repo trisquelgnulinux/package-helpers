@@ -1,11 +1,16 @@
---- a/build/Makefile	2023-05-17 02:42:44.707584584 -0600
-+++ b/build/Makefile	2023-05-17 02:44:14.563930750 -0600
-@@ -440,6 +440,9 @@
+diff --git a/build/Makefile b/build/Makefile
+index c073a32..cace03d 100644
+--- a/build/Makefile
++++ b/build/Makefile
+@@ -431,6 +431,12 @@ endif
  
  ifeq ($(DEB_HOST_ARCH_OS),linux)
  ifdef KERNELVERSION
-+ifeq ($(DEB_HOST_ARCH),amd64)
++ifneq ($(DEB_HOST_ARCH),ppc64el)
 +	chmod 755 $(TREE)/lib/$(DEB_HOST_MULTIARCH)/ld-linux*
++endif
++ifeq ($(DEB_HOST_ARCH),ppc64el)
++	chmod 755 $(TREE)/lib/$(DEB_HOST_MULTIARCH)/ld*.so*
 +endif
  	# Set up modules.dep, ensure there is at least one standard dir (kernel
  	# in this case), so depmod will use its prune list for archs with no
