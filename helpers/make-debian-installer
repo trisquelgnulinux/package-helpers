@@ -46,7 +46,7 @@ EOF
 find build/pkg-lists -type f | xargs sed -i /media-retriever/d
 apt-get update -c ${LOCAL_APT}/etc/apt_${CODENAME}.conf
 # Get available kernel at release/main packages.
-LASTKERNEL="$(apt-cache madison -c ${LOCAL_APT}/etc/apt_${CODENAME}.conf linux-libc-dev|\
+LASTKERNEL="$(apt-cache madison -c ${LOCAL_APT}/etc/apt_${CODENAME}.conf linux-hwe-5.19-tools-common|\
               grep ${CODENAME}/main|\
               awk '{print$3}'|head -n1|\
               cut -d. -f1,2,3)"
