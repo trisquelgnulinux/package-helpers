@@ -1,0 +1,220 @@
+=== modified file 'build/Makefile'
+#--- build/Makefile	2015-12-09 17:32:28 +0000
+#+++ build/Makefile	2016-04-16 19:45:21 +0000
+#@@ -525,12 +525,6 @@
+# 		`find $(TEMP) -type f -a \( -perm /0111 -o -name '*.so' -o -name '*.so.*' \) | \
+# 		 grep -v udeblibs | grep -v 'usr/lib/xorg/modules/.*\.so'`
+# 
+#-ifeq ($(DEB_HOST_ARCH),armhf)
+#-	# armhf has two linkers for now, while the world gets sorted
+#-	mkdir -p $(TREE)/lib/arm-linux-gnueabihf
+#-	ln -s /lib/ld-linux-armhf.so.3 $(TREE)/lib/arm-linux-gnueabihf/ld-linux.so.3
+#-endif
+#-
+# ifeq ($(DEB_HOST_ARCH_OS),hurd)
+# 	# On Hurd the SONAME for the dynamic linker is ld.so.1, but binaries
+# 	# have the ld.so symlink as the interpreter. Ideally mklibs should
+#
+#=== modified file 'build/config/amd64.cfg'
+#--- build/config/amd64.cfg	2016-04-08 14:58:47 +0000
+#+++ build/config/amd64.cfg	2016-04-16 19:45:21 +0000
+#@@ -1,8 +1,6 @@
+# MEDIUM_SUPPORTED = cdrom cdrom-xen netboot netboot-xen hd-media # netboot-gtk
+# MEDIUM_SUPPORTED_EXTRA = monolithic
+# 
+#-MKLIBS = mklibs-copy
+#-
+# # The version of the kernel to use.
+# BASEVERSION = 4.4.0-18
+# KERNELVERSION = $(BASEVERSION)-generic
+
+#=== modified file 'build/config/amd64/netboot.cfg'
+#--- build/config/amd64/netboot.cfg	2016-03-27 03:15:58 +0000
+#+++ build/config/amd64/netboot.cfg	2016-04-16 19:45:21 +0000
+#@@ -1,7 +1,7 @@
+# MEDIA_TYPE = netboot image
+# 
+# # Not really a floppy; this is for use on USB memory sticks.
+#-FLOPPY_SIZE = 44032
+#+FLOPPY_SIZE = 45056
+# GZIPPED = .gz
+# DISK_LABEL = "bootable drive"
+ 
+
+=== modified file 'build/config/armhf.cfg'
+--- build/config/armhf.cfg	2016-04-08 14:58:47 +0000
++++ build/config/armhf.cfg	2016-04-16 19:45:21 +0000
+@@ -1,6 +1,6 @@
+ SUBARCH_SUPPORTED = generic-lpae generic
+ 
+-MKLIBS = mklibs --ldlib=/lib/ld-linux-armhf.so.3
++MKLIBS = mklibs-copy --ldlib=/lib/ld-linux-armhf.so.3
+ 
+ KERNELMAJOR = 2.6
+ KERNELVERSION = 4.4.0-18
+
+#=== modified file 'build/config/common'
+#--- build/config/common	2015-11-12 19:14:48 +0000
+#+++ build/config/common	2016-04-16 19:45:21 +0000
+#@@ -24,7 +24,7 @@
+# 
+# # The library reducer to use. Set to mklibs (to build with library reduction)
+# # or mklibs-copy (to build without library reduction).
+#-MKLIBS = mklibs
+#+MKLIBS = mklibs-copy
+# 
+# # Normally the sources.list for building d-i will be derived from your
+# # "normal" sources.list. However, you can specify a mirror here to override
+
+#=== modified file 'build/config/i386/netboot.cfg'
+#--- build/config/i386/netboot.cfg	2016-03-22 04:37:29 +0000
+#+++ build/config/i386/netboot.cfg	2016-04-16 19:45:21 +0000
+#@@ -3,7 +3,7 @@
+# MEDIA_TYPE = netboot image
+# 
+# # Not really a floppy; this is for use on USB memory sticks.
+#-FLOPPY_SIZE = 40960
+#+FLOPPY_SIZE = 41984
+# GZIPPED = .gz
+# DISK_LABEL = "bootable drive"
+ 
+
+#=== modified file 'build/config/powerpc/powerpc/netboot.cfg'
+#--- build/config/powerpc/powerpc/netboot.cfg	2016-03-22 05:15:29 +0000
+#+++ build/config/powerpc/powerpc/netboot.cfg	2016-04-16 19:45:21 +0000
+#@@ -1,7 +1,7 @@
+# MEDIA_TYPE = netboot image
+# 
+# # Not really a floppy; this is for use on USB memory sticks.
+#-FLOPPY_SIZE = 49152
+#+FLOPPY_SIZE = 50176
+# GZIPPED = .gz
+# DISK_LABEL = "bootable drive"
+ 
+
+#=== modified file 'build/config/ppc64el.cfg'
+#--- build/config/ppc64el.cfg	2016-04-08 14:58:47 +0000
+#+++ build/config/ppc64el.cfg	2016-04-16 19:45:21 +0000
+#@@ -1,7 +1,5 @@
+# MEDIUM_SUPPORTED = netboot cdrom
+# 
+#-MKLIBS = mklibs-copy
+#-
+# KERNELMAJOR = 2.6
+# BASEVERSION = 4.4.0-18
+# KERNELVERSION = $(BASEVERSION)-generic
+
+#=== modified file 'build/pkg-lists/base'
+#--- build/pkg-lists/base	2015-09-22 18:31:39 +0000
+#+++ build/pkg-lists/base	2016-04-16 19:45:21 +0000
+#@@ -10,7 +10,6 @@
+# di-utils-shell
+# libdebconfclient0-udeb
+# libdebian-installer4-udeb
+#-libnss-dns-udeb
+# lowmemcheck
+# lsb-release-udeb
+# main-menu
+
+#=== modified file 'build/pkg-lists/exclude'
+#--- build/pkg-lists/exclude	2010-05-24 15:01:07 +0000
+#+++ build/pkg-lists/exclude	2016-04-16 19:45:21 +0000
+#@@ -2,15 +2,6 @@
+# # they are currently provided not in udeb form but by the library
+# # reduction step.
+# 
+#-# libc gets reduced, so using the udeb is not a good idea
+#-libc0.1 -
+#-libc0.1-udeb -
+#-libc0.3 -
+#-libc0.3-udeb -
+#-libc6 -
+#-libc6-udeb -
+#-libc6.1 -
+#-libc6.1-udeb -
+# # slang is also reduced
+# libslang2-udeb -
+# # and newt
+
+#=== modified file 'build/pkg-lists/gtk-common'
+#--- build/pkg-lists/gtk-common	2015-05-14 17:55:41 +0000
+#+++ build/pkg-lists/gtk-common	2016-04-16 19:45:21 +0000
+#@@ -1,5 +1,4 @@
+# # udebs needed for graphical installer
+#-libnss-files-udeb
+# rootskel-gtk
+# cdebconf-gtk-udeb
+# cdebconf-gtk-terminal
+
+#=== modified file 'build/pkg-lists/network-console'
+#--- build/pkg-lists/network-console	2004-06-29 08:17:34 +0000
+#+++ build/pkg-lists/network-console	2016-04-16 19:45:21 +0000
+#@@ -1,4 +1,3 @@
+# openssh-server-udeb
+#-libnss-files-udeb
+# network-console
+ 
+
+#=== modified file 'debian/changelog'
+#--- debian/changelog	2016-04-13 12:07:03 +0000
+#+++ debian/changelog	2016-04-16 19:45:21 +0000
+#@@ -1,3 +1,16 @@
+#+debian-installer (20101020ubuntu448) xenial; urgency=medium
+#+
+#+  * Cherry-pick changes from Debian for the removal of libnss-*-udeb:
+#+    - Switch to using mklibs-copy for the reduction on all arches.
+#+    - Drop the build-dependency on glibc-pic, unneeded for above.
+#+    - Stop excluding libc-udeb to avoid dropping libnss libraries
+#+      and to avoid a useless download of libc-udeb during install.
+#+    - Drop references to libnss-*-udeb, now provided by libc-udeb.
+#+    - Drop extra armhf linker, libc-udeb provides the same symlink.
+#+  * Bump FLOPPY_SIZE by 1MB on all arches to make room for the above.
+#+
+#+ -- Adam Conrad <adconrad@ubuntu.com>  Sat, 16 Apr 2016 12:12:07 -0600
+#+
+# debian-installer (20101020ubuntu447) xenial; urgency=medium
+# 
+#   * Rebuild with updated udebs for s390x.
+
+=== modified file 'debian/control'
+#--- debian/control	2016-02-19 17:00:28 +0000
+#+++ debian/control	2016-04-16 19:45:21 +0000
+#@@ -9,7 +9,7 @@
+# Vcs-Bzr: http://bazaar.launchpad.net/~ubuntu-core-dev/debian-installer/ubuntu
+# Build-Conflicts: libnewt-pic [mipsel]
+# # NOTE: Do not edit the next line by hand. See comment below.
+#-Build-Depends: debhelper (>= 7.0.0), apt, apt-utils, gnupg, ubuntu-keyring, dctrl-tools, wget, bc, debiandoc-sgml, xsltproc, docbook-xml, docbook-xsl, libbogl-dev [!kfreebsd-i386 !kfreebsd-amd64 !hurd-i386], lsb-release, glibc-pic, libslang2-pic (>= 2.0.6-4), libnewt-pic (>= 0.52.2-11.3) [!mipsel], libnewt-dev (>= 0.52.2-11.3) [mipsel], libgcc1 [i386 amd64], cramfsprogs [powerpc ia64 mips mipsel armeb armel], genext2fs (>= 1.3-7.1), e2fsprogs, mklibs (>= 0.1.25), genisoimage (>= 9:1.1.10-1ubuntu2) [!s390 !s390x], genromfs [sparc sparc64], hfsutils [powerpc], dosfstools (>= 3.0.9-1ubuntu2) [i386 ia64 m68k amd64 armel armhf arm64], cpio, devio [armeb armel], parted [armel armhf], slugimage (>= 0.10+r58-6) [armeb armel], u-boot-tools [arm64 armel armhf], syslinux (>= 3:6) [i386 amd64], syslinux-utils (>= 3:6) [i386 amd64], pxelinux (>= 3:6) [i386 amd64], isolinux (>= 3:6) [i386 amd64], syslinux-common (>= 3:6) [i386 amd64], palo [hppa], elilo [ia64], yaboot [powerpc], aboot (>= 0.9b-2) [alpha], silo [sparc], sparc-utils [sparc sparc64], genisovh [mips], tip22 [mips], colo [mipsel], sibyl [mips mipsel], atari-bootstrap [m68k], vmelilo [m68k], m68k-vme-tftplilo [m68k], amiboot [m68k], emile [m68k], emile-bootblocks [m68k], u-boot [armel armhf], shim-signed [amd64], tofrodos [i386 amd64 kfreebsd-i386 kfreebsd-amd64], mtools [i386 ia64 m68k amd64 arm64 kfreebsd-i386 kfreebsd-amd64 hurd-i386 armel armhf], po4a [i386 amd64], python3 (>= 3.1) [i386 amd64], kmod [linux-any], bf-utf-source [!s390 !s390x], mkvmlinuz [powerpc], openssl, makefs [kfreebsd-i386 kfreebsd-amd64], grub-pc (>= 1.98~20100101-1) [kfreebsd-i386 kfreebsd-amd64 hurd-i386], xorriso [arm64 kfreebsd-i386 kfreebsd-amd64 hurd-i386 ppc64el], grub-efi-amd64-bin (>= 2.00) [amd64], grub-efi-arm64-bin [arm64], grub-common [amd64 arm64], debian-ports-archive-keyring [sh4 sparc64], grub-ieee1275-bin [ppc64el]
+#+Build-Depends: debhelper (>= 7.0.0), apt, apt-utils, gnupg, ubuntu-keyring, dctrl-tools, wget, bc, debiandoc-sgml, xsltproc, docbook-xml, docbook-xsl, libbogl-dev [!kfreebsd-i386 !kfreebsd-amd64 !hurd-i386], lsb-release, libslang2-pic (>= 2.0.6-4), libnewt-pic (>= 0.52.2-11.3) [!mipsel], libnewt-dev (>= 0.52.2-11.3) [mipsel], libgcc1 [i386 amd64], cramfsprogs [powerpc ia64 mips mipsel armeb armel], genext2fs (>= 1.3-7.1), e2fsprogs, mklibs (>= 0.1.40), mklibs-copy (>= 0.1.40), genisoimage (>= 9:1.1.10-1ubuntu2) [!s390 !s390x], genromfs [sparc sparc64], hfsutils [powerpc], dosfstools (>= 3.0.9-1ubuntu2) [i386 ia64 m68k amd64 armel armhf arm64], cpio, devio [armeb armel], parted [armel armhf], slugimage (>= 0.10+r58-6) [armeb armel], u-boot-tools [arm64 armel armhf], syslinux (>= 3:6) [i386 amd64], syslinux-utils (>= 3:6) [i386 amd64], pxelinux (>= 3:6) [i386 amd64], isolinux (>= 3:6) [i386 amd64], syslinux-common (>= 3:6) [i386 amd64], palo [hppa], elilo [ia64], yaboot [powerpc], aboot (>= 0.9b-2) [alpha], silo [sparc], sparc-utils [sparc sparc64], genisovh [mips], tip22 [mips], colo [mipsel], sibyl [mips mipsel], atari-bootstrap [m68k], vmelilo [m68k], m68k-vme-tftplilo [m68k], amiboot [m68k], emile [m68k], emile-bootblocks [m68k], u-boot [armel armhf], shim-signed [amd64], tofrodos [i386 amd64 kfreebsd-i386 kfreebsd-amd64], mtools [i386 ia64 m68k amd64 arm64 kfreebsd-i386 kfreebsd-amd64 hurd-i386 armel armhf], po4a [i386 amd64], python3 (>= 3.1) [i386 amd64], kmod [linux-any], bf-utf-source [!s390 !s390x], mkvmlinuz [powerpc], openssl, makefs [kfreebsd-i386 kfreebsd-amd64], grub-pc (>= 1.98~20100101-1) [kfreebsd-i386 kfreebsd-amd64 hurd-i386], xorriso [arm64 kfreebsd-i386 kfreebsd-amd64 hurd-i386 ppc64el], grub-efi-amd64-bin (>= 2.00) [amd64], grub-efi-arm64-bin [arm64], grub-common [amd64 arm64], debian-ports-archive-keyring [sh4 sparc64], grub-ieee1275-bin [ppc64el]
+# # This package has the worst Build-Depends in Debian, so it deserves some
+# # explanation. Note that this comment can also be used to generate a
+# # Build-Depends line, by running the debian/genbuilddeps program.
+#@@ -46,8 +46,6 @@
+# #		Provides system version information.
+# #	
+# # Library build dependencies:
+#-#	- glibc-pic
+#-#		For library reduction.
+# #	- libslang2-pic (>= 2.0.6-4)
+# #		Make dependency versioned temporarily to make sure we avoid #392942
+# #	- libnewt-pic (>= 0.52.2-11.3) [!mipsel]
+#@@ -73,7 +71,7 @@
+# #		them.
+# #		Lintian: Yes, we know it's essential. We prefer not to
+# #		count on it remaining so.
+#-#	- mklibs (>= 0.1.25)
+#+#	- mklibs (>= 0.1.40), mklibs-copy (>= 0.1.40)
+# #		We use mklibs for library reduction.
+# #	- genisoimage (>= 9:1.1.10-1ubuntu2) [!s390 !s390x]
+# #		For making mini isos.
+##Ark74's fix
+--- debian/control	2023-05-10 08:36:56.311243556 -0600
++++ debian/control	2023-05-10 12:00:07.617639516 -0600
+@@ -45,6 +45,7 @@
+ #		them.
+ #		Lintian: Yes, we know it's essential. We prefer not to
+ #		count on it remaining so.
++	mklibs (>= 0.1.40), mklibs-copy (>= 0.1.40),
+ 	genisoimage [!s390 !s390x],
+ #		For making mini isos.
+ 	genromfs [sparc sparc64],
+

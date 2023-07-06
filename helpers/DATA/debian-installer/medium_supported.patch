@@ -1,0 +1,36 @@
+diff -Nru debian-installer-20210731+deb11u8+11.0trisquel13/build/config/amd64.cfg debian-installer-20210731+deb11u8+11.0trisquel13_/build/config/amd64.cfg
+--- debian-installer-20210731+deb11u8+11.0trisquel13/build/config/amd64.cfg	2023-05-12 13:48:56.045639664 -0600
++++ debian-installer-20210731+deb11u8+11.0trisquel13_/build/config/amd64.cfg	2023-05-12 14:00:23.091630526 -0600
+@@ -1,4 +1,4 @@
+-MEDIUM_SUPPORTED = cdrom cdrom-xen netboot netboot-gtk netboot-xen hd-media
++MEDIUM_SUPPORTED = cdrom netboot
+ MEDIUM_SUPPORTED_EXTRA = monolithic
+ 
+ # The version of the kernel to use.
+diff -Nru debian-installer-20210731+deb11u8+11.0trisquel13/build/config/arm64.cfg debian-installer-20210731+deb11u8+11.0trisquel13_/build/config/arm64.cfg
+--- debian-installer-20210731+deb11u8+11.0trisquel13/build/config/arm64.cfg	2023-05-12 13:48:56.073639701 -0600
++++ debian-installer-20210731+deb11u8+11.0trisquel13_/build/config/arm64.cfg	2023-05-12 14:00:45.351718688 -0600
+@@ -1,4 +1,4 @@
+-MEDIUM_SUPPORTED = cdrom netboot netboot-gtk device-tree u-boot
++MEDIUM_SUPPORTED = cdrom netboot device-tree u-boot
+ 
+ KERNELMAJOR = 2.6
+ # The version of the kernel to use.
+diff -Nru debian-installer-20210731+deb11u8+11.0trisquel13/build/config/armhf.cfg debian-installer-20210731+deb11u8+11.0trisquel13_/build/config/armhf.cfg
+--- debian-installer-20210731+deb11u8+11.0trisquel13/build/config/armhf.cfg	2023-05-12 13:48:59.157643670 -0600
++++ debian-installer-20210731+deb11u8+11.0trisquel13_/build/config/armhf.cfg	2023-05-12 14:01:10.243818298 -0600
+@@ -1,4 +1,4 @@
+-MEDIUM_SUPPORTED = hd-media netboot network-console netboot-gtk device-tree u-boot cdrom
++MEDIUM_SUPPORTED = netboot device-tree u-boot cdrom
+ 
+ MKLIBS = mklibs-copy --ldlib=/lib/ld-linux-armhf.so.3
+ 
+diff -Nru debian-installer-20210731+deb11u8+11.0trisquel13/build/config/i386.cfg debian-installer-20210731+deb11u8+11.0trisquel13_/build/config/i386.cfg
+--- debian-installer-20210731+deb11u8+11.0trisquel13/build/config/i386.cfg	2023-01-08 16:22:52.000000000 -0600
++++ debian-installer-20210731+deb11u8+11.0trisquel13_/build/config/i386.cfg	2023-05-12 13:59:51.799508139 -0600
+@@ -1,4 +1,4 @@
+-MEDIUM_SUPPORTED = cdrom cdrom-xen netboot netboot-gtk netboot-xen hd-media
++MEDIUM_SUPPORTED = cdrom netboot 
+ MEDIUM_SUPPORTED_EXTRA = monolithic
+ 
+ # The version of the kernel to use.

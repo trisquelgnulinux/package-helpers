@@ -1,0 +1,684 @@
+=== modified file 'build/Makefile'
+--- build/Makefile	2015-01-22 12:10:03 +0000
++++ build/Makefile	2015-03-17 21:09:21 +0000
+@@ -414,6 +414,14 @@
+ 
+ 	# These files are used to build special kernel images for some
+ 	# subarchitectures. Move them out of the way.
++	#
++	# Merge note on the last if:
++	# On Debian, the first two if statements have the side-effect of
++	# moving the dtb files under $(TEMP)/lib. The device-tree
++	# media type expects this and will look for the dtbs there.
++	# Ubuntu installs dtbs into a different path (under
++	# /lib/firmware), so we need to simulate that side-effect
++	# here.
+ 	$(foreach VERSION,$(KERNELVERSION), \
+ 		if [ -d $(TREE)/usr/lib/kernel-image-$(VERSION) ]; then \
+ 			mv $(TREE)/usr/lib/kernel-image-$(VERSION) \
+@@ -422,6 +430,10 @@
+ 		if [ -d $(TREE)/usr/lib/linux-image-$(VERSION) ]; then \
+ 			mv $(TREE)/usr/lib/linux-image-$(VERSION) \
+ 				$(TEMP)/lib; \
++		fi; \
++		if [ -d $(TREE)/lib/firmware/$(VERSION)/device-tree ]; then \
++			cp -a $(TREE)/lib/firmware/$(VERSION)/device-tree \
++				$(TEMP)/lib; \
+ 		fi;)
+ endif
+ endif
+#@@ -763,6 +775,16 @@
+# 	update-manifest $@ $(MANIFEST-KERNEL)
+# endif
+# 
+#+$(DTBS): $(TEMP_KERNEL)
+#+	mkdir -p $(SOME_DEST)/$(EXTRANAME)
+#+	set -ex ; for dtb in $$(find $(TEMP_DTBS) -name "*.dtb") ; do \
+#+		tgt=$(SOME_DEST)/$(EXTRANAME)$$(basename $$dtb); \
+#+		cp $$dtb $$tgt ; \
+#+		update-manifest $$tgt "Device Tree Blob: $$(basename $$dtb)";\
+#+	done
+#+	cp boot/README.device-tree $@
+#+	update-manifest $@ "Device Tree Blobs README"
+#+
+# # bootable images
+# $(BOOT): $(TEMP_BOOT)
+# 	install -m 644 -D $(TEMP_BOOT)$(GZIPPED) $@
+
+#=== added file 'build/boot/README.device-tree'
+#--- build/boot/README.device-tree	1970-01-01 00:00:00 +0000
+#+++ build/boot/README.device-tree	2015-02-13 23:50:29 +0000
+#@@ -0,0 +1,2 @@
+#+This directory contains all of the device-tree files shipped by the Ubuntu
+#+kernel package.
+
+=== added directory 'build/boot/arm64'
+=== added directory 'build/boot/arm64/grub'
+=== added file 'build/boot/arm64/grub/grub-efi.cfg'
+#--- build/boot/arm64/grub/grub-efi.cfg	1970-01-01 00:00:00 +0000
+#+++ build/boot/arm64/grub/grub-efi.cfg	2015-02-24 04:58:57 +0000
+#@@ -0,0 +1,3 @@
+#+set menu_color_normal=cyan/blue
+#+set menu_color_highlight=white/blue
+#+
+
+#=== modified file 'build/config/arm64.cfg'
+#--- build/config/arm64.cfg	2015-05-09 07:52:07 +0000
+#+++ build/config/arm64.cfg	2015-05-12 16:01:14 +0000
+#@@ -1,14 +1,98 @@
+#-SUBARCH_SUPPORTED = generic
+#-
+#-MKLIBS = mklibs-copy
+#+MEDIUM_SUPPORTED = cdrom netboot device-tree
+# 
+# KERNELMAJOR = 2.6
+#-KERNELVERSION = 3.19.0-17
+#+KERNELVERSION = 3.19.0-17-generic
+# KERNEL_FLAVOUR = di
+# KERNELIMAGEVERSION = $(KERNELVERSION)
+#-KERNELNAME = $(foreach ver,$(KERNELVERSION),vmlinuz-$(ver))
+#+KERNELNAME = vmlinuz
+# 
+#-VERSIONED_SYSTEM_MAP = t
+#+GRUB_EFI=y
+#+GRUB_PLATFORM=arm64-efi
+#+GRUB_EFI_NAME=aa64
+#+GRUB_FONT = /usr/share/grub/ascii.pf2
+# 
+# arch_boot_screens:
+# arch_tree:
+#+
+#+# Extract GRUB EFI files.
+#+.PHONY: arm64_grub_efi
+#+arm64_grub_efi:
+#+ifeq ($(GRUB_EFI),y)
+#+	efi-image $(TEMP_GRUB_EFI) arm64-efi aa64 $(NETBOOT_PATH)
+#+endif
+#+
+#+
+#+# Supply GRUB EFI configuration.
+#+.PHONY: arch_cd_info_dir
+#+arch_cd_info_dir: arm64_grub_efi
+#+	-rm -f $(TEMP_CD_INFO_DIR)/*
+#+	mkdir -p $(TEMP_CD_INFO_DIR)
+#+
+#+	if [ "$(GRUB_EFI)" = y ]; then \
+#+		set -e; \
+#+		mkdir -p $(TEMP_CD_INFO_DIR)/grub/arm64-efi; \
+#+		cp -a $(TEMP_GRUB_EFI)/efi.img $(TEMP_CD_INFO_DIR)/grub/; \
+#+		grub-gencfg \
+#+			KERNEL /%install%/vmlinuz \
+#+			INITRD /%install%/initrd.gz \
+#+			HEADER boot/arm64/grub/grub-efi.cfg \
+#+		> $(TEMP_CD_INFO_DIR)/grub/grub.cfg; \
+#+		cp -a $(GRUB_FONT) $(TEMP_CD_INFO_DIR)/grub/font.pf2; \
+#+		cp -a $(TEMP_GRUB_EFI)/boot/grub/arm64-efi/* \
+#+			$(TEMP_CD_INFO_DIR)/grub/arm64-efi/; \
+#+	fi
+#+
+#+.PHONY: arch_miniiso
+#+arch_miniiso: arm64_grub_efi
+#+	-rm -f $(TEMP_CD_TREE)/*
+#+	mkdir -p $(TEMP_CD_TREE)
+#+
+#+	ln -f $(TEMP_KERNEL) $(TEMP_CD_TREE)/linux
+#+	ln -f $(TEMP_INITRD) $(TEMP_CD_TREE)/initrd.gz
+#+
+#+	mkdir -p $(TEMP_CD_TREE)/.disk
+#+	echo "$(DISTRIBUTION_NAME) $(DEBIAN_VERSION) $(ARCH) - netboot mini.iso $(BUILD_DATE)"\
+#+	> $(TEMP_CD_TREE)/.disk/info
+#+
+#+	if [ "$(GRUB_EFI)" = y ]; then \
+#+		set -e; \
+#+		mkdir -p $(TEMP_CD_TREE)/boot/grub/arm64-efi; \
+#+		cp -a $(TEMP_GRUB_EFI)/efi.img $(TEMP_CD_TREE)/boot/grub/; \
+#+		grub-gencfg \
+#+			KERNEL /linux \
+#+			INITRD /initrd.gz \
+#+			HEADER boot/arm64/grub/grub-efi.cfg \
+#+		> $(TEMP_CD_TREE)/boot/grub/grub.cfg; \
+#+		cp -a $(GRUB_FONT) $(TEMP_CD_TREE)/boot/grub/font.pf2; \
+#+		cp -a $(TEMP_GRUB_EFI)/boot/grub/arm64-efi/* \
+#+			$(TEMP_CD_TREE)/boot/grub/arm64-efi/; \
+#+	fi
+#+
+#+	if [ "$(GRUB_EFI)" = y ]; then \
+#+		xorriso -as mkisofs -r -J -c boot.cat \
+#+			-boot-load-size 4 -boot-info-table \
+#+			-eltorito-alt-boot \
+#+			--efi-boot boot/grub/efi.img -no-emul-boot \
+#+			-o $(TEMP_MINIISO) $(TEMP_CD_TREE); \
+#+	fi
+#+
+#+.PHONY: arch_netboot_dir
+#+arch_netboot_dir: arm64_grub_efi
+#+	-rm -f $(TEMP_NETBOOT_DIR)
+#+	mkdir -p $(TEMP_NETBOOT_DIR)/$(NETBOOT_PATH)
+#+	cp $(TEMP_KERNEL) $(TEMP_NETBOOT_DIR)/$(NETBOOT_PATH)/linux
+#+	cp $(TEMP_INITRD) $(TEMP_NETBOOT_DIR)/$(NETBOOT_PATH)/initrd.gz
+#+
+#+	if [ "$(GRUB_EFI)" = y ]; then \
+#+		set -e; \
+#+		mkdir -p $(TEMP_NETBOOT_DIR)/$(NETBOOT_PATH)/grub/arm64-efi; \
+#+		cp -a $(TEMP_GRUB_EFI)/bootnetaa64.efi $(TEMP_NETBOOT_DIR)/$(NETBOOT_PATH); \
+#+		cp -a $(GRUB_FONT) $(TEMP_NETBOOT_DIR)/$(NETBOOT_PATH)/grub/font.pf2; \
+#+		cp -a $(TEMP_GRUB_EFI)/boot/grub/arm64-efi/* \
+#+			$(TEMP_NETBOOT_DIR)/$(NETBOOT_PATH)/grub/arm64-efi/; \
+#+		grub-gencfg \
+#+			KERNEL /$(NETBOOT_PATH)/linux \
+#+			INITRD /$(NETBOOT_PATH)/initrd.gz \
+#+			HEADER boot/arm64/grub/grub-efi.cfg \
+#+		> $(TEMP_NETBOOT_DIR)/$(NETBOOT_PATH)/grub/grub.cfg; \
+#+	fi
+
+=== added directory 'build/config/arm64/cdrom'
+=== added file 'build/config/arm64/cdrom.cfg'
+#--- build/config/arm64/cdrom.cfg	1970-01-01 00:00:00 +0000
+#+++ build/config/arm64/cdrom.cfg	2015-02-24 05:14:26 +0000
+#@@ -0,0 +1,3 @@
+#+FLAVOUR_SUPPORTED = grub
+#+
+#+MEDIA_TYPE = CD-ROM
+
+=== added file 'build/config/arm64/cdrom/grub.cfg'
+#--- build/config/arm64/cdrom/grub.cfg	1970-01-01 00:00:00 +0000
+#+++ build/config/arm64/cdrom/grub.cfg	2015-02-24 05:14:26 +0000
+#@@ -0,0 +1,8 @@
+#+MEDIA_TYPE = CD-ROM
+#+TARGET = $(INITRD) $(KERNEL) $(DEBIAN_CD_INFO)
+#+
+#+MANIFEST-KERNEL = "kernel for use with EFI to build a CD"
+#+MANIFEST-INITRD = "initrd for use with EFI to build a CD"
+#+MANIFEST-DEBIAN_CD_INFO = "EFI config files for CD"
+#+
+#+TYPE = cdrom/grub
+
+#=== added file 'build/config/arm64/device-tree.cfg'
+#--- build/config/arm64/device-tree.cfg	1970-01-01 00:00:00 +0000
+#+++ build/config/arm64/device-tree.cfg	2015-02-13 23:51:06 +0000
+#@@ -0,0 +1,4 @@
+#+MEDIA_TYPE = device-tree blobs
+#+
+#+TARGET = $(DTBS)
+#+EXTRANAME = $(MEDIUM)/
+
+#=== removed file 'build/config/arm64/generic.cfg'
+#--- build/config/arm64/generic.cfg	2014-01-27 14:09:42 +0000
+#+++ build/config/arm64/generic.cfg	1970-01-01 00:00:00 +0000
+#@@ -1,7 +0,0 @@
+#-MEDIUM_SUPPORTED = netboot
+#-
+#-# The version of the kernel to use.
+#-KERNELVERSION := $(KERNELVERSION)-generic
+#-# we use non-versioned filenames in the generic kernel udeb
+#-KERNELNAME = vmlinuz
+#-VERSIONED_SYSTEM_MAP =
+
+#=== removed file 'build/config/arm64/generic/netboot.cfg'
+#--- build/config/arm64/generic/netboot.cfg	2015-02-27 10:58:49 +0000
+#+++ build/config/arm64/generic/netboot.cfg	1970-01-01 00:00:00 +0000
+#@@ -1,33 +0,0 @@
+#-MEDIA_TYPE = netboot image
+#-TARGET = $(TEMP_INITRD) $(TEMP_KERNEL) all-generic
+#-EXTRANAME = $(MEDIUM)/
+#-INITRD_FS = initramfs
+#-
+#-MANIFEST-INITRD = "netboot initrd"
+#-MANIFEST-KERNEL = "kernel image to netboot"
+#-
+#-generic:
+#-	mkdir -p $(SOME_DEST)/$(EXTRANAME)/
+#-	cp $(TEMP_KERNEL) $(SOME_DEST)/$(EXTRANAME)/vmlinuz
+#-	cp $(TEMP_INITRD) $(SOME_DEST)/$(EXTRANAME)/initrd.gz
+#-	update-manifest $(SOME_DEST)/$(EXTRANAME)vmlinuz "Linux kernel for generic ARM64"
+#-	update-manifest $(SOME_DEST)/$(EXTRANAME)initrd.gz "initrd for generic ARM64"
+#-
+#-
+#-xgene:
+#-	# Make sure our build environment is clean
+#-	$(eval INSTALL_PATH=$(SOME_DEST)/netboot/xgene)
+#-	rm -rf $(INSTALL_PATH)
+#-	mkdir -p $(INSTALL_PATH)
+#-
+#-	# Generate uImage/uInitrd
+#-	mkimage -A arm -O linux -T kernel -C none -a 0x80000 -e 0x80000 -n "Ubuntu kernel" -d $(TEMP_KERNEL) $(INSTALL_PATH)/uImage
+#-	mkimage -A arm -O linux -T ramdisk -C none -a 0x0 -e 0x0 -n "debian-installer ramdisk" -d $(TEMP_INITRD) $(INSTALL_PATH)/uInitrd
+#-
+#-	install -m644 $(TEMP)/tree/lib/firmware/${KERNELVERSION}/device-tree/apm/apm-mustang.dtb $(INSTALL_PATH)
+#-
+#-	update-manifest $(INSTALL_PATH)/uImage "Linux kernel for X-Gene Boards"
+#-	update-manifest $(INSTALL_PATH)/uInitrd "initrd for X-Gene Boards"
+#-	update-manifest $(INSTALL_PATH)/apm-mustang.dtb "Device Tree file for APM X-Gene Mustang Board"
+#-
+#-all-generic: generic xgene
+
+=== added file 'build/config/arm64/netboot.cfg'
+#--- build/config/arm64/netboot.cfg	1970-01-01 00:00:00 +0000
+#+++ build/config/arm64/netboot.cfg	2015-02-24 05:45:09 +0000
+#@@ -0,0 +1,37 @@
+#+MEDIA_TYPE = netboot image
+#+
+#+NETBOOT_DIR_TARGETS = $(TEMP_INITRD) $(TEMP_KERNEL)
+#+TARGET = $(NETBOOT_DIR) $(NETBOOT_TAR) $(MINIISO)
+#+EXTRANAME = $(MEDIUM)/
+#+
+#+MANIFEST-NETBOOT_DIR = "PXE boot directory for tftp server"
+#+MANIFEST-NETBOOT_TAR = "tarball of PXE boot directory"
+#+MANIFEST-MINIISO = "tiny CD image that boots the netboot installer"
+#+
+#+.PHONY: arch_netboot_dir
+#+arch_netboot_dir:
+#+	-rm -f $(TEMP_NETBOOT_DIR)
+#+	mkdir -p $(TEMP_NETBOOT_DIR)/$(NETBOOT_PATH)
+#+	cp $(TEMP_KERNEL) $(TEMP_NETBOOT_DIR)/$(NETBOOT_PATH)/linux
+#+	cp $(TEMP_INITRD) $(TEMP_NETBOOT_DIR)/$(NETBOOT_PATH)/initrd.gz
+#+
+#+	if [ "$(GRUB_EFI)" = y ]; then \
+#+		set -e; \
+#+		mkdir -p $(TEMP_NETBOOT_DIR)/$(NETBOOT_PATH)/grub/arm64-efi; \
+#+		cp -a $(TEMP_GRUB_EFI)/bootnetaa64.efi $(TEMP_NETBOOT_DIR)/$(NETBOOT_PATH); \
+#+		cp -a $(GRUB_FONT) $(TEMP_NETBOOT_DIR)/$(NETBOOT_PATH)/grub/font.pf2; \
+#+		cp -a $(TEMP_GRUB_EFI)/boot/grub/arm64-efi/* \
+#+			$(TEMP_NETBOOT_DIR)/$(NETBOOT_PATH)/grub/arm64-efi/; \
+#+		grub-gencfg \
+#+			KERNEL /$(NETBOOT_PATH)/linux \
+#+			INITRD /$(NETBOOT_PATH)/initrd.gz \
+#+			HEADER boot/arm64/grub/grub-efi.cfg \
+#+		> $(TEMP_NETBOOT_DIR)/$(NETBOOT_PATH)/grub/grub.cfg; \
+#+	fi
+#+
+#+	# Generate images for X-Gene systems using U-Boot.
+#+	# They don't currently support bootz.
+#+	$(eval XU_INSTALL_PATH=$(TEMP_NETBOOT_DIR)/$(NETBOOT_PATH)/xgene-uboot)
+#+	mkdir -p $(XU_INSTALL_PATH)
+#+	mkimage -A arm -O linux -T kernel -C none -a 0x80000 -e 0x80000 -n "Ubuntu kernel" -d $(TEMP_KERNEL) $(XU_INSTALL_PATH)/uImage
+#+	mkimage -A arm -O linux -T ramdisk -C none -a 0x0 -e 0x0 -n "debian-installer ramdisk" -d $(TEMP_INITRD) $(XU_INSTALL_PATH)/uInitrd
+
+#=== modified file 'build/config/dir'
+#--- build/config/dir	2010-08-25 22:06:28 +0000
+#+++ build/config/dir	2015-02-13 23:50:29 +0000
+#@@ -62,6 +62,7 @@
+# # The files we may want to have in dest/
+# INITRD = $(SOME_DEST)/$(EXTRANAME)initrd.gz
+# KERNEL = $(foreach name,$(KERNELNAME),$(SOME_DEST)/$(EXTRANAME)$(name))
+#+DTBS = $(SOME_DEST)/$(EXTRANAME)README
+# BOOT = $(SOME_DEST)/$(EXTRANAME)boot.img$(GZIPPED)
+# ROOT = $(SOME_DEST)/$(EXTRANAME)root.img$(GZIPPED)
+# EXTRA = $(SOME_DEST)/$(EXTRANAME).img$(GZIPPED)
+#@@ -76,6 +77,7 @@
+# TEMP_INITRD = $(TEMP)/initrd.gz
+# TEMP_UDEB_LIST = $(TEMP)/udeb.list
+# TEMP_KERNEL = $(foreach name,$(KERNELNAME),$(TEMP)/$(name))
+#+TEMP_DTBS = $(TEMP)/lib
+# TEMP_BOOT = $(TEMP)/boot.img
+# TEMP_ROOT = $(TEMP)/root.img
+# TEMP_MINIISO = $(TEMP)/mini.iso
+
+#=== added file 'build/pkg-lists/cdrom/arm64.cfg'
+#--- build/pkg-lists/cdrom/arm64.cfg	1970-01-01 00:00:00 +0000
+#+++ build/pkg-lists/cdrom/arm64.cfg	2015-02-24 05:14:26 +0000
+#@@ -0,0 +1,11 @@
+#+fat-modules-${kernel:Version}
+#+storage-core-modules-${kernel:Version}
+#+input-modules-${kernel:Version}
+#+console-setup-udeb
+#+usb-modules-${kernel:Version} ?
+#+#serial-modules-${kernel:Version}
+#+usb-serial-modules-${kernel:Version} ?
+#+uinput-modules-${kernel:Version} ?
+#+
+#+# also support MMC/SD cards
+#+mmc-modules-${kernel:Version} ?
+
+#=== added directory 'build/pkg-lists/cdrom/grub'
+#=== added file 'build/pkg-lists/cdrom/grub/arm64.cfg'
+#--- build/pkg-lists/cdrom/grub/arm64.cfg	1970-01-01 00:00:00 +0000
+#+++ build/pkg-lists/cdrom/grub/arm64.cfg	2015-02-24 05:14:26 +0000
+#@@ -0,0 +1,2 @@
+#+# This image is based on the regular cdrom image, and gets all the packages
+#+# from that one too.
+
+#=== added file 'build/pkg-lists/cdrom/grub/common'
+#--- build/pkg-lists/cdrom/grub/common	1970-01-01 00:00:00 +0000
+#+++ build/pkg-lists/cdrom/grub/common	2015-03-17 21:09:21 +0000
+#@@ -0,0 +1,3 @@
+#+# This image is based on the regular cdrom image, and gets all the packages
+#+# from that one too.
+#+
+
+=== added directory 'build/pkg-lists/device-tree'
+#=== added file 'build/pkg-lists/device-tree/arm64.cfg'
+#--- build/pkg-lists/device-tree/arm64.cfg	1970-01-01 00:00:00 +0000
+#+++ build/pkg-lists/device-tree/arm64.cfg	2015-02-13 23:51:06 +0000
+#@@ -0,0 +1,1 @@
+#+# Empty
+
+=== added file 'build/pkg-lists/device-tree/common'
+#--- build/pkg-lists/device-tree/common	1970-01-01 00:00:00 +0000
+#+++ build/pkg-lists/device-tree/common	2015-02-13 23:50:29 +0000
+#@@ -0,0 +1,1 @@
+#+#include "kernel"
+
+#=== modified file 'build/util/efi-image'
+#--- build/util/efi-image	2012-10-15 20:03:40 +0000
+#+++ build/util/efi-image	2015-02-24 04:58:57 +0000
+#@@ -22,13 +22,14 @@
+# # it exists.
+# 
+# if [ -z "$1" ] || [ -z "$2" ]; then
+#-	echo "usage: $0 OUTPUT-DIRECTORY GRUB-PLATFORM EFI-NAME"
+#+	echo "usage: $0 OUTPUT-DIRECTORY GRUB-PLATFORM EFI-NAME [NETBOOT-PREFIX]"
+# 	exit 1
+# fi
+# 
+# outdir="$1"
+# platform="$2"
+# efi_name="$3"
+#+netboot_prefix="$4"
+# 
+# memdisk_img=
+# workdir=
+#@@ -144,6 +145,11 @@
+# 		search iso9660 configfile normal memdisk tar part_msdos fat
+# fi
+# 
+#+[ -z "$netboot_prefix" ] || \
+#+grub-mkimage -O "$platform" \
+#+	-o "$outdir/bootnet$efi_name.efi" -p "$netboot_prefix/grub" \
+#+	search configfile normal efinet tftp net
+#+
+# # Stuff it into a FAT filesystem, making it as small as possible.  24KiB
+# # headroom seems to be enough; (x+31)/32*32 rounds up to multiple of 32.
+# size=$(( $(stat -c %s "$workdir/boot$efi_name.efi") / 1024 ))
+
+#=== added file 'build/util/grub-gencfg'
+#--- build/util/grub-gencfg	1970-01-01 00:00:00 +0000
+#+++ build/util/grub-gencfg	2015-03-23 23:27:39 +0000
+#@@ -0,0 +1,210 @@
+#+#!/usr/bin/perl
+#+
+#+# Invoke as:
+#+#
+#+#  ./gen-grub-cfg KEY1 VAL1 KEY2 VAL2 ... -- COMMAND LINE
+#+#
+#+# Keys are:
+#+#    KERNEL             Normal kernel to use (required)
+#+#    INITRD             Normal initrd to use (required)
+#+#    INITRD_GTK         Graphical installer initrd (optional)
+#+#
+#+#    KERNEL64           Alternative kernel for optional 64-bit entries
+#+#    INITRD64           Alternative initrd for optional 64-bit entries
+#+#    INITRD64_GTK       Alternative graphical initrd for optional 64-bit entries
+#+#
+#+#    THEME_PATH         Path (in boot env) where themes are kept
+#+#    HEADER             Local path to file cat include as a header
+#+#
+#+# At least KERNEL and INITRD must be given.
+#+#
+#+# Unsupported:
+#+#    DEBIAN_VERSION
+#+#    BUILD_DATE
+#+#
+#+# TODO: Theme generation from template
+#+#
+#+# When invoked as:
+#+#
+#+#  ./gen-grub-cfg \
+#+#    KERNEL "/%install%/vmlinuz" \
+#+#    KERNEL64 "/%install-amd%/vmlinuz" \
+#+#    INITRD "/%install%/initrd.gz" \
+#+#    INITRD64 "/%install-amd%/initrd.gz" \
+#+#    INITRD_GTK "/%install%/gtk/initrd.gz" \
+#+#    INITRD64_GTK "/%install-amd%/gtk/initrd.gz" \
+#+#    THEME_PATH "/boot/grub/theme/" \
+#+#    HEADER "build/boot/x86/grub/grub-efi.cfg" \
+#+#    -- vga=788
+#+#
+#+# Will reproduce something similar to
+#+# debian-testing-amd64-netinst.iso::/boot/grub/grub.cfg weekly build
+#+# circa 2014-09-27.
+#+
+#+use warnings;
+#+use strict;
+#+
+#+my %VARS;
+#+
+#+while (@ARGV) {
+#+    my $key=shift;
+#+    last if $key eq "--";
+#+
+#+    my $value=shift;
+#+    $VARS{$key}=$value;
+#+}
+#+
+#+my @OPTS = @ARGV;
+#+
+#+die "No kernel?" unless $VARS{KERNEL};
+#+die "No initrd?" unless $VARS{INITRD};
+#+
+#+my $graphical = defined $VARS{INITRD_GTK};
+#+my $sixtyfour = defined $VARS{KERNEL64} && defined $VARS{INITRD64}
+#+    && (!$graphical || defined $VARS{INITRD64_GTK});
+#+my $themed = defined $VARS{THEME_PATH};
+#+
+#+my @menu_number = (1);
+#+
+#+sub print_indented ($)
+#+{
+#+    my ($text) = @_;
+#+    foreach ( split "\n", $text ) {
+#+        my $i = 1;
+#+        print "    " while ( $i++ < $#menu_number );
+#+        print "$_";
+#+        print "\n";
+#+    }
+#+}
+#+
+#+sub menu_theme ()
+#+{
+#+    my $name = join "-", @menu_number;
+#+}
+#+sub print_set_theme ($)
+#+{
+#+    my ($theme) = @_;
+#+    return unless $themed;
+#+
+#+    print_indented("set theme=$VARS{THEME_PATH}$theme\n");
+#+}
+#+
+#+sub start_submenu ($)
+#+{
+#+    my ($title) = @_;
+#+
+#+    print_indented("submenu '$title' {\n");
+#+
+#+    my $theme = menu_theme();
+#+    push @menu_number, 1;
+#+
+#+    print_indented("set menu_color_normal=cyan/blue\n");
+#+    print_indented("set menu_color_highlight=white/blue\n");
+#+    print_set_theme($theme);
+#+}
+#+sub end_submenu ()
+#+{
+#+    pop @menu_number;
+#+    $menu_number[$#menu_number]++;
+#+    print_indented("}\n");
+#+}
+#+
+#+sub menuentry ($;%)
+#+{
+#+    my ($title,%xattr) = @_;
+#+
+#+    $xattr{SixtyFour} ||= 0;
+#+    $xattr{Graphical} ||= 0;
+#+
+#+    $xattr{Expert} ||= 0;
+#+    $xattr{Auto} ||= 0;
+#+    $xattr{Rescue} ||= 0;
+#+    $xattr{Speach} ||= 0;
+#+
+#+    $xattr{Quiet} = !$xattr{Expert} unless defined $xattr{Quiet};
+#+
+#+    return if $xattr{Graphical} && !$graphical;
+#+    return if $xattr{SixtyFour} && !$sixtyfour;
+#+
+#+    die "automated expert?" if $xattr{Expert} && $xattr{Auto};
+#+
+#+    my $kernel = $xattr{SixtyFour} ? $VARS{KERNEL64} : $VARS{KERNEL};
+#+    my $initrd = $xattr{Graphical} ? $VARS{INITRD_GTK} : $VARS{INITRD};
+#+    $initrd = $xattr{Graphical} ? $VARS{INITRD64_GTK} : $VARS{INITRD64}
+#+        if $xattr{SixtyFour};
+#+
+#+    die "no kernel" unless $kernel;
+#+    die "no initrd" unless $initrd;
+#+
+#+    my @cmdline;
+#+    # Ordering here is to allow diffing against previous versions of this file.
+#+    push @cmdline, "desktop=$xattr{Desktop}" if $xattr{Desktop};
+#+    push @cmdline, "priority=low" if $xattr{Expert};
+#+    push @cmdline, ("auto=true", "priority=critical") if $xattr{Auto};
+#+    push @cmdline, @OPTS;
+#+    push @cmdline, "rescue/enable=true" if $xattr{Rescue};
+#+    push @cmdline, "speakup.synth=soft" if $xattr{Speach};
+#+    push @cmdline, "---";
+#+    push @cmdline, "quiet" if $xattr{Quiet};
+#+
+#+    my $cmdline = join(" ", @cmdline);
+#+
+#+    print_indented (<<EOE);
+#+menuentry '$title' {
+#+    set background_color=black
+#+    linux    $kernel $cmdline
+#+    initrd   $initrd
+#+}
+#+EOE
+#+}
+#+
+#+if ( defined $VARS{HEADER} )
+#+{
+#+    open(HEADER, "<$VARS{HEADER}") or die "open header: $!";
+#+    print <HEADER> or die "write header: $!";
+#+    close(HEADER) or die "close header: $!";
+#+}
+#+
+#+print_set_theme(menu_theme());
+#+push @menu_number, 1;
+#+
+#+menuentry("Install");
+#+menuentry("Graphical install", Graphical => 1);
+#+
+#+start_submenu("Advanced options ..."); {
+#+    menuentry("... Expert install", Expert => 1);
+#+    menuentry("... Rescue mode", Rescue => 1);
+#+    menuentry("... Automated install", Auto => 1);
+#+    menuentry("... Graphical expert install", Graphical => 1, Expert => 1);
+#+    menuentry("... Graphical rescue mode", Graphical => 1, Rescue => 1);
+#+    menuentry("... Graphical automated install", Graphical => 1, Auto => 1);
+#+
+#+    start_submenu("... Desktop environment menu ..."); {
+#+
+#+        foreach ( ["GNOME", "gnome"], ["KDE", "kde"], ["LXDE", "lxde"] ) {
+#+            my ($desktop,$opt) = @{$_};
+#+
+#+            my $one = sub { my ($title, %xargs) = @_;
+#+                            $xargs{Desktop} = $opt;
+#+                            menuentry($title, %xargs);
+#+            };
+#+            start_submenu("... $desktop desktop boot menu ..."); {
+#+                $one->("... Install");
+#+                $one->("... Graphical install", Graphical => 1);
+#+
+#+                start_submenu("... $desktop advanced options ..."); {
+#+                    $one->("... Expert install", Expert => 1);
+#+                    $one->("... Automated install", Auto => 1);
+#+                    $one->("... Graphical expert install", Graphical => 1, Expert => 1);
+#+                    $one->("... Graphical automated install", Graphical => 1, Auto => 1);
+#+                } end_submenu(); # $desktop advanced
+#+
+#+                $one->("... Install with speech synthesis", Speach => 1);
+#+                $one->("... Install with speech synthesis", Graphical => 1, Speach => 1);
+#+                $one->("... 64 bit speech install", SixtyFour => 1, Graphical => 1, Speach => 1)
+#+                    if $sixtyfour;
+#+            } end_submenu(); # $desktop submenu
+#+        } # Desktop loop
+#+    } end_submenu(); # Desktop submenu
+#+} end_submenu(); # Advanced
+#+menuentry('Install with speech synthesis', Graphical => $graphical, Speach => 1);
+
+#=== modified file 'debian/changelog'
+#--- debian/changelog	2015-05-09 07:52:07 +0000
+#+++ debian/changelog	2015-05-14 14:24:09 +0000
+#@@ -1,3 +1,25 @@
+#+debian-installer (20101020ubuntu379) UNRELEASED; urgency=medium
+#+
+#+  [ dann frazier ]
+#+  * arm64: Use mklibs instead of cargo-culting mklibs-copy. This
+#+    currently reduces the initrd.gz by just under 1M and drops
+#+    an unnecessary delta against Debian.
+#+  * arm64: kernel and System.map aren't versioned, correct config.
+#+    No functional change.
+#+  * arm64: Stop calling "generic" a subarchitecture
+#+  * arm64: Rename netboot/xgene -> netboot/xgene-uboot
+#+  * Add device-tree medium infrastructure (from Debian)
+#+  * arm64: Enable device-tree medium
+#+  * arm64/xgene-uboot: apm-mustang.dtb is now in the device-tree directory,
+#+    so we can drop it from the xgene-uboot directory.
+#+  * arm64: Create a netboot tarball
+#+  * arm64: Add netboot mini.iso
+#+  * arm64: Build cdrom medium
+#+  * arm64/netboot: Add a grub/efi build for netboot
+#+  * grub-gencfg: Use --- as linux separator
+#+
+#+ -- Mathieu Trudel-Lapierre <mathieu-tl@ubuntu.com>  Tue, 12 May 2015 15:45:32 -0400
+#+
+# debian-installer (20101020ubuntu378) wily; urgency=medium
+# 
+#   * Move master kernels to 3.19.0-17.
+
+#=== modified file 'debian/control'
+#--- debian/control	2014-10-30 08:19:25 +0000
+#+++ debian/control	2015-04-03 21:16:40 +0000
+#@@ -9,7 +9,7 @@
+# Vcs-Bzr: http://bazaar.launchpad.net/~ubuntu-core-dev/debian-installer/ubuntu
+# Build-Conflicts: libnewt-pic [mipsel]
+# # NOTE: Do not edit the next line by hand. See comment below.
+#-Build-Depends: debhelper (>= 7.0.0), apt, apt-utils, gnupg, ubuntu-keyring, dctrl-tools, wget, bc, debiandoc-sgml, xsltproc, docbook-xml, docbook-xsl, libbogl-dev [!kfreebsd-i386 !kfreebsd-amd64 !hurd-i386], lsb-release, glibc-pic, libslang2-pic (>= 2.0.6-4), libnewt-pic (>= 0.52.2-11.3) [!mipsel], libnewt-dev (>= 0.52.2-11.3) [mipsel], libgcc1 [i386 amd64], cramfsprogs [powerpc ia64 mips mipsel armeb armel], genext2fs (>= 1.3-7.1), e2fsprogs, mklibs (>= 0.1.25), genisoimage (>= 9:1.1.10-1ubuntu2) [!s390 !s390x], genromfs [sparc sparc64], hfsutils [powerpc], dosfstools (>= 3.0.9-1ubuntu2) [i386 ia64 m68k amd64 armel armhf], cpio, devio [armeb armel], parted [armel armhf], slugimage (>= 0.10+r58-6) [armeb armel], u-boot-tools [arm64 armel armhf], syslinux (>= 3:6) [i386 amd64], syslinux-utils (>= 3:6) [i386 amd64], pxelinux (>= 3:6) [i386 amd64], isolinux (>= 3:6) [i386 amd64], syslinux-common (>= 3:6) [i386 amd64], palo [hppa], elilo [ia64], yaboot [powerpc], aboot (>= 0.9b-2) [alpha], silo [sparc], sparc-utils [sparc sparc64], genisovh [mips], tip22 [mips], colo [mipsel], sibyl [mips mipsel], atari-bootstrap [m68k], vmelilo [m68k], m68k-vme-tftplilo [m68k], amiboot [m68k], emile [m68k], emile-bootblocks [m68k], u-boot [armel armhf], shim-signed [amd64], tofrodos [i386 amd64 kfreebsd-i386 kfreebsd-amd64], mtools [i386 ia64 m68k amd64 kfreebsd-i386 kfreebsd-amd64 hurd-i386 armel armhf], po4a [i386 amd64], python3 (>= 3.1) [i386 amd64], module-init-tools [i386 arm64 armeb armel armhf amd64 alpha hppa ia64 m68k mips mipsel powerpc ppc64el s390 sh4 sparc sparc64], bf-utf-source [!s390 !s390x], mkvmlinuz [powerpc], openssl, makefs [kfreebsd-i386 kfreebsd-amd64], grub-pc (>= 1.98~20100101-1) [kfreebsd-i386 kfreebsd-amd64 hurd-i386], xorriso [kfreebsd-i386 kfreebsd-amd64 hurd-i386 ppc64el], grub-efi-amd64-bin (>= 2.00) [amd64], grub-common [amd64], debian-ports-archive-keyring [sh4 sparc64], grub-ieee1275-bin [ppc64el]
+#+Build-Depends: debhelper (>= 7.0.0), apt, apt-utils, gnupg, ubuntu-keyring, dctrl-tools, wget, bc, debiandoc-sgml, xsltproc, docbook-xml, docbook-xsl, libbogl-dev [!kfreebsd-i386 !kfreebsd-amd64 !hurd-i386], lsb-release, glibc-pic, libslang2-pic (>= 2.0.6-4), libnewt-pic (>= 0.52.2-11.3) [!mipsel], libnewt-dev (>= 0.52.2-11.3) [mipsel], libgcc1 [i386 amd64], cramfsprogs [powerpc ia64 mips mipsel armeb armel], genext2fs (>= 1.3-7.1), e2fsprogs, mklibs (>= 0.1.25), genisoimage (>= 9:1.1.10-1ubuntu2) [!s390 !s390x], genromfs [sparc sparc64], hfsutils [powerpc], dosfstools (>= 3.0.9-1ubuntu2) [i386 ia64 m68k amd64 armel armhf arm64], cpio, devio [armeb armel], parted [armel armhf], slugimage (>= 0.10+r58-6) [armeb armel], u-boot-tools [arm64 armel armhf], syslinux (>= 3:6) [i386 amd64], syslinux-utils (>= 3:6) [i386 amd64], pxelinux (>= 3:6) [i386 amd64], isolinux (>= 3:6) [i386 amd64], syslinux-common (>= 3:6) [i386 amd64], palo [hppa], elilo [ia64], yaboot [powerpc], aboot (>= 0.9b-2) [alpha], silo [sparc], sparc-utils [sparc sparc64], genisovh [mips], tip22 [mips], colo [mipsel], sibyl [mips mipsel], atari-bootstrap [m68k], vmelilo [m68k], m68k-vme-tftplilo [m68k], amiboot [m68k], emile [m68k], emile-bootblocks [m68k], u-boot [armel armhf], shim-signed [amd64], tofrodos [i386 amd64 kfreebsd-i386 kfreebsd-amd64], mtools [i386 ia64 m68k amd64 arm64 kfreebsd-i386 kfreebsd-amd64 hurd-i386 armel armhf], po4a [i386 amd64], python3 (>= 3.1) [i386 amd64], module-init-tools [i386 arm64 armeb armel armhf amd64 alpha hppa ia64 m68k mips mipsel powerpc ppc64el s390 sh4 sparc sparc64], bf-utf-source [!s390 !s390x], mkvmlinuz [powerpc], openssl, makefs [kfreebsd-i386 kfreebsd-amd64], grub-pc (>= 1.98~20100101-1) [kfreebsd-i386 kfreebsd-amd64 hurd-i386], xorriso [arm64 kfreebsd-i386 kfreebsd-amd64 hurd-i386 ppc64el], grub-efi-amd64-bin (>= 2.00) [amd64], grub-efi-arm64-bin [arm64], grub-common [amd64 arm64], debian-ports-archive-keyring [sh4 sparc64], grub-ieee1275-bin [ppc64el]
+# # This package has the worst Build-Depends in Debian, so it deserves some
+# # explanation. Note that this comment can also be used to generate a
+# # Build-Depends line, by running the debian/genbuilddeps program.
+#@@ -82,7 +82,7 @@
+# #		default.)
+# #	- hfsutils [powerpc]
+# #		For making bootable HFS USB sticks for powerpc.
+#-#	- dosfstools (>= 3.0.9-1ubuntu2) [i386 ia64 m68k amd64 armel armhf]
+#+#	- dosfstools (>= 3.0.9-1ubuntu2) [i386 ia64 m68k amd64 armel armhf arm64]
+# #		For creating FAT filesystems with mkfs.msdos.
+# #		Of course i386/amd64 use this for floppies, CDs etc.
+# #		ia64 uses it for floppies (?)
+#@@ -151,7 +151,7 @@
+# #	- tofrodos [i386 amd64 kfreebsd-i386 kfreebsd-amd64]
+# #		For todos, used on files that need to be accessible from
+# #		DOS.
+#-#	- mtools [i386 ia64 m68k amd64 kfreebsd-i386 kfreebsd-amd64 hurd-i386 armel armhf]
+#+#	- mtools [i386 ia64 m68k amd64 arm64 kfreebsd-i386 kfreebsd-amd64 hurd-i386 armel armhf]
+# #		mcopy is used to put files onto FAT filesystems w/o
+# #		mounting them.
+# #	- po4a [i386 amd64]
+#@@ -175,11 +175,11 @@
+# #		Used to create an UFS1 filesystem from a directory tree.
+# #	- grub-pc (>= 1.98~20100101-1) [kfreebsd-i386 kfreebsd-amd64 hurd-i386]
+# #		Used as the CD-ROM's bootloader
+#-#       - xorriso [kfreebsd-i386 kfreebsd-amd64 hurd-i386 ppc64el]
+#+#       - xorriso [arm64 kfreebsd-i386 kfreebsd-amd64 hurd-i386 ppc64el]
+# #               Used by grub-pc/grub-ieee1275-bin to create the CD-ROM images
+#-#	- grub-efi-amd64-bin (>= 2.00) [amd64]
+#+#	- grub-efi-amd64-bin (>= 2.00) [amd64], grub-efi-arm64-bin [arm64]
+# #		EFI bootloader support.
+#-#	- grub-common [amd64]
+#+#	- grub-common [amd64 arm64]
+# #		For the GRUB font.
+# #	- debian-ports-archive-keyring [sh4 sparc64]
+# #		Used for architectures hosted on debian-ports.org
+

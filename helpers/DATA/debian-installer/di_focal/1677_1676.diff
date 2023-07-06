@@ -1,0 +1,46 @@
+=== modified file 'build/Makefile'
+#--- build/Makefile	2011-12-15 15:35:38 +0000
+#+++ build/Makefile	2012-04-18 05:24:59 +0000
+#@@ -493,6 +493,12 @@
+# 		`find $(TEMP) -type f -a \( -perm +0111 -o -name '*.so' -o -name '*.so.*' \) | \
+# 		 grep -v udeblibs | grep -v 'usr/lib/xorg/modules/.*\.so'`
+# 
+#+ifeq ($(DEB_HOST_ARCH),armhf)
+#+	# armhf has two linkers for now, while the world gets sorted
+#+	mkdir -p $(TREE)/lib/arm-linux-gnueabihf
+#+	ln -s /lib/ld-linux-armhf.so.3 $(TREE)/lib/arm-linux-gnueabihf/ld-linux.so.3
+#+endif
+#+
+# ifeq ($(DEB_HOST_ARCH_OS),hurd)
+# 	# On Hurd the SONAME for the dynamic linker is ld.so.1, but binaries
+# 	# have the ld.so symlink as the interpreter. Ideally mklibs should
+#
+=== modified file 'build/config/armhf.cfg'
+--- build/config/armhf.cfg	2012-04-11 08:52:18 +0000
++++ build/config/armhf.cfg	2012-04-18 05:24:59 +0000
+@@ -1,5 +1,7 @@
+ SUBARCH_SUPPORTED = omap omap4 armadaxp
+ 
++MKLIBS = mklibs --ldlib=/lib/ld-linux-armhf.so.3
++
+ KERNELMAJOR = 2.6
+ KERNELVERSION = 3.2.0-23
+ KERNEL_FLAVOUR = di
+
+#=== modified file 'debian/changelog'
+#--- debian/changelog	2012-04-13 13:14:35 +0000
+#+++ debian/changelog	2012-04-18 05:24:59 +0000
+#@@ -1,3 +1,12 @@
+#+debian-installer (20101020ubuntu134) precise; urgency=low
+#+
+#+  * Call mklibs with a hardcoded --ldlib in armhf.cfg, so we get a
+#+    deterministic result in our linker search, and then add the
+#+    symlink from the old linker path in build/Makefile (LP: #984007)
+#+  * Rebuild with latest omap4 kernels for ext2 support (LP: #984180)
+#+
+#+ -- Adam Conrad <adconrad@ubuntu.com>  Tue, 17 Apr 2012 23:20:29 -0600
+#+
+# debian-installer (20101020ubuntu133) precise; urgency=low
+# 
+#   * Move armel/omap4 and armhf/omap4 to 3.2.0-1412.
+#

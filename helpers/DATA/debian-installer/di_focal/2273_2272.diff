@@ -1,0 +1,27 @@
+=== modified file 'build/Makefile'
+--- build/Makefile	2018-02-15 11:44:41 +0000
++++ build/Makefile	2018-07-22 10:55:51 +0000
+@@ -782,6 +782,8 @@
+ 	update-manifest $@ $(MANIFEST-BOOT) $(UDEB_LISTS)
+ 
+ $(TEMP_KERNEL): $(STAMPS)tree-unpack-$(targetstring)-stamp
++	# The kernel is shipped 600 in some cases, so fix it:
++	chmod 644 $(TEMP_KERNEL)
+ 
+ $(TEMP_BOOT): $(TEMP_INITRD) $(TEMP_KERNEL) $(TEMP_BOOT_SCREENS) arch_boot
+ 
+
+#=== modified file 'debian/changelog'
+#--- debian/changelog	2018-06-14 10:36:23 +0000
+#+++ debian/changelog	2018-07-22 10:55:51 +0000
+#@@ -1,3 +1,9 @@
+#+debian-installer (20101020ubuntu547) UNRELEASED; urgency=medium
+#+
+#+  * Fix permissions on the netboot.tar kernel (LP: #1781036)
+#+
+#+ -- Adam Conrad <adconrad@ubuntu.com>  Sun, 22 Jul 2018 04:55:01 -0600
+#+
+# debian-installer (20101020ubuntu546) cosmic; urgency=medium
+# 
+#   * Move master kernels to 4.15.0-23.
+#
