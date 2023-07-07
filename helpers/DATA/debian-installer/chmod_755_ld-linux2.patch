@@ -7,7 +7,7 @@ index c073a32..cace03d 100644
  ifeq ($(DEB_HOST_ARCH_OS),linux)
  ifdef KERNELVERSION
 +ifneq ($(DEB_HOST_ARCH),ppc64el)
-+	chmod 755 $(TREE)/lib/$(DEB_HOST_MULTIARCH)/ld-linux*
++	find $(TREE)/lib/$(DEB_HOST_MULTIARCH)/ -name "ld-linux*" | xargs -r chmod 755
 +endif
 +ifeq ($(DEB_HOST_ARCH),ppc64el)
 +	chmod 755 $(TREE)/lib/$(DEB_HOST_MULTIARCH)/ld*.so*
