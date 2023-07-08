@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=102
+VERSION=103
 EXTERNAL='deb-src http://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu $UPSTREAM main'
 REPOKEY=9BDB3D89CE49EC21
 
@@ -326,6 +326,7 @@ s|brand-product-name = Firefox|brand-product-name = Abrowser|;
 s|Sign in to Firefox|Sign in to Sync|;
 s|Search addons.mozilla.org|Search|g;
 s|firefox.settings.services.mozilla.com|127.0.0.1|g;
+s|this-firefox|this-abrowser|g;
 "
 
 echo "Running batch replace operation"
@@ -377,9 +378,9 @@ do
 done
 ##Remove invalid policy for trisquel.
 find -name aboutRights.ftl | xargs sed -i '/rights-intro-point-5/,$d'
-find -name aboutRights.xhtml |xargs sed -i "/rights-intro-point-5/d"
+find -name aboutRights.xhtml |xargs sed -i "/rights-intro-point-5/,/<\/li>/d"
 find -name aboutRights.xhtml |xargs sed -i "/rights-intro-point-6/d"
-find -name aboutRights-unbranded.xhtml |xargs sed -i "/rights-intro-point-5/d"
+find -name aboutRights-unbranded.xhtml |xargs sed -i "/rights-intro-point-5/,/<\/li>/d"
 #EO about: mods.
 
 sed -i 's/<a\ href\=\"http\:\/\/www.mozilla.org\/\">Mozilla\ Project<\/a>/<a\ href\=\"http\:\/\/www.trisquel.info\/\"\>Trisquel\ Project<\/a>/g' browser/base/content/overrides/app-license.html
@@ -425,6 +426,17 @@ cp -a $DATA/android/branding/ mobile/android/branding/official
 cp $DATA/android/mobile.ico mobile/android/app/
 #cp $DATA/android/images/* mobile/android/themes/core/images/
 cp -a $DATA/android/res/main/* mobile/android/geckoview/src/main/res
+
+# Rebrand svg & debug tools & privacy logos
+find devtools/client/themes/images/ -name aboutdebugging-firefox-*.svg | xargs -n1 cp $DATA/debug_brand/debuglogo.svg
+find devtools/client/themes/images/ -name aboutdebugging-fenix*.svg | xargs -n1 cp $DATA/debug_brand/debuglogo.svg
+
+find browser/branding/ -name about-logo.svg | xargs -n1 cp $DATA/debug_brand/debuglogo.svg
+
+find browser/branding/ -name about-logo-private.png | xargs -n1 cp $DATA/debug_brand/about-logo-private.png
+find browser/branding/ -name about-logo-private@2x.png | xargs -n1 cp $DATA/debug_brand/about-logo-private@2x.png
+find browser/branding/ -name PrivateBrowsing_70.png | xargs -n1 cp $DATA/debug_brand/PrivateBrowsing_70.png
+find browser/branding/ -name PrivateBrowsing_150.png | xargs -n1 cp $DATA/debug_brand/PrivateBrowsing_150.png
 
 #Fixes by patch on source.
 ##Firefox v100, based on parabola 9004-FSDG-misc.patch
