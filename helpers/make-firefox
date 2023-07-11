@@ -379,7 +379,7 @@ done
 ##Remove invalid policy for trisquel.
 find -name aboutRights.ftl | xargs sed -i '/rights-intro-point-5/,$d'
 find -name aboutRights.xhtml |xargs sed -i "/rights-intro-point-5/,/<\/li>/d"
-find -name aboutRights.xhtml |xargs sed -i "/rights-intro-point-6/d"
+find -name aboutRights.xhtml |xargs sed -i "/rights-intro-point-6/,/<\/li>/d"
 find -name aboutRights-unbranded.xhtml |xargs sed -i "/rights-intro-point-5/,/<\/li>/d"
 #EO about: mods.
 
@@ -430,6 +430,7 @@ cp -a $DATA/android/res/main/* mobile/android/geckoview/src/main/res
 # Rebrand svg & debug tools & privacy logos
 find devtools/client/themes/images/ -name aboutdebugging-firefox-*.svg | xargs -n1 cp $DATA/debug_brand/debuglogo.svg
 find devtools/client/themes/images/ -name aboutdebugging-fenix*.svg | xargs -n1 cp $DATA/debug_brand/debuglogo.svg
+find devtools/client/themes/images/ -name aboutdebugging-firefox-logo.svg | xargs -n1 cp $DATA/debug_brand/debuglogo_gray.svg
 
 find browser/branding/ -name about-logo.svg | xargs -n1 cp $DATA/debug_brand/debuglogo.svg
 

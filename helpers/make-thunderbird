@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#    Copyright (C) 2022  Luis Guzmán <ark@switnet.org>
+#    Copyright (C) 2023  Luis Guzmán <ark@switnet.org>
 #    Copyright (C) 2020  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C) 2019  David Trudgian <dave@trudgian.net>
 #
@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=18
+VERSION=19
 
 . ./config
 
@@ -179,6 +179,7 @@ s|www.mozilla.com/legal/privacy|trisquel.info/legal|g;
 s/Trisquel Public/Mozilla Public/g;
 s/Trisquel Foundation/Mozilla Foundation/g;
 s/Trisquel Corporation/Mozilla Corporation/g;
+s|this-firefox|this-abrowser|g;
 "
 echo "Running batch replace operation"
 find . -type f -not -iregex '.*changelog.*' -not -iregex '.*copyright.*' -not -iregex '.*third_party/rust.*' -execdir /bin/sed --follow-symlinks -i "$SEDSCRIPT" '{}' ';'
@@ -251,25 +252,20 @@ do
  find -name aboutRights.ftl | xargs sed -i "s/^$STRING.*/$STRING = /"
 done
 ##Remove invalid policy for trisquel.
-find -name aboutRights.ftl | xargs sed -i '/rights-intro-point-5/,$d'
-find -name aboutRights.xhtml |xargs sed -i "/rights-intro-point-5/d"
-find -name aboutRights.xhtml |xargs sed -i "/rights-intro-point-6/d"
-find -name aboutRights-unbranded.xhtml |xargs sed -i "/rights-intro-point-5/d"
+find -name aboutRights.ftl | xargs sed -i '/rights-intro-point-3/,$d'
+find -name aboutRights.xhtml |xargs sed -i "/rights-intro-point-5/,/<\/li>/d"
+find -name aboutRights.xhtml |xargs sed -i "/rights-intro-point-6/,/<\/li>/d"
+find -name aboutRights-unbranded.xhtml |xargs sed -i "/rights-intro-point-5/,/<\/li>/d"
 
 sed -i 's/<a\ href\=\"https\:\/\/www.icedove.net\/\">Icedove\ Project<\/a>/<a\ href\=\"https\:\/\/www.trisquel.info\/\"\>Trisquel\ Project<\/a>/g' \
     comm/mail/base/content/overrides/app-license.html
 #EO about: mods.
 
-#Debbuging tools
-sed -i 's|this-firefox|this-abrowser|g' devtools/client/framework/test/browser_about-devtools-toolbox_reload.js
 #Rebrand debug tools
-echo "devtools/client/themes/images/aboutdebugging-fenix.svg \
-devtools/client/themes/images/aboutdebugging-fenix-nightly.svg \
-devtools/client/themes/images/aboutdebugging-firefox-aurora.svg \
-devtools/client/themes/images/aboutdebugging-firefox-beta.svg \
-devtools/client/themes/images/aboutdebugging-firefox-nightly.svg \
-devtools/client/themes/images/aboutdebugging-firefox-release.svg" | xargs -n1 cp $DATA/debug_brand/debuglogo.svg
-cp $DATA/debug_brand/debuglogo_gray.svg devtools/client/themes/images/aboutdebugging-firefox-logo.svg
+find devtools/client/themes/images/ -name aboutdebugging-firefox-*.svg | xargs -n1 cp $DATA/debug_brand/debuglogo.svg
+find devtools/client/themes/images/ -name aboutdebugging-fenix*.svg | xargs -n1 cp $DATA/debug_brand/debuglogo.svg
+find devtools/client/themes/images/ -name aboutdebugging-firefox-logo.svg | xargs -n1 cp $DATA/debug_brand/debuglogo_gray.svg
+
 cp $DATA/debug_brand/about-logo.svg comm/mail/branding/icedove/TB-symbolic.svg
 cp $DATA/debug_brand/about-logo.svg comm/mail/themes/shared/mail/icons/aboutdebugging-logo.svg
 cp $DATA/debug_brand/icon.png    comm/mail/themes/icon.png
