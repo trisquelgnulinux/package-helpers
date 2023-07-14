@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2011-2022  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2011-2023  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C)      2019  Mason Hock <mason@masonhock.com>
 #
 #    This program is free software; you can redistribute it and/or modify
@@ -18,20 +18,26 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=26
-EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu impish main universe'
-#REPOKEY="871920D1991BC93C"
+VERSION=34
+EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu jammy main universe'
 
 . ./config
 
-#Patch python test after tzdata update.
-sed 's/Canada/Bahamas/' -i ./tests/test_timezone.py
-
-# Enable full disk encryption by default. Disabled, as it hinders a11y and sighted people can choose to enable it.
-#patch -p0 < $DATA/nabia_encrypt_by_default.patch
+# Disable confirmation popups, as they are innacurate and buggy
+patch --no-backup-if-mismatch -p1 < $DATA/no_confrirmation_when_crypto.patch
 
 # Fix some gtk labels for Orca
-patch -p1 < $DATA/a11y.patch
+patch --no-backup-if-mismatch -p1 < $DATA/a11y.patch
+
+# Point ubiquity crash to trisquel's forge.
+patch --no-backup-if-mismatch -p1 < $DATA/crash_report_point_to_trisquel_forge.patch
+
+# Remove test_timezone to prevent error out future builds on different daylight time.
+rm tests/test_timezone.py
+
+# Revert changes to advanced features page
+cp $DATA/stepPartAsk.ui gui/gtk/stepPartAsk.ui
+sed '/# Advanced features in new installs/,/^$/d' -i ubiquity/plugins/ubi-partman.py
 
 # Do not try to start orca on ubiquity-dm
 sed 's/osextras.find_on_path.*orca.*/False:  # Disabled by trisquel changes/' -i bin/ubiquity-dm
@@ -43,8 +49,10 @@ sed '/universe multiverse/d' -i bin/oem-config-remaster
 # Use standard monospaced font for console
 sed 's/Ubuntu Mono/Monospace Regular/' -i ubiquity/frontend/gtk_ui.py
 
-# Start a11y-profile-manager-indicator only if not running already && Fixes issues starting orca
+# Start a11y-profile-manager-indicator only if not running already
 sed "/if osextras.find_on_path..a11y-profile-manager-indicator/s/:/ and (subprocess.run(\n                ['pgrep', '-f', 'a11y-profile-manager-indicator'], capture_output=True).returncode == 0):/" -i ubiquity/frontend/gtk_ui.py
+
+# Fixes issues starting orca
 sed "/Popen/s/'orca'/'orca', '--replace'/" -i ubiquity/frontend/gtk_ui.py
 
 # Kill at-spi after maybe-ubiquity, allows a11y to work on live desktop installer
@@ -213,15 +221,17 @@ replace Trisquel-Gettext-Domain Ubuntu-Gettext-Domain
   ## Korean - Fix #27659
 replace 우분투 Trisquel .
 #replace triskel-ubiquity kubuntu-ubiquity
-replace "launchpad.net/ubuntu/+source/ubiquity/+filebug" "trisquel.info/project/issues" .
-replace "launchpad.net/ubuntu/+source/ubiquity/" "trisquel.info/project/issues" .
-replace "launchpad.net/ubuntu/+source/" "trisquel.info/project/issues" .
+replace "https://bugs.launchpad.net/ubuntu/+source/.*/+bug/" "LP:#" .
+replace "https://git.launchpad.net/ubuntu/+source/" "https://gitlab.trisquel.org/trisquel/" .
+replace "launchpad.net/ubuntu/+source/ubiquity/+filebug" "gitlab.trisquel.org/trisquel/package-helpers/-/issues" .
 replace "ubiquity/+filebug" "" .
 replace "+filebug" "" .
+replace " ubuntu/devel$" "" .
 replace archive.ubuntu.com/ubuntu archive.trisquel.org/trisquel .
 replace security.ubuntu.com/trisquel archive.trisquel.org/trisquel .
 replace archive.ubuntu.com archive.trisquel.org .
 replace security.ubuntu.com archive.trisquel.org .
+replace help.ubuntu.com/bitlocker trisquel.info/en/wiki/bitlocker .
 #sed -i 's/apt-install/true #apt-install/' ubiquity/components/check_kernels.py
 sed -i 's/apt-install/true #apt-install/' scripts/check-kernels
 #sed -i '82s/True/False/g' gui/gtk/stepPrepare.ui
@@ -260,7 +270,8 @@ then
 fi
 
 # Hacks for accessibility
-if [ \$(gsettings get org.mate.interface accessibility) = "true" ]
+if [ \$(su trisquel -c "gsettings get org.mate.applications-at screen-reader-enabled") = "true" ] || \
+   [ \$(su trisquel -c "gsettings get org.gnome.desktop.a11y.applications screen-reader-enabled") = "true" ]
 then
   echo "Accessibility profile set to 'blindness', enabling screen reader by default in target system"
   echo "[org.mate.applications-at]
@@ -283,6 +294,14 @@ screen-reader=true
 " >> /target/usr/share/glib-2.0/schemas/99_accessibility.gschema.override
   chroot /target glib-compile-schemas /usr/share/glib-2.0/schemas
 
+  if grep -q lightdm /target/etc/passwd; then
+    mkdir -p /target/var/lib/lightdm/.cache/lightdm-gtk-greeter/
+    echo "[a11y-states]
+    reader=true" > /target/var/lib/lightdm/.cache/lightdm-gtk-greeter/state
+    chroot /target chown lightdm.lightdm /var/lib/lightdm/ -R
+    chmod 750 /target/var/lib/lightdm/
+  fi
+
 else 
   echo "Accessibility profile set to none, disabling screen reader by default in target system"
   rm /target/home/*/.local/share/orca/user-settings.conf -f
@@ -295,6 +314,12 @@ sed '/Package: ubiquity-frontend-kde/,/Depends/s/Depends:/Depends: libkf5kdelibs
 
 sed 's/Trisquel/Trsql/' -i ubiquity/plugins/ubi-partman.py
 sed 's/Trisquel-Battersea/Ubuntu-Battersea/' -i  tests/test_gtkwidgets.py
+
+# Remove ubuntu-artwork dependency
+sed -i '/ubuntu-artwork,/d' debian/control
+
+# Only warn about missing efi partition when running on efi mode
+sed 's|/var/lib/partman/efi|/sys/firmware/efi|' -i d-i/source/partman-efi/check.d/efi
 
 changelog "Adapted for Trisquel"
 
