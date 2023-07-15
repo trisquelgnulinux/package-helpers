@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=103
+VERSION=104
 EXTERNAL='deb-src http://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu $UPSTREAM main'
 REPOKEY=9BDB3D89CE49EC21
 
@@ -439,10 +439,12 @@ find browser/branding/ -name about-logo-private@2x.png | xargs -n1 cp $DATA/debu
 find browser/branding/ -name PrivateBrowsing_70.png | xargs -n1 cp $DATA/debug_brand/PrivateBrowsing_70.png
 find browser/branding/ -name PrivateBrowsing_150.png | xargs -n1 cp $DATA/debug_brand/PrivateBrowsing_150.png
 
-#Fixes by patch on source.
-##Firefox v100, based on parabola 9004-FSDG-misc.patch
-patch --no-backup-if-mismatch -p1 < $DATA/patch_changes/Remove_moreFromMozilla_Focus_and_Klar.patch
-patch --no-backup-if-mismatch -p1 < $DATA/patch_changes/Remove_Andoir_and_iOS_promotion.patch
+#Fixes by patch on source, see DATA/firefox/patches for more info.
+for patch in $(ls -v ${DATA}/patch_changes/*.patch)
+do
+    echo "Applying $patch"
+    patch --no-backup-if-mismatch -Np1 < $patch
+done
 
 # Postinst script to manage profile migration and system links
 echo '

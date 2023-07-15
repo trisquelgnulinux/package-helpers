@@ -1,0 +1,17 @@
+diff --git a/debian/control.in b/debian/control.in
+index 1955e51..c431192 100644
+--- a/debian/control.in
++++ b/debian/control.in
+@@ -38,9 +38,9 @@ Build-Depends: cdbs,
+ 	xvfb,
+ 	python3 (>= 3.7),
+ 	libffi-dev (>= 3.0.9) [powerpc ppc64el s390x],
+-	clang-15 | clang-14 | clang-13 | clang-12 | clang-10,
+-	libclang-15-dev | libclang-14-dev | libclang-13-dev | libclang-12-dev | libclang-10-dev,
+-	llvm-15-dev | llvm-14-dev | llvm-13-dev | llvm-12-dev | llvm-10-dev,
++	clang-15 [!ppc64el] | clang-14 | clang-13 | clang-12 | clang-10,
++	libclang-15-dev [!ppc64el] | libclang-14-dev | libclang-13-dev | libclang-12-dev | libclang-10-dev,
++	llvm-15-dev [!ppc64el] | llvm-14-dev | llvm-13-dev | llvm-12-dev | llvm-10-dev,
+ 	cargo (>= 0.67),
+ 	rustc (>= 1.66.0),
+ 	nodejs (>= 12.22.12)
