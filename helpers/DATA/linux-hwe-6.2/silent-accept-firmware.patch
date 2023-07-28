@@ -1822,29 +1822,6 @@ index fbc3f7c..054b30a 100644
  		return err;
  	}
  
-diff --git a/drivers/bluetooth/hci_bcm4377.c b/drivers/bluetooth/hci_bcm4377.c
-index 19ad0e7..93029ca 100644
---- a/drivers/bluetooth/hci_bcm4377.c
-+++ b/drivers/bluetooth/hci_bcm4377.c
-@@ -1203,8 +1203,7 @@ static const struct firmware *bcm4377_request_blob(struct bcm4377_data *bcm4377,
- 	snprintf(name1, sizeof(name1), "brcm/brcmbt%04x%s-%s.%s",
- 		 bcm4377->hw->id, bcm4377->stepping, bcm4377->board_type,
- 		suffix);
--	dev_dbg(&bcm4377->pdev->dev, "Trying to load firmware: '%s' or '%s'\n",
--		name0, name1);
-+	dev_dbg(&bcm4377->pdev->dev, "Trying to load firmware\n");
- 
- 	ret = firmware_request_nowarn(&fw, name0, &bcm4377->pdev->dev);
- 	if (!ret)
-@@ -1214,7 +1213,7 @@ static const struct firmware *bcm4377_request_blob(struct bcm4377_data *bcm4377,
- 		return fw;
- 
- 	dev_err(&bcm4377->pdev->dev,
--		"Unable to load firmware; tried '%s' and '%s'\n", name0, name1);
-+		"Unable to load firmware");
- 	return NULL;
- }
- 
 diff --git a/drivers/bluetooth/hci_intel.c b/drivers/bluetooth/hci_intel.c
 index 78afb9a..f9d2740 100644
 --- a/drivers/bluetooth/hci_intel.c
@@ -1981,3 +1958,26 @@ index 2bcdd19..2cdb9f5 100644
  	intel_uc_fw_change_status(uc_fw, INTEL_UC_FIRMWARE_LOAD_FAIL);
  	return err;
  }
+diff --git a/drivers/bluetooth/hci_bcm4377.c b/drivers/bluetooth/hci_bcm4377.c
+index 19ad0e7..93029ca 100644
+--- a/drivers/bluetooth/hci_bcm4377.c
++++ b/drivers/bluetooth/hci_bcm4377.c
+@@ -1203,8 +1203,7 @@ static const struct firmware *bcm4377_request_blob(struct bcm4377_data *bcm4377,
+ 	snprintf(name1, sizeof(name1), "brcm/brcmbt%04x%s-%s.%s",
+ 		 bcm4377->hw->id, bcm4377->stepping, bcm4377->board_type,
+ 		 suffix);
+-	dev_dbg(&bcm4377->pdev->dev, "Trying to load firmware: '%s' or '%s'\n",
+-		name0, name1);
++	dev_dbg(&bcm4377->pdev->dev, "Trying to load firmware\n");
+ 
+ 	ret = firmware_request_nowarn(&fw, name0, &bcm4377->pdev->dev);
+ 	if (!ret)
+@@ -1214,7 +1213,7 @@ static const struct firmware *bcm4377_request_blob(struct bcm4377_data *bcm4377,
+ 		return fw;
+ 
+ 	dev_err(&bcm4377->pdev->dev,
+-		"Unable to load firmware; tried '%s' and '%s'\n", name0, name1);
++		"Unable to load firmware");
+ 	return NULL;
+ }
+ 
