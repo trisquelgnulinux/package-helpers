@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=24
+VERSION=25
 HWEKR=6.2
 
 . ./config
@@ -199,7 +199,7 @@ line=$(grep -n ')-Ubuntu' debian/rules.d/0-common-vars.mk|cut -d: -f1)
 sed $(expr $line - 1 ),$(expr $line + 1 )d debian/rules.d/0-common-vars.mk -i
 #sed s/family=ubuntu/family=trisquel/ -i debian/rules.d/0-common-vars.mk
 cat << EOF > debian.master/etc/kernelconfig
-archs="amd64 i386 armhf arm64 ppc64el"
+archs="i386 amd64 armhf arm64 ppc64el"
 family='trisquel'
 EOF
 
@@ -222,10 +222,15 @@ replace "CONFIG_FW_LOADER_USER_HELPER=y" "CONFIG_FW_LOADER_USER_HELPER=n" debian
 sed -i "/AAEON/d" debian.master/config/annotations
 sed -i "/CONFIG_UBUNTU_ODM_DRIVERS/d" debian.master/config/annotations
 
-# Aramo using gcc-11 requires to disable the following annotations,
-# see more at: debian.hwe-5.19/scripts/helpers/local-mangle
-sed -i "/CONFIG_INIT_STACK_ALL_ZERO/s|'y'|'-'|g" debian.master/config/annotations
-sed -i "/CONFIG_SHADOW_CALL_STACK/s|'y'|'-'|g" debian.master/config/annotations
+# HWE 6.2 specific annotations changes.
+sed -i "/CONFIG_RUST /s|'-'|'n'|" debian.hwe-6.2/config/annotations
+sed -i "/CONFIG_PAHOLE_HAS_LANG_EXCLUDE/s|'-'|'y'|g" debian.hwe-6.2/config/annotations
+
+# Remove disabled modules from generic list (starting at 6.2)
+for module in gpio-aaeon hwmon-aaeon icp leds-aaeon mfd-aaeon spl zavl zcommon zlua znvpair zunicode zzstd
+do
+    grep -rl "^$module$" debian.hwe-$HWEKR/abi/*/ | xargs -r sed -i "/^$module$/d"
+done
 
 changelog "Removed non-free bits"
 
