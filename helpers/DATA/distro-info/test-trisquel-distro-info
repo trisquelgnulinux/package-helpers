@@ -273,10 +273,10 @@ testDays() {
     success "--devel --date=$date --days=release -r" "10.0 LTS 427"
     success "--devel --date=$date --days=release -f" "Trisquel GNU/Linux 10.0 LTS \"Nabia\" 427"
 
-    success "--devel --date=$date --days=eol" "1651"
-    success "--devel --date=$date --days=eol -c" "nabia 1651"
-    success "--devel --date=$date --days=eol -r" "10.0 LTS 1651"
-    success "--devel --date=$date --days=eol -f" "Trisquel GNU/Linux 10.0 LTS \"Nabia\" 1651"
+    success "--devel --date=$date --days=eol" "1687"
+    success "--devel --date=$date --days=eol -c" "nabia 1687"
+    success "--devel --date=$date --days=eol -r" "10.0 LTS 1687"
+    success "--devel --date=$date --days=eol -f" "Trisquel GNU/Linux 10.0 LTS \"Nabia\" 1687"
 }
 
 . shunit2
