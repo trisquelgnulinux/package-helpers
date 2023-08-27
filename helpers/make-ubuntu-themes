@@ -1,0 +1,45 @@
+#!/bin/sh
+#
+#    Copyright (C) 2023  Luis Guzmán <ark@switnet.org>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=1
+. ./config
+
+# Rebrand logo
+## light
+for a in $(find . -name *.svg|grep "distributor-logo\|start-here"|grep dark)
+do
+    cp $DATA/logo-trisquel-light.svg $a
+done
+## dark
+for b in $(find . -name *.svg|grep "distributor-logo\|start-here"|grep light)
+do
+    cp $DATA/logo-trisquel-dark.svg $b
+done
+
+#suru
+cp $DATA/png/trisquel-logo_512.png suru-icons/places/512/distributor-logo.png
+cp $DATA/png/trisquel-logo_256.png suru-icons/places/256/distributor-logo.png
+cp $DATA/png/trisquel-logo_128.png suru-icons/places/128/distributor-logo.png
+cp $DATA/png/trisquel-logo_48.png  suru-icons/places/48/distributor-logo.png
+cp $DATA/trisquel-logo.svg suru-icons/places/scalable/distributor-logo.svg
+
+cp $DATA/png/trisquel-logo.png distributor-logo.png
+
+changelog "Rebrand logo for trisquel mono themes."
+compile
