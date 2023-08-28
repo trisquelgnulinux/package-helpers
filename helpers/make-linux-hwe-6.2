@@ -222,10 +222,6 @@ replace "CONFIG_FW_LOADER_USER_HELPER=y" "CONFIG_FW_LOADER_USER_HELPER=n" debian
 sed -i "/AAEON/d" debian.master/config/annotations
 sed -i "/CONFIG_UBUNTU_ODM_DRIVERS/d" debian.master/config/annotations
 
-# HWE 6.2 specific annotations changes.
-sed -i "/CONFIG_RUST /s|'-'|'n'|" debian.hwe-6.2/config/annotations
-sed -i "/CONFIG_PAHOLE_HAS_LANG_EXCLUDE/s|'-'|'y'|g" debian.hwe-6.2/config/annotations
-
 # Remove disabled modules from generic list (starting at 6.2)
 for module in gpio-aaeon hwmon-aaeon icp leds-aaeon mfd-aaeon spl zavl zcommon zlua znvpair zunicode zzstd
 do
