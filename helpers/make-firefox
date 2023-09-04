@@ -19,12 +19,16 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=104
+VERSION=105
 EXTERNAL='deb-src http://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu $UPSTREAM main'
 REPOKEY=9BDB3D89CE49EC21
 
 . ./config
 
+#Replace md5sum checksums to match our changes.
+sed_md5() {
+    grep -rl $1 | xargs -r sed -i "s|$1|$2|"
+}
 rm debian/control
 
 # Disable remote settings antifeature.
@@ -51,6 +55,7 @@ sed '/"showSponsoredTopSites"/,/value/s/value: true/value: false/' -i $ActivityS
 sed -i '/activity-stream.showSponsored/s|true|false|g' browser/app/profile/firefox.js
 #Disable «Mozilla VPN» - firefox 94
 sed '/"browser.privatebrowsing.vpnpromourl"/s/https.*"/"/' -i browser/app/profile/firefox.js
+grep -rl browser.vpn_promo.enabled | xargs -r sed -i '/browser.vpn_promo.enabled/s|true|false|'
 
 sed '/network.connectivity-service.IPv/s/http.*success.txt?ipv[46]//' -i modules/libpref/init/all.js
 sed 's/accounts-static.cdn.mozilla.net.*sync.services.mozilla.com//' -i modules/libpref/init/all.js
@@ -65,7 +70,7 @@ sed -i '/browser.uitour.enabled/s|true|false|' browser/app/profile/firefox.js
 ##disable colorways closet
 sed -i '/browser.theme.colorway-closet/s|true|false|' browser/app/profile/firefox.js
 ##disable newtab intro - check adjustment for versions greater than 106
-grep -rl browser.newtabpage.introShown |xargs sed -i '/browser.newtabpage.introShown/s|true|false|' || true
+grep -rl browser.newtabpage.introShown |xargs -r sed -i '/browser.newtabpage.introShown/s|true|false|'
 ##Remove mailto handlers. 110
 sed -i '/kHandlerList = {/,/^ };/{/^  /d}' uriloader/exthandler/HandlerList.sys.mjs
 
@@ -93,8 +98,27 @@ pref("datareporting.healthreport.uploadEnabled", false);
 pref("datareporting.healthreport.about.reportUrl", "https://trisquel.info/legal");
 pref("datareporting.healthreport.infoURL", "https://trisquel.info/legal");
 EOF
-
+# Disable health report
 sed 's%https://www.mozilla.org/legal/privacy/%https://trisquel.info/legal%' -i ./browser/app/profile/firefox.js ./toolkit/content/aboutRights.xhtml
+
+# Disable telemetry pings
+grep -rl TELEMETRY_BASE_URL | xargs -r sed -i 's|"https://incoming.telemetry.mozilla.org/submit"|""|'
+grep -rl '"https://incoming.telemetry.mozilla.org"'| xargs -r sed -i 's|"https://incoming.telemetry.mozilla.org"|"http://127.0.0.1"|'
+grep -rl toolkit.telemetry.server_owner modules/| xargs -r sed -i '/toolkit.telemetry.server_owner/s|Mozilla|None|'
+grep -rl toolkit.telemetry.unified | xargs -r sed -i '/toolkit.telemetry.unified/s|[Tt]rue|false|'
+grep -rl toolkit.telemetry.archive.enabled | xargs -r sed -i '/toolkit.telemetry.archive.enabled/s|true|false|'
+grep -rl toolkit.telemetry.updatePing.enabled | xargs -r sed -i '/toolkit.telemetry.updatePing.enabled/s|true|false|'
+grep -rl toolkit.telemetry.shutdownPingSender.enabled  | xargs -r sed -i '/toolkit.telemetry.shutdownPingSender.enabled/s|[Tt]rue|false|'
+grep -rl toolkit.telemetry.newProfilePing.enabled | xargs -r sed -i '/toolkit.telemetry.newProfilePing.enabled/s|true|false|'
+grep -rl toolkit.telemetry.firstShutdownPing.enabled | xargs -r sed -i '/toolkit.telemetry.firstShutdownPing.enabled/s|true|false|'
+grep -rl toolkit.telemetry.bhrPing.enabled  | xargs -r sed -i '/toolkit.telemetry.bhrPing.enabled/s|true|false|'
+grep -rl browser.ping-centre.telemetry | xargs -r sed -i '/browser.ping-centre.telemetry/s|true|false|'
+grep -rl security.certerrors.recordEventTelemetry | xargs -r sed -i '/security.certerrors.recordEventTelemetry/s|true|false|'
+grep -rl services.sync.telemetry.maxPayloadCount modules/ | xargs -r sed -i '/services.sync.telemetry.maxPayloadCount/s|500|-1|'
+grep -rl services.sync.telemetry.submissionInterval modules/ | xargs -r sed -i '/services.sync.telemetry.submissionInterval/s|43200|-1|'
+echo 'pref("dom.security.unexpected_system_load_telemetry_enabled", false);' | tee -a browser/app/profile/firefox.js
+echo 'pref("toolkit.telemetry.hybridContent.enabled", false);' | tee -a browser/app/profile/firefox.js
+sed_md5 c82d1d4c32baa878e0fae566c10cbe348531f2983657aee39276fd78ea0c9b1d a0e63d41d752f284cc914980806be9a7c5f68ca1f18fbf04609b2d97e24b02f5
 
 # Remove Google API key
 sed '/Google API/,/google-api-keyfile/ d' debian/config/mozconfig.in -i

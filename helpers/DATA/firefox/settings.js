@@ -142,6 +142,17 @@ pref("captivedetect.canonicalURL", "");
 pref("network.captive-portal-service.enabled", false);
 // Disable shield/heartbeat
 pref("extensions.shield-recipe-client.enabled", false);
+// Disable telemetry pings to enhance privacy.
+pref("toolkit.telemetry.archive.enabled", false);
+pref("toolkit.telemetry.unified", false);
+pref("toolkit.telemetry.updatePing.enabled", false);
+pref("toolkit.telemetry.shutdownPingSender.enabled", false);
+pref("toolkit.telemetry.newProfilePing.enabled", false);
+pref("toolkit.telemetry.firstShutdownPing.enabled", false);
+pref("toolkit.telemetry.bhrPing.enabled", false);
+pref("browser.ping-centre.telemetry", false);
+pref("dom.security.unexpected_system_load_telemetry_enabled", false);
+
 // Canvas fingerprint protection
 // Disabled, as it breaks things and does little improvements to fingerprinting
 //pref("privacy.resistFingerprinting", true);
