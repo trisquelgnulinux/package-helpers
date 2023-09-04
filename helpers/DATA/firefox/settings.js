@@ -92,7 +92,7 @@ pref("network.protocol-handler.external.apt+http",true);
 // https://webdevelopmentaid.wordpress.com/2013/10/21/customize-privacy-settings-in-mozilla-firefox-part-1-aboutconfig/
 // https://panopticlick.eff.org
 // https://wiki.mozilla.org/Fingerprinting
-pref("browser.contentblocking.features.strict", "tp,tpPrivate,cookieBehavior1,cm,fp,stp");
+//pref("browser.contentblocking.features.strict", "tp,tpPrivate,cookieBehavior1,cm,fp,stp");
 pref("privacy.donottrackheader.enabled", true);
 pref("privacy.donottrackheader.value", 1);
 pref("dom.ipc.plugins.flash.subprocess.crashreporter.enabled", false);
@@ -142,6 +142,17 @@ pref("captivedetect.canonicalURL", "");
 pref("network.captive-portal-service.enabled", false);
 // Disable shield/heartbeat
 pref("extensions.shield-recipe-client.enabled", false);
+// Disable telemetry pings to enhance privacy.
+pref("toolkit.telemetry.archive.enabled", false);
+pref("toolkit.telemetry.unified", false);
+pref("toolkit.telemetry.updatePing.enabled", false);
+pref("toolkit.telemetry.shutdownPingSender.enabled", false);
+pref("toolkit.telemetry.newProfilePing.enabled", false);
+pref("toolkit.telemetry.firstShutdownPing.enabled", false);
+pref("toolkit.telemetry.bhrPing.enabled", false);
+pref("browser.ping-centre.telemetry", false);
+pref("dom.security.unexpected_system_load_telemetry_enabled", false);
+
 // Canvas fingerprint protection
 // Disabled, as it breaks things and does little improvements to fingerprinting
 //pref("privacy.resistFingerprinting", true);
@@ -232,7 +243,7 @@ pref("browser.onboarding.updatetour", "performance,library,singlesearch,customiz
 pref("browser.onboarding.enabled", false);
 
 // New tab settings
-pref("browser.newtabpage.activity-stream.default.sites", "https://trisquel.info/,https://www.gnu.org/,https://www.fsf.org/,https://directory.fsf.org,https://libreplanet.org/,https://fsfe.org,https://www.wikipedia.org/wiki/,https://www.h-node.org/");
+pref("browser.newtabpage.activity-stream.default.sites", "https://trisquel.info/,https://packages.trisquel.org,https://www.gnu.org/,https://www.fsf.org/,https://directory.fsf.org,https://libreplanet.org/,https://fsfe.org,https://www.wikipedia.org/wiki/,https://www.h-node.org/");
 pref("browser.newtabpage.activity-stream.showTopSites",true);
 pref("browser.newtabpage.activity-stream.feeds.section.topstories",false);
 pref("browser.newtabpage.activity-stream.feeds.snippets",false);

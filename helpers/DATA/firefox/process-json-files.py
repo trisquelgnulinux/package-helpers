@@ -159,7 +159,9 @@ class SearchConfig(RemoteSettings):
     @classmethod
     def should_drop_record(cls, search_engine):
         return search_engine['webExtension']['id'] not in (
-            cls._DUCKDUCKGO_SEARCH_ENGINE_ID, 'wikipedia@search.mozilla.org')
+            cls._DUCKDUCKGO_SEARCH_ENGINE_ID, 'wikipedia@search.mozilla.org',
+            'trisquel@search.mozilla.org', 'trisquel-packages@@search.mozilla.org',
+            'qwant@search.mozilla.org', 'ecosia@search.mozilla.org')
 
     @classmethod
     def process_record(cls, search_engine):
@@ -176,6 +178,8 @@ class SearchConfig(RemoteSettings):
 
             if 'included' in specifier and 'everywhere' in specifier[
                     'included'] and specifier['included']['everywhere']:
+                if search_engine['webExtension']['id'] == cls._DUCKDUCKGO_SEARCH_ENGINE_ID:
+                    specifier['default'] = 'yes'
                 general_specifier = specifier
 
         if not general_specifier:

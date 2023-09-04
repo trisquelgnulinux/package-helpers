@@ -10,13 +10,17 @@
   },
   "hidden": true,
   "icons": {
-    "16": "favicon.ico"
+    "16": "favicon.ico",
+    "32": "favicon.ico",
+    "48": "favicon.ico",
+    "256": "favicon.ico"
   },
   "web_accessible_resources": [
     "favicon.ico"
   ],
   "chrome_settings_overrides": {
     "search_provider": {
+      "keyword": ["@trisquel", "@t"],
       "name": "Trisquel",
       "search_url": "https://trisquel.info/search/node/{searchTerms}",
       "search_form": "https://trisquel.info/search/node/{searchTerms}"
