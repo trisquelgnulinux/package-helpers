@@ -70,7 +70,7 @@ sed -i '/browser.uitour.enabled/s|true|false|' browser/app/profile/firefox.js
 ##disable colorways closet
 sed -i '/browser.theme.colorway-closet/s|true|false|' browser/app/profile/firefox.js
 ##disable newtab intro - check adjustment for versions greater than 106
-grep -rl browser.newtabpage.introShown |xargs -r sed -i '/browser.newtabpage.introShown/s|true|false|'
+#grep -rl browser.newtabpage.introShown |xargs -r sed -i '/browser.newtabpage.introShown/s|true|false|'
 ##Remove mailto handlers. 110
 sed -i '/kHandlerList = {/,/^ };/{/^  /d}' uriloader/exthandler/HandlerList.sys.mjs
 
