@@ -1,6 +1,6 @@
 #! /bin/sh
 
-#    Copyright (C) 2008-2022 Alexandre Oliva <lxoliva@fsfla.org>
+#    Copyright (C) 2008-2023 Alexandre Oliva <lxoliva@fsfla.org>
 #    Copyright (C) 2008 Jeff Moe
 #    Copyright (C) 2009 Rubén Rodríguez <ruben@gnu.org>
 #
@@ -646,6 +646,9 @@ s,\(timeout = \)\(firmware_loading_timeout()\),\1is_nonfree_firmware(name) ? 1 :
 announce MICROCODE_AMD - "AMD microcode patch loading support"
 reject_firmware arch/x86/kernel/cpu/microcode/amd.c
 clean_blob arch/x86/kernel/cpu/microcode/amd.c
+if grep -q -i zenbleed.*microcode arch/x86/kernel/cpu/amd.c; then
+  clean_blob arch/x86/kernel/cpu/amd.c
+fi
 clean_kconfig arch/x86/Kconfig MICROCODE_AMD
 clean_mk CONFIG_MICROCODE_AMD arch/x86/kernel/cpu/microcode/Makefile
 
@@ -3825,14 +3828,26 @@ clean_kconfig drivers/i2c/Kconfig I2C_SLAVE_EEPROM
 clean_mk CONFIG_I2C_SLAVE_EEPROM drivers/i2c/Makefile
 
 announce MHI_BUS - "Modem Host Interface (MHI) bus"
-reject_firmware drivers/bus/mhi/core/boot.c
-clean_kconfig drivers/bus/mhi/Kconfig MHI_BUS
-clean_mk CONFIG_MHI_BUS drivers/bus/mhi/core/Makefile
+if test -f drivers/bus/mhi/host/boot.c; then
+  reject_firmware drivers/bus/mhi/host/boot.c
+  clean_kconfig drivers/bus/mhi/host/Kconfig MHI_BUS
+  clean_mk CONFIG_MHI_BUS drivers/bus/mhi/host/Makefile
+else
+  reject_firmware drivers/bus/mhi/core/boot.c
+  clean_kconfig drivers/bus/mhi/Kconfig MHI_BUS
+  clean_mk CONFIG_MHI_BUS drivers/bus/mhi/core/Makefile
+fi
 
 announce MHI_BUS_PCI_GENERIC - "MHI PCI controller driver"
-clean_blob drivers/bus/mhi/pci_generic.c
-clean_kconfig drivers/bus/mhi/Kconfig MHI_BUS_PCI_GENERIC
-clean_mk CONFIG_MHI_BUS_PCI_GENERIC drivers/bus/mhi/Makefile
+if test -f drivers/bus/mhi/host/pci_generic.c; then
+  clean_blob drivers/bus/mhi/host/pci_generic.c
+  clean_kconfig drivers/bus/mhi/host/Kconfig MHI_BUS_PCI_GENERIC
+  clean_mk CONFIG_MHI_BUS_PCI_GENERIC drivers/bus/mhi/host/Makefile
+else
+  clean_blob drivers/bus/mhi/pci_generic.c
+  clean_kconfig drivers/bus/mhi/Kconfig MHI_BUS_PCI_GENERIC
+  clean_mk CONFIG_MHI_BUS_PCI_GENERIC drivers/bus/mhi/Makefile
+fi
 
 # Greybus
 
@@ -3873,6 +3888,9 @@ clean_blob arch/arm64/boot/dts/qcom/qrb5165-rb5.dts
 clean_blob arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi
 clean_blob arch/arm64/boot/dts/qcom/sm8350-hdk.dts
 clean_blob arch/arm64/boot/dts/qcom/sm8350-mtp.dts
+if grep -q '/apq8016/' arch/arm64/boot/dts/qcom/apq8016-sbc.dts; then
+  clean_blob arch/arm64/boot/dts/qcom/apq8016-sbc.dts
+fi
 clean_kconfig arch/arm/mach-qcom/Kconfig ARCH_QCOM
 clean_mk CONFIG_ARCH_QCOM arch/arm64/boot/dts/qcom/Makefile
 
