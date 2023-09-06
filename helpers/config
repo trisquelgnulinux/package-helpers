@@ -273,3 +273,7 @@ remove_patch(){
   rm "$(find debian/patches -name "$1")"
   sed -i "/$1/d" debian/patches/series
 }
+
+sed_csum() {
+    grep -rl "$1" "$3" | xargs -r /bin/sed -i "s|$1|$2|"
+}
