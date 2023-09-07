@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=19
+VERSION=20
 
 . ./config
 
@@ -105,6 +105,18 @@ pref("app.update.url.manual", "https://trisquel.info/wiki/icedove");
 pref("extensions.getAddons.link.url", "https://trisquel.info/en/browser-plain");
 pref("extensions.getAddons.search.browseURL", "https://trisquel.info/en/browser-plain?keys=%TERMS%&tid=All");
 pref("extensions.getAddons.search.url", "https://trisquel.info/en/browser-plain?keys=%TERMS%&tid=All");
+
+// Disable telemetry pings to enhance privacy.
+pref("toolkit.telemetry.archive.enabled", false);
+pref("toolkit.telemetry.unified", false);
+pref("toolkit.telemetry.updatePing.enabled", false);
+pref("toolkit.telemetry.shutdownPingSender.enabled", false);
+pref("toolkit.telemetry.newProfilePing.enabled", false);
+pref("toolkit.telemetry.firstShutdownPing.enabled", false);
+pref("toolkit.telemetry.bhrPing.enabled", false);
+pref("browser.ping-centre.telemetry", false);
+pref("dom.security.unexpected_system_load_telemetry_enabled", false);
+
 EOF
 
 # DDG as default search engine
@@ -133,6 +145,27 @@ sed -i 's|https://www.mozilla.org/thunderbird/legal/privacy/|https://trisquel.in
 sed -i 's|https://www.mozilla.org/en-US/privacy/thunderbird/|https://trisquel.info/legal|' comm/mail/app/profile/all-thunderbird.js
 sed -i 's|https://www.mozilla.org/privacy/|https://trisquel.info/legal|' comm/mail/components/newmailaccount/content/accountProvisioner.xhtml
 grep -rl https://www.mozilla.org/privacy/thunderbird/ | xargs sed -i 's|https://www.mozilla.org/privacy/thunderbird/|https://trisquel.info/legal|g'
+
+# Disable telemetry pings
+grep -rl TELEMETRY_BASE_URL | xargs -r sed -i 's|"https://incoming.telemetry.mozilla.org/submit"|""|'
+grep -rl '"https://incoming.telemetry.mozilla.org"'| xargs -r sed -i 's|"https://incoming.telemetry.mozilla.org"|"http://127.0.0.1"|'
+grep -rl toolkit.telemetry.server_owner modules/| xargs -r sed -i '/toolkit.telemetry.server_owner/s|Mozilla|None|'
+grep -rl toolkit.telemetry.unified | xargs -r sed -i '/toolkit.telemetry.unified/s|[Tt]rue|false|'
+grep -rl toolkit.telemetry.archive.enabled | xargs -r sed -i '/toolkit.telemetry.archive.enabled/s|true|false|'
+grep -rl toolkit.telemetry.updatePing.enabled | xargs -r sed -i '/toolkit.telemetry.updatePing.enabled/s|true|false|'
+grep -rl toolkit.telemetry.shutdownPingSender.enabled  | xargs -r sed -i '/toolkit.telemetry.shutdownPingSender.enabled/s|[Tt]rue|false|'
+grep -rl toolkit.telemetry.newProfilePing.enabled | xargs -r sed -i '/toolkit.telemetry.newProfilePing.enabled/s|true|false|'
+grep -rl toolkit.telemetry.firstShutdownPing.enabled | xargs -r sed -i '/toolkit.telemetry.firstShutdownPing.enabled/s|true|false|'
+grep -rl toolkit.telemetry.bhrPing.enabled  | xargs -r sed -i '/toolkit.telemetry.bhrPing.enabled/s|true|false|'
+grep -rl browser.ping-centre.telemetry | xargs -r sed -i '/browser.ping-centre.telemetry/s|true|false|'
+grep -rl security.certerrors.recordEventTelemetry | xargs -r sed -i '/security.certerrors.recordEventTelemetry/s|true|false|'
+grep -rl services.sync.telemetry.maxPayloadCount modules/ | xargs -r sed -i '/services.sync.telemetry.maxPayloadCount/s|500|-1|'
+grep -rl services.sync.telemetry.submissionInterval modules/ | xargs -r sed -i '/services.sync.telemetry.submissionInterval/s|43200|-1|'
+grep -rl '"datareporting.healthreport.uploadEnabled"'| xargs -r sed -i '/"datareporting.healthreport.uploadEnabled"/s|[Tt]rue|false|'
+grep -rl '"datareporting.policy.dataSubmissionEnabled"'| xargs -r sed -i '/"datareporting.policy.dataSubmissionEnabled"/s|[Tt]rue|false|'
+echo 'pref("dom.security.unexpected_system_load_telemetry_enabled", false);' | tee -a browser/app/profile/firefox.js
+echo 'pref("toolkit.telemetry.hybridContent.enabled", false);' | tee -a browser/app/profile/firefox.js
+
 # Org branding
 sed 's/com.ubuntu/org.trisquel/' -i debian/config/mozconfig.in
 # Disable DRM support, armhf has no such option.
@@ -210,37 +243,16 @@ grep -rl IcedoveProfileMigrator.jsm | xargs sed -i 's|IcedoveProfileMigrator.jsm
 #Fix 1 character bigger than allowed yml line (81 > 80)
 sed -i 's|Abrowser is not running.  It|Abrowser is not running. It|' toolkit/mozapps/update/pings.yaml
 
-sed -i \
-'s|91a59d470e0700b4bcb3ff735d06799f3107b8ef4875a2e9904607b164be0326|05f8e055df0e14ee6d50183e701888a49b74fa085dfac9d6032a2f985b5309e6|' \
-third_party/dump_syms/vendor/regex/.cargo-checksum.json
-
-sed -i \
-'s|bcb4b59cfc5f48fbaba954b8ae4daa9eaecf9044afc89208a78a7e995c321b81|5f33885b0cc238abc78622e32bd56e6c550d90f1de419d5d7768c8da7f53f039|' \
-third_party/dump_syms/vendor/encoding_rs/.cargo-checksum.json
-
-sed -i \
-'s|a64116a6d46ab30ce91deabdb4c5388f03be632326e8a00110bfb0c598474a0a|5cd020aae75fdcd21aca4799d302f1720075c9dd6fb12ba19e6403a8012970b2|' \
-third_party/dump_syms/vendor/encoding_rs/.cargo-checksum.json
-
-sed -i \
-'s|fe4881780e8cd0181748a891102b2dd54c2060546d7648ec1b6435529bd0dcc2|40588888ea0d4b7e86bc1e184be9e667bd1b0480fe00406ebb828821f5080a07|' \
-third_party/dump_syms/vendor/h2/.cargo-checksum.json
-
-sed -i \
-'s|6f3be57dae549574569b812acab6213f4136ba9c4ad60a21848043d26e6aaece|07f28083516d3660082d9c46fe2349a1099720b4f30cc7431f1cc267690d6505|' \
-third_party/dump_syms/vendor/httparse/.cargo-checksum.json
-
-sed -i \
-'s|dc1147f2b16de747c15ff9bdab44fc02fe18dcc1b6abe6acba56b69bec99013b|0fcf90cc1bd0498e18dba003142bc0dfdb43e761d88a8caefeb2d8018e2da1bb|' \
-third_party/dump_syms/vendor/openssl/.cargo-checksum.json
-
-sed -i \
-'s|82c82f8ef547f67f3f449a0b240e2df4ed538d976a379b07e53d5ce7cde2438c|01baa5e11aa7ec74360151d379ba8b5607abcd34132e69568c816c0116958a26|' \
-third_party/dump_syms/vendor/symbolic-minidump/.cargo-checksum.json
-
-sed -i \
-'s|6018b016930c86610953a88ca35e8cebffd2dbbd92f11502c2464ab4281e7bbc|04c8d6c8a498abac61ffb2725484c2732328270e25a7e3ed452657962ce76f4e|' \
-third_party/dump_syms/vendor/bitvec/.cargo-checksum.json
+#Replace md5sum checksums to match our changes.
+sed_csum 91a59d470e0700b4bcb3ff735d06799f3107b8ef4875a2e9904607b164be0326 05f8e055df0e14ee6d50183e701888a49b74fa085dfac9d6032a2f985b5309e6 third_party/dump_syms/vendor/
+sed_csum a64116a6d46ab30ce91deabdb4c5388f03be632326e8a00110bfb0c598474a0a 5cd020aae75fdcd21aca4799d302f1720075c9dd6fb12ba19e6403a8012970b2 third_party/dump_syms/vendor/
+sed_csum fe4881780e8cd0181748a891102b2dd54c2060546d7648ec1b6435529bd0dcc2 40588888ea0d4b7e86bc1e184be9e667bd1b0480fe00406ebb828821f5080a07 third_party/dump_syms/vendor/
+sed_csum 6f3be57dae549574569b812acab6213f4136ba9c4ad60a21848043d26e6aaece 07f28083516d3660082d9c46fe2349a1099720b4f30cc7431f1cc267690d6505 third_party/dump_syms/vendor/
+sed_csum dc1147f2b16de747c15ff9bdab44fc02fe18dcc1b6abe6acba56b69bec99013b 0fcf90cc1bd0498e18dba003142bc0dfdb43e761d88a8caefeb2d8018e2da1bb third_party/dump_syms/vendor/
+sed_csum 82c82f8ef547f67f3f449a0b240e2df4ed538d976a379b07e53d5ce7cde2438c 01baa5e11aa7ec74360151d379ba8b5607abcd34132e69568c816c0116958a26 third_party/dump_syms/vendor/
+sed_csum 6018b016930c86610953a88ca35e8cebffd2dbbd92f11502c2464ab4281e7bbc 04c8d6c8a498abac61ffb2725484c2732328270e25a7e3ed452657962ce76f4e third_party/dump_syms/vendor/
+sed_csum bcb4b59cfc5f48fbaba954b8ae4daa9eaecf9044afc89208a78a7e995c321b81 5f33885b0cc238abc78622e32bd56e6c550d90f1de419d5d7768c8da7f53f039 third_party/dump_syms/vendor/
+sed_csum 4acbedba16d45f6404ccedde86e8aa33eea8c1b9554210cb69c79ff2ec9040c9 27a9839c98d39a6097afc129b21cbe209a73eab4d0f8d84cf2cc2494c1ce5c2f third_party/rust/glean/
 #EO Manual fixing.
 
 # about: page mods, like rights.
