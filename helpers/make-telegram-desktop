@@ -18,7 +18,7 @@
 #
 
 VERSION=3
-EXTERNAL='deb-src http://ftp.debian.org/debian bullseye-backports main'
+EXTERNAL='deb-src http://ftp.debian.org/debian bullseye-backports-sloppy main'
 REPOKEY=0E98404D386FA1D9
 BACKPORT=true
 
@@ -27,6 +27,6 @@ BACKPORT=true
 #Remove stable backport workaround to keep using libmsgsl-dev 3.0
 sed -i 's|\-I\$(CURDIR)/debian||' debian/rules
 
-changelog "Backported from debian bullseye-backports"
+changelog "Backported from debian bullseye-backports-sloppy"
 
 compile
