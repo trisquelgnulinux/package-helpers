@@ -1,0 +1,40 @@
+reverts https://lore.kernel.org/all/iwlwifi.20211210110539.1f742f0eb58a.I1315f22f6aa632d94ae2069f85e1bca5e734dce0@changeid/
+
+--- b/drivers/net/wireless/intel/iwlwifi/iwl-drv.c
++++ a/drivers/net/wireless/intel/iwlwifi/iwl-drv.c
+@@ -130,9 +130,6 @@
+ 
+ 	for (i = 0; i < IWL_UCODE_TYPE_MAX; i++)
+ 		iwl_free_fw_img(drv, drv->fw.img + i);
+-
+-	/* clear the data for the aborted load case */
+-	memset(&drv->fw, 0, sizeof(drv->fw));
+ }
+ 
+ static int iwl_alloc_fw_desc(struct iwl_drv *drv, struct fw_desc *desc,
+@@ -1429,7 +1426,6 @@
+ 	int i;
+ 	bool load_module = false;
+ 	bool usniffer_images = false;
+-	bool failure = true;
+ 
+ 	fw->ucode_capa.max_probe_length = IWL_DEFAULT_MAX_PROBE_LENGTH;
+ 	fw->ucode_capa.standard_phy_calibration_size =
+@@ -1699,7 +1695,6 @@
+ 				op->name, err);
+ #endif
+ 	}
+-	failure = false;
+ 	goto free;
+ 
+  try_again:
+@@ -1715,9 +1710,6 @@
+ 	complete(&drv->request_firmware_complete);
+ 	device_release_driver(drv->trans->dev);
+  free:
+-	if (failure)
+-		iwl_dealloc_ucode(drv);
+-
+ 	if (pieces) {
+ 		for (i = 0; i < ARRAY_SIZE(pieces->img); i++)
+ 			kfree(pieces->img[i].sec);
