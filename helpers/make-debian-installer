@@ -153,6 +153,29 @@ sed 's|EFI/debian|EFI/trisquel|' -i ./build/config/arm.cfg ./build/config/x86.cf
 #Fix u-boot naming debian>ubuntu
 sed -i 's|.imx|-dtb.imx|g' build/boot/arm/u-boot-image-config
 
+# replace references to the OS as 'Linux' with 'GNU/Linux'
+match_rxs=( # ASSERT: aligns with '$replace_rxs'
+  'Linux distribution'
+  'Linux environment'
+  'Unix/Linux system'
+  'Linux system'
+  'Linux or &debian'
+  'DOS, Linux, Macintosh'
+)
+replace_rxs=( # ASSERT: aligns with '$match_rxs'
+  'GNU/Linux distribution'
+  'GNU/Linux environment'
+  'Unix or GNU/Linux system'
+  'GNU/Linux system'
+  'GNU/Linux or \&debian'
+  'DOS, GNU/Linux, Macintosh'
+)
+for (( rx_n = 0 ; rx_n < ${#match_rxs[@]} ; ++rx_n ))
+do  /bin/sed -i "s|${match_rxs[$rx_n]}|${replace_rxs[$rx_n]}|g ; s|GNU/GNU/|GNU/|g" \
+    $(grep -rlI "${match_rxs[$rx_n]}" build/ doc/)
+done
+
+
 # Re apply upstream behavior and configuration features from last release (focal).
 # https://git.launchpad.net/ubuntu/+source/debian-installer/log/?h=ubuntu/focal
 ## - Makebuild set of patches
