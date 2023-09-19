@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=105
+VERSION=106
 EXTERNAL='deb-src http://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu $UPSTREAM main'
 REPOKEY=9BDB3D89CE49EC21
 
@@ -461,6 +461,9 @@ find browser/branding/ -name about-logo-private.png | xargs -n1 cp $DATA/debug_b
 find browser/branding/ -name about-logo-private@2x.png | xargs -n1 cp $DATA/debug_brand/about-logo-private@2x.png
 find browser/branding/ -name PrivateBrowsing_70.png | xargs -n1 cp $DATA/debug_brand/PrivateBrowsing_70.png
 find browser/branding/ -name PrivateBrowsing_150.png | xargs -n1 cp $DATA/debug_brand/PrivateBrowsing_150.png
+
+# Replace addons placeholder for the gnuzilla mozzarella.
+find l10n/ -name aboutAddons.ftl | xargs sed -i '/.placeholder/s|addons.mozilla.org|gnuzilla.gnu.org|g'
 
 #Fixes by patch on source, see DATA/firefox/patches for more info.
 for patch in $(ls -v ${DATA}/patch_changes/*.patch)
