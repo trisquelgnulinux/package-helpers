@@ -118,7 +118,6 @@ grep -rl services.sync.telemetry.maxPayloadCount modules/ | xargs -r sed -i '/se
 grep -rl services.sync.telemetry.submissionInterval modules/ | xargs -r sed -i '/services.sync.telemetry.submissionInterval/s|43200|-1|'
 echo 'pref("dom.security.unexpected_system_load_telemetry_enabled", false);' | tee -a browser/app/profile/firefox.js
 echo 'pref("toolkit.telemetry.hybridContent.enabled", false);' | tee -a browser/app/profile/firefox.js
-sed_md5 c82d1d4c32baa878e0fae566c10cbe348531f2983657aee39276fd78ea0c9b1d a0e63d41d752f284cc914980806be9a7c5f68ca1f18fbf04609b2d97e24b02f5
 
 # Remove Google API key
 sed '/Google API/,/google-api-keyfile/ d' debian/config/mozconfig.in -i
