@@ -19,7 +19,8 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=24
+VERSION=25
+HWEKR=5.15
 
 . ./config
 
@@ -56,7 +57,7 @@ for DIR in $PRESERVEDIRS; do
   cp $DIR $TMPDIR --parents -a
 done
 
-sh $DATA/deblob-5.15
+sh $DATA/deblob-$HWEKR
 
 echo "Reverting deblobbing for files patched by silent-accept-firmware"
 cp $TMPDIR/* . -av
@@ -80,17 +81,14 @@ echo > debian/dkms-versions
 # Remove ZFS
 rm zfs spl debian/scripts/misc/update-zfs.sh -rf
 /bin/sed 's/spl-dkms, zfs-dkms//' -i debian/control \
-                                     debian.master/control.d/vars.generic \
-                                     debian.master/control.d/vars.*
+                                     debian.{master,hwe-$HWEKR}/control.d/vars.generic \
+                                     debian.{master,hwe-$HWEKR}/control.d/vars.*
 
 /bin/sed -i '/ifeq ($(do_zfs),false)/,/endif$/d' debian/rules
-/bin/sed  -i '/zfs/d' debian.master/abi/*/*.modules \
+/bin/sed  -i '/zfs/d' debian.{master,hwe-$HWEKR}/abi/*/*.modules \
                       debian/rules.d/2-binary-arch.mk \
-                      debian.master/rules.d/* \
+                      debian.{master,hwe-$HWEKR}/rules.d/* \
                       debian/rules
-#                      debian.master/d-i/modules/fs-core-modules \
-#                      debian.master/control.d/generic.inclusion-list \
-#                      debian.master/control.d/vars.*
 
 # Remove VBox
 #sed -i '/vbox/s|true|false|' debian.master/rules.d/amd64.mk
@@ -99,11 +97,11 @@ rm zfs spl debian/scripts/misc/update-zfs.sh -rf
 /bin/sed -i '/ifeq ($(do_v4l2loopback),false)/,/endif$/d' debian/rules
 /bin/sed -i '/v4l2loopback/d' debian/rules.d/2-binary-arch.mk \
                               debian/rules
-/bin/sed -i '/do_v4l2loopback/d' debian.master/rules.d/*
+/bin/sed -i '/do_v4l2loopback/d' debian.{master,hwe-$HWEKR}/rules.d/*
 
 # Remove nvidia
 rm -rf debian/scripts/dkms-build--nvidia-N
-sed -i '/dkms-build--nvidia-N/d' debian.master/reconstruct
+sed -i '/dkms-build--nvidia-N/d' debian.{master,hwe-$HWEKR}/reconstruct
 
 #/bin/sed  '/do_dkms_nvidia = true/d' -i debian.master/abi/*/*/*.modules \
 #                                        debian/rules \
@@ -115,14 +113,12 @@ sed -i '/dkms-build--nvidia-N/d' debian.master/reconstruct
 #/bin/sed '/do_dkms_wireguard/d' -i debian.master/rules.d/*
 
 # Compile with less modules and avoid abi check
-echo 'skipmodule = true' >> debian.master/rules.d/0-common-vars.mk
-echo 'skipabi = true' >> debian.master/rules.d/0-common-vars.mk
-echo 'skipmodule = true' >> debian/rules.d/0-common-vars.mk
-echo 'skipabi = true' >> debian/rules.d/0-common-vars.mk
+echo -e 'skipmodule = true\nskipabi = true' | tee -a    debian.{master,hwe-$HWEKR}/rules.d/0-common-vars.mk \
+                                                        debian/rules.d/0-common-vars.mk
 
-# Skip the retpoline check as there is no last release to chaeck against
-echo 'skipretpoline = true' >> debian.master/rules.d/0-common-vars.mk
-echo 'skipretpoline = true' >> debian/rules.d/0-common-vars.mk
+# Skip the retpoline check as there is no last release to check against
+echo 'skipretpoline = true' | tee -a    debian.master/rules.d/0-common-vars.mk \
+                                        debian/rules.d/0-common-vars.mk
 
 # Do not label packages as unsigned
 sed '/bin_pkg_name_unsigned/s/linux-image-unsigned/linux-image/' -i debian/rules.d/0-common-vars.mk
@@ -164,11 +160,9 @@ sed -i "/AAEON/d" debian.master/config/annotations
 # Disable ubuntu ODM drivers
 sed -i "/CONFIG_UBUNTU_ODM_DRIVERS/d" debian.master/config/annotations
 
-cp debian.master/config debian.hwe -a
-
 changelog "Removed non-free bits"
 
 cp debian/changelog debian.master/changelog
-cp debian/changelog debian.hwe/changelog
+cp debian/changelog debian.hwe-$HWEKR/changelog
 
 compile
