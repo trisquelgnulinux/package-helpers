@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 
 # note, we need version 3.20.6 or higher, the binary plugin requirement
 # was reworked on that version.
@@ -55,7 +55,53 @@ cp $output $printers
 # Set plugin-optional entries to not-required
 /bin/sed -i 's/plugin=2/plugin=0/g' $printers debian/patches/*
 
-rm $tmp $tmp2
+rm $tmp $output
+
+
+# re-word non-free firmware recommendations and error messages
+# and disable online features (phone-home, plugin/firmware downlaoder, etc)
+#   from: https://git.parabola.nu/abslibre.git/plain/libre/hplip/PKGBUILD
+match_rxs=( # ASSERT: aligns with '$replace_rxs'
+  ', requires proprietary plugin'
+  'Device requires a proprietary binary Plug-in, run hp-plugin'
+  'Your HP Device requires to install HP proprietary plugin\\n'
+  "Device proprietary plug-in is missing. Click 'Next' to continue plug-in installation. In case of plugin download failure, run 'hp-plugin' command from the terminal manually."
+  "Device requires proprietary plug-in which is missing. Click 'Next' to continue plug-in installation"
+  "def download(self, pluginPath='',callback = None):"
+  'def download_from_network(weburl, outputFile = None, useURLLIB=False):'
+  'def download_via_wget(target):'
+  'def download_via_curl(target):'
+  'def check_network_via_ping(target):'
+  'def check_network_connection(url=HTTP_CHECK_TARGET, ping_server=PING_CHECK_TARGET):'
+  'def download(mode, passwordObj):'
+  'Network connection not detected.'
+)
+replace_rxs=( # ASSERT: aligns with '$match_rxs'
+  ', (non-free/unsupported)'
+  'Device is non-free/unsupported'
+  ''
+  'Device is non-free/unsupported./'
+  'Device is non-free/unsupported./'
+  '&\n        return 1'
+  '&\n    return -1, ""'
+  '&\n    return -1'
+  '&\n    return -1'
+  '&\n    return -1'
+  '&\n    return -1'
+  '&\n    return ERROR_NO_NETWORK'
+  'Trisquel has disabled the networking features of this application.'
+)
+for (( rx_n = 0 ; rx_n < ${#match_rxs[@]} ; ++rx_n ))
+do  sed -i "s|${match_rxs[$rx_n]}|${replace_rxs[$rx_n]}|" $(grep -rlI "${match_rxs[$rx_n]}")
+done
+patch -Np0 -i ${DATA}/disable_upgrade.patch
+
+# verify libre patching
+patch_msg='HPLIP auto-upgrade is disabled by Trisquel for security reasons.'
+err_msg="ERROR: 'disable_upgrade.patch' not applied"
+grep -A 1 "$patch_msg" upgrade.py | tail -n 1 | grep -q 'clean_exit(1)' ||
+! echo "$err_msg" || exit 1
+
 
 #Prevent failing on missing files
 cat << RULES >> debian/rules
