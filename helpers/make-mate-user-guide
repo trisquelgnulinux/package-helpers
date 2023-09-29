@@ -1,0 +1,42 @@
+#!/bin/sh
+#
+#    Copyright (C) 2023  Luis Guzman <ark@switnet.net>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=1
+. ./config
+
+# Add recommedation on mate-keyboard-properties help for iBus as default IM.
+cat << EOF | patch --no-backup-if-mismatch -p1
+diff --git a/mate-user-guide/C/goscustdesk.xml b/mate-user-guide/C/goscustdesk.xml
+index a6489c4..1c744d6 100644
+--- a/mate-user-guide/C/goscustdesk.xml
++++ b/mate-user-guide/C/goscustdesk.xml
+@@ -1377,7 +1377,7 @@ preference tool in the following functional areas:</para>
+       </listitem>
+     </itemizedlist>
+     -->
+-    <para>To open the <xref linkend="prefs-keyboard-a11y"/> tool, click the <guibutton>Accessibility</guibutton> button.</para>    
++    <para>To open the <xref linkend="prefs-keyboard-a11y"/> tool, click the <guibutton>Accessibility</guibutton> button. On Trisquel ${REVISION} - ${CODENAME^}, we recommend to use iBus as the preferred Input Method tool, you are still able to use any other method you want.</para>    
+     <section xml:id="goscustdesk-40"><info><title>Keyboard Preferences</title></info>
+       
+       <para>Use the <guilabel>General</guilabel> tabbed section to set general
+EOF
+
+changelog "Add recommedation on mate-keyboard-properties help for iBus as default IM."
+
+compile
