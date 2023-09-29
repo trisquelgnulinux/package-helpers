@@ -18,19 +18,17 @@
 #
 
 VERSION=1
-EXTERNAL='deb-src http://ftp.us.debian.org/debian sid main'
+EXTERNAL='deb-src http://ftp.us.debian.org/debian bookworm main'
 REPOKEY=6ED0E7B82643E131
 . ./config
 
 #Remove symbols missing at trisquel
-sed -i '/ZNSt12_Vector_baseIhSaIhEED1Ev@Base/d' debian/libopendht-c3.symbols
-sed -i '/ZNSt12_Vector_baseIhSaIhEED2Ev@Base/d' debian/libopendht-c3.symbols
-sed -i '/ZNSt14_Function_baseD1Ev@Base/d' debian/libopendht-c3.symbols
-sed -i '/ZNSt14_Function_baseD2Ev@Base/d' debian/libopendht-c3.symbols
-sed -i '/ZNSt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE10_M/d' debian/libopendht-c3.symbols
-sed -i '/ZNSt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE24_M/d' debian/libopendht-c3.symbols
-sed -i '/ZNSt6vectorIhSaIhEED2Ev@Base/d' debian/libopendht-c3.symbols
-sed -i '/ZNSt6vectorIhSaIhEED1Ev@Base/d' debian/libopendht-c3.symbols
+sed -i '/ZNSt12_Vector_baseIhSaIhEED1Ev@Base/d' debian/libopendht-c2.symbols
+sed -i '/ZNSt12_Vector_baseIhSaIhEED2Ev@Base/d' debian/libopendht-c2.symbols
+sed -i '/ZNSt14_Function_baseD1Ev@Base/d' debian/libopendht-c2.symbols
+sed -i '/ZNSt14_Function_baseD2Ev@Base/d' debian/libopendht-c2.symbols
+sed -i '/ZNSt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE10_M/d' debian/libopendht-c2.symbols
+sed -i '/ZNSt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE24_M/d' debian/libopendht-c2.symbols
 
 changelog "Imported into trisquel backports as part of jami dependency."
 
