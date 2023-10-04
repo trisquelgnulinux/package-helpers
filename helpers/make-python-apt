@@ -23,6 +23,9 @@ COMPONENT=main
 
 . ./config
 
+# Fix version number
+sed -i "1{s|ubuntu0.20.04.1||}" debian/changelog
+
 cat << EOF > data/templates/Trisquel.mirrors
 #LOC:BR
 https://trisquel.c3sl.ufpr.br/packages/
