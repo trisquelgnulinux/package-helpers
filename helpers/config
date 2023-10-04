@@ -275,5 +275,5 @@ remove_patch(){
 }
 
 sed_csum() {
-    grep -rl "$1" "$3" | xargs -r /bin/sed -i "s|$1|$2|"
+    grep -rl "$1" "${3:-"./"}" | xargs -r /bin/sed -i "s|$1|$2|"
 }
