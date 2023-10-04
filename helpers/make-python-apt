@@ -20,8 +20,13 @@
 
 VERSION=5
 COMPONENT=main
+#Be aware to not pull/build before publish date on T12.
+BUILD_UNTIL=11.0
 
 . ./config
+
+# Fix version number due to early release.
+export FULLVERSION="$(sed 's|ubuntu2||' <<< $FULLVERSION)"
 
 cat << EOF > data/templates/Trisquel.mirrors
 #LOC:BR
