@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=20
+VERSION=21
 
 . ./config
 
@@ -45,8 +45,8 @@ done
 cat << EOF >> debian/vendor.js
 
 // Trisquel settings
-pref("app.releaseNotesURL", "http://trisquel.info/mailclient");
-pref("app.vendorURL", "http://trisquel.info/mailclient");
+pref("app.releaseNotesURL", "http://trisquel.info/wiki/Icedove");
+pref("app.vendorURL", "http://trisquel.info/wiki/Icedove");
 
 // PFS url
 pref("pfs.datasource.url", "https://trisquel.info/sites/pfs.php?mime=%PLUGIN_MIMETYPE%");
@@ -130,7 +130,7 @@ sed '/visibleDefaultEngines/{n; s/"ddg",//; s/\"/"ddg", "/}'  -i comm/mail/compo
 # captive portal page
 sed '/captivedetect.canonicalURL/s/http.*.html//' -i modules/libpref/init/all.js
 # do not alter useragent/platform/oscpu/etc with fingerprinting countermeasure, it makes things worse
-sed '/ShouldResistFingerprinting/,/}/s/^/\/\//' -i ./netwerk/protocol/http/nsHttpHandler.cpp
+sed '/ (aShouldResistFingerprinting/,/}/s/^/\/\//' -i ./netwerk/protocol/http/nsHttpHandler.cpp
 sed '/If fingerprinting resistance is on/,/}/s/^/\/\//' -i ./dom/base/Navigator.cpp
 # Disable healtreport
 cat << EOF > toolkit/components/telemetry/healthreport-prefs.js
@@ -144,7 +144,7 @@ sed 's%https://www.mozilla.org/legal/privacy/%https://trisquel.info/legal%' -i .
 sed -i 's|https://www.mozilla.org/thunderbird/legal/privacy/|https://trisquel.info/legal|' comm/mail/app/profile/all-thunderbird.js
 sed -i 's|https://www.mozilla.org/en-US/privacy/thunderbird/|https://trisquel.info/legal|' comm/mail/app/profile/all-thunderbird.js
 sed -i 's|https://www.mozilla.org/privacy/|https://trisquel.info/legal|' comm/mail/components/newmailaccount/content/accountProvisioner.xhtml
-grep -rl https://www.mozilla.org/privacy/thunderbird/ | xargs sed -i 's|https://www.mozilla.org/privacy/thunderbird/|https://trisquel.info/legal|g'
+grep -rl https://www.mozilla.org/privacy/thunderbird/ | xargs -r sed -i 's|https://www.mozilla.org/privacy/thunderbird/|https://trisquel.info/legal|g'
 
 # Disable telemetry pings
 grep -rl TELEMETRY_BASE_URL | xargs -r sed -i 's|"https://incoming.telemetry.mozilla.org/submit"|""|'
@@ -217,31 +217,40 @@ s|this-firefox|this-abrowser|g;
 echo "Running batch replace operation"
 find . -type f -not -iregex '.*changelog.*' -not -iregex '.*copyright.*' -not -iregex '.*third_party/rust.*' -execdir /bin/sed --follow-symlinks -i "$SEDSCRIPT" '{}' ';'
 
+# Fix wrong changes, restore changes to reduce diff with previous sed script.
+grep -rl "Trisquel Bug" | xargs -r sed -i "s| Trisquel Bug | Mozilla Bug |g"
+grep -rl "AbrowserGraphics" | xargs -r sed -i "/github/s|AbrowserGraphics|FirefoxGraphics|g"
+
 sed 's|https://www.icedove.net/features/|https://trisquel.info/wiki/icedove|' -i comm/mail/base/content/utilityOverlay.js
 sed 's|https://www.icedove.net/get-involved/|https://trisquel.info/wiki/|' -i comm/mail/base/content/utilityOverlay.js
 sed 's|https://give.icedove.net/.*"|https://trisquel.info/donate/"|' -i comm/mail/base/content/utilityOverlay.js
 sed 's|https://www.icedove.net/.*/features/|https://trisquel.info/wiki/icedove|' -i comm/mailnews/base/content/msgAccountCentral.xhtml
 sed 's|https://give.icedove.net/.*"|https://trisquel.info/donate/"|' -i comm/mailnews/base/content/msgAccountCentral.xhtml
+sed '/app.donation.eoy.url/s|https://www.icedove.net/icedove/.*"|https://trisquel.info/donate/"|' -i comm/mail/app/profile/all-icedove.js
 sed 's|https://support.mozilla.org/products/icedove|https://trisquel.info/wiki/icedove|' -i comm/mailnews/base/content/msgAccountCentral.xhtml
 sed 's|https://www.icedove.net/.*/get-involved/|https://trisquel.info/wiki/|' -i comm/mailnews/base/content/msgAccountCentral.xhtml
 sed 's|https://developer.icedove.net/|https://gitlab.trisquel.org/trisquel|' -i comm/mailnews/base/content/msgAccountCentral.xhtml
 
 replace Daily Trisquel comm/mail/branding/
-sed '/.*<description.*communityExperimentalDesc/,/\/description/d' -i ./comm/mail/base/content/aboutDialog.xhtml
-sed '/.*<description.*communityDesc/,/\/description/d' -i ./comm/mail/base/content/aboutDialog.xhtml
-sed '/.*<description.*contributeDesc/,/\/description/d' -i ./comm/mail/base/content/aboutDialog.xhtml
+# Remove Thunderbird branding
+sed '/.*<div.*communityExperimentalDesc/,/\/div/d' -i ./comm/mail/base/content/aboutDialog.xhtml
+sed '/.*<div.*communityDesc/,/\/div/d' -i ./comm/mail/base/content/aboutDialog.xhtml
+sed '/.*<div.*contributeDesc/,/\/div/d' -i ./comm/mail/base/content/aboutDialog.xhtml
 
 sed '/^Source/s/.*/Source: thunderbird/' -i debian/control.in
 sed 's/Provides: mail-reader,/Provides: mail-reader, thunderbird,/' -i debian/control.in
 sed "s/Provides.*/Provides: icedove-locale-@LANGCODE@/" -i debian/control.langpacks
 
 #Manual fixes to allow rebranding processed through hash checks and other changes.
-# Restore wrong replacement module name.
-grep -rl IcedoveProfileImporter.jsm | xargs sed -i 's|IcedoveProfileImporter.jsm|ThunderbirdProfileImporter.jsm|g'
-grep -rl IcedoveImport.jsm | xargs sed -i 's|IcedoveImport.jsm|ThunderbirdImport.jsm|g'
-grep -rl IcedoveProfileMigrator.jsm | xargs sed -i 's|IcedoveProfileMigrator.jsm|ThunderbirdProfileMigrator.jsm|g'
+# Restore wrong replacement module names.
+grep -rl IcedoveProfileImporter.jsm | xargs -r sed -i 's|IcedoveProfileImporter.jsm|ThunderbirdProfileImporter.jsm|g'
+grep -rl IcedoveImport.jsm | xargs -r sed -i 's|IcedoveImport.jsm|ThunderbirdImport.jsm|g'
+grep -rl IcedoveProfileMigrator.jsm | xargs -r sed -i 's|IcedoveProfileMigrator.jsm|ThunderbirdProfileMigrator.jsm|g'
+grep -rl AbrowserViewTestUtils.sys.mjs | xargs -r sed -i 's|AbrowserViewTestUtils.sys.mjs|FirefoxViewTestUtils.sys.mjs|g'
+grep -rl AbrowserRelay.sys.mjs | xargs -r sed -i 's|AbrowserRelay.sys.mjs|FirefoxRelay.sys.mjs|g'
+grep -rl AbrowserRelayTelemetry.mjs | xargs -r sed -i 's|AbrowserRelayTelemetry.mjs|FirefoxRelayTelemetry.mjs|g'
 #Fix 1 character bigger than allowed yml line (81 > 80)
-sed -i 's|Abrowser is not running.  It|Abrowser is not running. It|' toolkit/mozapps/update/pings.yaml
+sed -i "s|Abrowser is not running.  It|Abrowser isn't running. It|" toolkit/mozapps/update/pings.yaml
 
 #Replace md5sum checksums to match our changes.
 sed_csum 91a59d470e0700b4bcb3ff735d06799f3107b8ef4875a2e9904607b164be0326 05f8e055df0e14ee6d50183e701888a49b74fa085dfac9d6032a2f985b5309e6 third_party/dump_syms/vendor/
@@ -252,7 +261,7 @@ sed_csum dc1147f2b16de747c15ff9bdab44fc02fe18dcc1b6abe6acba56b69bec99013b 0fcf90
 sed_csum 82c82f8ef547f67f3f449a0b240e2df4ed538d976a379b07e53d5ce7cde2438c 01baa5e11aa7ec74360151d379ba8b5607abcd34132e69568c816c0116958a26 third_party/dump_syms/vendor/
 sed_csum 6018b016930c86610953a88ca35e8cebffd2dbbd92f11502c2464ab4281e7bbc 04c8d6c8a498abac61ffb2725484c2732328270e25a7e3ed452657962ce76f4e third_party/dump_syms/vendor/
 sed_csum bcb4b59cfc5f48fbaba954b8ae4daa9eaecf9044afc89208a78a7e995c321b81 5f33885b0cc238abc78622e32bd56e6c550d90f1de419d5d7768c8da7f53f039 third_party/dump_syms/vendor/
-sed_csum 4acbedba16d45f6404ccedde86e8aa33eea8c1b9554210cb69c79ff2ec9040c9 27a9839c98d39a6097afc129b21cbe209a73eab4d0f8d84cf2cc2494c1ce5c2f third_party/rust/glean/
+sed_csum 883b327fdad366e414ece83f65ab6b0216ab819c7854b382acf91b702b5a9697 1d38e99d6d879e763f6570d0efff0a18d86fbf388c1eaf1db7437f6914e6f57a third_party/rust/glean/
 #EO Manual fixing.
 
 # about: page mods, like rights.
@@ -261,13 +270,14 @@ find -wholename '*/brand.dtd' |xargs /bin/sed 's/trademarkInfo.part1.*/trademark
 
 for STRING in rights-intro-point-2 rights-intro-point-3 rights-intro-point-4 rights-intro-point-5 rights-intro-point-6 rights-webservices rights-safebrowsing
 do
- find -name aboutRights.ftl | xargs sed -i "s/^$STRING.*/$STRING = /"
+ find -name aboutRights.ftl | xargs -r sed -i "s/^$STRING.*/$STRING = /"
 done
-##Remove invalid policy for trisquel.
-find -name aboutRights.ftl | xargs sed -i '/rights-intro-point-3/,$d'
-find -name aboutRights.xhtml |xargs sed -i "/rights-intro-point-5/,/<\/li>/d"
-find -name aboutRights.xhtml |xargs sed -i "/rights-intro-point-6/,/<\/li>/d"
-find -name aboutRights-unbranded.xhtml |xargs sed -i "/rights-intro-point-5/,/<\/li>/d"
+##Remove invalid policy for trisquel, make sure to check for changes on
+##each release as they silently update and change.
+find -name aboutRights.ftl | xargs -r sed -i '/rights-intro-point-3/,/li>/d'
+find -name aboutRights.xhtml |xargs -r sed -i "/rights-intro-point-5/,/li>/d"
+find -name aboutRights.xhtml |xargs -r sed -i "/rights-intro-point-6/d"
+find -name aboutRights-unbranded.xhtml |xargs -r sed -i "/rights-intro-point-5/,/li>/d"
 
 sed -i 's/<a\ href\=\"https\:\/\/www.icedove.net\/\">Icedove\ Project<\/a>/<a\ href\=\"https\:\/\/www.trisquel.info\/\"\>Trisquel\ Project<\/a>/g' \
     comm/mail/base/content/overrides/app-license.html
