@@ -49,7 +49,7 @@ sed '/fonts-/d' -i debian/control
 sed '/high_contrast_item/d' -i src/menubar.vala
 
 # Fix selection highlight on toggle buttons
-cat << EOF | patch -p1
+cat << EOF | patch --no-backup-if-mismatch -p1
 --- a/src/toggle-box.vala	2022-12-05 19:49:25.898324331 -0500
 +++ b/src/toggle-box.vala	2022-12-05 19:54:51.347291025 -0500
 @@ -99,6 +99,8 @@

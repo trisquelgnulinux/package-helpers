@@ -26,8 +26,8 @@ VERSION=1
 # Add missing file on tarball (1.5.26)
 cp $DATA/denylist.txt engine/
 # Apply patch to fix removal of Latin American Spanish
-patch -p1 < $DATA/fix_latam_spanish_blacklist.patch
-patch -p1 < $DATA/simple.xml.in_1.5.27.patch
+patch --no-backup-if-mismatch -p1 < $DATA/fix_latam_spanish_blacklist.patch
+patch --no-backup-if-mismatch -p1 < $DATA/simple.xml.in_1.5.27.patch
 
 changelog "Fix missing latam keyboard layout."
 

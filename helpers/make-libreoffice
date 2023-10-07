@@ -24,7 +24,7 @@ BACKPORT=true
 
 . ./config
 
-patch -p1 < $DATA/debian-rules_7.3.patch
+patch --no-backup-if-mismatch -p1 < $DATA/debian-rules_7.3.patch
 
 changelog "Backport libreoffice fresh into Trisquel"
 

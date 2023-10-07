@@ -143,7 +143,7 @@ grep -lr zfs 	debian.{master,hwe-$HWEKR}/reconstruct \
 		debian.{master,hwe-$HWEKR}/rules.d/ \
 		debian/rules \
 		debian.hwe-$HWEKR/d-i/modules/fs-core-modules \
-		debian.{master,hwe-$HWEKR}/control.d/ | xargs sed  -i '/zfs/d'
+		debian.{master,hwe-$HWEKR}/control.d/ | xargs -r sed  -i '/zfs/d'
 
 #/bin/sed 's/spl-dkms, zfs-dkms//' -i debian/control \
 #                                     debian.master/control.d/vars.generic \
@@ -161,14 +161,14 @@ grep -lr v4l2loopback 	debian.{master,hwe-$HWEKR}/reconstruct \
 			debian.{master,hwe-$HWEKR}/rules.d/ \
 			debian/rules \
 			debian.hwe-$HWEKR/d-i/modules/fs-core-modules \
-			debian.{master,hwe-$HWEKR}/control.d/ | xargs sed  -i '/v4l2loopback/d'
+			debian.{master,hwe-$HWEKR}/control.d/ | xargs -r sed  -i '/v4l2loopback/d'
 
 #/bin/sed -i '/ifeq ($(do_v4l2loopback),false)/,/endif$/d' debian/rules
 #/bin/sed -i '/do_v4l2loopback/d' debian.master/rules.d/*
 
 # Remove nvidia driver
 rm -rf debian/scripts/dkms-build--nvidia-N
-grep -l dkms-build--nvidia-N debian.{master,hwe-$HWEKR}/reconstruct|xargs sed -i '/dkms-build--nvidia-N/d'
+grep -l dkms-build--nvidia-N debian.{master,hwe-$HWEKR}/reconstruct|xargs -r sed -i '/dkms-build--nvidia-N/d'
 
 # Remove wireguard
 grep -lr wireguard 	debian.{master,hwe-$HWEKR}/reconstruct \
@@ -177,7 +177,7 @@ grep -lr wireguard 	debian.{master,hwe-$HWEKR}/reconstruct \
 			debian.{master,hwe-$HWEKR}/rules.d/ \
 			debian/rules \
 			debian.hwe-$HWEKR/d-i/modules/fs-core-modules \
-			debian.{master,hwe-$HWEKR}/control.d/ | xargs sed  -i '/wireguard/d'
+			debian.{master,hwe-$HWEKR}/control.d/ | xargs -r sed  -i '/wireguard/d'
 
 #/bin/sed '/ifeq ($(do_dkms_wireguard),false)/,/endif$/d' -i debian/rules
 #sed '/do_dkms_wireguard/d' -i debian/rules.d/2-binary-arch.mk
@@ -204,7 +204,7 @@ family='trisquel'
 EOF
 
 rename s/ubuntu/trisquel/ debian.*/config/config.common.ubuntu
-grep -lr config.common.ubuntu debian*/ | xargs sed -i 's|config.common.ubuntu|config.common.trisquel|g'
+grep -lr config.common.ubuntu debian*/ | xargs -r sed -i 's|config.common.ubuntu|config.common.trisquel|g'
 
 find debian* -type f -name *control* -exec sed 's/ with Ubuntu patches//; s/Linux/Linux-libre/g' -i {} \;
 

@@ -27,17 +27,17 @@ sed -i '/raspi/d' metapackage-map
 sed -i '/budgie-desktop-raspi/,/it not be removed./d' debian/control
 
 # Remove deprecated packages
-grep -l ubuntu-drivers-common desktop*| xargs sed -i '/ubuntu-drivers-common/d'
-grep -l snapd desktop*| xargs sed -i '/snapd/d'
-grep -l whoopsie desktop* | xargs sed -i '/whoopsie/d'
-grep -l apport desktop* | xargs sed -i '/apport/d'
-grep -l ubuntu-budgie desktop*| xargs sed -i 's|ubuntu-budgie|trisquel-budgie|g'
+grep -l ubuntu-drivers-common desktop*| xargs -r sed -i '/ubuntu-drivers-common/d'
+grep -l snapd desktop*| xargs -r sed -i '/snapd/d'
+grep -l whoopsie desktop* | xargs -r sed -i '/whoopsie/d'
+grep -l apport desktop* | xargs -r sed -i '/apport/d'
+grep -l ubuntu-budgie desktop*| xargs -r sed -i 's|ubuntu-budgie|trisquel-budgie|g'
 sed -i 's|ubuntu-budgie|trisquel-budgie|' metapackage-map
 
 # Add custom trisquel packages
-grep -l thunderbird desktop* | xargs sed -i "/thunderbird/a abrowser"
-grep -l thunderbird desktop* | xargs sed -i "s|thunderbird|icedove|"
-grep -l gnome-software desktop* | xargs sed -i "s|gnome-software|trisquel-app-install|g"
+grep -l thunderbird desktop* | xargs -r sed -i "/thunderbird/a abrowser"
+grep -l thunderbird desktop* | xargs -r sed -i "s|thunderbird|icedove|"
+grep -l gnome-software desktop* | xargs -r sed -i "s|gnome-software|trisquel-app-install|g"
 
 replace 'ubuntu-release-upgrader-gtk' 'trisquel-release-upgrader-gtk'
 replace 'fonts-ubuntu' 'fonts-trisquel'

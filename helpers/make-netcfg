@@ -28,7 +28,7 @@ NETINST=true
 for patch in $(ls -v ${DATA}/*.patch)
 do
 echo "Applying $patch"
-patch -Np1 < $patch
+patch --no-backup-if-mismatch -Np1 < $patch
 done
 
 changelog "Rebranded and adapted for Trisquel"

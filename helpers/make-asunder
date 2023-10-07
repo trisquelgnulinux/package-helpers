@@ -22,8 +22,8 @@ VERSION=3
 
 . ./config
 
-patch -p1 < $DATA/asunder_2.9.5-acc.patch
-patch -p1 < $DATA/asunder_2.9.5-monkey.patch
+patch --no-backup-if-mismatch -p1 < $DATA/asunder_2.9.5-acc.patch
+patch --no-backup-if-mismatch -p1 < $DATA/asunder_2.9.5-monkey.patch
 
 changelog "Removed non-free formats. Closes #4061"
 

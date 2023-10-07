@@ -41,8 +41,8 @@ do
     mv data/os/$i $TMPDIR || true
 done
 # Remove iso url for non-recommended distros, along with manjaro using custom url.
-grep -rl "<url>.*.iso.*</url>" data/os/|xargs sed -i "/.iso/d"
-grep -rl '<url>' data/os/manjaro.org/|xargs sed -i "/<url>/d"
+grep -rl "<url>.*.iso.*</url>" data/os/|xargs -r sed -i "/.iso/d"
+grep -rl '<url>' data/os/manjaro.org/|xargs -r sed -i "/<url>/d"
 mv $TMPDIR/* data/os/
 # Remove tests that will fail from previos iso url removal.
 rm tests/test_isoinfo.py tests/test_schema.py

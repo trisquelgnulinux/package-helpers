@@ -21,7 +21,7 @@ VERSION=1
 
 . ./config
 
-patch -p0 < $DATA/supported-versions-trisquel.patch
+patch --no-backup-if-mismatch -p0 < $DATA/supported-versions-trisquel.patch
 
 changelog "Imported into Trisquel"
 

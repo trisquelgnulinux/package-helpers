@@ -29,7 +29,7 @@ REPOKEY=0E98404D386FA1D9
 NETINST=true
 . ./config
 
-patch -p1 < $DATA/fix_keyboard-configure-netinstall.patch
+patch --no-backup-if-mismatch -p1 < $DATA/fix_keyboard-configure-netinstall.patch
 
 changelog "Fetch and build as udeb dependency for debian-installer."
 compile

@@ -23,7 +23,7 @@ VERSION=0
 . ./config
 
 #Apply path for handle open with, fix LP:#1714264
-patch -p1 < $DATA/mtpaint-desktop.patch
+patch --no-backup-if-mismatch -p1 < $DATA/mtpaint-desktop.patch
 
 changelog "Remove nvidia-settings dependency."
 

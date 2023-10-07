@@ -60,7 +60,7 @@ sed /fulloptions.free/d dia_fulloptions.inc -i
 
 # This hack adds parameters to the kernel if the timeout reaches 0, used to enable a11y
 #sed 's:\(.*\)120\(.*\):\181\2\n/timeout.time.x timeout.x 550 add def:' timeout.inc -i
-cat << EOF | patch -p1
+cat << EOF | patch --no-backup-if-mismatch -p1
 diff -ru gfxboot-theme-ubuntu-0.13.3.orig/common.inc gfxboot-theme-ubuntu-0.13.3/common.inc
 --- gfxboot-theme-ubuntu-0.13.3.orig/common.inc	2012-05-14 23:53:21.000000000 +0000
 +++ gfxboot-theme-ubuntu-0.13.3/common.inc	2012-11-10 22:00:04.000000000 +0000

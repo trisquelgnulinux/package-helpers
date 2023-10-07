@@ -28,14 +28,14 @@ sed '/update-manager/s/--no-update/--no-update", "--no-check-screen/' -i data/ba
 # Actually install all upgrades in "Install all upgrades" menu entry
 sed '/client.upgrade_system/s/safe_mode=True/safe_mode=False/' -i data/backend_helper.py
 # Check updates with update-notifier instead of aptdaemon
-patch -p1 < $DATA/check_updates_with_update_manager.patch
+patch --no-backup-if-mismatch -p1 < $DATA/check_updates_with_update_manager.patch
 # Shorter check times for apt task ending
 sed '/TIMEOUT_APT_RUN/s/600/60/g' -i src/update-notifier.c
 # Use update-manager to checks for dist-upgrades.
 sed '/RELEASE_UPGRADE_CHECKER/s|/usr/lib/ubuntu-release-upgrader/check-new-release-gtk|sleep 5; nice ionice -c3 /usr/lib/update-notifier/backend_helper.py reminder_check|' -i src/update-notifier.h
 
 # Reduce the timeout to refresh the status of the tray icon
-patch -p1 < $DATA/improve_responsiveness.patch
+patch --no-backup-if-mismatch -p1 < $DATA/improve_responsiveness.patch
 
 #Use custom apt-check to fix motd update notification by striping esm stuff.
 cp $DATA/apt_check.py data/apt_check.py
@@ -55,7 +55,7 @@ sed '/Update-Package-Lists/s/1/0/' -i debian/10periodic
 sed '/NotShowIn=KDE/d' -i data/update-notifier.desktop.in
 
 # Actually show the indicator icon
-cat << EOF | patch -p1
+cat << EOF | patch --no-backup-if-mismatch -p1
 diff --git a/src/update.c b/src/update.c
 index 588fa66..951a24f 100644
 --- a/src/update.c
@@ -81,7 +81,7 @@ sed '/usr\/share\/icons\/hicolor\/..x../d' -i debian/update-notifier.install
 sed '/livepatch/d' -i debian/update-notifier.install
 
 # Wayland compatibility
-cat << EOF | patch -p1
+cat << EOF | patch --no-backup-if-mismatch -p1
 --- a/src/update-notifier.c	2023-01-20 13:50:39.000000000 -0500
 +++ b/src/update-notifier.c	2023-02-07 11:08:58.883996715 -0500
 @@ -168,7 +168,13 @@
@@ -102,7 +102,7 @@ cat << EOF | patch -p1
 EOF
 
 # Removal of whoopsie & apport
-cat << EOF | patch -p1
+cat << EOF | patch --no-backup-if-mismatch -p1
 --- a/debian/control	2023-04-06 12:43:17.147156435 -0600
 +++ b/debian/control	2023-04-06 12:46:32.883071182 -0600
 @@ -34,11 +34,9 @@

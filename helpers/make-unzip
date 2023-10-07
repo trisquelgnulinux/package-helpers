@@ -24,7 +24,7 @@ COMPONENT=main
 # Origin:
 # http://lists.nongnu.org/archive/html/gnu-linux-libre/2011-09/msg00001.html
 
-patch -p0 < $DATA/match.patch
+patch --no-backup-if-mismatch -p0 < $DATA/match.patch
 
 changelog "Compiled for Trisquel" 
 

@@ -21,7 +21,7 @@ VERSION=1
 
 . ./config
 
-patch -p1 < $DATA/screenfetch_3.9.patch
+patch --no-backup-if-mismatch -p1 < $DATA/screenfetch_3.9.patch
 
 changelog "Adding ASC-II trisquel logo update, thanks to @LegoLeprechaun"
 

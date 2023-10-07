@@ -46,10 +46,10 @@ sed -i '/snapd/d' debian/control
 rm update-from-web.sh
 
 #Patch the test suite
-patch -p1 < $DATA/fix_test.patch
+patch --no-backup-if-mismatch -p1 < $DATA/fix_test.patch
 
 #Do not recommend extra repositories
-patch -p1 < $DATA/no_extra_repos.patch
+patch --no-backup-if-mismatch -p1 < $DATA/no_extra_repos.patch
 
 changelog "Removed references to non-free software"
 

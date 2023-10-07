@@ -50,7 +50,7 @@ cat << recommended-os > data/recommended-downloads.xml
 recommended-os
 
 # Remove gnome recommendation.
-grep -rl "<url>.*.iso.*</url>" data/osinfo/|xargs sed -i "/.iso/d"
+grep -rl "<url>.*.iso.*</url>" data/osinfo/|xargs -r sed -i "/.iso/d"
 
 changelog "Replace recommended downloads."
 

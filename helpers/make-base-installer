@@ -33,7 +33,7 @@ sed 's/archive.gpg/trisquel-archive-keyring.gpg/' -i ./debian/bootstrap-base.pos
 sed 's/debian-archive-keyring/trisquel-archive-keyring/' -i ./debian/control
 
 #Fix kernel detection
-patch -p1 < $DATA/kernel_update_list.patch
+patch --no-backup-if-mismatch -p1 < $DATA/kernel_update_list.patch
 cat << EOF > kernel/tests/amd64/cittagazze.test
 cpuinfo cittagazze.cpuinfo
 majors 2.6

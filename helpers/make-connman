@@ -23,7 +23,7 @@ VERSION=1
 
 changelog "Connman compiled for Trisquel. Fixes #4239"
 
-patch -p0 < $DATA/connman.4239.patch
+patch --no-backup-if-mismatch -p0 < $DATA/connman.4239.patch
 #BUG: https://trisquel.info/en/issues/4239
 compile
 

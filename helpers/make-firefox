@@ -394,13 +394,13 @@ echo ".warning{display: none!important; } .addon[notification=warning]{backgroun
 
 for STRING in rights-intro-point-2 rights-intro-point-3 rights-intro-point-4 rights-intro-point-5 rights-intro-point-6 rights-webservices rights-safebrowsing
 do
- find -name aboutRights.ftl | xargs sed -i "s/^$STRING.*/$STRING = /"
+ find -name aboutRights.ftl | xargs -r sed -i "s/^$STRING.*/$STRING = /"
 done
 ##Remove invalid policy for trisquel.
-find -name aboutRights.ftl | xargs sed -i '/rights-intro-point-5/,$d'
-find -name aboutRights.xhtml |xargs sed -i "/rights-intro-point-5/,/<\/li>/d"
-find -name aboutRights.xhtml |xargs sed -i "/rights-intro-point-6/,/<\/li>/d"
-find -name aboutRights-unbranded.xhtml |xargs sed -i "/rights-intro-point-5/,/<\/li>/d"
+find -name aboutRights.ftl | xargs -r sed -i '/rights-intro-point-5/,$d'
+find -name aboutRights.xhtml |xargs -r sed -i "/rights-intro-point-5/,/<\/li>/d"
+find -name aboutRights.xhtml |xargs -r sed -i "/rights-intro-point-6/,/<\/li>/d"
+find -name aboutRights-unbranded.xhtml |xargs -r sed -i "/rights-intro-point-5/,/<\/li>/d"
 #EO about: mods.
 
 sed -i 's/<a\ href\=\"http\:\/\/www.mozilla.org\/\">Mozilla\ Project<\/a>/<a\ href\=\"http\:\/\/www.trisquel.info\/\"\>Trisquel\ Project<\/a>/g' browser/base/content/overrides/app-license.html
@@ -460,7 +460,7 @@ find browser/branding/ -name PrivateBrowsing_70.png | xargs -n1 cp $DATA/debug_b
 find browser/branding/ -name PrivateBrowsing_150.png | xargs -n1 cp $DATA/debug_brand/PrivateBrowsing_150.png
 
 # Replace addons placeholder for the gnuzilla mozzarella.
-find l10n/ -name aboutAddons.ftl | xargs sed -i '/.placeholder/s|addons.mozilla.org|gnuzilla.gnu.org|g'
+find l10n/ -name aboutAddons.ftl | xargs -r sed -i '/.placeholder/s|addons.mozilla.org|gnuzilla.gnu.org|g'
 
 #Fixes by patch on source, see DATA/firefox/patches for more info.
 for patch in $(ls -v ${DATA}/patch_changes/*.patch)

@@ -23,7 +23,7 @@ BUILD_UNTIL=11.0
 . ./config
 
 #Apply patch to fix Debian's #1714264
-patch -p1 < $DATA/0002-Fix-cwidget-and-aptitude-FTBFS.patch
+patch --no-backup-if-mismatch -p1 < $DATA/0002-Fix-cwidget-and-aptitude-FTBFS.patch
 
 changelog "Apply patch to fix Debian's #1015925 affecting aramo."
 

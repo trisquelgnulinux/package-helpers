@@ -53,14 +53,14 @@ done
 # Removing ffmpeg time_base feature req. from jami so it builds
 # against libavutil56 (ffmpeg 4.4). Can be removed on Trisquel 12
 remove_patch fc975f0cacde4b06c6adde3d7f0c02f71abfb38c.patch
-patch -R -p1 < $DATA/ffmpeg_time_base_frame.patch
+patch --no-backup-if-mismatch -R -p1 < $DATA/ffmpeg_time_base_frame.patch
 
 # Backport latest changes required at experimental - Remove once package
 # keep up with changes at testing or unstable release.
 for patch in $(ls -v ${DATA}/debian_backport/*.patch)
 do
 echo "Applying $patch"
-patch -Np1 < $patch
+patch --no-backup-if-mismatch -Np1 < $patch
 done
 
 changelog "Backport ring/jammi to aramo from debian sid"

@@ -29,7 +29,7 @@ replace grub-efi-amd64-signed grub-efi-amd64
 
 sed 's/shim-signed/shim/' -i grub-installer
 
-cat << EOF | patch -p1
+cat << EOF | patch --no-backup-if-mismatch -p1
 diff -ru a/grub-installer b/grub-installer
 --- a/grub-installer	2022-11-25 19:04:53.765346384 -0500
 +++ b/grub-installer	2022-11-25 19:16:10.042175329 -0500

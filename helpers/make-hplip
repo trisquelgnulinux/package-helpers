@@ -94,7 +94,7 @@ replace_rxs=( # ASSERT: aligns with '$match_rxs'
 for (( rx_n = 0 ; rx_n < ${#match_rxs[@]} ; ++rx_n ))
 do  sed -i "s|${match_rxs[$rx_n]}|${replace_rxs[$rx_n]}|" $(grep -rlI "${match_rxs[$rx_n]}")
 done
-patch -Np0 -i ${DATA}/disable_upgrade.patch
+patch --no-backup-if-mismatch -Np0 -i ${DATA}/disable_upgrade.patch
 
 # verify libre patching
 patch_msg='HPLIP auto-upgrade is disabled by Trisquel for security reasons.'

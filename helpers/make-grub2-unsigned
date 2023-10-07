@@ -35,7 +35,7 @@ sed -i '/Package: grub-common/,/Built-Using:/s|Architecture: any|Architecture: a
 ## updated to 2.04-1 on https://aur.archlinux.org/packages/grub-luks-keyfile/
 for i in $DATA/*.patch; do
 echo Applying patch $i
-patch -p1 < $i
+patch --no-backup-if-mismatch -p1 < $i
 done
 
 #apt-get remove -y --force-yes dosfstools

@@ -22,14 +22,14 @@ VERSION=5
 
 rm_pkg_line(){
 #find and remove everywhere found.
-grep -rl $1 | xargs sed -i "/$1/d"
+grep -rl $1 | xargs -r sed -i "/$1/d"
 }
 # Remove deprecated packages
-grep -l ubuntu-drivers-common desktop* | xargs sed -i '/ubuntu-drivers-common/d'
-grep -l snapd desktop* | xargs sed -i '/snapd/d'
-grep -l kylin-docs desktop* | xargs sed -i '/ubuntu-kylin-docs/d'
-grep -l whoopsie desktop* | xargs sed -i '/whoopsie/d'
-grep -l apport desktop* | xargs sed -i '/apport/d'
+grep -l ubuntu-drivers-common desktop* | xargs -r sed -i '/ubuntu-drivers-common/d'
+grep -l snapd desktop* | xargs -r sed -i '/snapd/d'
+grep -l kylin-docs desktop* | xargs -r sed -i '/ubuntu-kylin-docs/d'
+grep -l whoopsie desktop* | xargs -r sed -i '/whoopsie/d'
+grep -l apport desktop* | xargs -r sed -i '/apport/d'
 rm_pkg_line xul-ext-ubufox
 rm_pkg_line branding-ubuntu
 rm_pkg_line ubuntu-advantage-tools
@@ -50,14 +50,14 @@ replace 'firefox' 'abrowser'
 replace 'thunderbird' 'icedove'
 replace 'fonts-ubuntu' 'fonts-trisquel'
 replace 'ubuntu-release-upgrader-gtk' 'trisquel-release-upgrader-gtk'
-grep -rl plymouth-theme | xargs sed -i '/plymouth-theme/s|ubuntu|trisquel|g'
-grep -rl sounds | xargs sed -i '/sounds/s|ubuntu|trisquel|g'
-grep -rl ubuntu-keyring | xargs sed -i 's|ubuntu-keyring|trisquel-keyring|g'
+grep -rl plymouth-theme | xargs -r sed -i '/plymouth-theme/s|ubuntu|trisquel|g'
+grep -rl sounds | xargs -r sed -i '/sounds/s|ubuntu|trisquel|g'
+grep -rl ubuntu-keyring | xargs -r sed -i 's|ubuntu-keyring|trisquel-keyring|g'
 grep -l ubuntu-kylin-software-center desktop* | \
-    xargs sed -i "s|ubuntu-kylin-software-center|trisquel-app-install|g"
+    xargs -r sed -i "s|ubuntu-kylin-software-center|trisquel-app-install|g"
 # Keep an eye on later versions as wayland might replace X.org dependencies.
 grep -l brltty desktop* | \
-    xargs sed -i "s|brltty|brltty\nbrltty-x11|g"
+    xargs -r sed -i "s|brltty|brltty\nbrltty-x11|g"
 
 # Remove raspimeta package components
 rm update.cfg

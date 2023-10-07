@@ -22,7 +22,7 @@ VERSION=3
 . ./config
 
 # Patch trisquel feeds
-patch src/akregator_part.cpp < $DATA/trisquel_feeds.patch
+patch --no-backup-if-mismatch src/akregator_part.cpp < $DATA/trisquel_feeds.patch
 
 #Prevent ppc64el arch since qtwebengine is not build for ppc64el either.
 sed -i 's|Architecture: any|Architecture: amd64 arm64 armhf i386|g' debian/control

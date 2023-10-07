@@ -23,7 +23,7 @@ REPOKEY=9BDB3D89CE49EC21
 BACKPORTS=true
 . ./config
 
-grep -lr 'project_root.join(\".git\").is_dir()' | xargs sed -i '/project_root.join(\".git\").is_dir()/d'
+grep -lr 'project_root.join(\".git\").is_dir()' | xargs -r sed -i '/project_root.join(\".git\").is_dir()/d'
 
 changelog "Import as dependency of newer abrowser deb dependencies."
 

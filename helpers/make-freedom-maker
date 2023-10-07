@@ -25,7 +25,7 @@ VERSION=1
 for patch in $(ls -v ${DATA}/*.patch)
 do
 echo "Applying $patch"
-patch -Np1 < $patch
+patch --no-backup-if-mismatch -Np1 < $patch
 done
 
 changelog "Build from Trisquel repos - Delete support for non-free hardware and emulators"

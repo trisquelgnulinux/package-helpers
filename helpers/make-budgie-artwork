@@ -21,7 +21,7 @@ VERSION=2
 . ./config
 
 # Rebrand and tweak
-grep -rl 'font-name='|xargs sed -i '/font-name/s|Ubuntu 11|Sans 11|'
+grep -rl 'font-name='|xargs -r sed -i '/font-name/s|Ubuntu 11|Sans 11|'
 replace ubuntu trisquel
 replace Ubuntu Trisquel
 find -type d |xargs rename s/ubuntu/trisquel/g

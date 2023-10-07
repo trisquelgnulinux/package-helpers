@@ -84,7 +84,7 @@ sed -i 's|changelogs.ubuntu.com/|archive.trisquel.org/trisquel/|' UpdateManager/
 
 # l10n patch fixes
 ## es.po
-patch -p0 < $DATA/l10n/es_po_rev032023.patch
+patch --no-backup-if-mismatch -p0 < $DATA/l10n/es_po_rev032023.patch
 
 changelog "Compiled for Trisquel"
 

@@ -22,7 +22,7 @@ VERSION=3
 
 . ./config
 
-patch -p1 < $DATA/bleachbit-FSDG.patch
+patch --no-backup-if-mismatch -p1 < $DATA/bleachbit-FSDG.patch
 
 # Non-free programs. Remove to avoid advertisement
 for CLEANER in adobe_reader amsn chromium discord flash google_chrome google_earth google_toolbar internet_explorer microsoft_office opera paint realplayer safari secondlife_viewer silverlight skype smartftp teamviewer winamp windows_defender windows_explorer windows_media_player winrar winzip wordpad yahoo_messenger

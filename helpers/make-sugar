@@ -23,7 +23,7 @@ EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu kinetic universe'
 . ./config
 
 # https://github.com/sugarlabs/sugar/issues/962
-cat << EOF | patch -p1
+cat << EOF | patch --no-backup-if-mismatch -p1
 --- a/src/jarabe/main.py	2022-04-23 02:53:15.000000000 -0400
 +++ b/src/jarabe/main.py	2022-12-02 09:08:53.666508572 -0500
 @@ -297,10 +297,6 @@

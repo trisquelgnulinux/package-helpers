@@ -21,9 +21,9 @@ VERSION=7
 
 . ./config
 
-patch -p0 < $DATA/add_trisquel_validate.patch
-patch -p0 < $DATA/add_trisquel_tools_py.patch
-patch -p0 < $DATA/README.Debian.patch
+patch --no-backup-if-mismatch -p0 < $DATA/add_trisquel_validate.patch
+patch --no-backup-if-mismatch -p0 < $DATA/add_trisquel_tools_py.patch
+patch --no-backup-if-mismatch -p0 < $DATA/README.Debian.patch
 
 cp $DATA/trisquel.csv  ./
 

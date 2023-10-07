@@ -21,6 +21,7 @@ VERSION=1
 EXTERNAL='deb-src http://ftp.debian.org/debian trixie main'
 REPOKEY=6ED0E7B82643E131
 BACKPORT=true
+BUILD_UNTIL=11.0
 . ./config
 
 changelog "Imported into trisquel backports as part of jami dependency."

@@ -24,7 +24,7 @@ VERSION=1
 # Remove helper once upstream version is 1.5.27 or later.
 
 # Apply patch to fix volume change notification
-patch -p1 < $DATA/fix_volume_change_notification.patch
+patch --no-backup-if-mismatch -p1 < $DATA/fix_volume_change_notification.patch
 
 changelog "Fix volume change notification on MATE and XFCE."
 

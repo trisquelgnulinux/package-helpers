@@ -43,7 +43,7 @@ deb $LOCALMIRROR $CODENAME-updates main
 deb $LOCALMIRROR $CODENAME-security main
 EOF
 
-find build/pkg-lists -type f | xargs sed -i /media-retriever/d
+find build/pkg-lists -type f | xargs -r sed -i /media-retriever/d
 apt-get update -c ${LOCAL_APT}/etc/apt_${CODENAME}.conf
 # Get available kernel at release/main packages.
 LASTKERNEL="$(apt-cache madison -c ${LOCAL_APT}/etc/apt_${CODENAME}.conf linux-hwe-5.19-tools-common|\
@@ -71,7 +71,7 @@ sed -i 's|-signed||' debian/control
 sed -i '/win32-loader/d' debian/control
 
 #use unsigned shim
-grep -rl "efi\.signed" | xargs sed -i 's|efi\.signed|efi|g'
+grep -rl "efi\.signed" | xargs -r sed -i 's|efi\.signed|efi|g'
 #adjust path and name files from debian to trisquel | $arch-bin efi file (/usr/lib/grub/x86_64-efi/monolithic/grubx64.efi)
 sed -i 's|\$platform-signed/grub|\$platform/monolithic/grub|' build/util/efi-image
 sed -i 's|\$efi_name-installer.efi|\$efi_name.efi|' build/util/efi-image
@@ -81,8 +81,8 @@ rm -r build/boot/artwork/11-homeworld
 mkdir build/boot/artwork/trisquel/
 cp $DATA/splash.svg build/boot/artwork/trisquel/trisquel.svg
 sed -i 's|SPLASH_PNG=.*|SPLASH_PNG=boot/artwork/trisquel/trisquel.png|' build/config/x86.cfg
-grep -rl 'vshift 8' build/boot | xargs sed -i '/vshift/s|8|12|g'
-grep -rl 'rows 12' build/boot | xargs sed -i '/rows/s|12|10|g'
+grep -rl 'vshift 8' build/boot | xargs -r sed -i '/vshift/s|8|12|g'
+grep -rl 'rows 12' build/boot | xargs -r sed -i '/rows/s|12|10|g'
 
 cat << EOF > build/sources.list.udeb.local
 deb $LOCALMIRROR $CODENAME main/debian-installer
@@ -126,7 +126,7 @@ rpl debian-archive-keyring-udeb trisquel-keyring-udeb . -R
 rpl debian-ports-archive-keyring-udeb trisquel-keyring-udeb . -R
 
 # build/config/common
-grep -rl TRISQUEL_VERSION |xargs sed -i "s|TRISQUEL_VERSION =.*|TRISQUEL_VERSION = $REVISION ($CODENAME)|"
+grep -rl TRISQUEL_VERSION |xargs -r sed -i "s|TRISQUEL_VERSION =.*|TRISQUEL_VERSION = $REVISION ($CODENAME)|"
 
 # Disable proposed-updates patch
 patch --no-backup-if-mismatch -p1 < $DATA/remove-proposed-updates.patch
@@ -134,9 +134,9 @@ patch --no-backup-if-mismatch -p1 < $DATA/remove-proposed-updates.patch
 echo "# Remove gtk related packages, not looking for graphical installer"
 rm $(find build/pkg-lists -type f  -path "*/gtk/*")
 echo "Remove unused modules from d-i pkg-list"
-grep -rl acpi-modules- build/pkg-lists/ |xargs sed -i '/acpi-modules-/d'
-grep -rl cdrom-core-modules- build/pkg-lists/ |xargs sed -i '/cdrom-core-modules-/d'
-grep -rl cdebconf-gtk-entropy build/config/ | xargs sed -i 's/cdebconf-gtk-entropy//'
+grep -rl acpi-modules- build/pkg-lists/ |xargs -r sed -i '/acpi-modules-/d'
+grep -rl cdrom-core-modules- build/pkg-lists/ |xargs -r sed -i '/cdrom-core-modules-/d'
+grep -rl cdebconf-gtk-entropy build/config/ | xargs -r sed -i 's/cdebconf-gtk-entropy//'
 
 # Ensure that ld-linux is executable
 patch --no-backup-if-mismatch -p1 < $DATA/chmod_755_ld-linux2.patch

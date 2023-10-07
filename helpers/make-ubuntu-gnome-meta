@@ -30,8 +30,8 @@ sed -i '/Before.*17.10/,/\ ./d' debian/control
 sed -i '/after the 17.04 release/,/not be removed./d' debian/control
 
 # Remove deprecated packages
-grep -l ubuntu-drivers-common desktop*| xargs sed -i '/ubuntu-drivers-common/d'
-grep -l snapd desktop*| xargs sed -i '/snapd/d'
+grep -l ubuntu-drivers-common desktop*| xargs -r sed -i '/ubuntu-drivers-common/d'
+grep -l snapd desktop*| xargs -r sed -i '/snapd/d'
 replace 'ubuntu-release-upgrader-gtk' 'trisquel-release-upgrader-gtk'
 replace 'fonts-ubuntu' 'fonts-trisquel'
 

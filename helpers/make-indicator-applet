@@ -24,7 +24,7 @@ COMPONENT=main
 
 # Fixes https://bugs.launchpad.net/indicator-applet/+bug/965953
 
-cat << EOF | patch -p0
+cat << EOF | patch --no-backup-if-mismatch -p0
 --- src/indicator-applet.c      2020-04-09 06:09:47.000000000 -0500
 +++ src.mod/indicator-applet.c  2021-08-11 19:21:12.914141219 -0500
 @@ -305,6 +305,24 @@

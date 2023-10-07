@@ -22,7 +22,7 @@ VERSION=1
 COMPONENT=main
 . ./config
 
-cat << EOF | patch -p1
+cat << EOF | patch --no-backup-if-mismatch -p1
 --- a/man/zip.1	2012-12-01 07:18:11.156374313 +0100
 +++ b/man/zip.1	2012-12-01 07:36:43.570167358 +0100
 @@ -49,8 +49,7 @@

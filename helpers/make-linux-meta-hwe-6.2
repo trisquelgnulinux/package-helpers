@@ -31,7 +31,7 @@ sed 's/, intel-microcode \[amd64\]//; s/, amd64-microcode \[amd64\]//;' -i debia
 
 # Remove wireguard dependencies.
 sed -i '/gencontrol_flags += -Vdkms:wireguard-linux-compat-modules/d' debian/rules
-grep -rl dkms:wireguard-linux-compat-modules | xargs sed -i '/^Provides: ${dkms:wireguard-linux-compat-modules}$/d'
+grep -rl dkms:wireguard-linux-compat-modules | xargs -r sed -i '/^Provides: ${dkms:wireguard-linux-compat-modules}$/d'
 
 
 changelog "Removed linux-firmware dependency, renamed release for Trisquel"

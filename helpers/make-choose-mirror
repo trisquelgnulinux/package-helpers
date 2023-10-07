@@ -24,8 +24,8 @@ REPOKEY=0E98404D386FA1D9
 NETINST=true
 . ./config
 
-patch -R -p1 < $DATA/rev_Makefile.patch
-patch -R -p1 < $DATA/rev_choose-mirror-bin.templates-in.patch
+patch --no-backup-if-mismatch -R -p1 < $DATA/rev_Makefile.patch
+patch --no-backup-if-mismatch -R -p1 < $DATA/rev_choose-mirror-bin.templates-in.patch
 
 sed -i '/oldstable/d;
         /testing/d;

@@ -191,7 +191,7 @@ family='trisquel'
 EOF
 
 rename s/ubuntu/trisquel/ debian.*/config/config.common.ubuntu
-grep -lr config.common.ubuntu debian*/ | xargs sed -i 's|config.common.ubuntu|config.common.trisquel|g'
+grep -lr config.common.ubuntu debian*/ | xargs -r sed -i 's|config.common.ubuntu|config.common.trisquel|g'
 
 find debian* -type f -name *control* -exec sed 's/ with Ubuntu patches//; s/Linux/Linux-libre/g' -i {} \;
 
