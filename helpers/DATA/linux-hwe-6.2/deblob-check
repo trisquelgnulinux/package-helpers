@@ -6797,6 +6797,9 @@ set_except () {
     # New in 6.3.3, 6.2.16, 6.1.29, 5.15.112, 5.10.180, 5.4.243, 4.19.283.
     blobname 'gsl1680-dexp-ursus-kx210i\.fw' drivers/platform/x86/touchscreen_dmi.c
 
+    # Trisquel 6.2 backport addition.
+    blobname 'qcom[/]sm6375[/]Sony[/]murray[/][ac]dsp\.mbn' arch/arm64/boot/dts/qcom/sm6375-sony-xperia-murray-pdx225.dts
+
     ;;
 
   */*freedo*.patch | */*logo*.patch)
