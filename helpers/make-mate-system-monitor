@@ -1,0 +1,56 @@
+#!/bin/sh
+#
+#    Copyright (C) 2023  Luis Guzmán <ark@switnet.org>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=1
+BUILD_UNTIL=11.0
+
+. ./config
+
+# Fix Information Fields not being saved - https://github.com/mate-desktop/mate-system-monitor/pull/224
+cat << PATCH | patch --no-backup-if-mismatch -p1
+From ddeb66b5af61a5367c8b72a5e5845317e82b62a4 Mon Sep 17 00:00:00 2001
+From: mbkma <johannes.unruh@fau.de>
+Date: Wed, 8 Sep 2021 21:28:55 +0200
+Subject: [PATCH] Fix Information Fields not being saved
+
+---
+ src/procman.cpp | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/src/procman.cpp b/src/procman.cpp
+index b8a084dc..12d3d347 100644
+--- a/src/procman.cpp
++++ b/src/procman.cpp
+@@ -97,10 +97,6 @@ procman_get_tree_state (GSettings *settings, GtkWidget *tree, const gchar *child
+             visible = g_settings_get_boolean (pt_settings, key);
+             g_free (key);
+ 
+-            column = gtk_tree_view_get_column (GTK_TREE_VIEW (tree), id);
+-            if (column == NULL)
+-                continue;
+-
+             gtk_tree_view_column_set_visible (column, visible);
+             if (visible) {
+                 /* ensure column is really visible */
+PATCH
+
+changelog "Fix mate-system-monitor bug(s) for Trisquel"
+
+compile
+
