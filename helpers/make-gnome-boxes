@@ -19,12 +19,15 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
+VERSION=4
 
 . ./config
 
-rm debian/patches/Update-recommended-downloads.patch
-sed -i '/Update-recommended-downloads.patch/d' debian/patches/series
+remove_patch Update-recommended-downloads.patch
+
+#Disable ubuntu artwork
+rm data/osinfo/ubuntu-4.10.xml
+sed -i '/ubuntu-4.10.xml/d' data/osinfo/meson.build
 
 #Required dependencies not in upstream.
 sed -i 's|libvirt-dev,|libvirt-dev, cmake, libsasl2-dev, libpulse-dev,|' debian/control*
