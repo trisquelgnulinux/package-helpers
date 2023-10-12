@@ -18,9 +18,13 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
+VERSION=4
 
 . ./config
+
+#Disable ubuntu artwork
+rm data/osinfo/ubuntu-4.10.xml
+sed -i '/ubuntu-4.10.xml/d' data/osinfo/meson.build
 
 cat << recommended-os > data/recommended-downloads.xml
 <?xml version="1.0" encoding="utf-8" ?>
