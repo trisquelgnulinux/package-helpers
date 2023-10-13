@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
+VERSION=4
 COMPONENT=main
 
 . ./config
@@ -26,6 +26,7 @@ cp $DATA/trisquel vendor -a
 
 replace ubuntu-codename trisquel-codename .
 replace Ubuntu Trisquel .
+sed -i "s|trisquel-codename \".*\"|trisquel-codename \"$CODENAME\"|" doc/apt-verbatim.ent
 
 replace "http://archive.ubuntu.com/ubuntu/project/ubuntu-archive-keyring.gpg" "http://archive.trisquel.org/trisquel/trisquel-archive-signkey.gpg" .
 replace ubuntu-keyring trisquel-keyring .
@@ -55,12 +56,12 @@ replace changelogs.ubuntu.com packages.trisquel.info .
 replace ubuntu.com/changelogs trisquel.info/changelogs .
 
 cat << EOF > ./test/interactive-helper/networkless-install-fixes/sources.test.list
-deb http://archive.trisquel.info/trisquel/ $CODENAME main
-deb-src http://archive.trisquel.info/trisquel/ $CODENAME main
-deb http://archive.trisquel.info/trisquel/ $CODENAME-updates main
-deb-src http://archive.trisquel.info/trisquel/ $CODENAME-updates main
-deb http://archive.trisquel.info/trisquel/ $CODENAME-security main
-deb-src http://archive.trisquel.info/trisquel/ $CODENAME-security main
+deb http://archive.trisquel.org/trisquel/ $CODENAME main
+deb-src http://archive.trisquel.org/trisquel/ $CODENAME main
+deb http://archive.trisquel.org/trisquel/ $CODENAME-updates main
+deb-src http://archive.trisquel.org/trisquel/ $CODENAME-updates main
+deb http://archive.trisquel.org/trisquel/ $CODENAME-security main
+deb-src http://archive.trisquel.org/trisquel/ $CODENAME-security main
 EOF
 
 cp ./test/interactive-helper/networkless-install-fixes/sources.test.list ./doc/examples/sources.list
