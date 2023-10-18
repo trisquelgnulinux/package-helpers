@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=14
+VERSION=15
 EXTERNAL='deb-src http://ftp.debian.org/debian bullseye main'
 REPOKEY=0E98404D386FA1D9
 NETINST=true
@@ -46,7 +46,7 @@ EOF
 find build/pkg-lists -type f | xargs -r sed -i /media-retriever/d
 apt-get update -c ${LOCAL_APT}/etc/apt_${CODENAME}.conf
 # Get available kernel at release/main packages.
-LASTKERNEL="$(apt-cache madison -c ${LOCAL_APT}/etc/apt_${CODENAME}.conf linux-hwe-5.19-tools-common|\
+LASTKERNEL="$(apt-cache madison -c ${LOCAL_APT}/etc/apt_${CODENAME}.conf linux-hwe-6.2-tools-common|\
               grep ${CODENAME}/main|\
               awk '{print$3}'|head -n1|\
               cut -d. -f1,2,3)"
