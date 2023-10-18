@@ -17,17 +17,16 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=7
+VERSION=8
 
 . ./config
 
-rm debian/patches/debian-example-feeds.patch
-sed '/debian-example-feeds/d;' debian/patches/series -i
+remove_patch debian-example-feeds.patch
 
 cat << EOF > opml/feedlist
 <?xml version="1.0"?>
 <opml version="1.0">
-<head>  
+<head>
     <title>Liferea Default Feed List</title>        <!-- translate this for localized feed list -->
 </head>
 <body>  
@@ -42,7 +41,6 @@ cat << EOF > opml/feedlist
       <outline text="FSF News" htmlUrl="https://www.fsf.org/" xmlUrl="https://static.fsf.org/fsforg/rss/news.xml" />
       <outline text="FSF Events" htmlUrl="https://www.fsf.org/" xmlUrl="https://static.fsf.org/fsforg/rss/events.xml" />
       <outline text="FSF Blogs" htmlUrl="https://www.fsf.org/" xmlUrl="https://static.fsf.org/fsforg/rss/blogs.xml" />
-      <outline text="fsdaily.com - Free Software News" htmlUrl="https://www.fsdaily.com/" xmlUrl="https://www.fsdaily.com/feed/published/All" />
       <outline text="GNU at Reddit" htmlUrl="https://www.reddit.com/r/gnu" xmlUrl="https://www.reddit.com/r/gnu/.rss" />
     </outline>
 
@@ -83,7 +81,6 @@ cat << EOF > opml/feedlist_es.opml
       <outline text="FSF News" htmlUrl="https://www.fsf.org/" xmlUrl="https://static.fsf.org/fsforg/rss/news.xml" />
       <outline text="FSF Events" htmlUrl="https://www.fsf.org/" xmlUrl="https://static.fsf.org/fsforg/rss/events.xml" />
       <outline text="FSF Blogs" htmlUrl="https://www.fsf.org/" xmlUrl="https://static.fsf.org/fsforg/rss/blogs.xml" />
-      <outline text="fsdaily.com - Free Software News" htmlUrl="https://www.fsdaily.com/" xmlUrl="https://www.fsdaily.com/feed/published/All" />
       <outline text="GNU en Reddit" htmlUrl="https://www.reddit.com/r/gnu" xmlUrl="https://www.reddit.com/r/gnu/.rss" />
     </outline>
 
