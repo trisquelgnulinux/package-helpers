@@ -84,7 +84,6 @@ sed 's/xul-ext-ubufox/xul-ext-youtube-html5-video-player/' -i debian/control.in
 
 #Remove exceptions on warnings when installing addons.
 sed -i '/addons.mozilla.org/d' browser/app/permissions
-sed -i '/fpn.firefox.com/d' browser/app/permissions
 
 # Disable healtreport
 cat << EOF > toolkit/components/telemetry/healthreport-prefs.js
@@ -112,7 +111,7 @@ grep -rl services.sync.telemetry.maxPayloadCount modules/ | xargs -r sed -i '/se
 grep -rl services.sync.telemetry.submissionInterval modules/ | xargs -r sed -i '/services.sync.telemetry.submissionInterval/s|43200|-1|'
 echo 'pref("dom.security.unexpected_system_load_telemetry_enabled", false);' | tee -a browser/app/profile/firefox.js
 echo 'pref("toolkit.telemetry.hybridContent.enabled", false);' | tee -a browser/app/profile/firefox.js
-sed_csum 5be1eaf4a2e1d1b35d9c13387f8f59b5f5d96a874b984396b7fae907e2938a8c 1024f857ad21f9e07b26560031ae205321355c100f9d1e57e269951bc0baf707
+sed_csum 136caf71560969cd404b51471cceca748bc9093bf8631d130670e163cdf1a1d1 2fac7950f86be998f5d10a1244c5b1760dcd37072d20cc0097dda497d8781f3d
 
 # Remove Google API key
 sed '/Google API/,/google-api-keyfile/ d' debian/config/mozconfig.in -i
