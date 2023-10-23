@@ -141,6 +141,7 @@ sed '/gmp-clearkey/d' -i ./debian/firefox.install.in
 
 # Locale packages should provide firefox-locale-$LANG
 sed "s/Provides.*/Provides: abrowser-locale-@LANGCODE@/" -i debian/control.langpacks
+sed 's/Firefox/Abrowser/' -i debian/control.langpacks
 
 # Provide firefox
 sed "s/iceweasel,/iceweasel, firefox,/" -i debian/control.in
