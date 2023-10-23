@@ -1,6 +1,6 @@
 --- src/akregator_part.cpp	2020-06-05 11:41:23.000000000 -0500
 +++ src/akregator_part_trisquel.cpp	2020-06-05 12:46:05.914051386 -0500
-@@ -189,6 +189,66 @@
+@@ -189,6 +189,61 @@
      wire.setAttribute(QStringLiteral("xmlUrl"), QStringLiteral("http://wire.kubuntu.org/?feed=rss2"));
      kubuntuFolder.appendChild(wire);
  
@@ -53,11 +53,6 @@
 +    fsfBlog.setAttribute(QStringLiteral("text"), i18n("FSF Blogs"));
 +    fsfBlog.setAttribute(QStringLiteral("xmlUrl"), QStringLiteral("https://static.fsf.org/fsforg/rss/blogs.xml"));
 +    fsFolder.appendChild(fsfBlog);
-+
-+    QDomElement fsDaily = doc.createElement(QStringLiteral("outline"));
-+    fsDaily.setAttribute(QStringLiteral("text"), i18n("fsdaily.com - Free Software News"));
-+    fsDaily.setAttribute(QStringLiteral("xmlUrl"), QStringLiteral("https://www.fsdaily.com/feed/published/All"));
-+    fsFolder.appendChild(fsDaily);
 +
 +    QDomElement gnuReddit = doc.createElement(QStringLiteral("outline"));
 +    gnuReddit.setAttribute(QStringLiteral("text"), i18n("GNU at Reddit"));
