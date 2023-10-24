@@ -22,6 +22,9 @@ VERSION=2
 
 . ./config
 
+# Fix version number due to source origin change.
+export FULLVERSION="$(sed 's|ubuntu0.1||' <<< $FULLVERSION)"
+
 # Add trisquel aramo's dependencies
 sed -i "/# Qt client/i # trisquel's aramo dependencies" debian/control
 for i in    "libgl1-mesa-dev" \
@@ -62,6 +65,7 @@ echo "Applying $patch"
 patch --no-backup-if-mismatch -Np1 < $patch
 done
 
-changelog "Backport ring/jammi to aramo from debian sid"
+changelog "Backport ring/jammi to aramo from mantic"
+head -n1 debian/changelog | grep -q ubuntu && echo "error: update upstream version" && exit
 
 compile
