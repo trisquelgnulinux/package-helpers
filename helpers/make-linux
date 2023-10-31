@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=11
+VERSION=12
 
 . ./config
 
@@ -134,11 +134,10 @@ sed -i "/CONFIG_FW_LOADER_USER_HELPER_FALLBACK/s|'armhf': 'n',|'armhf': '-',|g" 
 # Disable ahc1ec0.
 sed -i "/AHC1EC0/d" debian.master/config/annotations
 
-cp debian.master/config debian.hwe -a
+sed -i "/CONFIG_UBUNTU_ODM_DRIVERS/d" debian.master/config/annotations
 
 changelog "Removed non-free bits"
 
 cp debian/changelog debian.master/changelog
-cp debian/changelog debian.hwe/changelog
 
 compile
