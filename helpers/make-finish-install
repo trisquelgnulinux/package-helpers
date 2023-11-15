@@ -32,4 +32,4 @@ NETINST=true
 patch --no-backup-if-mismatch -p1 < $DATA/fix_keyboard-configure-netinstall.patch
 
 changelog "Fetch and build as udeb dependency for debian-installer."
-compile
+package

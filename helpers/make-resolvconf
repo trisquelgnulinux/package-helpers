@@ -25,4 +25,4 @@ sed '/Reboot/d; /db_input/d; /db_go/d' -i debian/postrm
 
 changelog "Prevent uninstall message on upgrade"
 
-compile
+package

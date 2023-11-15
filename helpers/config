@@ -188,7 +188,7 @@ export FULLVERSION=$(dpkg-parsechangelog --show-field Version)+${REVISION}trisqu
 grep -lr 'Maintainer:' debian*/control* | \
 xargs sed -i "s_^Maintainer.*_Maintainer: $DEBFULLNAME <$DEBEMAIL>_g"
 
-compile(){
+package(){
 
 # Make sure the series file is formated correctly after removals
 if [ -f debian/patches/series ]; then

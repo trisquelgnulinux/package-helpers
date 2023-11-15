@@ -41,5 +41,5 @@ find -name *buntu*desktop -exec rm {} \;
 sed -i '/buntu/d' debian/install
 changelog "Removed references to non-free apps"
 
-compile
+package
 

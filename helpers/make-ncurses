@@ -38,4 +38,4 @@ patch --no-backup-if-mismatch -p1 < $DATA/bbd46b3955647bf401325951d9f31db054e8d8
 changelog "Rebuild as udeb dependency for debian-installer and patch dh_autoreconf."
 head -n1 debian/changelog | grep -q ubuntu && echo "error: update upstream version" && exit
 
-compile
+package

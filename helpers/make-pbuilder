@@ -27,4 +27,4 @@ sed "s/devel/$CODENAME/g" -i debian/rules
 sed "s/main universe/main/" -i debian/rules
 
 changelog "Rebrand for Trisquel"
-compile
+package

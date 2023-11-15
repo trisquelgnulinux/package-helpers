@@ -23,5 +23,5 @@ VERSION=2
 sed '/ShellShowsAppMenu/s/True/False/' -i ./gtweak/utils.py
 
 changelog "Disable ShellShowsAppMenu"
-compile
+package
 

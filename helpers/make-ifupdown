@@ -23,4 +23,4 @@ VERSION=0
 patch --no-backup-if-mismatch -p1 < $DATA/fix_invalid_lines_from_resolved_integration.patch
 
 changelog "Manually apply LP: #1907878 on aramo"
-compile
+package

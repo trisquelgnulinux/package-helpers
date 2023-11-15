@@ -36,4 +36,4 @@ echo "shim.trisquel,1,Trisquel,shim,@UPSTREAM_VERSION@,https://gitlab.trisquel.o
 #sed -i 's|distributor=debian|distributor=trisquel|' debian/rules
 
 changelog "Rebuild to get unsigned binary as dependency for debian-installer."
-compile
+package

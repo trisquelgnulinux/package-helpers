@@ -40,4 +40,4 @@ cp $DATA/trisquel-budgie-logo_200_alpha.png usr/share/plymouth/themes/trisquel-b
 sed -i "s|background=.*|background=\'/usr/share/backgrounds/$CODENAME.jpg\'|g" debian/budgie-lightdm-theme.gsettings-override
 
 changelog "Rebuild for trisquel"
-compile
+package

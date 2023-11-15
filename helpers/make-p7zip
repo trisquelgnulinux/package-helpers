@@ -28,5 +28,5 @@ sed -i 's/RAR (only//; s/if non-free p7zip-rar package is installed),//' debian/
 
 changelog "Remove non free suggests"
 #Closes https://trisquel.info/es/issues/4360
-PARALLEL=false compile
+PARALLEL=false package
 

@@ -129,5 +129,5 @@ sed s/ubuntu/trisquel/ -i debian/rules
 changelog "Compiled for Trisquel"
 sed -i "1s/(\(.*\))/(1:\1)/" debian/changelog
 
-compile
+package
 

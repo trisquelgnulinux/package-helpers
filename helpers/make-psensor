@@ -28,4 +28,4 @@ patch --no-backup-if-mismatch -p1 < $DATA/fix-ftbfs-debian-patch.patch
 
 changelog "Removed libxnvctrl0 dependency not present in Trisquel"
 
-compile
+package

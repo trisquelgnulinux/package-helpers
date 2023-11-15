@@ -27,4 +27,4 @@ BACKPORTS=true
 sed -i "s|X-Python3-Version:.*|X-Python3-Version: >= 3.10|" debian/control
 
 changelog "Imported into Trisquel"
-compile
+package

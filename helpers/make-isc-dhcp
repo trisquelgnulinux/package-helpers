@@ -26,5 +26,5 @@ sed 's/send host-name/#send host-name/' -i debian/dhclient.conf
 
 changelog "Disable sending hostname through dhcp by default"
 
-compile
+package
 

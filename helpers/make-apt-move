@@ -25,4 +25,4 @@ sed -i 's%@_=split;%@_=split(/\\s+/,$_);%g' debian/patches/fix_perl_implicit_spl
 
 changelog "Imported into Trisquel"
 
-compile
+package

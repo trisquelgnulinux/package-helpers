@@ -36,4 +36,4 @@ sed ${START},${END}d debian/hw-detect.templates -i
 sed -i '/non-free/,/^fi$/ d'  hw-detect.post-base-installer.d/50install-firmware
 
 changelog "Rebranded and adapted for Trisquel"
-compile
+package

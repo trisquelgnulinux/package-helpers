@@ -31,5 +31,5 @@ sed '/HOSTNAME4_TAG/s|added by NetworkManager|Enable at /etc/dhcp/dhclient.conf|
 sed '/FQDN_TAG/s|added by NetworkManager|Enable at /etc/dhcp/dhclient.conf|' -i src/core/dhcp/nm-dhcp-dhclient-utils.c
 
 changelog "Do not send hostname on dhcp, plus other features"
-compile
+package
 

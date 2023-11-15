@@ -68,4 +68,4 @@ done
 changelog "Backport ring/jammi to aramo from mantic"
 head -n1 debian/changelog | grep -q ubuntu && echo "error: update upstream version" && exit
 
-compile
+package

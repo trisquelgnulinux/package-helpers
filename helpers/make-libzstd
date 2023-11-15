@@ -32,4 +32,4 @@ NETINST=true
 cp debian/zstd.install debian/libzstd1-udeb.install
 
 changelog "Rebuild upstream to get udeb dependency for debian-installer."
-compile
+package

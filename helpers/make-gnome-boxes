@@ -57,4 +57,4 @@ grep -rl "<url>.*.iso.*</url>" data/osinfo/|xargs -r sed -i "/.iso/d"
 
 changelog "Replace recommended downloads."
 
-compile
+package

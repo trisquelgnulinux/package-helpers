@@ -33,4 +33,4 @@ NETINST=true
 sed '/mount --bind \/run \/target\/run/amkdir -p /run/systemd/resolve; cp /etc/resolv.conf /run/systemd/resolve/stub-resolv.conf' -i chroot-setup.sh
 
 changelog "Fetch and build as udeb dependency for debian-installer."
-compile
+package

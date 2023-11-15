@@ -26,4 +26,4 @@ sed -i 's|DBUILD_NVIDIA=ON|DBUILD_NVIDIA=OFF|g' debian/rules
 
 changelog "Remove nvidia-settings dependency."
 
-compile
+package

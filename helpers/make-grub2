@@ -65,4 +65,4 @@ sed -i '/SB_EFI_VENDOR ?/s|=.*|= trisquel|' debian/rules
 
 changelog "skip test grub_cmd_set_date.in"
 
-compile
+package

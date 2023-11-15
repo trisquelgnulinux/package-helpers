@@ -42,4 +42,4 @@ sed -i '/github.com/s|Trisquel|Ubuntu|g' debian/control
 sed -i 's|Trisquel Kylin|Kylin|g' debian/control
 
 changelog "Rebuild to drop non-available deprecated and non-free source packages."
-compile
+package
