@@ -1,0 +1,54 @@
+From bbd46b3955647bf401325951d9f31db054e8d889 Mon Sep 17 00:00:00 2001
+From: Sven Joachim <svenjoac@gmx.de>
+Date: Sun, 7 May 2023 13:54:13 +0200
+Subject: [PATCH] Run autoconf-dickey rather than autoreconf-dickey in
+ debian/rules
+
+Unfortunately autoreconf-dickey picks up and processes the quilt
+backup file of configure.in below .pc/ directory.  As the other
+expected files are not present there, this fails and randomly leads to
+FTBFS, depending on the order in which autoreconf-dickey processes the
+directories.
+
+As pointed out by Thomas Dickey, we do not need to run the whole
+autotools machinery and can make do with autoconf-dickey which only
+runs in one directory at a time.  Since we should regenerate both
+./configure and test/configure and dh_autoreconf may only be run once,
+this needs to be done by a script, as suggested by the dh_autoreconf
+manpage.
+
+Closes: #1035621
+---
+ debian/autoconf.sh | 5 +++++
+ debian/changelog   | 9 +++++++++
+ debian/rules       | 2 +-
+ 3 files changed, 15 insertions(+), 1 deletion(-)
+ create mode 100755 debian/autoconf.sh
+
+diff --git a/debian/autoconf.sh b/debian/autoconf.sh
+new file mode 100755
+index 000000000..603b898a5
+--- /dev/null
++++ b/debian/autoconf.sh
+@@ -0,0 +1,5 @@
++#!/bin/sh
++set -e
++
++autoconf-dickey
++cd test && autoconf-dickey
+diff --git a/debian/rules b/debian/rules
+index 9504f3977..8d7f83d00 100755
+--- a/debian/rules
++++ b/debian/rules
+@@ -211,7 +211,7 @@ endif
+ 
+ config.guess-stamp:
+ 	dh_update_autotools_config
+-	dh_autoreconf autoreconf-dickey -- -f -i
++	dh_autoreconf debian/autoconf.sh
+ 	touch $@
+ 
+ $(objdir)/config.status: config.guess-stamp
+-- 
+GitLab
+

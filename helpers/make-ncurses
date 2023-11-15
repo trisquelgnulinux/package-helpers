@@ -23,7 +23,7 @@
 # such packages from Debian in order to build the required udeb packages.
 ##
 
-VERSION=1
+VERSION=2
 NETINST=true
 BUILD_UNTIL=11.0
 . ./config
@@ -32,7 +32,10 @@ BUILD_UNTIL=11.0
 # Set version number due to source origin change
 export FULLVERSION="$(sed 's|ubuntu0.1||' <<< $FULLVERSION)"
 
-changelog "Fetch and build as udeb dependency for debian-installer."
+# Apply Debian#1035621: ncurses: FTBFS: dh_autoreconf error on various architectures
+patch --no-backup-if-mismatch -p1 < $DATA/bbd46b3955647bf401325951d9f31db054e8d889.patch
+
+changelog "Rebuild as udeb dependency for debian-installer and patch dh_autoreconf."
 head -n1 debian/changelog | grep -q ubuntu && echo "error: update upstream version" && exit
 
 compile
