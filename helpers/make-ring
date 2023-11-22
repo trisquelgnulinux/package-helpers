@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu mantic universe'
+EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu noble universe'
 VERSION=2
 
 . ./config
@@ -65,7 +65,7 @@ echo "Applying $patch"
 patch --no-backup-if-mismatch -Np1 < $patch
 done
 
-changelog "Backport ring/jammi to aramo from mantic"
+changelog "Backport ring/jammi to aramo from LTS noble"
 head -n1 debian/changelog | grep -q ubuntu && echo "error: update upstream version" && exit
 
 package
