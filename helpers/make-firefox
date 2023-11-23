@@ -354,7 +354,9 @@ find . -type f -not -iregex '.*changelog.*' -not -iregex '.*copyright.*' -not -i
 
 echo "Replacing Firefox with Abrowser on ./l10n"
 find l10n -type f  -not -iregex '.*changelog.*' -not -iregex '.*copyright.*' -execdir /bin/sed --follow-symlinks -i "s/Firefox/Abrowser/" '{}' ';'
-sed 's/Firefox/Abrowser/' -i debian/control.in
+
+sed 's/Firefox/Abrowser/' -i debian/control.in \
+                             browser/locales/en-US/chrome/overrides/appstrings.properties
 
 sed s/ubuntu/trisquel/g debian/distribution.ini -i
 sed "s/ubuntu_version/trisquel_version/; s/Ubuntu 10.10/Trisquel $REVISION/; s/1010/40/" -i debian/firefox.postinst.in
