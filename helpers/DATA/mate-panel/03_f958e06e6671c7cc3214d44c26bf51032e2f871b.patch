@@ -1,0 +1,30 @@
+From f958e06e6671c7cc3214d44c26bf51032e2f871b Mon Sep 17 00:00:00 2001
+From: Colomban Wendling <cwendling@hypra.fr>
+Date: Tue, 28 Jun 2022 11:23:01 +0200
+Subject: [PATCH] clock: Fix memory leak
+
+---
+ applets/clock/clock.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/applets/clock/clock.c b/applets/clock/clock.c
+index 1b3480fe6..3c7d1fde5 100644
+--- a/applets/clock/clock.c
++++ b/applets/clock/clock.c
+@@ -373,7 +373,7 @@ calculate_minimum_height (GtkWidget        *widget,
+ {
+         GtkStateFlags    state;
+         GtkStyleContext *style_context;
+-        const PangoFontDescription *font_desc;
++        PangoFontDescription *font_desc;
+         GtkBorder        padding;
+         PangoContext     *pango_context;
+         PangoFontMetrics *metrics;
+@@ -394,6 +394,7 @@ calculate_minimum_height (GtkWidget        *widget,
+         descent = pango_font_metrics_get_descent (metrics);
+ 
+         pango_font_metrics_unref (metrics);
++        pango_font_description_free (font_desc);
+ 
+         gtk_style_context_get_padding (style_context, state, &padding);
+ 

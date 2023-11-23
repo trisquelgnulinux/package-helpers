@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=10
+VERSION=11
 
 . ./config
 
@@ -120,6 +120,12 @@ cat << EOF >> debian/mate-panel.install
 debian/mate-panel-layout-update.desktop etc/xdg/autostart
 debian/layout-reset usr/share/mate-panel
 EOF
+
+# Apply selected upstream fixes from mate-panel - 1.26.3
+for i in $(find $DATA/ -name *.patch|sort)
+do
+    patch --no-backup-if-mismatch -p1 < $i
+done
 
 changelog "Changed default layout"
 

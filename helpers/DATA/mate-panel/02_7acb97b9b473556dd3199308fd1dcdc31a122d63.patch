@@ -1,0 +1,37 @@
+From 7acb97b9b473556dd3199308fd1dcdc31a122d63 Mon Sep 17 00:00:00 2001
+From: Colomban Wendling <cwendling@hypra.fr>
+Date: Tue, 26 Apr 2022 11:44:47 +0200
+Subject: [PATCH] wncklet: Fix crash thumbnailing dying or otherwise
+ inaccessible windows
+
+Fixes https://github.com/mate-desktop/mate-desktop/issues/478
+---
+ applets/wncklet/window-list.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/applets/wncklet/window-list.c b/applets/wncklet/window-list.c
+index 45ed78f48..9c3ca6ff5 100644
+--- a/applets/wncklet/window-list.c
++++ b/applets/wncklet/window-list.c
+@@ -288,6 +288,8 @@ preview_window_thumbnail (WnckWindow   *wnck_window,
+ 		*thumbnail_width = (int) ((double) width * ratio);
+ 	}
+ 
++	gdk_x11_display_error_trap_push (gdk_window_get_display (window));
++
+ 	thumbnail = cairo_image_surface_create (CAIRO_FORMAT_ARGB32,
+ 	                                        *thumbnail_width,
+ 	                                        *thumbnail_height);
+@@ -298,6 +300,12 @@ preview_window_thumbnail (WnckWindow   *wnck_window,
+ 	cairo_paint (cr);
+ 	cairo_destroy (cr);
+ 
++	if (gdk_x11_display_error_trap_pop (gdk_window_get_display (window)))
++	{
++		cairo_surface_destroy (thumbnail);
++		thumbnail = NULL;
++	}
++
+ 	g_object_unref (window);
+ 
+ 	return thumbnail;
