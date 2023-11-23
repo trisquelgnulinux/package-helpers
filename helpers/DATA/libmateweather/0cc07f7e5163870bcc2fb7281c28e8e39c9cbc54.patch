@@ -1,0 +1,22 @@
+From 0cc07f7e5163870bcc2fb7281c28e8e39c9cbc54 Mon Sep 17 00:00:00 2001
+From: Mike Ovchinnikov <mixao@yandex.ru>
+Date: Wed, 18 Oct 2023 14:59:53 +0400
+Subject: [PATCH] Dataserver url changed
+
+---
+ libmateweather/weather-metar.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libmateweather/weather-metar.c b/libmateweather/weather-metar.c
+index a9f3c84d..0ae2cbb9 100644
+--- a/libmateweather/weather-metar.c
++++ b/libmateweather/weather-metar.c
+@@ -550,7 +550,7 @@ metar_start_open (WeatherInfo *info)
+     }
+ 
+     msg = soup_form_request_new (
+-        "GET", "https://www.aviationweather.gov/adds/dataserver_current/httpparam",
++        "GET", "https://www.aviationweather.gov/cgi-bin/data/dataserver.php",
+         "dataSource", "metars",
+         "requestType", "retrieve",
+         "format", "xml",
