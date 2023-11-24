@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=17
+VERSION=18
 
 . ./config
 
@@ -45,6 +45,9 @@ sed "s/head -n1/sed -n 1p/" -i scripts/casper-functions
 
 # Set trisquel isos as default suggestion.
 patch --no-backup-if-mismatch -p1 < $DATA/set_trisquel_iso_suggestion.patch
+# FIX T11 only: Set live user uid as 1000, which fails due to
+# systemd taking 999 in later versions (LP: #2004092) remove on T12.
+patch --no-backup-if-mismatch -p1 < $DATA/set_liveuser_uid_1000.patch
 
 changelog "Compiled for Trisquel"
 

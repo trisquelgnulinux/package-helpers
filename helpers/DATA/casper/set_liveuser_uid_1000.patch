@@ -1,0 +1,53 @@
+diff --git a/bin/casper-snapshot b/bin/casper-snapshot
+index ab075292..33243f63 100755
+--- a/bin/casper-snapshot
++++ b/bin/casper-snapshot
+@@ -33,7 +33,7 @@ VERSION=0.0.1
+ if [ -e /etc/casper.conf ]; then
+ 	. /etc/casper.conf
+ else
+-	USERNAME=$(cat /etc/passwd | grep "999" | cut -f1 -d ':')
++	USERNAME=$(cat /etc/passwd | grep "1000" | cut -f1 -d ':')
+ 	HOSTNAME=$(hostname)
+ 	BUILD_SYSTEM="Debian"
+ fi
+diff --git a/scripts/casper-bottom/15autologin b/scripts/casper-bottom/15autologin
+index d6c75e66..c80e2058 100755
+--- a/scripts/casper-bottom/15autologin
++++ b/scripts/casper-bottom/15autologin
+@@ -90,9 +90,6 @@ if [ -f /root/usr/bin/sddm ]; then
+         sddm_session=QLubuntu.desktop
+     fi
+     cat >>/root/etc/sddm.conf <<EOF
+-[Users]
+-MinimumUid=999
+-
+ [Autologin]
+ User=$USERNAME
+ Session=$sddm_session
+diff --git a/scripts/casper-bottom/25adduser b/scripts/casper-bottom/25adduser
+index 8320e710..efbf5677 100755
+--- a/scripts/casper-bottom/25adduser
++++ b/scripts/casper-bottom/25adduser
+@@ -57,7 +57,8 @@ db_set passwd/root-password-crypted '*'
+ db_set passwd/user-password-crypted U6aMy0wojraho
+ db_set passwd/user-fullname "$USERFULLNAME"
+ db_set passwd/username "$USERNAME"
+-db_set passwd/user-uid 999
++# Per LP: #2004092, systemd uses 995-999
++db_set passwd/user-uid 1000
+ 
+ chroot /root /usr/lib/user-setup/user-setup-apply > /dev/null
+ if [ ! -f /root/usr/bin/sddm ]; then
+@@ -93,11 +94,6 @@ for file in /usr/share/applications/ubiquity.desktop /usr/share/applications/kde
+     fi
+ done
+ 
+-# GDM
+-if [ -d /root/etc/gdm3 ]; then
+-    sed -i '/^[UG]ID_MIN/s/\<1000$/ 999/' /root/etc/login.defs
+-fi
+-
+ # Kubuntu
+ if [ -f "/root/usr/bin/plasma-desktop" ]; then
+     if [ -f "/root/usr/share/kde4/apps/khelpcenter/plugins/kubuntu/a_welcome.desktop" ]; then
