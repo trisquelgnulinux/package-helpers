@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
+VERSION=4
 
 . ./config
 
@@ -31,6 +31,24 @@ sed 's/debian/trisquel/g' -i apt-mirror
 sed "s/stable/$CODENAME/g" -i apt-mirror
 sed 's/ contrib//g' -i apt-mirror
 sed 's/ non-free//g' -i apt-mirror
+
+# Set fixed Trisquel release variables for mirror.list
+cat << EOF | patch --no-backup-if-mismatch -p1
+diff --git a/debian/rules b/debian/rules_
+index e9c85e9..b6c1c97 100755
+--- a/debian/rules
++++ b/debian/rules_
+@@ -1,7 +1,7 @@
+ #!/usr/bin/make -f
+ 
+-DIST ?= \$(shell lsb_release -si)
+-CODENAME ?= \$(shell lsb_release -sc)
++DIST ?= Trisquel
++CODENAME ?= $CODENAME
+ 
+ %:
+        dh \$@
+EOF
 
 changelog "Added config and update manpage for Trisquel."
 
