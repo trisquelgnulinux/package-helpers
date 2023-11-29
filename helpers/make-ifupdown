@@ -17,10 +17,10 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=0
+VERSION=1
 . ./config
 
-patch --no-backup-if-mismatch -p1 < $DATA/fix_invalid_lines_from_resolved_integration.patch
+# Previously fixed LP: #1907878
 
-changelog "Manually apply LP: #1907878 on aramo"
+changelog "Clean helper from manually patching previous bugs."
 package
