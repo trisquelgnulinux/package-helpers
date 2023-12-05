@@ -17,15 +17,19 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 
 . ./config
+
+# Fix version number
+sed -i "1{s|ubuntu0.2||}" debian/changelog
 
 rm debian/local/default-testpage-ubuntu.pdf
 cp $DATA/default-testpage.pdf debian/local/default-testpage-trisquel.pdf
 replace default-testpage-ubuntu default-testpage-trisquel .
 
 changelog "Replaced testpage pdf"
+head -n1 debian/changelog | grep -q ubuntu && echo "error: update upstream version" && exit
 
 compile
 

@@ -108,6 +108,7 @@ EOF
 export DEB_BUILD_OPTIONS=nocheck
 
 changelog "Compiled for Trisquel"
+head -n1 debian/changelog | grep -q ubuntu && echo "error: update upstream version" && exit
 
 compile
 
