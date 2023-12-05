@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2022  Luis Guzmán <ark@switnet.org>
+#    Copyright (C) 2023  Luis Guzmán <ark@switnet.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -23,10 +23,15 @@
 # such packages from Debian in order to build the required udeb packages.
 ##
 
-VERSION=0
+VERSION=1
 NETINST=true
 . ./config
 
+#FIXME:T12
+# Set version number due to source origin change
+export FULLVERSION="$(sed 's|ubuntu0.2||' <<< $FULLVERSION)"
 
 changelog "Fetch and build as udeb dependency for debian-installer."
+head -n1 debian/changelog | grep -q ubuntu && echo "error: update upstream version" && exit
+
 package
