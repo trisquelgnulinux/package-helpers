@@ -17,12 +17,12 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 
 . ./config
 
 # Fix version number
-sed -i "1{s|ubuntu0.2||}" debian/changelog
+export UPSTREAMVERSION="$(sed 's|ubuntu0.2||' <<< $UPSTREAMVERSION)"
 
 rm debian/local/default-testpage-ubuntu.pdf
 cp $DATA/default-testpage.pdf debian/local/default-testpage-trisquel.pdf
