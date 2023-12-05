@@ -25,7 +25,11 @@ BUILD_UNTIL=10.0
 
 . ./config
 
+# Fix version number
+export UPSTREAMVERSION="$(sed 's|ubuntu1||' <<< $UPSTREAMVERSION)"
+
 changelog "Backported from jammy"
+head -n1 debian/changelog | grep -q ubuntu && echo "error: update upstream version" && exit
 
 compile
 
