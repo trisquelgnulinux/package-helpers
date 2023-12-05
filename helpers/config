@@ -70,9 +70,9 @@ head -n 1 debian/changelog | grep -q $UPSTREAM-security && REPO=$CODENAME-securi
 [ "$BACKPORT" = true ] || [ "$BACKPORTS" = true ] && REPO=${CODENAME}-backports
 #Name convention issue "+" breaking packages build like console-setup, using "-" instead.
 if [ "$NAME_CI" = true ];then
-echo | dch -D $REPO -v `pkgversion`-${REVISION}trisquel${VERSION} "$1"
+echo | dch -D $REPO -v $UPSTREAMVERSION-${REVISION}trisquel${VERSION} "$1"
 else
-echo | dch -D $REPO -v `pkgversion`+${REVISION}trisquel${VERSION} "$1"
+echo | dch -D $REPO -v $UPSTREAMVERSION+${REVISION}trisquel${VERSION} "$1"
 fi
 
 # Make sure the changelog file is identical between archs
@@ -189,6 +189,8 @@ dpkg-source --no-check -x --skip-patches *.dsc source
 
 find -maxdepth 1 -type f | xargs rm
 cd source
+
+export UPSTREAMVERSION=$(pkgversion)
 
 #disable 3.0 deb source format
 [ -f debian/source/format ] && rm debian/source/format
