@@ -18,13 +18,13 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=5
+VERSION=6
 COMPONENT=main
 
 . ./config
 
 # Fix version number
-sed -i "1{s|ubuntu0.20.04.1||}" debian/changelog
+export UPSTREAMVERSION="$(sed 's|ubuntu0.20.04.1||' <<< $UPSTREAMVERSION)"
 
 cat << EOF > data/templates/Trisquel.mirrors
 #LOC:BR
