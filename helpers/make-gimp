@@ -17,10 +17,13 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 
-VERSION=2
+VERSION=3
 COMPONENT=main
 
 . ./config
+
+# Fix version number
+export UPSTREAMVERSION="$(sed 's|ubuntu0.1||' <<< $UPSTREAMVERSION)"
 
 sed 's/# (theme "Dark")/(theme "System")/' -i etc/gimprc.in
 sed 's/# (icon-theme "Symbolic")/(icon-theme "Color")/' -i etc/gimprc.in
@@ -29,6 +32,7 @@ sed '/DEFAULT_ICON_THEME/s/Symbolic/Color/' -i app/config/gimpguiconfig.h libgim
 
 
 changelog "Use system gtk theme and color icons"
+head -n1 debian/changelog | grep -q ubuntu && echo "error: update upstream version" && exit
 
 compile
 
