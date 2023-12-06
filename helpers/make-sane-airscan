@@ -17,17 +17,21 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu jammy main universe'
 REPOKEY="871920D1991BC93C"
 BUILD_UNTIL=10.0
 
 . ./config
 
+# Fix version number
+export UPSTREAMVERSION="$(sed 's|build1||' <<< $UPSTREAMVERSION)"
+
 sed 's/debhelper.*/debhelper,/' -i debian/control
 echo 12 > debian/compat
 
 changelog "Backported from jammy"
+head -n1 debian/changelog | grep -q ubuntu && echo "error: update upstream version" && exit
 
 compile
 
