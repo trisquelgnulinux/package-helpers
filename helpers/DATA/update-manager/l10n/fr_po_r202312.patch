@@ -1,0 +1,38 @@
+This patch now includes the l10n for the $DATA/prevent-autoconnection.patch
+
+diff --git a/po/fr.po b/po/fr.po
+index ca668e1..c18d0f8 100644
+--- a/po/fr.po
++++ b/po/fr.po
+@@ -997,8 +997,8 @@ msgstr ""
+ #~ "actualización no puede continuar.\n"
+ #~ "Asegúrese de que el directorio de sistema permite escribir."
+ 
+-#~ msgid "Include latest updates from the Internet?"
+-#~ msgstr "Inclure les dernières mises à jour en provenance d'Internet ?"
++msgid "Include latest updates from the Internet?"
++msgstr "Inclure les dernières mises à jour depuis Internet ?"
+ 
+ #~ msgid ""
+ #~ "The upgrade system can use the Internet to automatically download the "
+@@ -2499,3 +2499,20 @@ msgstr ""
+ #~ "sortie. Si vous ne voulez pas les installer maintenant, vous pourrez les "
+ #~ "installer plus tard à partir du « Gestionnaire de mises à jour » situé "
+ #~ "dans le menu Administration."
++
++#: UpdateManager/Dialogs.py
++msgid "Check for Updates"
++msgstr "Rechercher les mises à jour"
++
++#: UpdateManager/Dialogs.py
++msgid "Ask Me Later"
++msgstr "Me demander plus tard"
++
++msgid ""
++"To prevent unwanted connections to the Internet\n"
++"Trisquel will not automatically check for updates\n"
++"unless you say so in the Settings panel."
++msgstr ""
++"Afin d’éviter des connexions non désirées à Internet\n"
++"Trisquel ne recherchera pas automatiquement les mises à jour\n"
++"sauf à modifier les Paramètres en ce sens."
