@@ -17,13 +17,23 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=4
+VERSION=5
 EXTERNAL='deb-src http://ftp.debian.org/debian bullseye-backports main'
 REPOKEY=0E98404D386FA1D9
 BACKPORT=true
 
 . ./config
 
-changelog "Backported from debian bullseye as dependency for telegram-desktop"
+# Apply patches to use system's libsrtp2
+for patch in $(ls -v ${DATA}/*.patch)
+do
+    echo "Applying $patch"
+    patch --no-backup-if-mismatch -Np1 < $patch
+done
+
+# Manually remove third_party src
+rm -r src/third_party/libsrtp
+
+changelog "Applied libsrtp system usage update to bullseye-backports."
 
 package

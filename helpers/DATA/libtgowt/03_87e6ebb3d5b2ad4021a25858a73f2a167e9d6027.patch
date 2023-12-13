@@ -1,0 +1,52 @@
+From 87e6ebb3d5b2ad4021a25858a73f2a167e9d6027 Mon Sep 17 00:00:00 2001
+From: Nicholas Guriev <nicholas@guriev.su>
+Date: Sat, 24 Jun 2023 13:00:54 +0300
+Subject: [PATCH] Update Unbundle-libSRTP.patch and Unbundle-libyuv.patch
+
+ * Remove EXCLUDE_FROM_ALL property from INTERFACE libraries.
+ * It is meaningless and interferes backporting to bullseye.
+
+Gbp-Dch: ignore
+---
+ debian/patches/Unbundle-libSRTP.patch | 4 ++--
+ debian/patches/Unbundle-libyuv.patch  | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/debian/patches/Unbundle-libSRTP.patch b/debian/patches/Unbundle-libSRTP.patch
+index 466ad0ff..b51e2fe3 100644
+--- a/debian/patches/Unbundle-libSRTP.patch
++++ b/debian/patches/Unbundle-libSRTP.patch
+@@ -10,7 +10,7 @@ Last-Update: Thu, 04 May 2023 16:21:09 +0300
+ 
+ --- a/CMakeLists.txt
+ +++ b/CMakeLists.txt
+-@@ -2658,6 +2658,9 @@ if (TG_OWT_USE_PROTOBUF)
++@@ -2655,6 +2655,9 @@ if (TG_OWT_USE_PROTOBUF)
+      list(APPEND export_targets proto)
+  endif()
+  
+@@ -27,7 +27,7 @@ Last-Update: Thu, 04 May 2023 16:21:09 +0300
+ +pkg_check_modules(LIBSRTP libsrtp2)
+ +
+ +if (LIBSRTP_FOUND)
+-+    add_library(libsrtp INTERFACE EXCLUDE_FROM_ALL)
+++    add_library(libsrtp INTERFACE)
+ +    add_library(tg_owt::libsrtp ALIAS libsrtp)
+ +
+ +    target_include_directories(libsrtp INTERFACE ${LIBSRTP_INCLUDE_DIRS} ${LIBSRTP_CFLAGS_OTHER})
+#diff --git a/debian/patches/Unbundle-libyuv.patch b/debian/patches/Unbundle-libyuv.patch
+#index 1ad9956d..5fd3d54e 100644
+#--- a/debian/patches/Unbundle-libyuv.patch
+#+++ b/debian/patches/Unbundle-libyuv.patch
+#@@ -7,7 +7,7 @@ Last-Update: Sat, 24 Jun 2023 11:53:26 +0300
+# @@ -1,3 +1,12 @@
+# +find_library(LIBYUV_PATH yuv)
+# +if (LIBYUV_PATH)
+#-+    add_library(libyuv INTERFACE EXCLUDE_FROM_ALL)
+#++    add_library(libyuv INTERFACE)
+# +    add_library(tg_owt::libyuv ALIAS libyuv)
+# +
+# +    target_link_libraries(libyuv INTERFACE ${LIBYUV_PATH})
+-- 
+GitLab
+

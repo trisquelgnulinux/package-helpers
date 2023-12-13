@@ -1,0 +1,31 @@
+From 0614aac699b1a53242ffe2664e3724533bf64f97 Mon Sep 17 00:00:00 2001
+From: John Preston <johnprestonmail@gmail.com>
+Date: Fri, 28 Apr 2023 14:32:00 +0400
+Subject: [PATCH] Build: Add explicit libsrtp_config.
+
+---
+ src/third_party/libsrtp_config/config.h | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+ create mode 100644 src/third_party/libsrtp_config/config.h
+
+diff --git a/src/third_party/libsrtp_config/config.h b/src/third_party/libsrtp_config/config.h
+new file mode 100644
+index 00000000..1edcdc5c
+--- /dev/null
++++ b/src/third_party/libsrtp_config/config.h
+@@ -0,0 +1,15 @@
++#define PACKAGE_VERSION "2.5.0"
++#define PACKAGE_STRING "libsrtp2 2.5.0"
++
++#define GCM
++#define OPENSSL
++#define CPU_CISC 1
++#define HAVE_INTTYPES_H 1
++#define HAVE_STDINT_H 1
++#define HAVE_STDLIB_H 1
++#define HAVE_SYS_TYPES_H 1
++#define HAVE_UINT8_T 1
++#define HAVE_UINT16_T 1
++#define HAVE_UINT32_T 1
++#define HAVE_UINT64_T 1
++#define HAVE_INT32_T 1
