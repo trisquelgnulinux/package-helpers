@@ -1,8 +1,16 @@
 diff --git a/UpdateManager/Dialogs.py b/UpdateManager/Dialogs.py
-index b100c3a..d604f54 100644
+index a33f9c0..5a9e36c 100644
 --- a/UpdateManager/Dialogs.py
 +++ b/UpdateManager/Dialogs.py
-@@ -149,61 +149,6 @@ class InternalDialog(BuilderDialog):
+@@ -38,7 +38,6 @@ import distro_info
+ import os
+ 
+ import HweSupportStatus.consts
+-from .Core.LivePatchSocket import LivePatchSocket
+ from .Core.utils import get_dist
+ 
+ from gettext import gettext as _
+@@ -148,62 +147,6 @@ class InternalDialog(BuilderDialog):
              self.main_container.add(content_widget)
          self.main_container.set_visible(bool(content_widget))
  
@@ -18,10 +26,10 @@ index b100c3a..d604f54 100644
 -            if self._is_livepatch_supported() and \
 -               self.settings_button and \
 -               self.settings.get_int('launch-count') >= 4:
--                self.set_desc(_("<b>Tip:</b> You can use Livepatch to "
--                                "keep your computer more secure between "
--                                "restarts."))
--                self.settings_button.set_label(_("Settings & Livepatch…"))
+-                self.set_desc(_("<b>Tip:</b> You can use Livepatch with "
+-                                "Ubuntu Pro to keep your computer more "
+-                                "secure between restarts."))
+-                self.settings_button.set_label(_("Settings & Pro…"))
 -            return
 -
 -        needs_reschedule = False
@@ -61,6 +69,15 @@ index b100c3a..d604f54 100644
 -        self.lp_socket = LivePatchSocket()
 -        self.lp_socket.get_status(self.on_livepatch_status_ready)
 -
- 
+-
  class StoppedUpdatesDialog(InternalDialog):
      def __init__(self, window_main):
+         InternalDialog.__init__(self, window_main)
+@@ -227,7 +170,6 @@ class NoUpdatesDialog(InternalDialog):
+         self.settings_button = self.add_settings_button()
+         self.focus_button = self.add_button(Gtk.STOCK_OK,
+                                             self.window_main.close)
+-        self.check_livepatch_status()
+ 
+ 
+ class DistUpgradeDialog(InternalDialog):

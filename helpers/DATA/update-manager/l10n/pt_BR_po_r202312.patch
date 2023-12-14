@@ -1,0 +1,36 @@
+This patch now includes the l10n for the $DATA/prevent-autoconnection.patch
+
+diff --git a/po/pt_BR.po b/po/pt_BR.po
+index 29e001e..6ec80c0 100644
+--- a/po/pt_BR.po
++++ b/po/pt_BR.po
+@@ -389,7 +389,7 @@ msgstr ""
+ 
+ #: ../DistUpgrade/DistUpgradeController.py:465
+ msgid "Include latest updates from the Internet?"
+-msgstr "Incluir as últimas atualizações através da Internet?"
++msgstr "Incluir as últimas atualizações da Internet?"
+ 
+ #: ../DistUpgrade/DistUpgradeController.py:466
+ msgid ""
+@@ -2483,3 +2483,20 @@ msgstr ""
+ 
+ #~ msgid "1 kB"
+ #~ msgstr "1 kB"
++
++#: UpdateManager/Dialogs.py
++msgid "Check for Updates"
++msgstr "Buscar atualizações"
++
++#: UpdateManager/Dialogs.py
++msgid "Ask Me Later"
++msgstr "Me pergunte mais tarde"
++
++msgid ""
++"To prevent unwanted connections to the Internet\n"
++"Trisquel will not automatically check for updates\n"
++"unless you say so in the Settings panel."
++msgstr ""
++"Para evitar conexões indesejadas a Internet\n"
++"Trisquel não busca atualizações automaticamente\n"
++"a menos que você ative isso no painel de Configurações."
