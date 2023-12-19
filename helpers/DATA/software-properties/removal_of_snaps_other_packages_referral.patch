@@ -1,0 +1,25 @@
+diff --git a/data/gtkbuilder/main.ui b/data/gtkbuilder/main.ui
+index c09f7d2..eda56c9 100644
+--- a/data/gtkbuilder/main.ui
++++ b/data/gtkbuilder/main.ui
+@@ -546,7 +546,7 @@
+                                   <object class="GtkLabel" id="label_updates_1">
+                                     <property name="visible">True</property>
+                                     <property name="can_focus">False</property>
+-                                    <property name="label" translatable="yes">For other packages, this system has:</property>
++                                    <property name="label" translatable="yes">This system has:</property>
+                                     <property name="xalign">1</property>
+                                   </object>
+                                   <packing>
+diff --git a/po/software-properties.pot b/po/software-properties.pot
+index a9c524a..db8462a 100644
+--- a/po/software-properties.pot
++++ b/po/software-properties.pot
+@@ -1146,3 +1146,7 @@ msgstr ""
+ #: ../data/gtkbuilder/dialog-ua-attach.ui.h:5
+ msgid "Attach"
+ msgstr ""
++
++# data/gtkbuilder/main.ui:549
++msgid "This system has:"
++msgstr ""
