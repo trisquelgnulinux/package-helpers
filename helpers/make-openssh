@@ -17,14 +17,14 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
+VERSION=4
 NETINST=true
 
 . ./config
 
 #FIXME:T12
 # Set version number due to source origin change
-export FULLVERSION="$(sed 's|ubuntu0.4||' <<< $FULLVERSION)"
+export FULLVERSION="$(sed 's|ubuntu0.5||' <<< $FULLVERSION)"
 
 sed 's:Ubuntu:Trisquel\ GNU/Linux:g' -i debian/rules
 sed "s|^SSH_EXTRAVERSION.*|SSH_EXTRAVERSION := Trisquel_GNU/Linux_$REVISION-$VERSION|" -i debian/rules
