@@ -132,7 +132,7 @@ class Changes(RemoteSettings):
         changes = []
 
         for collection in unwrapped_jsons:
-            if collection.path != RemoteSettings.DUMPS_PATH_ABSOLUTE / 'main/example.json':
+            if collection.path not in (RemoteSettings.DUMPS_PATH_ABSOLUTE / 'main/example.json', RemoteSettings.DUMPS_PATH_ABSOLUTE / 'main/search-config-v2.json'):
                 latest_change = {}
                 latest_change[cls._LAST_MODIFIED_KEY_NAME] = cls.get_collection_timestamp(
                     collection)

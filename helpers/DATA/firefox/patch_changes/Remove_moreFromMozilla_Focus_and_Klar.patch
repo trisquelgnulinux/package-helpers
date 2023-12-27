@@ -376,14 +376,6 @@ diff -Nru a/browser/components/newtab/lib/OnboardingMessageProvider.jsm b/browse
    {
      id: "PB_NEWTAB_INFO_SECTION",
      template: "pb_newtab",
-@@ -1000,7 +699,6 @@ const BASE_MESSAGES = () => [
-       icon: "chrome://browser/skin/controlcenter/3rdpartycookies.svg",
-       icon_class: "cfr-doorhanger-small-icon",
-       persistent_doorhanger: true,
--      show_in_private_browsing: true,
-       heading_text: {
-         string_id: "cfr-cbh-header",
-       },
 diff --git a/browser/components/newtab/lib/PanelTestProvider.sys.mjs b/browser/components/newtab/lib/PanelTestProvider.sys.mjs
 index b5ff592..22cdf39 100644
 --- a/browser/components/newtab/lib/PanelTestProvider.sys.mjs	2022-10-16 05:35:50.835203327 -0500
