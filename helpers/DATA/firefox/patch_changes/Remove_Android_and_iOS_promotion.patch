@@ -75,3 +75,52 @@ index 2417f1a641..698c48ccc3 100644
  
      const vpnBanner = this.doc.querySelector(".vpn-banner");
      const exitIcon = vpnBanner.querySelector(".exit-icon");
+diff --git a/browser/components/protections/content/protections.html b/browser/components/protections/content/protections.html
+index 1374c30f..51796498 100644
+--- a/browser/components/protections/content/protections.html
++++ b/browser/components/protections/content/protections.html
+@@ -291,44 +291,6 @@
+             <div id="graph-total-summary"></div>
+           </div>
+         </div>
+-        <div id="mobile-hanger" class="card-body hidden">
+-          <div class="body-wrapper">
+-            <button
+-              class="exit-icon"
+-              data-l10n-id="protections-close-button2"
+-            ></button>
+-            <div id="etp-mobile-content">
+-              <img
+-                class="mobile-app-icon"
+-                src="chrome://browser/content/logos/etp-mobile.svg"
+-              />
+-              <span>
+-                <h2 class="card-title" data-l10n-id="mobile-app-title"></h2>
+-                <p class="content">
+-                  <span data-l10n-id="mobile-app-card-content"></span>
+-                  <span
+-                    target="_blank"
+-                    id="mobile-app-links"
+-                    data-l10n-id="mobile-app-links"
+-                  >
+-                    <a
+-                      target="_blank"
+-                      id="android-mobile-inline-link"
+-                      data-l10n-name="android-mobile-inline-link"
+-                      href=""
+-                    ></a>
+-                    <a
+-                      target="_blank"
+-                      id="ios-mobile-inline-link"
+-                      data-l10n-name="ios-mobile-inline-link"
+-                      href=""
+-                    ></a>
+-                  </span>
+-                </p>
+-              </span>
+-            </div>
+-          </div>
+-        </div>
+       </div>
+       <!-- Markup for Monitor card. -->
+       <section class="card card-no-hover monitor-card hidden">
