@@ -151,7 +151,7 @@ class SearchConfig(RemoteSettings):
         'main/search-config.json',
     )
     SCHEMA_PATH = arguments.MAIN_PATH / \
-        'toolkit/components/search/schema/search-engine-config-schema.json'
+        'toolkit/components/search/schema/search-config-schema.json'
     OUTPUT_PATH = JSON_PATHS[0]
 
     _DUCKDUCKGO_SEARCH_ENGINE_ID = 'ddg@search.mozilla.org'
