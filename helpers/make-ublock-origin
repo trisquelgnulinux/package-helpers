@@ -1,0 +1,43 @@
+#!/bin/sh
+#
+#    Copyright (C) 2024  Luis Guzman <ark@switnet.org>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=0
+BUILD_UNTIL=11.0
+
+. ./config
+
+sed -i 's|firefox-esr|icecat|g' debian/control
+sed -i '/Package:/!s|firefox|abrowser|g' debian/control
+sed -i 's|Firefox|Abrowser|g' debian/control
+sed -i 's|webext-ublock-origin-abrowser|webext-ublock-origin-firefox|g' debian/control
+sed -i '/Package:/!s|chromium|ungoogled-chromium|g' debian/control
+sed -i 's|Chromium|Ungoogled-Chromium|g' debian/control
+sed -i 's|webext-ublock-origin-ungoogled-chromium|webext-ublock-origin-chromium|g' debian/control
+
+#Fix ftbfs jammy - https://github.com/WebAssembly/wabt/issues/1937
+upd_func() {
+    grep -rl $1 . |xargs -rr sed -i "s|$1|$2|"
+}
+upd_func get_local local.get
+upd_func tee_local local.tee
+upd_func set_local local.set
+
+changelog "Avoid recommend non-free browser options."
+
+package
