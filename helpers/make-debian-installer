@@ -18,11 +18,20 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=15
+VERSION=16
 EXTERNAL='deb-src http://ftp.debian.org/debian bullseye main'
 REPOKEY=0E98404D386FA1D9
 NETINST=true
 . ./config
+
+# Set kernel from release/main packages.
+set_kernel_release() {
+KRNL_REL=6.2
+LASTKERNEL="$(apt-cache madison -c ${LOCAL_APT}/etc/apt_${CODENAME}.conf linux-hwe-$KRNL_REL-tools-common |\
+              grep ${CODENAME}/main |\
+              awk '{print$3}'|head -n1 |\
+              cut -d. -f1,2,3)"
+}
 
 cat << EOF > ${LOCAL_APT}/etc/apt_${CODENAME}.conf
 Dir::State "${LOCAL_APT}/var/lib/apt";
@@ -45,12 +54,9 @@ EOF
 
 find build/pkg-lists -type f | xargs -r sed -i /media-retriever/d
 apt-get update -c ${LOCAL_APT}/etc/apt_${CODENAME}.conf
-# Get available kernel at release/main packages.
-LASTKERNEL="$(apt-cache madison -c ${LOCAL_APT}/etc/apt_${CODENAME}.conf linux-hwe-6.2-tools-common|\
-              grep ${CODENAME}/main|\
-              awk '{print$3}'|head -n1|\
-              cut -d. -f1,2,3)"
 
+# Set kernel release for images
+set_kernel_release
 sed -i "s|LINUX_KERNEL_ABI ?= .*|LINUX_KERNEL_ABI ?= $LASTKERNEL|" build/config/common
 sed -i '/LINUX_KERNEL_ABI/d' build/config/ppc64el.cfg
 
