@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=16
+VERSION=17
 EXTERNAL='deb-src http://ftp.debian.org/debian bullseye main'
 REPOKEY=0E98404D386FA1D9
 NETINST=true
@@ -26,7 +26,7 @@ NETINST=true
 
 # Set kernel from release/main packages.
 set_kernel_release() {
-KRNL_REL=6.2
+KRNL_REL=6.5
 LASTKERNEL="$(apt-cache madison -c ${LOCAL_APT}/etc/apt_${CODENAME}.conf linux-hwe-$KRNL_REL-tools-common |\
               grep ${CODENAME}/main |\
               awk '{print$3}'|head -n1 |\
