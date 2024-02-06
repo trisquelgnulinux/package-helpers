@@ -202,7 +202,7 @@ fi
 
 cd ..
 mv source $PACKAGE-$FULLVERSION
-dpkg-source -b $PACKAGE-$FULLVERSION
+dpkg-source -b -I.falsefileextension99 $PACKAGE-$FULLVERSION
 rm -rf ${LOCAL_APT}
 echo "Trisquel source package built!"
 
