@@ -1,0 +1,185 @@
+--- a/d-i/source/grub-installer/grub-installer	2023-03-30 01:19:52.000000000 -0400
++++ b/d-i/source/grub-installer/grub-installer	2024-01-31 16:58:52.789037161 -0500
+@@ -266,7 +266,7 @@
+ 	esac
+ }
+ 
+-# by-id mapping copied from grub-pc.postinst.
++# by-id mapping copied from grub-pc-bin.postinst.
+ 
+ cached_available_ids=
+ available_ids()
+@@ -492,12 +492,12 @@
+ 		# This point can't be reached (yet).  See debian/isinstallable.
+ 		grub_package="grub-efi"
+ 	else
+-		grub_package="grub-pc"
++		grub_package="grub-pc-bin"
+ 	fi
+ 	;;
+     i386/efi|amd64/efi)
+ 	if [ -f /var/lib/partman/ignore_uefi ]; then
+-		grub_package="grub-pc"
++		grub_package="grub-pc-bin"
+ 	else
+ 		grub_package="grub-efi-amd64-signed"
+ 		if [ ! -d /target/boot/efi ]; then
+@@ -505,13 +505,13 @@
+ 			# believed this to be unnecessary, perhaps because we're
+ 			# installing on a pre-existing MBR partition table or
+ 			# perhaps because there's a BIOS Boot Partition.  In either
+-			# case, the right answer is to fall back to grub-pc.
+-			grub_package="grub-pc"
++			# case, the right answer is to fall back to grub-pc-bin.
++			grub_package="grub-pc-bin"
+ 		fi
+ 	fi
+ 	;;
+     i386/*|amd64/*)
+-	grub_package="grub-pc"
++	grub_package="grub-pc-bin"
+ 	;;
+     powerpc/*)
+ 	grub_package="grub-ieee1275"
+@@ -524,7 +524,7 @@
+ 	grub_package="grub-yeeloong"
+ 	;;
+     *)
+-	grub_package="grub-pc"
++	grub_package="grub-pc-bin"
+ esac
+ 
+ case $ARCH:$grub_package in
+@@ -622,12 +622,12 @@
+    (! db_get debian-installer/splash || [ "$RET" = true ]); then
+ 	defopt_params=${defopt_params:+$defopt_params }splash
+ fi
+-if [ "$grub_package" = grub-pc ]; then
++if [ "$grub_package" = grub-pc-bin ]; then
+ 	# Empty this for now to stop it being asked. We'll fix this up later.
+ 	# (quoting to deconfuse vim)
+ 	$chroot $ROOT 'debconf-set-selections' <<EOF
+-$grub_package grub-pc/install_devices multiselect
+-$grub_package grub-pc/install_devices_empty boolean true
++$grub_package grub-pc-bin/install_devices multiselect
++$grub_package grub-pc-bin/install_devices_empty boolean true
+ EOF
+ fi
+ 
+@@ -640,7 +640,7 @@
+ # we need to purge them first to support users who try grub2 and then switch
+ # to grub legacy, or vice-versa
+ case "$grub_package" in
+-    grub-pc)
++    grub-pc-bin)
+ 	log-output -t grub-installer $chroot $ROOT dpkg -P grub-efi grub-efi-amd64 grub-efi-ia32-bin grub-efi-ia32
+ 	;;
+     grub-efi)
+@@ -648,33 +648,7 @@
+ 	;;
+ esac
+ 
+-exit_code=0
+-inst_package=$grub_package
+-case "$grub_package" in
+-   *)
+-	# Will pull in os-prober based on global setting for Recommends
+-	apt-install $grub_package || exit_code=$? 
+-	case $grub_package in
+-	    *-signed)
+-		apt-install shim-signed || true
+-		apt-install grub-pc || true
+-		;;
+-	esac
+-	;;
+-esac
+-
+-if [ $exit_code -ne 0 ] ; then
+-	db_progress STOP
+-	info "Calling 'apt-install $inst_package' failed"
+-	db_subst grub-installer/apt-install-failed GRUB "$inst_package"
+-	db_input critical grub-installer/apt-install-failed || true
+-	if ! db_go; then
+-		exit 10 # back up to menu
+-	fi
+-	exit 1
+-fi
+-
+-grub_debian_version="$($chroot $ROOT dpkg-query -W -f '${Version}' $inst_package)"
++grub_debian_version="$($chroot $ROOT dpkg-query -W -f '${Version}' grub-common)"
+ 
+ db_progress STEP 1
+ db_progress INFO grub-installer/progress/step_os-probe
+@@ -783,7 +757,7 @@
+ 	hybrid="$RET"
+ fi
+ case $ARCH:$grub_package in
+-    *:grub|*:grub-pc|sparc:grub-ieee1275)
++    *:grub|*:grub-pc-bin|sparc:grub-ieee1275)
+ 	if [ "$grub_version" = grub2 ] && \
+ 	    ([ "$frtype" = mdadm ] || [ "$frtype" = multipath ]); then
+ 		# Check whether any of the RAIDed devices is a partition, and if so
+@@ -857,7 +831,7 @@
+ 	# Let's trust grub-mkdevicemap to select the most suitable ones
+ 	# and correctly handle systems with no /dev/disk/by-id.
+ 	# Use disk id string as a shortcut way to describe it.
+-	# FIXME switch to grub-pc's far more elegant disk_descriptions()
++	# FIXME switch to grub-pc-bin's far more elegant disk_descriptions()
+ 	dev_list=
+ 	dev_descr=
+ 	devices="$($chroot $ROOT grub-mkdevicemap --no-floppy -m - | cut -f2)"
+@@ -1095,7 +1069,7 @@
+ 
+ 		CODE=0
+ 		case $ARCH:$grub_package in
+-		    *:grub|*:grub-pc|*:grub-efi*|sparc:grub-ieee1275|ppc64el/*:grub-ieee1275)
++		    *:grub|*:grub-pc-bin|*:grub-efi*|sparc:grub-ieee1275|ppc64el/*:grub-ieee1275)
+ 			info "Running $chroot $ROOT grub-install $grub_install_params \"$bootdev\""
+ 			log-output -t grub-installer $chroot $ROOT grub-install $grub_install_params "$bootdev" || CODE=$?
+ 			;;
+@@ -1108,7 +1082,7 @@
+ 			info "grub-install ran successfully"
+ 		else
+ 			case $ARCH:$grub_package in
+-			    *:grub|*:grub-pc|*:grub-efi*|sparc:grub-ieee1275|ppc64el/*:grub-ieee1275)
++			    *:grub|*:grub-pc-bin|*:grub-efi*|sparc:grub-ieee1275|ppc64el/*:grub-ieee1275)
+ 				error "Running 'grub-install $grub_install_params \"$bootdev\"' failed."
+ 				;;
+ 			    *)
+@@ -1177,8 +1151,8 @@
+ }
+ 
+ make_active_partition () {
+-	if [ "$grub_package" != "grub-pc" ]; then
+-	# only do this for grub-pc since on EFI $bootdev is a dummy argument
++	if [ "$grub_package" != "grub-pc-bin" ]; then
++	# only do this for grub-pc-bin since on EFI $bootdev is a dummy argument
+ 	# and looking for a partition table on the wrong or non existing disk
+ 	# crashes the installer LP:#1303790
+ 		return
+@@ -1245,12 +1219,12 @@
+ 	make_active_partition
+ fi
+ 
+-if [ "$grub_package" = "grub-pc" ]; then
++if [ "$grub_package" = "grub-pc-bin" ]; then
+ 	# Do the same thing on upgrades.
+ 	$chroot $ROOT 'debconf-set-selections' <<EOF
+-$grub_package grub-pc/install_devices multiselect $(devices_to_ids $bootdevs)
+-$grub_package grub-pc/install_devices_empty boolean false
+-$grub_package grub-pc/install_devices_empty seen false
++$grub_package grub-pc-bin/install_devices multiselect $(devices_to_ids $bootdevs)
++$grub_package grub-pc-bin/install_devices_empty boolean false
++$grub_package grub-pc-bin/install_devices_empty seen false
+ EOF
+ fi
+ 
+@@ -1443,7 +1417,7 @@
+ 		) >$ROOT/boot/grub/$menu_file.new
+ 		mv $ROOT/boot/grub/$menu_file.new $ROOT/boot/grub/$menu_file
+ 		;;
+-	    grub-pc|grub-efi*)
++	    grub-pc-bin|grub-efi*)
+ 		if grep -q "^GRUB_TERMINAL=" $ROOT/etc/default/grub; then
+ 			sed -i $ROOT/etc/default/grub -e "s/^\(GRUB_TERMINAL\)=.*/\1=serial/g"
+ 		else
