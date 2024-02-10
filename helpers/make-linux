@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2023 Luis Guzman <ark@switnet.org>
+#    Copyright (C) 2024 Luis Guzman <ark@switnet.org>
 #    Copyright (C) 2008-2023  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C) 2019 David Trudgian <dave@trudgian.net>
 #
@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=24
+VERSION=25
 
 . ./config
 
@@ -217,12 +217,12 @@ sed -i "/CONFIG_FW_LOADER_USER_HELPER_FALLBACK/s|'ppc64el': 'n',|'ppc64el': '-',
 sed -i "/AAEON/d" debian.master/config/annotations
 # Disable ubuntu ODM drivers
 sed -i "/CONFIG_UBUNTU_ODM_DRIVERS/d" debian.master/config/annotations
-
-cp debian.master/config debian.hwe -a
+# Tweak 5.15.0-94.104
+sed -i "/CONFIG_GPIO_M058SSAN/s|'amd64': 'm'|'amd64': '-'|" debian.master/config/annotations
+sed -i "/CONFIG_RTC_DRV_PCF85263/s|'amd64': 'm'|'amd64': '-'|" debian.master/config/annotations
 
 changelog "Removed non-free bits"
 
 cp debian/changelog debian.master/changelog
-cp debian/changelog debian.hwe/changelog
 
 package
