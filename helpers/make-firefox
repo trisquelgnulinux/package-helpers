@@ -94,7 +94,8 @@ pref("datareporting.healthreport.about.reportUrl", "https://trisquel.info/legal"
 pref("datareporting.healthreport.infoURL", "https://trisquel.info/legal");
 EOF
 # Replace privacy page
-grep -rl 'https://www.mozilla.org/legal/privacy/' | xargs -r sed -i 's%https://www.mozilla.org/legal/privacy/*"%https://trisquel.info/legal"%'
+grep -rl https://www.mozilla.org/legal/privacy/ | \
+    xargs -r sed -i 's|https://www.mozilla.org/legal/privacy/.*"|https://trisquel.info/legal"|'
 
 # Disable telemetry pings
 grep -rl TELEMETRY_BASE_URL | xargs -r sed -i 's|"https://incoming.telemetry.mozilla.org/submit"|""|'
