@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=25
+VERSION=26
 HWEKR=5.15
 
 . ./config
@@ -155,10 +155,19 @@ sed -i "/CONFIG_FW_LOADER_USER_HELPER_FALLBACK/s|'armhf': 'n',|'armhf': '-',|g" 
 sed -i "/CONFIG_FW_LOADER_USER_HELPER_FALLBACK/s|'arm64': 'n',|'arm64': '-',|g" debian.master/config/annotations
 sed -i "/CONFIG_FW_LOADER_USER_HELPER_FALLBACK/s|'ppc64el': 'n',|'ppc64el': '-',|g" debian.master/config/annotations
 
-# Disable aaeon.
-sed -i "/AAEON/d" debian.master/config/annotations
-# Disable ubuntu ODM drivers
-sed -i "/CONFIG_UBUNTU_ODM_DRIVERS/d" debian.master/config/annotations
+# Disable aaeon & ubuntu odm drivers.
+for i in AAEON CONFIG_UBUNTU_ODM_DRIVERS
+do
+    grep -rl $i debian.{hwe-$HWEKR,master}/config/annotations | \
+    xargs -r sed -i "/$i/d"
+done
+
+# Unset PCF85263 & M058SSAN settings
+for i in CONFIG_GPIO_M058SSAN CONFIG_RTC_DRV_PCF85263
+do
+grep -rl $i debian.{hwe-$HWEKR,master}/config/annotations | \
+    xargs -r sed -i "/$i/s|'amd64': 'm'|'amd64': '-'|"
+done
 
 changelog "Removed non-free bits"
 
