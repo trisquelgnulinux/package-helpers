@@ -92,7 +92,8 @@ pref("datareporting.healthreport.about.reportUrl", "https://trisquel.info/legal"
 pref("datareporting.healthreport.infoURL", "https://trisquel.info/legal");
 EOF
 # Replace privacy page
-sed 's%https://www.mozilla.org/legal/privacy/%https://trisquel.info/legal%' -i ./browser/app/profile/firefox.js ./toolkit/content/aboutRights.xhtml
+grep -rl https://www.mozilla.org/legal/privacy/ | \
+    xargs -r sed -i 's|https://www.mozilla.org/legal/privacy/.*"|https://trisquel.info/legal"|'
 
 # Disable telemetry pings
 grep -rl TELEMETRY_BASE_URL | xargs -r sed -i 's|"https://incoming.telemetry.mozilla.org/submit"|""|'
@@ -105,7 +106,7 @@ grep -rl toolkit.telemetry.shutdownPingSender.enabled  | xargs -r sed -i '/toolk
 grep -rl toolkit.telemetry.newProfilePing.enabled | xargs -r sed -i '/toolkit.telemetry.newProfilePing.enabled/s|true|false|'
 grep -rl toolkit.telemetry.firstShutdownPing.enabled | xargs -r sed -i '/toolkit.telemetry.firstShutdownPing.enabled/s|true|false|'
 grep -rl toolkit.telemetry.bhrPing.enabled  | xargs -r sed -i '/toolkit.telemetry.bhrPing.enabled/s|true|false|'
-grep -rl browser.ping-centre.telemetry | xargs -r sed -i '/browser.ping-centre.telemetry/s|true|false|'
+# fixed by https://bugzilla.mozilla.org/show_bug.cgi?id=1868988
 grep -rl security.certerrors.recordEventTelemetry | xargs -r sed -i '/security.certerrors.recordEventTelemetry/s|true|false|'
 grep -rl services.sync.telemetry.maxPayloadCount modules/ | xargs -r sed -i '/services.sync.telemetry.maxPayloadCount/s|500|-1|'
 grep -rl services.sync.telemetry.submissionInterval modules/ | xargs -r sed -i '/services.sync.telemetry.submissionInterval/s|43200|-1|'
