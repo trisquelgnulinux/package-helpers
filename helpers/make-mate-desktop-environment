@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 
 . ./config
 
@@ -28,7 +28,10 @@ sed 's/thunderbird/icedove/' -i debian/control
 sed 's/firefox/abrowser/' -i debian/control
 sed 's/fonts-cantarell | fonts-ubuntu/fonts-trisquel/' -i debian/control
 
-changelog "Default to Viewnior for image viewer"
+# https://gitlab.trisquel.org/trisquel/package-helpers/-/issues/131
+sed -i '/lock-delay=/s|1|0|' debian/10_mate-common.gschema.override
+
+changelog "Default to Viewnior for image viewer | Match lock delay to mate-screensaver default value."
 
 package
 
