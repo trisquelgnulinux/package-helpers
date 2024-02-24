@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 
 . ./config
 
@@ -30,6 +30,23 @@ cp $DATA/usb-creator.svg debian/Debian/usb-creator-kde.svg
 
 replace "Ubuntu" "Trisquel" .
 replace "Trisquel-Gettext" "Ubuntu-Gettext" .
+
+sed -i '/install Trisquel from a removable disk/s|Trisquel|your OS|' gui/usbcreator-*.ui
+sed -i '/You may now run Trisquel on other computers/s|Trisquel|your OS|' gui/usbcreator-gtk.ui \
+       po/usbcreator.pot
+sed -i '/takes an Trisquel CD image/s|Trisquel|OS|' man/usb-creator-*.8
+sed -i "s|'Trisquel.')|'your OS.')|" usbcreator/frontends/kde/frontend.py
+
+# Set right issues url
+sed -i "s|<https://launchpad.net/ubuntu/.*filebug>|<https://gitlab.trisquel.org/trisquel/package-helpers/-/issues/>|; \
+        s|Trisquel Launchpad|Trisquel's issues tracker|" man/usb-creator-*.8
+
+# Trisquel l10n modifications using git patches.
+for patch in $(ls -v ${DATA}/l10n/*.patch)
+do
+    echo "> Applying $patch"
+    patch --no-backup-if-mismatch -Np1 < $patch
+done
 
 #disable help button
 #sed -i 359s/True/False/ gui/usbcreator-gtk.ui
