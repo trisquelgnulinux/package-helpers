@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 COMPONENT=main
 
 . ./config
@@ -29,6 +29,13 @@ do
 done
 
 sed '/PIDGIN_PREFS_ROOT.*conv_focus/s/TRUE/FALSE/' -i pidgin/gtksound.c
+
+# apply upstream pidgin security fixes / patches not yet in ubuntu.
+for patch in $(ls -v ${DATA}/cve/*.patch)
+do
+    echo "Applying $patch"
+    patch --no-backup-if-mismatch -Np1 < $patch
+done
 
 changelog "Compiled for Trisquel"
 
