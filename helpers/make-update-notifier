@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=12
+VERSION=13
 COMPONENT=main
 
 . ./config
@@ -31,8 +31,11 @@ sed '/client.upgrade_system/s/safe_mode=True/safe_mode=False/' -i data/backend_h
 patch --no-backup-if-mismatch -p1 < $DATA/check_updates_with_update_manager.patch
 # Shorter check times for apt task ending
 sed '/TIMEOUT_APT_RUN/s/600/60/g' -i src/update-notifier.c
+# Set the right path for 'check-new-release-gtk' and 'trisquel-release-upgrader'
+grep -rl check-new-release-gtk | xargs -r sed -i '/check-new-release-gtk/s|ubuntu|trisquel|'
+grep -rl lib/ubuntu-release-upgrader | xargs -r sed -i 's|lib/ubuntu-release-upgrader|lib/trisquel-release-upgrader|'
 # Use update-manager to checks for dist-upgrades.
-sed '/RELEASE_UPGRADE_CHECKER/s|/usr/lib/ubuntu-release-upgrader/check-new-release-gtk|sleep 5; nice ionice -c3 /usr/lib/update-notifier/backend_helper.py reminder_check|' -i src/update-notifier.h
+#FIXME: sed '/RELEASE_UPGRADE_CHECKER/s|/usr/lib/ubuntu-release-upgrader/check-new-release-gtk|sleep 5; nice ionice -c3 /usr/lib/update-notifier/backend_helper.py reminder_check|' -i src/update-notifier.h
 
 # Reduce the timeout to refresh the status of the tray icon
 patch --no-backup-if-mismatch -p1 < $DATA/improve_responsiveness.patch
