@@ -18,12 +18,13 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=35
+VERSION=36
 
 . ./config
 
 # Avoid the need for a custom cdrom:// repo
 patch --no-backup-if-mismatch -p1 < $DATA/grub-installer.patch
+truncate -s 0 d-i/source/apt-setup/generators/40cdrom
 
 # Disable confirmation popups, as they are innacurate and buggy
 patch --no-backup-if-mismatch -p1 < $DATA/no_confrirmation_when_crypto.patch
