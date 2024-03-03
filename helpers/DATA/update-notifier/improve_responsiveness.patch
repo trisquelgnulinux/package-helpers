@@ -1,0 +1,58 @@
+diff -ru source.orig/src/update-notifier.c source/src/update-notifier.c
+--- source.orig/src/update-notifier.c	2023-05-01 12:24:36.171054235 -0400
++++ source/src/update-notifier.c	2023-05-01 13:54:27.833304128 -0400
+@@ -53,7 +53,7 @@
+ gboolean update_timer_finished(gpointer data);
+ 
+ // the time when we check for fam events, in seconds
+-#define TIMEOUT_FAM 180
++#define TIMEOUT_FAM 30
+ 
+ // the timeout (in sec) when a further activity from dpkg/apt
+ // causes the applet to "ungray"
+@@ -388,10 +388,9 @@
+ 
+    // monitor these dirs
+    static const char *monitor_dirs[] = {
+-      "/var/lib/apt/lists/", "/var/lib/apt/lists/partial/",
+-      "/var/cache/apt/archives/", "/var/cache/apt/archives/partial/",
++      "/var/lib/apt/lists/",
++      "/var/cache/apt/archives/",
+       HOOKS_DIR,
+-      CRASHREPORT_DIR,
+       NULL};
+    for(i=0;monitor_dirs[i] != NULL;i++) {
+       if (getenv("UPSTART_SESSION") && monitor_dirs[i] == CRASHREPORT_DIR) {
+@@ -426,7 +426,6 @@ monitor_init(UpgradeNotifier *un)
+       "/var/lib/update-notifier/dpkg-run-stamp",
+       "/var/lib/apt/periodic/update-success-stamp",
+       UNICAST_LOCAL_AVAHI_FILE,
+-      LIVEPATCH_FILE,
+       NULL};
+    for(i=0;monitor_files[i] != NULL;i++) {
+       if (getenv("UPSTART_SESSION") && monitor_files[i] == UNICAST_LOCAL_AVAHI_FILE) {
+diff -ru source.orig/src/update.c source/src/update.c
+--- source.orig/src/update.c	2023-05-01 14:30:39.889778059 -0400
++++ source/src/update.c	2023-05-01 18:05:21.754318730 -0400
+@@ -702,7 +702,8 @@
+ 
+    // show the notification with some delay. otherwise on a login
+    // the origin of the window is 0,0 and that looks ugly
+-   g_timeout_add_seconds(5, show_notification, ta);
++   if (priv->num_upgrades != 0)
++       g_timeout_add_seconds(5, show_notification, ta);
+ 
+    return TRUE;
+ }
+diff -ru source.orig/src/update.c source/src/update.c
+--- source.orig/src/update.c	2023-05-01 14:30:39.889778059 -0400
++++ source/src/update.c	2023-05-01 20:45:14.717390627 -0400
+@@ -251,7 +251,7 @@
+ 					    GTK_STOCK_DIALOG_INFO, 48,0,NULL);
+    notify_notification_set_icon_from_pixbuf (n, pix);
+    g_object_unref(pix);
+-   notify_notification_set_timeout (n, 60*1000);
++   notify_notification_set_timeout (n, 10*1000);
+    notify_notification_show(n, NULL);
+    // save the notification handle
+    if (priv->active_notification)

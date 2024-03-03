@@ -52,7 +52,7 @@ def _get_output_from_lsb_release(lsb_option):
 def get_distro():
     " get distro name "
     try:
-        return _get_info_from_os_release(key="UBUNTU_CODENAME")
+        return _get_info_from_os_release(key="RELEASE_CODENAME")
     except Exception:
         # If the system does not have os-release file or does not have the
         # required entry in it, we will get the distro name from lsb_release
@@ -101,7 +101,7 @@ def saveDistUpgrade(cache, depcache):
 def isSecurityUpgrade(ver):
     " check if the given version is a security update (or masks one) "
     security_pockets = [("Ubuntu", "%s-security" % DISTRO),
-                        ("gNewSense", "%s-security" % DISTRO),
+                        ("Trisquel", "%s-security" % DISTRO),
                         ("Debian", "%s-updates" % DISTRO)]
     for (file, index) in ver.file_list:
         for origin, archive in security_pockets:

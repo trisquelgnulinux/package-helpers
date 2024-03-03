@@ -1,6 +1,7 @@
 #!/bin/sh
 #
-#    Copyright (C) 2012-2022 Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2012-2023 Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2024 Luis Guzmán <ark@switnet.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,10 +18,27 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=5
+VERSION=6
 COMPONENT=main
 
 . ./config
+
+# Don't show the connection check screen when listing available updates
+sed '/update-manager/s/--no-update/--no-update", "--no-check-screen/' -i data/backend_helper.py
+# Actually install all upgrades in "Install all upgrades" menu entry
+sed '/client.upgrade_system/s/safe_mode=True/safe_mode=False/' -i data/backend_helper.py
+# Check updates with update-notifier instead of aptdaemon
+patch --no-backup-if-mismatch -p1 < $DATA/check_updates_with_update_manager.patch
+# Shorter check times for apt task ending
+sed '/TIMEOUT_APT_RUN/s/600/60/g' -i src/update-notifier.c
+# Set the right path for 'check-new-release-gtk' and 'trisquel-release-upgrader'
+grep -rl check-new-release-gtk | xargs -r sed -i '/check-new-release-gtk/s|ubuntu|trisquel|'
+grep -rl lib/ubuntu-release-upgrader | xargs -r sed -i 's|lib/ubuntu-release-upgrader|lib/trisquel-release-upgrader|'
+# Use update-manager to checks for dist-upgrades.
+#FIXME: sed '/RELEASE_UPGRADE_CHECKER/s|/usr/lib/ubuntu-release-upgrader/check-new-release-gtk|sleep 90; nice ionice -c3 /usr/lib/update-notifier/backend_helper.py reminder_check|' -i src/update-notifier.h
+
+# Reduce the timeout to refresh the status of the tray icon
+patch --no-backup-if-mismatch -p1 < $DATA/improve_responsiveness.patch
 
 #Use custom apt-check to fix motd update notification by striping esm stuff.
 cp $DATA/apt_check.py data/apt_check.py
@@ -35,6 +53,95 @@ echo "exit 0" > data/list-oem-metapackages
 
 # Prevent automated connections
 sed '/Update-Package-Lists/s/1/0/' -i debian/10periodic
+
+# Allow to run under KDE
+sed '/NotShowIn=KDE/d' -i data/update-notifier.desktop.in
+
+# Actually show the indicator icon
+cat << EOF | patch --no-backup-if-mismatch -p1
+diff --git a/src/update.c b/src/update.c
+index 588fa66..951a24f 100644
+--- a/src/update.c
++++ b/src/update.c
+@@ -687,7 +687,6 @@ update_check (TrayApplet *ta)
+ 
+       g_child_watch_add (pid, launch_update_manager, NULL);
+    }
+-   return TRUE;
+ 
+    // if we are already visible, skip the rest
+    if(tray_applet_ui_get_visible (ta))
+EOF
+
+# Custom icons
+cp $DATA/icons/* ./pixmaps/scalable
+rm ./pixmaps/{16x16,22x22,24x24,48x48}/ -rf
+echo "SUBDIRS = scalable" > pixmaps/Makefile.am
+sed '/pixmaps\/..x..\/Makefile/d' -i configure.ac
+sed '/usr\/share\/icons\/hicolor\/..x../d' -i debian/update-notifier.install
+
+# Disable livepatch
+sed '/livepatch/d' -i debian/update-notifier.install
+
+# Wayland compatibility
+cat << EOF | patch --no-backup-if-mismatch -p1
+--- a/src/update-notifier.c	2023-01-20 13:50:39.000000000 -0500
++++ b/src/update-notifier.c	2023-02-07 11:08:58.883996715 -0500
+@@ -168,7 +168,13 @@
+ 
+    // normal launch
+    context = gdk_display_get_app_launch_context (gdk_display_get_default ());
+-   guint32 timestamp =  gdk_x11_get_server_time (gtk_widget_get_window (w));
++   guint32 timestamp;
++#ifdef GDK_WINDOWING_X11
++   if (GDK_IS_X11_DISPLAY (gdk_display_get_default ()))
++      timestamp =  gdk_x11_get_server_time (gtk_widget_get_window (w));
++   else
++#endif
++   timestamp = (guint32) (g_get_monotonic_time () / 1000);
+    appinfo = g_app_info_create_from_commandline(cmd, 
+ 						cmd, 
+ 						G_APP_INFO_CREATE_NONE,
+EOF
+
+# Removal of whoopsie & apport
+cat << EOF | patch --no-backup-if-mismatch -p1
+diff --git a/debian/control b/debian/control
+index 6819595..091bbea 100644
+--- a/debian/control
++++ b/debian/control
+@@ -36,8 +36,7 @@ Depends: ${shlibs:Depends},
+          ubuntu-release-upgrader-gtk,
+          gnome-shell <!s390x> | notification-daemon <!s390x>,
+          policykit-1
+-Recommends: apport-gtk (>=2.8-0ubuntu3), 
+-            python3-aptdaemon.gtk3widgets | synaptic (>= 0.75.12), 
++Recommends: python3-aptdaemon.gtk3widgets | synaptic (>= 0.75.12), 
+             software-properties-gtk, 
+             anacron, 
+             python3-aptdaemon
+EOF
+
+# Removal daemons from ubuntu-advantage
+truncate -s 0 data/ubuntu-advantage-notification.desktop.in
+#sed -i '/ubuntu-advantage-notification/d' debian/update-notifier.install
+#sed -i '/ubuntu-advantage-notification.desktop.in.h/,+2d' po/*.po po/*.pot
+
+# Remove ubuntu-advantage services
+cat << EOF >> debian/postrm
+# Remove previosly installed ubuntu-advantage-notification
+rm -rf /usr/lib/update-notifier/ubuntu-advantage-notification && \
+rm -rf /etc/xdg/autostart/ubuntu-advantage-notification.desktop
+
+#DEBHELPER#
+EOF
+
+# Force removal of old services on previous version.
+sed -i '/Description: Daemon/i Breaks: update-notifier-common (<= 3.192.30.17+10.0trisquel5)' debian/control
+sed -i '/Suggests: policykit-1/i Breaks: update-notifier-common (<= 3.192.30.17+10.0trisquel5)' debian/control
+
+# Improve gtk dependency
+sed '/Package: update-notifier$/,/^$/s/policykit-1/policykit-1, python3-aptdaemon.gtk3widgets/' -i debian/control
 
 changelog "Disabled hp-firmware handling and ubuntu-drivers"
 
