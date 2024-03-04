@@ -1,0 +1,2659 @@
+From 1e1b1e7cd8e9284dd4067705f55c3a207e008d60 Mon Sep 17 00:00:00 2001
+From: D-I role <debian-boot@lists.debian.org>
+Date: Thu, 14 Sep 2023 20:23:31 +0000
+Subject: [PATCH] [l10n]  Commit changed/added po files (from l10n-sync run at
+ dillon)
+
+---
+ debian/po/am.po    | 10 ++++++----
+ debian/po/ar.po    | 14 ++++++++------
+ debian/po/ast.po   | 10 ++++++----
+ debian/po/be.po    | 14 ++++++++------
+ debian/po/bg.po    | 12 +++++++-----
+ debian/po/bn.po    | 10 ++++++----
+ debian/po/bo.po    | 11 +++++------
+ debian/po/bs.po    | 10 ++++++----
+ debian/po/ca.po    | 12 +++++++-----
+ debian/po/cs.po    | 12 +++++++-----
+ debian/po/cy.po    | 10 ++++++----
+ debian/po/da.po    | 10 ++++++----
+ debian/po/de.po    | 12 +++++++-----
+ debian/po/dz.po    | 10 ++++++----
+ debian/po/el.po    | 10 ++++++----
+ debian/po/eo.po    | 10 ++++++----
+ debian/po/es.po    | 12 +++++++-----
+ debian/po/et.po    | 10 ++++++----
+ debian/po/eu.po    | 10 ++++++----
+ debian/po/fa.po    | 10 ++++++----
+ debian/po/fi.po    | 14 ++++++++------
+ debian/po/fr.po    | 10 ++++++----
+ debian/po/ga.po    | 10 ++++++----
+ debian/po/gl.po    | 10 ++++++----
+ debian/po/gu.po    | 10 ++++++----
+ debian/po/he.po    | 12 +++++++-----
+ debian/po/hi.po    | 14 ++++++++------
+ debian/po/hr.po    | 14 ++++++++------
+ debian/po/hu.po    | 10 ++++++----
+ debian/po/id.po    | 14 ++++++++------
+ debian/po/is.po    | 12 +++++++-----
+ debian/po/it.po    | 10 ++++++----
+ debian/po/ja.po    | 10 ++++++----
+ debian/po/ka.po    | 12 +++++++-----
+ debian/po/kab.po   | 10 ++++++----
+ debian/po/kk.po    | 10 ++++++----
+ debian/po/km.po    | 10 ++++++----
+ debian/po/kn.po    | 10 ++++++----
+ debian/po/ko.po    | 12 +++++++-----
+ debian/po/ku.po    | 10 ++++++----
+ debian/po/lo.po    | 10 ++++++----
+ debian/po/lt.po    | 12 +++++++-----
+ debian/po/lv.po    | 10 ++++++----
+ debian/po/mk.po    | 10 ++++++----
+ debian/po/ml.po    | 10 ++++++----
+ debian/po/mr.po    | 10 ++++++----
+ debian/po/nb.po    | 14 ++++++++------
+ debian/po/ne.po    | 10 ++++++----
+ debian/po/nl.po    | 12 +++++++-----
+ debian/po/nn.po    | 10 ++++++----
+ debian/po/oc.po    | 10 ++++++----
+ debian/po/pa.po    | 10 ++++++----
+ debian/po/pl.po    | 12 +++++++-----
+ debian/po/pt.po    | 12 +++++++-----
+ debian/po/pt_BR.po | 12 +++++++-----
+ debian/po/ro.po    | 12 +++++++-----
+ debian/po/ru.po    | 10 ++++++----
+ debian/po/se.po    | 11 +++++++----
+ debian/po/si.po    | 10 ++++++----
+ debian/po/sk.po    | 10 ++++++----
+ debian/po/sl.po    | 10 ++++++----
+ debian/po/sq.po    | 10 ++++++----
+ debian/po/sr.po    | 12 +++++++-----
+ debian/po/sv.po    | 14 ++++++++------
+ debian/po/ta.po    | 10 ++++++----
+ debian/po/te.po    | 10 ++++++----
+ debian/po/tg.po    | 10 ++++++----
+ debian/po/th.po    | 10 ++++++----
+ debian/po/tl.po    | 10 ++++++----
+ debian/po/tr.po    | 14 ++++++++------
+ debian/po/ug.po    | 10 ++++++----
+ debian/po/uk.po    | 14 ++++++++------
+ debian/po/vi.po    | 10 ++++++----
+ debian/po/zh_CN.po | 14 ++++++++------
+ debian/po/zh_TW.po | 14 ++++++++------
+ 75 files changed, 490 insertions(+), 342 deletions(-)
+
+diff --git a/debian/po/am.po b/debian/po/am.po
+index ee843616..1b753cf7 100644
+--- a/debian/po/am.po
++++ b/debian/po/am.po
+@@ -17,7 +17,7 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: debian-installer\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+ "PO-Revision-Date: 2022-12-11 11:40+0000\n"
+ "Last-Translator: Danial Behzadi <dani.behzi@ubuntu.com>\n"
+ "Language-Team: Amharic <linux-ethiopia@googlegroups.com>\n"
+@@ -428,14 +428,16 @@ msgstr "ግሩብ የገዢ ስልት ማስነሻ እንደገና ይተከል"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "/target/proc ን መጫን አልተሳካም"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "ሲዲውን መጫን አልተሳካም"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "የproc ፋይል ስርዓትን በ /target/proc መጫን አልተሳካም።"
+ 
+ #. Type: error
+diff --git a/debian/po/ar.po b/debian/po/ar.po
+index 300d86ee..fa7fca2c 100644
+--- a/debian/po/ar.po
++++ b/debian/po/ar.po
+@@ -30,9 +30,9 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: ar\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
+-"PO-Revision-Date: 2022-01-05 22:55+0000\n"
+-"Last-Translator: Bashir Hassan <bshbsh187@gmail.com>\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
++"PO-Revision-Date: 2023-02-10 08:40+0000\n"
++"Last-Translator: Khaled Mahmoud <Khaled.q6@gmail.com>\n"
+ "Language-Team: \n"
+ "Language: ar\n"
+ "MIME-Version: 1.0\n"
+@@ -453,14 +453,16 @@ msgstr "تثبيت محمّل الإقلاع GRUB"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "فشل تركيب /target/proc"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "فشل تركيب القرص المدمج"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "فشل تركيب نظام ملفّات proc عند /target/proc."
+ 
+ #. Type: error
+diff --git a/debian/po/ast.po b/debian/po/ast.po
+index 9dca7d44..04971f2a 100644
+--- a/debian/po/ast.po
++++ b/debian/po/ast.po
+@@ -19,7 +19,7 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: debian-installer\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+ "PO-Revision-Date: 2022-12-11 11:40+0000\n"
+ "Last-Translator: Danial Behzadi <dani.behzi@ubuntu.com>\n"
+ "Language-Team: Softastur\n"
+@@ -460,14 +460,16 @@ msgstr "Reinstalar el cargador d'arranque GRUB"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "Falló montar /target/proc"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "Falló montar CD-ROM"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "Falló montar el sistema de ficheros proc en /target/proc"
+ 
+ #. Type: error
+diff --git a/debian/po/be.po b/debian/po/be.po
+index a3ba5ad3..3b137f1a 100644
+--- a/debian/po/be.po
++++ b/debian/po/be.po
+@@ -22,9 +22,9 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: be\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
+-"PO-Revision-Date: 2023-04-27 15:36+0300\n"
+-"Last-Translator: Viktar Siarheichyk <vics@eq.by>\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
++"PO-Revision-Date: 2023-08-01 07:07+0000\n"
++"Last-Translator: Viktar Siarhejčyk <v@eq.by>\n"
+ "Language-Team: Belarusian <i18n@mova.org>\n"
+ "Language: be\n"
+ "MIME-Version: 1.0\n"
+@@ -451,14 +451,16 @@ msgstr "Пераўсталяваць загрузчык GRUB"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "Не атрымалася прымацаваць /target/proc"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "Не атрымалася прымацаваць CD-ROM"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr ""
+ "Не атрымалася прымацаваць файлавую сістэму proc да пункта /target/proc."
+ 
+diff --git a/debian/po/bg.po b/debian/po/bg.po
+index dc0e9821..ab00af87 100644
+--- a/debian/po/bg.po
++++ b/debian/po/bg.po
+@@ -35,8 +35,8 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: bg\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
+-"PO-Revision-Date: 2022-12-10 18:02+0200\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
++"PO-Revision-Date: 2023-04-06 18:54+0300\n"
+ "Last-Translator: Damyan Ivanov <dmn@debian.org>\n"
+ "Language-Team: Bulgarian <dict@ludost.net>\n"
+ "Language: bg\n"
+@@ -474,14 +474,16 @@ msgstr "Повторно инсталиране на програмата за 
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "Грешка при монтирането на /target/proc"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "Грешка при монтиране на компактдиска"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr ""
+ "Монтирането на файловата система proc в /target/proc завърши неуспешно."
+ 
+diff --git a/debian/po/bn.po b/debian/po/bn.po
+index f5bd85ec..df9424bd 100644
+--- a/debian/po/bn.po
++++ b/debian/po/bn.po
+@@ -32,7 +32,7 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: bn\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+ "PO-Revision-Date: 2023-05-14 17:53+0000\n"
+ "Last-Translator: Indrani Roy <indrani@scriptek.co.in>\n"
+ "Language-Team: Bengali\n"
+@@ -464,14 +464,16 @@ msgstr "পুনরায় GRUB বুট লোডার ইনস্টলক
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "/target/proc মাউন্ট করার যায় নি"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "CD-ROM মাউন্ট করতে ব্যর্থ"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "proc ফাইল সিস্টেমকে /target/proc-এ মাউন্ট করা যায় নি।"
+ 
+ #. Type: error
+diff --git a/debian/po/bo.po b/debian/po/bo.po
+index 7a0972a8..64557a7f 100644
+--- a/debian/po/bo.po
++++ b/debian/po/bo.po
+@@ -8,7 +8,7 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: debian-installer\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+ "PO-Revision-Date: 2019-08-28 18:09+0000\n"
+ "Last-Translator: leela <53352@protonmail.com>\n"
+ "Language-Team: bo <translation-team-bo@lists.sourceforge.net>\n"
+@@ -435,17 +435,16 @@ msgstr "GRUB འགོ་འཛུགས་ཆས་བསྐྱར་དུ་
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-#, fuzzy
+-msgid "Failed to mount /target/proc"
+-msgstr "/target ཐོག་ཏུ་བཀར་ཡོད་པའི་ཡིག་ཆ་མ་ལག་མེད་པ"
++msgid "Failed to mount ${PATH}"
++msgstr ""
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+ #, fuzzy
+-msgid "Mounting the proc file system on /target/proc failed."
+-msgstr "/target/ ཐོག་ཏུ་རྨང་གཞིའི་སྒྲིག་འཇུག་བྱེད་མ་ཐུབ"
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
++msgstr "${DEVICE} ཐོག་གི་ཁག་${PARTITION} གི་ཡིག་ཆའི་མ་ལག་${TYPE} འཚོལ་བཤེར་བཞིན་པ་་་"
+ 
+ #. Type: error
+ #. Description
+diff --git a/debian/po/bs.po b/debian/po/bs.po
+index f6e8262e..6e1c8f8a 100644
+--- a/debian/po/bs.po
++++ b/debian/po/bs.po
+@@ -26,7 +26,7 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: debian-installer_packages_po_sublevel1_bs\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+ "PO-Revision-Date: 2022-04-28 20:08+0000\n"
+ "Last-Translator: Amar Tufo <bhllinux@gmail.com>\n"
+ "Language-Team: Bosnian <lokal@linux.org.ba>\n"
+@@ -464,14 +464,16 @@ msgstr "Reinstaliraj GRUB boot loader"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "Nemogu montirati /target/proc"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "Nemogu montirati CD-ROM"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "Montiranje proc datotečnog sistema na /target/proc nije uspjelo."
+ 
+ #. Type: error
+diff --git a/debian/po/ca.po b/debian/po/ca.po
+index 980286e3..d002101f 100644
+--- a/debian/po/ca.po
++++ b/debian/po/ca.po
+@@ -23,8 +23,8 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: debian-installer\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
+-"PO-Revision-Date: 2023-04-23 19:09+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
++"PO-Revision-Date: 2023-08-21 06:34+0000\n"
+ "Last-Translator: d <dmanye@gmail.com>\n"
+ "Language-Team: Catalan <debian-l10n-catalan@lists.debian.org>\n"
+ "Language: ca\n"
+@@ -465,14 +465,16 @@ msgstr "Reinstal·la el carregador GRUB"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "No s'ha pogut muntar /target/proc"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "No s'ha pogut muntar el CD-ROM"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "Ha fallat el muntatge del sistema de fitxers proc a /target/proc."
+ 
+ #. Type: error
+diff --git a/debian/po/cs.po b/debian/po/cs.po
+index ff27c66d..3a901e62 100644
+--- a/debian/po/cs.po
++++ b/debian/po/cs.po
+@@ -18,8 +18,8 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: debian-installer\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
+-"PO-Revision-Date: 2023-05-15 14:16+0200\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
++"PO-Revision-Date: 2023-06-27 21:49+0200\n"
+ "Last-Translator:  Miroslav Kure <kurem@debian.cz>\n"
+ "Language-Team:  Czech <provoz@debian.cz>\n"
+ "Language: cs\n"
+@@ -446,14 +446,16 @@ msgstr "Reinstalovat zavaděč GRUB"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "Připojení /target/proc selhalo"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "Selhalo připojení CD-ROM"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "Připojení souborového systému proc pod /target/proc selhalo."
+ 
+ #. Type: error
+diff --git a/debian/po/cy.po b/debian/po/cy.po
+index d262bc6e..0e55e884 100644
+--- a/debian/po/cy.po
++++ b/debian/po/cy.po
+@@ -20,7 +20,7 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: \n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+ "PO-Revision-Date: 2022-03-06 22:56+0000\n"
+ "Last-Translator: Ceiri Wyn Tudur <ceiri.tudur@gmail.com>\n"
+ "Language-Team: Welsh <>\n"
+@@ -462,14 +462,16 @@ msgstr "Ailsefydlu'r llwythwr ymgychwyn GRUB"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "Methwyd clymu /target/proc"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "Methwyd clymu CD-ROM"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "Methwyd clymu'r system ffeiliau proc ar /target/proc."
+ 
+ #. Type: error
+diff --git a/debian/po/da.po b/debian/po/da.po
+index f2b6dfa5..e555ff97 100644
+--- a/debian/po/da.po
++++ b/debian/po/da.po
+@@ -39,7 +39,7 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: debian-installer_packages_po_sublevel1_da\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+ "PO-Revision-Date: 2023-05-10 00:53+0000\n"
+ "Last-Translator: Tino Didriksen <mail@tinodidriksen.com>\n"
+ "Language-Team: <dansk@dansk-gruppen.dk>\n"
+@@ -470,14 +470,16 @@ msgstr "Geninstaller GRUB-opstartsindlæseren"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "Kunne ikke montere /target/proc"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "Kunne ikke montere disketten"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "Montering af proc-filsystemet på /target/proc mislykkedes."
+ 
+ #. Type: error
+diff --git a/debian/po/de.po b/debian/po/de.po
+index dd82683b..47340661 100644
+--- a/debian/po/de.po
++++ b/debian/po/de.po
+@@ -41,8 +41,8 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: debian-installer\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
+-"PO-Revision-Date: 2023-04-22 23:52+0200\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
++"PO-Revision-Date: 2023-08-30 22:32+0200\n"
+ "Last-Translator: Holger Wansing <hwansing@mailbox.org>\n"
+ "Language-Team: German <debian-l10n-german@lists.debian.org>\n"
+ "Language: de\n"
+@@ -487,14 +487,16 @@ msgstr "Den GRUB-Bootloader neu installieren"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "Einbinden von /target/proc fehlgeschlagen"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "Einbinden der CD-ROM fehlgeschlagen"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "Das proc-Dateisystem konnte nicht als /target/proc eingebunden werden."
+ 
+ #. Type: error
+diff --git a/debian/po/dz.po b/debian/po/dz.po
+index 3d4438cb..c58b12c3 100644
+--- a/debian/po/dz.po
++++ b/debian/po/dz.po
+@@ -18,7 +18,7 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: dDz.po\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+ "PO-Revision-Date: 2021-05-21 05:32+0000\n"
+ "Last-Translator: Jacque Fresco <aidter@use.startmail.com>\n"
+ "Language-Team: Dzongkha <pgeyleg@dit.gov.bt>\n"
+@@ -454,14 +454,16 @@ msgstr "GRUB བུཊི་མངོན་གསལ་པ་ལོག་གཞ
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr " /target/proc སྦྱར་བརྩེགས་འབད་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོད།"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "སི་ཌི་-རོམ་སྦྱར་བཙེགས་འབད་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོད།"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr " /target/proc ལུ་ proc ཡིག་སྣོད་རིམ་ལུགས་སྦྱར་བརྩེགས་འབད་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོ"
+ 
+ #. Type: error
+diff --git a/debian/po/el.po b/debian/po/el.po
+index 2a1f8a5e..5ca0e845 100644
+--- a/debian/po/el.po
++++ b/debian/po/el.po
+@@ -35,7 +35,7 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: el\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+ "PO-Revision-Date: 2023-05-13 02:46+0300\n"
+ "Last-Translator: galaxico <galas@tee.gr>\n"
+ "Language-Team: Greek <debian-l10n-greek@lists.debian.org>\n"
+@@ -477,14 +477,16 @@ msgstr "Επανεγκατάσταση του φορτωτή εκκίνησης
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "Σφάλμα κατά τη προσάρτηση του /target/proc"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "Σφάλμα κατά την προσάρτηση (mount) του CD-ROM"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr ""
+ "Η προσάρτηση του εικονικού συστήματος αρχείων procfs στο /target/proc "
+ "απέτυχε."
+diff --git a/debian/po/eo.po b/debian/po/eo.po
+index 3ae61c11..3bc6e47d 100644
+--- a/debian/po/eo.po
++++ b/debian/po/eo.po
+#@@ -22,7 +22,7 @@ msgid ""
+# msgstr ""
+# "Project-Id-Version: debian-installer\n"
+# "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+#-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
+#+"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+# "PO-Revision-Date: 2023-07-21 00:03+0000\n"
+# "Last-Translator: Felipe Castro <fefcas@gmail.com>\n"
+# "Language-Team: Esperanto <debian-l10n-esperanto@lists.debian.org>\n"
+@@ -453,14 +453,16 @@ msgstr "Reinstali la ekŝargilon 'GRUB'"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "Malsukcesis munti /target/proc"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "Munto de lumdisko malsukcesis"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "Muntado de dosiersistemo proc sur /target/proc malsukcesis."
+ 
+ #. Type: error
+diff --git a/debian/po/es.po b/debian/po/es.po
+index 4f716c37..72bedde0 100644
+--- a/debian/po/es.po
++++ b/debian/po/es.po
+@@ -60,8 +60,8 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: debian-installer\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
+-"PO-Revision-Date: 2023-04-23 19:09+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
++"PO-Revision-Date: 2023-08-18 17:56+0000\n"
+ "Last-Translator: gallegonovato <fran-carro@hotmail.es>\n"
+ "Language-Team: Debian Spanish <debian-l10n-spanish@lists.debian.org>\n"
+ "Language: es\n"
+@@ -503,14 +503,16 @@ msgstr "Reinstalar el cargador de arranque GRUB"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "Fallo al montar «/target/proc»"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "Se produjo un fallo al montar el CD-ROM"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "Falló el montaje el sistema de ficheros proc en «/target/proc»."
+ 
+ #. Type: error
+diff --git a/debian/po/et.po b/debian/po/et.po
+index a638f434..26f09abe 100644
+--- a/debian/po/et.po
++++ b/debian/po/et.po
+@@ -31,7 +31,7 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: \n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+ "PO-Revision-Date: 2023-04-25 19:42+0000\n"
+ "Last-Translator: Kristjan Räts <kristjanrats@gmail.com>\n"
+ "Language-Team: Estonian <>\n"
+@@ -460,14 +460,16 @@ msgstr "GRUB alglaaduri uuesti seadistamine"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "/target/proc haakimine nurjus"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "Laserketast ei õnnestunud haakida"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "Failisüsteemi /target/proc ei õnnestunud külge haakida."
+ 
+ #. Type: error
+diff --git a/debian/po/eu.po b/debian/po/eu.po
+index eecab2dc..f6166dd1 100644
+--- a/debian/po/eu.po
++++ b/debian/po/eu.po
+@@ -27,7 +27,7 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: di-sublevel1_eu\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+ "PO-Revision-Date: 2022-06-09 19:45+0000\n"
+ "Last-Translator: Gontzal Manuel Pujana Onaindia <thadahdenyse@gmail.com>\n"
+ "Language-Team: Basque <librezale@librezale.eus>\n"
+@@ -458,14 +458,16 @@ msgstr "Berriro instalatu GRUB abioko kargatzailea"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "Huts egin du /target/proc muntatzean"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "Ezin izan da CD-ROMa muntatu"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "Huts egin du proc fitxategi-sistema /target/proc-en muntatzean."
+ 
+ #. Type: error
+diff --git a/debian/po/fa.po b/debian/po/fa.po
+index 71d635c3..6ef61be0 100644
+--- a/debian/po/fa.po
++++ b/debian/po/fa.po
+@@ -25,7 +25,7 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: fa sublevel1\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+ "PO-Revision-Date: 2023-05-06 12:58+0000\n"
+ "Last-Translator: Danial Behzadi <dani.behzi@ubuntu.com>\n"
+ "Language-Team: Debian-l10n-persian <debian-l10n-persian@lists.debian.org>\n"
+@@ -456,14 +456,16 @@ msgstr "نصب مجدد راه‌انداز GRUB"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "سوار کردن /target/proc شکست خورد"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "مونت CD-ROM با شکست مواجه شد"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "فایل سیستم proc بر روی  /target/proc مانت نشده است ."
+ 
+ #. Type: error
+diff --git a/debian/po/fi.po b/debian/po/fi.po
+index f489caba..299edc36 100644
+--- a/debian/po/fi.po
++++ b/debian/po/fi.po
+@@ -27,9 +27,9 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: debian-installer\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
+-"PO-Revision-Date: 2022-06-02 19:19+0000\n"
+-"Last-Translator: Jiri Nakola <github@nakola.fi>\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
++"PO-Revision-Date: 2022-09-16 09:23+0000\n"
++"Last-Translator: Tommi Nieminen <software@legisign.org>\n"
+ "Language-Team: Finnish <debian-l10n-finnish@lists.debian.org>\n"
+ "Language: fi\n"
+ "MIME-Version: 1.0\n"
+@@ -456,14 +456,16 @@ msgstr "Asennetaan GRUB-alkulatausohjelma uudelleen"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "Hakemiston /target/proc liittäminen ei onnistunut"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "CD-levyn liittäminen epäonnistui"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr ""
+ "proc-tiedostojärjestelmän liittäminen liitoskohtaan /target/proc ei "
+ "onnistunut."
+diff --git a/debian/po/fr.po b/debian/po/fr.po
+index 205fe424..9333b07f 100644
+--- a/debian/po/fr.po
++++ b/debian/po/fr.po
+@@ -30,7 +30,7 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: fr\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+ "PO-Revision-Date: 2023-05-14 09:38+0200\n"
+ "Last-Translator: Baptiste Jammet <baptiste@mailoo.org>\n"
+ "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
+@@ -480,14 +480,16 @@ msgstr "Réinstallation du programme de démarrage GRUB"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "Échec du montage de /target/proc"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "Impossible de monter le CD"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "Le montage du système de fichiers « proc » sur /target/proc a échoué."
+ 
+ #. Type: error
+diff --git a/debian/po/ga.po b/debian/po/ga.po
+index 8f134764..338d0466 100644
+--- a/debian/po/ga.po
++++ b/debian/po/ga.po
+@@ -17,7 +17,7 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: debian-installer\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+ "PO-Revision-Date: 2023-04-24 19:41-0500\n"
+ "Last-Translator: Kevin Scannell <kscanne@gmail.com>\n"
+ "Language-Team: Irish <gaeilge-gnulinux@lists.sourceforge.net>\n"
+@@ -451,14 +451,16 @@ msgstr "Athshuiteáil luchtóir tosaithe GRUB"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "Theip ar /target/proc a fheistiú"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "Theip ar CD-ROM a fheistiú"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "Níorbh fhéidir an córas comhad proc a fheistiú ar /target/proc."
+ 
+ #. Type: error
+diff --git a/debian/po/gl.po b/debian/po/gl.po
+index 9a10d06e..fe262a98 100644
+--- a/debian/po/gl.po
++++ b/debian/po/gl.po
+@@ -25,7 +25,7 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: gl\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+ "PO-Revision-Date: 2023-04-16 12:50+0000\n"
+ "Last-Translator: gallegonovato <fran-carro@hotmail.es>\n"
+ "Language-Team: Galician <proxecto@trasno.net>\n"
+@@ -460,14 +460,16 @@ msgstr "Reinstalar o cargador de arranque GRUB"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "Non foi posíbel montar /target/proc"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "Non foi posíbel montar o CD-ROM"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "Non foi posíbel montar o sistema de ficheiros proc en /target/proc ."
+ 
+ #. Type: error
+diff --git a/debian/po/gu.po b/debian/po/gu.po
+index e6325e69..ea12770d 100644
+--- a/debian/po/gu.po
++++ b/debian/po/gu.po
+@@ -24,7 +24,7 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: d-i\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+ "PO-Revision-Date: 2008-08-07 11:42+0530\n"
+ "Last-Translator: Kartik Mistry <kartik.mistry@gmail.com>\n"
+ "Language-Team: \n"
+@@ -451,14 +451,16 @@ msgstr "GRUB બૂટ લોડર ફરી સ્થાપિત કરો"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "/target/proc માઉન્ટ કરવામાં નિષ્ફળ"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "સીડી-રોમ માઉન્ટ કરવામાં નિષ્ફળ"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "/target/proc પર proc ફાઇલ સિસ્ટમ માઉન્ટ કરવામાં નિષ્ફળ ગયું"
+ 
+ #. Type: error
+diff --git a/debian/po/he.po b/debian/po/he.po
+index 69beaa2d..3dda5b63 100644
+--- a/debian/po/he.po
++++ b/debian/po/he.po
+@@ -27,8 +27,8 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: debian-installer\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
+-"PO-Revision-Date: 2023-04-23 13:41+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
++"PO-Revision-Date: 2023-08-18 17:56+0000\n"
+ "Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
+ "Language-Team: Hebrew (https://www.transifex.com/yaron/teams/79473/he/)\n"
+ "Language: he\n"
+@@ -449,14 +449,16 @@ msgstr "התקנה מחדש של מנהל האתחול GRUB"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "העיגון של ‎/target/proc נכשל"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "עגינת התקליטור נכשלה"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "עיגון מערכת קבצים מסוג proc ב־‎ /target/proc נכשל."
+ 
+ #. Type: error
+diff --git a/debian/po/hi.po b/debian/po/hi.po
+index e90c81ac..c9411908 100644
+--- a/debian/po/hi.po
++++ b/debian/po/hi.po
+@@ -27,7 +27,7 @@
+ # Kumar Appaiah <kumar.appaiah@gmail.com>, 2008, 2011, 2012.
+ # Sruthi Chandran <srud@openmailbox.org>, 2018.
+ # Himanshu Awasthi <johim9493@gmail.com>, 2018.
+-# KushagraKarira <kushagrakarira@gmail.com>, 2020, 2021.
++# KushagraKarira <kushagrakarira@gmail.com>, 2020, 2021, 2022.
+ # षिखर् <dnitesigm@gmail.com>, 2020.
+ # Indrani Roy <indrani@scriptek.co.in>, 2021.
+ #
+@@ -35,8 +35,8 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: debian-installer_packages_po_sublevel1_hi\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
+-"PO-Revision-Date: 2021-12-03 23:44+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
++"PO-Revision-Date: 2022-12-17 17:48+0000\n"
+ "Last-Translator: KushagraKarira <kushagrakarira@gmail.com>\n"
+ "Language-Team: \n"
+ "Language: hi\n"
+@@ -458,14 +458,16 @@ msgstr "ग्रब बूट लोडर पुनः संस्थाप
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "/target/proc को आरूढ़ करने में विफल"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "सीडी-रोम माउन्ट करने में असफल"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "proc फाइलतंत्र को /target/proc पर माउंट करने में असफल."
+ 
+ #. Type: error
+diff --git a/debian/po/hr.po b/debian/po/hr.po
+index 61e08318..d894292e 100644
+--- a/debian/po/hr.po
++++ b/debian/po/hr.po
+@@ -24,9 +24,9 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: Debian-installer 1st-stage master file HR\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
+-"PO-Revision-Date: 2023-05-28 21:04+0200\n"
+-"Last-Translator: Valentin Vidic <vvidic@debian.org>\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
++"PO-Revision-Date: 2023-06-03 10:49+0000\n"
++"Last-Translator: Milo Ivir <mail@milotype.de>\n"
+ "Language-Team: Croatian <lokalizacija@linux.hr>\n"
+ "Language: hr\n"
+ "MIME-Version: 1.0\n"
+@@ -455,14 +455,16 @@ msgstr "Ponovno instalirajte GRUB učitača pokretanja"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "Neuspjelo montiranje /target/proc"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "Neuspjelo montiranje CD-ROM-a"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "Montiranje proc datotečnog sustava na /target/proc nije uspjelo."
+ 
+ #. Type: error
+diff --git a/debian/po/hu.po b/debian/po/hu.po
+index e93be7bf..581c24cf 100644
+--- a/debian/po/hu.po
++++ b/debian/po/hu.po
+@@ -28,7 +28,7 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: debian-installer\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+ "PO-Revision-Date: 2023-04-25 15:56+0000\n"
+ "Last-Translator: Balázs Máhli <mahli@posteo.net>\n"
+ "Language-Team: Debian L10n Hungarian <debian-l10n-hungarian@lists.debian."
+@@ -515,14 +515,16 @@ msgstr "A GRUB boot betöltő újratelepítése"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "/target/proc csatolása sikertelen"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "CD-ROM csatolása sikertelen"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "A proc fájlrendszer csatolása /target/proc-ra nem sikerült."
+ 
+ #. Type: error
+diff --git a/debian/po/id.po b/debian/po/id.po
+index b06f95b7..0b89d929 100644
+--- a/debian/po/id.po
++++ b/debian/po/id.po
+@@ -34,9 +34,9 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: debian-installer (level1)\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
+-"PO-Revision-Date: 2023-05-06 12:58+0000\n"
+-"Last-Translator: Rania Amina <reaamina@gmail.com>\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
++"PO-Revision-Date: 2023-08-24 22:56+0000\n"
++"Last-Translator: Reza Almanda <rezaalmanda27@gmail.com>\n"
+ "Language-Team: Debian Indonesia Translators <debian-l10n-indonesian@lists."
+ "debian.org>\n"
+ "Language: id\n"
+@@ -467,14 +467,16 @@ msgstr "Memasang kembali boot loader GRUB"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "Gagal mengaitkan /target/proc"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "Gagal mengaitkan CD ROM"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "Pengaitan sistem berkas proc pada /target/proc gagal."
+ 
+ #. Type: error
+diff --git a/debian/po/is.po b/debian/po/is.po
+index 2a4536f7..ed1a58e2 100644
+--- a/debian/po/is.po
++++ b/debian/po/is.po
+#@@ -26,8 +26,8 @@ msgid ""
+# msgstr ""
+# "Project-Id-Version: Icelandic (Debian Installer)\n"
+# "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+#-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
+#-"PO-Revision-Date: 2023-06-05 11:50+0000\n"
+#+"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+#+"PO-Revision-Date: 2023-07-24 14:07+0000\n"
+# "Last-Translator: Sveinn í Felli <sv1@fellsnet.is>\n"
+# "Language-Team: Icelandic <translation-team-is@lists.sourceforge.net>\n"
+# "Language: is\n"
+@@ -458,14 +458,16 @@ msgstr "Setja GRUB ræsistjórann upp aftur"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "Tókst ekki að tengja /target/proc"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "Tókst ekki að tengja geisladisk"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "Tókst ekki að tengja proc skráakerfið á /target/proc."
+ 
+ #. Type: error
+diff --git a/debian/po/it.po b/debian/po/it.po
+index 534cce70..b30ec2e0 100644
+--- a/debian/po/it.po
++++ b/debian/po/it.po
+@@ -40,7 +40,7 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: debian-installer\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+ "PO-Revision-Date: 2020-10-26 09:14+0100\n"
+ "Last-Translator: Milo Casagrande <milo@milo.name>\n"
+ "Language-Team: Italian <tp@lists.linux.it>\n"
+@@ -477,14 +477,16 @@ msgstr "Re-installare il boot loader GRUB"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "Montaggio di /target/proc non riuscito"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "Montaggio del dischetto non riuscito"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "Il montaggio del file system proc su /target/proc non è riuscito."
+ 
+ #. Type: error
+diff --git a/debian/po/ja.po b/debian/po/ja.po
+index baef32f4..1a2eba91 100644
+--- a/debian/po/ja.po
++++ b/debian/po/ja.po
+@@ -29,7 +29,7 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: debian-installer\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+ "PO-Revision-Date: 2023-05-14 17:53+0000\n"
+ "Last-Translator: YOSHINO Yoshihito <yy.y.ja.jp@gmail.com>\n"
+ "Language-Team: Debian L10n Japanese <debian-japanese@lists.debian.org>\n"
+@@ -462,14 +462,16 @@ msgstr "GRUB ブートローダの再インストール"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "/target/proc のマウントに失敗しました"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "CD-ROM のマウントに失敗しました"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "proc ファイルシステムを /target/proc にマウントするのに失敗しました。"
+ 
+ #. Type: error
+diff --git a/debian/po/ka.po b/debian/po/ka.po
+index a4be02c3..b3604785 100644
+--- a/debian/po/ka.po
++++ b/debian/po/ka.po
+@@ -24,8 +24,8 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: debian-installer.2006071\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
+-"PO-Revision-Date: 2023-04-09 20:53+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
++"PO-Revision-Date: 2023-08-05 18:47+0000\n"
+ "Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
+ "Language-Team: Georgian\n"
+ "Language: ka\n"
+@@ -459,14 +459,16 @@ msgstr "GRUB სისტემური ჩამტვირთველის
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "შეცდომა დამონტაჟებისას"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "შეცდომა კომპაქტ-დისკის დამონტაჟებისას"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "proc ფაილური სისტემა ვერ დამონტაჟდა პუნქტზე /target/proc."
+ 
+ #. Type: error
+diff --git a/debian/po/kab.po b/debian/po/kab.po
+index 1657e781..f3416692 100644
+--- a/debian/po/kab.po
++++ b/debian/po/kab.po
+@@ -12,7 +12,7 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: debian-installer sublevel1\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+ "PO-Revision-Date: 2022-01-28 11:55+0000\n"
+ "Last-Translator: Selyan Sliman Amiri <selyan.kab@gmail.com>\n"
+ "Language-Team: Kabyle <kab@li.org>\n"
+@@ -444,14 +444,16 @@ msgstr "Ales asebded n umsalay n usenker GRUB"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "Yecceḍ userkeb n /asaḍas/proc"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "Ur yeddi ara usali n CD-ROM"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "Yecceḍ userkeb n unagraw n yifuyla proc ɣef /usaḍas/proc."
+ 
+ #. Type: error
+diff --git a/debian/po/kk.po b/debian/po/kk.po
+index 0406791e..deced522 100644
+--- a/debian/po/kk.po
++++ b/debian/po/kk.po
+@@ -22,7 +22,7 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: debian-installer\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+ "PO-Revision-Date: 2022-12-04 17:19+0600\n"
+ "Last-Translator: Baurzhan Muftakhidinov <baurthefirst@gmail.com>\n"
+ "Language-Team: Kazakh\n"
+@@ -448,14 +448,16 @@ msgstr "GRUB жүйелік жүктеушісін қайта орнату"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "/target/proc тіркеу сәтсіз"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "CD-ROM тіркеу сәтсіз аяқталды"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "Базалық жүйені /target/ бумасын орнату сәтсіз аяқталды."
+ 
+ #. Type: error
+diff --git a/debian/po/km.po b/debian/po/km.po
+index 1a12670a..4d8b3c69 100644
+--- a/debian/po/km.po
++++ b/debian/po/km.po
+@@ -13,7 +13,7 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: km\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+ "PO-Revision-Date: 2019-08-28 18:10+0000\n"
+ "Last-Translator: leela <53352@protonmail.com>\n"
+ "Language-Team: Khmer <support@khmeros.info>\n"
+@@ -446,14 +446,16 @@ msgstr "ដំឡើង​កម្មវិធី​ចាប់ផ្ដើម
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "បាន​បរាជ័យ​ក្នុង​ការ​ម៉ោន /target/proc"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "បរាជ័យ​ក្នុង​ម៉ោន​ស៊ីឌីរ៉ូម"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "ការ​ម៉ោន​ប្រព័ន្ធ​ឯកសារ proc លើ /target/proc បាន​បរាជ័យ​ហើយ ។"
+ 
+ #. Type: error
+diff --git a/debian/po/kn.po b/debian/po/kn.po
+index 08548589..bf2b3f53 100644
+--- a/debian/po/kn.po
++++ b/debian/po/kn.po
+@@ -21,7 +21,7 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: kn\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+ "PO-Revision-Date: 2020-07-21 17:24+0000\n"
+ "Last-Translator: Yogesh <yogesh@karnatakaeducation.org.in>\n"
+ "Language-Team: Kannada <debian-l10n-kannada@lists.debian.org>\n"
+@@ -458,14 +458,16 @@ msgstr "ಗ್ರಬ್ ಬೂಟ್ ಲೋಡರನ್ನು ಮರುಸ್ಥ
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "/target/proc ಕಳಶವಾಗಿಸಲು ವಿಫಲವಾಗಿದೆ "
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "ಸಿ ಡಿ ರೊಮ್ ಅನ್ನು  ಆರೋಹಿಸುವಲ್ಲಿ ವಿಫಲಗೊಂಡಿದೆ"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "proc ಕಡತ ವ್ಯವಸ್ಥೆ ಯು /target/proc ಮೇಲೆ  ಕಳಶವಾಗಿಸಲು  ವಿಫಲವಾಗಿದೆ  "
+ 
+ #. Type: error
+diff --git a/debian/po/ko.po b/debian/po/ko.po
+index c2fc156e..8704d5f5 100644
+--- a/debian/po/ko.po
++++ b/debian/po/ko.po
+@@ -27,8 +27,8 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: debian-installer\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
+-"PO-Revision-Date: 2023-04-28 22:35+0900\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
++"PO-Revision-Date: 2023-09-04 17:30+0530\n"
+ "Last-Translator: Changwoo Ryu <cwryu@debian.org>\n"
+ "Language-Team:  Korean <debian-l10n-korean@lists.debian.org>\n"
+ "Language: ko\n"
+@@ -449,14 +449,16 @@ msgstr "GRUB 부트로더 다시 설치"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "/target/proc을 마운트하는데 실패했습니다"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "CD-ROM을 마운트하는데 실패했습니다"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "/target/proc의 proc 파일 시스템을 마운트하는데 실패했습니다."
+ 
+ #. Type: error
+diff --git a/debian/po/ku.po b/debian/po/ku.po
+index 535e8c96..34d56d1e 100644
+--- a/debian/po/ku.po
++++ b/debian/po/ku.po
+@@ -18,7 +18,7 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: ku\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+ "PO-Revision-Date: 2021-05-21 05:32+0000\n"
+ "Last-Translator: Jacque Fresco <aidter@use.startmail.com>\n"
+ "Language-Team: Kurdish Team http://pckurd.net\n"
+@@ -450,14 +450,16 @@ msgstr "Boot loader a GRUB ji nû ve saz bike"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "Mountkirina /target/proc serneket"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "Mountkirina CD-ROM serneket"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "Mountkirina pergala pelan proc di /target/proc de serneket."
+ 
+ #. Type: error
+diff --git a/debian/po/lo.po b/debian/po/lo.po
+index a32ea04c..10530775 100644
+--- a/debian/po/lo.po
++++ b/debian/po/lo.po
+@@ -13,7 +13,7 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: lo\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+ "PO-Revision-Date: 2012-04-25 09:05+0700\n"
+ "Last-Translator: Anousak Souphavanh <anousak@gmail.com>\n"
+ "Language-Team: Lao <lo@li.org>\n"
+@@ -439,14 +439,16 @@ msgstr "ຕິດຕັ້ງບູດໂຫຼດເດີ GRUB ໃໝ່"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "ລົ້ມແຫຼວທີ່ຈະຍຶດເປົ້າໝາຍ /target/proc"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "ເມົ້າທ໌ຊີດີລອມບໍ່ສຳເລັດ"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "ເມົ້າທ໌ລະບົບແຟ້ມ proc ເທີງ /target/proc ບໍ່ສຳເລັດ"
+ 
+ #. Type: error
+diff --git a/debian/po/lt.po b/debian/po/lt.po
+index 5d1eaf59..e78f758f 100644
+--- a/debian/po/lt.po
++++ b/debian/po/lt.po
+#@@ -29,8 +29,8 @@ msgid ""
+# msgstr ""
+# "Project-Id-Version: debian-installer\n"
+# "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+#-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
+#-"PO-Revision-Date: 2023-07-17 07:08+0000\n"
+#+"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+#+"PO-Revision-Date: 2023-08-30 06:12+0000\n"
+# "Last-Translator: Rimas Kudelis <rimas@kudelis.lt>\n"
+# "Language-Team: Lithuanian <komp_lt@konferencijos.lt>\n"
+# "Language: lt\n"
+@@ -464,14 +464,16 @@ msgstr "Pradinio įkėliklio GRUB įdiegimas naujai"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "Nepavyko prijungti „/target/proc“"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "Nepavyko prijungti kompaktinio disko"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "Nepavyko prijungti „proc“ failų sistemos prie „/target/proc“."
+ 
+ #. Type: error
+diff --git a/debian/po/lv.po b/debian/po/lv.po
+index 4100cc03..0674bb3c 100644
+--- a/debian/po/lv.po
++++ b/debian/po/lv.po
+@@ -29,7 +29,7 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: lv\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+ "PO-Revision-Date: 2023-04-30 21:51+0300\n"
+ "Last-Translator: Tranzistors <rudolfs.mazurs@gmail.com>\n"
+ "Language-Team: Latvian <lata-l10n@googlegroups.com>\n"
+@@ -456,14 +456,16 @@ msgstr "Pārinstalēt GRUB palaidēju"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "Neizdevās piemontēt /target/proc"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "Nevarēja piemontēt CD-ROM"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "Neizdevās piemontēt proc datņu sistēmu uz /target/proc."
+ 
+ #. Type: error
+diff --git a/debian/po/mk.po b/debian/po/mk.po
+index 419793c7..90819be0 100644
+--- a/debian/po/mk.po
++++ b/debian/po/mk.po
+@@ -24,7 +24,7 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: debian-installer_packages_po_sublevel1_mk\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+ "PO-Revision-Date: 2023-05-20 08:52+0000\n"
+ "Last-Translator: Kristijan Fremen Velkovski <me@krisfremen.com>\n"
+ "Language-Team: Macedonian <>\n"
+@@ -463,14 +463,16 @@ msgstr "Преинсталирај го ГРУБ бут вчитувачот"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "Не успеав да монтирам /target/proc"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "Не успеав да го монтирам CD-ROM-от"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "Монтирањето на proc датотечниот систем на /target/proc не успеа."
+ 
+ #. Type: error
+diff --git a/debian/po/ml.po b/debian/po/ml.po
+index 70f57062..30ef3660 100644
+--- a/debian/po/ml.po
++++ b/debian/po/ml.po
+@@ -23,7 +23,7 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: Debian Installer Level 1\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+ "PO-Revision-Date: 2022-04-10 08:47+0000\n"
+ "Last-Translator: anomymous\n"
+ "Language-Team: Swatantra Malayalam Computing <discuss@lists.smc.org.in>\n"
+@@ -461,14 +461,16 @@ msgstr "ഗ്രബ് ബൂട്ട് ലോഡര്‍ വീണ്ടു
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "/target/proc മൌണ്ട് ചെയ്യുന്നതില്‍ പരാജയപ്പെട്ടു"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "സിഡി-റോം മൌണ്ട് ചെയ്യുന്നതില്‍ പരാജയപ്പെട്ടു"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "proc ഫയല്‍ സിസ്റ്റം /target/proc ല്‍ മൌണ്ട് ചെയ്യുന്നതില്‍ പരാജയപ്പെട്ടു."
+ 
+ #. Type: error
+diff --git a/debian/po/mr.po b/debian/po/mr.po
+index 4a18c87f..0bbefe54 100644
+--- a/debian/po/mr.po
++++ b/debian/po/mr.po
+@@ -19,7 +19,7 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: debian-installer\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+ "PO-Revision-Date: 2020-10-10 17:26+0000\n"
+ "Last-Translator: Prachi Joshi <josprachi@yahoo.com>\n"
+ "Language-Team: CDAC_DI\n"
+@@ -447,14 +447,16 @@ msgstr "ग्रब आरंभ सुचक पुन्हा अधिष
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "/target/proc आरोहित करता आले नाही"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "सीडी-रॉम आरोहित करणे अयशस्वी"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "पीआरओसी फाईल प्रणाली /target/proc वर आरोहित करता आली नाही."
+ 
+ #. Type: error
+diff --git a/debian/po/nb.po b/debian/po/nb.po
+index 63c27d03..8686f3dd 100644
+--- a/debian/po/nb.po
++++ b/debian/po/nb.po
+@@ -34,9 +34,9 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: nb\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
+-"PO-Revision-Date: 2023-05-06 12:58+0000\n"
+-"Last-Translator: Kjetil Sørlund <kjetil@sorlund.no>\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
++"PO-Revision-Date: 2023-09-08 12:41+0000\n"
++"Last-Translator: Petter Reinholdtsen <pere-weblate@hungry.com>\n"
+ "Language-Team: Norwegian Bokmål <i18n-nb@lister.ping.uio.no>\n"
+ "Language: nb\n"
+ "MIME-Version: 1.0\n"
+@@ -466,14 +466,16 @@ msgstr "Installer oppstartslasteren GRUB på nytt"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "Klarte ikke å montere /target/proc"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "Klarte ikke å montere CD-plata"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "klarte ikke å montere proc-filsystemet på /target/proc."
+ 
+ #. Type: error
+diff --git a/debian/po/ne.po b/debian/po/ne.po
+index cfc89511..46e70a2a 100644
+--- a/debian/po/ne.po
++++ b/debian/po/ne.po
+@@ -23,7 +23,7 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: debian-installer_packages_po_sublevel1_ne\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+ "PO-Revision-Date: 2019-08-28 18:10+0000\n"
+ "Last-Translator: leela <53352@protonmail.com>\n"
+ "Language-Team: Nepali <info@mpp.org.np>\n"
+@@ -458,14 +458,16 @@ msgstr "GRUB बुट लोडर पुन:स्थापना गर्न
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "/target/proc लाई माउन्ट गर्न असफल भयो"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "सी डी रोम माउन्ट गर्न असफल भयो"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "/target/proc मा proc फाइल प्रणाली माउन्ट गर्दै गरेको असफल भयो ।"
+ 
+ #. Type: error
+diff --git a/debian/po/nl.po b/debian/po/nl.po
+index af8c79ea..3ca2fcdf 100644
+--- a/debian/po/nl.po
++++ b/debian/po/nl.po
+@@ -27,8 +27,8 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: debian-installer/sublevel1\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
+-"PO-Revision-Date: 2023-04-21 23:04+0200\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
++"PO-Revision-Date: 2023-08-17 22:24+0200\n"
+ "Last-Translator: Frans Spiesschaert <Frans.Spiesschaert@yucom.be>\n"
+ "Language-Team: Debian Dutch l10n Team <debian-l10n-dutch@lists.debian.org>\n"
+ "Language: nl\n"
+@@ -471,14 +471,16 @@ msgstr "De GRUB bootloader opnieuw installeren"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "Aankoppelen van /target/proc is mislukt"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "Aankoppelen van de diskette is mislukt"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "Aankoppelen van het proc-bestandssysteem op /target/proc is mislukt."
+ 
+ #. Type: error
+diff --git a/debian/po/nn.po b/debian/po/nn.po
+index 8b138400..6266f181 100644
+--- a/debian/po/nn.po
++++ b/debian/po/nn.po
+@@ -26,7 +26,7 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: nn\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+ "PO-Revision-Date: 2023-05-17 23:53+0000\n"
+ "Last-Translator: Yngve Spjeld-Landro <l10n@landro.net>\n"
+ "Language-Team: Norwegian Nynorsk <i18n-nn@lister.ping.uio.no>\n"
+@@ -457,14 +457,16 @@ msgstr "Installer oppstartssystemet GRUB på nytt"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "Klarte ikkje å montera /target/proc"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "Klarte ikkje montera CD-plata"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "Klarte ikkje å montera proc-filsystemet på /target/proc."
+ 
+ #. Type: error
+diff --git a/debian/po/oc.po b/debian/po/oc.po
+index e45ea9b4..bb62baaf 100644
+--- a/debian/po/oc.po
++++ b/debian/po/oc.po
+@@ -15,7 +15,7 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: debian-installer sublevel1\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+ "PO-Revision-Date: 2023-05-20 08:52+0000\n"
+ "Last-Translator: Quentin PAGÈS <quentinantonin@free.fr>\n"
+ "Language-Team: Occitan (post 1500) <ubuntu-l10n-oci@lists.ubuntu.com>\n"
+@@ -458,14 +458,16 @@ msgstr "Tornar installar lo gestionari d'aviada GRUB"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "Impossible de montar /target/proc"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "Impossible de montar lo CD-ROM"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr ""
+ "Lo montatge del sistèma de fichièrs « proc » sus /target/proc a pas capitat."
+ 
+diff --git a/debian/po/pa.po b/debian/po/pa.po
+index 7f590f4b..0f465740 100644
+--- a/debian/po/pa.po
++++ b/debian/po/pa.po
+#@@ -26,7 +26,7 @@ msgid ""
+# msgstr ""
+# "Project-Id-Version: pa\n"
+# "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+#-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
+#+"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+# "PO-Revision-Date: 2023-09-03 10:42+0000\n"
+# "Last-Translator: Aman Alam <aalam@users.noreply.hosted.weblate.org>\n"
+# "Language-Team: Punjabi <punjabi-users@lists.sf.net>\n"
+@@ -448,14 +448,16 @@ msgstr "GRUB ਬੂਟ ਲੋਡਰ ਮੁੜ-ਇੰਸਟਾਲ ਹੋ ਰਿ
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "/target/proc ਨੂੰ ਮਾਊਂਟ ਕਰਨ ਵਿੱਚ ਫੇਲ੍ਹ"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "CD-ROM ਮਾਊਂਟ ਕਰਨ ਵਿੱਚ ਅਸਫਲ"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "/target/proc ਤੇ proc ਫਾਇਲ ਸਿਸਟਮ ਮਾਊਂਟ ਕਰਨ ਵਿੱਚ ਅਸਫਲ।"
+ 
+ #. Type: error
+diff --git a/debian/po/pl.po b/debian/po/pl.po
+index ddc6be5f..1ffd10a8 100644
+--- a/debian/po/pl.po
++++ b/debian/po/pl.po
+#@@ -36,8 +36,8 @@ msgid ""
+# msgstr ""
+# "Project-Id-Version: debian-installer\n"
+# "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+#-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
+#-"PO-Revision-Date: 2023-06-29 21:52+0000\n"
+#+"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+#+"PO-Revision-Date: 2023-08-18 17:56+0000\n"
+# "Last-Translator: Matthaiks <kitynska@gmail.com>\n"
+# "Language-Team: Polish <debian-l10n-polish@lists.debian.org>\n"
+# "Language: pl\n"
+@@ -472,14 +472,16 @@ msgstr "Ponowna instalacja programu rozruchowego GRUB"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "Montowanie /target/proc nie powiodło się"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "Nie udało się zamontować płyty CD"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "Zamontowanie systemu plików proc na /target/proc nie powiodło się."
+ 
+ #. Type: error
+diff --git a/debian/po/pt.po b/debian/po/pt.po
+index b84557c7..ff54239b 100644
+--- a/debian/po/pt.po
++++ b/debian/po/pt.po
+@@ -24,8 +24,8 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: debian-installer\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
+-"PO-Revision-Date: 2023-04-27 20:57+0100\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
++"PO-Revision-Date: 2023-08-27 16:16+0100\n"
+ "Last-Translator:  Miguel Figueiredo <elmig@debianpt.org>\n"
+ "Language-Team:  Portuguese <traduz@debianpt.org>\n"
+ "Language: pt\n"
+@@ -459,14 +459,16 @@ msgstr "Reinstalar o carregador do sistema GRUB"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "Falha ao tentar montar /target/proc"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "Não foi possível montar o CD-ROM"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "Falha ao montar o sistema de ficheiros proc em /target/proc."
+ 
+ #. Type: error
+diff --git a/debian/po/pt_BR.po b/debian/po/pt_BR.po
+index 7ce73bc3..223c4fce 100644
+--- a/debian/po/pt_BR.po
++++ b/debian/po/pt_BR.po
+@@ -22,8 +22,8 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: debian-installer\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
+-"PO-Revision-Date: 2023-04-21 18:30-0300\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
++"PO-Revision-Date: 2023-08-19 08:19-0300\n"
+ "Last-Translator: Adriano Rafael Gomes <adrianorg@debian.org>\n"
+ "Language-Team: Brazilian Portuguese <debian-l10n-portuguese@lists.debian."
+ "org>\n"
+@@ -463,14 +463,16 @@ msgstr "Reinstalar o carregador de inicialização GRUB"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "Falha ao montar /target/proc"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "Falha ao montar CD-ROM"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "A montagem do sistema de arquivos proc em /target/proc falhou."
+ 
+ #. Type: error
+diff --git a/debian/po/ro.po b/debian/po/ro.po
+index 7418062d..7efef826 100644
+--- a/debian/po/ro.po
++++ b/debian/po/ro.po
+#@@ -38,8 +38,8 @@ msgid ""
+# msgstr ""
+# "Project-Id-Version: ro\n"
+# "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+#-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
+#-"PO-Revision-Date: 2023-06-19 12:51+0000\n"
+#+"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+#+"PO-Revision-Date: 2023-07-08 14:50+0000\n"
+# "Last-Translator: NicolaeFericitu <cni@disroot.org>\n"
+# "Language-Team: Romanian <debian-l10n-romanian@lists.debian.org>\n"
+# "Language: ro\n"
+@@ -483,14 +483,16 @@ msgstr "Reinstalează încărcătorul de sistem GRUB"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "Eșec la montarea /target/proc"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "Eșec la montarea CD-ului"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "Montarea sistemului de fișiere proc în /target/proc a eșuat."
+ 
+ #. Type: error
+diff --git a/debian/po/ru.po b/debian/po/ru.po
+index b6e1e49c..5f81c7e3 100644
+--- a/debian/po/ru.po
++++ b/debian/po/ru.po
+@@ -26,7 +26,7 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: ru\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+ "PO-Revision-Date: 2022-12-11 12:17+0500\n"
+ "Last-Translator: Lev Lamberov <dogsleg@debian.org>\n"
+ "Language-Team: Russian <debian-l10n-russian@lists.debian.org>\n"
+@@ -458,14 +458,16 @@ msgstr "Переустановка системного загрузчика GRU
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "Не удалось смонтировать /target/proc"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "Не удалось смонтировать компакт-диск"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "Не удалось смонтировать файловую систему proc в /target/proc."
+ 
+ #. Type: error
+diff --git a/debian/po/se.po b/debian/po/se.po
+index 6ae2d232..75cb27f7 100644
+--- a/debian/po/se.po
++++ b/debian/po/se.po
+@@ -15,7 +15,7 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: se\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+ "PO-Revision-Date: 2021-05-21 05:32+0000\n"
+ "Last-Translator: Jacque Fresco <aidter@use.startmail.com>\n"
+ "Language-Team: Northern Sami <i18n-sme@lister.ping.uio.no>\n"
+@@ -437,15 +437,18 @@ msgstr "Sajáiduhttimin vuolggáhangieđahalli GRUB"
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+ #, fuzzy
+-msgid "Failed to mount /target/proc"
+-msgstr "Ii oktage fiilavuogádat lea čatnon /target ohcui"
++msgid "Failed to mount ${PATH}"
++msgstr "Hálidatgo geahččalit ođđasit čatnat CD-ROM:a?"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr ""
++"Dárkkisteamen ${TYPE}-fiilavuogádaga partišuvdnanr. ${PARTITION}:s ${DEVICE}:"
++"s …"
+ 
+ #. Type: error
+ #. Description
+diff --git a/debian/po/si.po b/debian/po/si.po
+index d101933c..c1ca8e95 100644
+--- a/debian/po/si.po
++++ b/debian/po/si.po
+@@ -17,7 +17,7 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: debian-installer\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+ "PO-Revision-Date: 2023-03-01 15:39+0000\n"
+ "Last-Translator: HelaBasa Group <weblate-helabasa@yalu.lk>\n"
+ "Language-Team: Sinhala <info@hanthana.org>\n"
+@@ -443,14 +443,16 @@ msgstr "GRUB ආරම්භක පූරකය නැවත ස්ථාපන
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "/target/proc රැඳවීම අසාර්ථක විය"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "CD-ROM රැඳවීම අසාර්ථකයි"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "proc ගොනු පද්ධතිය /target/proc හි රැඳවීම අසාර්ථක විය."
+ 
+ #. Type: error
+diff --git a/debian/po/sk.po b/debian/po/sk.po
+index 7e7804b8..03c2999e 100644
+--- a/debian/po/sk.po
++++ b/debian/po/sk.po
+@@ -25,7 +25,7 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: debian-installer\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+ "PO-Revision-Date: 2018-04-16 09:18+0200\n"
+ "Last-Translator: Ivan Masár <helix84@centrum.sk>\n"
+ "Language-Team: x\n"
+@@ -464,14 +464,16 @@ msgstr "Reinštalácia zavádzača GRUB"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "Chyba pri pripájaní /target/proc"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "Zlyhalo pripojenie CD"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "Zlyhalo pripájanie súborového systému proc do /target/proc."
+ 
+ #. Type: error
+diff --git a/debian/po/sl.po b/debian/po/sl.po
+index c19d4c69..3cc2cb1a 100644
+--- a/debian/po/sl.po
++++ b/debian/po/sl.po
+@@ -33,7 +33,7 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: sl\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+ "PO-Revision-Date: 2017-10-13 10:42+0100\n"
+ "Last-Translator: Vanja Cvelbar <cvelbar@gmail.com>\n"
+ "Language-Team: Slovenian <gnome-si@googlegroups.com>\n"
+@@ -475,14 +475,16 @@ msgstr "Ponovno namesti zagonski nalagalnik GRUB"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "Nisem mogel priklopiti /target/proc"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "Nisem mogel priklopiti CD-ROM-a"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "Priklapljanje proc datotečnega sistema na /target/proc ni uspelo."
+ 
+ #. Type: error
+diff --git a/debian/po/sq.po b/debian/po/sq.po
+index 7ac41007..f35bd388 100644
+--- a/debian/po/sq.po
++++ b/debian/po/sq.po
+@@ -20,7 +20,7 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: debian-installer\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+ "PO-Revision-Date: 2017-09-11 23:13+0300\n"
+ "Last-Translator: Sotirios Vrachas <sotirios@vrachas.net>\n"
+ "Language-Team: Albanian <debian-l10n-albanian@lists.debian.org>\n"
+@@ -466,14 +466,16 @@ msgstr "Duke reinstaluar ngarkuesin e nisjes GRUB"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "Montimi i /target/proc dështoi"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "Montimi i CD-ROM-it dështoi"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "Montimi i filesistemit proc në /target/proc dështoi."
+ 
+ #. Type: error
+diff --git a/debian/po/sr.po b/debian/po/sr.po
+index f3ef5e5a..762ca56f 100644
+--- a/debian/po/sr.po
++++ b/debian/po/sr.po
+@@ -25,8 +25,8 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: debian-installer\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
+-"PO-Revision-Date: 2023-04-27 16:50+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
++"PO-Revision-Date: 2023-08-28 16:13+0000\n"
+ "Last-Translator: Filipovic Dragan <filipovic@tutanota.com>\n"
+ "Language-Team: Serbian <debian-l10n-serbian@lists.debian.org>\n"
+ "Language: sr\n"
+@@ -454,14 +454,16 @@ msgstr "Понови инсталацију GRUB бут лоудера"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "Неуспело монтирање /target/proc"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "Неуспело монирање CD-ROM-а"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "Монтирање proc фајл система на /target/proc није успело."
+ 
+ #. Type: error
+diff --git a/debian/po/sv.po b/debian/po/sv.po
+index 50a50751..3a333c86 100644
+--- a/debian/po/sv.po
++++ b/debian/po/sv.po
+@@ -26,9 +26,9 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: debian-installer\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
+-"PO-Revision-Date: 2023-04-24 19:49+0000\n"
+-"Last-Translator: bittin1ddc447d824349b2 <bittin@reimu.nl>\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
++"PO-Revision-Date: 2023-08-19 20:53+0000\n"
++"Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
+ "Language-Team: Swedish <debian-l10n-swedish@lists.debian.org>\n"
+ "Language: sv\n"
+ "MIME-Version: 1.0\n"
+@@ -459,14 +459,16 @@ msgstr "Installera om starthanteraren GRUB"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "Misslyckades med att montera /target/proc"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "Misslyckades med att montera cd-skiva"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "Monteringen av proc-filsystemet i /target/proc misslyckades."
+ 
+ #. Type: error
+diff --git a/debian/po/ta.po b/debian/po/ta.po
+index d173c901..ab578e21 100644
+--- a/debian/po/ta.po
++++ b/debian/po/ta.po
+@@ -24,7 +24,7 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: ta\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+ "PO-Revision-Date: 2022-06-13 18:17+0000\n"
+ "Last-Translator: Alex <alexraj2003@gmail.com>\n"
+ "Language-Team: Tamil <<gnome-tamil-translation@googlegroups.com>>\n"
+@@ -453,14 +453,16 @@ msgstr "க்ரப் துவக்கியை மீண்டும் ந
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "/target/proc ஐ ஏற்றுதல் தோல்வியுற்றது"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "குறுந் தட்டை ஏற்றுதல் தோல்வியுற்றது"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "/target/proc இல் ப்ராக் கோப்பு அமைப்பை ஏற்றுதல் தோல்வியுற்றது."
+ 
+ #. Type: error
+diff --git a/debian/po/te.po b/debian/po/te.po
+index 82848018..a9ea0b71 100644
+--- a/debian/po/te.po
++++ b/debian/po/te.po
+@@ -21,7 +21,7 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: te\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+ "PO-Revision-Date: 2021-11-21 21:49+0000\n"
+ "Last-Translator: Praveen Illa <mail2ipn@gmail.com>\n"
+ "Language-Team: d-i <kde-i18n-doc@kde.org>\n"
+@@ -446,14 +446,16 @@ msgstr "GRUB బూట్ లోడర్ ని మరల స్థాపనచ
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "/target/proc సంధానము విఫలమైంది"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "CD-ROM అనుసంధానం  విఫలం"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "/target/proc పై proc ఫైల్ వ్యవస్థ  సంధానము విఫలమైంది"
+ 
+ #. Type: error
+diff --git a/debian/po/tg.po b/debian/po/tg.po
+index c52e3f42..dccedd88 100644
+--- a/debian/po/tg.po
++++ b/debian/po/tg.po
+@@ -15,7 +15,7 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: debian-installer\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+ "PO-Revision-Date: 2019-09-10 18:06+0500\n"
+ "Last-Translator: Victor Ibragimov <victor.ibragimov@gmail.com>\n"
+ "Language-Team: Tajik <victor.ibragimov@gmail.com>\n"
+@@ -466,14 +466,16 @@ msgstr "Аз нав насб кардани боркунандаи роҳанд
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "/target/proc васл карда нашуд"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "CD-ROM васл карда нашуд"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "Низоми файлии proc дар /target/proc бо нокомӣ дучор шуд."
+ 
+ #. Type: error
+diff --git a/debian/po/th.po b/debian/po/th.po
+index 102a4a6d..348362cd 100644
+--- a/debian/po/th.po
++++ b/debian/po/th.po
+@@ -22,7 +22,7 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: debian-installer\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+ "PO-Revision-Date: 2021-02-03 16:48+0700\n"
+ "Last-Translator: Theppitak Karoonboonyanan <theppitak@gmail.com>\n"
+ "Language-Team: Thai <thai-l10n@googlegroups.com>\n"
+@@ -439,14 +439,16 @@ msgstr "ติดตั้งบูตโหลดเดอร์ GRUB ใหม
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "ไม่สามารถเมานท์ /target/proc"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "เมานท์ซีดีรอมไม่สำเร็จ"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "เมานท์ระบบแฟ้ม proc บน /target/proc ไม่สำเร็จ"
+ 
+ #. Type: error
+diff --git a/debian/po/tl.po b/debian/po/tl.po
+index 8ed08be6..3295cd60 100644
+--- a/debian/po/tl.po
++++ b/debian/po/tl.po
+@@ -20,7 +20,7 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: debian-installer\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+ "PO-Revision-Date: 2021-05-21 05:32+0000\n"
+ "Last-Translator: Jacque Fresco <aidter@use.startmail.com>\n"
+ "Language-Team: Tagalog <debian-tl@banwa.upm.edu.ph>\n"
+@@ -465,14 +465,16 @@ msgstr "Iluklok muli ang GRUB boot loader"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "Bigo ang pag-mount ng /target/proc"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "Bigo ang pag-mount ng CD-ROM"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "Bigo ang pag-mount ng proc file system sa /target/proc."
+ 
+ #. Type: error
+diff --git a/debian/po/tr.po b/debian/po/tr.po
+index 7a374c17..ff0d48b0 100644
+--- a/debian/po/tr.po
++++ b/debian/po/tr.po
+@@ -30,15 +30,15 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: debian-installer\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
+-"PO-Revision-Date: 2023-05-10 11:52+0300\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
++"PO-Revision-Date: 2023-07-05 19:50+0000\n"
+ "Last-Translator: Fatih Altun <fatih.altun@pardus.org.tr>\n"
+ "Language-Team: Debian L10N Turkish\n"
+ "Language: tr\n"
+ "MIME-Version: 1.0\n"
+ "Content-Type: text/plain; charset=UTF-8\n"
+ "Content-Transfer-Encoding: 8bit\n"
+-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
++"Plural-Forms: nplurals=2; plural=n != 1;\n"
+ 
+ #. Type: boolean
+ #. Description
+@@ -465,14 +465,16 @@ msgstr "GRUB önyükleyiciyi tekrar kur"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "/target/proc bağlanması başarısız"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "CD-ROM bağlanamadı"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "/target/proc üzerine proc dosya sistemi bağlanması başarısız."
+ 
+ #. Type: error
+diff --git a/debian/po/ug.po b/debian/po/ug.po
+index 99102282..0ea84e46 100644
+--- a/debian/po/ug.po
++++ b/debian/po/ug.po
+@@ -19,7 +19,7 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: debian-installer\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+ "PO-Revision-Date: 2020-07-21 17:24+0000\n"
+ "Last-Translator: Abdusalam <1810010207@s.upc.edu.cn>\n"
+ "Language-Team: Uyghur Computer Science Association <UKIJ@yahoogroups.com>\n"
+@@ -459,14 +459,16 @@ msgstr "GRUB قوزغىتىش يۈكلىگۈچنى قايتا ئورنات"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "/target/proc ئېگەرلەش مەغلۇپ بولدى"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "CD-ROM نى ئېگەرلەش مەغلۇپ بولدى"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "proc ھۆججەت سىستېمىسىنى /target/proc غا ئېگەرلەش مەغلۇپ بولدى."
+ 
+ #. Type: error
+diff --git a/debian/po/uk.po b/debian/po/uk.po
+index b5e17dba..086dc53a 100644
+--- a/debian/po/uk.po
++++ b/debian/po/uk.po
+#@@ -25,9 +25,9 @@ msgid ""
+# msgstr ""
+# "Project-Id-Version: uk\n"
+# "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+#-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
+#-"PO-Revision-Date: 2023-06-15 17:50+0000\n"
+#-"Last-Translator: Tymofii Lytvynenko <till.svit@gmail.com>\n"
+#+"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+#+"PO-Revision-Date: 2023-07-22 18:08+0000\n"
+#+"Last-Translator: Serhii Horichenko <m@sgg.im>\n"
+# "Language-Team: Ukrainian <translation-team-uk@lists.sourceforge.net>\n"
+# "Language: uk\n"
+# "MIME-Version: 1.0\n"
+@@ -455,14 +455,16 @@ msgstr "Перевстановити завантажувач GRUB"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "Не вдалося змонтувати /target/proc"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "Не вдалося змонтувати CD-ROM"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "Не вдалося змонтувати файлову систему proc в /target/proc."
+ 
+ #. Type: error
+diff --git a/debian/po/vi.po b/debian/po/vi.po
+index bf35e102..f85d92fe 100644
+--- a/debian/po/vi.po
++++ b/debian/po/vi.po
+@@ -18,7 +18,7 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: debian-installer sublevel1\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+ "PO-Revision-Date: 2023-02-24 10:38+0000\n"
+ "Last-Translator: tictactoe <phandinhminh@protonmail.ch>\n"
+ "Language-Team: Vietnamese <debian-l10n-vietnamese@lists.debian.org>\n"
+@@ -451,14 +451,16 @@ msgstr "Cài đặt lại bộ tải khởi động GRUB"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "Gặp lỗi khi gắn kết “/target/proc”"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "Gặp lỗi khi gắn đĩa CD-ROM"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "Gặp lỗi khi gắn kết hệ thống tập tin proc vào “/target/proc” bị lỗi."
+ 
+ #. Type: error
+diff --git a/debian/po/zh_CN.po b/debian/po/zh_CN.po
+index 3a365eec..642b2d82 100644
+--- a/debian/po/zh_CN.po
++++ b/debian/po/zh_CN.po
+@@ -37,9 +37,9 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: debian-installer\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
+-"PO-Revision-Date: 2023-04-25 19:42+0000\n"
+-"Last-Translator: Wenbin Lv <wenbin816@gmail.com>\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
++"PO-Revision-Date: 2023-09-06 15:06+0000\n"
++"Last-Translator: Boyuan Yang <073plan@gmail.com>\n"
+ "Language-Team: <debian-l10n-chinese@lists.debian.org>\n"
+ "Language: zh_CN\n"
+ "MIME-Version: 1.0\n"
+@@ -453,14 +453,16 @@ msgstr "重新安装 GRUB 启动引导器"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "挂载 /target/proc 失败"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "无法挂载光盘"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "挂载 proc 文件系统到 /target/proc 上失败。"
+ 
+ #. Type: error
+diff --git a/debian/po/zh_TW.po b/debian/po/zh_TW.po
+index 78d53fae..414b7ed2 100644
+--- a/debian/po/zh_TW.po
++++ b/debian/po/zh_TW.po
+@@ -33,9 +33,9 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: debian-installer\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
+-"PO-Revision-Date: 2021-02-16 09:50+0000\n"
+-"Last-Translator: louies0623 <louies0623@gmail.com>\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
++"PO-Revision-Date: 2023-02-02 11:37+0000\n"
++"Last-Translator: Chang-Chia Tseng <pswo10680@gmail.com>\n"
+ "Language-Team: Debian-user in Chinese [Big5] <debian-chinese-big5@lists."
+ "debian.org>\n"
+ "Language: zh_TW\n"
+@@ -448,14 +448,16 @@ msgstr "重新安裝 GRUB 開機程式"
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
+-msgstr "無法掛載 /target/proc"
++#, fuzzy
++msgid "Failed to mount ${PATH}"
++msgstr "無法掛載光碟"
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++#, fuzzy
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr "在將 proc 檔案系統掛載至 /target/proc 上時失敗了。"
+ 
+ #. Type: error
+-- 
+GitLab
+

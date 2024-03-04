@@ -1,0 +1,1098 @@
+From 7bcf88624342b44066bcb312486e1d7c81ae7e7f Mon Sep 17 00:00:00 2001
+From: Philip Hands <phil@hands.com>
+Date: Wed, 23 Aug 2023 07:50:47 +0200
+Subject: [PATCH 01/14] move duplicated functions into functions.sh
+
+---
+ debian/postinst                     | 18 +------------
+ functions.sh                        | 41 +++++++++++++++++++++++++++++
+ grub-installer                      | 16 -----------
+ rescue.d/80grub-reinstall           | 16 -----------
+ rescue.d/81grub-efi-force-removable | 29 --------------------
+ 5 files changed, 42 insertions(+), 78 deletions(-)
+
+diff --git a/debian/postinst b/debian/postinst
+index 85714195..b7f5ef1f 100755
+--- a/debian/postinst
++++ b/debian/postinst
+@@ -2,23 +2,7 @@
+ 
+ . /usr/share/debconf/confmodule
+ 
+-log () {
+-	logger -t grub-installer "$@"
+-}
+-
+-error () {
+-	log "error: $@"
+-}
+-
+-die () {
+-	local template="$1"
+-	shift
+-
+-	error "$@"
+-	db_input critical "$template" || [ $? -eq 30 ]
+-	db_go || true
+-	exit 1
+-}
++. /usr/share/grub-installer/functions.sh
+ 
+ mountvirtfs () {
+ 	fstype="$1"
+diff --git a/functions.sh b/functions.sh
+index 412e97a7..55789b08 100644
+--- a/functions.sh
++++ b/functions.sh
+@@ -37,3 +37,44 @@ update_mtab() {
+ is_floppy () {
+ 	echo "$1" | grep -q '(fd' || echo "$1" | grep -q "/dev/fd" || echo "$1" | grep -q floppy
+ }
++
++log () {
++	logger -t grub-installer "$@"
++}
++
++error () {
++	log "error: $@"
++}
++
++info() {
++	log "info: $@"
++}
++
++debug () {
++	[ -z "${DEBCONF_DEBUG}" ] || log "debug: $@"
++}
++
++die () {
++	local template="$1"
++	shift
++
++	error "$@"
++	db_input critical "$template" || [ $? -eq 30 ]
++	db_go || true
++	exit 1
++}
++
++EXTRA_PATHS=""
++mountvirtfs () {
++	fstype="$1"
++	path="$2"
++	if grep -q "[[:space:]]$fstype\$" /proc/filesystems && \
++	   ! grep -q "^[^ ]\+ \+$path " /proc/mounts; then
++		mkdir -p "$path" || \
++			die grub-installer/mounterr "Error creating $path"
++		mount -t "$fstype" "$fstype" "$path" || \
++			die grub-installer/mounterr "Error mounting $path"
++		EXTRA_PATHS="$EXTRA_PATHS $path"
++		trap "umount $EXTRA_PATHS" HUP INT QUIT KILL PIPE TERM EXIT
++	fi
++}
+diff --git a/grub-installer b/grub-installer
+index 2787e7c8..bd2bcf9d 100755
+--- a/grub-installer
++++ b/grub-installer
+@@ -21,22 +21,6 @@ newline="
+ 
+ db_capb backup
+ 
+-log() {
+-	logger -t grub-installer "$@"
+-}
+-
+-error() {
+-	log "error: $@"
+-}
+-
+-info() {
+-	log "info: $@"
+-}
+-
+-debug () {
+-	[ -z "${DEBCONF_DEBUG}" ] || log "debug: $@"
+-}
+-
+ ARCH="$(archdetect)"
+ info "architecture: $ARCH"
+ SUBARCH="${ARCH#*/}"
+diff --git a/rescue.d/80grub-reinstall b/rescue.d/80grub-reinstall
+index cc3fe8a8..c52a0be2 100755
+--- a/rescue.d/80grub-reinstall
++++ b/rescue.d/80grub-reinstall
+@@ -4,22 +4,6 @@
+ 
+ . /usr/share/grub-installer/functions.sh
+ 
+-mountvirtfs () {
+-	fstype="$1"
+-	path="$2"
+-	if grep -q "[[:space:]]$fstype\$" /proc/filesystems && \
+-	   ! grep -q "^[^ ]\+ \+$path " /proc/mounts; then
+-		mkdir -p "$path" || \
+-			die grub-installer/mounterr "Error creating $path"
+-		mount -t "$fstype" "$fstype" "$path" || \
+-			die grub-installer/mounterr "Error mounting $path"
+-		EXTRA_PATHS="$EXTRA_PATHS $path"
+-		trap "umount $EXTRA_PATHS" HUP INT QUIT KILL PIPE TERM EXIT
+-	fi
+-}
+-
+-
+-
+ db_progress START 0 2 grub-installer/progress/title
+ db_progress INFO grub-installer/progress/step_bootdev
+ 
+diff --git a/rescue.d/81grub-efi-force-removable b/rescue.d/81grub-efi-force-removable
+index cbb1ce74..958f9a48 100755
+--- a/rescue.d/81grub-efi-force-removable
++++ b/rescue.d/81grub-efi-force-removable
+@@ -4,39 +4,10 @@
+ 
+ . /usr/share/grub-installer/functions.sh
+ 
+-EXTRA_PATHS=""
+-
+ log () {
+ 	logger -t grub-installer "grub-efi-force-removable $@"
+ }
+ 
+-error () {
+-	log "error: $@"
+-}
+-
+-die () {
+-	local template="$1"
+-	shift
+-
+-	error "$@"
+-	db_input critical "$template" || [ $? -eq 30 ]
+-	db_go || true
+-	exit 1
+-}
+-
+-mountvirtfs () {
+-	fstype="$1"
+-	path="$2"
+-	if grep -q "[[:space:]]$fstype\$" /proc/filesystems && \
+-	   ! grep -q "^[^ ]\+ \+$path " /proc/mounts; then
+-		mkdir -p "$path" || \
+-			die grub-installer/mounterr "Error creating $path"
+-		mount -t "$fstype" "$fstype" "$path" || \
+-			die grub-installer/mounterr "Error mounting $path"
+-		EXTRA_PATHS="$EXTRA_PATHS $path"
+-		trap "umount $EXTRA_PATHS" HUP INT QUIT KILL PIPE TERM EXIT
+-	fi
+-}
+ 
+ db_progress START 0 3 grub-installer/progress/title
+ db_progress INFO grub-installer/progress/step_force_efi_removable
+-- 
+GitLab
+
+
+From 1ec23ed1b62a4fed2b42b0cf555f4d2894c31b7c Mon Sep 17 00:00:00 2001
+From: Philip Hands <phil@hands.com>
+Date: Wed, 23 Aug 2023 08:12:10 +0200
+Subject: [PATCH 02/14] log: append the script's name if DEBCONF_DEBUG set
+
+This is a way of making 81grub-efi-force-removable less special, and
+seems like it might be a useful thing to have in our logs anyway.
+
+The fact that 81grub-efi-force-removable adds its own name when logging
+strikes me as left-over scafolding from when it was built, so we could
+just remove this instead.
+---
+ functions.sh                        |  8 ++++----
+ rescue.d/81grub-efi-force-removable | 14 +++++++-------
+ 2 files changed, 11 insertions(+), 11 deletions(-)
+
+diff --git a/functions.sh b/functions.sh
+index 55789b08..9eeb34b0 100644
+--- a/functions.sh
++++ b/functions.sh
+@@ -39,19 +39,19 @@ is_floppy () {
+ }
+ 
+ log () {
+-	logger -t grub-installer "$@"
++	logger -t grub-installer "$*${DEBCONF_DEBUG:+		[${0##*/}]}"
+ }
+ 
+ error () {
+-	log "error: $@"
++	log "error: $*"
+ }
+ 
+ info() {
+-	log "info: $@"
++	log "info: $*"
+ }
+ 
+ debug () {
+-	[ -z "${DEBCONF_DEBUG}" ] || log "debug: $@"
++	[ -z "${DEBCONF_DEBUG}" ] || log "debug: $*"
+ }
+ 
+ die () {
+diff --git a/rescue.d/81grub-efi-force-removable b/rescue.d/81grub-efi-force-removable
+index 958f9a48..f03d88d7 100755
+--- a/rescue.d/81grub-efi-force-removable
++++ b/rescue.d/81grub-efi-force-removable
+@@ -4,17 +4,17 @@
+ 
+ . /usr/share/grub-installer/functions.sh
+ 
+-log () {
+-	logger -t grub-installer "grub-efi-force-removable $@"
++_dbg_log() {
++	# just having DEBCONF_DEBUG defined is enough to get log() to append the script's name
++	DEBCONF_DEBUG=${DEBCONF_DEBUG:-0} log "$@"
+ }
+ 
+-
+ db_progress START 0 3 grub-installer/progress/title
+ db_progress INFO grub-installer/progress/step_force_efi_removable
+ 
+ # Should we also install grub-efi to the removable media path?
+ # Ask the user
+-log "Prompting user about removable media path"
++_dbg_log "Prompting user about removable media path"
+ db_input high grub-installer/force-efi-extra-removable
+ if ! db_go; then
+ 	# back up to menu
+@@ -30,7 +30,7 @@ fi
+ db_progress STEP 1
+ db_progress INFO grub-installer/progress/step_mount_filesystems
+ 
+-log "Mounting filesystems"
++_dbg_log "Mounting filesystems"
+ # If we're installing grub-efi, it wants /sys mounted in the
+ # target. Maybe /proc too, and definitely the efivars fs. Should be
+ # harmless if we're not using it.
+@@ -45,7 +45,7 @@ trap "umount $EXTRA_PATHS" HUP INT QUIT KILL PIPE TERM EXIT
+ db_progress STEP 1
+ db_progress INFO grub-installer/progress/step_install_loader
+ # Do the installation now
+-log "Running grub-install"
++_dbg_log "Running grub-install"
+ if ! chroot /target grub-install --force-extra-removable; then
+ 	db_input critical grub-installer/grub-install-failed || true
+ 	db_go || true
+@@ -56,7 +56,7 @@ fi
+ db_progress STEP 1
+ db_progress INFO grub-installer/progress/step_update_debconf_efi_removable
+ # And add the debconf flag so the installed system will also do this in future
+-log "Running debconf-set-selections in the chroot"
++_dbg_log "Running debconf-set-selections in the chroot"
+ chroot /target 'debconf-set-selections' <<EOF
+ grub2/force_efi_extra_removable boolean true
+ EOF
+-- 
+GitLab
+
+
+From 7abf009c6e3b74146001e42f4761582f306ea08a Mon Sep 17 00:00:00 2001
+From: Philip Hands <phil@hands.com>
+Date: Wed, 23 Aug 2023 08:13:48 +0200
+Subject: [PATCH 03/14] merge 'efivarsfs' special case into functions.sh
+
+---
+ debian/postinst | 23 ++++-------------------
+ functions.sh    | 12 +++++++++---
+ 2 files changed, 13 insertions(+), 22 deletions(-)
+
+diff --git a/debian/postinst b/debian/postinst
+index b7f5ef1f..b1954b87 100755
+--- a/debian/postinst
++++ b/debian/postinst
+@@ -4,29 +4,14 @@
+ 
+ . /usr/share/grub-installer/functions.sh
+ 
+-mountvirtfs () {
+-	fstype="$1"
+-	path="$2"
+-	if grep -q "[[:space:]]$fstype\$" /proc/filesystems && \
+-	   ! grep -q "^[^ ]\+ \+$path " /proc/mounts; then
+-		mkdir -p "$path" || \
+-			die grub-installer/mounterr "Error creating $path"
+-
+-		if mount -t "$fstype" "$fstype" "$path"; then
+-			log "Success mounting $path"
+-			trap "umount $path" HUP INT QUIT KILL PIPE TERM EXIT
+-		elif [ "$fstype" = "efivarfs" ]; then
+-			error "Error mounting $path (non-fatal)"
+-		else
+-			die grub-installer/mounterr "Error mounting $path"
+-		fi
+-	fi
+-}
+-
+ # If we're installing grub-efi, it wants /sys mounted in the
+ # target. Maybe /proc too?
+ mountvirtfs proc /target/proc
+ mountvirtfs sysfs /target/sys
++# unmounting /target/proc causes an error later on in the install:
++#    umount: can't unmount /target/proc: Invalid argument
++# (seems like a bug somewhere, but will preserve the old 'overwriting traps' behaviour for now)
++EXTRA_PATHS=""
+ mountvirtfs efivarfs /target/sys/firmware/efi/efivars
+ 
+ grub-installer /target
+diff --git a/functions.sh b/functions.sh
+index 9eeb34b0..c23265ab 100644
+--- a/functions.sh
++++ b/functions.sh
+@@ -72,9 +72,15 @@ mountvirtfs () {
+ 	   ! grep -q "^[^ ]\+ \+$path " /proc/mounts; then
+ 		mkdir -p "$path" || \
+ 			die grub-installer/mounterr "Error creating $path"
+-		mount -t "$fstype" "$fstype" "$path" || \
++
++		if mount -t "$fstype" "$fstype" "$path"; then
++			log "Success mounting $path"
++			EXTRA_PATHS="$EXTRA_PATHS $path"
++			trap "umount $EXTRA_PATHS" HUP INT QUIT KILL PIPE TERM EXIT
++		elif [ "$fstype" = "efivarfs" ]; then
++			error "Error mounting $path (non-fatal)"
++		else
+ 			die grub-installer/mounterr "Error mounting $path"
+-		EXTRA_PATHS="$EXTRA_PATHS $path"
+-		trap "umount $EXTRA_PATHS" HUP INT QUIT KILL PIPE TERM EXIT
++		fi
+ 	fi
+ }
+-- 
+GitLab
+
+
+From 676368b5f9b9c7e8b9d7e2fd3e4ce98770659660 Mon Sep 17 00:00:00 2001
+From: Arnaud Rebillout <arnaudr@kali.org>
+Date: Wed, 23 Aug 2023 09:59:22 +0200
+Subject: [PATCH 04/14] Don't fail if we can't mkdir efivars
+
+Closes: #1031183
+---
+ functions.sh | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/functions.sh b/functions.sh
+index c23265ab..183a6baa 100644
+--- a/functions.sh
++++ b/functions.sh
+@@ -70,8 +70,14 @@ mountvirtfs () {
+ 	path="$2"
+ 	if grep -q "[[:space:]]$fstype\$" /proc/filesystems && \
+ 	   ! grep -q "^[^ ]\+ \+$path " /proc/mounts; then
+-		mkdir -p "$path" || \
++		if mkdir -p "$path"; then
++			true
++		elif [ "$fstype" = "efivarfs" ]; then
++			error "Error creating $path (non-fatal)"
++			return
++		else
+ 			die grub-installer/mounterr "Error creating $path"
++		fi
+ 
+ 		if mount -t "$fstype" "$fstype" "$path"; then
+ 			log "Success mounting $path"
+-- 
+GitLab
+
+
+From 5d7b0988cedc35707f17f824aa6ad11a5199f989 Mon Sep 17 00:00:00 2001
+From: Philip Hands <phil@hands.com>
+Date: Wed, 23 Aug 2023 10:15:51 +0200
+Subject: [PATCH 05/14] mountvirtfs: separate success vs. fatality logic
+
+Having the efivarfs check in an elif made this code seem tangly to me.
+Hopefully this is now cleaner, with the operation's success or failure
+first being deterimined, then whether any error should be fatal being
+deterimined afterwards.
+---
+ functions.sh | 25 +++++++++++++------------
+ 1 file changed, 13 insertions(+), 12 deletions(-)
+
+diff --git a/functions.sh b/functions.sh
+index 183a6baa..6675efcd 100644
+--- a/functions.sh
++++ b/functions.sh
+@@ -71,22 +71,23 @@ mountvirtfs () {
+ 	if grep -q "[[:space:]]$fstype\$" /proc/filesystems && \
+ 	   ! grep -q "^[^ ]\+ \+$path " /proc/mounts; then
+ 		if mkdir -p "$path"; then
+-			true
+-		elif [ "$fstype" = "efivarfs" ]; then
+-			error "Error creating $path (non-fatal)"
+-			return
++			if mount -t "$fstype" "$fstype" "$path"; then
++				log "Success mounting $path"
++				EXTRA_PATHS="$EXTRA_PATHS $path"
++				trap "umount $EXTRA_PATHS" HUP INT QUIT KILL PIPE TERM EXIT
++				return
++			else
++				failed_action="Mounting"
++			fi
+ 		else
+-			die grub-installer/mounterr "Error creating $path"
++			failed_action="Creating"
+ 		fi
+ 
+-		if mount -t "$fstype" "$fstype" "$path"; then
+-			log "Success mounting $path"
+-			EXTRA_PATHS="$EXTRA_PATHS $path"
+-			trap "umount $EXTRA_PATHS" HUP INT QUIT KILL PIPE TERM EXIT
+-		elif [ "$fstype" = "efivarfs" ]; then
+-			error "Error mounting $path (non-fatal)"
++		# if here, a failure has occured (otherwise would 'return' above)
++		if [ "$fstype" = "efivarfs" ]; then
++			error "$failed_action $path failed (non-fatal)"
+ 		else
+-			die grub-installer/mounterr "Error mounting $path"
++			die grub-installer/mounterr "$failed_action '$path' failed"
+ 		fi
+ 	fi
+ }
+-- 
+GitLab
+
+
+From bc1945e46f6ae7a3113e6761d9f2a5e21a52adbd Mon Sep 17 00:00:00 2001
+From: Philip Hands <phil@hands.com>
+Date: Wed, 23 Aug 2023 10:27:27 +0200
+Subject: [PATCH 06/14] avoid tagging expected(ish) failure as 'error:'
+
+I've left the word 'error' in the message, to make it easy to find
+anyway, but if the behaviour is somewhat expected, then having 'error:'
+starting the line seems likely to be a red-herring when an unrelated bug
+occurs (even with the 'non-fatal').
+---
+ functions.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/functions.sh b/functions.sh
+index 6675efcd..a03e03af 100644
+--- a/functions.sh
++++ b/functions.sh
+@@ -85,7 +85,7 @@ mountvirtfs () {
+ 
+ 		# if here, a failure has occured (otherwise would 'return' above)
+ 		if [ "$fstype" = "efivarfs" ]; then
+-			error "$failed_action $path failed (non-fatal)"
++			info "$failed_action $path failed (non-fatal error)"
+ 		else
+ 			die grub-installer/mounterr "$failed_action '$path' failed"
+ 		fi
+-- 
+GitLab
+
+
+From 2b80ed9f3295f2fde11dfd97dc5e5da3cacc699e Mon Sep 17 00:00:00 2001
+From: Philip Hands <phil@hands.com>
+Date: Wed, 23 Aug 2023 10:36:16 +0200
+Subject: [PATCH 07/14] only try to mount /sys.../efi/... on efi systems
+
+---
+ debian/postinst | 21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
+
+diff --git a/debian/postinst b/debian/postinst
+index b1954b87..86d6428b 100755
+--- a/debian/postinst
++++ b/debian/postinst
+@@ -4,14 +4,17 @@
+ 
+ . /usr/share/grub-installer/functions.sh
+ 
+-# If we're installing grub-efi, it wants /sys mounted in the
+-# target. Maybe /proc too?
+-mountvirtfs proc /target/proc
+-mountvirtfs sysfs /target/sys
+-# unmounting /target/proc causes an error later on in the install:
+-#    umount: can't unmount /target/proc: Invalid argument
+-# (seems like a bug somewhere, but will preserve the old 'overwriting traps' behaviour for now)
+-EXTRA_PATHS=""
+-mountvirtfs efivarfs /target/sys/firmware/efi/efivars
++ARCH=$(archdetect)
++if [ "${ARCH#*/}" = "efi" ]; then
++	# If we're installing grub-efi, it wants /sys mounted in the
++	# target. Maybe /proc too?
++	mountvirtfs proc /target/proc
++	mountvirtfs sysfs /target/sys
++	# unmounting /target/proc causes an error later on in the install:
++	#    umount: can't unmount /target/proc: Invalid argument
++	# (seems like a bug somewhere, but will preserve the old 'overwriting traps' behaviour for now)
++	EXTRA_PATHS=""
++	mountvirtfs efivarfs /target/sys/firmware/efi/efivars
++fi
+ 
+ grub-installer /target
+-- 
+GitLab
+
+
+From da766c976ef03b578dab1306ba86581fb474ba61 Mon Sep 17 00:00:00 2001
+From: Philip Hands <phil@hands.com>
+Date: Wed, 23 Aug 2023 10:45:07 +0200
+Subject: [PATCH 08/14] mountvirtfs: introduce optional 'fatality' param
+
+This seems clearer than having mountvirtfs treat efivarfs as a special
+case, as one gets to see that there's something different in the call,
+and it also means that if the function manages to fail for some other
+reason than the mkdir failing, we won't mask that with `... || true`
+---
+ debian/postinst                     | 2 +-
+ functions.sh                        | 9 ++++++---
+ rescue.d/80grub-reinstall           | 2 +-
+ rescue.d/81grub-efi-force-removable | 2 +-
+ 4 files changed, 9 insertions(+), 6 deletions(-)
+
+diff --git a/debian/postinst b/debian/postinst
+index 86d6428b..2523c14f 100755
+--- a/debian/postinst
++++ b/debian/postinst
+@@ -14,7 +14,7 @@ if [ "${ARCH#*/}" = "efi" ]; then
+ 	#    umount: can't unmount /target/proc: Invalid argument
+ 	# (seems like a bug somewhere, but will preserve the old 'overwriting traps' behaviour for now)
+ 	EXTRA_PATHS=""
+-	mountvirtfs efivarfs /target/sys/firmware/efi/efivars
++	mountvirtfs efivarfs /target/sys/firmware/efi/efivars non-fatal
+ fi
+ 
+ grub-installer /target
+diff --git a/functions.sh b/functions.sh
+index a03e03af..a40af89d 100644
+--- a/functions.sh
++++ b/functions.sh
+@@ -68,6 +68,8 @@ EXTRA_PATHS=""
+ mountvirtfs () {
+ 	fstype="$1"
+ 	path="$2"
++	failure_response="${3:-fatal}"
++
+ 	if grep -q "[[:space:]]$fstype\$" /proc/filesystems && \
+ 	   ! grep -q "^[^ ]\+ \+$path " /proc/mounts; then
+ 		if mkdir -p "$path"; then
+@@ -83,11 +85,12 @@ mountvirtfs () {
+ 			failed_action="Creating"
+ 		fi
+ 
++		log_msg="$failed_action '$path' failed ($failure_response error)"
+ 		# if here, a failure has occured (otherwise would 'return' above)
+-		if [ "$fstype" = "efivarfs" ]; then
+-			info "$failed_action $path failed (non-fatal error)"
++		if [ "$failure_response" != "fatal" ]; then
++			info "$log_msg"
+ 		else
+-			die grub-installer/mounterr "$failed_action '$path' failed"
++			die grub-installer/mounterr "$log_msg"
+ 		fi
+ 	fi
+ }
+diff --git a/rescue.d/80grub-reinstall b/rescue.d/80grub-reinstall
+index c52a0be2..31b45125 100755
+--- a/rescue.d/80grub-reinstall
++++ b/rescue.d/80grub-reinstall
+@@ -13,7 +13,7 @@ db_progress INFO grub-installer/progress/step_bootdev
+ mountvirtfs proc /target/proc
+ mountvirtfs sysfs /target/sys
+ modprobe efivarfs >/dev/null 2>&1 || true
+-mountvirtfs efivarfs /target/sys/firmware/efi/efivars || true
++mountvirtfs efivarfs /target/sys/firmware/efi/efivars non-fatal
+ if [ -e /target/boot/efi ]; then
+     chroot /target mount /boot/efi || true
+     EXTRA_PATHS="$EXTRA_PATHS /target/boot/efi"
+diff --git a/rescue.d/81grub-efi-force-removable b/rescue.d/81grub-efi-force-removable
+index f03d88d7..212aeb74 100755
+--- a/rescue.d/81grub-efi-force-removable
++++ b/rescue.d/81grub-efi-force-removable
+@@ -37,7 +37,7 @@ _dbg_log "Mounting filesystems"
+ mountvirtfs proc /target/proc
+ mountvirtfs sysfs /target/sys
+ modprobe efivarfs >/dev/null 2>&1 || true
+-mountvirtfs efivarfs /target/sys/firmware/efi/efivars || true
++mountvirtfs efivarfs /target/sys/firmware/efi/efivars non-fatal
+ chroot /target mount /boot/efi || true
+ EXTRA_PATHS="$EXTRA_PATHS /target/boot/efi"
+ trap "umount $EXTRA_PATHS" HUP INT QUIT KILL PIPE TERM EXIT
+-- 
+GitLab
+
+
+From a1e2235247fd6c1ead6b15e7122d9e3451878b3b Mon Sep 17 00:00:00 2001
+From: Philip Hands <phil@hands.com>
+Date: Wed, 23 Aug 2023 10:52:23 +0200
+Subject: [PATCH 09/14] grub-installer/mounterr: say which path failed
+
+---
+ debian/grub-installer.templates |  4 ++--
+ functions.sh                    | 10 +++++++---
+ 2 files changed, 9 insertions(+), 5 deletions(-)
+
+diff --git a/debian/grub-installer.templates b/debian/grub-installer.templates
+index 83bbb217..7c4272bd 100644
+--- a/debian/grub-installer.templates
++++ b/debian/grub-installer.templates
+@@ -229,8 +229,8 @@ Description: for internal use; can be preseeded
+ Template: grub-installer/mounterr
+ Type: error
+ # :sl4:
+-_Description: Failed to mount /target/proc
+- Mounting the proc file system on /target/proc failed.
++_Description: Failed to mount ${PATH}
++ Mounting the ${FSTYPE} file system on ${PATH} failed.
+  .
+  Check /var/log/syslog or see virtual console 4 for the details.
+  .
+diff --git a/functions.sh b/functions.sh
+index a40af89d..4e3338c6 100644
+--- a/functions.sh
++++ b/functions.sh
+@@ -55,10 +55,14 @@ debug () {
+ }
+ 
+ die () {
+-	local template="$1"
+-	shift
++	local template="$1" ; shift
++	local fstype="$1" ; shift
++	local path="$1" ; shift
++
+ 
+ 	error "$@"
++	db_subst "$template" FSTYPE "$fstype"
++	db_subst "$template" PATH "$path"
+ 	db_input critical "$template" || [ $? -eq 30 ]
+ 	db_go || true
+ 	exit 1
+@@ -90,7 +94,7 @@ mountvirtfs () {
+ 		if [ "$failure_response" != "fatal" ]; then
+ 			info "$log_msg"
+ 		else
+-			die grub-installer/mounterr "$log_msg"
++			die grub-installer/mounterr "$fstype" "$path" "$log_msg"
+ 		fi
+ 	fi
+ }
+-- 
+GitLab
+
+
+From b878d83e2289e3907126d29dc2f687aaba7d4aab Mon Sep 17 00:00:00 2001
+From: Philip Hands <phil@hands.com>
+Date: Wed, 23 Aug 2023 18:30:04 +0200
+Subject: [PATCH 10/14] insert new paths at the start of $EXTRA_PATHS
+
+This ensures that umount is called with the most recently mounted thing
+first, which is required when mountpoints are nested.
+---
+ functions.sh                        | 2 +-
+ rescue.d/80grub-reinstall           | 2 +-
+ rescue.d/81grub-efi-force-removable | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/functions.sh b/functions.sh
+index 4e3338c6..186ad7b1 100644
+--- a/functions.sh
++++ b/functions.sh
+@@ -79,7 +79,7 @@ mountvirtfs () {
+ 		if mkdir -p "$path"; then
+ 			if mount -t "$fstype" "$fstype" "$path"; then
+ 				log "Success mounting $path"
+-				EXTRA_PATHS="$EXTRA_PATHS $path"
++				EXTRA_PATHS="$path $EXTRA_PATHS"
+ 				trap "umount $EXTRA_PATHS" HUP INT QUIT KILL PIPE TERM EXIT
+ 				return
+ 			else
+diff --git a/rescue.d/80grub-reinstall b/rescue.d/80grub-reinstall
+index 31b45125..d9441a49 100755
+--- a/rescue.d/80grub-reinstall
++++ b/rescue.d/80grub-reinstall
+@@ -16,7 +16,7 @@ modprobe efivarfs >/dev/null 2>&1 || true
+ mountvirtfs efivarfs /target/sys/firmware/efi/efivars non-fatal
+ if [ -e /target/boot/efi ]; then
+     chroot /target mount /boot/efi || true
+-    EXTRA_PATHS="$EXTRA_PATHS /target/boot/efi"
++    EXTRA_PATHS="/target/boot/efi $EXTRA_PATHS"
+ fi
+ if [ -n "$EXTRA_PATHS" ]; then
+     trap "umount $EXTRA_PATHS" HUP INT QUIT KILL PIPE TERM EXIT
+diff --git a/rescue.d/81grub-efi-force-removable b/rescue.d/81grub-efi-force-removable
+index 212aeb74..ede1ed33 100755
+--- a/rescue.d/81grub-efi-force-removable
++++ b/rescue.d/81grub-efi-force-removable
+@@ -39,7 +39,7 @@ mountvirtfs sysfs /target/sys
+ modprobe efivarfs >/dev/null 2>&1 || true
+ mountvirtfs efivarfs /target/sys/firmware/efi/efivars non-fatal
+ chroot /target mount /boot/efi || true
+-EXTRA_PATHS="$EXTRA_PATHS /target/boot/efi"
++EXTRA_PATHS="/target/boot/efi $EXTRA_PATHS"
+ trap "umount $EXTRA_PATHS" HUP INT QUIT KILL PIPE TERM EXIT
+ 
+ db_progress STEP 1
+-- 
+GitLab
+
+
+From 01126606e5055c1448b439666557fa1e94588ff0 Mon Sep 17 00:00:00 2001
+From: Pascal Hambourg <pascal@plouf.fr.eu.org>
+Date: Sun, 27 Aug 2023 15:17:42 +0200
+Subject: [PATCH 11/14] Move unmount-on-exit logic into its own function
+
+So that it can be used with other mounts than mountvirtfs (/run, /boot/efi).
+
+Use unmount_on_exit with /proc and /run, so that unmounts match mounts
+even on error exit. Unconditional unmount on normal exit only was
+flawed.
+---
+ functions.sh                        |  8 ++++++--
+ grub-installer                      | 14 +++++---------
+ rescue.d/80grub-reinstall           |  6 +-----
+ rescue.d/81grub-efi-force-removable |  4 +---
+ 4 files changed, 13 insertions(+), 19 deletions(-)
+
+diff --git a/functions.sh b/functions.sh
+index 186ad7b1..76df5ae0 100644
+--- a/functions.sh
++++ b/functions.sh
+@@ -69,6 +69,11 @@ die () {
+ }
+ 
+ EXTRA_PATHS=""
++unmount_on_exit () {
++	EXTRA_PATHS="$1 $EXTRA_PATHS"
++	trap "umount $EXTRA_PATHS" HUP INT QUIT KILL PIPE TERM EXIT
++}
++
+ mountvirtfs () {
+ 	fstype="$1"
+ 	path="$2"
+@@ -79,8 +84,7 @@ mountvirtfs () {
+ 		if mkdir -p "$path"; then
+ 			if mount -t "$fstype" "$fstype" "$path"; then
+ 				log "Success mounting $path"
+-				EXTRA_PATHS="$path $EXTRA_PATHS"
+-				trap "umount $EXTRA_PATHS" HUP INT QUIT KILL PIPE TERM EXIT
++				unmount_on_exit "$path"
+ 				return
+ 			else
+ 				failed_action="Mounting"
+diff --git a/grub-installer b/grub-installer
+index bd2bcf9d..efdc5fa7 100755
+--- a/grub-installer
++++ b/grub-installer
+@@ -35,17 +35,21 @@ if [ -z "$initial_proc_contents" ]; then
+ 	info "Mounting /proc into $ROOT"
+ 	if [ "$(udpkg --print-os)" = "kfreebsd" ]; then
+ 		mount -t linprocfs proc $ROOT/proc
++		unmount_on_exit $ROOT/proc
+ 	elif [ "$(udpkg --print-os)" = "hurd" ]; then
+ 		mount -t proc none $ROOT/proc
++		unmount_on_exit $ROOT/proc
+ 	else
+-		mount -t proc proc $ROOT/proc
++		mountvirtfs proc $ROOT/proc
+ 	fi
+ fi
+ 
+ # On Linux, we need /run in the chroot to work around
+ # https://bugs.debian.org/918590.
+ if [ "$(udpkg --print-os)" = "linux" ] && [ ! -d "$ROOT/run/udev" ]; then
++	info "Bind mounting /run into $ROOT"
+ 	mount --bind /run $ROOT/run
++	unmount_on_exit $ROOT/run
+ fi
+ 
+ get_serial_console() {
+@@ -1483,11 +1487,3 @@ fi
+ 
+ db_progress STEP 1
+ db_progress STOP
+-
+-if [ "$(udpkg --print-os)" = "linux" ] && ! umount $ROOT/run; then
+-	info "Failed to unmount /run in $ROOT"
+-fi
+-
+-if ! umount $ROOT/proc; then
+-	info "Failed to unmount /proc in $ROOT"
+-fi
+diff --git a/rescue.d/80grub-reinstall b/rescue.d/80grub-reinstall
+index d9441a49..754338ba 100755
+--- a/rescue.d/80grub-reinstall
++++ b/rescue.d/80grub-reinstall
+@@ -15,11 +15,7 @@ mountvirtfs sysfs /target/sys
+ modprobe efivarfs >/dev/null 2>&1 || true
+ mountvirtfs efivarfs /target/sys/firmware/efi/efivars non-fatal
+ if [ -e /target/boot/efi ]; then
+-    chroot /target mount /boot/efi || true
+-    EXTRA_PATHS="/target/boot/efi $EXTRA_PATHS"
+-fi
+-if [ -n "$EXTRA_PATHS" ]; then
+-    trap "umount $EXTRA_PATHS" HUP INT QUIT KILL PIPE TERM EXIT
++    chroot /target mount /boot/efi && unmount_on_exit /target/boot/efi || true
+ fi
+ 
+ db_input critical grub-installer/bootdev
+diff --git a/rescue.d/81grub-efi-force-removable b/rescue.d/81grub-efi-force-removable
+index ede1ed33..9275185d 100755
+--- a/rescue.d/81grub-efi-force-removable
++++ b/rescue.d/81grub-efi-force-removable
+@@ -38,9 +38,7 @@ mountvirtfs proc /target/proc
+ mountvirtfs sysfs /target/sys
+ modprobe efivarfs >/dev/null 2>&1 || true
+ mountvirtfs efivarfs /target/sys/firmware/efi/efivars non-fatal
+-chroot /target mount /boot/efi || true
+-EXTRA_PATHS="/target/boot/efi $EXTRA_PATHS"
+-trap "umount $EXTRA_PATHS" HUP INT QUIT KILL PIPE TERM EXIT
++chroot /target mount /boot/efi && unmount_on_exit /target/boot/efi || true
+ 
+ db_progress STEP 1
+ db_progress INFO grub-installer/progress/step_install_loader
+-- 
+GitLab
+
+
+From 4ce7d6c337c36cee7db499482ab9507c7d018c5f Mon Sep 17 00:00:00 2001
+From: Pascal Hambourg <pascal@plouf.fr.eu.org>
+Date: Sun, 27 Aug 2023 18:02:38 +0200
+Subject: [PATCH 12/14] Move /sys and efivarfs mounts from postinst to
+ grub-installer
+
+And mount them only if we're installing grub-efi* to avoid adding a
+bogus 'uefi-firmware' menu entry when ignore_uefi is set.
+Also, remove /proc mount from postinst since grub-installer does it too.
+---
+ debian/postinst | 17 -----------------
+ grub-installer  |  7 +++++++
+ 2 files changed, 7 insertions(+), 17 deletions(-)
+
+diff --git a/debian/postinst b/debian/postinst
+index 2523c14f..f63eea3d 100755
+--- a/debian/postinst
++++ b/debian/postinst
+@@ -1,20 +1,3 @@
+ #! /bin/sh -e
+ 
+-. /usr/share/debconf/confmodule
+-
+-. /usr/share/grub-installer/functions.sh
+-
+-ARCH=$(archdetect)
+-if [ "${ARCH#*/}" = "efi" ]; then
+-	# If we're installing grub-efi, it wants /sys mounted in the
+-	# target. Maybe /proc too?
+-	mountvirtfs proc /target/proc
+-	mountvirtfs sysfs /target/sys
+-	# unmounting /target/proc causes an error later on in the install:
+-	#    umount: can't unmount /target/proc: Invalid argument
+-	# (seems like a bug somewhere, but will preserve the old 'overwriting traps' behaviour for now)
+-	EXTRA_PATHS=""
+-	mountvirtfs efivarfs /target/sys/firmware/efi/efivars non-fatal
+-fi
+-
+ grub-installer /target
+diff --git a/grub-installer b/grub-installer
+index efdc5fa7..50defde0 100755
+--- a/grub-installer
++++ b/grub-installer
+@@ -461,6 +461,13 @@ fi
+ 
+ case $grub_package in
+     grub-efi*)
++	# If we're installing grub-efi, it wants /sys and efivarfs
++	# mounted in the target. Conversely, if we're installing grub-pc,
++	# efivarfs must not be mounted in the target to prevent update-grub
++	# from adding a bogus menu entry for UEFI firmware settings.
++	mountvirtfs sysfs $ROOT/sys
++	mountvirtfs efivarfs $ROOT/sys/firmware/efi/efivars non-fatal
++
+ 	# debconf priority for the EFI removable question. The happy path here
+ 	# is that efi boot variables are available. If they are not, then the
+ 	# user most likely has to force grub to the removable media path in
+-- 
+GitLab
+
+
+From 74edbf3a4ce9882569f8238cecd7651b6295087c Mon Sep 17 00:00:00 2001
+From: Philip Hands <phil@hands.com>
+Date: Mon, 28 Aug 2023 14:31:24 +0200
+Subject: [PATCH 13/14] Use a combined stack for on_exit() cleanup tasks
+
+Add support for not only umount but any cleanup commands (rmdir, rm...)
+to prepare partman's ignore_uefi flag propagation to the target system.
+
+This requires to undo the operations in the reverse order to which they
+were done in order to accomodate nested operations. So push all the
+commands onto a single LIFO stack.
+---
+ functions.sh                        | 25 ++++++++++++++++++++-----
+ grub-installer                      |  6 +++---
+ rescue.d/80grub-reinstall           |  2 +-
+ rescue.d/81grub-efi-force-removable |  2 +-
+ 4 files changed, 25 insertions(+), 10 deletions(-)
+
+diff --git a/functions.sh b/functions.sh
+index 76df5ae0..c48bf675 100644
+--- a/functions.sh
++++ b/functions.sh
+@@ -68,11 +68,26 @@ die () {
+ 	exit 1
+ }
+ 
+-EXTRA_PATHS=""
+-unmount_on_exit () {
+-	EXTRA_PATHS="$1 $EXTRA_PATHS"
+-	trap "umount $EXTRA_PATHS" HUP INT QUIT KILL PIPE TERM EXIT
++# on_exit() takes a command, and pushes it onto a stack of commands, which
++# are later executed by perform_exit_stack() (via trap) in LIFO order.
++EXIT_STACK=""
++on_exit() {
++	if [ 1 != $# ]; then
++		error "$0: on_exit() expects exactly 1 argument, but was given $# ${*:+(args:$(printf " [%s]" "$@"))}"
++		exit 1
++	fi
++	EXIT_STACK=$(printf '%s\n%s' "$1" "$EXIT_STACK")
++}
++
++perform_exit_stack () {
++	printf '%s\n' "$EXIT_STACK" | \
++		while read -r cmd; do
++			debug "perform_exit_stack(): Running \"$cmd\""
++			eval "$cmd" || info "attempt to run \"$cmd\" failed [$?] when exiting \"$0\" (non-fatal)"
++		done
++	debug "perform_exit_stack(): exiting \"$0\""
+ }
++trap perform_exit_stack HUP INT QUIT KILL PIPE TERM EXIT
+ 
+ mountvirtfs () {
+ 	fstype="$1"
+@@ -84,7 +99,7 @@ mountvirtfs () {
+ 		if mkdir -p "$path"; then
+ 			if mount -t "$fstype" "$fstype" "$path"; then
+ 				log "Success mounting $path"
+-				unmount_on_exit "$path"
++				on_exit "umount '$path'"
+ 				return
+ 			else
+ 				failed_action="Mounting"
+diff --git a/grub-installer b/grub-installer
+index 50defde0..5b9dc6a1 100755
+--- a/grub-installer
++++ b/grub-installer
+@@ -35,10 +35,10 @@ if [ -z "$initial_proc_contents" ]; then
+ 	info "Mounting /proc into $ROOT"
+ 	if [ "$(udpkg --print-os)" = "kfreebsd" ]; then
+ 		mount -t linprocfs proc $ROOT/proc
+-		unmount_on_exit $ROOT/proc
++		on_exit "umount '$ROOT/proc'"
+ 	elif [ "$(udpkg --print-os)" = "hurd" ]; then
+ 		mount -t proc none $ROOT/proc
+-		unmount_on_exit $ROOT/proc
++		on_exit "umount '$ROOT/proc'"
+ 	else
+ 		mountvirtfs proc $ROOT/proc
+ 	fi
+@@ -49,7 +49,7 @@ fi
+ if [ "$(udpkg --print-os)" = "linux" ] && [ ! -d "$ROOT/run/udev" ]; then
+ 	info "Bind mounting /run into $ROOT"
+ 	mount --bind /run $ROOT/run
+-	unmount_on_exit $ROOT/run
++	on_exit "umount '$ROOT/run'"
+ fi
+ 
+ get_serial_console() {
+diff --git a/rescue.d/80grub-reinstall b/rescue.d/80grub-reinstall
+index 754338ba..cd05f3d6 100755
+--- a/rescue.d/80grub-reinstall
++++ b/rescue.d/80grub-reinstall
+@@ -15,7 +15,7 @@ mountvirtfs sysfs /target/sys
+ modprobe efivarfs >/dev/null 2>&1 || true
+ mountvirtfs efivarfs /target/sys/firmware/efi/efivars non-fatal
+ if [ -e /target/boot/efi ]; then
+-    chroot /target mount /boot/efi && unmount_on_exit /target/boot/efi || true
++    chroot /target mount /boot/efi && on_exit "umount /target/boot/efi" || true
+ fi
+ 
+ db_input critical grub-installer/bootdev
+diff --git a/rescue.d/81grub-efi-force-removable b/rescue.d/81grub-efi-force-removable
+index 9275185d..82e17a3b 100755
+--- a/rescue.d/81grub-efi-force-removable
++++ b/rescue.d/81grub-efi-force-removable
+@@ -38,7 +38,7 @@ mountvirtfs proc /target/proc
+ mountvirtfs sysfs /target/sys
+ modprobe efivarfs >/dev/null 2>&1 || true
+ mountvirtfs efivarfs /target/sys/firmware/efi/efivars non-fatal
+-chroot /target mount /boot/efi && unmount_on_exit /target/boot/efi || true
++chroot /target mount /boot/efi && on_exit "umount /target/boot/efi" || true
+ 
+ db_progress STEP 1
+ db_progress INFO grub-installer/progress/step_install_loader
+-- 
+GitLab
+
+
+From 44cf4f9ea70d42371a37f159a9610a92b506f4a1 Mon Sep 17 00:00:00 2001
+From: Pascal Hambourg <pascal@plouf.fr.eu.org>
+Date: Sun, 27 Aug 2023 19:28:45 +0200
+Subject: [PATCH 14/14] grub-installer: propagate ignore_uefi flag to target
+ system for os-prober
+
+If partman-efi set /var/lib/partman/ignore_uefi flag, os-prober
+should perform legacy BIOS probes and skip EFI probes in target chroot,
+so temporarily set ignore_uefi in the target system too.
+---
+ grub-installer | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+
+diff --git a/grub-installer b/grub-installer
+index 5b9dc6a1..09dfe212 100755
+--- a/grub-installer
++++ b/grub-installer
+@@ -323,6 +323,8 @@ case $ARCH in
+ 	;;
+     i386/efi|amd64/efi)
+ 	if [ -f /var/lib/partman/ignore_uefi ]; then
++		# $SUBARCH != "efi" if partman ignore_uefi flag is set
++		# so this branch should not be reached
+ 		grub_package="grub-pc"
+ 	else
+ 		grub_package="grub-efi"
+@@ -368,6 +370,34 @@ case $ARCH in
+ 	grub_package="grub-pc"
+ esac
+ 
++if [ -f /var/lib/partman/ignore_uefi ]; then
++	# propagate partman ignore_uefi flag to the target system so that
++	# os-prober performs legacy BIOS probes instead of EFI probes
++	# when running update-grub in target chroot
++	if [ ! -e $ROOT/var/lib/partman ]; then
++		if mkdir -p $ROOT/var/lib/partman; then
++			on_exit "rmdir '$ROOT/var/lib/partman'"
++		else
++			error "Failed to create directory $ROOT/var/lib/partman"
++			exit 1
++		fi
++	elif [ ! -d $ROOT/var/lib/partman ]; then
++		error "$ROOT/var/lib/partman exists but is not a directory"
++		exit 1
++	fi
++	if [ ! -e $ROOT/var/lib/partman/ignore_uefi ]; then
++		if touch $ROOT/var/lib/partman/ignore_uefi; then
++			on_exit "rm '$ROOT/var/lib/partman/ignore_uefi'"
++		else
++			error "Failed to create file $ROOT/var/lib/partman/ignore_uefi"
++			exit 1
++		fi
++	elif [ ! -f $ROOT/var/lib/partman/ignore_uefi ]; then
++		error "$ROOT/var/lib/partman/ignore_uefi exists but is not a regular file"
++		exit 1
++	fi
++fi
++
+ case "$frtype:$bootfstype:$bootfslabel:$grub_package" in
+     multipath:*:*:*)
+ 	# Multipath requires GRUB Legacy for now
+-- 
+GitLab
+

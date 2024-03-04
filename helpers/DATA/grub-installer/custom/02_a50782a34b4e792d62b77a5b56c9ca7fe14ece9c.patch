@@ -1,0 +1,42 @@
+From a50782a34b4e792d62b77a5b56c9ca7fe14ece9c Mon Sep 17 00:00:00 2001
+From: D-I role <debian-boot@lists.debian.org>
+Date: Thu, 14 Sep 2023 20:02:51 +0000
+Subject: [PATCH] [l10n]  Update templates.pot (from l10n-sync run at dillon)
+
+---
+ debian/po/templates.pot | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/debian/po/templates.pot b/debian/po/templates.pot
+index 30e63b4e..c46bf4bd 100644
+--- a/debian/po/templates.pot
++++ b/debian/po/templates.pot
+@@ -8,7 +8,7 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: grub-installer\n"
+ "Report-Msgid-Bugs-To: grub-installer@packages.debian.org\n"
+-"POT-Creation-Date: 2023-04-20 20:02+0000\n"
++"POT-Creation-Date: 2023-09-14 20:02+0000\n"
+ "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+ "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+ "Language-Team: LANGUAGE <LL@li.org>\n"
+@@ -394,14 +394,14 @@ msgstr ""
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Failed to mount /target/proc"
++msgid "Failed to mount ${PATH}"
+ msgstr ""
+ 
+ #. Type: error
+ #. Description
+ #. :sl4:
+ #: ../grub-installer.templates:30001
+-msgid "Mounting the proc file system on /target/proc failed."
++msgid "Mounting the ${FSTYPE} file system on ${PATH} failed."
+ msgstr ""
+ 
+ #. Type: error
+-- 
+GitLab
+
