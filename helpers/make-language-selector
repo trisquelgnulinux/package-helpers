@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 COMPONENT=main
 
 . ./config
@@ -27,6 +27,31 @@ echo "Aymara;1;aym;aym_PE.UTF-8;aym;PE;aym_PE:aym:en_GB:en;kbd=lat0-sun16(utf8)"
 echo "quz:quz_PE" >> ./data/langcode2locale
 echo "aym:aym_PE" >> ./data/langcode2locale
 
-changelog "Added quz and aym locales"
+# Add icedove and abrowser to the supported language-selector apps.
+cat << EOF | patch --no-backup-if-mismatch -p1
+diff --git a/data/pkg_depends b/data/pkg_depends
+index 2ddc062..a81f854 100644
+--- a/data/pkg_depends
++++ b/data/pkg_depends
+@@ -11,13 +11,14 @@ tr::gvfs:language-pack-gnome-
+ # Format: %LCODE% or %LCODE%-%CCODE%
+ tr::libreoffice-common:libreoffice-l10n-
+ tr::libreoffice-common:libreoffice-help-
+-tr::thunderbird:thunderbird-locale-
++tr::icedove:icedove-locale-
++tr::abrowser:abrowser-locale-
+ tr::lightning-extension:lightning-extension-locale-
+ tr::sunbird:sunbird-locale-
+ tr::sword-text-gerlut1545:sword-language-pack-
+ tr::gimp:gimp-help-
+ tr::evolution:evolution-documentation-
+-tr::chromium-browser:chromium-browser-l10n
++#tr::chromium-browser:chromium-browser-l10n
+ tr::sylpheed:sylpheed-i18n
+ tr::amarok:amarok-help-
+ tr::gnome-user-docs:gnome-user-docs-
+EOF
+
+changelog "Added quz and aym locales | Added support for abrowser and icedove."
 
 package
