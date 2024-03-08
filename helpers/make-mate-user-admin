@@ -17,14 +17,14 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=0
-EXTERNAL='deb-src http://ftp.us.debian.org/debian bookworm main'
-REPOKEY=6ED0E7B82643E131
-BUILD_UNTIL=11.0
+VERSION=1
+EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu noble main universe'
 
 . ./config
 
+# Add cracklib-runtime dependency to debian/control
+patch --no-backup-if-mismatch -p1 < $DATA/add-cracklib-runtime-as-dependency.patch
 
-changelog "Imported into Trisquel Aramo"
+changelog "Imported into Trisquel Aramo | Added cracklib-runtime dependency."
 
 package

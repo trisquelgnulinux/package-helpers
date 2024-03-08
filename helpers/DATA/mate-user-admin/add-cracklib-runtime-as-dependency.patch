@@ -1,0 +1,14 @@
+# Fixes https://gitlab.trisquel.org/trisquel/package-helpers/-/issues/148
+
+diff --git a/debian/control b/debian/control
+index 3297b1c..37ff49a 100644
+--- a/debian/control
++++ b/debian/control
+@@ -28,6 +28,7 @@ Depends: ${shlibs:Depends},
+          accountsservice,
+          group-service,
+          mate-desktop-common,
++         cracklib-runtime,
+ Description: MATE User Manager
+  User and group management utility suitable for lightweight desktop
+  environments such as MATE or Xfce.
