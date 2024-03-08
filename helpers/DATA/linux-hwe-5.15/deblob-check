@@ -6344,6 +6344,8 @@ set_except () {
     blobname 'mediatek[/]WIFI_MT7922_patch_mcu_1_1_hdr\.bin' drivers/net/wireless/mediatek/mt76/mt7921/mt7921.h
     blobname 'qca[/]nvm_usb_%08x\.bin' drivers/bluetooth/btusb.c
     blobname 'qca[/]nvm_usb_%08x%s_%04x\.bin' drivers/bluetooth/btusb.c
+    ## New in 6.6-rc, 6.5.9, 6.1.60, 5.15.137, 5.10.199. - 07/Mar/2024
+    blobname 'gsl1680-\(bush-bush-windows-tablet\|positivo-c4128b\)\.fw' drivers/platform/x86/otuchscreen_dmi.c
 
     # New in 5.16.3, 5.15.17, 5.10.94, 5.4.174, 4.19.226, 4.14.263.
     accept 'static[ ]struct[ ]dvb_usb_device_properties[ ]\(p1100\|s660\|p7500\)_properties[ ]=[ ][{][\n]\([	]\.\(caps\|usb_ctrl\|size_of_priv\)[ ]*=[ ][^",]*,[\n]*\)*[	]\.firmware[ ]*=[ ]' drivers/media/usb/dvb-usb/dw2102.c
