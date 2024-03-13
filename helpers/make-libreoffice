@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=4
+VERSION=5
 EXTERNAL='deb-src https://ppa.launchpadcontent.net/libreoffice/libreoffice-still/ubuntu $UPSTREAM main'
 REPOKEY="83FBA1751378B444"
 BUILD_UNTIL=10.0
@@ -26,6 +26,9 @@ BUILD_UNTIL=10.0
 
 # Make sure that Trisquel gets compiled same as Ubuntu
 patch -p0 < $DATA/debian-rules.patch
+
+# Increase CPU usage for amd64 build.
+sed -i "/NUM_CPUS=/s|3|7|" debian/rules
 
 changelog "Backported to get latest version into Trisquel"
 
