@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=108
+VERSION=109
 EXTERNAL='deb-src http://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu $UPSTREAM main'
 REPOKEY=9BDB3D89CE49EC21
 
@@ -33,7 +33,7 @@ sed '/async download.*/areturn;' -i services/settings/RemoteSettingsClient.sys.m
 
 # Disable activity-stream antifeatures.
 # These are not condensed into a single sed script to make it fail on individual commands that didn't change the source
-ActivityStream=browser/components/newtab/lib/ActivityStream.jsm
+ActivityStream=browser/components/newtab/lib/ActivityStream.sys.mjs
 sed '/^const DEFAULT_SITES/,/^])\;/c const DEFAULT_SITES = new Map\([[""]]\);' -i browser/components/newtab/lib/DefaultSites.sys.mjs
 sed '/"showSponsored"/,/value/s/value: true/value: false/' -i $ActivityStream
 sed '/"telemetry"/,/value/s/value: true/value: false/' -i $ActivityStream
@@ -69,17 +69,6 @@ sed -i '/browser.theme.colorway-closet/s|true|false|' browser/app/profile/firefo
 #grep -rl browser.newtabpage.introShown |xargs -r sed -i '/browser.newtabpage.introShown/s|true|false|'
 ##Remove mailto handlers. 110
 sed -i '/kHandlerList = {/,/^ };/{/^  /d}' uriloader/exthandler/HandlerList.sys.mjs
-
-# Remove .gitignore call as those files get cleaned out on dpkg tarball by default.
-remove_gitignore_from_json(){
-    jq . ${1} |sed '/.gitignore/d'|awk -v RS= '{$1=$1}1'|tr -d ' '|tee ${1}.new
-    mv ${1}.new ${1}
-}
-
-for json in $(find -name \.cargo-checksum.json|xargs grep -rl gitignore)
-do
-    remove_gitignore_from_json $json
-done
 
 # Replace ubufox recommendation
 sed 's/xul-ext-ubufox/xul-ext-youtube-html5-video-player/' -i debian/control.in

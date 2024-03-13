@@ -57,9 +57,9 @@ diff -Nru a/browser/base/content/test/static/browser_all_files_referenced.js b/b
    { file: "resource://gre/greprefs.js" },
  
    // layout/mathml/nsMathMLChar.cpp
-diff -Nru a/browser/components/newtab/lib/OnboardingMessageProvider.jsm b/browser/components/newtab/lib/OnboardingMessageProvider.jsm
---- a/browser/components/newtab/lib/OnboardingMessageProvider.jsm	2022-10-16 05:35:50.783203285 -0500
-+++ b/browser/components/newtab/lib/OnboardingMessageProvider.jsm	2022-10-16 06:20:07.235345215 -0500
+diff -Nru a/browser/components/asrouter/modules/OnboardingMessageProvider.sys.mjs b/browser/components/newtab/lib/OnboardingMessageProvider.jsm
+--- a/browser/components/asrouter/modules/OnboardingMessageProvider.sys.mjs	2022-10-16 05:35:50.783203285 -0500
++++ b/browser/components/asrouter/modules/OnboardingMessageProvider.sys.mjs	2022-10-16 06:20:07.235345215 -0500
 @@ -513,315 +515,6 @@ const BASE_MESSAGES = () => [
        ],
      },
@@ -376,10 +376,10 @@ diff -Nru a/browser/components/newtab/lib/OnboardingMessageProvider.jsm b/browse
    {
      id: "PB_NEWTAB_INFO_SECTION",
      template: "pb_newtab",
-diff --git a/browser/components/newtab/lib/PanelTestProvider.sys.mjs b/browser/components/newtab/lib/PanelTestProvider.sys.mjs
+diff --git a/browser/components/asrouter/modules/PanelTestProvider.sys.mjs b/browser/components/newtab/lib/PanelTestProvider.sys.mjs
 index b5ff592..22cdf39 100644
---- a/browser/components/newtab/lib/PanelTestProvider.sys.mjs	2022-10-16 05:35:50.835203327 -0500
-+++ b/browser/components/newtab/lib/PanelTestProvider.sys.mjs	2022-10-16 06:24:48.095827505 -0500
+--- a/browser/components/asrouter/modules/PanelTestProvider.sys.mjs	2022-10-16 05:35:50.835203327 -0500
++++ b/browser/components/asrouter/modules/PanelTestProvider.sys.mjs	2022-10-16 06:24:48.095827505 -0500
 @@ -367,85 +374,6 @@ const MESSAGES = () => [
      frequency: { lifetime: 3 },
      trigger: { id: "defaultBrowserCheck" },
