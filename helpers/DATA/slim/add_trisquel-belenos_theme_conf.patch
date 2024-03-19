@@ -1,0 +1,23 @@
+diff --git a/debian/slim.install b/debian/slim.install
+index 399b59e..8728df6 100644
+--- a/debian/slim.install
++++ b/debian/slim.install
+@@ -6,6 +6,8 @@ debian/debian-joy usr/share/slim/themes/
+ debian/debian-lines usr/share/slim/themes/
+ #softwaves
+ debian/debian-softwaves usr/share/slim/themes/
++#belenos
++debian/trisquel-belenos usr/share/slim/themes/
+ 
+ debian/local/Xsession.d/20slim_locale etc/X11/Xsession.d
+ 
+diff --git a/debian/source/include-binaries b/debian/source/include-binaries
+index 28f7732..06e7c5e 100644
+--- a/debian/source/include-binaries
++++ b/debian/source/include-binaries
+@@ -10,3 +10,5 @@ debian/debian-lines/panel.png
+ debian/debian-lines/background.png
+ debian/debian-softwaves/panel.png
+ debian/debian-softwaves/background.png
++debian/trisquel-belenos/panel.png
++debian/trisquel-belenos/background.png
