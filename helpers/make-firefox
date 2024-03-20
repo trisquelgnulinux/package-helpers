@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=101
+VERSION=102
 
 . ./config
 
@@ -31,7 +31,7 @@ sed '/async download.*/areturn;' -i services/settings/RemoteSettingsClient.sys.m
 
 # Disable activity-stream antifeatures.
 # These are not condensed into a single sed script to make it fail on individual commands that didn't change the source
-ActivityStream=browser/components/newtab/lib/ActivityStream.jsm
+ActivityStream=browser/components/newtab/lib/ActivityStream.sys.mjs
 sed '/^const DEFAULT_SITES/,/^])\;/c const DEFAULT_SITES = new Map\([[""]]\);' -i browser/components/newtab/lib/DefaultSites.sys.mjs
 sed '/"showSponsored"/,/value/s/value: true/value: false/' -i $ActivityStream
 sed '/"telemetry"/,/value/s/value: true/value: false/' -i $ActivityStream
