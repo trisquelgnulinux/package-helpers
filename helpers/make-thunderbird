@@ -19,7 +19,9 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=21
+VERSION=22
+EXTERNAL='deb-src http://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu $UPSTREAM main'
+REPOKEY=9BDB3D89CE49EC21
 
 . ./config
 
@@ -29,17 +31,6 @@ cp $DATA/branding/* comm/mail/branding/thunderbird/ -r
 #for i in aurora nightly official unofficial; do
 #  cp $DATA/branding/* browser/branding/$i/ -r
 #done
-
-# Remove .gitignore call as those files get cleaned out on dpkg tarball by default.
-remove_gitignore_from_json(){
-    jq . ${1} |sed '/.gitignore/d'|awk -v RS= '{$1=$1}1'|tr -d ' '|tee ${1}.new
-    mv ${1}.new ${1}
-}
-
-for json in $(find -name \.cargo-checksum.json|xargs grep -rl gitignore)
-do
-    remove_gitignore_from_json $json
-done
 
 # Privacy and branding via prefs
 cat << EOF >> debian/vendor.js
