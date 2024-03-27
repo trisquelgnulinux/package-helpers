@@ -1,0 +1,26 @@
+From b5a7641dd3502fcfb897d3b96e197628b674ce3c Mon Sep 17 00:00:00 2001
+From: Adrian Heine <mail@adrianheine.de>
+Date: Mon, 23 Jan 2023 20:35:29 +0100
+Subject: [PATCH] Add pipewire client.conf to audio abstractions
+
+Fixes: https://bugs.launchpad.net/bugs/2003702
+---
+ profiles/apparmor.d/abstractions/audio | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/profiles/apparmor.d/abstractions/audio b/profiles/apparmor.d/abstractions/audio
+index 01493260d..dd783992d 100644
+--- a/profiles/apparmor.d/abstractions/audio
++++ b/profiles/apparmor.d/abstractions/audio
+@@ -85,5 +85,8 @@ owner @{HOME}/.local/share/openal/hrtf/{,**} r,
+ # wildmidi
+ /etc/wildmidi/wildmidi.cfg r,
+ 
++# pipewire
++/usr/share/pipewire/client.conf r,
++
+   # Include additions to the abstraction
+   include if exists <abstractions/audio.d>
+-- 
+GitLab
+
