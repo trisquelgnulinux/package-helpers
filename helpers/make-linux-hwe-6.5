@@ -301,7 +301,7 @@ if [ $HWE_ENABLED != 1 ]; then
 else
 # HWEKR - 6.5+
     ## Disable ppc64el Werroron amdgpu
-    for i in $(grep -rl CONFIG_DRM_AMDGPU_WERROR $DEBIAN_PATH/config/annotations)
+    for i in $(grep -rl CONFIG_DRM_AMDGPU_WERROR debian.*/config/annotations)
     do
         sed -i "/CONFIG_DRM_AMDGPU_WERROR/s|'ppc64el': 'y'|'ppc64el': 'n'|" $i
     done
