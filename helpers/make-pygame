@@ -17,13 +17,19 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=0
+VERSION=1
 BUILD_UNTIL=11.0
 
 . ./config
 
-patch --no-backup-if-mismatch -p1 < $DATA/update_surface_test.patch
+# 01_Rebuild to use the latest SDL support on aramo.
+# 02_SDL_CreateWindowFrom in "display" module
+for patch in $(ls -v ${DATA}/*.patch)
+do
+    echo "Applying $patch"
+    patch --no-backup-if-mismatch -Np1 < $patch
+done
 
-changelog "Rebuild to use the latest SDL support on aramo."
+changelog "Rebuild to use the latest SDL support on aramo. | Fix 'SDL_CreateWindowFrom' in 'display' module"
 
 package
