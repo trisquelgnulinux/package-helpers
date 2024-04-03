@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=11
+VERSION=12
 
 . ./config
 
@@ -120,6 +120,10 @@ cat << EOF >> debian/mate-panel.install
 debian/mate-panel-layout-update.desktop etc/xdg/autostart
 debian/layout-reset usr/share/mate-panel
 EOF
+
+# Disable MATE show-window-thumbnails, broken and could become a privacy issue.
+sed -i "/<key name=\"show-window-thumbnails\"/,/<summary>/s|true|false|" \
+    applets/wncklet/org.mate.panel.applet.window-list-previews.gschema.xml.in
 
 # Apply selected upstream fixes from mate-panel - 1.26.3
 for i in $(find $DATA/ -name *.patch|sort)
