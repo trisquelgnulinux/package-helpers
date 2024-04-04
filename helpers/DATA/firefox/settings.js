@@ -284,3 +284,6 @@ pref("browser.newtabpage.activity-stream.fxaccounts.endpoint", "");
 // Disable Normandy (remote settings changer for AB testing)
 pref("app.normandy.enabled", false);
 pref("app.normandy.api_url", "");
+
+// Disable Adwaita theme by default.
+pref("widget.gtk.libadwaita-colors.enabled", false);
