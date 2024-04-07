@@ -39,12 +39,12 @@ fi
 export DEBIAN_FRONTEND=noninteractive
 export DEBEMAIL=trisquel-devel@listas.trisquel.info
 export DEBFULLNAME="Trisquel GNU/Linux developers"
-export CODENAME=aramo
-export REVISION=11.0
+export CODENAME=ecne
+export REVISION=12.0
 export RELEASE=trisquel
 export DOMAIN=trisquel.info
-export UPSTREAM=jammy
-export UPSTREAMRELEASE=22.04
+export UPSTREAM=noble
+export UPSTREAMRELEASE=24.04
 MIRROR=http://archive.ubuntu.com/ubuntu
 LOCALMIRROR=http://archive.trisquel.org/trisquel
 LOCAL_APT=`mktemp -d` 
@@ -169,17 +169,7 @@ cd source
 
 UPSTREAMVERSION=$(dpkg-parsechangelog --show-field Version)
 
-# This needs to be enabled (and reviewed) as first step of t12 release. Making it break here to force review
-[ "$REVISION" == 12.0 ] && echo Review version string generation before building t12 packages! && exit 1
-export FULLVERSION=$(dpkg-parsechangelog --show-field Version)+${REVISION}trisquel${VERSION}
-[ "$PACKAGE" == "console-setup" ] && export FULLVERSION=$(dpkg-parsechangelog --show-field Version)-${REVISION}trisquel${VERSION}
-# This is the proposed method:
-#if echo $UPSTREAMVERSION | grep -q '-'; then
-#    export FULLVERSION=$(dpkg-parsechangelog --show-field Version)+${REVISION}trisquel${VERSION}
-#else
-#    export FULLVERSION=$(dpkg-parsechangelog --show-field Version)-${REVISION}trisquel${VERSION}
-#fi
-# IMPORTANT: the build watchdog would need to be modified to match any changes done here
+export FULLVERSION=$(dpkg-parsechangelog --show-field Version)trisquel${VERSION}
 
 # Use 3.0 (native) deb source format
 [ -f debian/source/format ] && echo "3 (native)" > debian/source/format
