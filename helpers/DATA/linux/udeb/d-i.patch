@@ -1,6 +1,8 @@
---- a/debian/rules	2023-02-10 11:40:38.000000000 -0600
-+++ b/debian/rules	2023-02-10 11:53:56.313708852 -0600
-@@ -128,12 +128,19 @@
+diff --git a/debian/rules b/debian/rules
+index 0f238b32..d96c732e 100755
+--- a/debian/rules
++++ b/debian/rules
+@@ -122,12 +122,19 @@ clean: debian/control debian/canonical-certs.pem debian/canonical-revoked-certs.
  	dh_testroot
  	dh_clean
  
@@ -10,7 +12,7 @@
 +	rm -f $(DEBIAN)/d-i/firmware/$(arch)/kernel-image
 +
  	# normal build junk
- 	rm -rf $(DEBIAN)/abi/$(release)-$(revision)
+ 	rm -rf $(DEBIAN)/abi
  	rm -rf $(builddir)
  	rm -f $(stampdir)/stamp-*
  	rm -rf $(DEBIAN)/linux-*
@@ -37,7 +39,7 @@
 +	export KW_DEFCONFIG_DIR=$(DEBIAN)/d-i && \
 +	export KW_CONFIG_DIR=$(DEBIAN)/d-i && \
 +	LANG=C kernel-wedge gen-control $(release)-$(abinum) | \
-+		perl -f $(DROOT)/scripts/misc/kernel-wedge-arch.pl $(arch) \
++               grep-dctrl -FArchitecture $(arch) \
 +		>>$(CURDIR)/debian/control
  
  debian/canonical-certs.pem: $(wildcard $(DROOT)/certs/*-all.pem) $(wildcard $(DROOT)/certs/*-$(arch).pem) $(wildcard $(DEBIAN)/certs/*-all.pem) $(wildcard $(DEBIAN)/certs/*-$(arch).pem)
