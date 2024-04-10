@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2023 Luis Guzman <ark@switnet.org>
+#    Copyright (C) 2024 Luis Guzman <ark@switnet.org>
 #    Copyright (C) 2008-2022  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C) 2019 David Trudgian <dave@trudgian.net>
 #
@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=12
+VERSION=13
 
 . ./config
 
@@ -75,14 +75,27 @@ rm zfs spl debian/scripts/misc/update-zfs.sh -rf
 /bin/sed 's/spl-dkms, zfs-dkms//' -i debian/control debian.master/control.d/vars.generic debian.master/control.d/vars.*
 /bin/sed '/^define build_zfs/,/^endef/d; /^define install_zfs/,/^endef/d; /zfs/d' -i debian/rules.d/2-binary-arch.mk
 /bin/sed '/ifeq ($(do_zfs),false)/,/endif/d' -i debian/rules
-/bin/sed  '/zfs/d' -i debian.master/rules.d/* debian.master/d-i/modules/fs-core-modules debian.master/control.d/generic.inclusion-list debian.master/abi/*/*/*.modules debian/rules debian.master/control.d/vars.*
+for i in $(grep -lr zfs	debian.master/rules.d/* \
+		debian.master/d-i/modules/fs-core-modules \
+		debian.master/control.d/generic.inclusion-list \
+		debian.master/abi/*/*/*.modules \
+		debian/rules \
+		debian.master/control.d/vars.*)
+do
+    sed  -i '/zfs/d' $i
+done
 
 # Remove VBox
 sed -i '/vbox/s|true|false|' debian.master/rules.d/amd64.mk
 
 # Remove nvidia
 rm -rf debian/scripts/debian/scripts/dkms-build--nvidia-N
-/bin/sed  '/do_dkms_nvidia = true/d' -i debian.master/abi/*/*/*.modules debian/rules debian.master/control.d/vars.*
+for i in $(grep -l 'do_dkms_nvidia = true' debian.master/abi/*/*/*.modules \
+		debian/rules \
+		debian.master/control.d/vars.*)
+do
+    sed -i '/do_dkms_nvidia = true/d' $i
+done
 sed '/do_dkms_nvidia/,/endif/d' -i debian/rules.d/2-binary-arch.mk
 /bin/sed '/do_dkms_nvidia/d' -i debian.master/rules.d/*
 
@@ -120,7 +133,7 @@ find debian* -type f -name *control* -exec sed 's/ with Ubuntu patches//; s/Linu
 # Descriptions should not change based on the build arch
 sed 's/on DESC//; s/PKGVER on/PKGVER/; /^ DESC.$/d;' debian*/control.d/flavour-control.stub -i
 
-sed '/^firmware/d' ./debian*/abi/*/fwinfo -i
+#sed '/^firmware/d' ./debian*/abi/*/fwinfo -i
 echo > ./debian.master/d-i/firmware/nic-modules
 echo > ./debian.master/d-i/firmware/scsi-modules
 
