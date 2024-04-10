@@ -1,8 +1,8 @@
 diff --git a/debian/rules b/debian/rules
-index fe52711..b2d1921 100755
+index 661286bd..e828a0ac 100755
 --- a/debian/rules
 +++ b/debian/rules
-@@ -134,12 +134,19 @@ clean: debian/control debian/canonical-certs.pem debian/canonical-revoked-certs.
+@@ -128,12 +128,19 @@ clean: debian/control debian/canonical-certs.pem debian/canonical-revoked-certs.
  	dh_testroot
  	dh_clean
  
@@ -12,7 +12,7 @@ index fe52711..b2d1921 100755
 +	rm -f $(DEBIAN)/d-i/firmware/$(arch)/kernel-image
 +
  	# normal build junk
- 	rm -rf $(DEBIAN)/abi/$(release)-$(revision)
+ 	rm -rf $(DEBIAN)/abi
  	rm -rf $(builddir)
  	rm -f $(stampdir)/stamp-*
  	rm -rf debian/linux-*/
@@ -22,14 +22,15 @@ index fe52711..b2d1921 100755
  	cp $(DEBIAN)/changelog debian/changelog
  
  	# Install the copyright information.
-@@ -184,7 +191,6 @@ $(DEBIAN)/control.stub: 				\
- 		$(DROOT)/scripts/control-create		\
- 		$(control_files)			\
- 		debian/canonical-revoked-certs.pem	\
--		$(DROOT)/control.d/flavour-module.stub	\
- 		$(DEBIAN)/changelog			\
- 		$(wildcard $(DEBIAN)/control.d/* $(DEBIAN)/sub-flavours/*.vars)
- 	for i in $(control_files); do                                           \
+#removed at 6.5.0-27.28~22.04.1
+#@@ -184,7 +191,6 @@ $(DEBIAN)/control.stub: 				\
+# 		$(DROOT)/scripts/control-create		\
+# 		$(control_files)			\
+# 		debian/canonical-revoked-certs.pem	\
+#-		$(DROOT)/control.d/flavour-module.stub	\
+# 		$(DEBIAN)/changelog			\
+# 		$(wildcard $(DEBIAN)/control.d/* $(DEBIAN)/sub-flavours/*.vars)
+# 	for i in $(control_files); do                                           \
 @@ -211,7 +217,14 @@ $(DEBIAN)/control.stub: 				\
  
  .PHONY: debian/control

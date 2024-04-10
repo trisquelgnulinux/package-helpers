@@ -24,7 +24,6 @@ HWEKR=5.15
 
 # DI_ENABLED = 1 enables udeb build, 0 or any other value disables them.
 DI_ENABLED=1
-
 # HWE_ENABLED = 1 enables HWE stack build, 0 or any other value disables it.
 HWE_ENABLED=0
 
@@ -134,7 +133,7 @@ Description: Metapackage depending on kernel udebs
  for easier version and migration tracking.
 EOF
 
-cat << EOF >> $(find -name flavour-control.stub)
+cat << EOF >> $DEBIAN_PATH/control.d/flavour-control.stub
 Package: SRCPKGNAME-udebs-FLAVOUR
 Build-Profiles: <!stage1> <!noudeb> <!cross> <!autopkgtest>
 XC-Package-Type: udeb
@@ -152,7 +151,7 @@ sed 's/+= binary-debs/+= binary-udebs/' -i debian/rules.d/2-binary-arch.mk
 for i in dctrl-tools kernel-wedge
 do
     sed "/Build-Depends:/a\ $i <\!stage1> <\!noudeb> <\!cross> <\!autopkgtest>," -i	debian/control \
-											$(find -name control.stub.in)
+											$DEBIAN_PATH/control.stub.in
 done
 }
 
@@ -302,7 +301,7 @@ if [ $HWE_ENABLED != 1 ]; then
 else
 # HWEKR - 6.5+
     ## Disable ppc64el Werroron amdgpu
-    for i in $(grep -rl CONFIG_DRM_AMDGPU_WERROR $DEBIAN_PATH/config/annotations)
+    for i in $(grep -rl CONFIG_DRM_AMDGPU_WERROR debian.*/config/annotations)
     do
         sed -i "/CONFIG_DRM_AMDGPU_WERROR/s|'ppc64el': 'y'|'ppc64el': 'n'|" $i
     done
