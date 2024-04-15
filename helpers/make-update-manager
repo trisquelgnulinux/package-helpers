@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=19
+VERSION=20
 
 . ./config
 
@@ -36,6 +36,9 @@ cp $DATA/index.docbook help/C/index.docbook
 # Prevent automated connections
 patch --no-backup-if-mismatch -p1 < $DATA/prevent-autoconnection.patch
 # NOTE: prevent-autoconnection.patch l10n is now part of the DATA/l10n/ patches.
+
+# Roll back the usage of uaclient.api.u.pro.packages.updates.v1
+patch --no-backup-if-mismatch -p1 -R < $DATA/rm-usage_uaclient.api.u.pro.packages.updates.v1.patch
 
 replace internet Internet .
 replace Ubuntu Trisquel .
