@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
+VERSION=4
 EXTERNAL='deb-src http://ppa.launchpad.net/libreoffice/ppa/ubuntu $UPSTREAM main'
 REPOKEY="83FBA1751378B444"
 BACKPORT=true
@@ -25,6 +25,9 @@ BACKPORT=true
 . ./config
 
 patch --no-backup-if-mismatch -p1 < $DATA/debian-rules_7.3.patch
+
+# Increase CPU usage for amd64 build.
+sed -i "/NUM_CPUS=/s|3|7|" debian/rules
 
 changelog "Backport libreoffice fresh into Trisquel"
 

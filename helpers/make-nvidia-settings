@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2017-2018  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2024 Luis Guzmán <ark@switnet.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,18 +17,13 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=7
+VERSION=0
+EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu $UPSTREAM main'
+
 . ./config
 
-sed 's/22.04/11.0/g' -i debian/control
-sed 's/20.04/10.0/g' -i debian/control
-#sed 's/Xenial/Flidas/; s/Bionic/Etiona/' -i debian/control
-sed 's/linux-firmware/firmware-linux-free/' -i debian/control ./debian/control.d/generic*
-sed 's/Ubuntu/upstream/' -i debian/control
-sed 's/Linux/Linux-libre/g' -i debian/control ./debian/control.d/generic*
-sed 's/, intel-microcode \[amd64\]//; s/, amd64-microcode \[amd64\]//;' -i debian/control debian/control.d/generic
-sed '/dkms_wireguard_version/d' -i debian/rules
+sed -i "/HTTPURL_PREFIX/s|https.*||" debian/rules.defs
 
-changelog "Removed linux-firmware dependency, renamed release for Trisquel"
+changelog "Remove nvidia-settings external repository pointers."
 
 package
