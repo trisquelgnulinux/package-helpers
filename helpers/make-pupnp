@@ -24,6 +24,8 @@ BACKPORT=true
 BUILD_UNTIL=11.0
 . ./config
 
+sed -i '/dpkg-dev/s|1.22.5|1.21.1ubuntu2.3|' debian/control
+
 changelog "Imported into trisquel backports as part of jami dependency."
 
 package
