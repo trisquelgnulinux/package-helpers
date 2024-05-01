@@ -18,17 +18,17 @@
 #
 
 VERSION=4
-EXTERNAL='deb-src http://ftp.debian.org/debian bullseye-backports-sloppy main'
-REPOKEY=0E98404D386FA1D9
+EXTERNAL='deb-src http://ftp.debian.org/debian bookworm-backports main'
+REPOKEY=6ED0E7B82643E131
 BACKPORT=true
 
 . ./config
 
 #Remove stable backport workaround to keep using libmsgsl-dev 3.0
-sed -i 's|\-I\$(CURDIR)/debian||' debian/rules
+#sed -i 's|\-I\$(CURDIR)/debian||' debian/rules
 
 # Bump VERSION=4 to rebuild against newer libtgowt with openssl 3.0 support.
 
-changelog "Backported from debian bullseye-backports-sloppy | * Bump VERSION=4 to rebuild against libtgowt (0~git20230105.5098730+dfsg-1~bpo11+1+11.0trisquel5) with openssl 3.0 support."
+changelog "Backported from debian bookworm-backports"
 
 package

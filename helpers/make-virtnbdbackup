@@ -24,8 +24,8 @@ BACKPORTS=true
 . ./config
 
 # Set on a supported python version
-sed -i "s|python3.11|python3.10|" debian/control
-sed -i "/PYBUILD_INTERPRETERS/s|python3.11|python3.10|" debian/rules
+sed -i "s|python3.11|python3.12|" debian/control
+sed -i "/PYBUILD_INTERPRETERS/s|python3.11|python3.12|" debian/rules
 
 changelog "Imported into Trisquel"
 package

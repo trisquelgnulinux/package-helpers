@@ -21,7 +21,7 @@ VERSION=1
 
 . ./config
 
-sed -i  '/Suggests: p7zip-rar/d'  debian/control 
+sed -i  '/Suggests: p7zip-rar/d'  debian/control
 #Our versions doesn't handle rar files, due to licenses
 sed -i 's/RAR (only//; s/if non-free p7zip-rar package is installed),//' debian/control
 #

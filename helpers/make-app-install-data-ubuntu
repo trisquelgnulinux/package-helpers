@@ -25,7 +25,7 @@ VERSION=4
 cp $DATA/applications.menu menu-data/applications.menu
 
 # We remove any info about non-free packages
-egrep -lr 'X-AppInstall-Section=(multiverse|restricted)' . | xargs -r rm
+grep -lr 'X-AppInstall-Section=(multiverse|restricted)' . | xargs -r rm
 for i in firefox jockey ndisgtk chromium-browser bughugger testdrive menueditor lp-review-list groundcontrol gstreamer nvidia dell-recovery ubufox thunderbird
 do
     find -name *$i*xpm -exec rm {} \;
