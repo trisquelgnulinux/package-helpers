@@ -1,0 +1,24 @@
+diff --git a/debian/control b/debian/control_
+index 75143e1..e88cd28 100644
+--- a/debian/control
++++ b/debian/control_
+@@ -18,8 +18,6 @@ Build-Depends-Indep: python3-distlib (>= 0.3.1),
+                      python3-distutils,
+                      python3-filelock,
+                      python3-importlib-metadata (>= 3.6),
+-                     python3-pip,
+-                     python3-pip-whl,
+                      python3-platformdirs,
+                      python3-setuptools,
+                      python3-setuptools-scm,
+@@ -31,9 +29,7 @@ Rules-Requires-Root: no
+ 
+ Package: python3-virtualenv
+ Architecture: all
+-Depends: python3-pip (>= 20.1-1~),
+-         python3-pip-whl,
+-         python3-setuptools-whl,
++Depends: python3-setuptools-whl,
+          python3-wheel-whl,
+          ${misc:Depends},
+          ${python3:Depends},
