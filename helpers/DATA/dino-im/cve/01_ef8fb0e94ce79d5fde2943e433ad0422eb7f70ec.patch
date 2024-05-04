@@ -1,0 +1,37 @@
+From ef8fb0e94ce79d5fde2943e433ad0422eb7f70ec Mon Sep 17 00:00:00 2001
+From: Marvin W <git@larma.de>
+Date: Thu, 23 Mar 2023 10:13:30 -0600
+Subject: [PATCH] Check sender of bookmark:1 updates
+
+---
+ xmpp-vala/src/module/xep/0402_bookmarks2.vala | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/xmpp-vala/src/module/xep/0402_bookmarks2.vala b/xmpp-vala/src/module/xep/0402_bookmarks2.vala
+index 406f37f43..d1e53e6e3 100644
+--- a/xmpp-vala/src/module/xep/0402_bookmarks2.vala
++++ b/xmpp-vala/src/module/xep/0402_bookmarks2.vala
+@@ -68,6 +68,11 @@ public class Module : BookmarksProvider, XmppStreamModule {
+     }
+ 
+     private void on_pupsub_item(XmppStream stream, Jid jid, string id, StanzaNode? node) {
++        if (!jid.equals(stream.get_flag(Bind.Flag.IDENTITY).my_jid.bare_jid)) {
++            warning("Received alleged bookmarks:1 item from %s, ignoring", jid.to_string());
++            return;
++        }
++
+         Conference conference = parse_item_node(node, id);
+         Flag? flag = stream.get_flag(Flag.IDENTITY);
+         if (flag != null) {
+@@ -77,6 +82,11 @@ public class Module : BookmarksProvider, XmppStreamModule {
+     }
+ 
+     private void on_pupsub_retract(XmppStream stream, Jid jid, string id) {
++        if (!jid.equals(stream.get_flag(Bind.Flag.IDENTITY).my_jid.bare_jid)) {
++            warning("Received alleged bookmarks:1 retract from %s, ignoring", jid.to_string());
++            return;
++        }
++
+         try {
+             Jid jid_parsed = new Jid(id);
+             Flag? flag = stream.get_flag(Flag.IDENTITY);
