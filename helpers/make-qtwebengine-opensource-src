@@ -18,11 +18,10 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
+VERSION=4
 
 . ./config
 
-sed '/libxnvctrl-dev/d' -i debian/control
 echo "gn_args += safe_browsing_mode=0" >> src/core/config/common.pri
 
 #Increase parallel restriction (it fails at full speed).

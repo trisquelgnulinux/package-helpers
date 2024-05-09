@@ -17,15 +17,15 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 
 . ./config
 
-sed '/libxnvctrl-dev/d' -i debian/control
+# restore libxnvctrl lib for nvidia hardware detection.
 
 #Apply fix ftbfs patch
 patch --no-backup-if-mismatch -p1 < $DATA/fix-ftbfs-debian-patch.patch
 
-changelog "Removed libxnvctrl0 dependency not present in Trisquel"
+changelog "Restore nvidia-settings dependency."
 
 package

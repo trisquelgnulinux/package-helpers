@@ -17,12 +17,12 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 
 . ./config
 
-sed -i '/libxnvctrl-dev/d' debian/control
+# restore libxnvctrl lib for nvidia hardware detection.
 
-changelog "Remove nvidia-settings dependency."
+changelog "Restore nvidia-settings dependency."
 
 package
