@@ -114,8 +114,10 @@ echo 'pref("dom.security.unexpected_system_load_telemetry_enabled", false);' | t
 echo 'pref("toolkit.telemetry.hybridContent.enabled", false);' | tee -a browser/app/profile/firefox.js
 # GPC opt-out entry added on 120 (not enabled yet).
 echo '//pref("privacy.globalprivacycontrol.enabled", true);' | tee -a browser/app/profile/firefox.js
-sed_csum 82b3a7933d913e1e2a4f328a76621db2d2e618d209d9785086d64c5c78c2a2d6 \
-         9fa741bfc583d1bee03d88c266acab1334c1cf6654d588bddd608056ab2e0275 \
+
+# Update third_party/rust/glean/src/configuration.rs sha256sum at third_party/rust/glean/.cargo-checksum.json
+sed_csum 27075b12236021c54d0c99427bcbd417933ca02545275604d3c13f32ca25af13 \
+         f354c756cb723a386263a3ad4669a1d5cc743379c7c620b14f894f505cf83500
 
 # Remove Google API key and calls
 sed '/Google API/,/google-api-keyfile/ d' debian/config/mozconfig.in -i

@@ -1,13 +1,14 @@
 diff --git a/browser/components/preferences/sync.inc.xhtml b/browser/components/preferences/sync.inc.xhtml
-index 7d37d26..4ebbc06 100644
+index 492491a3..0c8c462a 100644
 --- a/browser/components/preferences/sync.inc.xhtml
 +++ b/browser/components/preferences/sync.inc.xhtml
-@@ -35,22 +35,6 @@
+@@ -35,24 +35,6 @@
          </hbox>
        </vbox>
      </hbox>
 -    <label class="fxaMobilePromo" data-l10n-id="sync-mobile-promo">
 -      <html:img
+-        role="none"
 -        src="chrome://browser/skin/logo-android.svg"
 -        data-l10n-name="android-icon"
 -        class="androidIcon"/>
@@ -15,6 +16,7 @@ index 7d37d26..4ebbc06 100644
 -        data-l10n-name="android-link"
 -        class="fxaMobilePromo-android text-link" target="_blank"/>
 -      <html:img
+-        role="none"
 -        src="chrome://browser/skin/logo-ios.svg"
 -        data-l10n-name="ios-icon"
 -        class="iOSIcon"/>
