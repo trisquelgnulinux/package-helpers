@@ -16,7 +16,7 @@
 #    along with this program; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
-VERSION=9
+VERSION=11
 EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu jammy main universe'
 
 . ./config
@@ -107,6 +107,13 @@ sed '/Paned/,/^}$/s/image($backdrop_borders_color)/image($bg_color)/' -i light/g
 # fix panel toggles too wide
 sed '/min-width: 44px/d' -i light/gtk-3.0/_others.scss dark/gtk-3.0/_others.scss
 
+#fix invisible alt-tab transparent selector under white brackground.
+cat << EOF >> dark/gtk-3.0/_others.scss
+.osd image:selected {
+  background: #363636;
+}
+EOF
+
 # lxde panel
 cat << EOF >> dark/gtk-2.0/apps/xfce-panel.rc
 
@@ -122,7 +129,25 @@ style "darkpanel"
 widget "*Panel*" style "darkpanel"
 EOF
 
-changelog "Customized for Trisquel" 
+# fix background non-selected pane - GitLab PH#152
+## light
+cat << EOF >> light/gtk-3.0/_others.scss
+
+treeview.view:selected:not(:focused) {
+        color: #ffffff;
+        background-image: linear-gradient(to bottom, shade(#6699CC, 0.87), shade(#6699CC, 0.95) 100%);
+}
+EOF
+## dark
+cat << EOF >> dark/gtk-3.0/_others.scss
+
+treeview.view:selected:not(:focused) {
+        color: #ffffff;
+        background-image: linear-gradient(to bottom, shade(#6699CC, 0.87), shade(#6699CC, 0.95) 100%);
+}
+EOF
+
+changelog "Customized for Trisquel"
 
 compile
 
