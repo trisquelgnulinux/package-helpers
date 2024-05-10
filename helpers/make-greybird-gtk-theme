@@ -16,7 +16,7 @@
 #    along with this program; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
-VERSION=11
+VERSION=12
 . ./config
 
 #correct gtk2 color syntax
@@ -125,7 +125,25 @@ style "darkpanel"
 widget "*Panel*" style "darkpanel"
 EOF
 
-changelog "Customized for Trisquel" 
+# fix background non-selected pane - GitLab PH#152
+## light
+cat << EOF >> light/gtk-3.0/_others.scss
+
+treeview.view:selected:not(:focused) {
+        color: #ffffff;
+        background-image: linear-gradient(to bottom, shade(#6699CC, 0.87), shade(#6699CC, 0.95) 100%);
+}
+EOF
+## dark
+cat << EOF >> dark/gtk-3.0/_others.scss
+
+treeview.view:selected:not(:focused) {
+        color: #ffffff;
+        background-image: linear-gradient(to bottom, shade(#6699CC, 0.87), shade(#6699CC, 0.95) 100%);
+}
+EOF
+
+changelog "Customized for Trisquel"
 
 package
 
