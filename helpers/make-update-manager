@@ -76,7 +76,7 @@ sed -i 's|changelogs.ubuntu.com/|archive.trisquel.org/trisquel/|' UpdateManager/
 # Trisquel l10n modifications using git patches.
 for patch in $(ls -v ${DATA}/l10n/*.patch)
 do
-    echo "> Applying $patch"
+    echo "> Applying $(echo $patch|xargs basename)"
     patch --no-backup-if-mismatch -Np1 < $patch
 done
 
