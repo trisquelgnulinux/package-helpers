@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 
 . ./config
 
@@ -44,7 +44,7 @@ sed -i "s|<https://launchpad.net/ubuntu/.*filebug>|<https://gitlab.trisquel.org/
 # Trisquel l10n modifications using git patches.
 for patch in $(ls -v ${DATA}/l10n/*.patch)
 do
-    echo "> Applying $patch"
+    echo "> Applying $(echo $patch|xargs basename)"
     patch --no-backup-if-mismatch -Np1 < $patch
 done
 
