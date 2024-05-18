@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=28
+VERSION=29
 HWEKR=5.15
 
 # DI_ENABLED = 1 enables udeb build, 0 or any other value disables them.
@@ -159,7 +159,7 @@ done
 
 # Wipe dkms-versions
 # lists zfs / v4l2loopback versions
-echo > debian/dkms-versions
+truncate -s 0 $(find -name dkms-versions)
 
 # Remove ZFS - adjusting to each release
 rm debian/scripts/dkms-build-configure--zfs
