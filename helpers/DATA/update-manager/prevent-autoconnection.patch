@@ -1,44 +1,67 @@
-diff -ru source.orig/UpdateManager/Dialogs.py source/UpdateManager/Dialogs.py
---- source.orig/UpdateManager/Dialogs.py	2018-02-12 20:44:33.321329066 -0500
-+++ source/UpdateManager/Dialogs.py	2018-02-12 20:45:28.141249480 -0500
-@@ -161,7 +162,21 @@
-         self.add_settings_button()
-         self.focus_button = self.add_button(Gtk.STOCK_OK,
-                                             self.window_main.close)
+diff --git a/UpdateManager/Dialogs.py b/UpdateManager/Dialogs.py
+index a5d13ad4..89603956 100644
+--- a/UpdateManager/Dialogs.py
++++ b/UpdateManager/Dialogs.py
+@@ -175,6 +175,23 @@ class NoUpdatesDialog(InternalDialog):
+             Gtk.STOCK_OK, self.window_main.close
+         )
+ 
++
 +class ShouldUpdateDialog(InternalDialog):
 +    def __init__(self, window_main):
- 
++
 +        InternalDialog.__init__(self, window_main)
 +        self.set_header(_("Include latest updates from the Internet?"))
 +        self.set_desc(_('''To prevent unwanted connections to the Internet
 +Trisquel will not automatically check for updates
 +unless you say so in the Settings panel.'''))
 +        self.add_settings_button()
-+        self.add_button(_("Check for Updates"),self.check)
++        self.add_button(_("Check for Updates"), self.check)
 +        self.add_button(_("Ask Me Later"), self.window_main.close)
 +
 +    def check(self):
 +        self.window_main.options.no_update = False
 +        self.window_main.check_update()
++
  
  class DistUpgradeDialog(InternalDialog):
      def __init__(self, window_main, meta_release):
-diff -ru source.orig/UpdateManager/UpdateManager.py source/UpdateManager/UpdateManager.py
---- source.orig/UpdateManager/UpdateManager.py	2018-02-12 20:44:33.317329071 -0500
-+++ source/UpdateManager/UpdateManager.py	2018-02-12 20:45:28.133249491 -0500
-@@ -52,6 +52,7 @@
-                       ErrorDialog,
-                       HWEUpgradeDialog,
-                       NeedRestartDialog,
-+                      ShouldUpdateDialog,
-                       NoUpdatesDialog,
-                       PartialUpgradeDialog,
-                       StoppedUpdatesDialog,
-@@ -205,6 +206,17 @@
+diff --git a/UpdateManager/UpdateManager.py b/UpdateManager/UpdateManager.py
+index b6cdc8ab..d82db9dd 100644
+--- a/UpdateManager/UpdateManager.py
++++ b/UpdateManager/UpdateManager.py
+@@ -56,6 +56,7 @@ from .Dialogs import (
+     ErrorDialog,
+     HWEUpgradeDialog,
+     NeedRestartDialog,
++    ShouldUpdateDialog,
+     NoUpdatesDialog,
+     NoUpgradeForYouDialog,
+     PartialUpgradeDialog,
+@@ -125,11 +126,12 @@ class UpdateManager(Gtk.Window):
+             )
+ 
+         # Look for a new release in a thread
+-        self.meta_release = MetaRelease(
+-            self.options and self.options.devel_release,
+-            self.options and self.options.use_proposed,
+-            self.options and self.options.debug,
+-        )
++        if self.options.check_dist_upgrades and
++        apt_pkg.config.find_i("APT::Periodic::Update-Package-Lists") != 0:
++            self.meta_release = MetaRelease(
++                self.options and self.options.devel_release,
++                self.options and self.options.use_proposed,
++                self.options and self.options.debug)
+ 
+     def begin_user_resizable(self, stored_width=0, stored_height=0):
+         self.set_resizable(True)
+@@ -205,6 +206,18 @@
              self.start_available()
  
      def start_update(self):
-+        if not self.options.no_check_screen and apt_pkg.config.find_i("APT::Periodic::Update-Package-Lists") == 0:
++        if not self.options.no_check_screen and
++        apt_pkg.config.find_i("APT::Periodic::Update-Package-Lists") == 0:
 +            self._start_pane(ShouldUpdateDialog(self))
 +            return
 +        if self.options.no_update:
@@ -52,52 +75,7 @@ diff -ru source.orig/UpdateManager/UpdateManager.py source/UpdateManager/UpdateM
          if self.options.no_update:
              self.start_available()
              return
-diff -ru source.orig/update-manager source/update-manager
---- source.orig/update-manager	2023-05-04 19:26:47.710184166 -0400
-+++ source/update-manager	2023-05-04 19:29:09.884636731 -0400
-@@ -79,7 +79,7 @@
-                      default="/usr/share/update-manager/",
-                      help=_("Directory that contains the data files"))
-   parser.add_option ("-c", "--check-dist-upgrades", action="store_true",
--                     dest="check_dist_upgrades", default=False,
-+                     dest="check_dist_upgrades", default=True,
-                      help=_("Check if a new Ubuntu release is available"))
-   parser.add_option ("-d", "--devel-release", action="store_true",
-                      dest="devel_release", default=False,
-
-diff -ru source.orig/update-manager source/update-manager
---- source.orig/update-manager	2023-04-30 19:59:16.611564826 -0400
-+++ source/update-manager	2023-04-30 20:10:25.515512178 -0400
-@@ -92,6 +92,9 @@
-   parser.add_option ("--no-update", action="store_true",
-                      dest="no_update", default=False,
-                      help=_("Do not check for updates when starting"))
-+  parser.add_option ("--no-check-screen", action="store_true",
-+                     dest="no_check_screen", default=False,
-+                     help=_("Don't show screen preventing unwanted connections to the Internet"))
-   parser.add_option ("", "--debug", action="store_true", default=False,
-                      help=_("Show debug messages"))
- 
-diff -ru source.orig/UpdateManager/UpdateManager.py source/UpdateManager/UpdateManager.py
---- source.orig/UpdateManager/UpdateManager.py	2023-05-01 10:29:34.494164650 -0400
-+++ source/UpdateManager/UpdateManager.py	2023-05-01 12:04:53.000000000 -0400
-@@ -121,10 +121,11 @@
-                 "focus-in-event", self.on_initial_focus_in)
- 
-         # Look for a new release in a thread
--        self.meta_release = MetaRelease(
--            self.options and self.options.devel_release,
--            self.options and self.options.use_proposed,
--            self.options and self.options.debug)
-+        if self.options.check_dist_upgrades and apt_pkg.config.find_i("APT::Periodic::Update-Package-Lists") != 0:
-+            self.meta_release = MetaRelease(
-+                self.options and self.options.devel_release,
-+                self.options and self.options.use_proposed,
-+                self.options and self.options.debug)
- 
-     def begin_user_resizable(self, stored_width=0, stored_height=0):
-         self.set_resizable(True)
-@@ -234,6 +235,11 @@
+@@ -231,6 +232,11 @@ class UpdateManager(Gtk.Window):
              self.start_available()
              return
  
@@ -108,4 +86,26 @@ diff -ru source.orig/UpdateManager/UpdateManager.py source/UpdateManager/UpdateM
 +
          update_backend = get_backend(self, InstallBackend.ACTION_UPDATE)
          self._start_pane(update_backend)
+ 
+diff -ru a/update-manager b/update-manager
+--- a/update-manager	2023-05-04 19:26:47.710184166 -0400
++++ b/update-manager	2023-05-04 19:29:09.884636731 -0400
+@@ -79,7 +79,7 @@
+                      default="/usr/share/update-manager/",
+                      help=_("Directory that contains the data files"))
+   parser.add_option ("-c", "--check-dist-upgrades", action="store_true",
+-                     dest="check_dist_upgrades", default=False,
++                     dest="check_dist_upgrades", default=True,
+                      help=_("Check if a new Ubuntu release is available"))
+   parser.add_option ("-d", "--devel-release", action="store_true",
+                      dest="devel_release", default=False,
+@@ -92,6 +92,9 @@
+   parser.add_option ("--no-update", action="store_true",
+                      dest="no_update", default=False,
+                      help=_("Do not check for updates when starting"))
++  parser.add_option ("--no-check-screen", action="store_true",
++                     dest="no_check_screen", default=False,
++                     help=_("Don't show screen preventing unwanted connections to the Internet"))
+   parser.add_option ("", "--debug", action="store_true", default=False,
+                      help=_("Show debug messages"))
  

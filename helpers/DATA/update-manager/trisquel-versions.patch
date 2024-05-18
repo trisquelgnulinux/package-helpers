@@ -1,27 +1,31 @@
---- UpdateManager/Core/utils.py	2015-10-21 04:05:26.461825091 +0200
-+++ UpdateManager/Core/utils.py.new	2015-10-21 04:03:30.461825105 +0200
-@@ -426,7 +426,7 @@
+diff --git a/UpdateManager/Core/utils.py b/UpdateManager/Core/utils.py
+index fbabac1a..62171fe1 100644
+--- a/UpdateManager/Core/utils.py
++++ b/UpdateManager/Core/utils.py
+@@ -432,7 +432,8 @@ def get_ubuntu_flavor_package(cache=None):
      # From spec, first if ubuntu-desktop is installed, use that.
      # Second, grab first installed one from DistUpgrade.cfg.
      # Lastly, fallback to ubuntu-desktop again.
--    meta_pkgs = ['ubuntu-desktop']
-+    meta_pkgs = ['trisquel','trisquel-mini','trisquel-sugar', 'triskel', 'trisquel-gnome']
+-    meta_pkgs = ["ubuntu-desktop"]
++    meta_pkgs = ["trisquel", "trisquel-mini", "trisquel-sugar",
++                 "triskel", "trisquel-gnome"]
  
      try:
          meta_pkgs.extend(sorted(_load_meta_pkg_list()))
-@@ -439,13 +439,13 @@
+@@ -445,13 +445,14 @@ def get_ubuntu_flavor_package(cache=None):
          cache_pkg = cache[meta_pkg] if meta_pkg in cache else None
          if cache_pkg and cache_pkg.is_installed:
              return meta_pkg
--    return 'ubuntu-desktop'
-+    return 'trisquel'
+-    return "ubuntu-desktop"
++    return "trisquel"
  
  
  def get_ubuntu_flavor_name(cache=None):
-     """ try to guess the flavor name based on the running desktop """
+     """try to guess the flavor name based on the running desktop"""
      pkg = get_ubuntu_flavor_package(cache=cache)
--    lookup = {'ubuntustudio-desktop': 'Ubuntu Studio'}
-+    lookup = {'trisquel-mini': 'Trisquel Mini', 'trisquel-sugar': 'Trisquel Sugar' }
+-    lookup = {"ubuntustudio-desktop": "Ubuntu Studio"}
++    lookup = {"trisquel-mini": "Trisquel Mini",
++              "trisquel-sugar": "Trisquel Sugar"}
      if pkg in lookup:
          return lookup[pkg]
-     elif pkg.endswith('-desktop'):
+     elif pkg.endswith("-desktop"):

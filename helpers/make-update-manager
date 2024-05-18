@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 #    Copyright (C) 2008-2023  Ruben Rodriguez <ruben@trisquel.info>
-#    Copyright (C)      2023  Luis Guzmán <ark@switnet.org>
+#    Copyright (C)      2024  Luis Guzmán <ark@switnet.org>
 #    Copyright (C)      2019  Mason Hock <mason@masonhock.com>
 #
 #    This program is free software; you can redistribute it and/or modify
@@ -23,14 +23,18 @@ VERSION=23
 
 . ./config
 
+PRE_REVISION=11.0
+PRE_UPSTREAMRELEASE=22.04
+
 rm UpdateManager/Core/LivePatchSocket.py
 rm tests/test_livepatch_socket.py
+
 # Important patch make sure to update when necessary.
 patch --no-backup-if-mismatch -p1 < $DATA/remove-livepatch2.patch
-sed -i "/ubuntu-advantage-tools/d" debian/control
+sed -i "/ubuntu-pro-client/d" debian/control
 
 #Closes #12545
-patch --no-backup-if-mismatch -p0 < $DATA/trisquel-versions.patch
+patch --no-backup-if-mismatch -p1 < $DATA/trisquel-versions.patch
 
 cp $DATA/index.docbook help/C/index.docbook
 
@@ -38,24 +42,27 @@ cp $DATA/index.docbook help/C/index.docbook
 patch --no-backup-if-mismatch -p1 < $DATA/prevent-autoconnection.patch
 # NOTE: prevent-autoconnection.patch l10n is now part of the DATA/l10n/ patches.
 
-# Roll back the usage of uaclient.api.u.pro.packages.updates.v1
-patch --no-backup-if-mismatch -p1 -R < $DATA/rm-usage_uaclient.api.u.pro.packages.updates.v1.patch
+# Remove Ubuntu Pro packages updates ; yet another important patch.
+patch --no-backup-if-mismatch -p1 < $DATA/rm_pro.packages.updates_from_u-m.patch
 
 replace internet Internet .
 replace Ubuntu Trisquel .
 replace TrisquelDistroInfo UbuntuDistroInfo .
 replace "Trisquel-Gettext" "Ubuntu-Gettext" .
 
-sed -i 's/Trisquel 20.04 LTS to Trisquel 22.04 LTS/Trisquel 10.0 LTS to Trisquel 11.0 LTS/' HweSupportStatus/consts.py
+sed -i "s|Trisquel $PRE_UPSTREAMRELEASE LTS to Trisquel $UPSTREAMRELEASE LTS|Trisquel $PRE_REVISION LTS to Trisquel $REVISION LTS|" \
+  HweSupportStatus/consts.py
 
 replace kubuntu-desktop triskel .
 replace xubuntu-desktop trisquel-mini .
 replace edubuntu-desktop toast .
 replace ubuntu-desktop trisquel .
 
+# Remove upstream name flavor and python translation module
 sed '/%s base/ s/name.*/name = "Trisquel base"/' -i ./UpdateManager/Core/UpdateList.py
+sed -i '/from gettext import gettext as _/d' ./UpdateManager/Core/UpdateList.py
+
 sed 's_https://changelogs.ubuntu.com/changelogs/pool/_https://packages.trisquel.org/changelogs/pool/_' -i UpdateManager/Core/MyCache.py
-sed '/len(changelog) == 0/,/"later."/d' -i UpdateManager/Core/MyCache.py
 
 #Make sure apt_pkg is enabled for prevent-autoconnection.patch to work.
 [ -z "$(grep 'import apt_pkg' UpdateManager/UpdateManager.py)" ] && \
@@ -79,6 +86,10 @@ do
     echo "> Applying $(echo $patch|xargs basename)"
     patch --no-backup-if-mismatch -Np1 < $patch
 done
+
+# Add global pycodestyle patch
+echo "> Apply 99_pycodestyle_pass.patch"
+patch --no-backup-if-mismatch -p1 < $DATA/extra/99_pycodestyle_pass.patch
 
 changelog "Compiled for Trisquel"
 

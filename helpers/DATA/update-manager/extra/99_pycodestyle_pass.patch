@@ -1,0 +1,28 @@
+diff --git a/UpdateManager/Core/UpdateList.py b/UpdateManager/Core/UpdateList.py
+index 0f887633..5f919829 100644
+--- a/UpdateManager/Core/UpdateList.py
++++ b/UpdateManager/Core/UpdateList.py
+@@ -184,7 +184,7 @@ class UpdatePackageGroup(UpdateGroup):
+ 
+ class UpdateSystemGroup(UpdateGroup):
+     def __init__(self, cache, to_remove, sensitive=True):
+-        # Translators: the %s is a distro name, like 'Trisquel' and 'base' as in
++        # Translators: %s is a distro name, like 'Trisquel' and 'base' as in
+         # the core components and packages.
+         name = "Trisquel base"
+         icon = Gio.ThemedIcon.new("distributor-logo")
+diff --git a/UpdateManager/UpdatesAvailable.py b/UpdateManager/UpdatesAvailable.py
+index 7562bcc6..17de28cb 100644
+--- a/UpdateManager/UpdatesAvailable.py
++++ b/UpdateManager/UpdatesAvailable.py
+@@ -851,8 +851,8 @@ class UpdatesAvailable(InternalDialog):
+                     self.button_pro.destroy()
+                 elif (self.list.ubuntu_pro_fake_groups
+                       and not self.list.ubuntu_pro_groups):
+-                    download_str = _("You need to enable Trisquel Pro to install"
+-                                     " these updates.")
++                    download_str = _("You need to enable Trisquel Pro to"
++                                     " install these updates.")
+                     self.button_install.destroy()
+                 else:
+                     download_str = _("There are no updates to install.")
