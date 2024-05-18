@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2023 Luis Guzman <ark@switnet.org>
+#    Copyright (C) 2024 Luis Guzman <ark@switnet.org>
 #    Copyright (C) 2011-2022  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C) 2019 Mason Hock <mason@masonhock.com>
 #    Copyright (C) 2011  Carlos Pais <freemind@lavabit.com>
@@ -20,7 +20,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=13
+VERSION=14
 
 . ./config
 
@@ -85,7 +85,7 @@ patch --no-backup-if-mismatch -p1 < $DATA/removal_of_snaps_other_packages_referr
 # Trisquel l10n modifications using git patches.
 for patch in $(ls -v ${DATA}/l10n/*.patch)
 do
-    echo "> Applying $patch"
+    echo "> Applying $(echo $patch|xargs basename)"
     patch --no-backup-if-mismatch -Np1 < $patch
 done
 
