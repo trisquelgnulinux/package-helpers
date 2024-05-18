@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=28
+VERSION=29
 HWEKR=5.15
 
 . ./config
@@ -76,7 +76,7 @@ done
 
 # Wipe dkms-versions
 # lists zfs / v4l2loopback versions
-echo > debian/dkms-versions
+echo > debian.*/dkms-versions
 
 # Remove ZFS
 rm zfs spl debian/scripts/misc/update-zfs.sh -rf
