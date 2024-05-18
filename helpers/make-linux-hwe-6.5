@@ -159,7 +159,7 @@ done
 
 # Wipe dkms-versions
 # lists zfs / v4l2loopback versions
-echo > debian.*/dkms-versions
+truncate -s 0 $(find -name dkms-versions)
 
 # Remove ZFS - adjusting to each release
 rm debian/scripts/dkms-build-configure--zfs
