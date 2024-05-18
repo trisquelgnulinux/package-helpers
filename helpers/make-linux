@@ -68,7 +68,7 @@ rm -rf $TMPDIR
 
 # Wipe dkms-versions
 # lists zfs / nvidia versions
-echo > debian.*/dkms-versions
+truncate -s 0 $(find -name dkms-versions)
 
 # Remove ZFS
 rm zfs spl debian/scripts/misc/update-zfs.sh -rf
