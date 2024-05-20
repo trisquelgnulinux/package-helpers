@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 #    Copyright (C) 2008-2022 Ruben Rodriguez <ruben@trisquel.info>
-#    Copyright (C) 2023 Luis Guzmán <ark@switnet.org>
+#    Copyright (C) 2024 Luis Guzmán <ark@switnet.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -18,15 +18,16 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=5
+VERSION=6
 COMPONENT=main
 #Be aware to not pull/build before publish date on T12.
 
 . ./config
 
 # Fix version number due to early release.
-export FULLVERSION="$(sed 's|ubuntu2||' <<< $FULLVERSION)"
+export FULLVERSION="$(sed 's|ubuntu3||' <<< $FULLVERSION)"
 
+# https://en.wikipedia.org/wiki/ISO_3166-2
 cat << EOF > data/templates/Trisquel.mirrors
 #LOC:BR
 https://trisquel.c3sl.ufpr.br/packages/
@@ -50,6 +51,8 @@ https://repo.jing.rocks/trisquel/
 https://ftp.acc.umu.se/mirror/trisquel/packages/
 https://ftpmirror1.infania.net/mirror/trisquel/packages/
 https://ftp.sunet.se/mirror/trisquel/packages/
+#LOC:SG
+https://mirror.freedif.org/trisquel/packages/
 #LOC:US
 https://archive.trisquel.info/trisquel/
 https://archive.trisquel.org/trisquel/
