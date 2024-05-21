@@ -18,12 +18,13 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=5
+VERSION=6
 COMPONENT=main
 #Be aware to not pull/build before publish date on T12.
 
 . ./config
 
+# https://en.wikipedia.org/wiki/ISO_3166-2
 cat << EOF > data/templates/Trisquel.mirrors
 #LOC:BR
 https://trisquel.c3sl.ufpr.br/packages/
@@ -47,6 +48,8 @@ https://repo.jing.rocks/trisquel/
 https://ftp.acc.umu.se/mirror/trisquel/packages/
 https://ftpmirror1.infania.net/mirror/trisquel/packages/
 https://ftp.sunet.se/mirror/trisquel/packages/
+#LOC:SG
+https://mirror.freedif.org/trisquel/packages/
 #LOC:US
 https://archive.trisquel.info/trisquel/
 https://archive.trisquel.org/trisquel/
