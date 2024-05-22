@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2023 Luis Guzman <ark@switnet.org>
+#    Copyright (C) 2024 Luis Guzman <ark@switnet.org>
 #    Copyright (C) 2011-2022  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C) 2019 Mason Hock <mason@masonhock.com>
 #    Copyright (C) 2011  Carlos Pais <freemind@lavabit.com>
@@ -20,7 +20,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=13
+VERSION=15
 
 . ./config
 
@@ -29,7 +29,7 @@ rm data/ubuntu-pro-logo*.svg
 sed -i '/ubuntu-pro-logo/d' debian/software-properties-gtk.install
 
 rm softwareproperties/gtk/UbuntuProPage.py
-patch --no-backup-if-mismatch -p0 < $DATA/remove_snap_label.patch
+patch_p1 $DATA/remove_snap_label.patch
 
 #Python specific changes
 cp $DATA/trisquel_info.py softwareproperties/
@@ -52,7 +52,7 @@ replace TrisquelDistribution UbuntuDistribution .
 sed '/NoDisplay/d; s/Trisquel/Ubuntu/' -i data/software-properties-gtk.desktop.in
 
 sed '/ubuntu-drivers-common/d' -i debian/control
-sed '/ubuntu-advantage-tools/d' -i debian/control
+sed '/ubuntu-pro-client/d' -i debian/control
 sed '/ubuntu-advantage-desktop-daemon/d' -i debian/control
 sed '/software-properties-drivers/d' -i debian/software-properties-gtk.install setup.cfg
 
@@ -75,17 +75,17 @@ sed -i '/TrisquelProPage/d' softwareproperties/gtk/SoftwarePropertiesGtk.py
 sed -i '/init_ubuntu_pro/d' softwareproperties/gtk/SoftwarePropertiesGtk.py
 
 #Livepatch - aramo
-patch --no-backup-if-mismatch -p1 < $DATA/remove_ubuntu_suscription_tab.patch
-patch --no-backup-if-mismatch -p1 < $DATA/remove_proposed_updates.patch
+patch_p1 $DATA/remove_ubuntu_suscription_tab.patch
+patch_p1 $DATA/remove_proposed_updates.patch
 #Patch codename for PPAs
-patch --no-backup-if-mismatch -p1 < $DATA/fix_PPA_upstream_codename.patch
+patch_p1 $DATA/fix_PPA_upstream_codename.patch
 #Fix mention of "other packages" as we don't distribute snap.
-patch --no-backup-if-mismatch -p1 < $DATA/removal_of_snaps_other_packages_referral.patch
+patch_p1 $DATA/removal_of_snaps_other_packages_referral.patch
 
 # Trisquel l10n modifications using git patches.
 for patch in $(ls -v ${DATA}/l10n/*.patch)
 do
-    echo "> Applying $patch"
+    echo "> Applying $(echo $patch|xargs basename)"
     patch --no-backup-if-mismatch -Np1 < $patch
 done
 

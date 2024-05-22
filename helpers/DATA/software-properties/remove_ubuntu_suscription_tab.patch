@@ -1,10 +1,12 @@
-diff -Nru software-properties-0.99.22.5+11.0trisquel12/data/gtkbuilder/main.ui software-properties-0.99.22.5+11.0trisquel12_fix/data/gtkbuilder/main.ui
---- software-properties-0.99.22.5+11.0trisquel12/data/gtkbuilder/main.ui	2023-01-26 15:15:06.253819392 -0600
-+++ software-properties-0.99.22.5+11.0trisquel12_fix/data/gtkbuilder/main.ui	2023-01-26 15:17:19.325782731 -0600
-@@ -1211,423 +1211,6 @@
+diff --git a/data/gtkbuilder/main.ui b/data/gtkbuilder/main.ui
+index fe0a50f0..2943052f 100644
+--- a/data/gtkbuilder/main.ui
++++ b/data/gtkbuilder/main.ui
+@@ -1210,423 +1210,6 @@
+                 <property name="position">5</property>
                </packing>
              </child>
-             <child type="tab">
+-            <child type="tab">
 -              <object class="GtkLabel" id="label7">
 -                <property name="visible">True</property>
 -                <property name="can_focus">False</property>
@@ -17,7 +19,7 @@ diff -Nru software-properties-0.99.22.5+11.0trisquel12/data/gtkbuilder/main.ui s
 -            </child>
 -            <child>
 -              <object class="GtkStack" id="stack_ua_main">
--                <property name="visible">True</property>
+-                <property name="visible">False</property>
 -                <child>
 -                  <object class="GtkBox" id="box_ua_options">
 -                    <property name="visible">True</property>
@@ -315,7 +317,7 @@ diff -Nru software-properties-0.99.22.5+11.0trisquel12/data/gtkbuilder/main.ui s
 -                                <child>
 -                                  <object class="GtkLabel" id="label_ua_fips_status">
 -                                    <property name="visible">True</property>
--                                    <property name="label" translatable="yes">&lt;b&gt;FIPS 140-2&lt;/b&gt;</property>
+-                                    <property name="label">&lt;b&gt;FIPS 140-2&lt;/b&gt;</property>
 -                                    <property name="use_markup">True</property>
 -                                    <property name="xalign">0</property>
 -                                  </object>
@@ -421,7 +423,6 @@ diff -Nru software-properties-0.99.22.5+11.0trisquel12/data/gtkbuilder/main.ui s
 -                </child>
 -              </object>
 -            </child>
--            <child type="tab">
+             <child type="tab">
                <object class="GtkLabel">
                  <property name="visible">True</property>
-                 <property name="can_focus">False</property>

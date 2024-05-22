@@ -1,6 +1,7 @@
-diff -Nru software-properties-0.99.22.4+11.0trisquel9/softwareproperties/ppa.py software-properties-0.99.22.4+11.0trisquel9_fix/softwareproperties/ppa.py
---- software-properties-0.99.22.4+11.0trisquel9/softwareproperties/ppa.py	2023-01-21 14:29:00.314035991 -0600
-+++ software-properties-0.99.22.4+11.0trisquel9_fix/softwareproperties/ppa.py	2023-01-21 14:31:47.658510565 -0600
+diff --git a/softwareproperties/ppa.py b/softwareproperties/ppa.py
+index a979a3c9..c4e7cadc 100644
+--- a/softwareproperties/ppa.py
++++ b/softwareproperties/ppa.py
 @@ -32,6 +32,8 @@
  
  from urllib.parse import urlparse
@@ -10,12 +11,12 @@ diff -Nru software-properties-0.99.22.4+11.0trisquel9/softwareproperties/ppa.py 
  
  PPA_URI_FORMAT = 'https://ppa.launchpadcontent.net/{team}/{ppa}/ubuntu/'
  PRIVATE_PPA_URI_FORMAT = 'https://private-ppa.launchpadcontent.net/{team}/{ppa}/ubuntu/'
-@@ -85,7 +87,7 @@
+@@ -98,7 +98,7 @@ class PPAShortcutHandler(ShortcutHandler):
+             entry = Deb822SourceEntry(None, '')
+             entry.types = [self.binary_type]
+             entry.uris = [uri]
+-            entry.suites = [self.dist]
++            entry.suites = [trisquel_upstream_rel]
+             entry.comps = comps
  
-             uri_format = PRIVATE_PPA_URI_FORMAT if self.lpppa.private else PPA_URI_FORMAT
-             uri = uri_format.format(team=self.teamname, ppa=self.ppaname)
--            line = ('%s %s %s %s' % (self.binary_type, uri, self.dist, ' '.join(comps)))
-+            line = ('%s %s %s %s' % (self.binary_type, uri, trisquel_upstream_rel, ' '.join(comps)))
-             self._set_source_entry(line)
- 
-     @property
+             self._set_source_entry(str(entry))
