@@ -1,14 +1,16 @@
---- lib/tools.py	2021-10-15 08:01:00.000000000 -0500
-+++ lib/tools.py	2022-04-06 12:27:07.672427372 -0500
-@@ -37,7 +37,7 @@
+diff --git a/lib/tools.py b/lib/tools.py
+index 2ab74f7f..a3d52620 100644
+--- a/lib/tools.py
++++ b/lib/tools.py
+@@ -49,7 +49,7 @@ def get_csv_dict_reader(filename: str) -> csv.DictReader:
+ 
  def main(validation_function):
      """Main function with command line parameter parsing."""
-     script_name = os.path.basename(sys.argv[0])
--    usage = "%s [-h] -d|-u csv-file" % (script_name)
-+    usage = "%s [-h] -d|-u|-t csv-file" % (script_name)
-     parser = argparse.ArgumentParser(usage=usage)
+-    parser = argparse.ArgumentParser(usage="%(prog)s [-h] -d|-u csv-file")
++    parser = argparse.ArgumentParser(usage="%(prog)s [-h] -d|-u|-t csv-file")
  
      parser.add_argument(
+         "-d",
 @@ -56,15 +56,24 @@
          default=False,
          help="validate an Ubuntu CSV file",
