@@ -1,0 +1,152 @@
+diff --git a/python/distro_info_test/test_distro_info.py b/python/distro_info_test/test_distro_info.py
+index b9e1cc13..94474bf5 100644
+--- a/python/distro_info_test/test_distro_info.py
++++ b/python/distro_info_test/test_distro_info.py
+@@ -1,5 +1,6 @@
+ # test_distro_info.py - Test suite for distro_info
+ #
++# Copyright (C) 2024, Trisquel GNU/Linux developers <trisquel-devel@listas.trisquel.info>
+ # Copyright (C) 2011, Benjamin Drung <bdrung@debian.org>
+ #
+ # Permission to use, copy, modify, and/or distribute this software for any
+@@ -19,7 +20,7 @@
+ import datetime
+ import unittest
+ 
+-from distro_info import DebianDistroInfo, UbuntuDistroInfo
++from distro_info import DebianDistroInfo, TrisquelDistroInfo
+ 
+ 
+ class DebianDistroInfoTestCase(unittest.TestCase):  # pylint: disable=too-many-public-methods
+@@ -122,91 +123,89 @@ class DebianDistroInfoTestCase(unittest.TestCase):  # pylint: disable=too-many-p
+         self.assertEqual(self._distro_info.stable(self._date, result="release"), "5.0")
+ 
+ 
+-class UbuntuDistroInfoTestCase(unittest.TestCase):  # pylint: disable=too-many-public-methods
+-    """TestCase object for distro_info.UbuntuDistroInfo"""
++class TrisquelDistroInfoTestCase(unittest.TestCase):  # pylint: disable=too-many-public-methods
++    """TestCase object for distro_info.TrisquelDistroInfo"""
+ 
+     def setUp(self) -> None:  # pylint: disable=invalid-name
+-        self._distro_info = UbuntuDistroInfo()
++        self._distro_info = TrisquelDistroInfo()
+         self._date = datetime.date(2011, 1, 10)
+ 
+     def test_all(self) -> None:
+-        """Test: List all known Ubuntu distributions."""
++        """Test: List all known Trisquel distributions."""
+         all_distros = {
+-            "warty",
+-            "hoary",
+-            "breezy",
+-            "dapper",
+-            "edgy",
+-            "feisty",
+-            "gutsy",
+-            "hardy",
+-            "intrepid",
+-            "jaunty",
+-            "karmic",
+-            "lucid",
+-            "maverick",
+-            "natty",
++            "robur",
++            "dwyn",
++            "awen",
++            "taranis",
++            "slaine",
++            "dagda",
++            "brigantia",
++            "toutanis",
++            "belenos",
++            "flidas",
++            "etiona",
++            "nabia",
+         }
+         self.assertEqual(all_distros - set(self._distro_info.all), set())
+ 
+     def test_devel(self) -> None:
+-        """Test: Get latest development Ubuntu distribution."""
+-        self.assertEqual(self._distro_info.devel(self._date), "natty")
++        """Test: Get latest development Trisquel distribution."""
++        self.assertEqual(self._distro_info.devel(self._date), "dagda")
+ 
+     def test_lts(self) -> None:
+-        """Test: Get latest long term support (LTS) Ubuntu distribution."""
+-        self.assertEqual(self._distro_info.lts(self._date), "lucid")
++        """Test: Get latest long term support (LTS) Trisquel distribution."""
++        self.assertEqual(self._distro_info.lts(self._date), "taranis")
+ 
+     def test_stable(self) -> None:
+-        """Test: Get latest stable Ubuntu distribution."""
+-        self.assertEqual(self._distro_info.stable(self._date), "maverick")
++        """Test: Get latest stable Trisquel distribution."""
++        self.assertEqual(self._distro_info.stable(self._date), "taranis")
+ 
+     def test_supported(self) -> None:
+-        """Test: List all supported Ubuntu distribution."""
+-        supported = ["dapper", "hardy", "karmic", "lucid", "maverick", "natty"]
++        """Test: List all supported Trisquel distribution."""
++        supported = ["robur", "awen", "taranis", "slaine", "dagda"]
+         self.assertEqual(self._distro_info.supported(self._date), supported)
+ 
+     def test_unsupported(self) -> None:
+-        """Test: List all unsupported Ubuntu distributions."""
+-        unsupported = ["warty", "hoary", "breezy", "edgy", "feisty", "gutsy", "intrepid", "jaunty"]
++        """Test: List all unsupported Trisquel distributions."""
++        unsupported = ["dwyn"]
+         self.assertEqual(self._distro_info.unsupported(self._date), unsupported)
+ 
+     def test_current_unsupported(self) -> None:
+-        """Test: List all unsupported Ubuntu distributions today."""
+-        unsupported = {"warty", "hoary", "breezy", "edgy", "feisty", "gutsy", "intrepid", "jaunty"}
++        """Test: List all unsupported Trisquel distributions today."""
++        unsupported = {"robur", "dwyn"}
+         self.assertEqual(unsupported - set(str(d) for d in self._distro_info.unsupported()), set())
+ 
+     def test_valid(self) -> None:
+-        """Test: Check for valid Ubuntu distribution."""
+-        self.assertTrue(self._distro_info.valid("lucid"))
++        """Test: Check for valid Trisquel distribution."""
++        self.assertTrue(self._distro_info.valid("taranis"))
+         self.assertFalse(self._distro_info.valid("42"))
+ 
+     def test_is_lts(self) -> None:
+-        """Test: Check if Ubuntu distribution is an LTS."""
+-        self.assertTrue(self._distro_info.is_lts("lucid"))
++        """Test: Check if Trisquel distribution is an LTS."""
++        self.assertTrue(self._distro_info.is_lts("taranis"))
+         self.assertFalse(self._distro_info.is_lts("42"))
+         self.assertFalse(self._distro_info.is_lts("warty"))
+ 
+     def test_codename(self) -> None:
+         """Test: Check result set to codename."""
+-        self.assertEqual(self._distro_info.lts(self._date, "codename"), "lucid")
+-        self.assertEqual(self._distro_info.devel(self._date, result="codename"), "natty")
++        self.assertEqual(self._distro_info.lts(self._date, "codename"), "taranis")
++        self.assertEqual(self._distro_info.devel(self._date, result="codename"), "dagda")
+ 
+     def test_version(self) -> None:
+         """Test: Check result set to version."""
+-        self.assertEqual(self._distro_info.version("lucid"), "10.04 LTS")
+-        self.assertEqual(self._distro_info.version("Maverick Meerkat"), "10.10")
++        self.assertEqual(self._distro_info.version("taranis"), "4.0 LTS")
++        self.assertEqual(self._distro_info.version("Slaine"), "4.5")
+ 
+     def test_fullname(self) -> None:
+         """Test: Check result set to fullname."""
+         self.assertEqual(
+-            self._distro_info.stable(self._date, "fullname"), 'Ubuntu 10.10 "Maverick Meerkat"'
++            self._distro_info.stable(self._date, "fullname"), 'Trisquel 4.0 LTS "Taranis"'
+         )
+         self.assertEqual(
+-            self._distro_info.lts(self._date, result="fullname"), 'Ubuntu 10.04 LTS "Lucid Lynx"'
++            self._distro_info.lts(self._date, result="fullname"), 'Trisquel 4.0 LTS "Taranis"'
+         )
+ 
+     def test_release(self) -> None:
+         """Test: Check result set to release."""
+-        self.assertEqual(self._distro_info.devel(self._date, "release"), "11.04")
+-        self.assertEqual(self._distro_info.lts(self._date, result="release"), "10.04 LTS")
++        self.assertEqual(self._distro_info.devel(self._date, "release"), "5.0")
++        self.assertEqual(self._distro_info.lts(self._date, result="release"), "4.0 LTS")

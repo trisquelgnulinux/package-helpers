@@ -31,19 +31,20 @@ sed -i 's|,eol-server,eol-esm||' trisquel-distro-info.c
 sed -i 's|Ubuntu|Trisquel GNU/Linux|' shell/ubuntu-distro-info.in
 
 # distro-info-util.c
-patch --no-backup-if-mismatch -p1 < $DATA/distro-info-util_c.patch
+patch_p1 $DATA/distro-info-util_c.patch
 
 #test-ubuntu-distro-info
 cp $DATA/test-trisquel-distro-info .
 
 #python dir
-patch --no-backup-if-mismatch -p1 < $DATA/distro_info_py.patch
+patch_p1 $DATA/distro_info_py.patch
+patch_p1 $DATA/test_distro_info.py.patch
+
 replace Ubuntu Trisquel
 replace ubuntu trisquel
 #Maybe too much
 #sed -i '/__init__/s|"Trisquel"|"Trisquel GNU/Linux"|' python/distro_info.py
 mv python/ubuntu-distro-info python/trisquel-distro-info
-cp $DATA/test_distro_info.py python/distro_info_test/
 
 #perl
 cp $DATA/test.pl perl/

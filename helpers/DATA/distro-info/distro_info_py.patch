@@ -1,5 +1,7 @@
---- source/python/distro_info.py	2021-11-04 15:27:37.000000000 -0600
-+++ source/python/distro_info.py_fix	2022-04-06 10:20:39.217365952 -0500
+diff --git a/python/distro_info.py b/python/distro_info.py
+index c87fbff6..0a624745 100644
+--- a/python/distro_info.py
++++ b/python/distro_info.py
 @@ -1,3 +1,4 @@
 +# Copyright (C) 2021, Trisquel GNU/Linux developers <trisquel-devel@listas.trisquel.info>
  # Copyright (C) 2009-2012, Benjamin Drung <bdrung@debian.org>
@@ -23,7 +25,7 @@
      """
  
      def __init__(self, distro):
-@@ -311,14 +312,14 @@
+@@ -340,16 +340,16 @@ class DebianDistroInfo(DistroInfo):
          ]
  
  
@@ -32,31 +34,35 @@
 +class TrisquelDistroInfo(DistroInfo):
 +    """provides information about Trisquel's distributions"""
  
-     def __init__(self):
+     def __init__(self) -> None:
 -        super().__init__("Ubuntu")
 +        super().__init__("Trisquel")
  
-     def lts(self, date=None, result="codename"):
+     def lts(
+         self, date: typing.Optional[datetime.date] = None, result: str = "codename"
+     ) -> typing.Union[DistroRelease, str]:
 -        """Get latest long term support (LTS) Ubuntu distribution based on the
 +        """Get latest long term support (LTS) Trisquel distribution based on the
          given date."""
          if date is None:
              date = self._date
-@@ -337,7 +338,7 @@
-         return "LTS" in distros[0].version
- 
-     def supported(self, date=None, result="codename"):
+@@ -372,7 +372,7 @@ class UbuntuDistroInfo(DistroInfo):
+     def supported(
+         self, date: typing.Optional[datetime.date] = None, result: str = "codename"
+     ) -> list[typing.Union[DistroRelease, str]]:
 -        """Get list of all supported Ubuntu distributions based on the given
 +        """Get list of all supported Trisquel distributions based on the given
          date."""
          if date is None:
              date = self._date
-@@ -347,15 +348,3 @@
-             if date <= x.eol or (x.eol_server is not None and date <= x.eol_server)
+@@ -382,17 +382,3 @@ class UbuntuDistroInfo(DistroInfo):
+             if (x.eol and date <= x.eol) or (x.eol_server is not None and date <= x.eol_server)
          ]
          return distros
 -
--    def supported_esm(self, date=None, result="codename"):
+-    def supported_esm(
+-        self, date: typing.Optional[datetime.date] = None, result: str = "codename"
+-    ) -> list[typing.Union[DistroRelease, str]]:
 -        """Get list of all ESM supported Ubuntu distributions based on the
 -        given date."""
 -        if date is None:
