@@ -38,7 +38,7 @@ index b6cdc8ab..d82db9dd 100644
      NoUpdatesDialog,
      NoUpgradeForYouDialog,
      PartialUpgradeDialog,
-@@ -125,11 +126,12 @@ class UpdateManager(Gtk.Window):
+@@ -125,11 +126,13 @@ class UpdateManager(Gtk.Window):
              )
  
          # Look for a new release in a thread
@@ -47,8 +47,9 @@ index b6cdc8ab..d82db9dd 100644
 -            self.options and self.options.use_proposed,
 -            self.options and self.options.debug,
 -        )
-+        if self.options.check_dist_upgrades and
-+        apt_pkg.config.find_i("APT::Periodic::Update-Package-Lists") != 0:
++        if (self.options.check_dist_upgrades
++           and apt_pkg.config.find_i("APT::Periodic::Update-Package-Lists")
++           != 0):
 +            self.meta_release = MetaRelease(
 +                self.options and self.options.devel_release,
 +                self.options and self.options.use_proposed,
@@ -56,12 +57,13 @@ index b6cdc8ab..d82db9dd 100644
  
      def begin_user_resizable(self, stored_width=0, stored_height=0):
          self.set_resizable(True)
-@@ -205,6 +206,18 @@
+@@ -205,6 +206,19 @@
              self.start_available()
  
      def start_update(self):
-+        if not self.options.no_check_screen and
-+        apt_pkg.config.find_i("APT::Periodic::Update-Package-Lists") == 0:
++        if (not self.options.no_check_screen
++           and apt_pkg.config.find_i("APT::Periodic::Update-Package-Lists")
++           == 0):
 +            self._start_pane(ShouldUpdateDialog(self))
 +            return
 +        if self.options.no_update:
