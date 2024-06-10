@@ -1,0 +1,43 @@
+diff --git a/electrum/gui/qt/update_checker.py b/electrum/gui/qt/update_checker.py
+index fa3ad989..998e746f 100644
+--- a/electrum/gui/qt/update_checker.py
++++ b/electrum/gui/qt/update_checker.py
+@@ -16,7 +16,7 @@ from electrum.i18n import _
+ from electrum.util import make_aiohttp_session
+ from electrum.logging import Logger
+ from electrum.network import Network
+-from electrum._vendor.distutils.version import StrictVersion
++import packaging.version
+ 
+ 
+ class UpdateCheck(QDialog, Logger):
+@@ -76,7 +76,7 @@ class UpdateCheck(QDialog, Logger):
+ 
+     @staticmethod
+     def is_newer(latest_version):
+-        return latest_version > StrictVersion(version.ELECTRUM_VERSION)
++        return latest_version > packaging.version(version.ELECTRUM_VERSION)
+ 
+     def update_view(self, latest_version=None):
+         if latest_version:
+@@ -129,7 +129,7 @@ class UpdateCheckThread(QThread, Logger):
+                         break
+                 else:
+                     raise Exception('no valid signature for version announcement')
+-                return StrictVersion(version_num.strip())
++                return packaging.version(version_num.strip())
+ 
+     def run(self):
+         if not self.network:
+diff --git a/debian/control b/debian/control
+index 6b24e90c..2a3f3436 100644
+--- a/debian/control
++++ b/debian/control
+@@ -24,6 +24,7 @@ Build-Depends:
+  python3-dnspython (>= 2.0),
+  python3-ecdsa (>= 0.14),
+  python3-kivy,
++ python3-packaging,
+  python3-pbkdf2,
+  python3-protobuf (>= 3.12),
+  python3-pyaes,

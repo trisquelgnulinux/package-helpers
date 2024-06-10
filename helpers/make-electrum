@@ -17,13 +17,19 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
-EXTERNAL='deb-src http://ftp.debian.org/debian bullseye main'
+VERSION=3
+EXTERNAL='deb-src http://ftp.debian.org/debian bookworm main'
 REPOKEY=0E98404D386FA1D9
-DEPENDS=aiorpcx,aiohttp-socks,protobuf
 
 . ./config
 
-changelog "Backported from debian bullseye"
+# Replace deprecated distutils :
+# electrum/_vendor/distutils/version.py should be provided by
+# /usr/lib/python3/dist-packages/packaging/version.py, confirm.
+sed -i 's|python3-distutils,|python3-packaging,|' debian/control
+remove_patch Replace-vendored-distutils.patch
+patch_p1 $DATA/replace_distutils_by_packaging.patch
+
+changelog "Backported from debian bookworm"
 
 package
