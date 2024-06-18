@@ -1,5 +1,6 @@
 #!/bin/sh
 #
+#    Copyright (C)      2024  Luis Guzmán <ark@switnet.org>
 #    Copyright (C) 2016-2020  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C)      2017  Mason Hock <mason@masonhock.com>
 #
@@ -125,10 +126,10 @@ EOF
 sed -i "/<key name=\"show-window-thumbnails\"/,/<summary>/s|true|false|" \
     applets/wncklet/org.mate.panel.applet.window-list-previews.gschema.xml.in
 
-# Apply selected upstream fixes from mate-panel - 1.26.3
+# Apply selected upstream fixes / patches
 for i in $(find $DATA/ -name *.patch|sort)
 do
-    patch --no-backup-if-mismatch -p1 < $i
+    patch_p1 $i
 done
 
 changelog "Changed default layout"
