@@ -1,0 +1,17 @@
+diff --git a/debian/control b/debian/control
+index e680436f..7114f416 100644
+--- a/debian/control
++++ b/debian/control
+@@ -32,10 +32,9 @@ Pre-Depends: ${misc:Pre-Depends}
+ Depends: ${shlibs:Depends},
+          ${misc:Depends},
+          network-manager,
+-         gnome-shell | policykit-1-gnome | polkit-1-auth-agent,
++         policykit-1-gnome | polkit-1-auth-agent,
+          default-dbus-session-bus | dbus-session-bus
+-Recommends: gnome-shell | notification-daemon,
+-            gnome-keyring,
++Recommends: gnome-keyring,
+             humanity-icon-theme,
+             mobile-broadband-provider-info,
+             iso-codes
