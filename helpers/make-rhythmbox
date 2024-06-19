@@ -25,8 +25,8 @@ COMPONENT=main
 
 for i in 03_magnatune_partner.patch
 do
-  rm debian/patches/$i
-  sed /$i/d debian/patches/series -i
+  echo "> Removing patch $i:"
+  remove_patch $i
 done
 
 changelog "Changed referer for magnatune.
