@@ -30,6 +30,13 @@ done
 
 sed '/PIDGIN_PREFS_ROOT.*conv_focus/s/TRUE/FALSE/' -i pidgin/gtksound.c
 
+# apply upstream pidgin security fixes / patches not yet in ubuntu.
+for patch in $(ls -v ${DATA}/cve/*.patch)
+do
+    echo "Applying $(echo $patch|xargs basename)"
+    patch_p1 $patch
+done
+
 changelog "Compiled for Trisquel"
 
 package
