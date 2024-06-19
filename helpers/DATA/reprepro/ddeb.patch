@@ -1,12 +1,12 @@
-diff -ru reprepro.orig/source/atoms.c reprepro/source/atoms.c
---- reprepro.orig/source/atoms.c	2016-12-23 19:11:30.000000000 -0500
-+++ reprepro/source/atoms.c	2020-11-01 16:33:38.182181608 -0500
+diff -ru a/atoms.c b/atoms.c
+--- a/atoms.c	2016-12-23 19:11:30.000000000 -0500
++++ b/atoms.c	2020-11-01 16:33:38.182181608 -0500
 @@ -26,7 +26,7 @@
  
  const char **atoms_architectures;
  const char **atoms_components;
--const char * const packagetypes[4] = { "!!NONE!!", "dsc", "deb", "udeb" };
-+const char * const packagetypes[5] = { "!!NONE!!", "dsc", "deb", "udeb", "ddeb" };
+-static const char * const packagetypes[4] = { "!!NONE!!", "dsc", "deb", "udeb" };
++static const char * const packagetypes[5] = { "!!NONE!!", "dsc", "deb", "udeb", "ddeb" };
  const char **atoms_packagetypes = (const char **)&packagetypes;
  const char **atoms_commands;
  static int command_count;
@@ -34,9 +34,9 @@ diff -ru reprepro.orig/source/atoms.c reprepro/source/atoms.c
  	return atom_unknown;
  }
  
-diff -ru reprepro.orig/source/atoms.h reprepro/source/atoms.h
---- reprepro.orig/source/atoms.h	2016-12-23 19:11:30.000000000 -0500
-+++ reprepro/source/atoms.h	2020-11-01 16:33:38.182181608 -0500
+diff -ru a/atoms.h b/atoms.h
+--- a/atoms.h	2016-12-23 19:11:30.000000000 -0500
++++ b/atoms.h	2020-11-01 16:33:38.182181608 -0500
 @@ -19,6 +19,7 @@
  #define pt_dsc ((packagetype_t)1)
  #define pt_deb ((packagetype_t)2)
@@ -45,9 +45,9 @@ diff -ru reprepro.orig/source/atoms.h reprepro/source/atoms.h
  
  #define atom_defined(a) ((a) > (atom_t)0)
  
-diff -ru reprepro.orig/source/changes.c reprepro/source/changes.c
---- reprepro.orig/source/changes.c	2016-12-23 19:11:30.000000000 -0500
-+++ reprepro/source/changes.c	2020-11-01 16:33:38.182181608 -0500
+diff -ru a/changes.c b/changes.c
+--- a/changes.c	2016-12-23 19:11:30.000000000 -0500
++++ b/changes.c	2020-11-01 16:33:38.182181608 -0500
 @@ -164,6 +164,8 @@
  
  	if (l >= 4 && memcmp(p-4, ".deb", 4) == 0)
@@ -76,8 +76,8 @@ diff -ru reprepro.orig/source/changes.c reprepro/source/changes.c
  
  		/* if it uses a known compression, things are easy,
 diff -ru source.or/changes.h source/changes.h
---- reprepro.orig/source/changes.h 2018-09-09 01:17:15.000000000 -0400
-+++ reprepro/source/changes.h    2022-03-08 19:52:49.495104016 -0500
+--- a/changes.h 2018-09-09 01:17:15.000000000 -0400
++++ b/changes.h    2022-03-08 19:52:49.495104016 -0500
 @@ -7,7 +7,7 @@
  
  typedef enum {
@@ -98,9 +98,9 @@ diff -ru source.or/changes.h source/changes.h
  #define FE_SOURCE(ft) ((ft) == fe_DIFF || (ft) == fe_ORIG || (ft) == fe_TAR || (ft) == fe_DSC || (ft) == fe_UNKNOWN || (ft) == fe_ALTSRC || (ft) == fe_SIG)
  
  struct hash_data;
-diff -ru reprepro.orig/source/checkin.c reprepro/source/checkin.c
---- reprepro.orig/source/checkin.c	2016-12-28 10:03:44.000000000 -0500
-+++ reprepro/source/checkin.c	2020-11-01 16:33:38.182181608 -0500
+diff -ru a/checkin.c b/checkin.c
+--- a/checkin.c	2016-12-28 10:03:44.000000000 -0500
++++ b/checkin.c	2020-11-01 16:33:38.182181608 -0500
 @@ -207,6 +207,11 @@
  		*ignoredlines_p = true;
  		return RET_NOTHING;
@@ -145,9 +145,9 @@ diff -ru reprepro.orig/source/checkin.c reprepro/source/checkin.c
  		} else if (e->type == fe_UDEB) {
  			r = deb_addprepared(e->pkg.deb,
  				/* architecture all needs this, the rest is
-diff -ru reprepro.orig/source/checkindeb.c reprepro/source/checkindeb.c
---- reprepro.orig/source/checkindeb.c	2016-12-28 10:13:15.000000000 -0500
-+++ reprepro/source/checkindeb.c	2020-11-01 16:33:38.182181608 -0500
+diff -ru a/checkindeb.c b/checkindeb.c
+--- a/checkindeb.c	2016-12-28 10:13:15.000000000 -0500
++++ b/checkindeb.c	2020-11-01 16:33:38.182181608 -0500
 @@ -105,7 +105,13 @@
  	const struct overridedata *oinfo;
  	retvalue r;
@@ -223,9 +223,9 @@ diff -ru reprepro.orig/source/checkindeb.c reprepro/source/checkindeb.c
  	    !IGNORING(surprisingbinary,
  "'%s' has packagename '%s' not listed in the .changes file!\n",
  					debfilename, packagenametocheck)) {
-diff -ru reprepro.orig/source/contents.c reprepro/source/contents.c
---- reprepro.orig/source/contents.c	2016-12-23 19:11:30.000000000 -0500
-+++ reprepro/source/contents.c	2020-11-01 16:33:38.182181608 -0500
+diff -ru a/contents.c b/contents.c
+--- a/contents.c	2016-12-23 19:11:30.000000000 -0500
++++ b/contents.c	2020-11-01 16:33:38.182181608 -0500
 @@ -43,6 +43,7 @@
  		cf_uncompressed, cf_gz, cf_bz2, cf_xz,
  		cf_percomponent, cf_allcomponents,
@@ -352,9 +352,9 @@ diff -ru reprepro.orig/source/contents.c reprepro/source/contents.c
  	}
  	return result;
  }
-diff -ru reprepro.orig/source/contents.h reprepro/source/contents.h
---- reprepro.orig/source/contents.h	2016-12-23 19:11:30.000000000 -0500
-+++ reprepro/source/contents.h	2020-11-01 16:33:38.182181608 -0500
+diff -ru a/contents.h b/contents.h
+--- a/contents.h	2016-12-23 19:11:30.000000000 -0500
++++ b/contents.h	2020-11-01 16:33:38.182181608 -0500
 @@ -19,6 +19,7 @@
  		bool percomponent;
  		bool allcomponents;
@@ -363,9 +363,9 @@ diff -ru reprepro.orig/source/contents.h reprepro/source/contents.h
  	} flags;
  	compressionset compressions;
  };
-diff -ru reprepro.orig/source/copypackages.c reprepro/source/copypackages.c
---- reprepro.orig/source/copypackages.c	2016-12-23 19:11:30.000000000 -0500
-+++ reprepro/source/copypackages.c	2020-11-01 16:33:38.182181608 -0500
+diff -ru a/copypackages.c b/copypackages.c
+--- a/copypackages.c	2016-12-23 19:11:30.000000000 -0500
++++ b/copypackages.c	2020-11-01 16:33:38.182181608 -0500
 @@ -779,7 +779,14 @@
  					into->codename,
  					atoms_architectures[architecture]);
@@ -382,9 +382,9 @@ diff -ru reprepro.orig/source/copypackages.c reprepro/source/copypackages.c
  			if (!atomlist_in(&into->components, component)) {
  				fprintf(stderr,
  "Distribution '%s' does not contain component '%s!'\n",
-diff -ru reprepro.orig/source/distribution.c reprepro/source/distribution.c
---- reprepro.orig/source/distribution.c	2016-12-23 19:11:30.000000000 -0500
-+++ reprepro/source/distribution.c	2020-11-01 16:33:38.182181608 -0500
+diff -ru a/distribution.c b/distribution.c
+--- a/distribution.c	2016-12-23 19:11:30.000000000 -0500
++++ b/distribution.c	2020-11-01 16:33:38.182181608 -0500
 @@ -69,8 +69,10 @@
  		exportmode_done(&distribution->dsc);
  		exportmode_done(&distribution->deb);
@@ -491,9 +491,9 @@ diff -ru reprepro.orig/source/distribution.c reprepro/source/distribution.c
  	CF("DebIndices",	distribution,	deb),
  	CF("DebOverride",	distribution,	deb_override),
  	CF("Description",	distribution,	description),
-diff -ru reprepro.orig/source/distribution.h reprepro/source/distribution.h
---- reprepro.orig/source/distribution.h	2016-12-23 19:11:30.000000000 -0500
-+++ reprepro/source/distribution.h	2020-11-01 16:33:38.182181608 -0500
+diff -ru a/distribution.h b/distribution.h
+--- a/distribution.h	2016-12-23 19:11:30.000000000 -0500
++++ b/distribution.h	2020-11-01 16:33:38.182181608 -0500
 @@ -63,8 +63,10 @@
  	/* the list of components containing a debian-installer dir,
  	 * normally only "main" */
@@ -521,9 +521,9 @@ diff -ru reprepro.orig/source/distribution.h reprepro/source/distribution.h
  		       udebcomponents_set;
  	/* A list of all targets contained in the distribution*/
  	struct target *targets;
-diff -ru reprepro.orig/source/incoming.c reprepro/source/incoming.c
---- reprepro.orig/source/incoming.c	2016-12-28 10:10:28.000000000 -0500
-+++ reprepro/source/incoming.c	2020-11-01 16:33:38.182181608 -0500
+diff -ru a/incoming.c b/incoming.c
+--- a/incoming.c	2016-12-28 10:10:28.000000000 -0500
++++ b/incoming.c	2020-11-01 16:33:38.182181608 -0500
 @@ -1264,9 +1264,13 @@
  	assert (file == package->master);
  	if (file->type == fe_DEB)
@@ -563,9 +563,9 @@ diff -ru reprepro.orig/source/incoming.c reprepro/source/incoming.c
  				r = prepare_deb(i, c, d, file);
  				break;
  			case fe_DSC:
-diff -ru reprepro.orig/source/main.c reprepro/source/main.c
---- reprepro.orig/source/main.c	2016-12-28 10:02:44.000000000 -0500
-+++ reprepro/source/main.c	2020-11-01 16:35:21.842197208 -0500
+diff -ru a/main.c b/main.c
+--- a/main.c	2016-12-28 10:02:44.000000000 -0500
++++ b/main.c	2020-11-01 16:35:21.842197208 -0500
 @@ -2512,7 +2512,9 @@
          retvalue result, r;
  
@@ -647,9 +647,9 @@ diff -ru reprepro.orig/source/main.c reprepro/source/main.c
  " includeudeb <distribution> <.udeb-file>\n"
  "       Include the given installer binary package.\n"
  " includedsc <distribution> <.dsc-file>\n"
-diff -ru reprepro.orig/source/target.c reprepro/source/target.c
---- reprepro.orig/source/target.c	2016-12-23 19:11:30.000000000 -0500
-+++ reprepro/source/target.c	2020-11-01 16:33:38.186181609 -0500
+diff -ru a/target.c b/target.c
+--- a/target.c	2016-12-23 19:11:30.000000000 -0500
++++ b/target.c	2020-11-01 16:33:38.186181609 -0500
 @@ -53,6 +53,10 @@
  		return mprintf("u|%s|%s|%s", codename,
  				atoms_components[component],
@@ -687,9 +687,9 @@ diff -ru reprepro.orig/source/target.c reprepro/source/target.c
  			exportmode, readonly, noexport, target);
  }
  retvalue target_initialize_binary(struct distribution *d, component_t component, architecture_t architecture, const struct exportmode *exportmode, bool readonly, bool noexport, const char *fakecomponentprefix, struct target **target) {
-diff -ru reprepro.orig/source/target.h reprepro/source/target.h
---- reprepro.orig/source/target.h	2016-12-23 19:11:30.000000000 -0500
-+++ reprepro/source/target.h	2020-11-01 16:33:38.186181609 -0500
+diff -ru a/target.h b/target.h
+--- a/target.h	2016-12-23 19:11:30.000000000 -0500
++++ b/target.h	2020-11-01 16:33:38.186181609 -0500
 @@ -76,6 +76,7 @@
  };
  
@@ -698,9 +698,9 @@ diff -ru reprepro.orig/source/target.h reprepro/source/target.h
  retvalue target_initialize_binary(/*@dependant@*/struct distribution *, component_t, architecture_t, /*@dependent@*/const struct exportmode *, bool /*readonly*/, bool /*noexport*/, /*@NULL@*/const char *fakecomponentprefix, /*@out@*/struct target **);
  retvalue target_initialize_source(/*@dependant@*/struct distribution *, component_t, /*@dependent@*/const struct exportmode *, bool /*readonly*/, bool /*noexport*/, /*@NULL@*/const char *fakecomponentprefix, /*@out@*/struct target **);
  retvalue target_free(struct target *);
-diff -ru reprepro.orig/source/tests/genpackage.sh reprepro/source/tests/genpackage.sh
---- reprepro.orig/source/tests/genpackage.sh	2016-12-23 19:11:30.000000000 -0500
-+++ reprepro/source/tests/genpackage.sh	2020-11-01 16:33:38.186181609 -0500
+diff -ru a/tests/genpackage.sh b/tests/genpackage.sh
+--- a/tests/genpackage.sh	2016-12-23 19:11:30.000000000 -0500
++++ b/tests/genpackage.sh	2020-11-01 16:33:38.186181609 -0500
 @@ -9,6 +9,8 @@
  fi
  

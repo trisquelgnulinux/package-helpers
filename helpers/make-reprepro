@@ -21,7 +21,7 @@ VERSION=1
 
 . ./config
 
-patch --no-backup-if-mismatch -p2 < $DATA/ddeb.patch
+patch_p1 $DATA/ddeb.patch
 
 #https://github.com/ionos-cloud/reprepro
 changelog "Adds support for ddeb files"
