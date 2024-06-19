@@ -84,10 +84,13 @@ for PATCH in $DATA/*.patch ; do
 done
 
 ## Simple test for finding missing cases of silent_accept_firmware method
-#for dir in $PRESERVEDIRS; do
-#  grep -i "load.*firmware.*%" $PRESERVEDIRS -r|grep -vi info
-#  grep -i "load.*ucode.*%" $PRESERVEDIRS -r|grep -vi info
-#done
+test_missing_cases_silent_patch() {
+  for dir in $PRESERVEDIRS; do
+    grep -i "load.*firmware.*%" $PRESERVEDIRS -r|grep -vi info
+    grep -i "load.*ucode.*%" $PRESERVEDIRS -r|grep -vi info
+  done
+}
+#test_missing_cases_silent_patch
 
 # Re-enable udebs
 enable_udebs() {

@@ -229,20 +229,21 @@ diff --color -Nru a/drivers/gpu/drm/amd/amdgpu/cik_sdma.c b/drivers/gpu/drm/amd/
  		for (i = 0; i < adev->sdma.num_instances; i++)
  			amdgpu_ucode_release(&adev->sdma.instance[i].fw);
  	}
-diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c
-index 49d34c7..376ccc3 100644
---- a/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c
-@@ -4011,8 +4011,7 @@ static int gfx_v10_0_init_microcode(struct amdgpu_device *adev)
- 			goto out;
- 		if (err)
- 			dev_dbg(adev->dev,
--				"gfx10: amdgpu_ucode_request() failed \"%s\"\n",
--				fw_name);
-+				"gfx10: amdgpu_ucode_request() failed \n");
- 		rlc_hdr = (const struct rlc_firmware_header_v2_0 *)adev->gfx.rlc_fw->data;
- 		version_major = le16_to_cpu(rlc_hdr->header.header_version_major);
- 		version_minor = le16_to_cpu(rlc_hdr->header.header_version_minor);
+# removed starting at
+#diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c
+#index 49d34c7..376ccc3 100644
+#--- a/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c
+#+++ b/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c
+#@@ -4011,8 +4011,7 @@ static int gfx_v10_0_init_microcode(struct amdgpu_device *adev)
+# 			goto out;
+# 		if (err)
+# 			dev_dbg(adev->dev,
+#-				"gfx10: amdgpu_ucode_request() failed \"%s\"\n",
+#-				fw_name);
+#+				"gfx10: amdgpu_ucode_request() failed \n");
+# 		rlc_hdr = (const struct rlc_firmware_header_v2_0 *)adev->gfx.rlc_fw->data;
+# 		version_major = le16_to_cpu(rlc_hdr->header.header_version_major);
+# 		version_minor = le16_to_cpu(rlc_hdr->header.header_version_minor);
 diff --color -Nru a/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c
 --- a/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c	2022-07-31 16:03:01.000000000 -0500
 +++ b/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c	2023-03-09 19:48:18.700813841 -0600
@@ -1973,3 +1974,88 @@ index bd4c4174..9beeb2e6 100644
  
  	return request_firmware_nowait(THIS_MODULE, 1, drv->firmware_name,
  				       drv->trans->dev,
+diff --git a/drivers/bluetooth/hci_intel.c b/drivers/bluetooth/hci_intel.c
+index f9d2740a..37f4b0c3 100644
+--- a/drivers/bluetooth/hci_intel.c
++++ b/drivers/bluetooth/hci_intel.c
+@@ -701,8 +701,7 @@ static int intel_setup(struct hci_uart *hu)
+ 
+ 	err = request_firmware(&fw, fwname, &hdev->dev);
+ 	if (err < 0) {
+-		bt_dev_err(hdev, "Failed to load Intel firmware file (%d)",
+-			   err);
++		bt_dev_err(hdev, "Failed to load firmware file");
+ 		return err;
+ 	}
+ 
+diff --git a/drivers/bluetooth/hci_nokia.c b/drivers/bluetooth/hci_nokia.c
+index 97da0b2b..f8c38d91 100644
+--- a/drivers/bluetooth/hci_nokia.c
++++ b/drivers/bluetooth/hci_nokia.c
+@@ -344,8 +344,7 @@ static int nokia_setup_fw(struct hci_uart *hu)
+ 
+ 	err = request_firmware(&fw, fwname, dev);
+ 	if (err < 0) {
+-		dev_err(dev, "%s: Failed to load Nokia firmware file (%d)",
+-			hu->hdev->name, err);
++		dev_err(dev, "Failed to load firmware file");
+ 		return err;
+ 	}
+ 
+diff --git a/drivers/bluetooth/btintel.c b/drivers/bluetooth/btintel.c
+index f9b77a17..147d9fff 100644
+--- a/drivers/bluetooth/btintel.c
++++ b/drivers/bluetooth/btintel.c
+@@ -2049,12 +2049,11 @@ static int btintel_download_fw(struct hci_dev *hdev,
+ 			return 0;
+ 		}
+ 
+-		bt_dev_err(hdev, "Failed to load Intel firmware file (%d)",
+-			   err);
++		bt_dev_err(hdev, "Failed to load firmware file");
+ 		return err;
+ 	}
+ 
+-	bt_dev_info(hdev, "Found device firmware: %s", fwname);
++	bt_dev_info(hdev, "Found device firmware");
+ 
+ 	if (fw->size < 644) {
+ 		bt_dev_err(hdev, "Invalid size of firmware file (%zu)",
+@@ -2238,13 +2237,12 @@ static int btintel_prepare_fw_download_tlv(struct hci_dev *hdev,
+ 			return 0;
+ 		}
+ 
+-		bt_dev_err(hdev, "Failed to load Intel firmware file (%d)",
+-			   err);
++		bt_dev_err(hdev, "Failed to load firmware file");
+ 
+ 		return err;
+ 	}
+ 
+-	bt_dev_info(hdev, "Found device firmware: %s", fwname);
++	bt_dev_info(hdev, "Found device firmware");
+ 
+ 	if (fw->size < 644) {
+ 		bt_dev_err(hdev, "Invalid size of firmware file (%zu)",
+diff --git a/drivers/bluetooth/btmtk.c b/drivers/bluetooth/btmtk.c
+index 809762d6..fe2545ce 100644
+--- a/drivers/bluetooth/btmtk.c
++++ b/drivers/bluetooth/btmtk.c
+@@ -69,7 +69,7 @@ int btmtk_setup_firmware_79xx(struct hci_dev *hdev, const char *fwname,
+ 
+ 	err = request_firmware(&fw, fwname, &hdev->dev);
+ 	if (err < 0) {
+-		bt_dev_err(hdev, "Failed to load firmware file (%d)", err);
++		bt_dev_err(hdev, "Failed to load firmware file");
+ 		return err;
+ 	}
+ 
+@@ -181,7 +181,7 @@ int btmtk_setup_firmware(struct hci_dev *hdev, const char *fwname,
+ 
+ 	err = request_firmware(&fw, fwname, &hdev->dev);
+ 	if (err < 0) {
+-		bt_dev_err(hdev, "Failed to load firmware file (%d)", err);
++		bt_dev_err(hdev, "Failed to load firmware file");
+ 		return err;
+ 	}
+ 
