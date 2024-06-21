@@ -19,11 +19,12 @@
 #
 
 VERSION=4
-EXTERNAL='deb-src http://ftp.us.debian.org/debian bookworm main'
+EXTERNAL='deb-src http://ftp.us.debian.org/debian trixie main'
 REPOKEY=6ED0E7B82643E131
 
 . ./config
 
+sed -i '/Provides:/d' debian/control debian/templates/control.binary.in
 sed '/Suggests/s/$/\nProvides: linux-firmware/' -i 	debian/control \
 							debian/templates/control.binary.in
 
