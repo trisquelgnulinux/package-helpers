@@ -1,0 +1,17 @@
+--- a/scripts/reproducible-check	2023-04-02 17:44:26+00:00
++++ b/scripts/reproducible-check	2024-06-21 06:33:30.224688+00:00
+@@ -198,13 +198,13 @@
+ 
+                 # We may have installed a binNMU version locally so we need to
+                 # strip these off when looking up against the JSON of results.
+                 version = re.sub(r"\+b\d+$", "", pkg_ver.version)
+ 
+-                result[
+-                    (pkg.shortname, pkg_ver.architecture, version)
+-                ] = pkg_ver.source_name
++                result[(pkg.shortname, pkg_ver.architecture, version)] = (
++                    pkg_ver.source_name
++                )
+ 
+         self.log.debug("Parsed %d installed binary packages", len(result))
+ 
