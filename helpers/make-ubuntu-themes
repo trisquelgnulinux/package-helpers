@@ -17,19 +17,27 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 . ./config
 
 # Rebrand logo
 ## light
-for a in $(find . -name *.svg|grep "distributor-logo\|start-here"|grep dark)
+for a in $(find . -name *.svg|grep "distributor-logo\|start-here\|preferences-system-directory"|grep dark)
 do
+    echo "> copying logo-trisquel-light.svg to $a"
     cp $DATA/logo-trisquel-light.svg $a
 done
 ## dark
-for b in $(find . -name *.svg|grep "distributor-logo\|start-here"|grep light)
+for b in $(find . -name *.svg|grep "distributor-logo\|start-here\|preferences-system-directory"|grep light)
 do
+    echo "> copying logo-trisquel-dark.svg $b"
     cp $DATA/logo-trisquel-dark.svg $b
+done
+## regular
+for c in $(find . -name *.svg|grep "computer\|package-supported"|grep -v devices)
+do
+    echo "> copying trisquel-logo.svg to $c"
+    cp $DATA/trisquel-logo.svg $c
 done
 
 #suru
