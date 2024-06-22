@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 #    Copyright (C) 2011  Santiago Rodríguez  <santi@trisquel.info>
-#    Copyright (C) 2021  Luis Guzman  <ark@switnet.org>
+#    Copyright (C) 2024  Luis Guzman  <ark@switnet.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -22,8 +22,8 @@ VERSION=3
 
 . ./config
 
-patch --no-backup-if-mismatch -p1 < $DATA/asunder_2.9.5-acc.patch
-patch --no-backup-if-mismatch -p1 < $DATA/asunder_2.9.5-monkey.patch
+patch_p1 $DATA/asunder_2.9.5-acc.patch
+patch_p1 $DATA/asunder_2.9.5-monkey.patch
 
 changelog "Removed non-free formats. Closes #4061"
 

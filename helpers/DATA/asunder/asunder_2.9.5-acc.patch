@@ -171,11 +171,10 @@ diff -ruN a/src/interface.h b/src/interface.h
 diff -ruN a/src/prefs.c b/src/prefs.c
 --- a/src/prefs.c	2019-08-29 00:18:58.000000000 -0500
 +++ b/src/prefs.c	2021-06-27 16:07:27.299217038 -0500
-@@ -127,8 +127,6 @@
+@@ -127,7 +127,6 @@
      p->wavpack_bitrate = 3;
      p->rip_monkey = 0;
      p->monkey_compression = 2;
--    p->rip_aac = 0;
 -    p->aac_quality = 60;
      p->rip_musepack = 0;
      p->musepack_bitrate = 2;
