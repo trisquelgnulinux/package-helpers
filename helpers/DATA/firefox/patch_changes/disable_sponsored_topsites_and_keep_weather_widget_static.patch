@@ -1,0 +1,38 @@
+diff --git a/browser/app/profile/firefox.js b/browser/app/profile/firefox.js
+index a80f361..77dc480 100644
+--- a/browser/app/profile/firefox.js
++++ b/browser/app/profile/firefox.js
+@@ -1679,25 +1679,25 @@ pref("prompts.defaultModalType", 3);
+ 
+ pref("browser.topsites.useRemoteSetting", true);
+ // Fetch sponsored Top Sites from Mozilla Tiles Service (Contile)
+-pref("browser.topsites.contile.enabled", true);
+-pref("browser.topsites.contile.endpoint", "https://contile.services.mozilla.com/v1/tiles");
++pref("browser.topsites.contile.enabled", false);
++pref("browser.topsites.contile.endpoint", "");
+ 
+ // Whether to enable the Share-of-Voice feature for Sponsored Topsites via Contile.
+-pref("browser.topsites.contile.sov.enabled", true);
++pref("browser.topsites.contile.sov.enabled", false);
+ 
+ // The base URL for the Quick Suggest anonymizing proxy. To make a request to
+ // the proxy, include a campaign ID in the path.
+-pref("browser.partnerlink.attributionURL", "https://topsites.services.mozilla.com/cid/");
+-pref("browser.partnerlink.campaign.topsites", "amzn_2020_a1");
++pref("browser.partnerlink.attributionURL", "");
++pref("browser.partnerlink.campaign.topsites", "");
+ 
+ // Activates preloading of the new tab url.
+-pref("browser.newtab.preload", true);
++pref("browser.newtab.preload", false);
+ 
+ // Weather widget for newtab
+-pref("browser.newtabpage.activity-stream.showWeather", true);
++pref("browser.newtabpage.activity-stream.showWeather", false);
+ pref("browser.newtabpage.activity-stream.weather.query", "");
+ pref("browser.newtabpage.activity-stream.weather.locationSearchEnabled", false);
+-pref("browser.newtabpage.activity-stream.weather.temperatureUnits", "f");
++pref("browser.newtabpage.activity-stream.weather.temperatureUnits", "c");
+ pref("browser.newtabpage.activity-stream.weather.display", "simple");
+ // List of regions that get weather by default.
+ pref("browser.newtabpage.activity-stream.discoverystream.region-weather-config", "");
