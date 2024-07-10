@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2023 Luis Guzmán <ark@switnet.org>
+#    Copyright (C) 2024 Luis Guzmán <ark@switnet.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -22,10 +22,6 @@ EXTERNAL='deb-src http://ftp.us.debian.org/debian trixie main'
 REPOKEY=6ED0E7B82643E131
 BACKPORTS=true
 . ./config
-
-# Set on a supported python version
-sed -i "s|python3.11|python3.10|" debian/control
-sed -i "/PYBUILD_INTERPRETERS/s|python3.11|python3.10|" debian/rules
 
 changelog "Imported into Trisquel"
 package
