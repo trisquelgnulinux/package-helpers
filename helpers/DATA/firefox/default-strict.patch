@@ -1,7 +1,8 @@
-diff -ru firefox-110.0+build1/browser/components/BrowserGlue.sys.mjs firefox-110.0+build1/browser/components/BrowserGlue.sys.mjs_fix
---- firefox-110.0+build1/browser/components/BrowserGlue.sys.mjs	2023-02-07 01:52:32.000000000 -0600
-+++ firefox-110.0+build1/browser/components/BrowserGlue.sys.mjs_fix	2023-02-07 14:52:59.465762604 -0600
-@@ -1637,6 +1637,19 @@
+diff --git a/browser/components/BrowserGlue.sys.mjs b/browser/components/BrowserGlue.sys.mjs
+index 8fa6f7a..a34ab8b 100644
+--- a/browser/components/BrowserGlue.sys.mjs
++++ b/browser/components/BrowserGlue.sys.mjs
+@@ -1860,6 +1860,19 @@ BrowserGlue.prototype = {
        }
      });
  
@@ -18,6 +19,6 @@ diff -ru firefox-110.0+build1/browser/components/BrowserGlue.sys.mjs firefox-110
 +      Services.prefs.setStringPref("browser.contentblocking.category", "strict"); this._updateCBCategory;
 +    }
 +
-     // Offer to reset a user's profile if it hasn't been used for 60 days.
-     const OFFER_PROFILE_RESET_INTERVAL_MS = 60 * 24 * 60 * 60 * 1000;
-     let lastUse = Services.appinfo.replacedLockTime;
+     this._maybeOfferProfileReset();
+ 
+     this._checkForOldBuildUpdates();
