@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=110
+VERSION=111
 EXTERNAL='deb-src http://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu $UPSTREAM main'
 REPOKEY=9BDB3D89CE49EC21
 
@@ -85,6 +85,9 @@ done
 
 # Replace ubufox recommendation
 sed 's/xul-ext-ubufox/xul-ext-youtube-html5-video-player/' -i debian/control.in
+
+# Temporary ppc64el fix dependency for v128
+sed -i "/libffi-dev/a \\\tlibaom-dev [ppc64el]," debian/control.in
 
 #Remove exceptions on warnings when installing addons.
 sed -i '/addons.mozilla.org/d' browser/app/permissions

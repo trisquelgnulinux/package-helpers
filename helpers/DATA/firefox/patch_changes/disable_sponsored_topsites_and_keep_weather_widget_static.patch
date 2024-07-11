@@ -1,8 +1,8 @@
 diff --git a/browser/app/profile/firefox.js b/browser/app/profile/firefox.js
-index a80f361..77dc480 100644
+index b8aa711..c923c87 100644
 --- a/browser/app/profile/firefox.js
 +++ b/browser/app/profile/firefox.js
-@@ -1679,25 +1679,25 @@ pref("prompts.defaultModalType", 3);
+@@ -1698,22 +1698,22 @@ pref("browser.topsites.component.enabled", false);
  
  pref("browser.topsites.useRemoteSetting", true);
  // Fetch sponsored Top Sites from Mozilla Tiles Service (Contile)
@@ -31,8 +31,4 @@ index a80f361..77dc480 100644
 +pref("browser.newtabpage.activity-stream.showWeather", false);
  pref("browser.newtabpage.activity-stream.weather.query", "");
  pref("browser.newtabpage.activity-stream.weather.locationSearchEnabled", false);
--pref("browser.newtabpage.activity-stream.weather.temperatureUnits", "f");
-+pref("browser.newtabpage.activity-stream.weather.temperatureUnits", "c");
  pref("browser.newtabpage.activity-stream.weather.display", "simple");
- // List of regions that get weather by default.
- pref("browser.newtabpage.activity-stream.discoverystream.region-weather-config", "");
