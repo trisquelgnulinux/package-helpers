@@ -266,3 +266,7 @@ echo "> Applying $(echo $1|xargs basename):"
 patch --no-backup-if-mismatch -p1 < $1
 }
 
+patch_Rp1() {
+echo "> Rolling back $(echo $1|xargs basename):"
+patch --no-backup-if-mismatch -R -p1 < $1
+}
