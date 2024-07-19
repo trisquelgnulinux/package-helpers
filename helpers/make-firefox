@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=111
+VERSION=112
 EXTERNAL='deb-src http://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu $UPSTREAM main'
 REPOKEY=9BDB3D89CE49EC21
 
@@ -297,8 +297,11 @@ cp -a $DATA/searchplugins/* browser/components/search/extensions/
 /bin/sed "/\"data\": \[/ r $DATA/searchplugins/trisquel.json" -i ./services/settings/dumps/main/search-config.json
 /bin/sed "/\"data\": \[/ r $DATA/searchplugins/trisquel-packages.json" -i ./services/settings/dumps/main/search-config.json
 
+echo "Customizing search engines..."
 # Reprocess search preconfiguration dump
 python3 $DATA/process-json-files.py . browser/components/extensions/schemas/
+# Disable new search config 'til new one gets figured out (ref: https://hg.mozilla.org/mozilla-central/rev/bad743156b30)
+patch_Rp1 $DATA/firefox_permanently_enable_new_search_engine_config.patch
 
 cat << EOF > debian/distribution.ini
 [Global]

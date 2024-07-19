@@ -1,0 +1,100 @@
+
+# HG changeset patch
+# User Mark Banner <standard8@mozilla.com>
+# Date 1717528181 0
+# Node ID bad743156b3050747ba33df8bc46518e90a1f673
+# Parent  a414b7e839e5940d7d90cc8134665b1595549605
+Bug 1900638 - Permanently enable the new search config. r=search-reviewers,daleharvey
+
+Differential Revision: https://phabricator.services.mozilla.com/D212575
+
+diff --git a/modules/libpref/init/all.js b/modules/libpref/init/all.js
+--- a/modules/libpref/init/all.js
++++ b/modules/libpref/init/all.js
+@@ -3580,26 +3580,16 @@ pref("urlclassifier.blockedTable", "mozt
+ pref("browser.search.log", false);
+ pref("browser.search.update", true);
+ pref("browser.search.suggest.enabled", true);
+ pref("browser.search.suggest.enabled.private", false);
+ pref("browser.search.separatePrivateDefault", true);
+ pref("browser.search.separatePrivateDefault.ui.enabled", false);
+ pref("browser.search.removeEngineInfobar.enabled", true);
+ 
+-// Enables a new search configuration style with no functional changes for the
+-// user. This is solely intended as a rollout button - it will go away once the
+-// new configuration has been rolled out.
+-// Whether search-config-v2 is enabled.
+-#ifdef NIGHTLY_BUILD
+-pref("browser.search.newSearchConfig.enabled", true);
+-#else
+-pref("browser.search.newSearchConfig.enabled", false);
+-#endif
+-
+ // GMPInstallManager prefs
+ 
+ // User-settable override to media.gmp-manager.url for testing purposes.
+ //pref("media.gmp-manager.url.override", "");
+ 
+ // When |media.gmp-manager.allowLocalSources| is true, we will allow falling
+ // back to using the plugin configurations distributed with Firefox to update
+ // or install plugins. This fallback is only used when we fail to get an
+diff --git a/toolkit/components/search/SearchUtils.sys.mjs b/toolkit/components/search/SearchUtils.sys.mjs
+--- a/toolkit/components/search/SearchUtils.sys.mjs
++++ b/toolkit/components/search/SearchUtils.sys.mjs
+@@ -106,16 +106,20 @@ class LoadListener {
+   }
+ 
+   // nsIProgressEventSink
+   onProgress() {}
+   onStatus() {}
+ }
+ 
+ export var SearchUtils = {
++  // Permanently enable the new search configuration until we remove the old
++  // code as part of bug 1870686.
++  newSearchConfigEnabled: true,
++
+   BROWSER_SEARCH_PREF,
+ 
+   /**
+    * This is the Remote Settings key that we use to get the ignore lists for
+    * engines.
+    */
+   SETTINGS_IGNORELIST_KEY: "hijack-blocklists",
+ 
+@@ -426,20 +430,13 @@ export var SearchUtils = {
+ 
+ XPCOMUtils.defineLazyPreferenceGetter(
+   SearchUtils,
+   "loggingEnabled",
+   BROWSER_SEARCH_PREF + "log",
+   false
+ );
+ 
+-ChromeUtils.defineLazyGetter(SearchUtils, "newSearchConfigEnabled", () => {
+-  return Services.prefs.getBoolPref(
+-    "browser.search.newSearchConfig.enabled",
+-    false
+-  );
+-});
+-
+ // Can't use defineLazyPreferenceGetter because we want the value
+ // from the default branch
+ ChromeUtils.defineLazyGetter(SearchUtils, "distroID", () => {
+   return Services.prefs.getDefaultBranch("distribution.").getCharPref("id", "");
+ });
+diff --git a/toolkit/components/search/tests/xpcshell/xpcshell.toml b/toolkit/components/search/tests/xpcshell/xpcshell.toml
+index 72020a45..6b5f63d2 100644
+--- a/toolkit/components/search/tests/xpcshell/xpcshell.toml
++++ b/toolkit/components/search/tests/xpcshell/xpcshell.toml
+@@ -119,8 +119,10 @@ support-files = [
+ ["test_engine_old_selector_application.js"]
+ 
+ ["test_engine_old_selector_application_distribution.js"]
++skip-if = ["true"] # Will be permanently removed as part of bug 1870686
+ 
+ ["test_engine_old_selector_application_name.js"]
++skip-if = ["true"] # Will be permanently removed as part of bug 1870686
+ 
+ ["test_engine_old_selector_order.js"]
+ 
