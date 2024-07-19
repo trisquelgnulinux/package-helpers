@@ -287,3 +287,10 @@ pref("app.normandy.api_url", "");
 
 // Disable Adwaita theme by default.
 pref("widget.gtk.libadwaita-colors.enabled", false);
+
+
+// High level search data collection
+defaultPref("browser.search.serpEventTelemetry.enabled",false);
+
+// Disable Privacy-Preserving Attribution submition
+pref("dom.private-attribution.submission.enabled", false);
