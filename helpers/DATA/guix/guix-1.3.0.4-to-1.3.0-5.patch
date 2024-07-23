@@ -1,0 +1,157 @@
+diff --git a/debian/control b/debian/control
+index f5080c40..24f545ae 100644
+--- a/debian/control
++++ b/debian/control
+@@ -44,7 +44,9 @@ Depends: ${misc:Depends}, ${shlibs:Depends},
+  guile-sqlite3 (>= 0.1.3-2~),
+  guile-zlib (>= 0.1.0),
+  libssh-dev,
+-Recommends: nscd,
++Recommends: ca-certificates,
++ less,
++ nscd,
+  systemd,
+ Description: GNU Guix functional package manager
+  Guix is an advanced distribution of the GNU operating system
+diff --git a/debian/patches/series b/debian/patches/series
+index 2151eca4..5d506e57 100644
+--- a/debian/patches/series
++++ b/debian/patches/series
+@@ -38,3 +38,5 @@ lsb-init-functions
+ 0030-Disable-gexp-derivation-allowed-references-test-when.patch
+ 0031-Disable-substitue-deduplication-test-when-network-is.patch
+ guix-daemon-openrc-fixes
++tests-Ensure-test-OpenPGP-keys-never-expire.patch
++use-c-utf8-locale
+diff --git a/guix/debian/patches/tests-Ensure-test-OpenPGP-keys-never-expire.patch b/debian/patches/tests-Ensure-test-OpenPGP-keys-never-expire.patch
+new file mode 100644
+index 00000000..3d23bd95
+--- /dev/null
++++ b/debian/patches/tests-Ensure-test-OpenPGP-keys-never-expire.patch
+@@ -0,0 +1,62 @@
++From 3ae7632ca0a1edca9d8c3c766efb0dcc8aa5da37 Mon Sep 17 00:00:00 2001
++From: =?UTF-8?q?Ludovic=20Court=C3=A8s?= <ludo@gnu.org>
++Date: Wed, 18 May 2022 23:20:21 +0200
++Subject: [PATCH] tests: Ensure test OpenPGP keys never expire.
++
++All these keys had expiration dates.  'tests/keys/ed25519.pub' expired
++on 2022-04-24.
++
++Fixes <https://issues.guix.gnu.org/55506>.
++
++* tests/keys/ed25519.pub, tests/keys/ed25519-2.pub,
++tests/keys/ed25519-3.pub: Remove expiration date.
++---
++ tests/keys/ed25519-2.pub | 11 +++++------
++ tests/keys/ed25519-3.pub | 10 +++++-----
++ tests/keys/ed25519.pub   | 10 +++++-----
++ 3 files changed, 15 insertions(+), 16 deletions(-)
++
++Adjusted to apply to older locations present in 1.3.0.
++
++diff --git a/tests/ed25519bis.key b/tests/ed25519bis.key
++index f5329105d5..ef050e3845 100644
++--- a/tests/ed25519bis.key
+++++ b/tests/ed25519bis.key
++@@ -1,10 +1,9 @@
++ -----BEGIN PGP PUBLIC KEY BLOCK-----
++ 
++ mDMEXtVsNhYJKwYBBAHaRw8BAQdAnLsYdh3BpeK1xDguJE80XW2/MSmqeeP6pbQw
++-8jAw0OG0IkNoYXJsaWUgR3VpeCA8Y2hhcmxpZUBleGFtcGxlLm9yZz6IlgQTFggA
++-PhYhBKBDaY1jer75FlruS4IkDtyrgNqDBQJe1Ww2AhsDBQkDwmcABQsJCAcCBhUK
++-CQgLAgQWAgMBAh4BAheAAAoJEIIkDtyrgNqDM6cA/idDdoxo9SU+witdTXt24APH
++-yRzHbX9Iyh4dZNIek9JwAP9E0BwSvDHB4LY9z4RWf2hJp3dm/yZ/jEpK+w4BGN4J
++-Ag==
++-=JIU0
+++8jAw0OG0IkNoYXJsaWUgR3VpeCA8Y2hhcmxpZUBleGFtcGxlLm9yZz6IkAQTFggA
+++OAIbAwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBKBDaY1jer75FlruS4IkDtyr
+++gNqDBQJihWJtAAoJEIIkDtyrgNqDbs0BAPOaGSYf3pX3DReEe1zbxxVQrolX9/AZ
+++VP0AOt0TAgkzAP0Sr7G1NuCtjWWGK1WmlyTFPhOWLhNriKgZFkBZrGypAw==
+++=pdTB
++ -----END PGP PUBLIC KEY BLOCK-----
++diff --git a/tests/ed25519.key b/tests/ed25519.key
++index f6bf906783..5a2fccc9f9 100644
++--- a/tests/ed25519.key
+++++ b/tests/ed25519.key
++@@ -2,9 +2,9 @@
++ 
++ mDMEXqNaoBYJKwYBBAHaRw8BAQdArviKtelb4g0I3zx9xyDS40Oz8i1/LRXqppG6
++ b23Hdim0KEVkIFR3by1GaWZ0eSA8bHVkbyt0ZXN0LWVjY0BjaGJvdWliLm9yZz6I
++-lgQTFggAPhYhBETTHiGvcTj5tjIoCncfScv6rgctBQJeo1qgAhsDBQkDwmcABQsJ
++-CAcCBhUKCQgLAgQWAgMBAh4BAheAAAoJEHcfScv6rgctq4MA/1R9G0roEwrHwmTd
++-DHxt211eLqupwXE0Z7xY2FH6DHk9AP4owEefBU7jQprSAzBS+c6gdS3SCCKKqAh6
++-ToZ4LmbKAw==
++-=FXMK
+++kAQTFggAOAIbAwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBETTHiGvcTj5tjIo
+++CncfScv6rgctBQJihWH6AAoJEHcfScv6rgctfPMBAPv+yPmEgM+J6D1nZjXsO4zW
++++4e3y2Ez+QxgI2tn8Z2xAQDBUWyyu0X+8dguGmVlsaiQdkazaUSpexvIhh9zONYw
+++Bg==
+++=s4Vp
++ -----END PGP PUBLIC KEY BLOCK-----
++-- 
++2.30.2
++
+diff --git a/guix/debian/patches/use-c-utf8-locale b/debian/patches/use-c-utf8-locale
+new file mode 100644
+index 00000000..6f69c0fa
+--- /dev/null
++++ b/debian/patches/use-c-utf8-locale
+@@ -0,0 +1,58 @@
++Use the C.UTF-8 locale for guix-daemon and guix-publish.
++
++https://bugs.debian.org/1012536
++
++Index: guix/etc/guix-daemon.service.in
++===================================================================
++--- guix.orig/etc/guix-daemon.service.in
+++++ guix/etc/guix-daemon.service.in
++@@ -7,7 +7,7 @@ Description=Build daemon for GNU Guix
++ 
++ [Service]
++ ExecStart=/usr/bin/guix-daemon --build-users-group=_guixbuild
++-Environment='GUIX_LOCPATH=@localstatedir@/guix/profiles/per-user/root/guix-profile/lib/locale' LC_ALL=en_US.utf8
+++Environment=LC_ALL=C.UTF-8
++ RemainAfterExit=yes
++ StandardOutput=syslog
++ StandardError=syslog
++Index: guix/etc/init.d/guix-daemon.in
++===================================================================
++--- guix.orig/etc/init.d/guix-daemon.in
+++++ guix/etc/init.d/guix-daemon.in
++@@ -35,8 +35,7 @@ start)
++       -a \
++       -e "/var/log/guix-daemon-stderr.log" \
++       -o "/var/log/guix-daemon-stdout.log" \
++-      -E GUIX_LOCPATH=@localstatedir@/guix/profiles/per-user/root/guix-profile/lib/locale \
++-      -E LC_ALL=en_US.utf8 \
+++      -E LC_ALL=C.UTF-8 \
++       -p "/var/run/guix-daemon.pid" \
++       /usr/bin/guix-daemon \
++       --build-users-group=_guixbuild
++Index: guix/etc/openrc/guix-daemon.in
++===================================================================
++--- guix.orig/etc/openrc/guix-daemon.in
+++++ guix/etc/openrc/guix-daemon.in
++@@ -17,8 +17,7 @@
++ # You should have received a copy of the GNU General Public License
++ # along with GNU Guix.  If not, see <http://www.gnu.org/licenses/>.
++ 
++-export GUIX_LOCPATH=@localstatedir@/guix/profiles/per-user/root/guix-profile/lib/locale
++-export LC_ALL=en_US.utf8
+++export LC_ALL=C.UTF-8
++ command="/usr/bin/guix-daemon"
++ command_args="--build-users-group=_guixbuild"
++ command_background="yes"
++Index: guix/etc/guix-publish.service.in
++===================================================================
++--- guix.orig/etc/guix-publish.service.in
+++++ guix/etc/guix-publish.service.in
++@@ -10,7 +10,7 @@ After=guix-daemon.service
++ 
++ [Service]
++ ExecStart=/usr/bin/guix publish --user=nobody --port=8181
++-Environment='GUIX_LOCPATH=@localstatedir@/guix/profiles/per-user/root/guix-profile/lib/locale' LC_ALL=en_US.utf8
+++Environment=LC_ALL=C.UTF-8
++ RemainAfterExit=yes
++ StandardOutput=syslog
++ StandardError=syslog
