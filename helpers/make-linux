@@ -19,11 +19,11 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=29
-HWEKR=5.15
+VERSION=30
+HWEKR=6.8
 
 # DI_ENABLED = 1 enables udeb build, 0 or any other value disables them.
-DI_ENABLED=1
+DI_ENABLED=0
 # HWE_ENABLED = 1 enables HWE stack build, 0 or any other value disables it.
 HWE_ENABLED=0
 
@@ -58,10 +58,9 @@ drivers/net/wireless/realtek/rtlwifi/rtl8723be
 drivers/net/wireless/realtek/rtlwifi/rtl8821ae
 drivers/net/wireless/broadcom/brcm80211
 '
-# HWEKR - 5.15
+# HWEKR - 6.8
 [ $HWE_ENABLED != 1 ] && \
-PRESERVEDIRS="$PRESERVEDIRS
-drivers/gpu/drm/r128"
+PRESERVEDIRS="$PRESERVEDIRS"
 
 TMPDIR=$(mktemp -d preserve-XXXX)
 PRESERVE=$(grep '^+++' $DATA/silent-accept-firmware.patch | /bin/sed 's/+++ //; s/\t.*//;' | cut -d/ -f2- | sort -u )
@@ -79,23 +78,24 @@ cp $TMPDIR/* . -av
 rm -rf $TMPDIR
 
 for PATCH in $DATA/*.patch ; do
-  echo $PATCH
-  patch --no-backup-if-mismatch -p1 < $PATCH
+  patch_p1 $PATCH
 done
 
 ## Simple test for finding missing cases of silent_accept_firmware method
-#for dir in $PRESERVEDIRS; do
-#  grep -i "load.*firmware.*%" $PRESERVEDIRS -r|grep -vi info
-#  grep -i "load.*ucode.*%" $PRESERVEDIRS -r|grep -vi info
-#done
+search_for_missing_cases_silent_patch() {
+  for dir in $PRESERVEDIRS; do
+    grep -i "load.*firmware.*%" $PRESERVEDIRS -r|grep -vi info
+    grep -i "load.*ucode.*%" $PRESERVEDIRS -r|grep -vi info
+  done
+}
+#search_for_missing_cases_silent_patch
 
 # Re-enable udebs
 enable_udebs() {
 
 #Apply udeb/d-i related patches.
 for PATCH in $DATA/udeb/*.patch ; do
-  echo $PATCH
-  patch --no-backup-if-mismatch -p1 < $PATCH
+  patch_p1 $PATCH
 done
 
 cp $DATA/udeb/5-udebs.mk debian/rules.d
@@ -253,10 +253,10 @@ for i in $(grep -rl family=ubuntu debian/rules.d/)
 do
     sed -i s/family=ubuntu/family=trisquel/ $i
 done
-cat << EOF > $DEBIAN_PATH/etc/kernelconfig
-archs="i386 amd64 armhf arm64 ppc64el"
-family='trisquel'
-EOF
+#cat << EOF > $DEBIAN_PATH/etc/kernelconfig
+#archs="i386 amd64 armhf arm64 ppc64el"
+#family='trisquel'
+#EOF
 
 rename s/ubuntu/trisquel/ debian.*/config/config.common.ubuntu
 for i in $(grep -lr config.common.ubuntu debian*/)
@@ -277,27 +277,28 @@ sed 's/on DESC//; s/PKGVER on/PKGVER/; /^ DESC.$/d;' debian*/control.d/flavour-c
 replace "CONFIG_FW_LOADER_USER_HELPER=y" "CONFIG_FW_LOADER_USER_HELPER=n" $DEBIAN_PATH/config
 
 # Disable aaeon & ubuntu odm drivers, remove on both paths to match annotations.
-for i in AAEON CONFIG_UBUNTU_ODM_DRIVERS
+for i in _AAEON CONFIG_UBUNTU_ODM_DRIVERS
 do
     grep -rl "$i" debian.*/config/annotations | \
-    xargs -r sed -i "/$i/d"
+    xargs -r sed -i "/$i/s|'y'|'n'|g;/$i/s|'-'|'n'|g;/$i/s|'m'|'-'|g"
 done
 
 # Custom changes for linux and linux-hwe.
 if [ $HWE_ENABLED != 1 ]; then
-## HWEKR - 5.15
-    ## Removal wireguard 5.15 specific.
-    sed '/ifeq ($(do_dkms_wireguard),false)/,/endif$/d' -i debian/rules
-    ## Fix ports build
-    sed -i "/CONFIG_FW_LOADER_USER_HELPER/s|'armhf': 'y',|'armhf': 'n',|g" debian.master/config/annotations
-    sed -i "/CONFIG_FW_LOADER_USER_HELPER/s|'arm64': 'y',|'arm64': 'n',|g" debian.master/config/annotations
-    sed -i "/CONFIG_FW_LOADER_USER_HELPER/s|'ppc64el': 'y',|'ppc64el': 'n',|g" debian.master/config/annotations
-    sed -i "/CONFIG_FW_LOADER_USER_HELPER_FALLBACK/s|'armhf': 'n',|'armhf': '-',|g" debian.master/config/annotations
-    sed -i "/CONFIG_FW_LOADER_USER_HELPER_FALLBACK/s|'arm64': 'n',|'arm64': '-',|g" debian.master/config/annotations
-    sed -i "/CONFIG_FW_LOADER_USER_HELPER_FALLBACK/s|'ppc64el': 'n',|'ppc64el': '-',|g" debian.master/config/annotations
-    ## Tweak 5.15.0-94.104
-    sed -i "/CONFIG_GPIO_M058SSAN/s|'amd64': 'm'|'amd64': '-'|" debian.master/config/annotations
-    sed -i "/CONFIG_RTC_DRV_PCF85263/s|'amd64': 'm'|'amd64': '-'|" debian.master/config/annotations
+## HWEKR - 6.8
+    ## Disable ppc64el Werroron amdgpu
+    for i in $(grep -rl CONFIG_DRM_AMDGPU_WERROR debian.*/config/annotations)
+    do
+        sed -i "/CONFIG_DRM_AMDGPU_WERROR/s|'ppc64el': 'y'|'ppc64el': 'n'|" $i
+    done
+    ## Remove disabled modules from generic list (starting at 6.2)
+    for module in gpio-aaeon hwmon-aaeon leds-aaeon mfd-aaeon spl
+    do
+        for i in $(grep -rl "^$module$" $DEBIAN_PATH/abi/*/)
+        do
+            sed -i "/^$module$/d" $i
+        done
+    done
 else
 # HWEKR - 6.5+
     ## Disable ppc64el Werroron amdgpu

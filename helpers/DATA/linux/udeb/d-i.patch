@@ -1,8 +1,8 @@
 diff --git a/debian/rules b/debian/rules
-index 0f238b32..d96c732e 100755
+index 661286bd..e828a0ac 100755
 --- a/debian/rules
 +++ b/debian/rules
-@@ -122,12 +122,19 @@ clean: debian/control debian/canonical-certs.pem debian/canonical-revoked-certs.
+@@ -128,12 +128,19 @@ clean: debian/control debian/canonical-certs.pem debian/canonical-revoked-certs.
  	dh_testroot
  	dh_clean
  
@@ -15,47 +15,49 @@ index 0f238b32..d96c732e 100755
  	rm -rf $(DEBIAN)/abi
  	rm -rf $(builddir)
  	rm -f $(stampdir)/stamp-*
- 	rm -rf $(DEBIAN)/linux-*
+ 	rm -rf debian/linux-*/
  
 +	# This gets rid of the d-i packages in control
 +	cp -f $(DEBIAN)/control.stub $(DROOT)/control
  	cp $(DEBIAN)/changelog debian/changelog
  
  	# Install the copyright information.
-@@ -184,7 +191,6 @@
- 		$(DROOT)/scripts/control-create		\
- 		$(control_files)			\
- 		debian/canonical-revoked-certs.pem	\
--		$(DROOT)/control.d/flavour-module.stub	\
- 		$(DEBIAN)/changelog			\
- 		$(wildcard $(DEBIAN)/control.d/* $(DEBIAN)/sub-flavours/*.vars)
- 	for i in $(control_files); do                                           \
-@@ -210,7 +216,13 @@
+#removed at 6.5.0-27.28~22.04.1
+#@@ -184,7 +191,6 @@ $(DEBIAN)/control.stub: 				\
+# 		$(DROOT)/scripts/control-create		\
+# 		$(control_files)			\
+# 		debian/canonical-revoked-certs.pem	\
+#-		$(DROOT)/control.d/flavour-module.stub	\
+# 		$(DEBIAN)/changelog			\
+# 		$(wildcard $(DEBIAN)/control.d/* $(DEBIAN)/sub-flavours/*.vars)
+# 	for i in $(control_files); do                                           \
+@@ -211,7 +217,14 @@ $(DEBIAN)/control.stub: 				\
  
  .PHONY: debian/control
  debian/control: $(DEBIAN)/control.stub
 +	echo "# placebo control.stub for kernel-wedge flow change" >debian/control.stub
  	cp $(DEBIAN)/control.stub debian/control
++	# append udeb packages
 +	export KW_DEFCONFIG_DIR=$(DEBIAN)/d-i && \
 +	export KW_CONFIG_DIR=$(DEBIAN)/d-i && \
 +	LANG=C kernel-wedge gen-control $(release)-$(abinum) | \
-+               grep-dctrl -FArchitecture $(arch) \
++		grep-dctrl -FArchitecture $(arch) \
 +		>>$(CURDIR)/debian/control
  
  debian/canonical-certs.pem: $(wildcard $(DROOT)/certs/*-all.pem) $(wildcard $(DROOT)/certs/*-$(arch).pem) $(wildcard $(DEBIAN)/certs/*-all.pem) $(wildcard $(DEBIAN)/certs/*-$(arch).pem)
  	for cert in $(sort $(notdir $^));					\
---- a/debian/rules.d/2-binary-arch.mk	2023-02-10 11:40:38.000000000 -0600
-+++ b/debian/rules.d/2-binary-arch.mk	2023-02-10 11:57:00.107737218 -0600
-@@ -178,12 +178,14 @@
- 		$(pkgdir)/boot/config-$(abi_release)-$*
+diff --git a/debian/rules.d/2-binary-arch.mk b/debian/rules.d/2-binary-arch.mk
+index b89c61c..ef1ef03 100644
+--- a/debian/rules.d/2-binary-arch.mk
++++ b/debian/rules.d/2-binary-arch.mk
+@@ -178,10 +178,14 @@ endif
  	install -m600 $(builddir)/build-$*/System.map \
  		$(pkgdir)/boot/System.map-$(abi_release)-$*
--
+ 
 -ifeq ($(do_dtbs),true)
 -	$(build_cd) $(kmake) $(build_O) $(conc_level) dtbs_install \
 -		INSTALL_DTBS_PATH=$(pkgdir)/lib/firmware/$(abi_release)-$*/device-tree
 -endif
--
 +	if [ "$(filter true,$(do_dtbs))" ]; then \
 +		$(build_cd) $(kmake) $(build_O) $(conc_level) dtbs_install \
 +			INSTALL_DTBS_PATH=$(pkgdir)/lib/firmware/$(abi_release)-$*/device-tree; \
@@ -64,6 +66,6 @@ index 0f238b32..d96c732e 100755
 +			echo "$$dtb_file ?" >> $(DEBIAN)/d-i/firmware/$(arch)/kernel-image; \
 +		done; \
 +	fi
+ 
  ifeq ($(no_dumpfile),)
  	makedumpfile -g $(pkgdir)/boot/vmcoreinfo-$(abi_release)-$* \
- 		-x $(builddir)/build-$*/vmlinux
