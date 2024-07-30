@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=4
+VERSION=5
 
 . ./config
 
@@ -25,7 +25,10 @@ VERSION=4
 cp $DATA/applications.menu menu-data/applications.menu
 
 # We remove any info about non-free packages
-grep -lr 'X-AppInstall-Section=(multiverse|restricted)' . | xargs -r rm
+for i in multiverse restricted
+do
+    grep -lr "X-AppInstall-Section=$i" . | xargs -r rm
+done
 for i in firefox jockey ndisgtk chromium-browser bughugger testdrive menueditor lp-review-list groundcontrol gstreamer nvidia dell-recovery ubufox thunderbird
 do
     find -name *$i*xpm -exec rm {} \;
