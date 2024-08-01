@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=30
+VERSION=31
 HWEKR=6.8
 
 # DI_ENABLED = 1 enables udeb build, 0 or any other value disables them.
@@ -274,46 +274,52 @@ sed 's/on DESC//; s/PKGVER on/PKGVER/; /^ DESC.$/d;' debian*/control.d/flavour-c
 #echo > ./debian.master/d-i/firmware/scsi-modules
 
 # Disable using udev as a fallback for firmware loading
-replace "CONFIG_FW_LOADER_USER_HELPER=y" "CONFIG_FW_LOADER_USER_HELPER=n" $DEBIAN_PATH/config
+# Read more at: Documentation/driver-api/firmware/fallback-mechanisms.rst
+#replace "CONFIG_FW_LOADER_USER_HELPER=y" "CONFIG_FW_LOADER_USER_HELPER=n" $DEBIAN_PATH/config
 
 # Disable aaeon & ubuntu odm drivers, remove on both paths to match annotations.
-for i in _AAEON CONFIG_UBUNTU_ODM_DRIVERS
+for i in CONFIG_GPIO_AAEON CONFIG_LEDS_AAEON CONFIG_MFD_AAEON CONFIG_SENSORS_AAEON
 do
-    grep -rl "$i" debian.*/config/annotations | \
-    xargs -r sed -i "/$i/s|'y'|'n'|g;/$i/s|'-'|'n'|g;/$i/s|'m'|'-'|g"
+    echo "> Modifying $i annotations value:"
+    python3 debian/scripts/misc/annotations -f $DEBIAN_PATH/config/annotations \
+        --arch amd64 --flavour generic --config $i --write -
 done
+for i in amd64 arm64 armhf ppc64el riscv64 s390x
+do
+    echo "> Modifying CONFIG_UBUNTU_ODM_DRIVERS for arch $i:"
+    python3 debian/scripts/misc/annotations -f $DEBIAN_PATH/config/annotations \
+            --arch $i --flavour generic --config CONFIG_UBUNTU_ODM_DRIVERS --write n
+done
+python3 debian/scripts/misc/annotations -f $DEBIAN_PATH/config/annotations \
+            --arch arm64 --flavour generic-64k --config CONFIG_UBUNTU_ODM_DRIVERS --write n
 
+## Disable ppc64el Werroron amdgpu
+python3 debian/scripts/misc/annotations -f $DEBIAN_PATH/config/annotations \
+    --arch ppc64el --flavour generic --config CONFIG_DRM_AMDGPU_WERROR --write n
+
+## Remove disabled modules from generic list (starting at 6.2)
+for module in gpio-aaeon hwmon-aaeon leds-aaeon mfd-aaeon spl
+do
+    for i in $(grep -rl "^$module$" $DEBIAN_PATH/abi/*/)
+    do
+        sed -i "/^$module$/d" $i
+    done
+done
 # Custom changes for linux and linux-hwe.
 if [ $HWE_ENABLED != 1 ]; then
 ## HWEKR - 6.8
-    ## Disable ppc64el Werroron amdgpu
-    for i in $(grep -rl CONFIG_DRM_AMDGPU_WERROR debian.*/config/annotations)
+    for i in CONFIG_AX88796B_RUST_PHY CONFIG_CONSTRUCTORS CONFIG_RUST_BUILD_ASSERT_ALLOW \
+        CONFIG_RUST_DEBUG_ASSERTIONS CONFIG_RUST_OVERFLOW_CHECKS CONFIG_RUST_PHYLIB_ABSTRACTIONS \
+        CONFIG_SAMPLES_RUST
     do
-        sed -i "/CONFIG_DRM_AMDGPU_WERROR/s|'ppc64el': 'y'|'ppc64el': 'n'|" $i
+        echo "> Modifying $i annotations value:"
+        python3 debian/scripts/misc/annotations -f $DEBIAN_PATH/config/annotations \
+            --arch amd64 --flavour generic --config $i --write -
     done
-    ## Remove disabled modules from generic list (starting at 6.2)
-    for module in gpio-aaeon hwmon-aaeon leds-aaeon mfd-aaeon spl
-    do
-        for i in $(grep -rl "^$module$" $DEBIAN_PATH/abi/*/)
-        do
-            sed -i "/^$module$/d" $i
-        done
-    done
+    python3 debian/scripts/misc/annotations -f $DEBIAN_PATH/config/annotations \
+        --arch amd64 --flavour generic --config CONFIG_RUST --write n
 else
-# HWEKR - 6.5+
-    ## Disable ppc64el Werroron amdgpu
-    for i in $(grep -rl CONFIG_DRM_AMDGPU_WERROR debian.*/config/annotations)
-    do
-        sed -i "/CONFIG_DRM_AMDGPU_WERROR/s|'ppc64el': 'y'|'ppc64el': 'n'|" $i
-    done
-    ## Remove disabled modules from generic list (starting at 6.2)
-    for module in gpio-aaeon hwmon-aaeon leds-aaeon mfd-aaeon spl
-    do
-        for i in $(grep -rl "^$module$" $DEBIAN_PATH/abi/*/)
-        do
-            sed -i "/^$module$/d" $i
-        done
-    done
+    echo "# HWEKR - 6.X+"
 fi
 
 grep -rl '^Vcs-Git:' | \
