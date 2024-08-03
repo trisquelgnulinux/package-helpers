@@ -1,0 +1,14 @@
+diff --git a/softwareproperties/gtk/SoftwarePropertiesGtk.py b/softwareproperties/gtk/SoftwarePropertiesGtk.py
+index d76513f7..0a08c820 100644
+--- a/softwareproperties/gtk/SoftwarePropertiesGtk.py
++++ b/softwareproperties/gtk/SoftwarePropertiesGtk.py
+@@ -454,9 +454,6 @@ class SoftwarePropertiesGtk(SoftwareProperties, SimpleGtkbuilderApp):
+         else:
+                 eol_expiry_text = _("Active until %s") % eol_date.strftime("%x")
+         self.label_eol.set_label(eol_expiry_text)
+-        self.label_esm_subscribe.set_markup(
+-                "<a href=\"%s\">%s</a>" % (esm_url, _("Extend…"))
+-        )
+         self.label_esm_subscribe.set_visible(
+                 esm_available and not esm_enabled
+         )

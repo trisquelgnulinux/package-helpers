@@ -1,5 +1,5 @@
 #
-#    Copyright (C) 2021 Luis Guzman <ark@switnet.org>
+#    Copyright (C) 2024 Luis Guzman <ark@switnet.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -16,12 +16,15 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
+# replaced lsb_release in favor of distro
 import csv
-import lsb_release
 from datetime import datetime
+from distro import distro
 
-release_name = lsb_release.get_distro_information()['CODENAME']
-release_description = lsb_release.get_distro_information()['DESCRIPTION']
+release_name = distro.codename()
+release_description = distro.name(pretty=True)
+#print(release_name)
+#print(release_description)
 
 def trisquel_eol():
         with open('/usr/share/distro-info/trisquel.csv', 'r') as distro_data:

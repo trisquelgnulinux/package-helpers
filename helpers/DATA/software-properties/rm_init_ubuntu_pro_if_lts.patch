@@ -1,0 +1,24 @@
+diff --git a/softwareproperties/gtk/SoftwarePropertiesGtk.py b/softwareproperties/gtk/SoftwarePropertiesGtk.py
+index a91d2595..940fd790 100644
+--- a/softwareproperties/gtk/SoftwarePropertiesGtk.py
++++ b/softwareproperties/gtk/SoftwarePropertiesGtk.py
+@@ -251,9 +251,6 @@ class SoftwarePropertiesGtk(SoftwareProperties, SimpleGtkbuilderApp):
+         self.show_distro()
+         # Setup and show the Additonal Drivers tab
+         self.init_drivers()
+-        # Setup and show the Trisquel Pro tab if the serie is a LTS
+-        if is_current_distro_lts():
+-            self.init_ubuntu_pro()
+ 
+         # Connect to switch-page before setting initial tab. Otherwise the
+         # first switch goes unnoticed.
+diff --git a/softwareproperties/gtk/SoftwarePropertiesGtk.py b/softwareproperties/gtk/SoftwarePropertiesGtk.py
+index c18bcd09..15f78ef3 100644
+--- a/softwareproperties/gtk/SoftwarePropertiesGtk.py
++++ b/softwareproperties/gtk/SoftwarePropertiesGtk.py
+@@ -1636,5 +1636,3 @@ class SoftwarePropertiesGtk(SoftwareProperties, SimpleGtkbuilderApp):
+         else:
+             self.label_driver_action.set_label(_("No proprietary drivers are in use."))
+ 
+-    def init_ubuntu_pro(self):
+-        self.ubuntu_pro_page = TrisquelProPage(self)

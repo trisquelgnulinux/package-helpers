@@ -20,7 +20,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=15
+VERSION=16
 
 . ./config
 
@@ -33,7 +33,8 @@ patch_p1 $DATA/remove_snap_label.patch
 
 #Python specific changes
 cp $DATA/trisquel_info.py softwareproperties/
-sed -i '/import softwareproperties.SoftwareProperties/a from softwareproperties.trisquel_info import trisquel_rel_desc, trisquel_eol' softwareproperties/gtk/SoftwarePropertiesGtk.py
+sed -i '/import softwareproperties.SoftwareProperties/a from softwareproperties.trisquel_info import trisquel_rel_desc, trisquel_eol' \
+       softwareproperties/gtk/SoftwarePropertiesGtk.py
 sed -i 's|eol_date = distro.eol|eol_date = trisquel_eol|' softwareproperties/gtk/SoftwarePropertiesGtk.py
 sed -i 's|eol_text = .*|eol_text = trisquel_rel_desc|' softwareproperties/gtk/SoftwarePropertiesGtk.py
 #Allow to start and remove drivers tab for qt flavor
@@ -71,8 +72,8 @@ sed -i '/software-properties-livepatch.desktop.in/d' setup.cfg
 sed -i '/software-properties-livepatch.desktop/s|^|#|' debian/software-properties-gtk.install
 
 #Remove ProPage
-sed -i '/TrisquelProPage/d' softwareproperties/gtk/SoftwarePropertiesGtk.py
-sed -i '/init_ubuntu_pro/d' softwareproperties/gtk/SoftwarePropertiesGtk.py
+patch_p1 $DATA/rm_init_ubuntu_pro_if_lts.patch
+sed -i '/.TrisquelProPage/d' softwareproperties/gtk/SoftwarePropertiesGtk.py
 
 #Livepatch - aramo
 patch_p1 $DATA/remove_ubuntu_suscription_tab.patch
@@ -81,12 +82,14 @@ patch_p1 $DATA/remove_proposed_updates.patch
 patch_p1 $DATA/fix_PPA_upstream_codename.patch
 #Fix mention of "other packages" as we don't distribute snap.
 patch_p1 $DATA/removal_of_snaps_other_packages_referral.patch
+# Remove extend esm url from update tabs
+patch_p1 $DATA/rm_extend_esm_url_link.patch
 
 # Trisquel l10n modifications using git patches.
 for patch in $(ls -v ${DATA}/l10n/*.patch)
 do
     echo "> Applying $(echo $patch|xargs basename)"
-    patch --no-backup-if-mismatch -Np1 < $patch
+    patch_p1 $patch
 done
 
 changelog "Removed Ubuntu-specifc tests, Livepatch, Snap and fix PPA integration."
