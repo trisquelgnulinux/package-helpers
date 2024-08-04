@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
+VERSION=4
 . ./config
 
 # Custom settings
@@ -28,7 +28,6 @@ cp $DATA/system-ready.ogg data/sounds/stereo/system-ready.ogg
 
 # Custom artwork
 sed '/logo-bare/d; /rm.*logo.png/d' -i debian/rules
-#sed '/paint_with_alpha/s/0.5/1.0/' -i src/background.vala
 cp $DATA/logo.png data/logo.png
 cp $DATA/logo.png .
 cp $DATA/logo-bare.png data/logo-bare.png
@@ -37,16 +36,9 @@ cp $DATA/badge.png ./data/badges/trisquel_badge.png
 cp $DATA/badge.png data/badges/unknown_badge.png
 replace ubuntu_badge trisquel_badge .
 
-sed '/paint_with_alpha/s/0.4/0.7/' -i src/menubar.vala
-sed '/set_source_rgb/s/(0.1, 0.1, 0.1)/(0.0, 0.0, 0.0)/' -i src/menubar.vala
-sed '/set_source_rgba/s/(0.1, 0.1, 0.1, 0.4)/(0.0, 0.0, 0.0, 0.7)/' -i src/dash-box.vala
+sed '/set_source_rgba/s/(0.4, 0.4, 0.4, 0.4)/(0.0, 0.0, 0.0, 0.7)/' -i src/dash-box.vala
 
-sed 's/Cabin/Sans/g' -i debian/30_arctica*
-sed 's/Cantarell/Sans/g' -i src/shutdown-dialog.vala debian/patches/2002_shutdown-dialog-font.patch
 sed '/fonts-/d' -i debian/control
-
-# The high_contrast theme makes almost no difference, disabling
-sed '/high_contrast_item/d' -i src/menubar.vala
 
 # Fix selection highlight on toggle buttons
 cat << EOF | patch --no-backup-if-mismatch -p1
@@ -63,27 +55,8 @@ cat << EOF | patch --no-backup-if-mismatch -p1
          selected_key = selected_button.get_data<string> ("toggle-list-key");
 EOF
 
-# Custom orca wrapper
-sed '/Shell.parse_argv/s/orca.*splash-window,/orca-arctica-wrapper/' -i src/menubar.vala
-cat << EOF > orca-arctica-wrapper
-#!/bin/sh
-
-# Make sure that pulseaudio is running and not muted. This prevents sound initialization errors in the lightdm session
-pulseaudio --start
-pactl set-sink-mute @DEFAULT_SINK@ true
-pactl set-sink-mute @DEFAULT_SINK@ false
-
-which espeak paplay >/dev/null && espeak "Trisquel login" --stdout|paplay
-exec orca --replace --no-setup --disable splash-window, \$@
-EOF
-chmod 755 orca-arctica-wrapper
-echo orca-arctica-wrapper /usr/bin >> debian/arctica-greeter.install
-
-# correct gsettings path
-sed 's/org.mate.settings-daemon.plugins/org.mate.SettingsDaemon.plugins/' -i src/settings-daemon.vala
-
 # Prevent lightdm failure on removal
-sed '/very serious/,/^$/d' -i debian/90-arctica-greeter.conf
+sed '/very serious/,/^$/d' -i data/90-arctica-greeter.conf
 
 changelog "Adapted for Trisquel"
 
