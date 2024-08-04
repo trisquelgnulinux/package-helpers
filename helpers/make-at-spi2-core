@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 COMPONENT=main
 
 . ./config
@@ -26,9 +26,6 @@ cat << EOF >> bus/at-spi-dbus-bus.desktop.in
 X-MATE-AutoRestart=true
 X-MATE-Autostart-Phase=Initialization
 EOF
-
-#Remove unnecessary requirement.
-sed -i '/gedit/d' debian/control
 
 changelog "Enable on MATE"
 
