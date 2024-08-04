@@ -66,16 +66,6 @@ diff -ru a/doc/cleaner_markup_language.xsd b/doc/cleaner_markup_language.xsd
                              <xs:enumeration value="delete"/>
                              <xs:enumeration value="dnf.autoremove"/>
                              <xs:enumeration value="dnf.clean_all"/>
-diff -ru source/PKG-INFO source_fix/PKG-INFO
---- a/PKG-INFO	2021-11-13 15:05:48.000000000 -0600
-+++ b/PKG-INFO	2022-04-10 16:28:47.450145458 -0500
-@@ -7,5 +7,5 @@
- Author-email: andrew@bleachbit.org
- License: GPLv3
- Download-URL: https://www.bleachbit.org/download
--Description: BleachBit frees space and maintains privacy by quickly wiping files you don't need and didn't know you had. Supported applications include Edge, Firefox, Google Chrome, VLC, and many others.
-+Description: BleachBit frees space and maintains privacy by quickly wiping files you don't need and didn't know you had. Supported applications include Firefox, VLC, and many others.
- Platform: Linux and Windows; Python v2.6 and 2.7; GTK v3.12+
 diff -ru source/setup.py source_fix/setup.py
 --- a/setup.py	2021-11-13 15:05:47.000000000 -0600
 +++ b/setup.py	2022-04-10 16:34:51.418739031 -0500
@@ -88,3 +78,14 @@ diff -ru source/setup.py source_fix/setup.py
  
  #
  # begin win32com.shell workaround for py2exe
+diff --git a/PKG-INFO b/PKG-INFO
+index e7605a5c..1cb44f88 100644
+--- a/PKG-INFO
++++ b/PKG-INFO
+@@ -10,5 +10,5 @@ Download-URL: https://www.bleachbit.org/download
+ Platform: Linux and Windows; Python v2.6 and 2.7; GTK v3.12+
+ License-File: COPYING
+ 
+-BleachBit frees space and maintains privacy by quickly wiping files you don't need and didn't know you had. Supported applications include Edge, Firefox, Google Chrome, VLC, and many others.
++BleachBit frees space and maintains privacy by quickly wiping files you don't need and didn't know you had. Supported applications include Abrowser, VLC, and many others.
+ 
