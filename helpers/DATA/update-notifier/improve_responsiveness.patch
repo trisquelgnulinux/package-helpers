@@ -1,6 +1,6 @@
-diff -ru source.orig/src/update-notifier.c source/src/update-notifier.c
---- source.orig/src/update-notifier.c	2023-05-01 12:24:36.171054235 -0400
-+++ source/src/update-notifier.c	2023-05-01 13:54:27.833304128 -0400
+diff -ru a/src/update-notifier.c b/src/update-notifier.c
+--- a/src/update-notifier.c	2023-05-01 12:24:36.171054235 -0400
++++ b/src/update-notifier.c	2023-05-01 13:54:27.833304128 -0400
 @@ -53,7 +53,7 @@
  gboolean update_timer_finished(gpointer data);
  
@@ -10,7 +10,7 @@ diff -ru source.orig/src/update-notifier.c source/src/update-notifier.c
  
  // the timeout (in sec) when a further activity from dpkg/apt
  // causes the applet to "ungray"
-@@ -388,10 +388,9 @@
+@@ -398,10 +398,9 @@ monitor_init(UpgradeNotifier *un)
  
     // monitor these dirs
     static const char *monitor_dirs[] = {
@@ -20,20 +20,20 @@ diff -ru source.orig/src/update-notifier.c source/src/update-notifier.c
 +      "/var/cache/apt/archives/",
        HOOKS_DIR,
 -      CRASHREPORT_DIR,
+       DPKG_INFO_DIR,
        NULL};
     for(i=0;monitor_dirs[i] != NULL;i++) {
-       if (getenv("UPSTART_SESSION") && monitor_dirs[i] == CRASHREPORT_DIR) {
-@@ -411,7 +410,6 @@
+@@ -422,7 +421,6 @@ monitor_init(UpgradeNotifier *un)
        "/var/lib/dpkg/status",
        "/var/lib/update-notifier/dpkg-run-stamp",
        "/var/lib/apt/periodic/update-success-stamp",
 -      LIVEPATCH_FILE,
+       REBOOT_FILE,
        NULL};
     for(i=0;monitor_files[i] != NULL;i++) {
-       GError *error = NULL;
-diff -ru source.orig/src/update.c source/src/update.c
---- source.orig/src/update.c	2023-05-01 14:30:39.889778059 -0400
-+++ source/src/update.c	2023-05-01 18:05:21.754318730 -0400
+diff -ru a/src/update.c b/src/update.c
+--- a/src/update.c	2023-05-01 14:30:39.889778059 -0400
++++ b/src/update.c	2023-05-01 18:05:21.754318730 -0400
 @@ -702,7 +702,8 @@
  
     // show the notification with some delay. otherwise on a login
@@ -44,9 +44,9 @@ diff -ru source.orig/src/update.c source/src/update.c
  
     return TRUE;
  }
-diff -ru source.orig/src/update.c source/src/update.c
---- source.orig/src/update.c	2023-05-01 14:30:39.889778059 -0400
-+++ source/src/update.c	2023-05-01 20:45:14.717390627 -0400
+diff -ru a/src/update.c b/src/update.c
+--- a/src/update.c	2023-05-01 14:30:39.889778059 -0400
++++ b/src/update.c	2023-05-01 20:45:14.717390627 -0400
 @@ -251,7 +251,7 @@
  					    GTK_STOCK_DIALOG_INFO, 48,0,NULL);
     notify_notification_set_icon_from_pixbuf (n, pix);
