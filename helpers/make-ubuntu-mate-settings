@@ -17,17 +17,21 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=6
+VERSION=7
 
 . ./config
 
 replace "Ubuntu MATE" "Trisquel" .
-sed '/font/s/Ubuntu/Sans/' -i \
-usr/share/ubuntu-mate/settings-overlay/config/Trolltech.conf \
-usr/share/ubuntu-mate/settings-overlay/config/tilda/config_0 \
-usr/share/ubuntu-mate/settings-overlay/config/smplayer/smplayer.ini
+replace "Ubuntu-MATE" "Trisquel" usr/share/glib-2.0/schemas/30_ubuntu-mate.gschema.override
 
-sed 's/Ubuntu-MATE/Trisquel/; /font/s/Ubuntu/Sans/' -i usr/share/glib-2.0/schemas/30_ubuntu-mate.gschema.override
+for a in usr/share/ubuntu-mate/settings-overlay/config/ usr/share/glib-2.0/schemas/
+do
+    for b in $(grep -rl 'font' $a)
+    do
+        echo "> Modify Ubuntu font at: $i"
+        sed -i '/font/s|Ubuntu|Sans|' $b
+    done
+done
 
 cat << EOF > usr/share/applications/mate-mimeapps.list
 [Default Applications]
@@ -99,15 +103,16 @@ sed '/dropbox/d' -i debian/ubuntu-mate-default-settings.install
 #Remove abrowser/firefox policies (starting on Jammy/Aramo).
 rm etc/firefox/policies/policies.json
 
-#Do not customize arctica-greeter
+# Do not customize arctica-greeter
 sed '/org.ArcticaProject.arctica-greeter/,/^$/d' -i usr/share/glib-2.0/schemas/30_ubuntu-mate.gschema.override
 
-#sed -i '/exit/i if [ -f /etc/firefox/policies/policies.json ]; then' debian/ubuntu-mate-default-settings.postinst \
-#                                                                     debian/ubuntu-mate-default-settings.postrm
-#sed -i '/exit/i    rm -f /etc/firefox/policies/policies.json' debian/ubuntu-mate-default-settings.postinst \
-#                                                              debian/ubuntu-mate-default-settings.postrm
-#sed -i '/exit/i fi' debian/ubuntu-mate-default-settings.postinst \
-#                    debian/ubuntu-mate-default-settings.postrm
+# Remove upstream firefox policies.json file.
+sed -i '/exit/i if [ -f /etc/firefox/policies/policies.json ]; then' debian/ubuntu-mate-default-settings.postinst \
+                                                                     debian/ubuntu-mate-default-settings.postrm
+sed -i '/exit/i    rm -f /etc/firefox/policies/policies.json' debian/ubuntu-mate-default-settings.postinst \
+                                                              debian/ubuntu-mate-default-settings.postrm
+sed -i '/exit/i fi' debian/ubuntu-mate-default-settings.postinst \
+                    debian/ubuntu-mate-default-settings.postrm
 
 changelog "Customized for Trisquel"
 
