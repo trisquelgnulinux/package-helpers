@@ -1,0 +1,29 @@
+diff --git a/data/osinfo/meson.build b/data/osinfo/meson.build
+index acf27962..158af16b 100644
+--- a/data/osinfo/meson.build
++++ b/data/osinfo/meson.build
+@@ -16,7 +16,8 @@ osinfo_db = [
+   ['popos-17.10.xml', 'gnome-boxes/osinfo/os/system76.com'],
+   ['rhel-8.0.xml', 'gnome-boxes/osinfo/os/redhat.com'],
+   ['rocky-8.4.xml', 'gnome-boxes/osinfo/os/rockylinux.org'],
+-  ['silverblue-28.xml', 'gnome-boxes/osinfo/os/fedoraproject.org']
++  ['silverblue-28.xml', 'gnome-boxes/osinfo/os/fedoraproject.org'],
++  ['trisquel-9.xml', 'gnome-boxes/osinfo/os/trisquel.info']
+ ]
+ 
+ foreach os: osinfo_db
+diff --git a/data/osinfo/trisquel-11.xml b/data/osinfo/trisquel-11.xml
+new file mode 100644
+index 00000000..ce9b4b36
+--- /dev/null
++++ b/data/osinfo/trisquel-9.xml
+@@ -0,0 +1,9 @@
++<libosinfo version="0.0.1">
++
++  <!-- Please read https://gitlab.gnome.org/GNOME/gnome-boxes-logos/-/raw/master/README.md for any questions about usage of product logos in Boxes. !-->
++
++  <os id="http://trisquel.info/trisquel/9">
++    <logo>https://gitlab.gnome.org/GNOME/gnome-boxes-logos/-/raw/master/logos/trisquel.svg</logo>
++  </os>
++
++</libosinfo>
