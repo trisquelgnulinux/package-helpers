@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=4
+VERSION=5
 . ./config
 
 # Rebrand and tweak packages
@@ -26,7 +26,7 @@ sed -i '/^Package:/s|ubuntu-budgie-desktop|trisquel-budgie-desktop|' debian/cont
 sed -i '/raspi/d' metapackage-map
 sed -i '/budgie-desktop-raspi/,/it not be removed./d' debian/control
 
-# Remove deprecated packages
+# Remove deprecated + nonfree packages
 grep -l ubuntu-drivers-common desktop*| xargs -r sed -i '/ubuntu-drivers-common/d'
 grep -l snapd desktop*| xargs -r sed -i '/snapd/d'
 grep -l whoopsie desktop* | xargs -r sed -i '/whoopsie/d'
@@ -35,9 +35,10 @@ grep -l ubuntu-budgie desktop*| xargs -r sed -i 's|ubuntu-budgie|trisquel-budgie
 sed -i 's|ubuntu-budgie|trisquel-budgie|' metapackage-map
 
 # Add custom trisquel packages
-grep -l thunderbird desktop* | xargs -r sed -i "/thunderbird/a abrowser"
-grep -l thunderbird desktop* | xargs -r sed -i "s|thunderbird|icedove|"
-grep -l gnome-software desktop* | xargs -r sed -i "s|gnome-software|trisquel-app-install|g"
+grep -l firefox desktop* | xargs -r sed -i "/firefox/a icedove"
+grep -l firefox desktop* | xargs -r sed -i "/firefox/a trisquel-app-install"
+grep -l firefox desktop* | xargs -r sed -i "s|firefox|abrowser|"
+#grep -l gnome-software desktop* | xargs -r sed -i "s|gnome-software|trisquel-app-install|g"
 
 replace 'ubuntu-release-upgrader-gtk' 'trisquel-release-upgrader-gtk'
 replace 'fonts-ubuntu' 'fonts-trisquel'
