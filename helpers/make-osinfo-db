@@ -18,10 +18,9 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=7
+VERSION=8
 
-EXTERNAL='deb-src http://ftp.us.debian.org/debian bookworm main'
-REPOKEY=6ED0E7B82643E131
+EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu noble universe'
 
 . ./config
 
@@ -30,8 +29,7 @@ rd_domain=($(cat $DATA/recommended-distros|grep -v \#|awk '{print$3}'))
 # Apply latest patches
 for patch in $(ls -v ${DATA}/*.patch)
 do
-    echo "Applying $patch"
-    patch --no-backup-if-mismatch -Np1 < $patch
+    patch_p1 $patch
 done
 
 # Remove non-free distros references.
