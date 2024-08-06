@@ -1,0 +1,24 @@
+diff --git a/data/os/trisquel.info/trisquel-10.xml.in b/data/os/trisquel.info/trisquel-10.xml.in
+index f012ba00..78fd5bdd 100644
+--- a/data/os/trisquel.info/trisquel-10.xml.in
++++ b/data/os/trisquel.info/trisquel-10.xml.in
+@@ -11,6 +11,7 @@
+     <family>linux</family>
+     <distro>trisquel</distro>
+     <codename>Nabia</codename>
++    <upgrades id="http://trisquel.info/trisquel/9"/>
+     <derives-from id="http://ubuntu.com/ubuntu/20.04"/>
+ 
+     <release-date>2022-02-01</release-date>
+diff --git a/data/os/trisquel.info/trisquel-11.xml.in b/data/os/trisquel.info/trisquel-11.xml.in
+index 0c986732..8619adb1 100644
+--- a/data/os/trisquel.info/trisquel-11.xml.in
++++ b/data/os/trisquel.info/trisquel-11.xml.in
+@@ -11,6 +11,7 @@
+     <family>linux</family>
+     <distro>trisquel</distro>
+     <codename>Aramo</codename>
++    <upgrades id="http://trisquel.info/trisquel/10"/>
+     <derives-from id="http://ubuntu.com/ubuntu/22.04"/>
+ 
+     <release-date>2023-03-19</release-date>
