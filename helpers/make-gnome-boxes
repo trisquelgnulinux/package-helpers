@@ -2,7 +2,7 @@
 #
 #    Copyright (C) 2022 Trisquel GNU/Linux developers
 #                       <trisquel-devel@listas.trisquel.info>
-#    Copyright (C) 2022 Luis Guzman <ark@switnet.org>
+#    Copyright (C) 2024 Luis Guzman <ark@switnet.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -19,15 +19,14 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=4
+VERSION=5
 
 . ./config
 
-remove_patch Update-recommended-downloads.patch
+# Add trisquel logo patch.
+patch_p1 $DATA/001_add_trisquel_gnome-boxes_logo.patch
 
-#Disable ubuntu artwork
-rm data/osinfo/ubuntu-4.10.xml
-sed -i '/ubuntu-4.10.xml/d' data/osinfo/meson.build
+remove_patch Update-recommended-downloads.patch
 
 #Required dependencies not in upstream.
 sed -i 's|libvirt-dev,|libvirt-dev, cmake, libsasl2-dev, libpulse-dev,|' debian/control*
