@@ -1,0 +1,66 @@
+diff --git a/src/LoginPage.cpp b/src/LoginPage.cpp_
+index 6c7e49fd..001c9f99 100644
+--- a/src/LoginPage.cpp
++++ b/src/LoginPage.cpp_
+@@ -207,33 +207,34 @@ LoginPage::checkHomeserverVersion()
+             bool ssoSupported      = false;
+             bool passwordSupported = false;
+             for (const auto &flow : flows.flows) {
+-                if (flow.type == mtx::user_interactive::auth_types::sso) {
+-                    ssoSupported = true;
+-
+-                    for (const auto &idp : flow.identity_providers) {
+-                        SSOProvider prov;
+-                        if (idp.brand == "apple")
+-                            prov.name_ = tr("Sign in with Apple");
+-                        else if (idp.brand == "facebook")
+-                            prov.name_ = tr("Continue with Facebook");
+-                        else if (idp.brand == "google")
+-                            prov.name_ = tr("Sign in with Google");
+-                        else if (idp.brand == "twitter")
+-                            prov.name_ = tr("Sign in with Twitter");
+-                        else
+-                            prov.name_ = tr("Login using %1").arg(QString::fromStdString(idp.name));
+-
+-                        prov.avatarUrl_ = QString::fromStdString(idp.icon);
+-                        prov.id_        = QString::fromStdString(idp.id);
+-                        idps.push_back(QVariant::fromValue(prov));
+-                    }
+-
+-                    if (flow.identity_providers.empty()) {
+-                        SSOProvider prov;
+-                        prov.name_ = tr("SSO LOGIN");
+-                        idps.push_back(QVariant::fromValue(prov));
+-                    }
+-                } else if (flow.type == mtx::user_interactive::auth_types::password) {
++//                if (flow.type == mtx::user_interactive::auth_types::sso) {
++//                    ssoSupported = true;
++//
++//                    for (const auto &idp : flow.identity_providers) {
++//                        SSOProvider prov;
++//                        if (idp.brand == "apple")
++//                            prov.name_ = tr("Sign in with Apple");
++//                        else if (idp.brand == "facebook")
++//                            prov.name_ = tr("Continue with Facebook");
++//                        else if (idp.brand == "google")
++//                            prov.name_ = tr("Sign in with Google");
++//                        else if (idp.brand == "twitter")
++//                            prov.name_ = tr("Sign in with Twitter");
++//                        else
++//                            prov.name_ = tr("Login using %1").arg(QString::fromStdString(idp.name));
++//
++//                        prov.avatarUrl_ = QString::fromStdString(idp.icon);
++//                        prov.id_        = QString::fromStdString(idp.id);
++//                        idps.push_back(QVariant::fromValue(prov));
++//                    }
++//
++//                    if (flow.identity_providers.empty()) {
++//                        SSOProvider prov;
++//                        prov.name_ = tr("SSO LOGIN");
++//                        idps.push_back(QVariant::fromValue(prov));
++//                    }
++//                } else if (flow.type == mtx::user_interactive::auth_types::password) {
++                if (flow.type == mtx::user_interactive::auth_types::password) {
+                     passwordSupported = true;
+                 }
+             }
