@@ -1,5 +1,6 @@
 #!/bin/sh
 #
+#    Copyright (C) 2024 Luis Guzmán <ark@switnet.org>
 #    Copyright (C) 2019 Mason Hock <mason@masonhock.com>
 #
 #    This program is free software; you can redistribute it and/or modify
@@ -17,23 +18,9 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 
 . ./config
-
-# revert ubuntu/snap customizations
-sed '/libsnapd-glib-dev/d' -i debian/control
-sed '/libsnapd-glib-dev/d' -i debian/control.in
-sed '/python3-macaroonbakery/d' -i debian/control
-sed '/python3-macaroonbakery/d' -i debian/control.in
-sed '/lpa_helper.py/d' -i debian/gnome-online-accounts.install
-sed '/ubuntu_sso_provider/d' -i debian/libgoa-backend-1.0-1.symbols
-rm debian/patches/0001-ubuntu-sso-provider.patch debian/patches/0002-livepatch-auth.patch
-sed '/0001-ubuntu-sso-provider.patch/d' -i debian/patches/series
-sed '/0002-livepatch-auth.patch/d' -i debian/patches/series
-sed '/--enable-ubuntu-sso/d' -i debian/rules
-sed 's/--enable-foursquare \\/--enable-foursquare/' -i debian/rules
-
 
 ## Avoid promote questionable online services via dconf,
 ## still available for users who enable them.
@@ -62,7 +49,7 @@ EOF
 dconf update
 EO-GOA
 
-changelog "Remove Snap build dependency"
+changelog "Avoid promote questionable online services."
 
 package
 
