@@ -25,7 +25,11 @@ VERSION=3
 sed -i 's/main.height \* 0.56 : main.height \* 0.71/main.height * 0.4 : main.height * 0.4/' applets/digital-clock/package/contents/ui/DigitalClock.qml
 
 # Use trisquel background
-sed 's|/Next/contents/images/5120x2880.jpg|/Aramo/contents/images/5120x2880.jpg|' -i sddm-theme/theme.conf.cmake
+for i in $(find -name theme.conf.cmake)
+do
+    echo -e "\n> customizing wallpaper at $i file:\n"
+    sed 's|/Next/contents/images/5120x2880.*|/Aramo/contents/images/5120x2880.jpg|' -i $i
+done
 
 changelog "Customized for Trisquel"
 
