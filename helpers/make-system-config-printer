@@ -17,19 +17,15 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 COMPONENT=main
 
 . ./config
 
-sed -i '/+NotShowIn/s|;GNOME;|;|g' debian/patches/Hide-Printers-app-in-GNOME-and-KDE.patch \
-                                  debian/patches/Do-not-autostart-the-applet-on-LXDE-or-Unity.patch
+sed -i '/+NotShowIn/s|;GNOME;|;|g' debian/patches/Do-not-autostart-the-applet-on-LXDE-or-Unity.patch
 
 remove_patch Allow-installing-non-free-drivers-from-OpenPrinting.patch
 remove_patch Allow-installing-packages-from-OpenPrinting.patch
-
-#mkdir debian/local/
-#cp $DATA/testpage* debian/local/
 
 #Recommend trisquel-app-installer over gnome-software
 sed 's|gnome-software.*|trisquel-app-install,|g' -i debian/control
