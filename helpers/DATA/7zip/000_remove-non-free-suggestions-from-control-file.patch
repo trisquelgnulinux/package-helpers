@@ -1,0 +1,32 @@
+diff --git a/debian/control b/debian/control
+index b4734c95..e0aa528c 100644
+--- a/debian/control
++++ b/debian/control
+@@ -13,7 +13,7 @@ Vcs-Browser: https://salsa.debian.org/debian/7zip
+ Package: 7zip
+ Architecture: any
+ Depends: ${misc:Depends}, ${shlibs:Depends}
+-Suggests: 7zip-standalone, 7zip-rar
++Suggests: 7zip-standalone
+ Breaks: p7zip-full (<= 16.02+dfsg-8), p7zip (<= 16.02+dfsg-8)
+ Replaces: p7zip-full (<= 16.02+dfsg-8), p7zip (<= 16.02+dfsg-8)
+ Provides: p7zip-full, p7zip
+@@ -37,7 +37,6 @@ Description: 7-Zip file archiver with a high compression ratio
+   * /usr/bin/7zr: LZMA (.7z, .lzma, .xz) only. Minimal executable.
+  .
+  Note: The unRAR code was dropped to keep compatible with DFSG.
+-       Install 7zip-rar package in non-free section to use RAR files.
+ 
+ Package: 7zip-standalone
+ Architecture: any
+@@ -49,8 +48,8 @@ Description: 7-Zip file archiver with a high compression ratio (standalone)
+  .
+  "7zip-standalone" provides:
+   * /usr/bin/7zz: Full featured except plugins, standalone executable.
+-       This means 7zz can't work with unRAR plugin that provided by 7zip-rar
+-       package. Use 7zip package for unRAR plugin.
++       This means 7zz can't work with the non-free unRAR plugin not
++       available at Trisquel repo.
+  .
+  Note: If you want to create SFX archive, you also needs 7zip package for SFX
+        stub module.
