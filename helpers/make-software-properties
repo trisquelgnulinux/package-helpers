@@ -20,7 +20,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=14
+VERSION=15
 
 . ./config
 
@@ -81,6 +81,10 @@ patch --no-backup-if-mismatch -p1 < $DATA/remove_proposed_updates.patch
 patch --no-backup-if-mismatch -p1 < $DATA/fix_PPA_upstream_codename.patch
 #Fix mention of "other packages" as we don't distribute snap.
 patch --no-backup-if-mismatch -p1 < $DATA/removal_of_snaps_other_packages_referral.patch
+
+# Make software-properties-qt visible on Triskel
+sed -i '/^NoDisplay=/s|true|false|' data/software-properties-qt.desktop.in
+sed -i '/^Icon=/s|applications-other|system-software-install|' data/software-properties-qt.desktop.in
 
 # Trisquel l10n modifications using git patches.
 for patch in $(ls -v ${DATA}/l10n/*.patch)
