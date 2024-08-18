@@ -20,7 +20,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=16
+VERSION=16.2
 
 . ./config
 
@@ -84,6 +84,10 @@ patch_p1 $DATA/fix_PPA_upstream_codename.patch
 patch_p1 $DATA/removal_of_snaps_other_packages_referral.patch
 # Remove extend esm url from update tabs
 patch_p1 $DATA/rm_extend_esm_url_link.patch
+
+# Make software-properties-qt visible on Triskel
+sed -i '/^NoDisplay=/s|true|false|' data/software-properties-qt.desktop.in
+sed -i '/^Icon=/s|applications-other|system-software-install|' data/software-properties-qt.desktop.in
 
 # Trisquel l10n modifications using git patches.
 for patch in $(ls -v ${DATA}/l10n/*.patch)
