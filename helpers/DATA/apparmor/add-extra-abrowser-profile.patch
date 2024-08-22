@@ -1,0 +1,91 @@
+diff --git a/profiles/apparmor/profiles/extras/abrowser b/profiles/apparmor/profiles/extras/abrowser
+index c7b4aa7c..ed8f01c5 100644
+--- a/profiles/apparmor/profiles/extras/abrowser
++++ b/profiles/apparmor/profiles/extras/abrowser
+@@ -14,7 +14,7 @@ abi <abi/4.0>,
+ include <tunables/global>
+ 
+ # Declare some variables to help with variants
+-@{MOZ_APP_NAME}=firefox{,-esr}
++@{MOZ_APP_NAME}=abrowser{,-esr}
+ @{MOZ_LIBDIR}=/usr/lib/@{MOZ_APP_NAME}{,-[0-9]*}
+ @{MOZ_ADDONDIR}=/usr/lib/{@{MOZ_APP_NAME},xulrunner}-addons
+ 
+@@ -22,7 +22,7 @@ include <tunables/global>
+ #  /usr/lib/firefox-4.0b8/firefox
+ # but not:
+ #  /usr/lib/firefox-4.0b8/firefox.sh
+-profile firefox @{MOZ_LIBDIR}/@{MOZ_APP_NAME}{,*[^s][^h]} {
++profile abrowser @{MOZ_LIBDIR}/@{MOZ_APP_NAME}{,*[^s][^h]} {
+   include <abstractions/audio>
+   include <abstractions/cups-client>
+   include <abstractions/dbus-strict>
+@@ -144,8 +144,8 @@ profile firefox @{MOZ_LIBDIR}/@{MOZ_APP_NAME}{,*[^s][^h]} {
+   /etc/wildmidi/wildmidi.cfg r,
+ 
+   # firefox specific
+-  /etc/firefox*/ r,
+-  /etc/firefox*/** r,
++  /etc/abrowser*/ r,
++  /etc/abrowser*/** r,
+   /etc/xul-ext/** r,
+   /etc/xulrunner{,-[0-9]*}/ r,
+   /etc/xulrunner{,-[0-9]*}/** r,
+@@ -234,12 +234,12 @@ profile firefox @{MOZ_LIBDIR}/@{MOZ_APP_NAME}{,*[^s][^h]} {
+   owner @{HOME}/.thumbnails/*/*.png r,
+ 
+   # per-user firefox configuration
+-  owner @{HOME}/.{firefox,mozilla}/ rw,
+-  owner @{HOME}/.{firefox,mozilla}/** rw,
+-  owner @{HOME}/.{firefox,mozilla}/**/*.{db,parentlock,sqlite}* k,
+-  owner @{HOME}/.{firefox,mozilla}/plugins/** rm,
+-  owner @{HOME}/.{firefox,mozilla}/**/plugins/** rm,
+-  owner @{HOME}/.gnome2/firefox* rwk,
++  owner @{HOME}/.{abrowser,mozilla}/ rw,
++  owner @{HOME}/.{abrowser,mozilla}/** rw,
++  owner @{HOME}/.{abrowser,mozilla}/**/*.{db,parentlock,sqlite}* k,
++  owner @{HOME}/.{abrowser,mozilla}/plugins/** rm,
++  owner @{HOME}/.{abrowser,mozilla}/**/plugins/** rm,
++  owner @{HOME}/.gnome2/abrowser* rwk,
+   owner @{HOME}/.cache/mozilla/{,@{MOZ_APP_NAME}/} rw,
+   owner @{HOME}/.cache/mozilla/@{MOZ_APP_NAME}/** rw,
+   owner @{HOME}/.cache/mozilla/@{MOZ_APP_NAME}/**/*.sqlite k,
+@@ -440,7 +440,7 @@ profile firefox @{MOZ_LIBDIR}/@{MOZ_APP_NAME}{,*[^s][^h]} {
+   owner @{HOME}/.mozilla/**/extensions/** mixr,
+ 
+   # Widevine CDM plugin (LP: #1777070)
+-  owner @{HOME}/.mozilla/firefox/*/gmp-widevinecdm/*/libwidevinecdm.so m,
++  owner @{HOME}/.mozilla/abrowser/*/gmp-widevinecdm/*/libwidevinecdm.so m,
+ 
+   deny @{MOZ_LIBDIR}/update.test w,
+   deny /usr/lib/mozilla/extensions/**/ w,
+@@ -458,7 +458,7 @@ profile firefox @{MOZ_LIBDIR}/@{MOZ_APP_NAME}{,*[^s][^h]} {
+ 
+   /usr/bin/lsb_release Pxr -> lsb_release,
+ 
+-  # These should be started outside of Firefox
++  # These should be started outside of abrowser
+   deny /usr/bin/dbus-launch x,
+   deny /usr/bin/speech-dispatcher x,
+ 
+@@ -466,6 +466,6 @@ profile firefox @{MOZ_LIBDIR}/@{MOZ_APP_NAME}{,*[^s][^h]} {
+   include if exists <abstractions/ubuntu-browsers.d/firefox>
+ 
+   # Site-specific additions and overrides. See local/README for details.
+-  include if exists <local/usr.bin.firefox>
+-  include if exists <local/firefox>
++  include if exists <local/usr.bin.abrowser>
++  include if exists <local/abrowser>
+ }
+diff --git a/debian/apparmor-profiles.install b/debian/apparmor-profiles.install
+index d12ab262..a6ea623d 100644
+--- a/debian/apparmor-profiles.install
++++ b/debian/apparmor-profiles.install
+@@ -86,6 +86,7 @@ usr/share/apparmor/extra-profiles/usr.lib.GConf.2.gconfd-2
+ usr/share/apparmor/extra-profiles/usr.lib.RealPlayer10.realplay
+ usr/share/apparmor/extra-profiles/usr.lib.bonobo.bonobo-activation-server
+ usr/share/apparmor/extra-profiles/usr.lib.evolution-data-server.evolution-data-server-1.10
++usr/share/apparmor/extra-profiles/abrowser
+ usr/share/apparmor/extra-profiles/firefox
+ usr/share/apparmor/extra-profiles/firefox.sh
+ usr/share/apparmor/extra-profiles/usr.lib.firefox.mozilla-xremote-client

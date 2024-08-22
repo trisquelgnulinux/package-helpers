@@ -1,0 +1,52 @@
+diff --git a/profiles/apparmor.d/abrowser b/profiles/apparmor.d/abrowser
+index c4b6337f..8a3ac9ec 100644
+--- a/profiles/apparmor.d/abrowser
++++ b/profiles/apparmor.d/abrowser
+@@ -4,9 +4,9 @@
+ abi <abi/4.0>,
+ include <tunables/global>
+ 
+-profile firefox /usr/lib/firefox{,-esr,-beta,-devedition,-nightly}/firefox{,-esr,-bin} flags=(unconfined) {
++profile abrowser /usr/lib/abrowser{,-esr,-beta,-devedition,-nightly}/abrowser{,-esr,-bin} flags=(unconfined) {
+   userns,
+ 
+   # Site-specific additions and overrides. See local/README for details.
+-  include if exists <local/firefox>
++  include if exists <local/abrowser>
+ }
+diff --git a/profiles/apparmor.d/icedove b/profiles/apparmor.d/icedove
+index 060eb24d..667b1674 100644
+--- a/profiles/apparmor.d/icedove
++++ b/profiles/apparmor.d/icedove
+@@ -4,9 +4,9 @@
+ abi <abi/4.0>,
+ include <tunables/global>
+ 
+-profile thunderbird /usr/bin/thunderbird flags=(unconfined) {
++profile icedove /usr/bin/icedove flags=(unconfined) {
+   userns,
+ 
+   # Site-specific additions and overrides. See local/README for details.
+-  include if exists <local/thunderbird>
++  include if exists <local/icedove>
+ }
+diff --git a/debian/apparmor.install b/debian/apparmor.install
+index 79c8700e..2971e426 100644
+--- a/debian/apparmor.install
++++ b/debian/apparmor.install
+@@ -68,6 +68,7 @@ etc/apparmor.d/sbuild-update
+ etc/apparmor.d/sbuild-upgrade
+ etc/apparmor.d/slirp4netns
+ etc/apparmor.d/stress-ng
++etc/apparmor.d/icedove
+ etc/apparmor.d/thunderbird
+ etc/apparmor.d/toybox
+ etc/apparmor.d/trinity
+@@ -83,6 +84,7 @@ etc/apparmor.d/1password
+ etc/apparmor.d/Discord
+ etc/apparmor.d/MongoDB_Compass
+ etc/apparmor.d/code
++etc/apparmor.d/abrowser
+ etc/apparmor.d/firefox
+ etc/apparmor.d/github-desktop
+ etc/apparmor.d/obsidian

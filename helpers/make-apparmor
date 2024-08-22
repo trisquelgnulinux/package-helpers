@@ -17,14 +17,29 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=0
+VERSION=1
 
 . ./config
 
 # Apply fix for pipewire on apparmor, see more at:
 # https://bugs.launchpad.net/apparmor/+bug/2003702
-patch --no-backup-if-mismatch -p1 < $DATA/b5a7641dd3502fcfb897d3b96e197628b674ce3c.patch
+patch_p1 $DATA/b5a7641dd3502fcfb897d3b96e197628b674ce3c.patch
 
-changelog "Apply fix LP:2003702 for pidgin like clients."
+# Add custom unconfined profiles for abrowser and icedove, deliberately patch
+# upon an original upstream profile copy to force track original files and
+# update patch accordinlgy, as it's an important security feature starting
+# at upstream 23.10:
+# https://ubuntu.com/blog/ubuntu-23-10-restricted-unprivileged-user-namespaces
+
+cp profiles/apparmor.d/{thunderbird,icedove}
+cp profiles/apparmor.d/{firefox,abrowser}
+patch_p1 $DATA/add-unconfined-profile-firefox-icedove.patch
+
+cp profiles/apparmor/profiles/extras/{firefox,abrowser}
+patch_p1 $DATA/add-extra-abrowser-profile.patch
+# Note: look for updates on abrowser.sh profile on each helper/patch change:
+patch_p1 $DATA/update-profile-extra-firefox-sh.patch
+
+changelog "Apply fix LP:2003702 for pidgin like clients. | Add unconfined profiles for firefox and icedove."
 
 package
