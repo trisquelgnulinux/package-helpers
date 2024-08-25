@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2008-2023  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2008-2024  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C)      2014  Santiago Rodriguez <santi@trisquel.info>
 #    Copyright (C)      2019  Mason Hock <mason@masonhock.com>
 #
@@ -24,9 +24,13 @@
 # Also, don't forget to update the meta-release files at archive and packages.t.i
 # The "obsoletes" list from ubuntu has been removed
 
-VERSION=15
+VERSION=16
 
 . ./config
+
+# Fix PEP440 version compatibility
+# https://salsa.debian.org/debian/distro-info/-/commit/e2877dc44659d034155495e91976874c209a3c02
+patch --no-backup-if-mismatch -Np1 < $DATA/pep440.patch
 
 #%FSDG: Remove functions to deal with proprietary drivers
 rm ./DistUpgrade/xorg_fix_proprietary.py
@@ -116,7 +120,7 @@ that you have found a bug please send it to us via
   https://gitlab.trisquel.org/trisquel/package-helpers/-/issues
 
 If you have a question, or if you think you may have found a bug but 
-aren't sure, first try asking on the #trisquel IRC channel on Freenode,
+aren't sure, first try asking on the #trisquel IRC channel on LiberaChat,
 on the Trisquel Users mailing list, or on the Trisquel forums:
 
  https://listas.trisquel.info/
@@ -173,7 +177,7 @@ that you have found a bug please send it to us via
   https://gitlab.trisquel.org/trisquel/package-helpers/-/issues
 
 If you have a question, or if you think you may have found a bug but 
-aren't sure, first try asking on the #trisquel IRC channel on Freenode,
+aren't sure, first try asking on the #trisquel IRC channel on LiberaChat,
 on the Trisquel Users mailing list, or on the Trisquel forums:
 
  https://listas.trisquel.info/
@@ -264,6 +268,7 @@ rpl 20\.04 10\.0 po/* -R
 rpl 20\.04 10\.0 DistUpgrade/*.ui -R
 replace '20.04' '10.0'
 replace '22.04' '11.0'
+replace '24.04' '12.0'
 rpl oneiric brigantia . -R
 rpl natty dagda . -R
 rpl maverick slaine . -R
@@ -278,6 +283,7 @@ rpl xenial flidas . -R
 rpl bionic etiona . -R
 rpl focal nabia . -R
 rpl jammy aramo . -R
+rpl noble ecne . -R
 
 rm data/DistUpgrade.cfg*
 cp $DATA/DistUpgrade.cfg* data/
@@ -313,13 +319,9 @@ rpl security.ubuntu.com/ubuntu archive.trisquel.org/trisquel . -R
 rpl archive.ubuntu.com archive.trisquel.org . -R
 rpl security.ubuntu.com archive.trisquel.org . -R
 
-sed 's/"main", "restricted", "universe", "multiverse"/"main"/g' DistUpgrade/DistUpgradeController.py -i utils/demotions.py
+sed "s/.main., .restricted., .universe., .multiverse./'main'/g" DistUpgrade/DistUpgradeController.py -i utils/demotions.py
 sed '/restricted/d' -i utils/demotions.py
-sed 's/"main", "restricted"/"main"/g' DistUpgrade/DistUpgradeController.py -i
 rpl "main restricted" "main" DistUpgrade -R
-sed 's/,"restricted"//g' DistUpgrade/DistUpgradeController.py -i
-#sed 's/","restricted"/\\n"/g' DistUpgrade/DistUpgradeController.py -i
-#rpl '10.04' $REVISION DistUpgrade po -R
 replace Ubuntu Trisquel
 replace Canonical Trisquel
 replace "https*://www.ubuntu.com/" "https://trisquel.info" .
