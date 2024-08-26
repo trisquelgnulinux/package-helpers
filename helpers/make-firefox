@@ -19,11 +19,14 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=112
+VERSION=113
 EXTERNAL='deb-src http://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu $UPSTREAM main'
 REPOKEY=9BDB3D89CE49EC21
 
 . ./config
+
+#SHA HASHES UPDATES
+GLEAN_CONF_RS_INITIAL=$(sha256sum third_party/rust/glean/src/configuration.rs|awk '{print$1}')
 
 rm debian/control
 
@@ -44,8 +47,8 @@ sed '/stories_endpoint/s/getpocket.cdn.mozilla.net/127.0.0.1/' -i $ActivityStrea
 sed '/stories_referrer/s/http.*/",/' -i $ActivityStream
 sed '/topics_endpoint/s/getpocket.cdn.mozilla.net/127.0.0.1/' -i $ActivityStream
 sed 's/preffedRegions.includes.geo. .. ..locales .. locales.includes.locale./false/' -i $ActivityStream
-sed 's/Ubuntu, //' -i browser/components/newtab/css/activity-stream*.css
-echo "#header-asrouter-container{display: none!important;}" >> browser/components/newtab/css/activity-stream-linux.css
+#sed 's/Ubuntu, //' -i browser/components/newtab/css/activity-stream*.css
+#echo "#header-asrouter-container{display: none!important;}" >> browser/components/newtab/css/activity-stream-linux.css
 #Disable «Sponsored tiles on the New Tab page» - firefox 92+94
 sed '/"showSponsoredTopSites"/,/value/s/value: true/value: false/' -i $ActivityStream
 sed -i '/activity-stream.showSponsored/s|true|false|g' browser/app/profile/firefox.js
@@ -110,10 +113,13 @@ echo 'pref("dom.security.unexpected_system_load_telemetry_enabled", false);' | t
 echo 'pref("toolkit.telemetry.hybridContent.enabled", false);' | tee -a browser/app/profile/firefox.js
 # GPC opt-out entry added on 120 (not enabled yet).
 echo '//pref("privacy.globalprivacycontrol.enabled", true);' | tee -a browser/app/profile/firefox.js
+# Disable translataion popup
+grep -rl browser.translations.automaticallyPopup modules/ | xargs -r sed -i '/browser.translations.automaticallyPopup/s|true|false|'
 
 # Update third_party/rust/glean/src/configuration.rs sha256sum at third_party/rust/glean/.cargo-checksum.json
-sed_csum 27075b12236021c54d0c99427bcbd417933ca02545275604d3c13f32ca25af13 \
-         f354c756cb723a386263a3ad4669a1d5cc743379c7c620b14f894f505cf83500
+GLEAN_CONF_RS_MODIFIED=$(sha256sum third_party/rust/glean/src/configuration.rs|awk '{print$1}')
+sed_csum $GLEAN_CONF_RS_INITIAL \
+         $GLEAN_CONF_RS_MODIFIED
 
 # Remove Google API key and calls
 sed '/Google API/,/google-api-keyfile/ d' debian/config/mozconfig.in -i
@@ -277,7 +283,6 @@ cp browser/components/search/extensions/ddg browser/components/search/extensions
 sed 's|/duckduckgo.com/|/html.duckduckgo.com/html/|' -i browser/components/search/extensions/ddg-html/manifest.json
 sed 's|DuckDuckGo|DuckDuckGo (HTML)|' -i browser/components/search/extensions/ddg-html/manifest.json
 sed 's|ddg@|ddg-html@|' -i browser/components/search/extensions/ddg-html/manifest.json
-patch_p1 $DATA/rollback_ddg_firefox_partnership_codes.patch
 # disable ads, disable redirect
 #sed '/search/s|q=|k1=-1\&kd=-1\&ko=1\&q=|' -i browser/components/search/extensions/ddg/manifest.json
 
@@ -291,6 +296,13 @@ echo "Customizing search engines..."
 python3 $DATA/process-json-files.py . browser/components/extensions/schemas/
 # Disable new search config 'til new one gets figured out (ref: https://hg.mozilla.org/mozilla-central/rev/bad743156b30)
 patch_Rp1 $DATA/firefox_permanently_enable_new_search_engine_config.patch
+# Restore favicons on old search config.
+patch_p1 $DATA/tmp_restore_favicons_on_old_search-engine_bar.patch
+for i in ddg-html  ddg  ecosia  qwant  wikipedia
+do
+    echo "> tmp restore of $i favicon"
+    cp $DATA/tmp_favicons/$i.ico browser/components/search/extensions/$i/favicon.ico
+done
 
 cat << EOF > debian/distribution.ini
 [Global]
@@ -351,6 +363,7 @@ s|Sign in to Firefox|Sign in to Sync|;
 s|Search addons.mozilla.org|Search|g;
 s|firefox.settings.services.mozilla.com|127.0.0.1|g;
 s|this-firefox|this-abrowser|g;
+s|firefox-help|abrowser-help|g;
 "
 
 echo "Running batch replace operation"
@@ -466,8 +479,15 @@ find browser/branding/ -name about-logo-private@2x.png | xargs -n1 cp $DATA/debu
 find browser/branding/ -name PrivateBrowsing_70.png | xargs -n1 cp $DATA/debug_brand/PrivateBrowsing_70.png
 find browser/branding/ -name PrivateBrowsing_150.png | xargs -n1 cp $DATA/debug_brand/PrivateBrowsing_150.png
 
+# Replace/remove brand name on used view(s) to avoid branding issues.
+sed -i '/firefoxview-brand-name/s|Firefox View|Abrowser View|' toolkit/locales/en-US/toolkit/branding/brandings.ftl
+sed -i 's|= Firefox |= |' toolkit/locales/en-US/toolkit/branding/brandings.ftl
+
 # Replace addons placeholder for the gnuzilla mozzarella.
+OLD_WEB_DEV_URL="https://addons.mozilla.org/firefox/collections/mozilla/webdeveloper/"
+WEB_DEV_URL="https://gnuzilla.gnu.org/mozzarella/category.php?id=web-development"
 find l10n/ -name aboutAddons.ftl | xargs -r sed -i '/.placeholder/s|addons.mozilla.org|gnuzilla.gnu.org|g'
+sed -i "s|$OLD_WEB_DEV_URL|$WEB_DEV_URL|" devtools/client/menus.js
 
 #Fixes by patch on source, see DATA/firefox/patches for more info.
 for patch in $(ls -v ${DATA}/patch_changes/*.patch)
