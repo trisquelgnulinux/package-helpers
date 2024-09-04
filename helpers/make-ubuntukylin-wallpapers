@@ -27,9 +27,9 @@ VERSION=3
 sed -i "s|background=.*|background=\"/usr/share/backgrounds/$CODENAME.jpg\"|" 30_ubuntukylin-wallpapers.gschema.override
 sed -i "s|picture-uri=.*|picture-uri=\'file:///usr/share/backgrounds/$CODENAME.jpg\'|" 30_ubuntukylin-wallpapers.gschema.override
 
-# Copy final artwork from trisquel-packages/$VERSION/trisquel-wallpapers repository.
-# Make sure to force helper fail on release update, so it's fixed once the new artwork is released.
-cp $DATA/$CODENAME.jpg warty-final-ubuntukylin.jpg
+# Make sure to review helper on the designed stage prior to release, so it uses
+# right artwork when released.
+cp $(find DATA/trisquel-wallpapers/ -name $CODENAME.*) warty-final-ubuntukylin.jpg
 
 # Add current release wallpaper to any possible xml release kylin-wallpaper file.
 for i in $(find -name \*.xml.in)

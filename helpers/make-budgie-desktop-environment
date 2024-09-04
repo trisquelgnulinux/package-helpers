@@ -24,13 +24,16 @@ VERSION=2
 
 #Set default trisquel wallpaper
 BUDGIE_WALLP="budgie-codename.png"
-TRISQUEL_WALLP="$CODENAME.jpg"
+TRISQUEL_WALLP="$(find DATA/trisquel-wallpapers/ -name $CODENAME.*|xargs basename)"
 
 grep -lr "$BUDGIE_WALLP" | xargs -r sed -i "s|$BUDGIE_WALLP|$TRISQUEL_WALLP|g"
 
 #menu-icon
 cp $DATA/logo-trisquel.svg distrologo/trisquel-logo.svg
-cp $DATA/$CODENAME.jpg codename-wallpapers/
+
+# Make sure to review helper on the designed stage prior to release, so it uses
+# right artwork when released.
+cp $(find DATA/trisquel-wallpapers/ -name $CODENAME.*) codename-wallpapers/
 rm codename-wallpapers/budgie-codename.png
 
 #Tweak default handlers
