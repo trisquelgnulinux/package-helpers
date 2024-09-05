@@ -1,45 +1,43 @@
---- debian/supported-versions.orig	2016-03-29 04:53:13.000000000 -0400
-+++ debian/supported-versions	2017-02-10 14:20:08.503521825 -0500
-@@ -55,9 +55,12 @@
- 
+diff --git a/debian/supported-versions b/tmp/supported-versions
+index 9edb220..6d16f58 100755
+--- a/debian/supported-versions
++++ b/debian/supported-versions
+@@ -48,6 +48,9 @@ DEFAULT="16"
  default() {
-     case "$DISTRO" in
+     . /etc/os-release
+     case "$ID" in
 +        [tT]risquel)
-+            trisquel "$RELEASE"
++            trisquel
 +            ;;
          [uU]buntu)
-             ubuntu "$RELEASE"
+             ubuntu
              ;;
-         [dD]ebian)
-             debian "$RELEASE"
+@@ -56,7 +59,10 @@ default() {
              ;;
-@@ -76,6 +82,36 @@
-             ;;
+         *)
+             echo "supported-versions: WARNING! Unknown distribution ID in /etc/os-release: $ID" >&2
+-            if  echo $ID_LIKE | grep -E '(^| )ubuntu($| )' > /dev/null; then
++            if echo $ID_LIKE | grep -E '(^| )trisquel($| )' > /dev/null; then
++                echo "trisqueln found in ID_LIKE, treating as Trisquel" >&2
++                trisquel
++            elif  echo $ID_LIKE | grep -E '(^| )ubuntu($| )' > /dev/null; then
+                 echo "ubuntu found in ID_LIKE, treating as Ubuntu" >&2
+                 ubuntu
+             elif echo $ID_LIKE | grep -E '(^| )debian($| )' > /dev/null; then
+@@ -76,6 +76,27 @@ default() {
      esac
  }
-+
+ 
 +trisquel() {
 +    case "$1" in
-+        4.0*) # Taranis
-+            /bin/echo -e "8.4"
-+            ;;
-+        6.0*) # Toutatis
-+            /bin/echo -e "9.1"
-+            ;;
-+        7.0*) # Belenos
-+            /bin/echo -e "9.3"
-+            ;;
-+        8.0*) # Flidas
-+            /bin/echo -e "9.5"
-+            ;;
-+        9.0*) # Etiona
-+            /bin/echo -e "10"
-+            ;;
 +        10.0*) # Nabia
 +            /bin/echo -e "12"
 +            ;;
 +        11.0*) # Aramo
 +            /bin/echo -e "14"
++            ;;
++        12.0*) # Ecne
++            /bin/echo -e "16"
 +            ;;
 +        *)
 +            echo "supported_versions: WARNING: Unknown Trisquel release: $1" >&2
@@ -47,6 +45,10 @@
 +            ;;
 +    esac
 +}
- 
++
++trisquel() {
++    echo "$DEFAULT"
++}
  ubuntu() {
-     case "$1" in
+     echo "$DEFAULT"
+ }
