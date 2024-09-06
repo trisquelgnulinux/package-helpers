@@ -1,0 +1,15 @@
+diff --git a/setup.py b/setup.py
+index afd2fb91..6b73c251 100644
+--- a/setup.py
++++ b/setup.py
+@@ -9,8 +9,8 @@ changelog = "debian/changelog"
+ if os.path.exists(changelog):
+     head=open(changelog).readline()
+     match = re.compile(".*\((.*)\).*").match(head)
+-    if match:
+-        version = match.group(1)
++    version = match.group(1)
++    version = re.sub("([a-zA-Z])", r"+\1", version, count=1)
+ 
+ setup(
+     name = 'ubuntukylin-wallpapers',

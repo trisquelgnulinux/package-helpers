@@ -23,6 +23,9 @@ VERSION=3
 
 . ./config
 
+# Patch PEP440 version.
+patch_p1 $DATA/pep440.patch
+
 # Tune default background for kylin
 sed -i "s|background=.*|background=\"/usr/share/backgrounds/$CODENAME.jpg\"|" 30_ubuntukylin-wallpapers.gschema.override
 sed -i "s|picture-uri=.*|picture-uri=\'file:///usr/share/backgrounds/$CODENAME.jpg\'|" 30_ubuntukylin-wallpapers.gschema.override
