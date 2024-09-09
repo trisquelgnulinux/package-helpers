@@ -1,0 +1,96 @@
+diff --git a/src/modules/frontend/newt/newt.c b/src/modules/frontend/newt/newt.c
+index 838ff2f..ee754a2 100644
+--- a/src/modules/frontend/newt/newt.c
++++ b/src/modules/frontend/newt/newt.c
+@@ -72,6 +72,47 @@ struct newt_data {
+     struct question *scale_info;
+ };
+ 
++struct newtColors newtAltColorPalette = {
++	/*"white", "blue",*/ 			/* root fg, bg */
++	"white", "black", 			/* root fg, bg */
++	/*"black", "lightgray",*/		/* border fg, bg */
++	"white", "black",			/* border fg, bg */
++	/*"black", "lightgray",*/		/* window fg, bg */
++	"white", "black",			/* window fg, bg */
++	/*"white", "black",*/			/* shadow fg, bg */
++	"white", "black",			/* shadow fg, bg */
++	/*"red", "lightgray",*/			/* title fg, bg */
++	"yellow", "black",			/* title fg, bg */
++	/*"brightred", "gray",*/		/* button fg, bg */
++	"black", "lightgray",			/* button fg, bg */
++	"gray", "brightred",			/* active button fg, bg */
++	"white", "gray",			/* checkbox fg, bg */
++	/*"yellow", "brown",*/			/* active checkbox fg, bg */
++	"black", "lightgray",			/* active checkbox fg, bg */
++	/*"yellow", "blue",*/			/* entry box fg, bg */
++	"white", "black",			/* entry box fg, bg */
++	/*"blue", "lightgray",*/		/* label fg, bg */
++	"brightred", "black",			/* label fg, bg */
++	/*"black", "lightgray",*/		/* listbox fg, bg */
++	"white", "black",			/* listbox fg, bg */
++	"yellow", "blue",			/* active listbox fg, bg */
++	/*"black", "lightgray",*/		/* textbox fg, bg */
++	"white", "black",			/* textbox fg, bg */
++	"lightgray", "black",			/* active textbox fg, bg */
++	/*"white", "blue",*/			/* help line */
++	"white", "black",			/* help line */
++	"yellow", "blue",			/* root text */
++	/*"blue",*/				/* scale full */
++	"black",				/* scale full */
++	/*"red",*/				/* scale empty */
++	"blue",					/* scale empty */
++	"blue", "lightgray",			/* disabled entry fg, bg */
++	/*"black", "lightgray",*/		/* compact button fg, bg */
++	"white", "black",			/* compact button fg, bg */
++	"black", "lightgray",			/* active & sel listbox */
++	"black", "brown"			/* selected listbox */
++};
++
+ typedef int (newt_handler)(struct frontend *obj, struct question *q);
+ 
+ struct newt_help_callback_data {
+@@ -153,6 +194,7 @@ cdebconf_newt_setup(void)
+ {
+     SLang_init_tty(0, 1, 0); /* disable flow control */
+     newtInit();
++    newtSetColors(newtAltColorPalette);
+     newtCls();
+ }
+ 
+@@ -1078,7 +1120,7 @@ newt_handler_error(struct frontend *obj, struct question *q)
+ {
+     char *oldrootBg, *oldshadowBg, *oldhelpLineFg, *oldhelpLineBg;
+     int ret;
+-    struct newtColors palette = newtDefaultColorPalette;
++    struct newtColors palette = newtAltColorPalette;
+ 
+     oldrootBg = palette.rootBg;
+     oldshadowBg = palette.shadowBg;
+@@ -1148,22 +1190,15 @@ newt_initialize(struct frontend *obj, struct configuration *conf)
+ {
+     int width = 80, height = 24;
+     const char *palette;
+-    const char *base = "/etc/newt/palette";
+-    char *path;
+ 
+     obj->interactive = 1;
+     obj->data = calloc(1, sizeof(struct newt_data));
+     SLang_init_tty(0, 1, 0); /* disable flow control */
+-    palette = getenv("FRONTEND_BACKGROUND");
+-    if (palette != NULL && asprintf(&path, "%s.%s", base, palette) >= 0) {
+-	/* Establish a symlink from /etc/newt/palette to
+-         *   /etc/newt/palette.$FRONTEND_BACKGROUND
+-	 */
+-	unlink(base);
+-	link(path, base);
+-	free(path);
+-    }
+     newtInit();
++    palette = getenv("FRONTEND_BACKGROUND");
++    if (palette == NULL || strcmp(palette, "dark") != 0)
++        newtAltColorPalette = newtDefaultColorPalette;
++    newtSetColors(newtAltColorPalette);
+     newtGetScreenSize(&width, &height);
+     newtFinished();
+     return DC_OK;

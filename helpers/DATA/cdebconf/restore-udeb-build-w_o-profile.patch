@@ -1,0 +1,96 @@
+diff --git a/debian/control b/debian/control
+index 0b67d83..de3d32e 100644
+--- a/debian/control
++++ b/debian/control
+@@ -83,7 +82,6 @@ Priority: standard
+ Depends: ${shlibs:Depends}, ${misc:Depends}
+ Provides: debconf-2.0
+ Package-Type: udeb
+-Build-Profiles: <!noudeb>
+ Description: Debian Configuration Management System (C-implementation)
+  Debconf is a configuration management system for Debian packages. It is
+  used by some packages to prompt you for information before they are
+@@ -99,7 +97,6 @@ Section: debian-installer
+ Priority: standard
+ Depends: cdebconf-udeb, ${misc:Depends}
+ Package-Type: udeb
+-Build-Profiles: <!noudeb>
+ XB-Installer-Menu-Item: 93000
+ Description: Change debconf priority
+  This is a udeb that allows you to change the priority limit for the
+@@ -110,7 +107,6 @@ Architecture: any
+ Section: debian-installer
+ Depends: ${shlibs:Depends}, ${misc:Depends}, cdebconf-udeb
+ Package-Type: udeb
+-Build-Profiles: <!noudeb>
+ Description: Debian Configuration Management System (C-implementation)
+  Debconf is a configuration management system for Debian packages. It is
+  used by some packages to prompt you for information before they are
+@@ -124,7 +120,6 @@ Architecture: any
+ Section: debian-installer
+ Depends: cdebconf-udeb, ${shlibs:Depends}, ${misc:Depends}
+ Package-Type: udeb
+-Build-Profiles: <!noudeb>
+ Description: Plain text frontend for Debian Configuration Management System
+  Debconf is a configuration management system for Debian packages. It is
+  used by some packages to prompt you for information before they are
+@@ -139,7 +134,6 @@ Architecture: any
+ Section: debian-installer
+ Depends: cdebconf-udeb, di-utils-terminfo, ${shlibs:Depends}, ${misc:Depends}
+ Package-Type: udeb
+-Build-Profiles: <!noudeb>
+ Description: Newt frontend for Debian Configuration Management System
+  Debconf is a configuration management system for Debian packages. It is
+  used by some packages to prompt you for information before they are
+@@ -154,7 +148,7 @@ Architecture: any
+ Section: debian-installer
+ Depends: cdebconf-udeb, ${shlibs:Depends}, ${misc:Depends}, rootskel-gtk [!s390 !s390x]
+ Package-Type: udeb
+-Build-Profiles: <!pkg.cdebconf.nogtk !noudeb>
++Build-Profiles: <!pkg.cdebconf.nogtk>
+ Description: Gtk+ frontend for Debian Configuration Management System
+  Debconf is a configuration management system for Debian packages. It is
+  used by some packages to prompt you for information before they are
+diff --git a/debian/rules b/debian/rules
+index 3ee2ec0..a66e684 100755
+--- a/debian/rules
++++ b/debian/rules
+@@ -12,10 +12,6 @@ udebbuild=debian/build-udeb
+ 
+ include /usr/share/dpkg/architecture.mk
+ 
+-ifeq (,$(filter noudeb, $(DEB_BUILD_PROFILES)))
+-  with_udeb = yes
+-endif
+-
+ CONFFILE=/etc/cdebconf.conf
+ 
+ #package names
+@@ -46,7 +42,7 @@ ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
+ 	DEBUG_CONFIGURE_OPT=--with-debug=yes
+ endif
+ 
+-build: build-deb $(if $(with_udeb),build-udeb)
++build: build-deb build-udeb
+ 
+ build-arch: build
+ build-indep: build
+@@ -108,9 +104,7 @@ install-arch: build
+ 	dh_testroot
+ 	dh_prep
+ 	$(MAKE) -C $(debbuild) install DESTDIR=$(CURDIR)/debian/tmp/deb
+-ifeq ($(with_udeb),yes)
+ 	$(MAKE) -C $(udebbuild) install DESTDIR=$(CURDIR)/debian/tmp/udeb
+-endif
+ 	dh_install -a
+ 
+ install-indep:
+@@ -152,7 +146,7 @@ endif
+ 	dh_strip -a
+ 	dh_compress -a
+ 	dh_fixperms -a
+-	dh_makeshlibs -a $(if $(with_udeb),--add-udeb=libdebconfclient0-udeb)
++	dh_makeshlibs -a --add-udeb=libdebconfclient0-udeb
+ 	dh_installdeb -a
+ 	dh_shlibdeps -a
+ 	dh_gencontrol -a

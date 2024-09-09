@@ -1,5 +1,6 @@
 #!/bin/sh
 #
+#    Copyright (C) 2024  Luis Guzman <ark@switnet.org>
 #    Copyright (C) 2014  Rubén Rodríguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
@@ -24,9 +25,8 @@ NETINST=true
 
 . ./config
 
-rm debian/palette.ubuntu
-ln -sf palette.original debian/palette
-sed '/palette.ubuntu/d' -i ./debian/cdebconf-newt-udeb.install
+patch_p1 $DATA/restore-udeb-build-w_o-profile.patch
+patch_p1 $DATA/new-default-color-palet-usage.patch
 
 changelog "Color palette set back to default"
 
