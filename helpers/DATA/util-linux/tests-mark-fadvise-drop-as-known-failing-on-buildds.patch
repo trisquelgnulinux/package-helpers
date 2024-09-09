@@ -1,0 +1,23 @@
+From: Chris Hofstaedtler <zeha@debian.org>
+Date: Tue, 2 Apr 2024 21:52:47 +0200
+Subject: tests: mark fadvise/drop as known failing on buildds
+
+buildds build on a tmpfs, but this is not visible inside the build environment.
+---
+ tests/ts/fadvise/drop | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/tests/ts/fadvise/drop b/tests/ts/fadvise/drop
+index 45dcb91..c01e16c 100755
+--- a/tests/ts/fadvise/drop
++++ b/tests/ts/fadvise/drop
+@@ -6,6 +6,9 @@ TS_DESC="drop page caches related to a file"
+ . "$TS_TOPDIR"/functions.sh
+ ts_init "$*"
+ 
++# fails on Debian buildds, because the buildds use tmpfs hidden behind an unshare namespace.
++TS_KNOWN_FAIL="yes"
++
+ ts_check_test_command "$TS_CMD_FADVISE"
+ ts_check_test_command "$TS_CMD_FINCORE"
+ ts_check_test_command "$TS_CMD_FINDMNT"

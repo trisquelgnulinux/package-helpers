@@ -25,10 +25,15 @@
 
 #STAGE-4-UDEBS || #STAGE-1-DEBOOTSTRAP
 
-VERSION=0
+VERSION=1
 NETINST=true
 . ./config
 
+# Fix FTBFS when rebuild at Ecne.
+# - lsfd/option-inet
+patch_p1 $DATA/lsfd--fix-2399-use-fifo-in-test-cases.patch
+# - fadvise/drop
+patch_p1 $DATA/tests-mark-fadvise-drop-as-known-failing-on-buildds.patch
 
 changelog "Rebuild upstream to get udeb dependency for debian-installer."
 package
