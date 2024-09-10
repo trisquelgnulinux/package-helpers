@@ -1,5 +1,6 @@
 #!/bin/sh
 #
+#    Copyright (C) 2024  Luis Guzmán <ark@switnet.org>
 #    Copyright (C) 2012-2022  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
@@ -19,7 +20,7 @@
 
 #STAGE-1-DEBOOTSTRAP
 
-VERSION=4
+VERSION=5
 COMPONENT=main
 
 . ./config
@@ -34,11 +35,14 @@ EOF
 cp scripts/t/Dpkg_BuildFlags_Ubuntu.t scripts/t/Dpkg_BuildFlags_Trisquel.t
 cp scripts/t/Dpkg_Changelog_Ubuntu.t scripts/t/Dpkg_Changelog_Trisquel.t
 sed 's/Ubuntu/Trisquel/g' -i scripts/t/Dpkg_BuildFlags_Trisquel.t
-cp $DATA/Trisquel.pm scripts/Dpkg/Vendor/Trisquel.pm
 
-sed '/Ubuntu.pm/a\\tDpkg/Vendor/Trisquel.pm \\' -i scripts/Makefile.in scripts/Makefile.am
-sed '/Dpkg_BuildFlags_Ubuntu.t/a\\tt/Dpkg_BuildFlags_Trisquel.t \\' -i scripts/Makefile.in scripts/Makefile.am
-sed '/Dpkg_Changelog_Ubuntu.t/a\\tt/Dpkg_Changelog_Trisquel.t \\' -i scripts/Makefile.in scripts/Makefile.am
+# Patch a copy from the Ubuntu.pm file to force track changes more often,
+# and rebuild easier the original changes.
+cp scripts/Dpkg/Vendor/{Ubuntu,Trisquel}.pm
+patch_p1 $DATA/patch-Trisquel_pm-from-Ubuntu_pm.patch
+
+# Use patch to track changes at Makefile.{in,am} files.
+patch_p1 $DATA/patch-Makefile_in_am-to-add-trisquel-options.patch
 
 # Trisquel.pm in now here, not at trisquel-base-data
 sed '/Package: libdpkg-perl/,/^$/s/Depends:/Replaces: trisquel-base-data\nDepends:/' -i debian/control

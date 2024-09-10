@@ -1,0 +1,56 @@
+diff --git a/scripts/Makefile.am b/scripts/Makefile.am
+index 8d39d24..c69d88d 100644
+--- a/scripts/Makefile.am
++++ b/scripts/Makefile.am
+@@ -89,6 +89,7 @@ nobase_dist_perllib_DATA = \
+ 	Dpkg/Vendor/Default.pm \
+ 	Dpkg/Vendor/Devuan.pm \
+ 	Dpkg/Vendor/Ubuntu.pm \
++	Dpkg/Vendor/Trisquel.pm \
+ 	Dpkg/Version.pm \
+ 	Dpkg.pm \
+ 	# EOL
+@@ -237,6 +238,7 @@ test_scripts = \
+ 	t/Dpkg_BuildEnv.t \
+ 	t/Dpkg_BuildFlags.t \
+ 	t/Dpkg_BuildFlags_Ubuntu.t \
++	t/Dpkg_BuildFlags_Trisquel.t
+ 	t/Dpkg_BuildInfo.t \
+ 	t/Dpkg_BuildOptions.t \
+ 	t/Dpkg_BuildProfiles.t \
+@@ -258,6 +260,7 @@ test_scripts = \
+ 	t/Dpkg_Vendor.t \
+ 	t/Dpkg_Changelog.t \
+ 	t/Dpkg_Changelog_Ubuntu.t \
++	t/Dpkg_Changelog_Trisquel.t \
+ 	t/Dpkg_Control_Fields.t \
+ 	t/Dpkg_Control.t \
+ 	t/Dpkg_Control_Tests.t \
+diff --git a/scripts/Makefile.in b/scripts/Makefile.in
+index 8b0a61f..74a035f 100644
+--- a/scripts/Makefile.in
++++ b/scripts/Makefile.in
+@@ -548,6 +548,7 @@ nobase_dist_perllib_DATA = \
+ 	Dpkg/Vendor/Default.pm \
+ 	Dpkg/Vendor/Devuan.pm \
+ 	Dpkg/Vendor/Ubuntu.pm \
++	Dpkg/Vendor/Trisquel.pm \
+ 	Dpkg/Version.pm \
+ 	Dpkg.pm \
+ 	# EOL
+@@ -644,6 +645,7 @@ test_scripts = \
+ 	t/Dpkg_BuildEnv.t \
+ 	t/Dpkg_BuildFlags.t \
+ 	t/Dpkg_BuildFlags_Ubuntu.t \
++	t/Dpkg_BuildFlags_Trisquel.t \
+ 	t/Dpkg_BuildInfo.t \
+ 	t/Dpkg_BuildOptions.t \
+ 	t/Dpkg_BuildProfiles.t \
+@@ -665,6 +667,7 @@ test_scripts = \
+ 	t/Dpkg_Vendor.t \
+ 	t/Dpkg_Changelog.t \
+ 	t/Dpkg_Changelog_Ubuntu.t \
++	t/Dpkg_Changelog_Trisquel.t \
+ 	t/Dpkg_Control_Fields.t \
+ 	t/Dpkg_Control.t \
+ 	t/Dpkg_Control_Tests.t \
