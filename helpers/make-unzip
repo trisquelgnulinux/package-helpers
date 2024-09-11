@@ -23,6 +23,8 @@ COMPONENT=main
 
 # Origin:
 # http://lists.nongnu.org/archive/html/gnu-linux-libre/2011-09/msg00001.html
+# Santiago ported recmatch() from util.c found in the zip package, which follows
+# ftp://ftp.info-zip.org/pub/infozip/license.html
 
 patch --no-backup-if-mismatch -p0 < $DATA/match.patch
 

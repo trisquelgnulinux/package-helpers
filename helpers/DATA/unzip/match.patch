@@ -7,14 +7,14 @@
 -  Copyright on recmatch() from Zip's util.c (although recmatch() was almost
 -  certainly written by Mark Adler...ask me how I can tell :-) ):
 +  Copyright on recmatch() from Zip's util.c
-+	 Copyright (c) 1990-2005 Info-ZIP.  All rights reserved.
++  Copyright (c) 1990-2005 Info-ZIP.  All rights reserved.
  
 -     Copyright (C) 1990-1992 Mark Adler, Richard B. Wales, Jean-loup Gailly,
 -     Kai Uwe Rommel and Igor Mandrichenko.
-+	 See the accompanying file LICENSE, version 2004-May-22 or later
-+	 for terms of use.
-+	 If, for some reason, both of these files are missing, the Info-ZIP license
-+	 also may be found at:  ftp://ftp.info-zip.org/pub/infozip/license.html  
++  See the accompanying file LICENSE, version 2004-May-22 or later
++  for terms of use.
++  If, for some reason, both of these files are missing, the Info-ZIP license
++  also may be found at:  ftp://ftp.info-zip.org/pub/infozip/license.html
  
 -     Permission is granted to any individual or institution to use, copy,
 -     or redistribute this software so long as all of the original files are
@@ -23,15 +23,6 @@
  
    ---------------------------------------------------------------------------
  
-@@ -53,7 +51,7 @@
- 
-   A set is composed of characters or ranges; a range looks like ``character
-   hyphen character'' (as in 0-9 or A-Z).  [0-9a-zA-Z_] is the minimal set of
--  characters allowed in the [..] pattern construct.  Other characters are
-+  characters ALlowed in the [..] pattern construct.  Other characters are
-   allowed (i.e., 8-bit characters) if your system will support them.
- 
-   To suppress the special syntactic significance of any of ``[]*?!^-\'', in-
 @@ -101,8 +99,32 @@
  #  define WILDCHAR   '?'
  #  define BEG_RANGE  '['
