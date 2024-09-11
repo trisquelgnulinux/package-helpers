@@ -1,16 +1,15 @@
 diff --git a/debian/control b/debian/control
-index 7262a65c..497779f7 100644
+index 2ea9e66..91f61fc 100644
 --- a/debian/control
 +++ b/debian/control
-@@ -60,10 +60,8 @@ Depends: appstream,
+@@ -62,9 +62,8 @@ Depends: appstream,
           ${misc:Depends},
           ${shlibs:Depends}
  Conflicts: sessioninstaller
--Recommends: fwupd [linux-any],
--            ${plugin:Recommends}
+-Recommends: fwupd [linux-any], ${plugin:Recommends}
 +Recommends: ${plugin:Recommends}
  Suggests: apt-config-icons-hidpi,
--          gnome-software-plugin-flatpak [amd64 arm64 armel armhf i386 mipsel mips64el ppc64el s390x hppa powerpc ppc64 riscv64 x32],
+-          gnome-software-plugin-flatpak [amd64 arm64 armel armhf i386 mips mipsel mips64el ppc64el s390x hppa powerpc powerpcspe ppc64],
            ${plugin:Suggests}
  Description: Software Center for GNOME
   Software lets you install and update applications and system extensions.
