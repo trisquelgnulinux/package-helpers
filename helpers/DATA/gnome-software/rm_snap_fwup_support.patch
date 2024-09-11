@@ -1,0 +1,86 @@
+diff --git a/debian/control b/debian/control
+index 2ea9e66..91f61fc 100644
+--- a/debian/control
++++ b/debian/control
+@@ -62,9 +62,8 @@ Depends: appstream,
+          ${misc:Depends},
+          ${shlibs:Depends}
+ Conflicts: sessioninstaller
+-Recommends: fwupd [linux-any], ${plugin:Recommends}
++Recommends: ${plugin:Recommends}
+ Suggests: apt-config-icons-hidpi,
+-          gnome-software-plugin-flatpak [amd64 arm64 armel armhf i386 mips mipsel mips64el ppc64el s390x hppa powerpc powerpcspe ppc64],
+           ${plugin:Suggests}
+ Description: Software Center for GNOME
+  Software lets you install and update applications and system extensions.
+@@ -106,26 +106,6 @@ Description: Flatpak support for GNOME Software
+  .
+  This package contains the Flatpak plugin.
+ 
+-Package: gnome-software-plugin-snap
+-Architecture: amd64 arm64 armel armhf i386 ppc64el s390x
+-Depends: gnome-software (= ${binary:Version}),
+-         snapd [amd64 arm64 armel armhf i386 ppc64el],
+-         ${misc:Depends},
+-         ${shlibs:Depends}
+-Recommends: snapd [s390x]
+-Breaks: gnome-software (<< 3.22.3)
+-Replaces: gnome-software (<< 3.22.3)
+-Description: Snap support for GNOME Software
+- Software lets you install and update applications and system extensions.
+- .
+- Software uses a plugin architecture to separate the frontend from the
+- technologies that are used underneath. Currently, a PackageKit plugin provides
+- data from a number of traditional packaging systems, such as rpm or apt. An
+- appdata plugin provides additional metadata from locally installed data in the
+- appdata format.
+- .
+- This package contains the Snap plugin.
+-
+ Package: gnome-software-dev
+ Section: libdevel
+ Architecture: any
+diff --git a/debian/rules b/debian/rules
+index f0bb2394..58b4bc70 100755
+--- a/debian/rules
++++ b/debian/rules
+@@ -30,11 +30,11 @@ ifeq ($(DEB_HOST_ARCH_OS), linux)
+ 	GS_CONFIGURE_FLAGS += -Dgudev=true
+ 	
+ 	# Enable fwupd support on Linux
+-	GS_CONFIGURE_FLAGS += -Dfwupd=true
++	GS_CONFIGURE_FLAGS += -Dfwupd=false
+ 
+ 	# Enable snap support on supported architectures
+ 	ifneq (,$(filter $(DEB_HOST_ARCH), amd64 arm64 armel armhf i386 ppc64el s390x))
+-		GS_CONFIGURE_FLAGS += -Dsnap=true
++		GS_CONFIGURE_FLAGS += -Dsnap=false
+ 	endif
+ endif
+ 
+@@ -42,9 +42,9 @@ DISTRO_ID = debian
+ FREE_REPOS = \'@DISTRO@-*-main\'
+ FREE_URL = https:\/\/www.debian.org\/social_contract\#guidelines
+ ifeq (yes,$(shell dpkg-vendor --derives-from Ubuntu && echo yes))
+-	DISTRO_ID = ubuntu
+-	FREE_REPOS = \'@DISTRO@-*-main\', \'@DISTRO@-*-universe\'
+-	FREE_URL = https:\/\/www.ubuntu.com\/about\/about-ubuntu\/licensing
++	DISTRO_ID = trisquel
++	FREE_REPOS = \'@DISTRO@-*-main\'
++	FREE_URL = https:\/\/trisquel.info\/legal
+ else ifeq (yes,$(shell dpkg-vendor --derives-from Tanglu && echo yes))
+ 	DISTRO_ID = tanglu
+ else ifeq (yes,$(shell dpkg-vendor --derives-from PureOS && echo yes))
+@@ -87,11 +87,7 @@ override_dh_shlibdeps:
+ override_dh_auto_test:
+ 
+ override_dh_gencontrol:
+-ifeq ($(shell dpkg-vendor --query vendor),Ubuntu)
+-	dh_gencontrol -- -Vplugin:Recommends='gnome-software-plugin-snap [linux-any]'
+-else
+-	dh_gencontrol -- -Vplugin:Suggests='gnome-software-plugin-snap [linux-any]'
+-endif
++	dh_gencontrol
+ 
+ override_dh_clean:
+ 	rm -f debian/gnome-software.gsettings-override
