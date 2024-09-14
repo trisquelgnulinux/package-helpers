@@ -29,10 +29,6 @@ sed -i "s|Utility|Network|" mirall.desktop.in
 #Prevent ppc64el arch since qtwebengine is not build for ppc64el.
 sed -i 's|Architecture: any|Architecture: amd64 arm64 armhf i386 mips64el mipsel|g' debian/control
 
-# Apply fix  for:
-# [Bug]: filesystem error with multi-byte character leads to crash on Ubuntu 22.04 #7026
-patch_p1 $DATA/7081.patch
-
 changelog "Imported into Trisquel"
 
 package
