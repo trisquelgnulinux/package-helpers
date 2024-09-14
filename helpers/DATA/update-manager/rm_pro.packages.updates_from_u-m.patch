@@ -1,0 +1,144 @@
+diff --git a/UpdateManager/UpdateManager.py b/UpdateManager.py
+index 3b9eaa58..d44040d5 100644
+--- a/UpdateManager/UpdateManager.py
++++ b/UpdateManager.py
+@@ -25,7 +25,6 @@ from gi.repository import Gdk, GdkX11
+ from gi.repository import Gio
+ from gi.repository import GLib
+ from gi.repository import GObject
+-import uaclient.api.u.pro.packages.updates.v1 as ua
+ 
+ GdkX11  # pyflakes
+ 
+@@ -40,7 +40,6 @@ import os
+ import subprocess
+ import sys
+ import time
+-import threading
+ from gettext import gettext as _
+ 
+ import dbus
+@@ -90,7 +88,6 @@ class UpdateManager(Gtk.Window):
+         self.unity = UnitySupport()
+         self.controller = None
+         self.cache = None
+-        self.ua_security_packages = []
+         self.update_list = None
+         self.meta_release = None
+         self.hwe_replacement_packages = None
+@@ -287,42 +286,6 @@ class UpdateManager(Gtk.Window):
+                and pkg.installed:
+                 self.oem_metapackages.add(pkg)
+ 
+-    def _fetch_ua_updates(self):
+-        try:
+-            self.ua_updates = ua.updates().updates
+-        except:
+-            self.ua_updates = []
+-
+-    def _get_ua_security_status(self):
+-        self.ua_security_packages = []
+-        self.ua_updates = []
+-        t = threading.Thread(target=self._fetch_ua_updates, daemon=True)
+-        t.start()
+-        while t.is_alive():
+-            while Gtk.events_pending():
+-                Gtk.main_iteration()
+-            time.sleep(0.05)
+-        for package in self.ua_updates:
+-            if (
+-                package.provided_by == 'standard-security'
+-                or package.provided_by == 'standard-updates'
+-            ):
+-                continue
+-            status = package.status
+-            if (
+-                status == 'pending_attach'
+-                or status == 'pending_enable'
+-                or status == 'upgrade_available'
+-            ):
+-                name = package.package
+-                version = package.version
+-                size = package.download_size
+-                downloadable = status == 'upgrade_available'
+-                self.ua_security_packages.append(
+-                    (name, version, size, downloadable)
+-                )
+-        self.cache.create_pro_cache(self.ua_security_packages)
+-
+     def _make_available_pane(self, install_count, need_reboot=False,
+                              cancelled_update=False, error_occurred=False):
+         self._check_hwe_support_status()
+@@ -495,8 +460,6 @@ class UpdateManager(Gtk.Window):
+ 
+         self._check_oem_metapackages()
+ 
+-        self._get_ua_security_status()
+-
+         for pkgname in self.oem_metapackages:
+             try:
+                 if not self.cache[pkgname].is_installed:
+@@ -488,9 +451,7 @@ class UpdateManager(Gtk.Window):
+         self.update_list = UpdateList(self)
+         try:
+             self.update_list.update(self.cache, eventloop_callback=iterate,
+-                                    duplicate_packages=self.duplicate_packages,
+-                                    ua_security_packages=self.
+-                                    ua_security_packages)
++                                    duplicate_packages=self.duplicate_packages)
+         except SystemError as e:
+             header = _("Could not calculate the upgrade")
+             desc = _("An unresolvable problem occurred while "
+diff --git a/UpdateManager/Core/MyCache.py b/UpdateManager/Core/MyCache.py
+index fc227822..89f4a774 100644
+--- a/UpdateManager/Core/MyCache.py
++++ b/UpdateManager/Core/MyCache.py
+@@ -424,48 +424,3 @@ class MyCache(DistUpgrade.DistUpgradeCache.MyCache):
+                         "Failed to download the list of changes. \n"
+                         "Please check your Internet connection.")
+         self.all_changes[name] += error_message
+-
+-    # If the machine is not attached to Ubuntu Pro, Update Manager advertises
+-    # the upgrades that would be available if it were attached.
+-    # As that is unbeknownst to Apt, we need this map to show the correct
+-    # version of each upgradable-if-pro-subscribed package.
+-    def create_pro_cache(self, pro_pkgs):
+-        for (name, version, _a, _a) in pro_pkgs:
+-            self.pro_versions[name] = version
+-
+-    def get_changelog(self, name):
+-        " get the changelog file from the changelog location "
+-        origins = self[name].candidate.origins
+-        version = self.pro_versions.get(name, self[name].candidate.version)
+-        self.all_changes[name] = _("Changes for %s versions:\n"
+-                                   "Installed version: %s\n"
+-                                   "Available version: %s\n\n") % \
+-            (name, getattr(self[name].installed, "version", None), version)
+-        if self.CHANGELOG_ORIGIN not in [o.origin for o in origins]:
+-            self._fetch_changelog_for_third_party_package(name, origins)
+-            return
+-        # fixup epoch handling version
+-        srcpkg = self[name].candidate.source_name
+-        srcver_epoch = self[name].candidate.source_version.replace(':', '%3A')
+-        try:
+-            changelog = self._get_changelog_or_news(name, "changelog")
+-            if len(changelog) == 0:
+-                changelog = _("The changelog does not contain any relevant "
+-                              "changes.\n\n"
+-                              "Please use http://launchpad.net/ubuntu/+source/"
+-                              "%s/%s/+changelog\n"
+-                              "until the changes become available or try "
+-                              "again later.") % (srcpkg, srcver_epoch)
+-        except HTTPError:
+-            changelog = _("The list of changes is not available yet.\n\n"
+-                          "Please use http://launchpad.net/ubuntu/+source/"
+-                          "%s/%s/+changelog\n"
+-                          "until the changes become available or try again "
+-                          "later.") % (srcpkg, srcver_epoch)
+-        except (IOError, BadStatusLine, socket.error) as e:
+-            print("caught exception: ", e)
+-            changelog = _("Failed to download the list "
+-                          "of changes. \nPlease "
+-                          "check your Internet "
+-                          "connection.")
+-        self.all_changes[name] += changelog
