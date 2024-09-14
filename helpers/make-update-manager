@@ -20,6 +20,7 @@
 #
 
 VERSION=23
+DEPENDS=at-spi2-core
 
 . ./config
 
@@ -30,20 +31,23 @@ rm UpdateManager/Core/LivePatchSocket.py
 rm tests/test_livepatch_socket.py
 
 # Important patch make sure to update when necessary.
-patch --no-backup-if-mismatch -p1 < $DATA/remove-livepatch2.patch
-sed -i "/ubuntu-pro-client/d" debian/control
+patch_p1 $DATA/remove-livepatch2.patch
 
 #Closes #12545
-patch --no-backup-if-mismatch -p1 < $DATA/trisquel-versions.patch
+patch_p1 $DATA/trisquel-versions.patch
 
 cp $DATA/index.docbook help/C/index.docbook
 
 # Prevent automated connections
-patch --no-backup-if-mismatch -p1 < $DATA/prevent-autoconnection.patch
+patch_p1 $DATA/prevent-autoconnection.patch
 # NOTE: prevent-autoconnection.patch l10n is now part of the DATA/l10n/ patches.
 
 # Remove Ubuntu Pro packages updates ; yet another important patch.
-patch --no-backup-if-mismatch -p1 < $DATA/rm_pro.packages.updates_from_u-m.patch
+patch_p1 $DATA/rm_pro.packages.updates_from_u-m.patch
+
+# Remove snap backend.
+#sed -i "/gir1.2-snapd-2,/d" debian/control
+#patch_p1 $DATA/rm_snap_backend.patch
 
 replace internet Internet .
 replace Ubuntu Trisquel .
@@ -83,13 +87,12 @@ sed -i 's|changelogs.ubuntu.com/|archive.trisquel.org/trisquel/|' UpdateManager/
 # Trisquel l10n modifications using git patches.
 for patch in $(ls -v ${DATA}/l10n/*.patch)
 do
-    echo "> Applying $(echo $patch|xargs basename)"
-    patch --no-backup-if-mismatch -Np1 < $patch
+    patch_p1 $patch
 done
 
 # Add global pycodestyle patch
 echo "> Apply 99_pycodestyle_pass.patch"
-patch --no-backup-if-mismatch -p1 < $DATA/extra/99_pycodestyle_pass.patch
+patch_p1 $DATA/extra/99_pycodestyle_pass.patch
 
 changelog "Compiled for Trisquel"
 
