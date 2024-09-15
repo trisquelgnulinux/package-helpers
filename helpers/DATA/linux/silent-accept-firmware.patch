@@ -1522,16 +1522,22 @@ diff -ru source.orig/drivers/bluetooth/ath3k.c source/drivers/bluetooth/ath3k.c
  		return ret;
  	}
  
-@@ -505,8 +505,7 @@
+@@ -502,11 +502,10 @@ static int ath3k_probe(struct usb_interface *intf,
  	ret = request_firmware(&firmware, ATH3K_FIRMWARE, &udev->dev);
  	if (ret < 0) {
  		if (ret == -ENOENT)
 -			BT_ERR("Firmware file \"%s\" not found",
--							ATH3K_FIRMWARE);
+-			       ATH3K_FIRMWARE);
 +			BT_ERR("Firmware file not found");
  		else
- 			BT_ERR("Firmware file \"%s\" request failed (err=%d)",
- 							ATH3K_FIRMWARE, ret);
+-			BT_ERR("Firmware file \"%s\" request failed (err=%d)",
+-			       ATH3K_FIRMWARE, ret);
++			BT_ERR("Firmware file request failed (err=%d)",
++			       ret);
+ 		return ret;
+ 	}
+ 
+
 diff -ru source.orig/drivers/bluetooth/btbcm.c source/drivers/bluetooth/btbcm.c
 --- source.orig/drivers/bluetooth/btbcm.c	2023-06-07 09:29:12.000000000 -0400
 +++ source/drivers/bluetooth/btbcm.c	2023-06-07 10:07:36.541063483 -0400
