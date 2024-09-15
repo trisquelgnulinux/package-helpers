@@ -1,0 +1,333 @@
+#!/bin/sh
+#
+#    Copyright (C) 2024 Luis Guzman <ark@switnet.org>
+#    Copyright (C) 2008-2023  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2019 David Trudgian <dave@trudgian.net>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=31
+HWEKR=6.8
+
+# DI_ENABLED = 1 enables udeb build, 0 or any other value disables them.
+DI_ENABLED=0
+# HWE_ENABLED = 1 enables HWE stack build, 0 or any other value disables it.
+HWE_ENABLED=0
+
+[ $HWE_ENABLED != 1 ] && \
+DEBIAN_PATH=debian.master && \
+CONTROL_PACKAGE=linux
+[ $HWE_ENABLED = 1 ] && \
+DEBIAN_PATH=debian.hwe-$HWEKR && \
+CONTROL_PACKAGE=linux-hwe-$HWEKR
+
+. ./config
+
+PRESERVEDIRS='
+drivers/bluetooth
+drivers/gpu/drm/i915
+drivers/gpu/drm/amd/amdgpu
+drivers/gpu/drm/amd/pm/powerplay
+drivers/gpu/drm/radeon
+drivers/net/wireless/intel/ipw2x00
+drivers/net/wireless/intel/iwlegacy
+drivers/net/wireless/intel/iwlwifi
+drivers/net/wireless/realtek/rtl8xxxu
+drivers/net/wireless/realtek/rtlwifi
+drivers/net/wireless/realtek/rtlwifi/rtl8188ee
+drivers/net/wireless/realtek/rtlwifi/rtl8192ce
+drivers/net/wireless/realtek/rtlwifi/rtl8192cu
+drivers/net/wireless/realtek/rtlwifi/rtl8192de
+drivers/net/wireless/realtek/rtlwifi/rtl8192ee
+drivers/net/wireless/realtek/rtlwifi/rtl8192se
+drivers/net/wireless/realtek/rtlwifi/rtl8723ae
+drivers/net/wireless/realtek/rtlwifi/rtl8723be
+drivers/net/wireless/realtek/rtlwifi/rtl8821ae
+drivers/net/wireless/broadcom/brcm80211
+'
+# HWEKR - 6.8
+[ $HWE_ENABLED != 1 ] && \
+PRESERVEDIRS="$PRESERVEDIRS"
+
+TMPDIR=$(mktemp -d preserve-XXXX)
+PRESERVE=$(grep '^+++' $DATA/silent-accept-firmware.patch | /bin/sed 's/+++ //; s/\t.*//;' | cut -d/ -f2- | sort -u )
+for FILE in $PRESERVE; do
+  cp $FILE $TMPDIR --parents -a
+done
+for DIR in $PRESERVEDIRS; do
+  cp $DIR $TMPDIR --parents -a
+done
+
+sh $DATA/deblob-$HWEKR
+
+echo "Reverting deblobbing for files patched by silent-accept-firmware"
+cp $TMPDIR/* . -av
+rm -rf $TMPDIR
+
+for PATCH in $DATA/*.patch ; do
+  patch_p1 $PATCH
+done
+
+## Simple test for finding missing cases of silent_accept_firmware method
+search_for_missing_cases_silent_patch() {
+  for dir in $PRESERVEDIRS; do
+    grep -i "load.*firmware.*%" $PRESERVEDIRS -r|grep -vi info
+    grep -i "load.*ucode.*%" $PRESERVEDIRS -r|grep -vi info
+  done
+}
+#search_for_missing_cases_silent_patch
+
+# Re-enable udebs
+enable_udebs() {
+
+#Apply udeb/d-i related patches.
+for PATCH in $DATA/udeb/*.patch ; do
+  patch_p1 $PATCH
+done
+
+cp $DATA/udeb/5-udebs.mk debian/rules.d
+cp -a $DATA/udeb/d-i $DEBIAN_PATH
+
+cat << EOF >> debian/control
+Package: $CONTROL_PACKAGE-udebs-generic
+Build-Profiles: <!stage1> <!noudeb> <!cross> <!autopkgtest>
+XC-Package-Type: udeb
+Section: debian-installer
+Architecture: amd64 armhf arm64 ppc64el s390x
+Depends: \${udeb:Depends}
+Description: Metapackage depending on kernel udebs
+ This package depends on the all udebs that the kernel build generated,
+ for easier version and migration tracking.
+
+Package: $CONTROL_PACKAGE-udebs-generic-lpae
+Build-Profiles: <!stage1> <!noudeb> <!cross> <!autopkgtest>
+XC-Package-Type: udeb
+Section: debian-installer
+Architecture: armhf
+Depends: \${udeb:Depends}
+Description: Metapackage depending on kernel udebs
+ This package depends on the all udebs that the kernel build generated,
+ for easier version and migration tracking.
+
+Package: $CONTROL_PACKAGE-udebs-lowlatency
+Build-Profiles: <!stage1> <!noudeb> <!cross> <!autopkgtest>
+XC-Package-Type: udeb
+Section: debian-installer
+Architecture: amd64
+Depends: \${udeb:Depends}
+Description: Metapackage depending on kernel udebs
+ This package depends on the all udebs that the kernel build generated,
+ for easier version and migration tracking.
+EOF
+
+cat << EOF >> $DEBIAN_PATH/control.d/flavour-control.stub
+Package: SRCPKGNAME-udebs-FLAVOUR
+Build-Profiles: <!stage1> <!noudeb> <!cross> <!autopkgtest>
+XC-Package-Type: udeb
+Section: debian-installer
+Architecture: ARCH
+Depends: \${udeb:Depends}
+Description: Metapackage depending on kernel udebs
+ This package depends on the all udebs that the kernel build generated,
+ for easier version and migration tracking.
+EOF
+
+sed '/include.*2-binary-arch.mk/a\\n# Rules for building the udebs ($(DEBIAN)-installer)\ninclude $(DROOT)/rules.d/5-udebs.mk' -i debian/rules
+sed 's/+= binary-debs/+= binary-udebs/' -i debian/rules.d/2-binary-arch.mk
+
+for i in dctrl-tools kernel-wedge
+do
+    sed "/Build-Depends:/a\ $i <\!stage1> <\!noudeb> <\!cross> <\!autopkgtest>," -i	debian/control \
+											$DEBIAN_PATH/control.stub.in
+done
+}
+
+[ "$DI_ENABLED" = "1" ] && enable_udebs
+
+# Wipe dkms-versions
+# lists zfs / v4l2loopback versions
+truncate -s 0 $(find -name dkms-versions)
+
+# Remove ZFS - adjusting to each release
+rm debian/scripts/dkms-build-configure--zfs
+
+for i in $(grep -lr zfs $DEBIAN_PATH/reconstruct \
+		$DEBIAN_PATH/abi/*/*.modules \
+		debian/rules.d/2-binary-arch.mk \
+		$DEBIAN_PATH/rules.d/ \
+		debian/rules \
+		$DEBIAN_PATH/control.d/)
+do
+     sed  -i '/zfs/d' $i
+done
+
+[ "$DI_ENABLED" = "1" ] && \
+for i in $(grep -lr zfs   $DEBIAN_PATH/d-i/modules/fs-core-modules) ; \
+do \
+    sed  -i '/zfs/d' $i ; \
+done
+
+#/bin/sed 's/spl-dkms, zfs-dkms//' -i debian/control \
+#                                     $DEBIAN_PATH/control.d/vars.generic \
+#                                     $DEBIAN_PATH/control.d/vars.*
+
+#/bin/sed -i '/ifeq ($(do_zfs),false)/,/endif$/d' debian/rules
+
+# Remove VBox
+#sed -i '/vbox/s|true|false|' $DEBIAN_PATH/rules.d/amd64.mk
+
+# Remove v4l2loopback
+for i in $(grep -lr v4l2loopback $DEBIAN_PATH/reconstruct \
+			$DEBIAN_PATH/abi/*/*.modules \
+			debian/rules.d/2-binary-arch.mk \
+			$DEBIAN_PATH/rules.d/ \
+			debian/rules \
+			$DEBIAN_PATH/control.d/)
+do
+    sed  -i '/v4l2loopback/d' $i
+done
+
+[ "$DI_ENABLED" = "1" ] && \
+for i in $(grep -lr v4l2loopback $DEBIAN_PATH/d-i/modules/fs-core-modules) ; \
+do \
+    sed  -i '/v4l2loopback/d' ; \
+done
+#/bin/sed -i '/ifeq ($(do_v4l2loopback),false)/,/endif$/d' debian/rules
+#/bin/sed -i '/do_v4l2loopback/d' debian.master/rules.d/*
+
+# Remove nvidia driver
+rm -rf debian/scripts/dkms-build--nvidia-N
+for i in $(grep -l dkms-build--nvidia-N $DEBIAN_PATH/reconstruct)
+do
+    sed -i '/dkms-build--nvidia-N/d' $i
+done
+
+# Remove wireguard
+for i in $(grep -lr wireguard $DEBIAN_PATH/reconstruct \
+			$DEBIAN_PATH/abi/*/*.modules \
+			debian/rules.d/2-binary-arch.mk \
+			$DEBIAN_PATH/rules.d/ \
+			$DEBIAN_PATH/control.d/)
+do
+    sed  -i '/wireguard/d' $i
+done
+[ "$DI_ENABLED" = "1" ] && \
+for i in $(grep -lr wireguard $DEBIAN_PATH/d-i/modules/fs-core-modules) ; \
+do \
+    sed  -i '/wireguard/d' $i ; \
+done
+
+#/bin/sed '/ifeq ($(do_dkms_wireguard),false)/,/endif$/d' -i debian/rules
+#sed '/do_dkms_wireguard/d' -i debian/rules.d/2-binary-arch.mk
+#/bin/sed '/do_dkms_wireguard/d' -i $DEBIAN_PATH/rules.d/*
+
+# Compile with less modules and avoid abi check
+echo -e 'skipmodule = true\nskipabi = true' | tee -a 	$DEBIAN_PATH/rules.d/0-common-vars.mk \
+							debian/rules.d/0-common-vars.mk
+
+# Skip the retpoline check as there is no last release to check against
+echo 'skipretpoline = true' | tee -a 	$DEBIAN_PATH/rules.d/0-common-vars.mk \
+					debian/rules.d/0-common-vars.mk
+
+# Do not label packages as unsigned
+sed '/bin_pkg_name_unsigned/s/linux-image-unsigned/linux-image/' -i debian/rules.d/0-common-vars.mk
+sed 's/.unsigned//' -i debian/scripts/control-create
+sed '/Package:/s/.unsigned//;/This package /s/.unsigned//' -i debian/control
+
+line=$(grep -n ')-Ubuntu' debian/rules.d/0-common-vars.mk|cut -d: -f1)
+sed $(expr $line - 1 ),$(expr $line + 1 )d debian/rules.d/0-common-vars.mk -i
+for i in $(grep -rl family=ubuntu debian/rules.d/)
+do
+    sed -i s/family=ubuntu/family=trisquel/ $i
+done
+#cat << EOF > $DEBIAN_PATH/etc/kernelconfig
+#archs="i386 amd64 armhf arm64 ppc64el"
+#family='trisquel'
+#EOF
+
+rename s/ubuntu/trisquel/ debian.*/config/config.common.ubuntu
+for i in $(grep -lr config.common.ubuntu debian*/)
+do
+    sed -i 's|config.common.ubuntu|config.common.trisquel|g' $i
+done
+
+find debian* -type f -name *control* -exec sed 's/ with Ubuntu patches//; s/Linux/Linux-libre/g' -i {} \;
+
+# Descriptions should not change based on the build arch
+sed 's/on DESC//; s/PKGVER on/PKGVER/; /^ DESC.$/d;' debian*/control.d/flavour-control.stub -i
+
+#sed '/^firmware/d' ./debian*/abi/fwinfo -i
+#echo > ./debian.master/d-i/firmware/nic-modules
+#echo > ./debian.master/d-i/firmware/scsi-modules
+
+# Disable using udev as a fallback for firmware loading
+# Read more at: Documentation/driver-api/firmware/fallback-mechanisms.rst
+#replace "CONFIG_FW_LOADER_USER_HELPER=y" "CONFIG_FW_LOADER_USER_HELPER=n" $DEBIAN_PATH/config
+
+# Disable aaeon & ubuntu odm drivers, remove on both paths to match annotations.
+for i in CONFIG_GPIO_AAEON CONFIG_LEDS_AAEON CONFIG_MFD_AAEON CONFIG_SENSORS_AAEON
+do
+    echo "> Modifying $i annotations value:"
+    python3 debian/scripts/misc/annotations -f $DEBIAN_PATH/config/annotations \
+        --arch amd64 --flavour generic --config $i --write -
+done
+for i in amd64 arm64 armhf ppc64el riscv64 s390x
+do
+    echo "> Modifying CONFIG_UBUNTU_ODM_DRIVERS for arch $i:"
+    python3 debian/scripts/misc/annotations -f $DEBIAN_PATH/config/annotations \
+            --arch $i --flavour generic --config CONFIG_UBUNTU_ODM_DRIVERS --write n
+done
+python3 debian/scripts/misc/annotations -f $DEBIAN_PATH/config/annotations \
+            --arch arm64 --flavour generic-64k --config CONFIG_UBUNTU_ODM_DRIVERS --write n
+
+## Disable ppc64el Werroron amdgpu
+python3 debian/scripts/misc/annotations -f $DEBIAN_PATH/config/annotations \
+    --arch ppc64el --flavour generic --config CONFIG_DRM_AMDGPU_WERROR --write n
+
+## Remove disabled modules from generic list (starting at 6.2)
+for module in gpio-aaeon hwmon-aaeon leds-aaeon mfd-aaeon spl
+do
+    for i in $(grep -rl "^$module$" $DEBIAN_PATH/abi/*/)
+    do
+        sed -i "/^$module$/d" $i
+    done
+done
+# Custom changes for linux and linux-hwe.
+if [ $HWE_ENABLED != 1 ]; then
+## HWEKR - 6.8
+    for i in CONFIG_AX88796B_RUST_PHY CONFIG_CONSTRUCTORS CONFIG_RUST_BUILD_ASSERT_ALLOW \
+        CONFIG_RUST_DEBUG_ASSERTIONS CONFIG_RUST_OVERFLOW_CHECKS CONFIG_RUST_PHYLIB_ABSTRACTIONS \
+        CONFIG_SAMPLES_RUST
+    do
+        echo "> Modifying $i annotations value:"
+        python3 debian/scripts/misc/annotations -f $DEBIAN_PATH/config/annotations \
+            --arch amd64 --flavour generic --config $i --write -
+    done
+    python3 debian/scripts/misc/annotations -f $DEBIAN_PATH/config/annotations \
+        --arch amd64 --flavour generic --config CONFIG_RUST --write n
+else
+    echo "# HWEKR - 6.X+"
+fi
+
+grep -rl '^Vcs-Git:' | \
+  xargs sed -i "s|^Vcs-Git:.*|Vcs-Git: https://gitlab.trisquel.org/trisquel/package-helpers|"
+
+changelog "Removed non-free bits"
+
+cp debian/changelog debian.master/changelog
+cp debian/changelog $DEBIAN_PATH/changelog
+
+package
