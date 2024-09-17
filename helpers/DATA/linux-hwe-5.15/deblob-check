@@ -28,6 +28,9 @@
 #        modified with 2023-12-26 r19450 (partial)
 #        modified with 2024-03-01 r19492
 #        modified with 2023-06-12 r19329 (partial)
+#        modified with 2023-12-26 r19450 (more partial)
+#        modified with 2023-10-23 r19416 (more partial)
+#        modified with 2024-07-05 r19593 (partial)
 # Inspired in gNewSense's find-firmware script.
 # Written by Alexandre Oliva <lxoliva@fsfla.org>
 
@@ -6336,6 +6339,10 @@ set_except () {
     # Catch other names likely to appear in BRCMF_FW*_DEF strings in these files.
     blobna 'brcmfmac43[^";) \t\n]*\(-sdio\|-pcie\)\?' drivers/net/wireless/broadcom/brcm80211/brcmfmac/'\(sdio\|pcie\|usb\)\.c'
 
+    # Trisquel changes for Aramo
+    blobname 'mediatek[/]WIFI_RAM_CODE_MT7922_1\.bin' drivers/net/wireless/mediatek/mt76/mt7921/mt7921.h
+    blobname 'mediatek[/]WIFI_MT7922_patch_mcu_1_1_hdr\.bin' drivers/net/wireless/mediatek/mt76/mt7921/mt7921.h
+
     # New in 5.15.3-gnu and 5.14.19-gnu.
     blobna '[/][*][ ]linux-firmware\.git[ ]hash[ ][0-9a-f]*[ ][*][/]' drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
 
@@ -6407,12 +6414,6 @@ set_except () {
     # New in 5.15.121.
     blobname 'qcom[/]apq8016[/]\(\(mba\|modem\|wcnss\)\.mbn\|WCNSS_qcom_wlan_nv_sbc\.bin\)' arch/arm64/boot/dts/qcom/apq8016-sbc.dts
 
-    # Trisquel changes for Aramo
-    blobname 'mediatek[/]WIFI_RAM_CODE_MT7922_1\.bin' drivers/net/wireless/mediatek/mt76/mt7921/mt7921.h
-    blobname 'mediatek[/]WIFI_MT7922_patch_mcu_1_1_hdr\.bin' drivers/net/wireless/mediatek/mt76/mt7921/mt7921.h
-    blobname 'qca[/]nvm_usb_%08x\.bin' drivers/bluetooth/btusb.c
-    blobname 'qca[/]nvm_usb_%08x%s_%04x\.bin' drivers/bluetooth/btusb.c
-
     # New in 6.4.6, 6.1.41, 5.15.122, 5.10.187, 5.4.250, 4.19.289.
     blobna 'please[ ]update[ ]your[ ]microcode' arch/x86/kernel/cpu/amd.c
 
@@ -6433,6 +6434,15 @@ set_except () {
     # New in 5.15.153.
     blobname 'qca[/]hpbtfw%02x\.tlv' drivers/bluetooth/btqca.c
     blobname 'qca[/]hpnv%02x\.bin' drivers/bluetooth/btqca.c
+
+    # New in 5.15.162.
+    blobname 'qca[/]hpnv%02x%s\.\(bin\|%x\)' drivers/bluetooth/btqca.c
+    blobname 'qca[/]\(ap\|hmt\)btfw%02x\.tlv' drivers/bluetooth/btqca.c
+    blobname 'qca[/]\(ap\|hmt\)nv%02x\.bin' drivers/bluetooth/btqca.c
+
+    # New in 6.10-rc, 6.9.9, 6.6.39, 6.1.98, 5.15.163, 5.10.222.
+    blobname 'gsl1680-globalspace-solt-ivw116\.fw' drivers/platform/x86/touchscreen_dmi.c
+    blobname 'E\.WSA116_8\.E1\.042\.bin' drivers/platform/x86/touchscreen_dmi.c
 
     ;;
 
