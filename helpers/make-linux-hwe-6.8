@@ -19,14 +19,13 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=31
+VERSION=32
 HWEKR=6.8
+DI_ENABLED=0
+HWE_ENABLED=1
 
 # DI_ENABLED = 1 enables udeb build, 0 or any other value disables them.
-DI_ENABLED=0
 # HWE_ENABLED = 1 enables HWE stack build, 0 or any other value disables it.
-HWE_ENABLED=0
-
 [ $HWE_ENABLED != 1 ] && \
 DEBIAN_PATH=debian.master && \
 CONTROL_PACKAGE=linux
