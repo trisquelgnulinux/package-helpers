@@ -1615,16 +1615,21 @@ index 88262d3..93b3826 100644
  		return ret;
  	}
  
-@@ -504,8 +504,7 @@ static int ath3k_probe(struct usb_interface *intf,
+@@ -501,11 +501,10 @@ static int ath3k_probe(struct usb_interface *intf,
  	ret = request_firmware(&firmware, ATH3K_FIRMWARE, &udev->dev);
  	if (ret < 0) {
  		if (ret == -ENOENT)
 -			BT_ERR("Firmware file \"%s\" not found",
--							ATH3K_FIRMWARE);
+-			       ATH3K_FIRMWARE);
 +			BT_ERR("Firmware file not found");
  		else
- 			BT_ERR("Firmware file \"%s\" request failed (err=%d)",
- 							ATH3K_FIRMWARE, ret);
+-			BT_ERR("Firmware file \"%s\" request failed (err=%d)",
+-			       ATH3K_FIRMWARE, ret);
++			BT_ERR("Firmware file request failed (err=%d)",
++			       ret);
+ 		return ret;
+ 	}
+ 
 diff --git a/drivers/bluetooth/btbcm.c b/drivers/bluetooth/btbcm.c
 index d8fe39e..f9c6a53 100644
 --- a/drivers/bluetooth/btbcm.c
