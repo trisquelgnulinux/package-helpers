@@ -6,8 +6,8 @@ index c4b6337f..8a3ac9ec 100644
  abi <abi/4.0>,
  include <tunables/global>
  
--profile firefox /usr/lib/firefox{,-esr,-beta,-devedition,-nightly}/firefox{,-esr,-bin} flags=(unconfined) {
-+profile abrowser /usr/lib/abrowser{,-esr,-beta,-devedition,-nightly}/abrowser{,-esr,-bin} flags=(unconfined) {
+-profile firefox /{usr/lib/firefox{,-esr,-beta,-devedition,-nightly},opt/firefox}/firefox{,-esr,-bin} flags=(unconfined) {
++profile abrowser /{usr/lib/abrowser{,-esr,-beta,-devedition,-nightly},opt/firefox}/abrowser{,-esr,-bin} flags=(unconfined) {
    userns,
  
    # Site-specific additions and overrides. See local/README for details.
