@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=6
+VERSION=7
 COMPONENT=main
 #Be aware to not pull/build before publish date on T12.
 
@@ -29,6 +29,8 @@ export FULLVERSION="$(sed 's|ubuntu3||' <<< $FULLVERSION)"
 
 # https://en.wikipedia.org/wiki/ISO_3166-2
 cat << EOF > data/templates/Trisquel.mirrors
+#LOC:AU
+https://mirrors.middlendian.com/trisquel-packages/
 #LOC:BR
 https://trisquel.c3sl.ufpr.br/packages/
 #LOC:CA
@@ -41,7 +43,6 @@ https://mirrors.dotsrc.org/trisquel/
 #LOC:EC
 https://mirror.cedia.org.ec/trisquel.packages
 #LOC:ES
-https://ftp.caliu.cat/pub/distribucions/trisquel/packages
 https://mirror.librelabucm.org/trisquel/
 #LOC:HU
 https://quantum-mirror.hu/mirrors/pub/trisquel/packages/
@@ -51,8 +52,6 @@ https://repo.jing.rocks/trisquel/
 https://ftp.acc.umu.se/mirror/trisquel/packages/
 https://ftpmirror1.infania.net/mirror/trisquel/packages/
 https://ftp.sunet.se/mirror/trisquel/packages/
-#LOC:SG
-https://mirror.freedif.org/trisquel/packages/
 #LOC:US
 https://archive.trisquel.info/trisquel/
 https://archive.trisquel.org/trisquel/
