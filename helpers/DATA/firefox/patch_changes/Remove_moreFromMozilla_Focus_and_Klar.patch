@@ -6,20 +6,20 @@ Based on https://git.parabola.nu/abslibre.git/diff/libre/iceweasel/9004-FSDG-mis
 diff -Nru a/browser/app/profile/firefox.js b/browser/app/profile/firefox.js
 --- a/browser/app/profile/firefox.js	2022-05-22 09:35:55.500675021 +0000
 +++ b/browser/app/profile/firefox.js	2022-05-22 21:54:34.961904349 +0000
-@@ -1007,11 +1007,11 @@
- // Toggling Search bar on and off in about:preferences
- pref("browser.preferences.search", true);
- #if defined(NIGHTLY_BUILD)
+@@ -1233,11 +1233,11 @@ pref("accessibility.typeaheadfind.linksonly", false);
+ pref("accessibility.typeaheadfind.flashBar", 1);
+ 
+ // Whether we can show the "Firefox Labs" section.
 -pref("browser.preferences.experimental", true);
 +pref("browser.preferences.experimental", false);
- #else
- pref("browser.preferences.experimental", false);
- #endif
+ // Whether we had to hide the "Firefox Labs" section because it would be empty.
+ pref("browser.preferences.experimental.hidden", false);
+ // Whether we show the "More from Mozilla" section.
 -pref("browser.preferences.moreFromMozilla", true);
 +pref("browser.preferences.moreFromMozilla", false);
- pref("browser.preferences.experimental.hidden", false);
- pref("browser.preferences.defaultPerformanceSettings.enabled", true);
  
+ // Used by settings to track whether the user customized advanced
+ // performance settings. Not used directly elsewhere.
 @@ -1907,7 +1907,7 @@
  pref("browser.promo.focus.disallowed_regions", "cn");
  

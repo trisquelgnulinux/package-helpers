@@ -19,14 +19,17 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=113
+VERSION=114
 EXTERNAL='deb-src http://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu $UPSTREAM main'
 REPOKEY=9BDB3D89CE49EC21
 
 . ./config
 
-#SHA HASHES UPDATES
+# SHA256 HASHES UPDATES
 GLEAN_CONF_RS_INITIAL=$(sha256sum third_party/rust/glean/src/configuration.rs|awk '{print$1}')
+# GNUZILLA ADDON REPLACEMENT
+OLD_WEB_DEV_URL="https://addons.mozilla.org/firefox/collections/mozilla/webdeveloper/"
+WEB_DEV_URL="https://gnuzilla.gnu.org/mozzarella/category.php?id=web-development"
 
 rm debian/control
 
@@ -37,6 +40,7 @@ sed '/async download.*/areturn;' -i services/settings/RemoteSettingsClient.sys.m
 # Disable activity-stream antifeatures.
 # These are not condensed into a single sed script to make it fail on individual commands that didn't change the source
 ActivityStream=browser/components/newtab/lib/ActivityStream.sys.mjs
+BAP_FirefoxJs=browser/app/profile/firefox.js
 sed '/^const DEFAULT_SITES/,/^])\;/c const DEFAULT_SITES = new Map\([[""]]\);' -i browser/components/newtab/lib/DefaultSites.sys.mjs
 sed '/"showSponsored"/,/value/s/value: true/value: false/' -i $ActivityStream
 sed '/"telemetry"/,/value/s/value: true/value: false/' -i $ActivityStream
@@ -51,29 +55,29 @@ sed 's/preffedRegions.includes.geo. .. ..locales .. locales.includes.locale./fal
 #echo "#header-asrouter-container{display: none!important;}" >> browser/components/newtab/css/activity-stream-linux.css
 #Disable «Sponsored tiles on the New Tab page» - firefox 92+94
 sed '/"showSponsoredTopSites"/,/value/s/value: true/value: false/' -i $ActivityStream
-sed -i '/activity-stream.showSponsored/s|true|false|g' browser/app/profile/firefox.js
+sed -i '/activity-stream.showSponsored/s|true|false|g' $BAP_FirefoxJs
 #Disable «Mozilla VPN» - firefox 94
-sed '/"browser.privatebrowsing.vpnpromourl"/s/https.*"/"/' -i browser/app/profile/firefox.js
+sed '/"browser.privatebrowsing.vpnpromourl"/s/https.*"/"/' -i $BAP_FirefoxJs
 grep -rl browser.vpn_promo.enabled | xargs -r sed -i '/browser.vpn_promo.enabled/s|true|false|'
 
 sed '/network.connectivity-service.IPv/s/http.*success.txt?ipv[46]//' -i modules/libpref/init/all.js
 sed 's/accounts-static.cdn.mozilla.net.*sync.services.mozilla.com//' -i modules/libpref/init/all.js
 
 # Disable 106 firefox-view and other firefox-branded popups
-sed -i '/browser.urlbar.quicksuggest.shouldShowOnboardingDialog/s|true|false|' browser/app/profile/firefox.js
-sed -i '/services.sync.prefs.sync.browser.firefox-view.feature-tour/s|true|false|' browser/app/profile/firefox.js
+sed -i '/browser.urlbar.quicksuggest.shouldShowOnboardingDialog/s|true|false|' $BAP_FirefoxJs
+sed -i '/services.sync.prefs.sync.browser.firefox-view.feature-tour/s|true|false|' $BAP_FirefoxJs
 ##disable firefox-view
 ##sed -i '/"browser.tabs.firefox-view"/s|true|false|' browser/app/profile/firefox.js #deprecated -v127
 ##disable ui tour
-sed -i '/browser.uitour.enabled/s|true|false|' browser/app/profile/firefox.js
+sed -i '/browser.uitour.enabled/s|true|false|' $BAP_FirefoxJs
 ##disable colorways closet
-sed -i '/browser.theme.colorway-closet/s|true|false|' browser/app/profile/firefox.js
+sed -i '/browser.theme.colorway-closet/s|true|false|' $BAP_FirefoxJs
 ##disable newtab intro - check adjustment for versions greater than 106
 #grep -rl browser.newtabpage.introShown |xargs -r sed -i '/browser.newtabpage.introShown/s|true|false|'
 ##Remove mailto handlers. 110
 sed -i '/kHandlerList = {/,/^ };/{/^  /d}' uriloader/exthandler/HandlerList.sys.mjs
 # keep contectRelevancy disabled (first appearence is false thus using /bin/sed)
-/bin/sed -i '/"toolkit.contentRelevancy.ingestEnabled"/s|,.*)|, false)|' browser/app/profile/firefox.js
+/bin/sed -i '/"toolkit.contentRelevancy.ingestEnabled"/s|,.*)|, false)|' $BAP_FirefoxJs
 
 # Remove .gitignore call as those files get cleaned out on dpkg tarball by default.
 remove_gitignore_from_json(){
@@ -120,12 +124,14 @@ grep -rl toolkit.telemetry.bhrPing.enabled  | xargs -r sed -i '/toolkit.telemetr
 grep -rl security.certerrors.recordEventTelemetry | xargs -r sed -i '/security.certerrors.recordEventTelemetry/s|true|false|'
 grep -rl services.sync.telemetry.maxPayloadCount modules/ | xargs -r sed -i '/services.sync.telemetry.maxPayloadCount/s|500|-1|'
 grep -rl services.sync.telemetry.submissionInterval modules/ | xargs -r sed -i '/services.sync.telemetry.submissionInterval/s|43200|-1|'
-echo 'pref("dom.security.unexpected_system_load_telemetry_enabled", false);' | tee -a browser/app/profile/firefox.js
-echo 'pref("toolkit.telemetry.hybridContent.enabled", false);' | tee -a browser/app/profile/firefox.js
+echo 'pref("dom.security.unexpected_system_load_telemetry_enabled", false);' | tee -a $BAP_FirefoxJs
+echo 'pref("toolkit.telemetry.hybridContent.enabled", false);' | tee -a $BAP_FirefoxJs
 # GPC opt-out entry added on 120 (not enabled yet).
-echo '//pref("privacy.globalprivacycontrol.enabled", true);' | tee -a browser/app/profile/firefox.js
+echo '//pref("privacy.globalprivacycontrol.enabled", true);' | tee -a $BAP_FirefoxJs
 # Disable translataion popup
 grep -rl browser.translations.automaticallyPopup modules/ | xargs -r sed -i '/browser.translations.automaticallyPopup/s|true|false|'
+# Disable Firefox Relay
+sed -i '/signon.firefoxRelay.feature/c pref("signon.firefoxRelay.feature", "disabled");' $BAP_FirefoxJs
 
 # Update third_party/rust/glean/src/configuration.rs sha256sum at third_party/rust/glean/.cargo-checksum.json
 GLEAN_CONF_RS_MODIFIED=$(sha256sum third_party/rust/glean/src/configuration.rs|awk '{print$1}')
@@ -135,6 +141,9 @@ sed_csum $GLEAN_CONF_RS_INITIAL \
 # Remove Google API key and calls
 sed '/Google API/,/google-api-keyfile/ d' debian/config/mozconfig.in -i
 sed '/"geo.provider.network.url"/s|https.*"|"|' -i modules/libpref/init/all.js
+
+# Disable save password in browser suggestion.
+#grep -lr '^pref("signon.rememberSignons"'| xargs sed -i "/^pref(\"signon.rememberSignons\"/s|true|false|" modules/libpref/init/all.js
 
 # Org branding
 sed 's/com.ubuntu/org.trisquel/' -i debian/config/mozconfig.in
@@ -168,123 +177,7 @@ sed "s/iceweasel,/iceweasel, firefox,/" -i debian/control.in
 sed -i /ubuntu-bookmarks/d debian/patches/series
 rm debian/patches/ubuntu-bookmarks*
 
-# Custom newtab images
-sed '/^]$/d' -i browser/components/newtab/data/content/tippytop/top_sites.json
-sed 's/}$/},/' -i browser/components/newtab/data/content/tippytop/top_sites.json
-
-cat << EOF >> browser/components/newtab/data/content/tippytop/top_sites.json
-  {
-    "domains": ["trisquel.info"],
-    "image_url": "images/trisquel.png",
-    "favicon_url": "favicons/trisquel.ico"
-  },
-  {
-    "domains": ["packages.trisquel.org"],
-    "image_url": "images/trisquel-packages.png",
-    "favicon_url": "favicons/trisquel-packages.ico"
-  },
-  {
-    "domains": ["gnu.org"],
-    "image_url": "images/gnu.png",
-    "favicon_url": "favicons/gnu.ico"
-  },
-  {
-    "domains": ["fsf.org"],
-    "image_url": "images/fsf.png",
-    "favicon_url": "favicons/fsf.ico"
-  },
-  {
-    "domains": ["directory.fsf.org"],
-    "image_url": "images/directory.png",
-    "favicon_url": "favicons/fsf.ico"
-  },
-  {
-    "domains": ["libreplanet.org"],
-    "image_url": "images/libreplanet.png",
-    "favicon_url": "favicons/libreplanet.ico"
-  },
-  {
-    "domains": ["fsfe.org"],
-    "image_url": "images/fsfe.png",
-    "favicon_url": "favicons/fsfe.ico"
-  },
-  {
-    "domains": ["wikipedia.org"],
-    "image_url": "images/wikipedia.png",
-    "favicon_url": "favicons/wikipedia.ico"
-  },
-  {
-    "domains": ["h-node.org"],
-    "image_url": "images/hnode.png",
-    "favicon_url": "favicons/hnode.ico"
-  }
-]
-EOF
-
-#uuidgen --sha1 --namespace @dns --name "trisquel.info"
-cat << TOP_JSON > services/settings/dumps/main/top-sites.json
-{
-  "data": [
-    {
-      "url": "https://trisquel.info/",
-      "order": 0,
-      "title": "Trisquel",
-      "id": "ec7f4843-6be5-5e86-870a-1c8383500a4b",
-      "last_modified": $(date +%s%N | cut -b1-13)
-    },
-    {
-      "url": "https://packages.trisquel.org/",
-      "order": 1,
-      "title": "Trisquel Packages",
-      "id": "27a9b035-0b8b-4472-97cb-b1866aba0740",
-      "last_modified": $(date +%s%N | cut -b1-13)
-    },
-    {
-      "url": "https://www.gnu.org/",
-      "order": 2,
-      "title": "GNU",
-      "id": "1baee931-751c-5993-b6fe-d86fbf78f9b0",
-      "last_modified": $(date +%s%N | cut -b1-13)
-    },
-    {
-      "url": "https://www.fsf.org/",
-      "order": 3,
-      "title": "FSF",
-      "id": "fcc60dd8-4d97-5aca-8e5d-784652c75818",
-      "last_modified": $(date +%s%N | cut -b1-13)
-    },
-    {
-      "url": "https://directory.fsf.org/",
-      "order": 4,
-      "title": "FSF Directory",
-      "id": "abe5bfb2-9487-5697-9f27-e0b782dfe006",
-      "last_modified": $(date +%s%N | cut -b1-13)
-    },
-    {
-      "url": "https://libreplanet.org/",
-      "order": 5,
-      "title": "LibrePlanet",
-      "id": "e3d2cf88-a4dc-5d2e-9f9a-f3ea241d17d8",
-      "last_modified": $(date +%s%N | cut -b1-13)
-    },
-    {
-      "url": "https://www.wikipedia.org/",
-      "order": 6,
-      "title": "Wikipedia",
-      "id": "02c295f5-54a8-5d29-8d1f-b619216b20c0",
-      "last_modified": $(date +%s%N | cut -b1-13)
-    },
-    {
-      "url": "https://h-node.org/",
-      "order": 7,
-      "title": "h-node",
-      "id": "c426481f-8c3f-53b8-b23a-431a91a1c7b4",
-      "last_modified": $(date +%s%N | cut -b1-13)
-    }
-  ],
-  "timestamp": $(date +%s%N | cut -b1-13)
-}
-TOP_JSON
+# Custom newtab images at DATA/firefox/search-custom/
 
 cp $DATA/newtab/*.ico browser/components/newtab/data/content/tippytop/favicons/
 cp $DATA/newtab/*.png browser/components/newtab/data/content/tippytop/images/
@@ -299,21 +192,12 @@ sed 's|ddg@|ddg-html@|' -i browser/components/search/extensions/ddg-html/manifes
 
 #Trisquel custom search engines
 cp -a $DATA/searchplugins/* browser/components/search/extensions/
-/bin/sed "/\"data\": \[/ r $DATA/searchplugins/trisquel.json" -i ./services/settings/dumps/main/search-config.json
-/bin/sed "/\"data\": \[/ r $DATA/searchplugins/trisquel-packages.json" -i ./services/settings/dumps/main/search-config.json
+/bin/sed "/\"data\": \[/ r $DATA/searchplugins/trisquel-v2.json" -i ./services/settings/dumps/main/search-config-v2.json
+/bin/sed "/\"data\": \[/ r $DATA/searchplugins/trisquel-packages-v2.json" -i ./services/settings/dumps/main/search-config-v2.json
 
 echo "Customizing search engines..."
 # Reprocess search preconfiguration dump
-python3 $DATA/process-json-files.py . browser/components/extensions/schemas/
-# Disable new search config 'til new one gets figured out (ref: https://hg.mozilla.org/mozilla-central/rev/bad743156b30)
-patch_Rp1 $DATA/firefox_permanently_enable_new_search_engine_config.patch
-# Restore favicons on old search config.
-patch_p1 $DATA/tmp_restore_favicons_on_old_search-engine_bar.patch
-for i in ddg-html  ddg  ecosia  qwant  wikipedia
-do
-    echo "> tmp restore of $i favicon"
-    cp $DATA/tmp_favicons/$i.ico browser/components/search/extensions/$i/favicon.ico
-done
+python3 $DATA/process-json-files.py . $DATA/search-custom/
 
 cat << EOF > debian/distribution.ini
 [Global]
@@ -340,6 +224,13 @@ cp -a $DATA/branding/* browser/branding/official
 cp -a $DATA/branding/* browser/branding/unofficial
 cp -a $DATA/branding/* browser/branding/nightly
 cp -a $DATA/branding/* browser/branding/aurora
+
+# Replace/remove brand name on used view(s) to avoid branding issues.
+for i in $(find . -name brandings.ftl)
+do
+    /bin/sed -i '/firefoxview-brand-name/s|Firefox View|Abrowser View|' $i
+    sed -i 's|= Firefox |= |' $i
+done
 
 sed '/about-wordmark.svg/d' -i browser/base/content/aboutDialog.css
 echo '#warningDesc, #communityExperimentalDesc, #communityDesc, #contributeDesc {display:none!important}' >> browser/base/content/aboutDialog.css
@@ -490,13 +381,7 @@ find browser/branding/ -name about-logo-private@2x.png | xargs -n1 cp $DATA/debu
 find browser/branding/ -name PrivateBrowsing_70.png | xargs -n1 cp $DATA/debug_brand/PrivateBrowsing_70.png
 find browser/branding/ -name PrivateBrowsing_150.png | xargs -n1 cp $DATA/debug_brand/PrivateBrowsing_150.png
 
-# Replace/remove brand name on used view(s) to avoid branding issues.
-sed -i '/firefoxview-brand-name/s|Firefox View|Abrowser View|' toolkit/locales/en-US/toolkit/branding/brandings.ftl
-sed -i 's|= Firefox |= |' toolkit/locales/en-US/toolkit/branding/brandings.ftl
-
 # Replace addons placeholder for the gnuzilla mozzarella.
-OLD_WEB_DEV_URL="https://addons.mozilla.org/firefox/collections/mozilla/webdeveloper/"
-WEB_DEV_URL="https://gnuzilla.gnu.org/mozzarella/category.php?id=web-development"
 find l10n/ -name aboutAddons.ftl | xargs -r sed -i '/.placeholder/s|addons.mozilla.org|gnuzilla.gnu.org|g'
 sed -i "s|$OLD_WEB_DEV_URL|$WEB_DEV_URL|" devtools/client/menus.js
 
@@ -519,7 +404,7 @@ do
     [ -d $HOMEDIR/.mozilla/firefox ] || continue
     echo Linking $HOMEDIR/.mozilla/firefox into $HOMEDIR/.mozilla/abrowser
     ln -s $HOMEDIR/.mozilla/firefox $HOMEDIR/.mozilla/abrowser
-done 
+done
 fi
 exit 0 ' >> debian/abrowser.postinst.in
 

@@ -294,3 +294,10 @@ defaultPref("browser.search.serpEventTelemetry.enabled",false);
 
 // Disable Privacy-Preserving Attribution submition
 pref("dom.private-attribution.submission.enabled", false);
+
+// Disable Machine Learning
+defaultPref("browser.ml.enabled", false);
+defaultPref("browser.ml.chat.enabled", false);
+// Hide from UI
+defaultPref("browser.ml.chat.hideFromLabs", true);
+defaultPref("browser.ml.chat.hideLabsShortcuts", true);
