@@ -2,7 +2,7 @@
 #
 #    Copyright (C) 2022 Trisquel GNU/Linux developers
 #                       <trisquel-devel@listas.trisquel.info>
-#    Copyright (C) 2022  Luis Guzman <ark@switnet.org>
+#    Copyright (C) 2024  Luis Guzman <ark@switnet.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -27,7 +27,6 @@ BACKPORT=true
 
 . ./config
 
-sed -i 's|kdevplatform-dev|kdevelop-dev|' debian/control
 
 changelog "Backport latest release from kde neon archive."
 
