@@ -2,7 +2,7 @@
 #
 #    Copyright (C) 2022 Trisquel GNU/Linux developers
 #                       <trisquel-devel@listas.trisquel.info>
-#    Copyright (C) 2022  Luis Guzman <ark@switnet.org>
+#    Copyright (C) 2024  Luis Guzman <ark@switnet.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -19,16 +19,13 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-#Backport from jammy kde neon to aramo backports.
 VERSION=1
-EXTERNAL='deb-src http://archive.neon.kde.org/user jammy main'
+EXTERNAL='deb-src http://archive.neon.kde.org/user $UPSTREAM main'
 REPOKEY="E6D4736255751E5D"
 BACKPORT=true
 
 . ./config
 
-sed -i 's|kdevplatform-dev|kdevelop-dev|' debian/control
-sed -i 's|llvm-13-dev|llvm-14-dev|' debian/control
 
 changelog "Backport latest release from kde neon archive."
 
