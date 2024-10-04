@@ -10,3 +10,27 @@ index 2086de0..5499c0a 100644
                                           -e '^XSBC-Original-Maintainer:.*<debian-qt-kde@lists\.debian\.org>[[:space:]]*$$' debian/control)
  
  # Distribution-specific policy file may not exist. It is fine
+diff --git a/qt-kde-team/2/policy.mk b/qt-kde-team/2/policy.mk
+index bef6af59..7b40cfa7 100644
+--- a/qt-kde-team/2/policy.mk
++++ b/qt-kde-team/2/policy.mk
+@@ -5,6 +5,7 @@ dqk_disable_policy_check ?=
+ dqk_distribution := $(shell dpkg-parsechangelog | sed -n '/^Distribution:/{ s/^Distribution:[[:space:]]*//g; p; q }')
+ dqk_kde_major_version := $(shell echo "$(dqk_upstream_version)" | cut -d. -f1-2)
+ dqk_maintainer_check := $(shell grep -e '^Maintainer:.*<debian-qt-kde@lists\.debian\.org>[[:space:]]*$$' \
++                                     -e '^Maintainer:.*<trisquel-devel@listas\.trisquel\.info>[[:space:]]*$$' \
+                                      -e '^XSBC-Original-Maintainer:.*<debian-qt-kde@lists\.debian\.org>[[:space:]]*$$' debian/control)
+ 
+ # Distribution-specific policy file may not exist. It is fine
+diff --git a/qt-kde-team/3/policy.mk b/qt-kde-team/3/policy.mk
+index bef6af59..7b40cfa7 100644
+--- a/qt-kde-team/3/policy.mk
++++ b/qt-kde-team/3/policy.mk
+@@ -5,6 +5,7 @@ dqk_disable_policy_check ?=
+ dqk_distribution := $(shell dpkg-parsechangelog | sed -n '/^Distribution:/{ s/^Distribution:[[:space:]]*//g; p; q }')
+ dqk_kde_major_version := $(shell echo "$(dqk_upstream_version)" | cut -d. -f1-2)
+ dqk_maintainer_check := $(shell grep -e '^Maintainer:.*<debian-qt-kde@lists\.debian\.org>[[:space:]]*$$' \
++                                     -e '^Maintainer:.*<trisquel-devel@listas\.trisquel\.info>[[:space:]]*$$' \
+                                      -e '^XSBC-Original-Maintainer:.*<debian-qt-kde@lists\.debian\.org>[[:space:]]*$$' debian/control)
+ 
+ # Distribution-specific policy file may not exist. It is fine
