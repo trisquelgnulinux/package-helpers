@@ -17,13 +17,15 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 EXTERNAL='deb-src http://ppa.launchpad.net/nextcloud-devs/client/ubuntu $UPSTREAM main'
 REPOKEY="60EE47FBAD3DD469"
 BACKPORT=true
 
 . ./config
 
+# Add trisquel as maintainer to pass checks on custom packages.
+patch_p1 $DATA/000_add_trisquel_maintainer.patch
 
 changelog "Upgrade backport as a dependency for nextcloud-desktop"
 
