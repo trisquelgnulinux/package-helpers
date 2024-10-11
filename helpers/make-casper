@@ -25,9 +25,6 @@ VERSION=18
 # Only generate the locale selected at boot
 sed 's/keep-existing/keep-existing $LANG/' -i scripts/casper-bottom/14locales
 
-# Make sure we disable ureadahead
-sed 's/readahead-list/ureadahead/' -i scripts/casper-bottom/25configure_init
-
 # Enable a11y on mate
 sed '/gset org.gnome.desktop.interface toolkit-accessibility true/a \ \ \ \ \ \ \ \ gset org.mate.desktop.interface accessibility true' -i bin/casper-a11y-enable
 sed "/gset org.gnome.desktop.interface toolkit-accessibility true/a \ \ \ \ \ \ \ \ gset com.canonical.a11y-profile-manager active-profile \"'blindness\'\"" -i bin/casper-a11y-enable
