@@ -17,22 +17,16 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=4
+VERSION=3
 EXTERNAL='deb-src http://ppa.launchpad.net/nextcloud-devs/client/ubuntu $UPSTREAM main'
 REPOKEY="60EE47FBAD3DD469"
 BACKPORT=true
 
 . ./config
 
-sed -i "s|Utility|Network|" mirall.desktop.in
+# Add trisquel as maintainer to pass checks on custom packages.
+patch_p1 $DATA/000_add_trisquel_maintainer.patch
 
-#Prevent ppc64el arch since qtwebengine is not build for ppc64el.
-sed -i 's|Architecture: any|Architecture: amd64 arm64 armhf i386 mips64el mipsel|g' debian/control
-
-# l10n fixes
-## es
-grep -rl 'antes de sincronizar' |grep _es_| xargs -r sed -i "s|Perdir confirmaci´pón|Pedir confirmación|"
-
-changelog "Backported into Trisquel"
+changelog "Upgrade backport as a dependency for nextcloud-desktop"
 
 package
