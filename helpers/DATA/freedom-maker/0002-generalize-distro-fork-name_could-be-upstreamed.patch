@@ -11,22 +11,31 @@ index ca998d9..1b051e2 100644
  # initramfs-tools is a dependency for the kernel-image package. However, when
  # kernel is not installed, as in case of Raspberry Pi image, explicit
  # dependency is needed.
-@@ -114,14 +116,15 @@ class ImageBuilder(object):  # pylint: disable=too-many-instance-attributes
-             elif 'contrib' in self.release_components:
-                 free_tag = 'contrib'
-             else:
--                free_tag = 'free'
-+                free_tag = 'libre'
-         else:
--            free_tag = 'nonfree'
-+            free_tag = 'libre'
+diff --git a/freedommaker/builder.py b/freedommaker/builder.py
+index e4ccddd5..1ec3026b 100644
+--- a/freedommaker/builder.py
++++ b/freedommaker/builder.py
+@@ -87,10 +87,10 @@ class ImageBuilder:  # pylint: disable=too-many-instance-attributes
+         """Return the Debian release components to use for the build."""
+         components = ['main']
+         if self.include_non_free_firmware:
+-            components.append('non-free-firmware')
++            components.append('libre')
  
+         if self.include_contrib:
+-            components.append('contrib')
++            components.append('libre')
+ 
+         if self.arguments.release_component:
+             for component in self.arguments.release_component:
+@@ -120,8 +120,9 @@ class ImageBuilder:  # pylint: disable=too-many-instance-attributes
+         """Return the base file name of the final image."""
          build_stamp = self.arguments.build_stamp
          build_stamp = build_stamp + '_' if build_stamp else ''
--        return 'freedombox-{distribution}-{free_tag}_{build_stamp}{machine}' \
+-        return 'freedombox-{distribution}_{build_stamp}{machine}' \
 +        return '{distro}freedombox-{distribution}-{free_tag}_{build_stamp}_{machine}' \
              '-{architecture}'.format(
 +                distro=DISTRO_BRAND.lower() + '-' if DISTRO_BRAND else '',
-                 distribution=self.arguments.distribution, free_tag=free_tag,
+                 distribution=self.arguments.distribution,
                  build_stamp=build_stamp, machine=self.machine,
                  architecture=self.architecture)

@@ -5,12 +5,12 @@ index ff7f807..ad94e1c 100644
 @@ -10,7 +10,7 @@ from .arm import ARMImageBuilder
  class A20ImageBuilder(ARMImageBuilder):
      """Base image builder for all Allwinner A20 board based targets."""
-     architecture = 'armhf'
--    kernel_flavor = 'armmp-lpae'
-+    kernel_flavor = 'generic'
-     u_boot_path = None
+     architecture: str = 'armhf'
+-    kernel_flavor: str = 'armmp-lpae'
++    kernel_flavor: str = 'generic'
+     u_boot_path: str | None = None
+     u_boot_variant: str = 'sunxi'
  
-     def install_boot_loader(self, state):
 diff --git a/freedommaker/builders/a64.py b/ffreedommaker/builders/a64.py
 index 7314724..21f3ae1 100644
 --- a/freedommaker/builders/a64.py
@@ -18,22 +18,25 @@ index 7314724..21f3ae1 100644
 @@ -12,7 +12,7 @@ from .arm import ARMImageBuilder
  class A64ImageBuilder(ARMImageBuilder):
      """Image builder for all Allwinner A64 board targets."""
-     architecture = 'arm64'
--    kernel_flavor = 'arm64'
-+    kernel_flavor = 'generic'
-     u_boot_target = None
+     architecture: str = 'arm64'
+-    kernel_flavor: str = 'arm64'
++    kernel_flavor: str = 'generic'
+     u_boot_target: str | None = None
  
      def __init__(self, *args, **kwargs):
 diff --git a/freedommaker/builders/amd64.py b/ffreedommaker/builders/amd64.py
 index d577ece..1b758f8 100644
 --- a/freedommaker/builders/amd64.py
 +++ b/ffreedommaker/builders/amd64.py
-@@ -9,4 +9,4 @@ from .amd_intel import AMDIntelImageBuilder
+@@ -9,7 +9,7 @@ from .amd_intel import AMDIntelImageBuilder
  class AMD64ImageBuilder(AMDIntelImageBuilder):
      """Image builder for all amd64 targets."""
      architecture = 'amd64'
 -    kernel_flavor = 'amd64'
 +    kernel_flavor = 'generic'
+     include_non_free_firmware = True
+ 
+     def __init__(self, *args, **kwargs):
 diff --git a/freedommaker/builders/arm64.py b/ffreedommaker/builders/arm64.py
 index 4576d3e..fc593f9 100644
 --- a/freedommaker/builders/arm64.py
@@ -77,12 +80,15 @@ diff --git a/freedommaker/builders/i386.py b/ffreedommaker/builders/i386.py
 index 98a48da..692122d 100644
 --- a/freedommaker/builders/i386.py
 +++ b/ffreedommaker/builders/i386.py
-@@ -9,4 +9,4 @@ from .amd_intel import AMDIntelImageBuilder
+@@ -9,7 +9,7 @@ from .amd_intel import AMDIntelImageBuilder
  class I386ImageBuilder(AMDIntelImageBuilder):
      """Image builder for all i386 targets."""
      architecture = 'i386'
 -    kernel_flavor = '686'
 +    kernel_flavor = 'generic'
+     include_non_free_firmware = True
+ 
+     def __init__(self, *args, **kwargs):
 diff --git a/freedommaker/builders/qemu_amd64.py b/ffreedommaker/builders/qemu_amd64.py
 index bb28f0a..61e5863 100644
 --- a/freedommaker/builders/qemu_amd64.py

@@ -16,23 +16,23 @@ index c5175a8..a479721 100644
  LOG_LEVEL = 'debug'
  HOSTNAME = 'freedombox'
 diff --git a/freedommaker/library.py b/freedommaker/library.py
-index f8ea629..04954b5 100644
+index 28f10cfa..b821226b 100644
 --- a/freedommaker/library.py
 +++ b/freedommaker/library.py
-@@ -493,12 +493,12 @@ deb {mirror} {distribution}-updates {components}
+@@ -527,12 +527,12 @@ deb {mirror} {distribution}-updates {components}
  deb-src {mirror} {distribution}-updates {components}
  '''
      security_template = '''
 -deb http://security.debian.org/debian-security/ {distribution}-security {components}
 -deb-src http://security.debian.org/debian-security/ {distribution}-security {components}
-+deb {mirror} {distribution}-security {components}
-+deb-src {mirror} {distribution}-security {components}
++deb https://archive.trisquel.org/trisquel/ {distribution}-security {components}
++deb-src https://archive.trisquel.org/trisquel/ {distribution}-security {components}
  '''
      backports_template = f'''
--deb http://deb.debian.org/debian {STABLE_CODENAME}-backports main
--deb-src http://deb.debian.org/debian {STABLE_CODENAME}-backports main
-+#deb {mirror} {distribution}-backports {components}
-+#deb-src {mirror} {distribution}-backports {components}
+-deb http://deb.debian.org/debian {releases.STABLE_CODENAME}-backports main
+-deb-src http://deb.debian.org/debian {releases.STABLE_CODENAME}-backports main
++deb {mirror} {distribution}-backports {components}
++deb-src {mirror} {distribution}-backports {components}
  '''
      file_path = path_in_mount(state, 'etc/apt/sources.list')
      with open(file_path, 'w') as file_handle:
