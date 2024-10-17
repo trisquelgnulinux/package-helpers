@@ -1,0 +1,13 @@
+diff --git a/debian/rules b/debian/rules
+index 0740cdee..cde335f9 100755
+--- a/debian/rules
++++ b/debian/rules
+@@ -2,7 +2,7 @@
+ 
+ include /usr/share/dpkg/architecture.mk
+ 
+-ifeq ($(shell dpkg-vendor --is Ubuntu && echo yes) $(DEB_HOST_ARCH), yes i386)
++ifeq ($(shell dpkg-vendor --is Ubuntu && echo yes || dpkg-vendor --is Trisquel && echo yes) $(DEB_HOST_ARCH), yes i386)
+    BUILD_PACKAGES += -Nnetwork-manager
+    NETPLAN += --disable-netplan
+ endif

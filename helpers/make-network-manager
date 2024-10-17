@@ -1,5 +1,6 @@
 #!/bin/sh
 #
+#    Copyright (C) 2024  Luis Guzmán <ark@switnet.org>
 #    Copyright (C) 2020  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
@@ -17,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 COMPONENT=main
 
 . ./config
@@ -29,6 +30,9 @@ sed '/send host-name/s|added by NetworkManager|Enable at /etc/dhcp/dhclient.conf
 sed '/send fqdn/s|added by NetworkManager|Enable at /etc/dhcp/dhclient.conf|' -i src/core/dhcp/tests/test-dhcp-dhclient.c
 sed '/HOSTNAME4_TAG/s|added by NetworkManager|Enable at /etc/dhcp/dhclient.conf|' -i src/core/dhcp/nm-dhcp-dhclient-utils.c
 sed '/FQDN_TAG/s|added by NetworkManager|Enable at /etc/dhcp/dhclient.conf|' -i src/core/dhcp/nm-dhcp-dhclient-utils.c
+
+# Patch debian/rules to match Trisquel on i386 build.
+patch_p1 $DATA/define_trisquel_for_i386.patch
 
 changelog "Do not send hostname on dhcp, plus other features"
 package
