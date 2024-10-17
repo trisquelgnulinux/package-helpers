@@ -1,6 +1,9 @@
 #! /usr/bin/python3
-
-#    Copyright (C) 2020, 2021  grizzlyuser <grizzlyuser@protonmail.com>
+#    Copyright (C) 2024  Luis Guzmán <ark@switnet.org>
+#    Copyright (C) 2020, 2021, 2022, 2023, 2024 grizzlyuser <grizzlyuser@protonmail.com>
+#    Based on: https://gitlab.trisquel.org/trisquel/wrapage-helpers/-/blob/81881d89b2bf7d502dd14fcccdb471fec6f6b206/helpers/DATA/firefox/reprocess-search-config.py
+#    Below is the notice from the original author:
+#
 #    Copyright (C) 2020, 2021  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
@@ -23,6 +26,7 @@ import time
 import copy
 import argparse
 import pathlib
+import logging
 from collections import namedtuple
 from jsonschema import validate
 
@@ -41,12 +45,42 @@ parser.add_argument(
     type=int,
     default=2,
     help='indent for pretty printing of output files')
+parser.add_argument(
+    '-l',
+    '--loglevel',
+    choices=logging._nameToLevel.keys(),
+    default=logging.INFO,
+    help='logging level')
 arguments = parser.parse_args()
+
+logging.basicConfig(level=arguments.loglevel)
+logger = logging.getLogger(str(pathlib.Path(__file__).name))
 
 File = namedtuple('File', ['path', 'content'])
 
 
-class RemoteSettings:
+class JsonProcessor:
+    @classmethod
+    def process(cls):
+        parsed_jsons = []
+        for json_path in cls.JSON_PATHS:
+            logger.info('Reading input: ' + str(json_path) + '...')
+            with json_path.open(encoding='utf-8') as file:
+                parsed_jsons.append(File(json_path, json.load(file)))
+
+        parsed_schema = None
+        if hasattr(cls, "SCHEMA_PATH"):
+            logger.info('Reading schema: ' + str(json_path) + '...')
+            with cls.SCHEMA_PATH.open() as file:
+                parsed_schema = json.load(file)
+
+        processed = cls.process_parsed(parsed_jsons, parsed_schema)
+        with processed.path.open('w') as file:
+            json.dump(processed.content, file, indent=arguments.indent)
+            logger.info('Wrote: ' + str(processed.path))
+
+
+class RemoteSettings(JsonProcessor):
     DUMPS_PATH_RELATIVE = 'services/settings/dumps'
     DUMPS_PATH_ABSOLUTE = arguments.MAIN_PATH / DUMPS_PATH_RELATIVE
 
@@ -75,11 +109,12 @@ class RemoteSettings:
 
     @classmethod
     def now(cls):
-        return int(round(time.time() / 10 ** 6))
+        return int(round(time.time() * 1000))
 
     @classmethod
     def process_raw(cls, unwrapped_jsons, parsed_schema):
         timestamps, result = [], []
+
         for collection in unwrapped_jsons:
             should_modify_collection = cls.should_modify_collection(collection)
             for record in collection.content:
@@ -110,11 +145,21 @@ class RemoteSettings:
         return File(cls.OUTPUT_PATH, result)
 
     @classmethod
-    def process(cls, parsed_jsons, parsed_schema):
+    def process_parsed(cls, parsed_jsons, parsed_schema):
         return cls.wrap(
             cls.process_raw(
                 cls.unwrap(parsed_jsons),
                 parsed_schema))
+
+
+class EmptyRemoteSettings(RemoteSettings):
+    @classmethod
+    def should_drop_record(cls, search_engine):
+        return True
+
+    @classmethod
+    def process_record(cls, record):
+        return record
 
 
 class Changes(RemoteSettings):
@@ -132,7 +177,7 @@ class Changes(RemoteSettings):
         changes = []
 
         for collection in unwrapped_jsons:
-            if collection.path not in (RemoteSettings.DUMPS_PATH_ABSOLUTE / 'main/example.json', RemoteSettings.DUMPS_PATH_ABSOLUTE / 'main/search-config-v2.json'):
+            if collection.path != RemoteSettings.DUMPS_PATH_ABSOLUTE / 'main/example.json':
                 latest_change = {}
                 latest_change[cls._LAST_MODIFIED_KEY_NAME] = cls.get_collection_timestamp(
                     collection)
@@ -145,53 +190,108 @@ class Changes(RemoteSettings):
         return File(cls.OUTPUT_PATH, changes)
 
 
-class SearchConfig(RemoteSettings):
+class SearchConfigV2(RemoteSettings):
     JSON_PATHS = (
         RemoteSettings.DUMPS_PATH_ABSOLUTE /
-        'main/search-config.json',
+        'main/search-config-v2.json',
     )
     SCHEMA_PATH = arguments.MAIN_PATH / \
-        'toolkit/components/search/schema/search-config-schema.json'
+        'toolkit/components/search/schema/search-config-v2-schema.json'
     OUTPUT_PATH = JSON_PATHS[0]
 
-    _DUCKDUCKGO_SEARCH_ENGINE_ID = 'ddg@search.mozilla.org'
+    _DUCKDUCKGO_SEARCH_ENGINE_IDENTIFIER = 'ddg'
 
     @classmethod
-    def should_drop_record(cls, search_engine):
-        return search_engine['webExtension']['id'] not in (
-            cls._DUCKDUCKGO_SEARCH_ENGINE_ID, 'wikipedia@search.mozilla.org',
-            'trisquel@search.mozilla.org', 'trisquel-packages@@search.mozilla.org',
-            'qwant@search.mozilla.org', 'ecosia@search.mozilla.org')
+    def should_drop_record(cls, record):
+        if record['recordType'] != 'engine':
+            return False
+
+        identifier = record['identifier']
+        excluded_identifiers = ['ecosia', 'qwant', 'trisquel', 'trisquel-packages']
+
+        return (
+            identifier != cls._DUCKDUCKGO_SEARCH_ENGINE_IDENTIFIER and
+            not (identifier.startswith('wikipedia') or identifier in excluded_identifiers)
+        )
 
     @classmethod
-    def process_record(cls, search_engine):
-        [search_engine.pop(key, None)
-         for key in ['extraParams', 'telemetryId']]
+    def process_record(cls, record):
+        if record['recordType'] == 'defaultEngines':
+            return cls.process_default_engines(record)
+        elif record['recordType'] == 'engine':
+            return cls.process_engine(record)
+        elif record['recordType'] == 'engineOrders':
+            return cls.process_engine_orders(record)
+        else:
+            return record
 
-        general_specifier = {}
-        for specifier in search_engine['appliesTo'].copy():
-            if 'application' in specifier:
-                if 'distributions' in specifier['application']:
-                    search_engine['appliesTo'].remove(specifier)
-                    continue
-                specifier['application'].pop('extraParams', None)
+    @classmethod
+    def process_default_engines(cls, default_engines):
+        default_engines['globalDefault'] = cls._DUCKDUCKGO_SEARCH_ENGINE_IDENTIFIER
+        default_engines['specificDefaults'] = []
+        return default_engines
 
-            if 'included' in specifier and 'everywhere' in specifier[
-                    'included'] and specifier['included']['everywhere']:
-                if search_engine['webExtension']['id'] == cls._DUCKDUCKGO_SEARCH_ENGINE_ID:
-                    specifier['default'] = 'yes'
-                general_specifier = specifier
+    @classmethod
+    def process_engine(cls, engine):
+        engine['base'].pop('partnerCode', None)
+        engine['base']['urls']['search'].pop('params', None)
 
-        if not general_specifier:
-            general_specifier = {'included': {'everywhere': True}}
-            search_engine['appliesTo'].insert(0, general_specifier)
-        if search_engine['webExtension']['id'] == cls._DUCKDUCKGO_SEARCH_ENGINE_ID:
-            general_specifier['default'] = 'yes'
+        if engine['identifier'] == cls._DUCKDUCKGO_SEARCH_ENGINE_IDENTIFIER:
+            engine['base']['name'] += ' HTML'
+            engine['base']['urls']['search']['base'] = 'https://html.duckduckgo.com/html'
 
-        return search_engine
+        allRegions_prefixes = ['ecosia', 'qwant', 'trisquel']
+
+        if any(engine['identifier'].startswith(prefix) for prefix in allRegions_prefixes) or \
+           engine['identifier'] == cls._DUCKDUCKGO_SEARCH_ENGINE_IDENTIFIER:
+            engine['variants'] = [{'environment': {'allRegionsAndLocales': True}}]
+
+        return engine
+
+    @classmethod
+    def process_engine_orders(cls, engine_orders):
+        engine_orders['orders'] = []
+        return engine_orders
+
+class SearchConfigOverridesV2(EmptyRemoteSettings):
+    JSON_PATHS = (
+        RemoteSettings.DUMPS_PATH_ABSOLUTE /
+        'main/search-config-overrides-v2.json',
+    )
+    SCHEMA_PATH = arguments.MAIN_PATH / \
+        'toolkit/components/search/schema/search-config-overrides-v2-schema.json'
+    OUTPUT_PATH = JSON_PATHS[0]
 
 
-class TippyTopSites:
+class SearchDefaultOverrideAllowlist(EmptyRemoteSettings):
+    JSON_PATHS = (
+        RemoteSettings.DUMPS_PATH_ABSOLUTE /
+        'main/search-default-override-allowlist.json',
+    )
+    SCHEMA_PATH = arguments.MAIN_PATH / \
+        'toolkit/components/search/schema/search-default-override-allowlist-schema.json'
+    OUTPUT_PATH = JSON_PATHS[0]
+
+
+class SearchTelemetryV2(EmptyRemoteSettings):
+    JSON_PATHS = (
+        RemoteSettings.DUMPS_PATH_ABSOLUTE /
+        'main/search-telemetry-v2.json',
+    )
+    SCHEMA_PATH = arguments.MAIN_PATH / \
+        'browser/components/search/schema/search-telemetry-v2-schema.json'
+    OUTPUT_PATH = JSON_PATHS[0]
+
+
+class UrlClassifierSkipUrls(EmptyRemoteSettings):
+    JSON_PATHS = (
+        RemoteSettings.DUMPS_PATH_ABSOLUTE /
+        'main/url-classifier-skip-urls.json',
+    )
+    OUTPUT_PATH = JSON_PATHS[0]
+
+
+class TippyTopSites(JsonProcessor):
     JSON_PATHS = (
         arguments.MAIN_PATH /
         'browser/components/newtab/data/content/tippytop/top_sites.json',
@@ -199,7 +299,7 @@ class TippyTopSites:
         'tippytop/top_sites.json')
 
     @classmethod
-    def process(cls, parsed_jsons, parsed_schema):
+    def process_parsed(cls, parsed_jsons, parsed_schema):
         tippy_top_sites_main = parsed_jsons[0]
         tippy_top_sites_branding = parsed_jsons[1]
         result = tippy_top_sites_branding.content + \
@@ -234,19 +334,15 @@ class TopSites(RemoteSettings):
 
 # To reflect the latest timestamps, Changes class should always come after
 # all other RemoteSettings subclasses
-processors = (SearchConfig, Changes)
+processors = (
+    SearchConfigV2,
+    SearchConfigOverridesV2,
+    SearchDefaultOverrideAllowlist,
+    SearchTelemetryV2,
+    UrlClassifierSkipUrls,
+    TopSites,
+    Changes,
+    TippyTopSites)
 
 for processor in processors:
-    parsed_jsons = []
-    for json_path in processor.JSON_PATHS:
-        with json_path.open(encoding='utf-8') as file:
-            parsed_jsons.append(File(json_path, json.load(file)))
-
-    parsed_schema = None
-    if hasattr(processor, "SCHEMA_PATH"):
-        with processor.SCHEMA_PATH.open() as file:
-            parsed_schema = json.load(file)
-
-    processed = processor.process(parsed_jsons, parsed_schema)
-    with processed.path.open('w') as file:
-        json.dump(processed.content, file, indent=arguments.indent)
+    processor.process()
