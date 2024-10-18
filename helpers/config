@@ -1,5 +1,6 @@
 #!/bin/bash
 #
+#    Copyright (C)      2024  Luis Guzmán <ark@switnet.org>
 #    Copyright (C) 2008-2020  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C)      2014  Santiago Rodriguez <santi@trisquel.info>
 #    Copyright (C)      2019  David Trudgian <dave@trudgian.net>
@@ -207,6 +208,10 @@ dpkg-source -b -I.falsefileextension99 $PACKAGE-$FULLVERSION
 rm -rf ${LOCAL_APT}
 echo "Trisquel source package built!"
 
+if grep -q "dpkg-vendor" $PACKAGE-$FULLVERSION/debian/rules; then
+    printf "> Note: 'dpkg-vendor' is present on debian/rules "
+    printf "a distro related behavior might be in place.\n"
+fi
 }
 
 sedhelper2(){
