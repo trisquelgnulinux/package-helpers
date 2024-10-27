@@ -1,5 +1,6 @@
 #!/bin/sh
 #
+#    Copyright (C) 2024 Luis Guzmán <ark@switnet.org>
 #    Copyright (C) 2008-2022  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C) 2019 Mason Hock <mason@masonhock.com>
 #
@@ -18,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=12
+VERSION=13.1
 QUILT=skip
 . ./config
 
@@ -26,6 +27,24 @@ export QUILT_PATCHES=debian/patches
 quilt push -a
 
 cat << EOF >> debian/control
+
+Package: plymouth-theme-trisquel-logo
+Architecture: linux-any
+Depends:
+ \${misc:Depends},
+ \${shlibs:Depends},
+ plymouth (= \${binary:Version}),
+ plymouth-label (= \${binary:Version}),
+Provides: plymouth-theme,
+Description: boot animation, logger and I/O multiplexer - trisquel-logo theme
+ Plymouth provides a boot-time I/O multiplexing framework - the most obvious
+ use for which is to provide an attractive graphical animation in place of
+ the text messages that normally get shown during boot. (The messages are
+ instead redirected to a logfile for later viewing.) However, in event-driven
+ boot systems Plymouth can also usefully handle user interaction such as
+ password prompts for encrypted file systems.
+ .
+ This package contains the trisquel-logo theme.
 
 Package: plymouth-theme-sugar
 Architecture: linux-any
@@ -57,6 +76,7 @@ cp $DATA/plymouth-theme-trisquel-logo.postinst debian/plymouth-theme-sugar.posti
 cp $DATA/plymouth-theme-trisquel-logo.prerm debian/plymouth-theme-sugar.prerm
 
 echo usr/share/plymouth/themes/sugar/ > debian/plymouth-theme-sugar.install
+echo usr/share/plymouth/themes/trisquel-logo/ > debian/plymouth-theme-trisquel-logo.install
 
 /bin/sed 's/trisquel-logo/sugar/g' debian/plymouth-theme-sugar* -i
 
@@ -89,8 +109,8 @@ replace "Name=Kubuntu" "Name=Trisquel-mini" .
 replace "Name=Ubuntu" "Name=Trisquel" .
 replace 2c001e 000000 .
 replace ff4012 0051FF .
-replace "Ubuntu $UPSTREAMRELEASE" "Trisquel $REVISION" .
 replace "Kubuntu $UPSTREAMRELEASE" "Trisquel mini $REVISION" .
+replace "Ubuntu $UPSTREAMRELEASE" "Trisquel $REVISION" .
 replace "Ubuntu [0-9][0-9].[0-9][0-9] LTS" "Trisquel $REVISION"
 
 cp $DATA/*.png themes/script
@@ -109,27 +129,36 @@ cp themes/script -a themes/trisquel-logo
 cp $DATA/background.png themes/trisquel-logo/
 cp $DATA/trisquel_logo.png themes/trisquel-logo/trisquel-logo.png
 cp $DATA/trisquel_logo16.png themes/trisquel-logo/trisquel-logo16.png
-sed -i 's/progress_bar.png/progress_bar.png\\\n\t\tbackground.png\\\n\t\ttrisquel_logo16.png/' themes/trisquel-logo/Makefile*
+for i in trisquel_logo16.png background.png
+do
+    sed -i "/'progress_bar.png'/a\ \ '$i'," themes/trisquel-logo/meson.build
+done
 sed s:/script:/trisquel-logo:g -i themes/trisquel-logo/script.plymouth.in
 sed 's:=Script:=Trisquel-logo:g' -i themes/trisquel-logo/script.plymouth.in
-sed 's/script\.script/trisquel-logo\.rtoken/g' -i themes/trisquel-logo/Make*
-sed 's/script/trisquel-logo/g' -i themes/trisquel-logo/Make*
-sed 's/rtoken/script/g' -i themes/trisquel-logo/Make*
+sed 's/script\.script/trisquel-logo\.rtoken/g' -i themes/trisquel-logo/meson.build
+sed 's/script/trisquel-logo/g' -i themes/trisquel-logo/meson.build
+sed 's/rtoken/script/g' -i themes/trisquel-logo/meson.build
 rename s/script.script/trisquel-logo.script/g themes/trisquel-logo/*
 rename s/script.plymouth.in/trisquel-logo.plymouth.in/g themes/trisquel-logo/*
+echo "subdir('trisquel-logo')" >> themes/meson.build
+echo "usr/share/plymouth/themes/trisquel-logo" >> debian/plymouth-themes.install
+sed -i 's|trisquel-logo_plymouth =|trisquel_logo_plymouth =|' themes/trisquel-logo/meson.build
 
 cp themes/script -a themes/glow
 sed s:/script:/glow:g -i themes/glow/script.plymouth.in
 sed 's:=Script:=Glow:g' -i themes/glow/script.plymouth.in
-sed 's/script\.script/glow\.rtoken/g' -i themes/glow/Make*
-sed 's/script/glow/g' -i themes/glow/Make*
-sed 's/rtoken/script/g' -i themes/glow/Make*
+sed 's/script\.script/glow\.rtoken/g' -i themes/glow/meson.build
+sed 's/script/glow/g' -i themes/glow/meson.build
+sed 's/rtoken/script/g' -i themes/glow/meson.build
 cp $DATA/sugar.png $DATA/trisquel_logo16.png $DATA/trisquel_logo-sugar.png themes/glow/
 /bin/sed -i s/background/sugar/g themes/glow/*
 sed -i 's_special://logo_trisquel\_logo-sugar.png_g; s/0.3/0.8/' themes/glow/*.script
 rename s/script.script/glow.script/g themes/glow/*
 rename s/script.plymouth.in/glow.plymouth.in/g themes/glow/*
-sed -i 's/progress_bar.png/progress_bar.png\\\n\t\tsugar.png\\\n\t\ttrisquel_logo16.png\\\n\t\ttrisquel_logo-sugar.png/' themes/glow/Makefile*
+for i in trisquel_logo-sugar.png trisquel_logo16.png sugar.png
+do
+    sed -i "/'progress_bar.png'/a\ \ '$i'," themes/glow/meson.build
+done
 
 find -type d |xargs rename s/glow/sugar/g
 find -type f |xargs rename s/glow/sugar/g
@@ -138,6 +167,9 @@ replace glow sugar .
 replace Glow Sugar .
 
 sed s/Ubuntu/Trisquel/ -i debian/plymouth-theme-trisquel-text.postinst
+
+# Clean up
+rm ./debian/plymouth-theme-ubuntu-logo.postinst
 
 changelog "Plymouth themes modified for Trisquel"
 
