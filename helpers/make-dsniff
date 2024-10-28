@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2015  Santiago Rodríguez <santi@trisquel.info>
+#    Copyright (C) 2024  Luis Guzmán <ark@switnet.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,13 +17,34 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+# Placeholder helper, remove or update according latest removal policy on new distro.
+VERSION=0
+BUILD_UNTIL=12.0
 
 . ./config
 
-rm debian/patches/23_urlsnarf_timestamp.patch
-sed -i 's/23_urlsnarf_timestamp.patch//g' debian/patches/series
+# Lower version and remove trisquel suffix to prevent update issues on further actions.
+export FULLVERSION="$(sed "s|trisquel$VERSION||" <<< $FULLVERSION)"
+new_build=$(( ${FULLVERSION: -1} - 1 ))
+export FULLVERSION=("${FULLVERSION%?}$new_build")
 
-changelog "Remove patch to avoid segfault"
+# Remove patch to avoid segfault ## Still necessary at T12?
+#remove_patch 23_urlsnarf_timestamp.patch
+
+# Deprecated helper
+# Fix FTBFS by adding missing dependency
+sed -i '/Build-Depends:/s|$|, libnsl-dev|' debian/control
+
+# Custom changelog.
+changelog(){
+head -n 1 debian/changelog | grep -q $UPSTREAM-security && REPO=$CODENAME-security || REPO=$CODENAME
+[ "$SECURITY" = true ] && REPO=${CODENAME}-security
+[ "$BACKPORT" = true ] || [ "$BACKPORTS" = true ] && REPO=${CODENAME}-backports
+echo | dch -b -D $REPO -v $FULLVERSION "$1"
+# Make sure the changelog file is identical between archs
+/bin/sed "/-- Trisquel/s/.*/ -- Trisquel GNU\/Linux developers <trisquel-devel@listas.trisquel.info>  $DATE/" -i debian/changelog
+}
+
+changelog "Fix FTBFS on rebuild."
 
 package
