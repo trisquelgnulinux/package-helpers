@@ -27,7 +27,6 @@ VERSION=2
 NETINST=true
 . ./config
 
-sed 's/fail-missing/list-missing/g' -i debian/rules
 
 changelog "Rebuild upstream to get udeb dependency for debian-installer."
 package
