@@ -17,12 +17,12 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 . ./config
 
 # Remove snap and fwup support
 patch_p1 $DATA/rm_snap_fwup_support.patch
 rm debian/gnome-software-plugin-snap.install
 
-changelog "Disable snap plugin support in Trisquel"
+changelog "Disable snap & fwupd plugin support in Trisquel"
 package

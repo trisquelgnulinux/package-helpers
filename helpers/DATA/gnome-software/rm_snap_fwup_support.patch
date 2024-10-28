@@ -2,6 +2,14 @@ diff --git a/debian/control b/debian/control
 index 7262a65c..497779f7 100644
 --- a/debian/control
 +++ b/debian/control
+@@ -17,7 +17,6 @@ Build-Depends: appstream,
+                libadwaita-1-dev (>= 1.4),
+                libappstream-dev (>= 1.0.0),
+                libflatpak-dev (>= 1.14.0) [amd64 arm64 armel armhf i386 mipsel mips64el ppc64el s390x hppa powerpc ppc64 riscv64 x32],
+-               libfwupd-dev (>= 1.5.6) [linux-any],
+                libglib-testing-0-dev,
+                libglib2.0-dev (>= 2.70.0),
+                libgtk-4-dev (>= 4.12.0),
 @@ -60,10 +60,8 @@ Depends: appstream,
           ${misc:Depends},
           ${shlibs:Depends}
