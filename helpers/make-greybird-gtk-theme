@@ -16,7 +16,7 @@
 #    along with this program; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
-VERSION=12
+VERSION=13
 . ./config
 
 #correct gtk2 color syntax
@@ -129,7 +129,7 @@ EOF
 ## light
 cat << EOF >> light/gtk-3.0/_others.scss
 
-treeview.view:selected:not(:focused) {
+treeview.view:selected:not(:focus) {
         color: #ffffff;
         background-image: linear-gradient(to bottom, shade(#6699CC, 0.87), shade(#6699CC, 0.95) 100%);
 }
@@ -137,7 +137,7 @@ EOF
 ## dark
 cat << EOF >> dark/gtk-3.0/_others.scss
 
-treeview.view:selected:not(:focused) {
+treeview.view:selected:not(:focus) {
         color: #ffffff;
         background-image: linear-gradient(to bottom, shade(#6699CC, 0.87), shade(#6699CC, 0.95) 100%);
 }
