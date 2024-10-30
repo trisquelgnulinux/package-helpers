@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=23
+VERSION=24
 DEPENDS=at-spi2-core
 
 . ./config
@@ -73,11 +73,13 @@ sed 's_https://changelogs.ubuntu.com/changelogs/pool/_https://packages.trisquel.
 sed -i '/import distro_info/i import apt_pkg' UpdateManager/UpdateManager.py
 
 #Make use of new TrisquelDistroInfo
-sed -i 's|UbuntuDistroInfo|TrisquelDistroInfo|g' UpdateManager/UpdateManager.py
-sed -i 's|UbuntuDistroInfo|TrisquelDistroInfo|g' hwe-support-status
-sed -i 's|UbuntuDistroInfo|TrisquelDistroInfo|g' ubuntu-security-status
-sed -i 's|UbuntuDistroInfo|TrisquelDistroInfo|g' tests/test_meta_release_core.py
-sed -i 's|UbuntuDistroInfo|TrisquelDistroInfo|g' UpdateManager/Core/MetaRelease.py
+for i in UpdateManager/UpdateManager.py hwe-support-status \
+	 ubuntu-security-status tests/test_meta_release_core.py \
+	 UpdateManager/Core/MetaRelease.py
+do
+    sed -i 's|UbuntuDistroInfo|TrisquelDistroInfo|g' $i
+done
+
 #Fix partial upgrade button
 sed -i '/do-partial-upgrade/s|ubuntu-release|trisquel-release|' UpdateManager/Dialogs.py
 

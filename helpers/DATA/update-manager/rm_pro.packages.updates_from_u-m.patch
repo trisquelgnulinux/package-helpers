@@ -1,3 +1,15 @@
+diff --git a/debian/control b/debian/control
+index ac30f400..e504ab58 100644
+--- a/debian/control
++++ b/debian/control
+@@ -27,7 +27,6 @@ Section: admin
+ Depends: distro-info-data,
+          python3-distro-info,
+          python3-update-manager (= ${source:Version}),
+-         ubuntu-pro-client,
+          ubuntu-release-upgrader-core (>= 1:18.04.9),
+          ${misc:Depends},
+          ${python3:Depends},
 diff --git a/UpdateManager/UpdateManager.py b/UpdateManager.py
 index 3b9eaa58..d44040d5 100644
 --- a/UpdateManager/UpdateManager.py
