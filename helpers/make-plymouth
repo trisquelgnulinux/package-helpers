@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=13.1
+VERSION=14
 QUILT=skip
 . ./config
 
@@ -115,9 +115,12 @@ replace "Ubuntu [0-9][0-9].[0-9][0-9] LTS" "Trisquel $REVISION"
 
 cp $DATA/*.png themes/script
 cp $DATA/script.script themes/script/script.script
+cp $DATA/trisquel_logo.png debian/local/trisquel-logo.png
+cp $DATA/trisquel_logo16.png debian/local/bgrt-fallback.png
 
 cat << EOF > debian/source/include-binaries
 themes/script/background.png
+themes/script/trisquel_logo.png
 themes/script/trisquel_logo16.png
 themes/glow/sugar.png
 themes/glow/trisquel_logo16.png
@@ -127,9 +130,7 @@ EOF
 rm themes/trisquel-logo themes/glow -rf
 cp themes/script -a themes/trisquel-logo
 cp $DATA/background.png themes/trisquel-logo/
-cp $DATA/trisquel_logo.png themes/trisquel-logo/trisquel-logo.png
-cp $DATA/trisquel_logo16.png themes/trisquel-logo/trisquel-logo16.png
-for i in trisquel_logo16.png background.png
+for i in trisquel_logo16.png background.png trisquel_logo.png
 do
     sed -i "/'progress_bar.png'/a\ \ '$i'," themes/trisquel-logo/meson.build
 done
@@ -159,6 +160,9 @@ for i in trisquel_logo-sugar.png trisquel_logo16.png sugar.png
 do
     sed -i "/'progress_bar.png'/a\ \ '$i'," themes/glow/meson.build
 done
+
+# explicit calling logo
+sed -i 's|special://logo|trisquel_logo.png|' themes/trisquel-logo/*.script
 
 find -type d |xargs rename s/glow/sugar/g
 find -type f |xargs rename s/glow/sugar/g
