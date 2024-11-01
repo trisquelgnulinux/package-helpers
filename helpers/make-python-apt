@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=7
+VERSION=8
 COMPONENT=main
 #Be aware to not pull/build before publish date on T12.
 
@@ -43,7 +43,7 @@ https://mirrors.dotsrc.org/trisquel/
 #LOC:EC
 https://mirror.cedia.org.ec/trisquel.packages
 #LOC:ES
-https://mirror.librelabucm.org/trisquel/
+https://ftp.caliu.cat/pub/distribucions/trisquel/packages
 #LOC:HU
 https://quantum-mirror.hu/mirrors/pub/trisquel/packages/
 #LOC:JP
@@ -58,6 +58,7 @@ https://archive.trisquel.org/trisquel/
 https://mirror.fsf.org/trisquel/
 https://mirrors.ocf.berkeley.edu/trisquel/
 https://mirror.math.princeton.edu/pub/trisquel-packages/
+https://mirror.vern.cc/trisquel/
 EOF
 
 cat << EOF > data/templates/Trisquel.info.in
