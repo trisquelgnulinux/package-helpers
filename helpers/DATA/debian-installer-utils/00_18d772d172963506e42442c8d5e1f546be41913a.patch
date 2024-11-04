@@ -1,0 +1,32 @@
+From 18d772d172963506e42442c8d5e1f546be41913a Mon Sep 17 00:00:00 2001
+From: Sven Joachim <svenjoac@gmx.de>
+Date: Sat, 1 Jul 2023 21:14:04 +0200
+Subject: [PATCH] Write the vt102-di terminfo entry to /usr/share/terminfo
+
+This is the location where the all the other terminfo files are since
+with ncurses-base 6.4+20230603.  Also create the directory in advance,
+because tic does not create multiple levels of directories and would
+fail if an older ncurses-base version is installed at build time.
+
+Closes: #1040048
+---
+ debian/rules | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/debian/rules b/debian/rules
+index 50ab30c..c7278c7 100755
+--- a/debian/rules
++++ b/debian/rules
+@@ -44,7 +44,8 @@ override_dh_auto_install:
+ 		cp -pL $$file debian/di-utils-terminfo/$$file; \
+ 		chmod 644 debian/di-utils-terminfo/$$file; \
+ 	done
+-	tic vt102-di -o debian/di-utils-terminfo/lib/terminfo
++	mkdir -p debian/di-utils-terminfo/usr/share/terminfo
++	tic vt102-di -o debian/di-utils-terminfo/usr/share/terminfo
+ 
+ 	mkdir -p debian/di-utils/bin
+ 	cp -pL list-devices-$(DEB_HOST_ARCH_OS) debian/di-utils/bin/list-devices
+-- 
+GitLab
+
