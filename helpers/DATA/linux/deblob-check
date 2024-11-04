@@ -7304,6 +7304,10 @@ set_except () {
     # New in 6.9-rc, 6.8.10.
     blobname 'amdgpu[/]dcn_3_5_1_dmcub\.bin' drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
 
+    # Trisquel changes for upstream kernel.
+    blobname 'gsl1680-globalspace-solt-ivw116\.fw' drivers/platform/x86/touchscreen_dmi.c
+    blobname 'E\.WSA116_8\.E1\.042\.bin' drivers/platform/x86/touchscreen_dmi.c
+
     ;;
 
   */*freedo*.patch | */*logo*.patch)
