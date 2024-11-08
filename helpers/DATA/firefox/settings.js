@@ -75,8 +75,8 @@ pref ("plugins.update.url", "https://trisquel.info/en/wiki/abrowser-help");
 pref ("browser.customizemode.tip0.learnMoreUrl", "https://trisquel.info/en/wiki/abrowser-help");
 
 // Dictionary download preference
-pref("browser.dictionaries.download.url", "http://dictionaries.mozdev.org/");
-pref("browser.search.searchEnginesURL", "http://mycroft.mozdev.org/");
+pref("browser.dictionaries.download.url", "https://addons.mozilla.org/%LOCALE%/firefox/language-tools/");
+pref("browser.search.searchEnginesURL", "https://mycroftproject.com/");
 // Enable Spell Checking In All Text Fields
 pref("layout.spellcheckDefault", 2);
 
@@ -202,6 +202,10 @@ pref("media.gmp-manager.url", "");
 pref("media.gmp-provider.enabled", false);
 // Don't install openh264 codec
 pref("media.gmp-gmpopenh264.enabled", false);
+// Disable Widevine
+pref("media.gmp-widevinecdm.enabled", false);
+// Disable eme codecs
+pref("media.eme.enabled", false);
 
 //Disable middle click content load
 //Avoid loading urls by mistake 
@@ -296,7 +300,6 @@ defaultPref("browser.search.serpEventTelemetry.enabled",false);
 pref("dom.private-attribution.submission.enabled", false);
 
 // Disable Machine Learning
-defaultPref("browser.ml.enabled", false);
 defaultPref("browser.ml.chat.enabled", false);
 // Hide from UI
 defaultPref("browser.ml.chat.hideFromLabs", true);
