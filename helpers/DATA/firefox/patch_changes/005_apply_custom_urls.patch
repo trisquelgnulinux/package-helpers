@@ -1,3 +1,22 @@
+URL customizations requires to comprehend the scope to handle the documentation for this
+and other projects heavily customizing and rebranding Firefox like Abrowser does.
+
+This patch documents how to handle custom URLs to point to a desired page (initially).
+
+It replaces,
+
+* is="moz-support-link"
+* support-page="..."
+
+to customize the default URL, making sure there is an id for l10n field,
+
+* data-l10n-id="..."
+
+so the corresponding message is displayed as it seems to be linked on some cases
+with is="" and support-page="..."
+
+Cheers!
+
 diff --git a/browser/components/preferences/privacy.inc.xhtml b/browser/components/preferences/privacy.inc.xhtml
 index a9e8501a..02328371 100644
 --- a/browser/components/preferences/privacy.inc.xhtml
