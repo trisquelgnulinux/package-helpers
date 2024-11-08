@@ -1,0 +1,51 @@
+diff --git a/browser/components/preferences/privacy.inc.xhtml b/browser/components/preferences/privacy.inc.xhtml
+index a9e8501a..02328371 100644
+--- a/browser/components/preferences/privacy.inc.xhtml
++++ b/browser/components/preferences/privacy.inc.xhtml
+@@ -21,13 +21,13 @@
+     <hbox align="start">
+       <image id="trackingProtectionShield"/>
+       <description class="description-with-side-element" flex="1">
+-        <html:span id="contentBlockingDescription" data-l10n-id="content-blocking-section-top-level-description"></html:span>
+-        <html:a is="moz-support-link"
+-                id="contentBlockingLearnMore"
+-                class="learnMore"
+-                data-l10n-id="content-blocking-learn-more"
+-                support-page="enhanced-tracking-protection"
+-        />
++          <html:span id="contentBlockingDescription" data-l10n-id="content-blocking-section-top-level-description"></html:span>
++          <html:a id="contentBlockingLearnMore"
++             class="learnMore"
++             data-l10n-id="content-blocking-learn-more"
++             href="https://trisquel.info/en/wiki/abrowser-help"
++             target="_blank"
++          />
+       </description>
+       <button id="trackingProtectionExceptions"
+               is="highlightable-button"
+@@ -374,10 +374,7 @@
+     <vbox id="legacyDoNotTrackBox">
+       <label>
+         <label class="tail-with-learn-more" data-l10n-id="do-not-track-description" id="doNotTrackDesc"></label>
+-      <html:a is="moz-support-link"
+-              class="learnMore"
+-              support-page="how-do-i-turn-do-not-track-feature"
+-      />
++        <html:a class="learnMore" href="https://trisquel.info/en/wiki/abrowser-help" target="_blank"/>
+       </label>
+       <radiogroup id="doNotTrackRadioGroup" aria-labelledby="doNotTrackDesc" preference="privacy.donottrackheader.enabled">
+         <radio value="true" data-l10n-id="do-not-track-option-always"/>
+@@ -389,9 +386,10 @@
+               class="tail-with-learn-more"
+               preference="privacy.donottrackheader.enabled"
+               data-l10n-id="do-not-track-description2" />
+-      <html:a is="moz-support-link"
+-          id="doNotTrackLearnMoreLink"
+-          support-page="how-do-i-turn-do-not-track-feature" />
++      <html:a id="doNotTrackLearnMoreLink"
++          href="https://trisquel.info/en/wiki/abrowser-help"
++          data-l10n-id="do-not-track-learn-more"
++          target="_blank"/>
+     </hbox>
+   </vbox>
+ </groupbox>
