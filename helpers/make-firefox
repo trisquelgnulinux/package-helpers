@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=115
+VERSION=116
 EXTERNAL='deb-src http://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu $UPSTREAM main'
 REPOKEY=9BDB3D89CE49EC21
 
@@ -64,7 +64,7 @@ sed '/network.connectivity-service.IPv/s/http.*success.txt?ipv[46]//' -i modules
 sed 's/accounts-static.cdn.mozilla.net.*sync.services.mozilla.com//' -i modules/libpref/init/all.js
 
 # Disable 106 firefox-view and other firefox-branded popups
-sed -i '/browser.urlbar.quicksuggest.shouldShowOnboardingDialog/s|true|false|' $BAP_FirefoxJs
+/bin/sed -i '/browser.urlbar.quicksuggest.shouldShowOnboardingDialog/s|true|false|' $BAP_FirefoxJs
 sed -i '/services.sync.prefs.sync.browser.firefox-view.feature-tour/s|true|false|' $BAP_FirefoxJs
 ##disable firefox-view
 ##sed -i '/"browser.tabs.firefox-view"/s|true|false|' browser/app/profile/firefox.js #deprecated -v127
