@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2020  Luis Guzmán <ark@switnet.org>
+#    Copyright (C) 2024  Luis Guzmán <ark@switnet.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 
 . ./config
 
@@ -28,10 +28,14 @@ cat  << FIX >> debian/apparmor-profile
   owner /tmp/.mate_desktop_thumbnail* w,
   owner /tmp/mate-desktop-thumbnailer* w,
 
+  # Fix thumbnail issue #915024
+  owner @{HOME}/.cache/thumbnails/** rw,
+  owner /tmp/atril-thumbnailer* rw,
+
 }
 FIX
 
-changelog "Fix LP #1798091 - no pdf thumbnails"
+changelog "Fix LP #1798091 - no pdf thumbnails || Fix Debian #915024 - no pdf thumbnails"
 
 package
 
