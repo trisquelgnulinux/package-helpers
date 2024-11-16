@@ -294,13 +294,13 @@ pref("widget.gtk.libadwaita-colors.enabled", false);
 
 
 // High level search data collection
-defaultPref("browser.search.serpEventTelemetry.enabled",false);
+pref("browser.search.serpEventTelemetry.enabled",false);
 
 // Disable Privacy-Preserving Attribution submition
 pref("dom.private-attribution.submission.enabled", false);
 
 // Disable Machine Learning
-defaultPref("browser.ml.chat.enabled", false);
+pref("browser.ml.chat.enabled", false);
 // Hide from UI
-defaultPref("browser.ml.chat.hideFromLabs", true);
-defaultPref("browser.ml.chat.hideLabsShortcuts", true);
+pref("browser.ml.chat.hideFromLabs", true);
+pref("browser.ml.chat.hideLabsShortcuts", true);
