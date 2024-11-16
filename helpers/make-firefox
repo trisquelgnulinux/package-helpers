@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=116
+VERSION=117
 EXTERNAL='deb-src http://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu $UPSTREAM main'
 REPOKEY=9BDB3D89CE49EC21
 
@@ -32,10 +32,14 @@ OLD_WEB_DEV_URL="https://addons.mozilla.org/firefox/collections/mozilla/webdevel
 WEB_DEV_URL="https://gnuzilla.gnu.org/mozzarella/category.php?id=web-development"
 
 rm debian/control
+sed "s|Safe and easy web browser from Mozilla|Safe and easy web browser from Mozilla by Trisquel|" \
+  -i debian/control.in
 
 # Disable remote settings antifeature.
-sed '/async fetchLatestChanges.*/areturn;' -i services/settings/Utils.sys.mjs
-sed '/async download.*/areturn;' -i services/settings/RemoteSettingsClient.sys.mjs services/settings/Attachments.sys.mjs
+sed '/async download.*/a\ \ \ \ return null;' -i services/settings/Attachments.sys.mjs
+sed "/async download.*/a\ \ \ \ console.warn(\"Function 'fetchLatestChanges' disabled in Abrowser due privacy concerns.\");" \
+  -i services/settings/Attachments.sys.mjs
+# More info at $DATA/patch_changes/007_disable_remote_settings_antifeature.patch
 
 # Disable activity-stream antifeatures.
 # These are not condensed into a single sed script to make it fail on individual commands that didn't change the source
@@ -75,7 +79,7 @@ sed -i '/browser.theme.colorway-closet/s|true|false|' $BAP_FirefoxJs
 ##disable newtab intro - check adjustment for versions greater than 106
 #grep -rl browser.newtabpage.introShown |xargs -r sed -i '/browser.newtabpage.introShown/s|true|false|'
 ##Remove mailto handlers. 110
-sed -i '/kHandlerList = {/,/^ };/{/^  /d}' uriloader/exthandler/HandlerList.sys.mjs
+# More info at $DATA/patch_changes/006_remova_mailto_handlers_correctly.patch
 # keep contectRelevancy disabled (first appearence is false thus using /bin/sed)
 /bin/sed -i '/"toolkit.contentRelevancy.ingestEnabled"/s|,.*)|, false)|' $BAP_FirefoxJs
 
@@ -91,10 +95,7 @@ do
 done
 
 # Replace ubufox recommendation
-sed 's/xul-ext-ubufox/xul-ext-youtube-html5-video-player/' -i debian/control.in
-
-# Temporary ppc64el fix dependency for v128
-sed -i "/libffi-dev/a \\\tlibaom-dev [ppc64el]," debian/control.in
+sed 's/xul-ext-ubufox/webext-ublock-origin/' -i debian/control.in
 
 #Remove exceptions on warnings when installing addons.
 sed -i '/addons.mozilla.org/d' browser/app/permissions
