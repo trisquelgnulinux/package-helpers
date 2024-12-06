@@ -1,0 +1,29 @@
+diff --git a/debian/rules b/debian/rules
+old mode 100755
+new mode 100644
+index 8a7ff87..655c574
+--- a/debian/rules
++++ b/debian/rules
+@@ -52,3 +52,9 @@ override_dh_auto_configure:
+ 
+ get-orig-source:
+ 	uscan --noconf --force-download --rename --download-current-version --destdir=..
++
++execute_after_dh_install:
++	install -m 0644 -D debian/apparmor-profile debian/atril/etc/apparmor.d/usr.bin.atril
++	install -m 0644 -D debian/apparmor-profile.abstraction debian/atril/etc/apparmor.d/abstractions/atril
++	install -m 0644 -D debian/atril.apport debian/atril/usr/share/apport/package-hooks/source_atril.py
++	dh_apparmor --profile-name=usr.bin.atril -patril
+
+diff --git a/debian/control b/debian/control
+index f5bda53..6d72cc9 100644
+--- a/debian/control
++++ b/debian/control
+@@ -9,6 +9,7 @@ Uploaders: Mike Gabriel <sunweaver@debian.org>,
+            Vangelis Mouhtsis <vangelis@gnugr.org>,
+            Martin Wimpress <code@flexion.org>,
+ Build-Depends: debhelper-compat (= 13),
++               dh-apparmor,
+                dpkg-dev (>= 1.16.1.1),
+                gobject-introspection,
+                intltool,
