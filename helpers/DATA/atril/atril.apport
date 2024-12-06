@@ -1,0 +1,21 @@
+'''apport package hook for atril
+
+(c) 2024 Luis Guzmán
+Author:
+Luis Guzmán <ark@switnet.org>
+based on evince's hook
+
+'''
+
+from apport.hookutils import *
+from os import path
+import re
+
+def add_info(report):
+    attach_conffiles(report, 'atril')
+    attach_related_packages(report, ['apparmor', 'libapparmor1',
+        'libapparmor-perl', 'apparmor-utils', 'auditd', 'libaudit1'])
+
+    attach_mac_events(report, ['/usr/bin/atril',
+                               '/usr/bin/atril-previewer',
+                               '/usr/bin/atril-thumbnailer'])
