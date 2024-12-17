@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=117
+VERSION=118
 EXTERNAL='deb-src http://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu $UPSTREAM main'
 REPOKEY=9BDB3D89CE49EC21
 
@@ -79,8 +79,8 @@ sed -i '/browser.theme.colorway-closet/s|true|false|' $BAP_FirefoxJs
 ##disable newtab intro - check adjustment for versions greater than 106
 #grep -rl browser.newtabpage.introShown |xargs -r sed -i '/browser.newtabpage.introShown/s|true|false|'
 ##Remove mailto handlers. 110
-# More info at $DATA/patch_changes/006_remova_mailto_handlers_correctly.patch
-# keep contectRelevancy disabled (first appearence is false thus using /bin/sed)
+##More info at $DATA/patch_changes/006_remova_mailto_handlers_correctly.patch
+# keep contentRelevancy disabled (first appearence is false thus using /bin/sed)
 /bin/sed -i '/"toolkit.contentRelevancy.ingestEnabled"/s|,.*)|, false)|' $BAP_FirefoxJs
 
 # Replace ubufox recommendation
@@ -111,7 +111,7 @@ grep -rl toolkit.telemetry.newProfilePing.enabled | xargs -r sed -i '/toolkit.te
 grep -rl toolkit.telemetry.firstShutdownPing.enabled | xargs -r sed -i '/toolkit.telemetry.firstShutdownPing.enabled/s|true|false|'
 grep -rl toolkit.telemetry.bhrPing.enabled  | xargs -r sed -i '/toolkit.telemetry.bhrPing.enabled/s|true|false|'
 # fixed by https://bugzilla.mozilla.org/show_bug.cgi?id=1868988
-grep -rl security.certerrors.recordEventTelemetry | xargs -r sed -i '/security.certerrors.recordEventTelemetry/s|true|false|'
+#grep -rl security.certerrors.recordEventTelemetry | xargs -r sed -i '/security.certerrors.recordEventTelemetry/s|true|false|'
 grep -rl services.sync.telemetry.maxPayloadCount modules/ | xargs -r sed -i '/services.sync.telemetry.maxPayloadCount/s|500|-1|'
 grep -rl services.sync.telemetry.submissionInterval modules/ | xargs -r sed -i '/services.sync.telemetry.submissionInterval/s|43200|-1|'
 echo 'pref("dom.security.unexpected_system_load_telemetry_enabled", false);' | tee -a $BAP_FirefoxJs
@@ -122,6 +122,11 @@ echo '//pref("privacy.globalprivacycontrol.enabled", true);' | tee -a $BAP_Firef
 grep -rl browser.translations.automaticallyPopup modules/ | xargs -r sed -i '/browser.translations.automaticallyPopup/s|true|false|'
 # Disable Firefox Relay
 sed -i '/signon.firefoxRelay.feature/c pref("signon.firefoxRelay.feature", "disabled");' $BAP_FirefoxJs
+
+# Disable autoupdate GMP chromium repo & extensions
+sed -i '/media.gmp-manager.chromium-update-url/s|https://update.googleapis.com/service.*"|"|' $BAP_FirefoxJs
+sed -i 's|\(pref("media\.gmp-widevinecdm-l1\.chromium-guid", \)"[^"]*"|\1""|' $BAP_FirefoxJs
+sed -i 's|\(pref("media\.gmp-widevinecdm\.chromium-guid", \)"[^"]*"|\1""|' $BAP_FirefoxJs
 
 # Update third_party/rust/glean/src/configuration.rs sha256sum at third_party/rust/glean/.cargo-checksum.json
 GLEAN_CONF_RS_MODIFIED=$(sha256sum third_party/rust/glean/src/configuration.rs|awk '{print$1}')
@@ -172,18 +177,24 @@ rm debian/patches/ubuntu-bookmarks*
 cp $DATA/newtab/*.ico browser/components/newtab/data/content/tippytop/favicons/
 cp $DATA/newtab/*.png browser/components/newtab/data/content/tippytop/images/
 
-# Custom DDG
-cp browser/components/search/extensions/ddg browser/components/search/extensions/ddg-html -a
-sed 's|/duckduckgo.com/|/html.duckduckgo.com/html/|' -i browser/components/search/extensions/ddg-html/manifest.json
-sed 's|DuckDuckGo|DuckDuckGo (HTML)|' -i browser/components/search/extensions/ddg-html/manifest.json
-sed 's|ddg@|ddg-html@|' -i browser/components/search/extensions/ddg-html/manifest.json
-# disable ads, disable redirect
-#sed '/search/s|q=|k1=-1\&kd=-1\&ko=1\&q=|' -i browser/components/search/extensions/ddg/manifest.json
-
 #Trisquel custom search engines
-cp -a $DATA/searchplugins/* browser/components/search/extensions/
+#cp -a $DATA/searchplugins/* browser/components/search/extensions/
 /bin/sed "/\"data\": \[/ r $DATA/searchplugins/trisquel-v2.json" -i ./services/settings/dumps/main/search-config-v2.json
 /bin/sed "/\"data\": \[/ r $DATA/searchplugins/trisquel-packages-v2.json" -i ./services/settings/dumps/main/search-config-v2.json
+# Setup trisquel's searchengine icons
+## copy icons and json definitons.
+cp $DATA/trisquel-search-icons/b99ed276-9557-4492-8bbb-d59826381893.png \
+    services/settings/dumps/main/search-config-icons/b99ed276-9557-4492-8bbb-d59826381893
+cp $DATA/trisquel-search-icons/b99ed276-trisquel.json \
+    services/settings/dumps/main/search-config-icons/b99ed276-9557-4492-8bbb-d59826381893.meta.json
+cp $DATA/trisquel-search-icons/b5fd21a8-e369-477f-a3f2-b47a370f9030.png \
+    services/settings/dumps/main/search-config-icons/b5fd21a8-e369-477f-a3f2-b47a370f9030
+cp $DATA/trisquel-search-icons/b5fd21a8-trisquel-packages.json \
+   services/settings/dumps/main/search-config-icons/b5fd21a8-e369-477f-a3f2-b47a370f9030.meta.json
+jq --slurpfile newIcon1 "$DATA/trisquel-search-icons/b99ed276-trisquel.json" \
+   --slurpfile newIcon2 "$DATA/trisquel-search-icons/b5fd21a8-trisquel-packages.json" \
+   '.data += [$newIcon1[0], $newIcon2[0]]' services/settings/dumps/main/search-config-icons.json > tmp-s-c-i.json && \
+   mv tmp-s-c-i.json services/settings/dumps/main/search-config-icons.json
 
 echo "Customizing search engines..."
 # Reprocess search preconfiguration dump
@@ -214,6 +225,9 @@ cp -a $DATA/branding/* browser/branding/official
 cp -a $DATA/branding/* browser/branding/unofficial
 cp -a $DATA/branding/* browser/branding/nightly
 cp -a $DATA/branding/* browser/branding/aurora
+# We are using unofficial but also should have abrowser word on the about window.
+cp browser/branding/official/content/jar.mn browser/branding/unofficial/content/jar.mn
+echo '#warningDesc, #communityExperimentalDesc, #communityDesc, #contributeDesc {display:none!important}' >> browser/base/content/aboutDialog.css
 
 # Replace/remove brand name on used view(s) to avoid branding issues.
 for i in $(find . -name brandings.ftl)
@@ -222,8 +236,6 @@ do
     sed -i 's|= Firefox |= |' $i
 done
 
-sed '/about-wordmark.svg/d' -i browser/base/content/aboutDialog.css
-echo '#warningDesc, #communityExperimentalDesc, #communityDesc, #contributeDesc {display:none!important}' >> browser/base/content/aboutDialog.css
 # Disable preprocessor
 sed 's/_PP//' -i browser/branding/branding-common.mozbuild
 #Prevent duplicated values.
@@ -314,7 +326,7 @@ find -name aboutRights.xhtml |xargs -r sed -i "/rights-intro-point-6/,/<\/li>/d"
 find -name aboutRights-unbranded.xhtml |xargs -r sed -i "/rights-intro-point-5/,/<\/li>/d"
 #EO about: mods.
 
-sed -i 's/<a\ href\=\"http\:\/\/www.mozilla.org\/\">Mozilla\ Project<\/a>/<a\ href\=\"http\:\/\/www.trisquel.info\/\"\>Trisquel\ Project<\/a>/g' browser/base/content/overrides/app-license.html
+sed -i 's|<a href="http://www.mozilla.org/">Mozilla Project</a>|<a href="http://www.trisquel.info/">Trisquel Project</a>|g' browser/base/content/overrides/app-license.html
 sed -i 's|https://firefox-source-docs.mozilla.org/contributing/contribution_quickref.html|https://gitlab.trisquel.org/trisquel/package-helpers|' toolkit/content/license.html
 
 # We went too far...
