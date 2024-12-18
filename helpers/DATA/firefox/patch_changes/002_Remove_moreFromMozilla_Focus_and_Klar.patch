@@ -33,15 +33,6 @@ index c5f7cf3a..f0124235 100644
 diff -Nru a/browser/base/content/test/static/browser_all_files_referenced.js b/browser/base/content/test/static/browser_all_files_referenced.js
 --- a/browser/base/content/test/static/browser_all_files_referenced.js	2022-05-22 09:35:55.336673325 +0000
 +++ b/browser/base/content/test/static/browser_all_files_referenced.js	2022-05-22 21:50:33.783348501 +0000
-@@ -32,8 +32,6 @@
-   "chrome://activity-stream/content/data/content/assets/remote/",
-   "chrome://browser/content/assets/moz-vpn.svg",
-   "chrome://browser/content/assets/vpn-logo.svg",
--  "chrome://browser/content/assets/focus-promo.png",
--  "chrome://browser/content/assets/klar-qr-code.svg",
- 
-   // These app marketplace icons are referenced based on the user's locale
-   // in browser/components/newtab/content-src/aboutwelcome/components/MobileDownloads.jsx
 @@ -145,15 +145,6 @@ var whitelist = [
    // extensions/pref/autoconfig/src/nsReadConfig.cpp
    { file: "resource://gre/defaults/autoconfig/prefcalls.js" },
@@ -790,3 +781,16 @@ diff -Nru a/browser/components/privatebrowsing/content/assets/klar-qr-code.svg b
 -</defs>
 -</svg>
 
+diff --git a/browser/base/content/test/static/browser_all_files_referenced.js b/browser/base/content/test/static/browser_all_files_referenced.js
+index 3888af10..1d6c606f 100644
+--- a/browser/base/content/test/static/browser_all_files_referenced.js
++++ b/browser/base/content/test/static/browser_all_files_referenced.js
+@@ -41,8 +41,6 @@ var gExceptionPaths = [
+   "chrome://activity-stream/content/data/content/assets/euo-chatbot.svg",
+   "chrome://browser/content/assets/moz-vpn.svg",
+   "chrome://browser/content/assets/vpn-logo.svg",
+-  "chrome://browser/content/assets/focus-promo.png",
+-  "chrome://browser/content/assets/klar-qr-code.svg",
+   "chrome://browser/content/asrouter/assets/fox-with-box-on-cloud.svg",
+   "chrome://browser/content/asrouter/assets/fox-with-devices.svg",
+   "chrome://browser/content/asrouter/assets/fox-with-locked-box.svg",
