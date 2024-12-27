@@ -18,24 +18,24 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=4
+VERSION=5
 EXTERNAL='deb-src http://ftp.us.debian.org/debian trixie main'
 REPOKEY=6ED0E7B82643E131
 
 . ./config
 
-sed -i '/Provides:/d' debian/control debian/templates/control.binary.in
-sed '/Suggests/s/$/\nProvides: linux-firmware/' -i 	debian/control \
-							debian/templates/control.binary.in
+sed -i '/Provides:/d' debian/templates/binary.control.in
+sed '/Suggests/s/$/\nProvides: linux-firmware/' -i      debian/control \
+                                                        debian/templates/binary.control.in
 
 changelog "Imported into Trisquel"
 
 md5sum  debian/bin/gencontrol.py \
         debian/config/defines \
         debian/config/linux-free/defines \
-	debian/changelog \
+        debian/changelog \
         debian/templates/control.binary.udeb.in \
-        debian/templates/control.binary.in \
-        debian/templates/control.source.in > debian/control.md5sum
+        debian/templates/binary.control.in \
+        debian/templates/source.control.in > debian/control.md5sum
 
 package
