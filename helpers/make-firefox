@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=118
+VERSION=119
 EXTERNAL='deb-src http://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu $UPSTREAM main'
 REPOKEY=9BDB3D89CE49EC21
 
@@ -182,15 +182,22 @@ cp $DATA/newtab/*.png browser/components/newtab/data/content/tippytop/images/
 /bin/sed "/\"data\": \[/ r $DATA/searchplugins/trisquel-v2.json" -i ./services/settings/dumps/main/search-config-v2.json
 /bin/sed "/\"data\": \[/ r $DATA/searchplugins/trisquel-packages-v2.json" -i ./services/settings/dumps/main/search-config-v2.json
 # Setup trisquel's searchengine icons
-## copy icons and json definitons.
-cp $DATA/trisquel-search-icons/b99ed276-9557-4492-8bbb-d59826381893.png \
-    services/settings/dumps/main/search-config-icons/b99ed276-9557-4492-8bbb-d59826381893
-cp $DATA/trisquel-search-icons/b99ed276-trisquel.json \
-    services/settings/dumps/main/search-config-icons/b99ed276-9557-4492-8bbb-d59826381893.meta.json
-cp $DATA/trisquel-search-icons/b5fd21a8-e369-477f-a3f2-b47a370f9030.png \
-    services/settings/dumps/main/search-config-icons/b5fd21a8-e369-477f-a3f2-b47a370f9030
-cp $DATA/trisquel-search-icons/b5fd21a8-trisquel-packages.json \
-   services/settings/dumps/main/search-config-icons/b5fd21a8-e369-477f-a3f2-b47a370f9030.meta.json
+ICONS_FOLDER="services/settings/dumps/main/search-config-icons"
+for id in \
+    "b99ed276-9557-4492-8bbb-d59826381893" \
+    "b5fd21a8-e369-477f-a3f2-b47a370f9030"
+do
+    ## customize id value
+    echo "$id" | grep -q "b99ed276" && json_name="trisquel.json"
+    echo "$id" | grep -q "b5fd21a8" && json_name="trisquel-packages.json"
+    ## copy icons and json definitons.
+    cp "$DATA/trisquel-search-icons/$id.png" "$ICONS_FOLDER/$id"
+    cp "$DATA/trisquel-search-icons/${id:0:8}-${json_name}" "$ICONS_FOLDER/$id.meta.json"
+done
+## Add references to moz.build
+python3 $DATA/trisquel-search-icons/update_mozbuild.py
+
+## Set json in search-config-icons.json
 jq --slurpfile newIcon1 "$DATA/trisquel-search-icons/b99ed276-trisquel.json" \
    --slurpfile newIcon2 "$DATA/trisquel-search-icons/b5fd21a8-trisquel-packages.json" \
    '.data += [$newIcon1[0], $newIcon2[0]]' services/settings/dumps/main/search-config-icons.json > tmp-s-c-i.json && \
