@@ -49,6 +49,19 @@ export UPSTREAMRELEASE=24.04
 MIRROR=http://archive.ubuntu.com/ubuntu
 LOCALMIRROR=http://archive.trisquel.org/trisquel
 LOCAL_APT=`mktemp -d` 
+if [[ "$PACKAGE" =~ ^linux(-hwe-[0-9]+\.[0-9]+)?$ && -n "$LP_VERSION" ]]; then
+# Function to truncate the version string to the major version (e.g., 6.5.0)
+truncate_version() {
+    full_version=$1
+    # Match the first three components of the version (X.Y.0)
+    echo "$full_version" | sed -E 's/^([^_]+_[0-9]+\.[0-9]+\.0).*/\1/'
+}
+LP_ARCHIVE_URL="https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/${PACKAGE}/${LP_VERSION}"
+TRUNCATED_VERSION=$(truncate_version "${PACKAGE}_${LP_VERSION}")
+LP_TARBALL="${TRUNCATED_VERSION}.orig.tar.gz"
+LP_DIFF_FILE="${PACKAGE}_${LP_VERSION}.diff.gz"
+LP_DSC_FILE="${PACKAGE}_${LP_VERSION}.dsc"
+fi
 
 if [ -n "$BUILD_UNTIL" ] && (( $(echo "$BUILD_UNTIL $REVISION" | awk '{print ($1 > $2)}') )); then
     echo "Skipping build of helper with BUILD_UNTIL=$BUILD_UNTIL > REVISION=$REVISION"
@@ -61,7 +74,7 @@ $RPL "$@"
 }
 
 pkgversion(){
-	dpkg-parsechangelog --show-field Version
+    dpkg-parsechangelog --show-field Version
 }
 replace(){
 find ${@:3} -type f -not -iregex '.*changelog.*' -not -iregex '.*copyright.*' -execdir /bin/sed --follow-symlinks -i s^"$1"^"$2"^g {} \;
@@ -146,22 +159,32 @@ cd PACKAGES/$PACKAGE
 [ $UID = 0 ] && id _apt > /dev/null 2>&1 && chown _apt .
 
 #Get package and uncompress it
-apt-get update -c $LOCAL_APT/etc/apt.conf
-if [ -n "$FIXED_VER" ]; then
-  apt-get source --only-source $PACKAGE=$FIXED_VER --download-only -c ${LOCAL_APT}/etc/apt.conf
+if [[ "$PACKAGE" =~ ^linux(-hwe-[0-9]+\.[0-9]+)?$ && -n "$LP_VERSION" ]]; then
+    for file in "${LP_TARBALL}" "${LP_DIFF_FILE}" "${LP_DSC_FILE}"; do
+        echo "Downloading ${file} from ${LP_ARCHIVE_URL}"
+        if ! wget "${LP_ARCHIVE_URL}/${file}" -O "${file}"; then
+            echo "Error: Failed to download ${file}."
+            exit 1
+        fi
+    done
 else
-  apt-get source --only-source $PACKAGE --download-only -c ${LOCAL_APT}/etc/apt.conf
-fi
-# Verify it first
-if grep -q "BEGIN PGP SIGNATURE" *.dsc; then
-  KEY=$(gpg2 --keyid-format 0xlong --verify  *.dsc  2>&1 | grep 0x | sed 's/.*0x//' || true)
-  [ -z "$KEY" ] && KEY=$(gpgv --keyring ${LOCAL_APT}/etc/apt/trusted.gpg.d/keyring *.dsc 2>&1 | egrep ".SA key" | sed 's/.*.SA key //' || true)
-  fetchkey $KEY
-  gpg2 --verify --keyring ${LOCAL_APT}/etc/apt/trusted.gpg.d/keyring.gpg *.dsc
-  [ -n SCHROOT_COMMAND ] && gpgconf --kill gpg-agent
-else
-  echo WARNING! The dsc file is not gpg signed!
-  [ -z "$EXTERNAL" ] && exit 1
+    apt-get update -c $LOCAL_APT/etc/apt.conf
+    if [ -n "$FIXED_VER" ]; then
+      apt-get source --only-source $PACKAGE=$FIXED_VER --download-only -c ${LOCAL_APT}/etc/apt.conf
+    else
+      apt-get source --only-source $PACKAGE --download-only -c ${LOCAL_APT}/etc/apt.conf
+    fi
+    # Verify it first
+    if grep -q "BEGIN PGP SIGNATURE" *.dsc; then
+      KEY=$(gpg2 --keyid-format 0xlong --verify  *.dsc  2>&1 | grep 0x | sed 's/.*0x//' || true)
+      [ -z "$KEY" ] && KEY=$(gpgv --keyring ${LOCAL_APT}/etc/apt/trusted.gpg.d/keyring *.dsc 2>&1 | egrep ".SA key" | sed 's/.*.SA key //' || true)
+      fetchkey $KEY
+      gpg2 --verify --keyring ${LOCAL_APT}/etc/apt/trusted.gpg.d/keyring.gpg *.dsc
+      [ -n SCHROOT_COMMAND ] && gpgconf --kill gpg-agent
+    else
+      echo WARNING! The dsc file is not gpg signed!
+      [ -z "$EXTERNAL" ] && exit 1
+    fi
 fi
 
 dpkg-source --no-check -x --skip-patches *.dsc source
@@ -276,3 +299,4 @@ patch_Rp1() {
 echo "> Rolling back $(echo $1|xargs basename):"
 patch --no-backup-if-mismatch -R -p1 < $1
 }
+
