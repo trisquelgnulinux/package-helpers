@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#    Copyright (C)      2024  Luis Guzmán <ark@switnet.org>
+#    Copyright (C)      2025  Luis Guzmán <ark@switnet.org>
 #    Copyright (C) 2008-2020  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C)      2014  Santiago Rodriguez <santi@trisquel.info>
 #    Copyright (C)      2019  David Trudgian <dave@trudgian.net>
@@ -221,10 +221,7 @@ dpkg-source -b -I.falsefileextension99 $PACKAGE-$FULLVERSION
 rm -rf ${LOCAL_APT}
 echo "Trisquel source package built!"
 
-if grep -q "dpkg-vendor" $PACKAGE-$FULLVERSION/debian/rules; then
-    printf "> Note: 'dpkg-vendor' is present on debian/rules "
-    printf "a distro related behavior might be in place.\n"
-fi
+notify_found_distro_match_on_debian_rules
 }
 
 sedhelper2(){
@@ -300,3 +297,59 @@ echo "> Rolling back $(echo $1|xargs basename):"
 patch --no-backup-if-mismatch -R -p1 < $1
 }
 
+notify_found_distro_match_on_debian_rules() {
+DPKG_VENDOR="dpkg-vendor"
+EXCLUDE_DERIVES_UBUNTU="--derives-from Ubuntu"
+
+# Search for matching debian* folders
+SEARCH_DIRS=$(find . -type d -name "*debian*" -printf "%p ")
+
+# Set files found on debian directories
+FILES=()
+for DIR in $SEARCH_DIRS; do
+    while IFS= read -r -d '' FILE; do
+        FILES+=("$FILE")
+    done < <(find "$DIR" -type f \( -name "rules" -o -path "*/rules.d/*" \) -print0)
+done
+
+# Trim to relative path function
+trim_path() {
+    echo "$1" | awk -F'/' '{sub("./[^/]+/", "", $0); print $0}'
+}
+
+FILES_WITH_DPKG_VENDOR=()
+FILES_WITH_UPSTREAM=()
+
+# Parse every file found for dpkg-vendor and upstream distro codename.
+for FILE in "${FILES[@]}"; do
+    if grep -q -E "^\\s*[^#]*\\b$DPKG_VENDOR\\b" "$FILE"; then
+        MATCHES_DPKG_VENDOR=()
+        while IFS= read -r line; do
+            if [[ "$line" =~ $DPKG_VENDOR && ! "$line" =~ "$EXCLUDE_DERIVES_UBUNTU" ]]; then
+                MATCHES_DPKG_VENDOR+=("$line")
+            fi
+        done < "$FILE"
+        if [ ${#MATCHES_DPKG_VENDOR[@]} -gt 0 ]; then
+            FILES_WITH_DPKG_VENDOR+=("$FILE")
+            echo "> Note: The string $DPKG_VENDOR is present in $(trim_path "$FILE") with the following matches:"
+            printf '  - %s\n' "${MATCHES_DPKG_VENDOR[@]}"
+            echo "A distro-related behavior might be in place. You should consider reviewing it."
+        fi
+    fi
+
+    if grep -q -E "^\\s*[^#]*\\b$UPSTREAM\\b" "$FILE"; then
+        MATCHES_UPSTREAM=()
+        while IFS= read -r line; do
+            if [[ "$line" =~ "$UPSTREAM" && ! "$line" =~ "$CODENAME" && ! "$line" =~ ^[[:space:]]*# ]]; then
+                MATCHES_UPSTREAM+=("$line")
+            fi
+        done < "$FILE"
+        if [ ${#MATCHES_UPSTREAM[@]} -gt 0 ]; then
+            FILES_WITH_UPSTREAM+=("$FILE")
+            echo "> Note: The string $UPSTREAM is present in $(trim_path "$FILE") with the following matches:"
+            printf '  - %s\n' "${MATCHES_UPSTREAM[@]}"
+            echo "A distro-related behavior might be in place. You should consider reviewing it."
+        fi
+    fi
+done
+}
