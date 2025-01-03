@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2024 Luis Guzman <ark@switnet.org>
+#    Copyright (C) 2025 Luis Guzman <ark@switnet.org>
 #    Copyright (C) 2008-2023  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C) 2019 David Trudgian <dave@trudgian.net>
 #
@@ -19,11 +19,11 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=29
+VERSION=30
 HWEKR=6.5
 
 # DI_ENABLED = 1 enables udeb build, 0 or any other value disables them.
-DI_ENABLED=0
+DI_ENABLED=1
 # HWE_ENABLED = 1 enables HWE stack build, 0 or any other value disables it.
 HWE_ENABLED=1
 
@@ -79,8 +79,7 @@ cp $TMPDIR/* . -av
 rm -rf $TMPDIR
 
 for PATCH in $DATA/*.patch ; do
-  echo $PATCH
-  patch --no-backup-if-mismatch -p1 < $PATCH
+  patch_p1 $PATCH
 done
 
 ## Simple test for finding missing cases of silent_accept_firmware method
@@ -97,8 +96,7 @@ enable_udebs() {
 
 #Apply udeb/d-i related patches.
 for PATCH in $DATA/udeb/*.patch ; do
-  echo $PATCH
-  patch --no-backup-if-mismatch -p1 < $PATCH
+  patch_p1 $PATCH
 done
 
 cp $DATA/udeb/5-udebs.mk debian/rules.d

@@ -1,0 +1,15 @@
+diff --git a/debian/rules.d/0-common-vars.mk b/debian/rules.d/0-common-vars.mk_
+index bc873563..d6692ca1 100644
+--- a/debian/rules.d/0-common-vars.mk
++++ b/debian/rules.d/0-common-vars.mk_
+@@ -197,8 +197,9 @@ do_dtbs=false
+ do_fips_checks=false
+ 
+ # ZSTD compressed kernel modules
++ifeq ($(filter $(series),jammy aramo),)
+ do_zstd_ko=true
+-ifeq ($(series),jammy)
++else
+ do_zstd_ko=
+ endif
+ 
