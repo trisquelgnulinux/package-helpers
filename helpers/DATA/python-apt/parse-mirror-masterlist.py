@@ -77,10 +77,10 @@ if args.mirmon:
         if args.country and country != args.country:
             continue
         for site, urls in sites.items():
-            if urls["http"]:
-                print(f"{country.lower()} {urls['http'][0]}")
-            elif urls["https"]:
+            if urls["https"]:
                 print(f"{country.lower()} {urls['https'][0]}")
+            elif urls["http"]:
+                print(f"{country.lower()} {urls['http'][0]}")
     exit(0)
 
 # Print output
@@ -89,7 +89,7 @@ for country, sites in sorted(mirrors.items()):
         continue
 
     valid_sites = {
-        site: urls for site, urls in sites.items() 
+        site: urls for site, urls in sites.items()
         if urls["https"] or urls["http"]
     }
     if not valid_sites:
