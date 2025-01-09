@@ -1,8 +1,8 @@
 diff --git a/debian/rules b/debian/rules
-index 661286bd..e828a0ac 100755
+index 43eae8d5..c81721bc 100755
 --- a/debian/rules
 +++ b/debian/rules
-@@ -128,12 +128,19 @@ clean: debian/control debian/canonical-certs.pem debian/canonical-revoked-certs.
+@@ -136,11 +136,18 @@ clean: debian/control debian/canonical-certs.pem debian/canonical-revoked-certs.
  	dh_testroot
  	dh_clean
  
@@ -13,8 +13,7 @@ index 661286bd..e828a0ac 100755
 +
  	# normal build junk
  	rm -rf $(DEBIAN)/abi
- 	rm -rf $(builddir)
- 	rm -f $(stampdir)/stamp-*
+ 	rm -rf $(builddir) $(stampdir)
  	rm -rf debian/linux-*/
  
 +	# This gets rid of the d-i packages in control
@@ -22,16 +21,7 @@ index 661286bd..e828a0ac 100755
  	cp $(DEBIAN)/changelog debian/changelog
  
  	# Install the copyright information.
-#removed at 6.5.0-27.28~22.04.1
-#@@ -184,7 +191,6 @@ $(DEBIAN)/control.stub: 				\
-# 		$(DROOT)/scripts/control-create		\
-# 		$(control_files)			\
-# 		debian/canonical-revoked-certs.pem	\
-#-		$(DROOT)/control.d/flavour-module.stub	\
-# 		$(DEBIAN)/changelog			\
-# 		$(wildcard $(DEBIAN)/control.d/* $(DEBIAN)/sub-flavours/*.vars)
-# 	for i in $(control_files); do                                           \
-@@ -211,7 +217,14 @@ $(DEBIAN)/control.stub: 				\
+@@ -213,7 +221,14 @@ $(DEBIAN)/control.stub: 				\
  
  .PHONY: debian/control
  debian/control: $(DEBIAN)/control.stub
@@ -47,19 +37,19 @@ index 661286bd..e828a0ac 100755
  debian/canonical-certs.pem: $(wildcard $(DROOT)/certs/*-all.pem) $(wildcard $(DROOT)/certs/*-$(arch).pem) $(wildcard $(DEBIAN)/certs/*-all.pem) $(wildcard $(DEBIAN)/certs/*-$(arch).pem)
  	for cert in $(sort $(notdir $^));					\
 diff --git a/debian/rules.d/2-binary-arch.mk b/debian/rules.d/2-binary-arch.mk
-index b89c61c..ef1ef03 100644
+index fe66f8a0..e934f797 100644
 --- a/debian/rules.d/2-binary-arch.mk
 +++ b/debian/rules.d/2-binary-arch.mk
-@@ -178,10 +178,14 @@ endif
+@@ -145,10 +145,14 @@ endif
  	install -m600 $(builddir)/build-$*/System.map \
  		$(pkgdir)/boot/System.map-$(abi_release)-$*
  
 -ifeq ($(do_dtbs),true)
--	$(build_cd) $(kmake) $(build_O) $(conc_level) dtbs_install \
+-	$(kmake) O=$(builddir)/build-$* $(conc_level) dtbs_install \
 -		INSTALL_DTBS_PATH=$(pkgdir)/lib/firmware/$(abi_release)-$*/device-tree
 -endif
 +	if [ "$(filter true,$(do_dtbs))" ]; then \
-+		$(build_cd) $(kmake) $(build_O) $(conc_level) dtbs_install \
++		$(kmake) O=$(builddir)/build-$* $(conc_level) dtbs_install \
 +			INSTALL_DTBS_PATH=$(pkgdir)/lib/firmware/$(abi_release)-$*/device-tree; \
 +		( cd $(pkgdir)/lib/firmware/$(abi_release)-$*/ && find device-tree -print ) | \
 +		while read dtb_file; do \

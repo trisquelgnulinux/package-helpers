@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2024 Luis Guzman <ark@switnet.org>
+#    Copyright (C) 2025 Luis Guzman <ark@switnet.org>
 #    Copyright (C) 2008-2023  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C) 2019 David Trudgian <dave@trudgian.net>
 #
@@ -19,9 +19,9 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=32
+VERSION=33
 HWEKR=6.8
-DI_ENABLED=0
+DI_ENABLED=1
 HWE_ENABLED=1
 
 # DI_ENABLED = 1 enables udeb build, 0 or any other value disables them.
@@ -62,7 +62,7 @@ drivers/net/wireless/broadcom/brcm80211
 PRESERVEDIRS="$PRESERVEDIRS"
 
 TMPDIR=$(mktemp -d preserve-XXXX)
-PRESERVE=$(grep '^+++' $DATA/silent-accept-firmware.patch | /bin/sed 's/+++ //; s/\t.*//;' | cut -d/ -f2- | sort -u )
+PRESERVE=$(grep '^+++' $DATA/000-silent-accept-firmware.patch | /bin/sed 's/+++ //; s/\t.*//;' | cut -d/ -f2- | sort -u )
 for FILE in $PRESERVE; do
   cp $FILE $TMPDIR --parents -a
 done
@@ -72,7 +72,7 @@ done
 
 sh $DATA/deblob-$HWEKR
 
-echo "Reverting deblobbing for files patched by silent-accept-firmware"
+echo "Reverting deblobbing for files patched by 000-silent-accept-firmware"
 cp $TMPDIR/* . -av
 rm -rf $TMPDIR
 
