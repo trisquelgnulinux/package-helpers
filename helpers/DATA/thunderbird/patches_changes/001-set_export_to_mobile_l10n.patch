@@ -1,0 +1,724 @@
+diff --git a/comm/mail/locales/en-US/messenger/preferences/preferences.ftl b/comm/mail/locales/en-US/messenger/preferences/preferences.ftl
+index 9f5c0d31..9212df5c 100644
+--- a/comm/mail/locales/en-US/messenger/preferences/preferences.ftl
++++ b/comm/mail/locales/en-US/messenger/preferences/preferences.ftl
+@@ -1054,7 +1054,7 @@ sync-disconnected-turn-on-sync = Turn on Syncing…
+ 
+ ## Mobile QR Export Pane
+ 
+-qr-export-pane-header = Export accounts to { -brand-product-name } Mobile
++qr-export-pane-header = Export accounts to Mobile
+ 
+ qr-export-description = Quickly transfer your account settings from desktop to mobile by generating a QR code. Select which accounts to include, decide if you want to transfer your password, and scan the code with your mobile device. Fast, secure, and simple.
+ 
+@@ -1064,7 +1064,7 @@ qr-export-create = Create a QR code to export your accounts
+ 
+ qr-export-select-accounts = Select which accounts to export:
+ 
+-qr-export-no-accounts = Not seeing all your accounts? Some accounts may be disabled because they are not supported by { -brand-product-name } for Android. <a data-l10n-name="account-support-link">Support</a>
++qr-export-no-accounts = Not seeing all your accounts? Some accounts may be disabled because they are not supported for Android. <a data-l10n-name="account-support-link">Support</a>
+ 
+ qr-export-accounts-legend = Email accounts
+ 
+diff --git a/l10n/cs/mail/messenger/preferences/preferences.ftl b/l10n/cs/mail/messenger/preferences/preferences.ftl
+index 67947ec7..ca2c1194 100644
+--- a/l10n/cs/mail/messenger/preferences/preferences.ftl
++++ b/l10n/cs/mail/messenger/preferences/preferences.ftl
+@@ -895,12 +895,12 @@ sync-disconnected-turn-on-sync = Zapnout synchronizaci…
+ 
+ ## Mobile QR Export Pane
+ 
+-qr-export-pane-header = Exportovat účty do aplikace { -brand-product-name } pro mobily
++qr-export-pane-header = Exportovat účty do aplikace pro mobily
+ qr-export-description = Rychle přeneste nastavení účtu z počítače do mobilu vygenerováním QR kódu. Vyberte, které účty chcete zahrnout, rozhodněte, zda chcete přenést heslo, a naskenujte kód pomocí mobilního zařízení. Rychlé, bezpečné a jednoduché.
+ qr-export-get-app = Ještě nemáte { -brand-product-name } v mobilu? <a data-l10n-name="app-link">Stáhněte si ji z Google Play</a>
+ qr-export-create = Vytvoření QR kódu pro export účtů
+ qr-export-select-accounts = Vyberte, které účty chcete exportovat:
+-qr-export-no-accounts = Nevidíte všechny své účty? Některé účty mohou být zakázány, protože je { -brand-product-name } pro Android nepodporuje. <a data-l10n-name="account-support-link">Podpora</a>
++qr-export-no-accounts = Nevidíte všechny své účty? Některé účty mohou být zakázány, protože je  pro Android nepodporuje. <a data-l10n-name="account-support-link">Podpora</a>
+ qr-export-accounts-legend = E-mailové účty
+ qr-export-select-all-accounts = Vybrat vše
+ qr-export-security-legend = Zabezpečení
+diff --git a/l10n/cy/mail/messenger/preferences/preferences.ftl b/l10n/cy/mail/messenger/preferences/preferences.ftl
+index 58c3e3b0..6ea3a90a 100644
+--- a/l10n/cy/mail/messenger/preferences/preferences.ftl
++++ b/l10n/cy/mail/messenger/preferences/preferences.ftl
+@@ -814,12 +814,12 @@ sync-disconnected-turn-on-sync = Cychwyn Cydweddu…
+ 
+ ## Mobile QR Export Pane
+ 
+-qr-export-pane-header = Allforio cyfrifon i { -brand-product-name } Symudol
++qr-export-pane-header = Allforio cyfrifon i Symudol
+ qr-export-description = Trosglwyddwch eich gosodiadau cyfrif yn gyflym o'r bwrdd gwaith i ffôn symudol trwy gynhyrchu cod QR. Dewiswch pa gyfrifon i'w cynnwys, penderfynwch a ydych am drosglwyddo'ch cyfrinair, a sganiwch y cod gyda'ch dyfais symudol. Cyflym, diogel a syml.
+ qr-export-get-app = Heb { -brand-product-name } ar eich ffôn symudol eto? <a data-l10n-name="app-link">Ewch ar Google Play i'w gael</a>
+ qr-export-create = Crëwch god QR i allforio eich cyfrifon
+ qr-export-select-accounts = Dewiswch pa gyfrifon i'w hallforio:
+-qr-export-no-accounts = Ddim yn gweld eich holl gyfrifon? Mae'n bosib y bydd rhai cyfrifon yn cael eu hanalluogi oherwydd nad ydyn nhw'n cael eu cefnogi gan { -brand-product-name } Android. <a data-l10n-name="account-support-link">Cymorth</a>
++qr-export-no-accounts = Ddim yn gweld eich holl gyfrifon? Mae'n bosib y bydd rhai cyfrifon yn cael eu hanalluogi oherwydd nad ydyn nhw'n cael eu cefnogi gan  Android. <a data-l10n-name="account-support-link">Cymorth</a>
+ qr-export-accounts-legend = Cyfrifon e-bost
+ qr-export-select-all-accounts = Dewis popeth
+ qr-export-security-legend = Diogelwch
+diff --git a/l10n/da/mail/messenger/preferences/preferences.ftl b/l10n/da/mail/messenger/preferences/preferences.ftl
+index 9635ad0c..b52428a3 100644
+--- a/l10n/da/mail/messenger/preferences/preferences.ftl
++++ b/l10n/da/mail/messenger/preferences/preferences.ftl
+@@ -810,12 +810,12 @@ sync-disconnected-turn-on-sync = Slå synkronisering til...
+ 
+ ## Mobile QR Export Pane
+ 
+-qr-export-pane-header = Eksporter konti til { -brand-product-name } Mobile
++qr-export-pane-header = Eksporter konti til Mobile
+ qr-export-description = Overfør nemt dine kontoindstillinger fra din computer til din mobilenhed ved hjælp af en QR-kode. Vælg hvilke konti, der skal overføres og om du vil overføre din adgangskode, og skan derefter QR-koden med din mobilenhed. Hurtigt, sikkert og nemt.
+ qr-export-get-app = Har du ikke { -brand-product-name } på din mobilenhed endnu? <a data-l10n-name="app-link">Hent den på Google Play</a>
+ qr-export-create = Lav en QR-kode for at eksportere dine konti
+ qr-export-select-accounts = Vælg hvilke konti der skal eksporteres:
+-qr-export-no-accounts = Kan du ikke se alle dine konti? Visse konti kan være udeladt, da de ikke understøttes af { -brand-product-name } til Android. <a data-l10n-name="account-support-link">Support</a>
++qr-export-no-accounts = Kan du ikke se alle dine konti? Visse konti kan være udeladt, da de ikke understøttes til Android. <a data-l10n-name="account-support-link">Support</a>
+ qr-export-accounts-legend = Mailkonti
+ qr-export-select-all-accounts = Vælg alle
+ qr-export-security-legend = Sikkerhed
+diff --git a/l10n/de/mail/messenger/preferences/preferences.ftl b/l10n/de/mail/messenger/preferences/preferences.ftl
+index 028115dd..32a2bbb1 100644
+--- a/l10n/de/mail/messenger/preferences/preferences.ftl
++++ b/l10n/de/mail/messenger/preferences/preferences.ftl
+@@ -818,12 +818,12 @@ sync-disconnected-turn-on-sync = Synchronisierung einschalten…
+ 
+ ## Mobile QR Export Pane
+ 
+-qr-export-pane-header = Konten nach { -brand-product-name } Mobile exportieren
++qr-export-pane-header = Konten nach Mobile exportieren
+ qr-export-description = Übertragen Sie Ihre Kontoeinstellungen schnell vom Desktop auf Ihr Mobilgerät, indem Sie einen QR-Code erzeugen. Wählen Sie aus, welche Konten eingeschlossen werden sollen, entscheiden Sie, ob Sie Ihr Passwort übertragen möchten und scannen Sie den Code mit Ihrem Mobilgerät. Schnell, sicher und einfach.
+ qr-export-get-app = Sie haben { -brand-product-name } noch nicht Ihrem Mobilgerät? <a data-l10n-name="app-link"> Sie erhalten ihn bei Google Play</a>
+ qr-export-create = Erstellen Sie einen QR-Code, um Ihre Konten zu exportieren
+ qr-export-select-accounts = Wählen Sie, welche Konten exportiert werden sollen:
+-qr-export-no-accounts = Sehen Sie nicht alle Ihre Konten? Einige Konten sind möglicherweise deaktiviert, weil sie von { -brand-product-name } für Android nicht unterstützt werden. <a data-l10n-name="account-support-link">Hilfe</a>
++qr-export-no-accounts = Sehen Sie nicht alle Ihre Konten? Einige Konten sind möglicherweise deaktiviert, weil sie für Android nicht unterstützt werden. <a data-l10n-name="account-support-link">Hilfe</a>
+ qr-export-accounts-legend = E-Mail-Konten
+ qr-export-select-all-accounts = Alle auswählen
+ qr-export-security-legend = Sicherheit
+diff --git a/l10n/dsb/mail/messenger/preferences/preferences.ftl b/l10n/dsb/mail/messenger/preferences/preferences.ftl
+index 7d3b434f..20d5c811 100644
+--- a/l10n/dsb/mail/messenger/preferences/preferences.ftl
++++ b/l10n/dsb/mail/messenger/preferences/preferences.ftl
+@@ -818,12 +818,12 @@ sync-disconnected-turn-on-sync = Synchronizaciju zmóžniś…
+ 
+ ## Mobile QR Export Pane
+ 
+-qr-export-pane-header = Konta do mobilnego { -brand-product-name } eksportěrowaś
++qr-export-pane-header = Konta do mobilnego eksportować
+ qr-export-description = Generěrujśo kod QR, aby swóje kontowe nastajenja malsnje wót desktopa do mobilnego rěda pśenosował. Wubjeŕśo, kótare konta maju se zapśimjeś, rozsuźćo, lěc cośo  swójo gronidło pśenosowaś a scannujśo kod ze swójim mobilnym rědom. Malsny, wěsty a lažki.
+ qr-export-get-app = Njamaśo hyšći { -brand-product-name } na mobilnem rěźe? <a data-l10n-name="app-link">Wobstarajśo se jen na Google Play</a>
+ qr-export-create = Napórajśo kod QR, aby swóje konta eksportěrował
+ qr-export-select-accounts = Wubjeŕśo konta, kótarež se maju eksportěrowaś:
+-qr-export-no-accounts = Njewiźiśo wšykne konta? Někotare konta su snaź znjemóžnjone, dokulaž se wót { -brand-product-name } za Android njepódpěraju. <a data-l10n-name="account-support-link">Pódpěra</a>
++qr-export-no-accounts = Njewiźiśo wšykne konta? Někotare konta su snaź znjemóžnjone, dokulaž se za Android njepódpěraju. <a data-l10n-name="account-support-link">Pódpěra</a>
+ qr-export-accounts-legend = E-mailowe konta
+ qr-export-select-all-accounts = Wšykne wubraś
+ qr-export-security-legend = Wěstota
+diff --git a/l10n/el/mail/messenger/preferences/preferences.ftl b/l10n/el/mail/messenger/preferences/preferences.ftl
+index 3021443a..d4bfddfc 100644
+--- a/l10n/el/mail/messenger/preferences/preferences.ftl
++++ b/l10n/el/mail/messenger/preferences/preferences.ftl
+@@ -814,12 +814,12 @@ sync-disconnected-turn-on-sync = Ενεργοποίηση συγχρονισμο
+ 
+ ## Mobile QR Export Pane
+ 
+-qr-export-pane-header = Εξαγωγή λογαριασμών στο { -brand-product-name } για κινητές συσκευές
++qr-export-pane-header = Εξαγωγή λογαριασμών για κινητές συσκευές
+ qr-export-description = Μεταφέρετε γρήγορα τις ρυθμίσεις του λογαριασμού σας από τον υπολογιστή στην κινητή σας συσκευή με έναν κωδικό QR. Επιλέξτε ποιους λογαριασμούς θα συμπεριλάβετε, αποφασίστε αν θέλετε να μεταφέρετε τους κωδικούς πρόσβασής σας και σαρώστε τον κωδικό με την κινητή σας συσκευή. Γρήγορα, εύκολα και με ασφάλεια.
+ qr-export-get-app = Ακόμα να κάνετε λήψη του { -brand-product-name } στην κινητή σας συσκευή; <a data-l10n-name="app-link">Αποκτήστε το στο Google Play</a>
+ qr-export-create = Δημιουργήστε έναν κωδικό QR για να εξαγάγετε τους λογαριασμούς σας
+ qr-export-select-accounts = Επιλέξτε λογαριασμούς προς εξαγωγή:
+-qr-export-no-accounts = Δεν βλέπετε όλους τους λογαριασμούς σας; Ορισμένοι λογαριασμοί ενδέχεται να έχουν απενεργοποιηθεί επειδή δεν υποστηρίζονται από το { -brand-product-name } για Android. <a data-l10n-name="account-support-link">Υποστήριξη</a>
++qr-export-no-accounts = Δεν βλέπετε όλους τους λογαριασμούς σας; Ορισμένοι λογαριασμοί ενδέχεται να έχουν απενεργοποιηθεί επειδή δεν υποστηρίζονται από το  για Android. <a data-l10n-name="account-support-link">Υποστήριξη</a>
+ qr-export-accounts-legend = Λογαριασμοί email
+ qr-export-select-all-accounts = Επιλογή όλων
+ qr-export-security-legend = Ασφάλεια
+diff --git a/l10n/en-GB/mail/messenger/preferences/preferences.ftl b/l10n/en-GB/mail/messenger/preferences/preferences.ftl
+index bea4deb2..546161bd 100644
+--- a/l10n/en-GB/mail/messenger/preferences/preferences.ftl
++++ b/l10n/en-GB/mail/messenger/preferences/preferences.ftl
+@@ -818,12 +818,12 @@ sync-disconnected-turn-on-sync = Turn on Synchronisation…
+ 
+ ## Mobile QR Export Pane
+ 
+-qr-export-pane-header = Export accounts to { -brand-product-name } Mobile
++qr-export-pane-header = Export accounts to Mobile
+ qr-export-description = Quickly transfer your account settings from desktop to mobile by generating a QR code. Select which accounts to include, decide if you want to transfer your password, and scan the code with your mobile device. Fast, secure, and simple.
+ qr-export-get-app = Don’t have { -brand-product-name } on mobile yet? <a data-l10n-name="app-link">Get it on Google Play</a>
+ qr-export-create = Create a QR code to export your accounts
+ qr-export-select-accounts = Select which accounts to export:
+-qr-export-no-accounts = Not seeing all your accounts? Some accounts may be disabled because they are not supported by { -brand-product-name } for Android. <a data-l10n-name="account-support-link">Support</a>
++qr-export-no-accounts = Not seeing all your accounts? Some accounts may be disabled because they are not supported for Android. <a data-l10n-name="account-support-link">Support</a>
+ qr-export-accounts-legend = Email accounts
+ qr-export-select-all-accounts = Select all
+ qr-export-security-legend = Security
+diff --git a/l10n/es-AR/mail/messenger/preferences/preferences.ftl b/l10n/es-AR/mail/messenger/preferences/preferences.ftl
+index 085f26f2..d67d5cb6 100644
+--- a/l10n/es-AR/mail/messenger/preferences/preferences.ftl
++++ b/l10n/es-AR/mail/messenger/preferences/preferences.ftl
+@@ -814,12 +814,12 @@ sync-disconnected-turn-on-sync = Habilitar sincronización…
+ 
+ ## Mobile QR Export Pane
+ 
+-qr-export-pane-header = Exportar cuentas a { -brand-product-name } móvil
++qr-export-pane-header = Exportar cuentas a móvil
+ qr-export-description = Transfiera rápidamente la configuración de la cuenta desde el escritorio al dispositivo móvil generando un código QR. Seleccione qué cuentas incluir, decida si quiere transferir su contraseña y escanee el código con su dispositivo móvil. Rápido, seguro y sencillo.
+ qr-export-get-app = ¿Todavía no tiene { -brand-product-name } en dispositivos móviles? <a data-l10n-name="app-link">Consígalo en Google Play</a>
+ qr-export-create = Crear un código QR para exportar cuentas
+ qr-export-select-accounts = Seleccione qué cuentas exportar:
+-qr-export-no-accounts = ¿No ve todas sus cuentas? Algunas cuentas pueden estar deshabilitadas porque no son compatibles con { -brand-product-name } para Android. <a data-l10n-name="account-support-link">Ayuda</a>
++qr-export-no-accounts = ¿No ve todas sus cuentas? Algunas cuentas pueden estar deshabilitadas porque no son compatibles para Android. <a data-l10n-name="account-support-link">Ayuda</a>
+ qr-export-accounts-legend = Cuentas de correo
+ qr-export-select-all-accounts = Seleccionar todo
+ qr-export-security-legend = Seguridad
+diff --git a/l10n/es-ES/mail/messenger/preferences/preferences.ftl b/l10n/es-ES/mail/messenger/preferences/preferences.ftl
+index 9961cfac..9c1b59e1 100644
+--- a/l10n/es-ES/mail/messenger/preferences/preferences.ftl
++++ b/l10n/es-ES/mail/messenger/preferences/preferences.ftl
+@@ -814,12 +814,12 @@ sync-disconnected-turn-on-sync = Activar la sincronización…
+ 
+ ## Mobile QR Export Pane
+ 
+-qr-export-pane-header = Exportar cuentas a { -brand-product-name } para dispositivos móviles
++qr-export-pane-header = Exportar cuentas a dispositivos móviles
+ qr-export-description = Transfiera rápidamente la configuración de su cuenta desde el escritorio al dispositivo móvil generando un código QR. Seleccione qué cuentas incluir, decida si quiere transferir su contraseña y escanee el código con su dispositivo móvil. Rápido, seguro y sencillo.
+ qr-export-get-app = ¿Todavía no tiene { -brand-product-name } en su dispositivo móvil? <a data-l10n-name="app-link">Consígalo en Google Play</a>
+ qr-export-create = Crear un código QR para exportar sus cuentas
+ qr-export-select-accounts = Seleccione las cuentas que quiere exportar:
+-qr-export-no-accounts = ¿No ve todas sus cuentas? Algunas cuentas pueden estar desactivadas porque no son compatibles con { -brand-product-name } para Android. <a data-l10n-name="account-support-link">Ayuda</a>
++qr-export-no-accounts = ¿No ve todas sus cuentas? Algunas cuentas pueden estar desactivadas porque no son compatibles para Android. <a data-l10n-name="account-support-link">Ayuda</a>
+ qr-export-accounts-legend = Cuentas de correo electrónico
+ qr-export-select-all-accounts = Seleccionar todo
+ qr-export-security-legend = Seguridad
+diff --git a/l10n/eu/mail/messenger/preferences/preferences.ftl b/l10n/eu/mail/messenger/preferences/preferences.ftl
+index d76d7e06..49e220ba 100644
+--- a/l10n/eu/mail/messenger/preferences/preferences.ftl
++++ b/l10n/eu/mail/messenger/preferences/preferences.ftl
+@@ -812,12 +812,12 @@ sync-disconnected-turn-on-sync = Gaitu sinkronizazioa…
+ 
+ ## Mobile QR Export Pane
+ 
+-qr-export-pane-header = Esportatu kontuak { -brand-product-name } mugikorrera
++qr-export-pane-header = Esportatu kontuak mugikorrera
+ qr-export-description = Bizkor transferitu zure kontuaren ezarpenak mahaigainetik mugikorrera QR kodea sortuz. Hautatu zein kontu sartu, erabaki zure pasahitza transferitu nahi duzun eta eskaneatu kodea zure gailu mugikorrekin. Azkarra, segurua eta sinplea.
+ qr-export-get-app = Ez duzu { -brand-product-name } mugikorrean oraindik? <a data-l10n-name="app-link">Lortu Google Playen</a>
+ qr-export-create = Sortu QR kode bat zure kontuak esportatzeko
+ qr-export-select-accounts = Hautatu zein kontu esportatu nahi dituzun:
+-qr-export-no-accounts = Ez dituzu zure kontu guztiak ikusten? Baliteke kontu batzuk desgaituta egotea Androidek { -brand-product-name } onartzen ez duelako. <a data-l10n-name="account-support-link">Laguntza</a>
++qr-export-no-accounts = Ez dituzu zure kontu guztiak ikusten? Baliteke kontu batzuk desgaituta egotea Androidek  onartzen ez duelako. <a data-l10n-name="account-support-link">Laguntza</a>
+ qr-export-accounts-legend = Posta elektroniko kontuak
+ qr-export-select-all-accounts = Hautatu dena
+ qr-export-security-legend = Segurtasuna
+diff --git a/l10n/fi/mail/messenger/preferences/preferences.ftl b/l10n/fi/mail/messenger/preferences/preferences.ftl
+index a7a12a13..6ec1945b 100644
+--- a/l10n/fi/mail/messenger/preferences/preferences.ftl
++++ b/l10n/fi/mail/messenger/preferences/preferences.ftl
+@@ -798,12 +798,12 @@ sync-disconnected-turn-on-sync = Ota synkronointi käyttöön…
+ 
+ ## Mobile QR Export Pane
+ 
+-qr-export-pane-header = Vie tilit { -brand-product-name }in mobiilisovellukseen
++qr-export-pane-header = Vie tilitin mobiilisovellukseen
+ qr-export-description = Siirrä tilisi asetukset nopeasti tietokoneelta mobiililaitteelle luomalla QR-koodi. Valitse sisällytettävät tilit, päätä, haluatko siirtää salasanasi ja skannaa koodi mobiililaitteellasi. Nopeaa, turvallista ja yksinkertaista.
+ qr-export-get-app = Eikö sinulla ole vielä { -brand-product-name }ia mobiililaitteella? <a data-l10n-name="app-link">Hanki se Google Playsta</a>
+ qr-export-create = Luo QR-koodi tilien viemistä varten
+ qr-export-select-accounts = Valitse vietävät tilit:
+-qr-export-no-accounts = Etkö näe kaikkia tilejäsi? Jotkin tilit on mahdollisesti poistettu käytöstä, koska { -brand-product-name }in Android-versio ei tue niitä. <a data-l10n-name="account-support-link">Tuki</a>
++qr-export-no-accounts = Etkö näe kaikkia tilejäsi? Jotkin tilit on mahdollisesti poistettu käytöstä, koska Android-versio ei tue niitä. <a data-l10n-name="account-support-link">Tuki</a>
+ qr-export-accounts-legend = Sähköpostitilit
+ qr-export-select-all-accounts = Valitse kaikki
+ qr-export-security-legend = Turvallisuus
+diff --git a/l10n/fr/mail/messenger/preferences/preferences.ftl b/l10n/fr/mail/messenger/preferences/preferences.ftl
+index a415c361..8a9b73d6 100644
+--- a/l10n/fr/mail/messenger/preferences/preferences.ftl
++++ b/l10n/fr/mail/messenger/preferences/preferences.ftl
+@@ -816,12 +816,12 @@ sync-disconnected-turn-on-sync = Activer la synchronisation…
+ 
+ ## Mobile QR Export Pane
+ 
+-qr-export-pane-header = Exporter les comptes vers { -brand-product-name } Mobile
++qr-export-pane-header = Exporter les comptes vers Mobile
+ qr-export-description = Transférez rapidement les paramètres de votre compte de l’ordinateur à un appareil mobile en générant un code QR. Sélectionnez les comptes à inclure, décidez si vous souhaitez transférer votre mot de passe et scannez le code avec votre appareil mobile. C’est rapide, sûr et simple.
+ qr-export-get-app = Vous n’avez pas encore { -brand-product-name } sur mobile ? <a data-l10n-name="app-link">Installez-le depuis Google Play</a>
+ qr-export-create = Créer un code QR pour exporter vos comptes
+ qr-export-select-accounts = Sélectionnez les comptes à exporter :
+-qr-export-no-accounts = Vous ne voyez pas tous vos comptes ? Certains comptes peuvent être désactivés car ils ne sont pas pris en charge par { -brand-product-name } pour Android. <a data-l10n-name="account-support-link">Assistance</a>
++qr-export-no-accounts = Vous ne voyez pas tous vos comptes ? Certains comptes peuvent être désactivés car ils ne sont pas pris en charge pour Android. <a data-l10n-name="account-support-link">Assistance</a>
+ qr-export-accounts-legend = Comptes de messagerie
+ qr-export-select-all-accounts = Tout sélectionner
+ qr-export-security-legend = Sécurité
+diff --git a/l10n/fy-NL/mail/messenger/preferences/preferences.ftl b/l10n/fy-NL/mail/messenger/preferences/preferences.ftl
+index 68db0e91..f4e3cfd7 100644
+--- a/l10n/fy-NL/mail/messenger/preferences/preferences.ftl
++++ b/l10n/fy-NL/mail/messenger/preferences/preferences.ftl
+@@ -818,12 +818,12 @@ sync-disconnected-turn-on-sync = Syngronisaasje ynskeakelje…
+ 
+ ## Mobile QR Export Pane
+ 
+-qr-export-pane-header = Accounts eksportearje nei { -brand-product-name } Mobyl
++qr-export-pane-header = Accounts eksportearje nei Mobyl
+ qr-export-description = Set fluch jo accountynstellingen oer fan desktop nei mobyl troch in QR-koade oan te meitsjen. Selektearje hokker accounts jo opnimme wolle, beslis oft jo jo wachtwurd oersette wolle en scan de koade mei jo mobile apparaat. Fluch, feilich en ienfâldich.
+ qr-export-get-app = Hawwe jo { -brand-product-name } noch net op mobyl? <a data-l10n-name="app-link">Download fia Google Play</a>
+ qr-export-create = In QR-koade oanmeitsje om jo accounts te eksportearjen
+ qr-export-select-accounts = Selektearje de te eksportearjen accounts:
+-qr-export-no-accounts = Sjogge jo net al jo accounts? Guon accounts binne mooglik útskeakele, omdat se net troch { -brand-product-name } foar Android stipe wurde. <a data-l10n-name="account-support-link">Stipe</a>
++qr-export-no-accounts = Sjogge jo net al jo accounts? Guon accounts binne mooglik útskeakele, omdat se net troch  foar Android stipe wurde. <a data-l10n-name="account-support-link">Stipe</a>
+ qr-export-accounts-legend = E-mailaccounts
+ qr-export-select-all-accounts = Alles selektearje
+ qr-export-security-legend = Befeiliging
+diff --git a/l10n/gl/mail/messenger/preferences/preferences.ftl b/l10n/gl/mail/messenger/preferences/preferences.ftl
+index 28e344c1..35c09c17 100644
+--- a/l10n/gl/mail/messenger/preferences/preferences.ftl
++++ b/l10n/gl/mail/messenger/preferences/preferences.ftl
+@@ -816,4 +816,4 @@ sync-disconnected-turn-on-sync = Activar a sincronización ...
+ 
+ ## Mobile QR Export Pane
+ 
+-qr-export-pane-header = Exporta contas a { -brand-product-name } móbil
++qr-export-pane-header = Exporta contas a móbil
+diff --git a/l10n/hsb/mail/messenger/preferences/preferences.ftl b/l10n/hsb/mail/messenger/preferences/preferences.ftl
+index 38a1c8ff..61735ee1 100644
+--- a/l10n/hsb/mail/messenger/preferences/preferences.ftl
++++ b/l10n/hsb/mail/messenger/preferences/preferences.ftl
+@@ -818,12 +818,12 @@ sync-disconnected-turn-on-sync = Synchronizaciju zmóžnić…
+ 
+ ## Mobile QR Export Pane
+ 
+-qr-export-pane-header = Konta do mobilneho { -brand-product-name } eksportować
++qr-export-pane-header = Konta do mobilneho eksportować
+ qr-export-description = Generěrujće kod QR, zo byšće swoje kontowe nastajenja spěšnje wot desktopa do mobilneho grata přenošował. Wubjerće, kotre konta maja so zapřijeć, rozsudźće, hač chceće  swoje hesło přenošować a skenujće kod ze swojim mobilnym gratom. Spěšny, wěsty a lochki.
+ qr-export-get-app = Nimaće hišće { -brand-product-name } na mobilnym graće? <a data-l10n-name="app-link">Wobstarajće sej jón na Google Play</a>
+ qr-export-create = Wutworće kod QR, zo byšće swoje konta eksportował
+ qr-export-select-accounts = Wubjerće konta, kotrež so maja eksportować:
+-qr-export-no-accounts = Njewidźiće wšě konta? Někotre konta su snano znjemóžnjene, dokelž so wot { -brand-product-name } za Android njepodpěruja. <a data-l10n-name="account-support-link">Podpěra</a>
++qr-export-no-accounts = Njewidźiće wšě konta? Někotre konta su snano znjemóžnjene, dokelž so za Android njepodpěruja. <a data-l10n-name="account-support-link">Podpěra</a>
+ qr-export-accounts-legend = E-mejlowe konta
+ qr-export-select-all-accounts = Wšě wubrać
+ qr-export-security-legend = Wěstota
+diff --git a/l10n/hu/mail/messenger/preferences/preferences.ftl b/l10n/hu/mail/messenger/preferences/preferences.ftl
+index d6ddaf43..5c146705 100644
+--- a/l10n/hu/mail/messenger/preferences/preferences.ftl
++++ b/l10n/hu/mail/messenger/preferences/preferences.ftl
+@@ -818,12 +818,12 @@ sync-disconnected-turn-on-sync = Szinkronizálás bekapcsolása…
+ 
+ ## Mobile QR Export Pane
+ 
+-qr-export-pane-header = Fiókok exportálása a mobilos { -brand-product-name }be
++qr-export-pane-header = Fiókok exportálása a mobilosbe
+ qr-export-description = Gyorsan vigye át fiókbeállításait az asztali gépéről mobilra egy QR-kód előállításával. Válassza ki a figyelembe veendő fiókokat, döntse el, hogy át akarja-e küldeni a jelszavát, és olvassa le a kódot a mobileszközével. Gyors, biztonságos és egyszerű.
+ qr-export-get-app = Nincs még { -brand-product-name } a mobilján? <a data-l10n-name="app-link">Szerezze be a Google Playen</a>
+ qr-export-create = Hozzon létre egy QR-kódot a fiókjai exportálásához
+ qr-export-select-accounts = Válassza ki az exportálandó fiókokat:
+-qr-export-no-accounts = Nem látja az összes fiókját? Előfordulhat, hogy egyes fiókok le lettek tiltva, mert az androidos { -brand-product-name } nem támogatja őket. <a data-l10n-name="account-support-link">Támogatás</a>
++qr-export-no-accounts = Nem látja az összes fiókját? Előfordulhat, hogy egyes fiókok le lettek tiltva, mert az androidos  nem támogatja őket. <a data-l10n-name="account-support-link">Támogatás</a>
+ qr-export-accounts-legend = Levelezőfiókok
+ qr-export-select-all-accounts = Összes kijelölése
+ qr-export-security-legend = Biztonság
+diff --git a/l10n/id/mail/messenger/preferences/preferences.ftl b/l10n/id/mail/messenger/preferences/preferences.ftl
+index 35f566f4..7252bcde 100644
+--- a/l10n/id/mail/messenger/preferences/preferences.ftl
++++ b/l10n/id/mail/messenger/preferences/preferences.ftl
+@@ -800,12 +800,12 @@ sync-disconnected-turn-on-sync = Aktifkan Sinkronisasi…
+ 
+ ## Mobile QR Export Pane
+ 
+-qr-export-pane-header = Ekspor akun ke { -brand-product-name } Mobile
++qr-export-pane-header = Ekspor akun ke Mobile
+ qr-export-description = Dengan cepat mentransfer pengaturan akun Anda dari desktop ke ponsel dengan membuat kode QR. Pilih akun mana yang akan disertakan, putuskan apakah Anda ingin mentransfer kata sandi Anda, dan pindai kode dengan perangkat seluler Anda. Cepat, aman, dan sederhana.
+ qr-export-get-app = Belum memiliki { -brand-product-name } di perangkat seluler? <a data-l10n-name="app-link">Dapatkan di Google Play</a>
+ qr-export-create = Buat kode QR untuk mengekspor akun Anda
+ qr-export-select-accounts = Pilih akun mana yang akan diekspor:
+-qr-export-no-accounts = Tidak melihat semua akun Anda? Beberapa akun mungkin dinonaktifkan karena tidak didukung oleh { -brand-product-name } untuk Android. <a data-l10n-name="account-support-link">Dukungan</a>
++qr-export-no-accounts = Tidak melihat semua akun Anda? Beberapa akun mungkin dinonaktifkan karena tidak didukung oleh  untuk Android. <a data-l10n-name="account-support-link">Dukungan</a>
+ qr-export-accounts-legend = Akun surel
+ qr-export-select-all-accounts = Pilih semua
+ qr-export-security-legend = Keamanan
+diff --git a/l10n/is/mail/messenger/preferences/preferences.ftl b/l10n/is/mail/messenger/preferences/preferences.ftl
+index 5992f613..49cba728 100644
+--- a/l10n/is/mail/messenger/preferences/preferences.ftl
++++ b/l10n/is/mail/messenger/preferences/preferences.ftl
+@@ -818,12 +818,12 @@ sync-disconnected-turn-on-sync = Kveikja á samstillingu…
+ 
+ ## Mobile QR Export Pane
+ 
+-qr-export-pane-header = Flytja út reikninga í { -brand-product-name } á farsíma
++qr-export-pane-header = Flytja út reikninga í farsíma
+ qr-export-description = Flyttu reikningsstillingarnar þínar fljótt úr vinnutölvu yfir í farsíma með því að búa til QR-kóða. Veldu hvaða reikninga þú vilt hafa með, ákveddu hvort þú viljir flytja lykilorðið þitt og skannaðu kóðann með farsímanum þínum. Hratt, öruggt og einfalt.
+ qr-export-get-app = Ertu ekki enn með { -brand-product-name } í farsímanum? <a data-l10n-name="app-link">Sæktu það á Google Play</a>
+ qr-export-create = Búðu til QR-kóða til að flytja út reikningana þína
+ qr-export-select-accounts = Veldu hvaða reikninga á að flytja út:
+-qr-export-no-accounts = Sérðu ekki alla reikningana þína? Sumir reikningar gætu verið óvirkir vegna þess að þeir eru ekki studdir af { -brand-product-name } fyrir Android. <a data-l10n-name="account-support-link">Aðstoð</a>
++qr-export-no-accounts = Sérðu ekki alla reikningana þína? Sumir reikningar gætu verið óvirkir vegna þess að þeir eru ekki studdir af  fyrir Android. <a data-l10n-name="account-support-link">Aðstoð</a>
+ qr-export-accounts-legend = Tölvupóstsreikningar
+ qr-export-select-all-accounts = Velja allt
+ qr-export-security-legend = Öryggi
+diff --git a/l10n/it/mail/messenger/preferences/preferences.ftl b/l10n/it/mail/messenger/preferences/preferences.ftl
+index 1178f194..640a6344 100644
+--- a/l10n/it/mail/messenger/preferences/preferences.ftl
++++ b/l10n/it/mail/messenger/preferences/preferences.ftl
+@@ -814,12 +814,12 @@ sync-disconnected-turn-on-sync = Attiva sincronizzazione…
+ 
+ ## Mobile QR Export Pane
+ 
+-qr-export-pane-header = Esporta account su { -brand-product-name } Mobile
++qr-export-pane-header = Esporta account su Mobile
+ qr-export-description = Trasferisci rapidamente le impostazioni del tuo account dal desktop al dispositivo mobile generando un codice QR. Seleziona gli account da includere, decidi se vuoi trasferire la password e scansiona il codice con il tuo dispositivo mobile. Veloce, sicuro e semplice.
+ qr-export-get-app = Non hai ancora { -brand-product-name } per dispositivi mobili? <a data-l10n-name="app-link">Scaricalo su Google Play</a>
+ qr-export-create = Crea un codice QR per esportare i tuoi account
+ qr-export-select-accounts = Seleziona gli account da esportare:
+-qr-export-no-accounts = Non vedi tutti i tuoi account? Alcuni account potrebbero essere disattivati in quanto non supportati da { -brand-product-name } per Android. <a data-l10n-name="account-support-link">Supporto</a>
++qr-export-no-accounts = Non vedi tutti i tuoi account? Alcuni account potrebbero essere disattivati in quanto non supportati da  per Android. <a data-l10n-name="account-support-link">Supporto</a>
+ qr-export-accounts-legend = Account di posta elettronica
+ qr-export-select-all-accounts = Seleziona tutto
+ qr-export-security-legend = Sicurezza
+diff --git a/l10n/ja/mail/messenger/preferences/preferences.ftl b/l10n/ja/mail/messenger/preferences/preferences.ftl
+index 6109aac2..e5a18d5f 100644
+--- a/l10n/ja/mail/messenger/preferences/preferences.ftl
++++ b/l10n/ja/mail/messenger/preferences/preferences.ftl
+@@ -815,12 +815,12 @@ sync-disconnected-turn-on-sync = 同期をオンにする...
+ 
+ ## Mobile QR Export Pane
+ 
+-qr-export-pane-header =  モバイル版 { -brand-product-name } にアカウント設定をエクスポート
++qr-export-pane-header =  モバイル版 にアカウント設定をエクスポート
+ qr-export-description = QR コードを生成してアカウント設定をデスクトップからモバイル端末へすばやく転送します。転送データに含めるアカウントを選択してください。パスワードも転送するかどうかを決定し、モバイル端末で QR コードをスキャンしてください。速く、安全で簡単に転送できます。
+ qr-export-get-app = まだモバイル端末に { -brand-product-name } をインストールしていない場合は、<a data-l10n-name="app-link">Google Play から入手</a> してください。
+ qr-export-create = QR コードを生成してアカウントをエクスポートする
+ qr-export-select-accounts = エクスポートするアカウントを選択:
+-qr-export-no-accounts = アカウントがすべて表示されない場合、Android 版 { -brand-product-name } でサポートされていないものが一部無効になっているかもしれません。<a data-l10n-name="account-support-link">サポート情報</a>
++qr-export-no-accounts = アカウントがすべて表示されない場合、Android 版  でサポートされていないものが一部無効になっているかもしれません。<a data-l10n-name="account-support-link">サポート情報</a>
+ qr-export-accounts-legend = メールアカウント
+ qr-export-select-all-accounts = すべて選択
+ qr-export-security-legend = セキュリティ
+diff --git a/l10n/ja-JP-mac/mail/messenger/preferences/preferences.ftl b/l10n/ja-JP-mac/mail/messenger/preferences/preferences.ftl
+index e6be8126..8b819de6 100644
+--- a/l10n/ja-JP-mac/mail/messenger/preferences/preferences.ftl
++++ b/l10n/ja-JP-mac/mail/messenger/preferences/preferences.ftl
+@@ -815,12 +815,12 @@ sync-disconnected-turn-on-sync = 同期をオンにする...
+ 
+ ## Mobile QR Export Pane
+ 
+-qr-export-pane-header =  モバイル版 { -brand-product-name } にアカウント設定を書き出し
++qr-export-pane-header =  モバイル版 にアカウント設定を書き出し
+ qr-export-description = QR コードを生成してアカウント設定をデスクトップからモバイル端末へすばやく転送します。転送データに含めるアカウントを選択してください。パスワードも転送するかどうかを決定し、モバイル端末で QR コードをスキャンしてください。速く、安全で簡単に転送できます。
+ qr-export-get-app = まだモバイル端末に { -brand-product-name } をインストールしていない場合は、<a data-l10n-name="app-link">Google Play から入手</a> してください。
+ qr-export-create = QR コードを生成してアカウントを書き出す
+ qr-export-select-accounts = 書き出すアカウントを選択:
+-qr-export-no-accounts = アカウントがすべて表示されない場合、Android 版 { -brand-product-name } でサポートされていないものが一部無効になっているかもしれません。<a data-l10n-name="account-support-link">サポート情報</a>
++qr-export-no-accounts = アカウントがすべて表示されない場合、Android 版  でサポートされていないものが一部無効になっているかもしれません。<a data-l10n-name="account-support-link">サポート情報</a>
+ qr-export-accounts-legend = メールアカウント
+ qr-export-select-all-accounts = すべてを選択
+ qr-export-security-legend = セキュリティ
+diff --git a/l10n/kk/mail/messenger/preferences/preferences.ftl b/l10n/kk/mail/messenger/preferences/preferences.ftl
+index 36c9461f..7206119c 100644
+--- a/l10n/kk/mail/messenger/preferences/preferences.ftl
++++ b/l10n/kk/mail/messenger/preferences/preferences.ftl
+@@ -818,12 +818,12 @@ sync-disconnected-turn-on-sync = Синхрондауды іске қосу…
+ 
+ ## Mobile QR Export Pane
+ 
+-qr-export-pane-header = Тіркелгілерді мобильді { -brand-product-name } қолданбасына экспорттау
++qr-export-pane-header = Тіркелгілерді мобильді қолданбасына экспорттау
+ qr-export-description = QR кодын жасау арқылы тіркелгі параметрлерін жұмыс үстелінен мобильді құрылғыға жылдам тасымалдаңыз. Тасымалданатын тіркелгілерді таңдап, парольді тасымалдағыңыз келетін-келмейтінін шешіңіз және мобильді құрылғыңызбен кодты сканерлеңіз. Жылдам, қауіпсіз және қарапайым.
+ qr-export-get-app = Мобильді құрылғыңызда әлі { -brand-product-name } жоқ па? <a data-l10n-name="app-link">Оны Google Play ішінен жүктеп алыңыз</a>
+ qr-export-create = Тіркелгілеріңізді экспорттау үшін QR кодын жасау
+ qr-export-select-accounts = Экспортталатын тіркелгілерді таңдаңыз:
+-qr-export-no-accounts = Тіркелгілеріңіздің барлығын бірдей көрмейсіз бе? Кейбір тіркелгілер Android үшін { -brand-product-name } қолдау көрсетпейтіндіктен сөндірілген болуы мүмкін. <a data-l10n-name="account-support-link">Қолдау</a>
++qr-export-no-accounts = Тіркелгілеріңіздің барлығын бірдей көрмейсіз бе? Кейбір тіркелгілер Android үшін  қолдау көрсетпейтіндіктен сөндірілген болуы мүмкін. <a data-l10n-name="account-support-link">Қолдау</a>
+ qr-export-accounts-legend = Эл. пошта тіркелгілері
+ qr-export-select-all-accounts = Барлығын таңдау
+ qr-export-security-legend = Қауіпсіздік
+diff --git a/l10n/nl/mail/messenger/preferences/preferences.ftl b/l10n/nl/mail/messenger/preferences/preferences.ftl
+index dc2b8aed..24bf9efd 100644
+--- a/l10n/nl/mail/messenger/preferences/preferences.ftl
++++ b/l10n/nl/mail/messenger/preferences/preferences.ftl
+@@ -830,12 +830,12 @@ sync-disconnected-turn-on-sync = Synchronisatie inschakelen…
+ 
+ ## Mobile QR Export Pane
+ 
+-qr-export-pane-header = Accounts exporteren naar { -brand-product-name } Mobiel
++qr-export-pane-header = Accounts exporteren naar Mobiel
+ qr-export-description = Zet snel uw accountinstellingen over van desktop naar mobiel door een QR-code aan te maken. Selecteer welke accounts u wilt opnemen, beslis of u uw wachtwoord wilt overzetten en scan de code met uw mobiele apparaat. Snel, veilig en eenvoudig.
+ qr-export-get-app = Hebt u { -brand-product-name } nog niet op mobiel? <a data-l10n-name="app-link">Downloaden via Google Play</a>
+ qr-export-create = Een QR-code aanmaken om uw accounts te exporteren
+ qr-export-select-accounts = Selecteer de te exporteren accounts:
+-qr-export-no-accounts = Ziet u niet al uw accounts? Sommige accounts zijn mogelijk uitgeschakeld, omdat ze niet door { -brand-product-name } voor Android worden ondersteund. <a data-l10n-name="account-support-link">Ondersteuning</a>
++qr-export-no-accounts = Ziet u niet al uw accounts? Sommige accounts zijn mogelijk uitgeschakeld, omdat ze niet door  voor Android worden ondersteund. <a data-l10n-name="account-support-link">Ondersteuning</a>
+ qr-export-accounts-legend = E-mailaccounts
+ qr-export-select-all-accounts = Alles selecteren
+ qr-export-security-legend = Beveiliging
+diff --git a/l10n/nn-NO/mail/messenger/preferences/preferences.ftl b/l10n/nn-NO/mail/messenger/preferences/preferences.ftl
+index d0818a6b..92416689 100644
+--- a/l10n/nn-NO/mail/messenger/preferences/preferences.ftl
++++ b/l10n/nn-NO/mail/messenger/preferences/preferences.ftl
+@@ -811,7 +811,7 @@ sync-disconnected-turn-on-sync = Slå på synkronisering…
+ 
+ ## Mobile QR Export Pane
+ 
+-qr-export-pane-header = Eksporter kontoar til { -brand-product-name } mobil
++qr-export-pane-header = Eksporter kontoar til mobil
+ qr-export-description = Overfør kontoinnstillingane dine raskt frå datamaskin til mobil ved å generere ein QR-kode. Vel kva kontoar som skal inkluderast, avgjer om du vil overføre passordet ditt, og skann koden med mobileininga di. Rask, sikkert og enkelt.
+ qr-export-get-app = Har du ikkje { -brand-product-name } på mobilen din enno? <a data-l10n-name="app-link">Last han ned frå Google Play</a>
+ qr-export-create = Lag ein QR-kode for å eksportere kontoane dine
+diff --git a/l10n/pl/mail/messenger/preferences/preferences.ftl b/l10n/pl/mail/messenger/preferences/preferences.ftl
+index f780402f..3af7dbb9 100644
+--- a/l10n/pl/mail/messenger/preferences/preferences.ftl
++++ b/l10n/pl/mail/messenger/preferences/preferences.ftl
+@@ -818,7 +818,7 @@ sync-disconnected-turn-on-sync = Włącz synchronizację…
+ 
+ ## Mobile QR Export Pane
+ 
+-qr-export-pane-header = Eksportuj konta do { -brand-product-name(case: "gen") } na telefon
++qr-export-pane-header = Eksportuj konta na telefon
+ qr-export-description = Szybko przenoś ustawienia kont z komputera na telefon za pomocą wygenerowanego kodu QR. Wybierz konta, zdecyduj o przeniesieniu hasła i zeskanuj kod za pomocą telefonu. Szybko, prosto i bezpiecznie.
+ qr-export-get-app = Nie masz jeszcze { -brand-product-name(case: "gen") } na telefon? <a data-l10n-name="app-link">Pobierz go z Google Play</a>
+ qr-export-create = Utwórz kod QR, aby wyeksportować konta
+diff --git a/l10n/pt-BR/mail/messenger/preferences/preferences.ftl b/l10n/pt-BR/mail/messenger/preferences/preferences.ftl
+index c4915a31..9c95fc40 100644
+--- a/l10n/pt-BR/mail/messenger/preferences/preferences.ftl
++++ b/l10n/pt-BR/mail/messenger/preferences/preferences.ftl
+@@ -816,12 +816,12 @@ sync-disconnected-turn-on-sync = Ativar sincronização…
+ 
+ ## Mobile QR Export Pane
+ 
+-qr-export-pane-header = Exportar contas para o { -brand-product-name } de dispositivos móveis
++qr-export-pane-header = Exportar contas para dispositivos móveis
+ qr-export-description = Transfira rapidamente suas configurações de contas do computador para dispositivo móvel, gerando um código QR. Selecione quais contas incluir, decida se quer transferir senhas e capture o código com seu dispositivo móvel. Rápido, seguro e simples.
+ qr-export-get-app = Ainda não tem o { -brand-product-name } no celular? <a data-l10n-name="app-link"Instale>Instale pelo Google Play</a>
+ qr-export-create = Crie um código QR para exportar suas contas
+ qr-export-select-accounts = Selecione quais contas exportar:
+-qr-export-no-accounts = Não aparecem todas as suas contas? Algumas contas podem estar desativadas porque não há suporte para elas no { -brand-product-name } de Android. <a data-l10n-name="account-support-link">Suporte</a>
++qr-export-no-accounts = Não aparecem todas as suas contas? Algumas contas podem estar desativadas porque não há suporte para elas no Android. <a data-l10n-name="account-support-link">Suporte</a>
+ qr-export-accounts-legend = Contas de email
+ qr-export-select-all-accounts = Selecionar tudo
+ qr-export-security-legend = Segurança
+diff --git a/l10n/rm/mail/messenger/preferences/preferences.ftl b/l10n/rm/mail/messenger/preferences/preferences.ftl
+index bb65d77b..53fe62e2 100644
+--- a/l10n/rm/mail/messenger/preferences/preferences.ftl
++++ b/l10n/rm/mail/messenger/preferences/preferences.ftl
+@@ -818,12 +818,12 @@ sync-disconnected-turn-on-sync = Activar la sincronisaziun…
+ 
+ ## Mobile QR Export Pane
+ 
+-qr-export-pane-header = Exportar ils contos en { -brand-product-name } Mobile
++qr-export-pane-header = Exportar ils contos en Mobile
+ qr-export-description = Transferescha sveltamain ils parameters da tes conto dal computer desktop sin l’apparat mobil cun generar in code QR. Tscherna tge contos includer, decida sche ti vuls transferir tes pled-clav e scannescha il code cun tes apparat mobil. Svelt, segir e simpel.
+ qr-export-get-app = N’has ti anc betg { -brand-product-name } sin tes apparat mobil? <a data-l10n-name="app-link">Va per l’app en Google Play</a>
+ qr-export-create = Creescha in code QR per exportar tes contos
+ qr-export-select-accounts = Tscherna ils contos per exportar:
+-qr-export-no-accounts = Na vesas ti betg tut tes contos? Tscherts contos èn eventualmain deactivads perquai ch’els na vegnan betg sustegnids da { -brand-product-name } per Android. <a data-l10n-name="account-support-link">Agid</a>
++qr-export-no-accounts = Na vesas ti betg tut tes contos? Tscherts contos èn eventualmain deactivads perquai ch’els na vegnan betg sustegnids da  per Android. <a data-l10n-name="account-support-link">Agid</a>
+ qr-export-accounts-legend = Contos dad e-mail
+ qr-export-select-all-accounts = Selecziunar tut
+ qr-export-security-legend = Segirezza
+diff --git a/l10n/ru/mail/messenger/preferences/preferences.ftl b/l10n/ru/mail/messenger/preferences/preferences.ftl
+index eda8e814..709bc792 100644
+--- a/l10n/ru/mail/messenger/preferences/preferences.ftl
++++ b/l10n/ru/mail/messenger/preferences/preferences.ftl
+@@ -818,12 +818,12 @@ sync-disconnected-turn-on-sync = Включить Cинхронизацию…
+ 
+ ## Mobile QR Export Pane
+ 
+-qr-export-pane-header = Экспорт учётных записей в { -brand-product-name } для мобильных устройств
++qr-export-pane-header = Экспорт учётных записей для мобильных устройств
+ qr-export-description = Быстро перенесите настройки своего аккаунта с ПК на мобильное устройство, сгенерировав QR-код. Выберите, какие учётные записи включить, решите, хотите ли вы передать свой пароль, и отсканируйте код мобильным устройством. Быстро, безопасно и просто.
+ qr-export-get-app = У вас ещё нет { -brand-product-name } на мобильных устройствах? <a data-l10n-name="app-link">Загрузите в Google Play</a>
+ qr-export-create = Создайте QR-код для экспорта ваших учётных записей
+ qr-export-select-accounts = Выберите учётные записи для экспорта:
+-qr-export-no-accounts = Не видите все ваши учётные записи? Некоторые учётные записи могут быть отключены, поскольку они не поддерживаются { -brand-product-name } для Android. <a data-l10n-name="account-support-link">Поддержка</a>
++qr-export-no-accounts = Не видите все ваши учётные записи? Некоторые учётные записи могут быть отключены, поскольку они не поддерживаются  для Android. <a data-l10n-name="account-support-link">Поддержка</a>
+ qr-export-accounts-legend = Учётные записи электронной почты
+ qr-export-select-all-accounts = Выбрать все
+ qr-export-security-legend = Защита
+diff --git a/l10n/sk/mail/messenger/preferences/preferences.ftl b/l10n/sk/mail/messenger/preferences/preferences.ftl
+index 2d7cb245..e37b1f7c 100644
+--- a/l10n/sk/mail/messenger/preferences/preferences.ftl
++++ b/l10n/sk/mail/messenger/preferences/preferences.ftl
+@@ -818,12 +818,12 @@ sync-disconnected-turn-on-sync = Zapnúť synchronizáciu…
+ 
+ ## Mobile QR Export Pane
+ 
+-qr-export-pane-header = Export účtov do { -brand-product-name(case: "gen") } pre mobilné zariadenia
++qr-export-pane-header = Export účtov pre mobilné zariadenia
+ qr-export-description = Rýchlo preneste nastavenia účtu z počítača do mobilného zariadenia vygenerovaním QR kódu. Vyberte, ktoré účty chcete zahrnúť, rozhodnite sa, či chcete preniesť svoje heslo, a naskenujte kód pomocou mobilného zariadenia. Rýchle, bezpečné a jednoduché.
+ qr-export-get-app = Ešte nemáte { -brand-product-name } v mobile? <a data-l10n-name="app-link">Získate ho v službe Google Play</a>
+ qr-export-create = Vytvorte si QR kód na export vašich účtov
+ qr-export-select-accounts = Vyberte, ktoré účty chcete exportovať:
+-qr-export-no-accounts = Nevidíte všetky svoje účty? Niektoré účty môžu byť deaktivované, pretože ich { -brand-product-name } pre Android nepodporuje. <a data-l10n-name="account-support-link">Podpora</a>
++qr-export-no-accounts = Nevidíte všetky svoje účty? Niektoré účty môžu byť deaktivované, pretože ich  pre Android nepodporuje. <a data-l10n-name="account-support-link">Podpora</a>
+ qr-export-accounts-legend = E‑mailové účty
+ qr-export-select-all-accounts = Vybrať všetky
+ qr-export-security-legend = Bezpečnosť
+diff --git a/l10n/sl/mail/messenger/preferences/preferences.ftl b/l10n/sl/mail/messenger/preferences/preferences.ftl
+index 8b73def7..bd354b57 100644
+--- a/l10n/sl/mail/messenger/preferences/preferences.ftl
++++ b/l10n/sl/mail/messenger/preferences/preferences.ftl
+@@ -818,12 +818,12 @@ sync-disconnected-turn-on-sync = Vklopi sinhronizacijo …
+ 
+ ## Mobile QR Export Pane
+ 
+-qr-export-pane-header = Izvozi račune v { -brand-product-name } za mobilne naprave
++qr-export-pane-header = Izvozi račune v za mobilne naprave
+ qr-export-description = S pomočjo kode QR hitro prenesite nastavitve računa z računalnika na mobilno napravo. Izberite, katere račune želite vključiti, odločite se, ali želite prenesti tudi geslo, in z mobilno napravo preberite kodo. Hitro, varno in preprosto.
+ qr-export-get-app = Še nimate { -brand-product-name(sklon: "rodilnik") } za mobilne naprave? <a data-l10n-name="app-link">Prenesite ga iz trgovine Google Play</a>
+ qr-export-create = Ustvarite kodo QR za izvoz računov
+ qr-export-select-accounts = Izberite, katere račune želite izvoziti:
+-qr-export-no-accounts = Niso prikazani vsi računi? Nekateri računi so lahko onemogočeni, ker jih { -brand-product-name } za Android ne podpira. <a data-l10n-name="account-support-link">Podpora</a>
++qr-export-no-accounts = Niso prikazani vsi računi? Nekateri računi so lahko onemogočeni, ker jih  za Android ne podpira. <a data-l10n-name="account-support-link">Podpora</a>
+ qr-export-accounts-legend = E-poštni računi
+ qr-export-select-all-accounts = Izberi vse
+ qr-export-security-legend = Varnost
+diff --git a/l10n/sq/mail/messenger/preferences/preferences.ftl b/l10n/sq/mail/messenger/preferences/preferences.ftl
+index a509c77f..e2df6e5a 100644
+--- a/l10n/sq/mail/messenger/preferences/preferences.ftl
++++ b/l10n/sq/mail/messenger/preferences/preferences.ftl
+@@ -818,12 +818,12 @@ sync-disconnected-turn-on-sync = Aktivizoni Njëkohësimin…
+ 
+ ## Mobile QR Export Pane
+ 
+-qr-export-pane-header = Eksportoni llogari për { -brand-product-name } për Celular
++qr-export-pane-header = Eksportoni llogari për për Celular
+ qr-export-description = Shpërngulni shpejt e shpejt rregullimet e llogarisë tuaj nga desktop në celular, duke prodhuar një kod QR. Përzgjidhni cilat llogari të përfshihen, vendosni nëse doni të shpërngulni fjalëkalimin tuaj dhe skanojeni kodin me pajisjen tuaj celulare. E shpejtë, e siguruar dhe e thjeshtë.
+ qr-export-get-app = S’e keni ende { -brand-product-name } në celular? <a data-l10n-name="app-link">Merreni që nga Google Play</a>
+ qr-export-create = Krijoni një kod QR për të eksportuar llogaritë tuaja
+ qr-export-select-accounts = Përzgjidhni cilat llogari të eksportohen:
+-qr-export-no-accounts = S’i shihni krejt llogaritë tuaja? Disa llogari mund të jenë çaktivizuar, ngaqë nuk mbulohen nga { -brand-product-name } për Android. <a data-l10n-name="account-support-link">Asistencë</a>
++qr-export-no-accounts = S’i shihni krejt llogaritë tuaja? Disa llogari mund të jenë çaktivizuar, ngaqë nuk mbulohen nga  për Android. <a data-l10n-name="account-support-link">Asistencë</a>
+ qr-export-accounts-legend = Llogari email
+ qr-export-select-all-accounts = Përzgjidhi krejt
+ qr-export-security-legend = Siguri
+diff --git a/l10n/sv-SE/mail/messenger/preferences/preferences.ftl b/l10n/sv-SE/mail/messenger/preferences/preferences.ftl
+index d4b7bdc9..b78ac6d9 100644
+--- a/l10n/sv-SE/mail/messenger/preferences/preferences.ftl
++++ b/l10n/sv-SE/mail/messenger/preferences/preferences.ftl
+@@ -814,12 +814,12 @@ sync-disconnected-turn-on-sync = Aktivera synkronisering…
+ 
+ ## Mobile QR Export Pane
+ 
+-qr-export-pane-header = Exportera konton till { -brand-product-name } mobil
++qr-export-pane-header = Exportera konton till mobil
+ qr-export-description = Överför snabbt dina kontoinställningar från dator till mobil genom att generera en QR-kod. Välj vilka konton som ska inkluderas, bestäm om du vill överföra ditt lösenord och skanna koden med din mobila enhet. Snabbt, säkert och enkelt.
+ qr-export-get-app = Har du inte { -brand-product-name } på mobilen än? <a data-l10n-name="app-link">Hämta den på Google Play</a>
+ qr-export-create = Skapa en QR-kod för att exportera dina konton
+ qr-export-select-accounts = Välj vilka konton som ska exporteras:
+-qr-export-no-accounts = Ser du inte alla dina konton? Vissa konton kan inaktiveras eftersom de inte stöds av { -brand-product-name } för Android. <a data-l10n-name="account-support-link">Support</a>
++qr-export-no-accounts = Ser du inte alla dina konton? Vissa konton kan inaktiveras eftersom de inte stöds för Android. <a data-l10n-name="account-support-link">Support</a>
+ qr-export-accounts-legend = E-postkonton
+ qr-export-select-all-accounts = Markera alla
+ qr-export-security-legend = Säkerhet
+diff --git a/l10n/tr/mail/messenger/preferences/preferences.ftl b/l10n/tr/mail/messenger/preferences/preferences.ftl
+index 00a44664..3960591d 100644
+--- a/l10n/tr/mail/messenger/preferences/preferences.ftl
++++ b/l10n/tr/mail/messenger/preferences/preferences.ftl
+@@ -818,12 +818,12 @@ sync-disconnected-turn-on-sync = Eşitlemeyi aç…
+ 
+ ## Mobile QR Export Pane
+ 
+-qr-export-pane-header = Hesapları { -brand-product-name } Mobil’e aktar
++qr-export-pane-header = Hesapları Mobil’e aktar
+ qr-export-description = QR kodu oluşturarak hesap ayarlarınızı bilgisayardan telefona hızlıca aktarabilirsiniz. Ekleyeceğiniz hesapları seçin, parolanızı aktarmak isteyip istemediğinize karar verin ve kodu mobil cihazınızla okutun. Hızlı, güvenli ve basit.
+ qr-export-get-app = Mobil cihazınızda henüz { -brand-product-name } yok mu? <a data-l10n-name="app-link">Google Play’den indirin</a>
+ qr-export-create = Hesaplarınızı dışa aktarmak için QR kodu oluşturun
+ qr-export-select-accounts = Dışa aktarılacak hesapları seçin:
+-qr-export-no-accounts = Tüm hesaplarınızı göremiyor musunuz? Android için { -brand-product-name } tarafından desteklenmeyen hesaplarınız devre dışı bırakılmış olabilir. <a data-l10n-name="account-support-link">Destek alın</a>
++qr-export-no-accounts = Tüm hesaplarınızı göremiyor musunuz? Android için  tarafından desteklenmeyen hesaplarınız devre dışı bırakılmış olabilir. <a data-l10n-name="account-support-link">Destek alın</a>
+ qr-export-accounts-legend = E-posta hesapları
+ qr-export-select-all-accounts = Tümünü seç
+ qr-export-security-legend = Güvenlik
+diff --git a/l10n/uk/mail/messenger/preferences/preferences.ftl b/l10n/uk/mail/messenger/preferences/preferences.ftl
+index 2dd419e0..be4702bf 100644
+--- a/l10n/uk/mail/messenger/preferences/preferences.ftl
++++ b/l10n/uk/mail/messenger/preferences/preferences.ftl
+@@ -814,12 +814,12 @@ sync-disconnected-turn-on-sync = Увімкнути синхронізацію
+ 
+ ## Mobile QR Export Pane
+ 
+-qr-export-pane-header = Експорт облікових записів у { -brand-product-name } для мобільних пристроїв
++qr-export-pane-header = Експорт облікових записів для мобільних пристроїв
+ qr-export-description = Швидко перенесіть налаштування облікового запису з комп'ютера на мобільний, згенерувавши QR-код. Виберіть, які облікові записи включити, вирішіть, чи бажаєте ви передати свій пароль, і скануйте код за допомогою мобільного пристрою. Швидко, безпечно та просто.
+ qr-export-get-app = Ще не маєте { -brand-product-name } на мобільному? <a data-l10n-name="app-link">Завантажте його з Google Play</a>
+ qr-export-create = Створити QR-код, щоб експортувати свої облікові записи
+ qr-export-select-accounts = Виберіть облікові записи для експорту:
+-qr-export-no-accounts = Не бачите всіх своїх облікових записів? Деякі облікові записи можуть бути вимкнені, оскільки вони не підтримуються { -brand-product-name } для Android. <a data-l10n-name="account-support-link">Підтримка</a>
++qr-export-no-accounts = Не бачите всіх своїх облікових записів? Деякі облікові записи можуть бути вимкнені, оскільки вони не підтримуються  для Android. <a data-l10n-name="account-support-link">Підтримка</a>
+ qr-export-accounts-legend = Облікові записи електронної пошти
+ qr-export-select-all-accounts = Вибрати все
+ qr-export-security-legend = Безпека
+diff --git a/l10n/vi/mail/messenger/preferences/preferences.ftl b/l10n/vi/mail/messenger/preferences/preferences.ftl
+index 16e9c927..af1d388b 100644
+--- a/l10n/vi/mail/messenger/preferences/preferences.ftl
++++ b/l10n/vi/mail/messenger/preferences/preferences.ftl
+@@ -818,12 +818,12 @@ sync-disconnected-turn-on-sync = Bật Đồng bộ hóa…
+ 
+ ## Mobile QR Export Pane
+ 
+-qr-export-pane-header = Xuất tài khoản sang { -brand-product-name } di động
++qr-export-pane-header = Xuất tài khoản sang di động
+ qr-export-description = Nhanh chóng chuyển cài đặt tài khoản của bạn từ máy tính để bàn sang thiết bị di động bằng cách tạo mã QR. Chọn những tài khoản sẽ bao gồm, quyết định xem bạn có muốn chuyển mật khẩu của mình hay không và quét mã bằng thiết bị di động của bạn. Nhanh chóng, an toàn và đơn giản.
+ qr-export-get-app = Chưa có { -brand-product-name } trên di động? <a data-l10n-name="app-link">Tải nó trên Google Play</a>
+ qr-export-create = Tạo một mã QR để xuất tài khoản của bạn
+ qr-export-select-accounts = Chọn tài khoản để xuất:
+-qr-export-no-accounts = Không thấy tất cả tài khoản của bạn? Một số tài khoản có thể bị vô hiệu hóa vì chúng không được hỗ trợ bởi { -brand-product-name } trên Android. <a data-l10n-name="account-support-link">Hỗ trợ</a>
++qr-export-no-accounts = Không thấy tất cả tài khoản của bạn? Một số tài khoản có thể bị vô hiệu hóa vì chúng không được hỗ trợ bởi  trên Android. <a data-l10n-name="account-support-link">Hỗ trợ</a>
+ qr-export-accounts-legend = Tài khoản email
+ qr-export-select-all-accounts = Chọn tất cả
+ qr-export-security-legend = Bảo mật
+diff --git a/l10n/zh-CN/mail/messenger/preferences/preferences.ftl b/l10n/zh-CN/mail/messenger/preferences/preferences.ftl
+index 9dad7cc4..5acb613e 100644
+--- a/l10n/zh-CN/mail/messenger/preferences/preferences.ftl
++++ b/l10n/zh-CN/mail/messenger/preferences/preferences.ftl
+@@ -820,12 +820,12 @@ sync-disconnected-turn-on-sync = 开启同步...
+ 
+ ## Mobile QR Export Pane
+ 
+-qr-export-pane-header = 导出账户到 { -brand-product-name } 移动版
++qr-export-pane-header = 导出账户到 移动版
+ qr-export-description = 通过生成二维码，将账户设置从桌面设备快速传输到移动设备。只需选择要传输的账户、决定是否一并传输密码，然后用移动设备扫码即可。快速、安全、简易。
+ qr-export-get-app = 移动设备上未安装 { -brand-product-name }？<a data-l10n-name="app-link">前往 Google Play 下载</a>
+ qr-export-create = 创建二维码以导出账户
+ qr-export-select-accounts = 选择要导出的账户：
+-qr-export-no-accounts = 有账户未显示在此？相关账户可能未受 Android 版 { -brand-product-name } 支持，因此无法选择。<a data-l10n-name="account-support-link">技术支持</a>
++qr-export-no-accounts = 有账户未显示在此？相关账户可能未受 Android 版  支持，因此无法选择。<a data-l10n-name="account-support-link">技术支持</a>
+ qr-export-accounts-legend = 邮箱账户
+ qr-export-select-all-accounts = 全选
+ qr-export-security-legend = 安全性
+diff --git a/l10n/zh-TW/mail/messenger/preferences/preferences.ftl b/l10n/zh-TW/mail/messenger/preferences/preferences.ftl
+index ee7ae8f1..a1fb7cd3 100644
+--- a/l10n/zh-TW/mail/messenger/preferences/preferences.ftl
++++ b/l10n/zh-TW/mail/messenger/preferences/preferences.ftl
+@@ -814,12 +814,12 @@ sync-disconnected-turn-on-sync = 開啟同步…
+ 
+ ## Mobile QR Export Pane
+ 
+-qr-export-pane-header = 將帳號匯出至 { -brand-product-name } 行動版使用
++qr-export-pane-header = 將帳號匯出至 行動版使用
+ qr-export-description = 透過產生 QR Code，快速將您的帳號設定從桌面版轉移到行動版。選擇要包含的帳號、確認是否要轉移密碼，然後用行動裝置掃描 QR Code。快速、安全、簡單。
+ qr-export-get-app = 還沒有安裝 { -brand-product-name } 行動版嗎？<a data-l10n-name="app-link">到 Google Play 下載</a>
+ qr-export-create = 建立 QR Code 來匯出您的帳號
+ qr-export-select-accounts = 選擇要匯出的帳號：
+-qr-export-no-accounts = 沒有看到您的所有帳號嗎？某些帳號可能因不受 { -brand-product-name } for Android 支援而已被停用。<a data-l10n-name="account-support-link">技術支援</a>
++qr-export-no-accounts = 沒有看到您的所有帳號嗎？某些帳號可能因不受  for Android 支援而已被停用。<a data-l10n-name="account-support-link">技術支援</a>
+ qr-export-accounts-legend = 電子郵件帳號
+ qr-export-select-all-accounts = 選擇全部
+ qr-export-security-legend = 安全性
+diff --git a/comm/mail/components/preferences/qrExport.inc.xhtml b/comm/mail/components/preferences/qrExport.inc.xhtml
+index b24e4978..75aab707 100644
+--- a/comm/mail/components/preferences/qrExport.inc.xhtml
++++ b/comm/mail/components/preferences/qrExport.inc.xhtml
+@@ -16,15 +16,6 @@
+     </xul:label>
+     <section id="qrExportIntro">
+       <p data-l10n-id="qr-export-description"></p>
+-      <p
+-        class="qr-small"
+-        data-l10n-id="qr-export-get-app"
+-      >
+-        <a
+-          data-l10n-name="app-link"
+-          href="https://play.google.com/store/apps/details?id=net.icedove.android&amp;referrer=utm_campaign%3Dcross_device_import%26utm_medium%3Ddesktop%26utm_source%3Dicedove%26utm_content%3Dlink"
+-        ></a>
+-      </p>
+       <h2 data-l10n-id="qr-export-create"></h2>
+       <form id="qrExportIntroForm" class="qr-panel" action="">
+         <h3 data-l10n-id="qr-export-select-accounts"></h3>
