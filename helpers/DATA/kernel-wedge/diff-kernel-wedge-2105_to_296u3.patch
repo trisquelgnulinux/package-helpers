@@ -1,8 +1,8 @@
-diff --git a/kernel-wedge-2.96ubuntu3/README b/kernel-wedge-2.96ubuntu3/README
+diff --git a/README b/README
 new file mode 100644
 index 0000000..5d7d329
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/README
++++ b/README
 @@ -0,0 +1,195 @@
 +This is kernel-wedge, an industrial strength kernel splitting tool.
 +It is used to generate kernel module udebs for the debian installer.
@@ -199,10 +199,10 @@ index 0000000..5d7d329
 +though -- but the modules.dep can even be copied from another system and
 +it'll work. This can be useful if you cannot install the required
 +kernel-image package, or are cross-compiling.
-diff --git a/kernel-wedge-2.104ubuntu1/README.md b/kernel-wedge-2.104ubuntu1/README.md
+diff --git a/README.md b/README.md
 deleted file mode 100644
 index 06d5d3c..0000000
---- a/kernel-wedge-2.104ubuntu1/README.md
+--- a/README.md
 +++ /dev/null
 @@ -1,224 +0,0 @@
 -# kernel-wedge, an industrial strength kernel splitting tool
@@ -429,20 +429,20 @@ index 06d5d3c..0000000
 -though -- but the modules.dep can even be copied from another system and
 -it'll work. This can be useful if you cannot install the required
 -kernel-image package, or are cross-compiling.
-diff --git a/kernel-wedge-2.104ubuntu1/TODO b/kernel-wedge-2.96ubuntu3/TODO
+diff --git a/TODO b/TODO
 index 5c8df11..2c98bc5 100644
---- a/kernel-wedge-2.104ubuntu1/TODO
-+++ b/kernel-wedge-2.96ubuntu3/TODO
+--- a/TODO
++++ b/TODO
 @@ -1,2 +1,4 @@
  * Better docs for making a custom modules package, or using a different or
    custom kernel.
 +* Support Depends_subarch in package-lists, not currently supported in
 +  gen-deps or gen-control.
-diff --git a/kernel-wedge-2.96ubuntu3/commands/build-all.txt b/kernel-wedge-2.96ubuntu3/commands/build-all.txt
+diff --git a/commands/build-all.txt b/commands/build-all.txt
 new file mode 100644
 index 0000000..225ba1b
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/commands/build-all.txt
++++ b/commands/build-all.txt
 @@ -0,0 +1,10 @@
 +build-all
 +
@@ -454,10 +454,10 @@ index 0000000..225ba1b
 +not shipped in the .deb (varies)
 +
 +dpkg-cross must be installed, but you do not need a cross compiler.
-diff --git a/kernel-wedge-2.104ubuntu1/commands/build-arch b/kernel-wedge-2.96ubuntu3/commands/build-arch
+diff --git a/commands/build-arch b/commands/build-arch
 index 5b910ab..4a9b21f 100755
---- a/kernel-wedge-2.104ubuntu1/commands/build-arch
-+++ b/kernel-wedge-2.96ubuntu3/commands/build-arch
+--- a/commands/build-arch
++++ b/commands/build-arch
 @@ -21,7 +21,9 @@ buildpackage -S
  # Directory for stubs, added to PATH.
  arch="$1"
@@ -469,11 +469,11 @@ index 5b910ab..4a9b21f 100755
  PATH=$PATH:$tmpdir
  export PATH
  
-diff --git a/kernel-wedge-2.96ubuntu3/commands/build-arch.txt b/kernel-wedge-2.96ubuntu3/commands/build-arch.txt
+diff --git a/commands/build-arch.txt b/commands/build-arch.txt
 new file mode 100644
 index 0000000..ee82b24
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/commands/build-arch.txt
++++ b/commands/build-arch.txt
 @@ -0,0 +1,11 @@
 +build-arch
 +
@@ -486,11 +486,31 @@ index 0000000..ee82b24
 +not shipped in the .deb (varies)
 +
 +dpkg-cross must be installed, but you do not need a cross compiler.
-diff --git a/kernel-wedge-2.96ubuntu3/commands/check.txt b/kernel-wedge-2.96ubuntu3/commands/check.txt
+diff --git a/commands/check b/commands/check
+index 4b416d1..bb8c8b7 100755
+--- a/commands/check
++++ b/commands/check
+@@ -3,7 +3,14 @@ empty=
+ if [ $# -ge 1 ]; then
+     packages="$*"
+ else
+-    packages="$(dh_listpackages -s)"
++    packages_all="$(dh_listpackages -s)"
++    packages=""
++    for pkg in $packages_all
++    do
++        case "$pkg" in
++        *-di)           packages="$packages $pkg" ;;
++        esac
++    done
+ fi
+ for pkg in $packages; do
+ 	if [ -z  "$(find debian/$pkg -type f)" ]; then
+diff --git a/commands/check.txt b/commands/check.txt
 new file mode 100644
 index 0000000..df4722a
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/commands/check.txt
++++ b/commands/check.txt
 @@ -0,0 +1,6 @@
 +check
 +
@@ -498,11 +518,11 @@ index 0000000..df4722a
 +
 +Return 1 if any problems are found, unless $KW_CHECK_NONFATAL is
 +non-empty.
-diff --git a/kernel-wedge-2.96ubuntu3/commands/copy-firmware b/kernel-wedge-2.96ubuntu3/commands/copy-firmware
+diff --git a/commands/copy-firmware b/commands/copy-firmware
 new file mode 100755
 index 0000000..d8a3f1e
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/commands/copy-firmware
++++ b/commands/copy-firmware
 @@ -0,0 +1,118 @@
 +#!/bin/sh
 +#
@@ -622,11 +642,11 @@ index 0000000..d8a3f1e
 +	fi
 +done
 +exit $code
-diff --git a/kernel-wedge-2.96ubuntu3/commands/copy-firmware.txt b/kernel-wedge-2.96ubuntu3/commands/copy-firmware.txt
+diff --git a/commands/copy-firmware.txt b/commands/copy-firmware.txt
 new file mode 100644
 index 0000000..600e534
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/commands/copy-firmware.txt
++++ b/commands/copy-firmware.txt
 @@ -0,0 +1,6 @@
 +copy-firmware version flavour installedname
 +
@@ -634,10 +654,10 @@ index 0000000..600e534
 +
 +Return 1 if a required module is missing, unless $KW_CHECK_NONFATAL is
 +non-empty.
-diff --git a/kernel-wedge-2.104ubuntu1/commands/copy-modules b/kernel-wedge-2.96ubuntu3/commands/copy-modules
+diff --git a/commands/copy-modules b/commands/copy-modules
 index 30f9dc5..276267a 100755
---- a/kernel-wedge-2.104ubuntu1/commands/copy-modules
-+++ b/kernel-wedge-2.96ubuntu3/commands/copy-modules
+--- a/commands/copy-modules
++++ b/commands/copy-modules
 @@ -32,6 +32,59 @@ deplist() {
  	done
  }
@@ -763,11 +783,11 @@ index 30f9dc5..276267a 100755
  	fi
  done
  exit $code
-diff --git a/kernel-wedge-2.96ubuntu3/commands/copy-modules.txt b/kernel-wedge-2.96ubuntu3/commands/copy-modules.txt
+diff --git a/commands/copy-modules.txt b/commands/copy-modules.txt
 new file mode 100644
 index 0000000..f719caf
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/commands/copy-modules.txt
++++ b/commands/copy-modules.txt
 @@ -0,0 +1,6 @@
 +copy-modules version flavour installedname
 +
@@ -775,10 +795,10 @@ index 0000000..f719caf
 +
 +Return 1 if a required module is missing, unless $KW_CHECK_NONFATAL is
 +non-empty.
-diff --git a/kernel-wedge-2.104ubuntu1/commands/find-dups b/kernel-wedge-2.96ubuntu3/commands/find-dups
+diff --git a/commands/find-dups b/commands/find-dups
 index 7c4d45a..ea34572 100755
---- a/kernel-wedge-2.104ubuntu1/commands/find-dups
-+++ b/kernel-wedge-2.96ubuntu3/commands/find-dups
+--- a/commands/find-dups
++++ b/commands/find-dups
 @@ -3,7 +3,7 @@
  kernel=$1
  (
@@ -788,11 +808,11 @@ index 7c4d45a..ea34572 100755
  		cd $dir
  		find lib -type f -printf "$dir %p\n"
  		cd ../..
-diff --git a/kernel-wedge-2.96ubuntu3/commands/find-dups.txt b/kernel-wedge-2.96ubuntu3/commands/find-dups.txt
+diff --git a/commands/find-dups.txt b/commands/find-dups.txt
 new file mode 100644
 index 0000000..6ff3462
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/commands/find-dups.txt
++++ b/commands/find-dups.txt
 @@ -0,0 +1,6 @@
 +find-dups kernel-name
 +
@@ -800,21 +820,21 @@ index 0000000..6ff3462
 +
 +Return 1 if any duplicates are found, unless $KW_CHECK_NONFATAL is
 +non-empty or the configuration file 'ignore-dups' exists.
-diff --git a/kernel-wedge-2.96ubuntu3/commands/find-unpackaged.txt b/kernel-wedge-2.96ubuntu3/commands/find-unpackaged.txt
+diff --git a/commands/find-unpackaged.txt b/commands/find-unpackaged.txt
 new file mode 100644
 index 0000000..5aae086
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/commands/find-unpackaged.txt
++++ b/commands/find-unpackaged.txt
 @@ -0,0 +1,5 @@
 +find-unpackaged kernel-name
 +
 +List modules that are not packaged in a udeb. Pass the kernel name.
 +
 +Always return 0.
-diff --git a/kernel-wedge-2.104ubuntu1/commands/gen-control b/kernel-wedge-2.96ubuntu3/commands/gen-control
+diff --git a/commands/gen-control b/commands/gen-control
 index 67922d8..417930e 100755
---- a/kernel-wedge-2.104ubuntu1/commands/gen-control
-+++ b/kernel-wedge-2.96ubuntu3/commands/gen-control
+--- a/commands/gen-control
++++ b/commands/gen-control
 @@ -4,15 +4,22 @@
  use strict;
  use warnings;
@@ -1055,20 +1075,20 @@ index 67922d8..417930e 100755
  	}
 -});
 +}
-diff --git a/kernel-wedge-2.96ubuntu3/commands/gen-control.txt b/kernel-wedge-2.96ubuntu3/commands/gen-control.txt
+diff --git a/commands/gen-control.txt b/commands/gen-control.txt
 new file mode 100644
 index 0000000..da85997
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/commands/gen-control.txt
++++ b/commands/gen-control.txt
 @@ -0,0 +1,4 @@
 +gen-control
 +
 +Generate a debian/control from the control stub, the kernel-versions
 +files, and the package-list.
-diff --git a/kernel-wedge-2.104ubuntu1/commands/gen-deps b/kernel-wedge-2.96ubuntu3/commands/gen-deps
+diff --git a/commands/gen-deps b/commands/gen-deps
 index 3a1a90c..71101ef 100755
---- a/kernel-wedge-2.104ubuntu1/commands/gen-deps
-+++ b/kernel-wedge-2.96ubuntu3/commands/gen-deps
+--- a/commands/gen-deps
++++ b/commands/gen-deps
 @@ -1,35 +1,74 @@
  #!/usr/bin/perl
 -# Generates from debian/control a dependency file, suitable to be fed to
@@ -1162,11 +1182,11 @@ index 3a1a90c..71101ef 100755
 +read_package_list("$defconfigdir/package-list");
 +read_package_list("$configdir/package-list");
  print sort @out;
-diff --git a/kernel-wedge-2.96ubuntu3/commands/gen-deps.txt b/kernel-wedge-2.96ubuntu3/commands/gen-deps.txt
+diff --git a/commands/gen-deps.txt b/commands/gen-deps.txt
 new file mode 100644
 index 0000000..937485d
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/commands/gen-deps.txt
++++ b/commands/gen-deps.txt
 @@ -0,0 +1,6 @@
 +gen-deps flavour
 +
@@ -1174,10 +1194,10 @@ index 0000000..937485d
 +flavour, suitable to be fed to tsort. The file has the base package name on
 +the left, and the package it depends on is on the right. It is sorted.
 +
-diff --git a/kernel-wedge-2.104ubuntu1/commands/help b/kernel-wedge-2.96ubuntu3/commands/help
+diff --git a/commands/help b/commands/help
 index 4a7a73f..ba04853 100755
---- a/kernel-wedge-2.104ubuntu1/commands/help
-+++ b/kernel-wedge-2.96ubuntu3/commands/help
+--- a/commands/help
++++ b/commands/help
 @@ -9,4 +9,8 @@ if [ ! -x "$LIBDIR/$command" ]; then
  	echo "No such command."
  	exit 1
@@ -1188,20 +1208,20 @@ index 4a7a73f..ba04853 100755
 +	exit
 +fi
 +cat $LIBDIR/$command.txt
-diff --git a/kernel-wedge-2.96ubuntu3/commands/help.txt b/kernel-wedge-2.96ubuntu3/commands/help.txt
+diff --git a/commands/help.txt b/commands/help.txt
 new file mode 100644
 index 0000000..06b4d90
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/commands/help.txt
++++ b/commands/help.txt
 @@ -0,0 +1,4 @@
 +help command
 +
 +The help command displays help for another command (or in the case of this
 +help text, for itself).
-diff --git a/kernel-wedge-2.104ubuntu1/commands/install-files b/kernel-wedge-2.96ubuntu3/commands/install-files
+diff --git a/commands/install-files b/commands/install-files
 index c88e29a..2def509 100755
---- a/kernel-wedge-2.104ubuntu1/commands/install-files
-+++ b/kernel-wedge-2.96ubuntu3/commands/install-files
+--- a/commands/install-files
++++ b/commands/install-files
 @@ -45,7 +45,6 @@ while (<KVERS>) {
  	}
  
@@ -1276,21 +1296,21 @@ index c88e29a..2def509 100755
 +	doit("kernel-wedge", "strip-modules", "$kernelversion-$flavour");
  }
  close KVERS;
-diff --git a/kernel-wedge-2.96ubuntu3/commands/install-files.txt b/kernel-wedge-2.96ubuntu3/commands/install-files.txt
+diff --git a/commands/install-files.txt b/commands/install-files.txt
 new file mode 100644
 index 0000000..6a5309e
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/commands/install-files.txt
++++ b/commands/install-files.txt
 @@ -0,0 +1,4 @@
 +install-files
 +
 +Create and populate the package build directories.
 +
-diff --git a/kernel-wedge-2.96ubuntu3/commands/mass-build b/kernel-wedge-2.96ubuntu3/commands/mass-build
+diff --git a/commands/mass-build b/commands/mass-build
 new file mode 100755
 index 0000000..301dded
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/commands/mass-build
++++ b/commands/mass-build
 @@ -0,0 +1,10 @@
 +#!/bin/sh
 +set -e
@@ -1302,20 +1322,20 @@ index 0000000..301dded
 +		cd $pwd
 +	fi
 +done
-diff --git a/kernel-wedge-2.96ubuntu3/commands/mass-build.txt b/kernel-wedge-2.96ubuntu3/commands/mass-build.txt
+diff --git a/commands/mass-build.txt b/commands/mass-build.txt
 new file mode 100644
 index 0000000..9e906dd
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/commands/mass-build.txt
++++ b/commands/mass-build.txt
 @@ -0,0 +1,4 @@
 +mass-build
 +
 +Runs the build-all command in every linux-kernel-di directory in the
 +working directory.
-diff --git a/kernel-wedge-2.104ubuntu1/commands/preprocess b/kernel-wedge-2.96ubuntu3/commands/preprocess
-index 0c77e52..045903b 100755
---- a/kernel-wedge-2.104ubuntu1/commands/preprocess
-+++ b/kernel-wedge-2.96ubuntu3/commands/preprocess
+diff --git a/commands/preprocess b/commands/preprocess
+index 7cd1041..045903b 100755
+--- a/commands/preprocess
++++ b/commands/preprocess
 @@ -2,53 +2,51 @@
  use strict;
  use warnings;
@@ -1350,7 +1370,7 @@ index 0c77e52..045903b 100755
 -	File::Find::find({
 -		follow => 1, # If $moddir is a symlink, follow it.
 -		wanted => sub {
--			if (/\.ko$/) {
+-			if (/\.ko(?:\.(?:xz|zstd))?$/) {
 -				push @module_files,
 -				    File::Spec->abs2rel($File::Find::name,
 -							$moddir);
@@ -1457,15 +1477,15 @@ index 0c77e52..045903b 100755
 +	$fullpattern = '^' . $fullpattern . '\.(?:ko|o)$';
  
 -		# Add module suffix; anchor at start and end of string
--		@regexps = ('^' . $re . '\.ko$');
+-		@regexps = ('^' . $re . '\.ko(?:\.(?:xz|zstd))?$');
 -	} else {
 -		# If pattern doesn't include a wildcard, find the
 -		# module in any subdir, but prefer a module in the
 -		# kernel subdir.  We still do wildcard processing
 -		# to handle equivalence of '-' and '_' for Linux.
 -		my $re = wildcard_to_regexp($pattern);
--		@regexps = ('^kernel/(?:.*/)?' . $re . '\.ko$',
--			    '(?:^|/)' . $re . '\.ko$');
+-		@regexps = ('^kernel/(?:.*/)?' . $re . '\.ko(?:\.(?:xz|zstd))?$',
+-			    '(?:^|/)' . $re . '\.ko(?:\.(?:xz|zstd))?$');
 -	}
 +	# We need to recurse only if the pattern contains '**' or a
 +	# directory separator after any wildcard.  We could optimise
@@ -1587,11 +1607,11 @@ index 0c77e52..045903b 100755
  foreach my $m (sort keys %modules) {
  	print "$m\n";
  }
-diff --git a/kernel-wedge-2.96ubuntu3/commands/preprocess.txt b/kernel-wedge-2.96ubuntu3/commands/preprocess.txt
+diff --git a/commands/preprocess.txt b/commands/preprocess.txt
 new file mode 100644
 index 0000000..833bbe7
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/commands/preprocess.txt
++++ b/commands/preprocess.txt
 @@ -0,0 +1,11 @@
 +preprocess module-list module-dir
 +
@@ -1604,11 +1624,11 @@ index 0000000..833bbe7
 +?  Match a single character within a path component
 +*  Match any number of characters within a path component
 +** Match any number of characters including multiple path components
-diff --git a/kernel-wedge-2.96ubuntu3/commands/strip-modules b/kernel-wedge-2.96ubuntu3/commands/strip-modules
+diff --git a/commands/strip-modules b/commands/strip-modules
 new file mode 100755
 index 0000000..fdc682b
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/commands/strip-modules
++++ b/commands/strip-modules
 @@ -0,0 +1,10 @@
 +#!/bin/bash -e
 +exit 0 # temporarily disabled, turn on after etch rc2 release
@@ -1620,48 +1640,26 @@ index 0000000..fdc682b
 +		strip -R .comment -R .note -g --strip-unneeded $module
 +	done
 +done
-diff --git a/kernel-wedge-2.96ubuntu3/commands/strip-modules.txt b/kernel-wedge-2.96ubuntu3/commands/strip-modules.txt
+diff --git a/commands/strip-modules.txt b/commands/strip-modules.txt
 new file mode 100644
 index 0000000..39d9ede
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/commands/strip-modules.txt
++++ b/commands/strip-modules.txt
 @@ -0,0 +1,3 @@
 +strip-modules kernel-name
 +
 +Remove debugging symbols from kernel modules. Pass the kernel name.
-diff --git a/kernel-wedge-2.96ubuntu3/debian/compat b/kernel-wedge-2.96ubuntu3/debian/compat
+diff --git a/debian/compat b/debian/compat
 new file mode 100644
 index 0000000..ec63514
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/debian/compat
++++ b/debian/compat
 @@ -0,0 +1 @@
 +9
-diff --git a/kernel-wedge-2.104ubuntu1/debian/control b/kernel-wedge-2.96ubuntu3/debian/control
-index 442e4a7..8a3213a 100644
---- a/kernel-wedge-2.104ubuntu1/debian/control
-+++ b/kernel-wedge-2.96ubuntu3/debian/control
-@@ -3,12 +3,11 @@ Section: utils
- Priority: optional
- Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
- XSBC-Original-Maintainer: Debian Install System Team <debian-boot@lists.debian.org>
--Uploaders: Steve Langasek <vorlon@debian.org>, Ben Hutchings <benh@debian.org>
--Build-Depends: debhelper-compat (= 12)
--Rules-Requires-Root: no
--Standards-Version: 4.4.1
--Vcs-Browser: https://salsa.debian.org/installer-team/kernel-wedge
--Vcs-Git: https://salsa.debian.org/installer-team/kernel-wedge.git
-+Uploaders: Steve Langasek <vorlon@debian.org>, Ben Hutchings <ben@decadent.org.uk>, Christian Perrier <bubulle@debian.org>
-+Build-Depends: debhelper (>= 9)
-+Standards-Version: 3.9.4
-+Vcs-Browser: https://anonscm.debian.org/cgit/d-i/kernel-wedge.git
-+Vcs-Git: https://anonscm.debian.org/git/d-i/kernel-wedge.git
- 
- Package: kernel-wedge
- Architecture: all
-diff --git a/kernel-wedge-2.104ubuntu1/debian/copyright b/kernel-wedge-2.96ubuntu3/debian/copyright
+diff --git a/debian/copyright b/debian/copyright
 index 3982c68..168f437 100644
---- a/kernel-wedge-2.104ubuntu1/debian/copyright
-+++ b/kernel-wedge-2.96ubuntu3/debian/copyright
+--- a/debian/copyright
++++ b/debian/copyright
 @@ -1,27 +1,5 @@
 -Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 +This package is Copyright (c) 2001-2002 Herbert Xu <herbert@debian.org>
@@ -1694,49 +1692,57 @@ index 3982c68..168f437 100644
 - `/usr/share/common-licenses/GPL-2'.
 +It is licensed under the terms of the GNU GPL, see
 +/usr/share/common-licenses/GPL
-diff --git a/kernel-wedge-2.104ubuntu1/debian/docs b/kernel-wedge-2.96ubuntu3/debian/docs
+diff --git a/debian/docs b/debian/docs
 index 6f77277..724e084 100644
---- a/kernel-wedge-2.104ubuntu1/debian/docs
-+++ b/kernel-wedge-2.96ubuntu3/debian/docs
+--- a/debian/docs
++++ b/debian/docs
 @@ -1,2 +1,2 @@
 -README.md
 +README
  TODO
-diff --git a/kernel-wedge-2.104ubuntu1/debian/install b/kernel-wedge-2.96ubuntu3/debian/install
+diff --git a/debian/gbp.conf b/debian/gbp.conf
+deleted file mode 100644
+index 0bb7b3e..0000000
+--- a/debian/gbp.conf
++++ /dev/null
+@@ -1,2 +0,0 @@
+-[DEFAULT]
+-debian-tag=%(version)s
+diff --git a/debian/install b/debian/install
 index 7b23e42..8b11304 100644
---- a/kernel-wedge-2.104ubuntu1/debian/install
-+++ b/kernel-wedge-2.96ubuntu3/debian/install
+--- a/debian/install
++++ b/debian/install
 @@ -1,3 +1,2 @@
  kernel-wedge usr/bin
  generic-rules commands usr/share/kernel-wedge
 -lib/KernelWedge.pm usr/share/perl5
-diff --git a/kernel-wedge-2.104ubuntu1/debian/kernel-wedge.lintian-overrides b/kernel-wedge-2.104ubuntu1/debian/kernel-wedge.lintian-overrides
+diff --git a/debian/kernel-wedge.lintian-overrides b/debian/kernel-wedge.lintian-overrides
 deleted file mode 100644
 index 1406034..0000000
---- a/kernel-wedge-2.104ubuntu1/debian/kernel-wedge.lintian-overrides
+--- a/debian/kernel-wedge.lintian-overrides
 +++ /dev/null
 @@ -1 +0,0 @@
 -kernel-wedge: binary-package-depends-on-toolchain-package Depends: debhelper (>= 9)
-diff --git a/kernel-wedge-2.104ubuntu1/debian/manpages b/kernel-wedge-2.96ubuntu3/debian/manpages
+diff --git a/debian/manpages b/debian/manpages
 index bf519d7..85cd183 100644
---- a/kernel-wedge-2.104ubuntu1/debian/manpages
-+++ b/kernel-wedge-2.96ubuntu3/debian/manpages
+--- a/debian/manpages
++++ b/debian/manpages
 @@ -1 +1 @@
 -man/*.1
 +kernel-wedge.1
-diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/control b/kernel-wedge-2.104ubuntu1/debian/tests/control
+diff --git a/debian/tests/control b/debian/tests/control
 deleted file mode 100644
 index 9a56926..0000000
---- a/kernel-wedge-2.104ubuntu1/debian/tests/control
+--- a/debian/tests/control
 +++ /dev/null
 @@ -1,3 +0,0 @@
 -Tests: preprocess
 -# We don't use gcc but need it to avoid #945772
 -Depends: diffutils, gcc
-diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess
+diff --git a/debian/tests/preprocess b/debian/tests/preprocess
 deleted file mode 100755
 index 3106f75..0000000
---- a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess
+--- a/debian/tests/preprocess
 +++ /dev/null
 @@ -1,57 +0,0 @@
 -#!/bin/sh -eu
@@ -1796,36 +1802,36 @@ index 3106f75..0000000
 -done
 -
 -exit "$my_rc"
-diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/builtin.in b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/builtin.in
+diff --git a/debian/tests/preprocess-data/builtin.in b/debian/tests/preprocess-data/builtin.in
 deleted file mode 100644
 index 6a13e96..0000000
---- a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/builtin.in
+--- a/debian/tests/preprocess-data/builtin.in
 +++ /dev/null
 @@ -1 +0,0 @@
 -builtin
-diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/builtin.out b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/builtin.out
+diff --git a/debian/tests/preprocess-data/builtin.out b/debian/tests/preprocess-data/builtin.out
 deleted file mode 100644
 index e69de29..0000000
-diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/excludemissing.in b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/excludemissing.in
+diff --git a/debian/tests/preprocess-data/excludemissing.in b/debian/tests/preprocess-data/excludemissing.in
 deleted file mode 100644
 index 4d71975..0000000
---- a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/excludemissing.in
+--- a/debian/tests/preprocess-data/excludemissing.in
 +++ /dev/null
 @@ -1,3 +0,0 @@
 -does-not-exist
 -foo
 -does-not-exist -
-diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/excludemissing.out b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/excludemissing.out
+diff --git a/debian/tests/preprocess-data/excludemissing.out b/debian/tests/preprocess-data/excludemissing.out
 deleted file mode 100644
 index a476456..0000000
---- a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/excludemissing.out
+--- a/debian/tests/preprocess-data/excludemissing.out
 +++ /dev/null
 @@ -1 +0,0 @@
 -kernel/drivers/foo.ko
-diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/filelist b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/filelist
+diff --git a/debian/tests/preprocess-data/filelist b/debian/tests/preprocess-data/filelist
 deleted file mode 100644
 index 2a6fbf3..0000000
---- a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/filelist
+--- a/debian/tests/preprocess-data/filelist
 +++ /dev/null
 @@ -1,18 +0,0 @@
 -extra/foo.ko
@@ -1846,142 +1852,142 @@ index 2a6fbf3..0000000
 -modules.softdep
 -modules.symbols
 -modules.symbols.bin
-diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/hyphen.in b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/hyphen.in
+diff --git a/debian/tests/preprocess-data/hyphen.in b/debian/tests/preprocess-data/hyphen.in
 deleted file mode 100644
 index 3645353..0000000
---- a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/hyphen.in
+--- a/debian/tests/preprocess-data/hyphen.in
 +++ /dev/null
 @@ -1,2 +0,0 @@
 -hyp-hen
 -under-score
-diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/hyphen.out b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/hyphen.out
+diff --git a/debian/tests/preprocess-data/hyphen.out b/debian/tests/preprocess-data/hyphen.out
 deleted file mode 100644
 index 001fbd3..0000000
---- a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/hyphen.out
+--- a/debian/tests/preprocess-data/hyphen.out
 +++ /dev/null
 @@ -1,2 +0,0 @@
 -kernel/drivers/hyp-hen.ko
 -kernel/drivers/under_score.ko
-diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/include.in b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/include.in
+diff --git a/debian/tests/preprocess-data/include.in b/debian/tests/preprocess-data/include.in
 deleted file mode 100644
 index 8645503..0000000
---- a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/include.in
+--- a/debian/tests/preprocess-data/include.in
 +++ /dev/null
 @@ -1,2 +0,0 @@
 -#include <common>
 -foo
-diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/include.out b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/include.out
+diff --git a/debian/tests/preprocess-data/include.out b/debian/tests/preprocess-data/include.out
 deleted file mode 100644
 index 09ca089..0000000
---- a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/include.out
+--- a/debian/tests/preprocess-data/include.out
 +++ /dev/null
 @@ -1,2 +0,0 @@
 -kernel/drivers/foo.ko
 -kernel/drivers/subdir/bar.ko
-diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/missing.err b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/missing.err
+diff --git a/debian/tests/preprocess-data/missing.err b/debian/tests/preprocess-data/missing.err
 deleted file mode 100644
 index c9f581c..0000000
---- a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/missing.err
+--- a/debian/tests/preprocess-data/missing.err
 +++ /dev/null
 @@ -1 +0,0 @@
 -missing module does-not-exist
-diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/missing.in b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/missing.in
+diff --git a/debian/tests/preprocess-data/missing.in b/debian/tests/preprocess-data/missing.in
 deleted file mode 100644
 index 6702195..0000000
---- a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/missing.in
+--- a/debian/tests/preprocess-data/missing.in
 +++ /dev/null
 @@ -1 +0,0 @@
 -does-not-exist
-diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/missing.out b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/missing.out
+diff --git a/debian/tests/preprocess-data/missing.out b/debian/tests/preprocess-data/missing.out
 deleted file mode 100644
 index e69de29..0000000
-diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/missing.rc b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/missing.rc
+diff --git a/debian/tests/preprocess-data/missing.rc b/debian/tests/preprocess-data/missing.rc
 deleted file mode 100644
 index d00491f..0000000
---- a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/missing.rc
+--- a/debian/tests/preprocess-data/missing.rc
 +++ /dev/null
 @@ -1 +0,0 @@
 -1
-diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/missingdir.err b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/missingdir.err
+diff --git a/debian/tests/preprocess-data/missingdir.err b/debian/tests/preprocess-data/missingdir.err
 deleted file mode 100644
 index aad5c3a..0000000
---- a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/missingdir.err
+--- a/debian/tests/preprocess-data/missingdir.err
 +++ /dev/null
 @@ -1,2 +0,0 @@
 -pattern missing/dir/* refers to nonexistent subdirectory
 -Died at SOMEWHERE, <$fh> line 1.
-diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/missingdir.in b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/missingdir.in
+diff --git a/debian/tests/preprocess-data/missingdir.in b/debian/tests/preprocess-data/missingdir.in
 deleted file mode 100644
 index 3af1147..0000000
---- a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/missingdir.in
+--- a/debian/tests/preprocess-data/missingdir.in
 +++ /dev/null
 @@ -1 +0,0 @@
 -missing/dir/*
-diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/missingdir.out b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/missingdir.out
+diff --git a/debian/tests/preprocess-data/missingdir.out b/debian/tests/preprocess-data/missingdir.out
 deleted file mode 100644
 index e69de29..0000000
-diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/missingdir.rc b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/missingdir.rc
+diff --git a/debian/tests/preprocess-data/missingdir.rc b/debian/tests/preprocess-data/missingdir.rc
 deleted file mode 100644
 index d00491f..0000000
---- a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/missingdir.rc
+--- a/debian/tests/preprocess-data/missingdir.rc
 +++ /dev/null
 @@ -1 +0,0 @@
 -1
-diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/modules/common b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/modules/common
+diff --git a/debian/tests/preprocess-data/modules/common b/debian/tests/preprocess-data/modules/common
 deleted file mode 100644
 index 5716ca5..0000000
---- a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/modules/common
+--- a/debian/tests/preprocess-data/modules/common
 +++ /dev/null
 @@ -1 +0,0 @@
 -bar
-diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/modules.builtin b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/modules.builtin
+diff --git a/debian/tests/preprocess-data/modules.builtin b/debian/tests/preprocess-data/modules.builtin
 deleted file mode 100644
 index 4f01ad9..0000000
---- a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/modules.builtin
+--- a/debian/tests/preprocess-data/modules.builtin
 +++ /dev/null
 @@ -1 +0,0 @@
 -kernel/blah/builtin.ko
-diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/simple.in b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/simple.in
+diff --git a/debian/tests/preprocess-data/simple.in b/debian/tests/preprocess-data/simple.in
 deleted file mode 100644
 index 257cc56..0000000
---- a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/simple.in
+--- a/debian/tests/preprocess-data/simple.in
 +++ /dev/null
 @@ -1 +0,0 @@
 -foo
-diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/simple.out b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/simple.out
+diff --git a/debian/tests/preprocess-data/simple.out b/debian/tests/preprocess-data/simple.out
 deleted file mode 100644
 index a476456..0000000
---- a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/simple.out
+--- a/debian/tests/preprocess-data/simple.out
 +++ /dev/null
 @@ -1 +0,0 @@
 -kernel/drivers/foo.ko
-diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/underscore.in b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/underscore.in
+diff --git a/debian/tests/preprocess-data/underscore.in b/debian/tests/preprocess-data/underscore.in
 deleted file mode 100644
 index 15f1fb8..0000000
---- a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/underscore.in
+--- a/debian/tests/preprocess-data/underscore.in
 +++ /dev/null
 @@ -1,2 +0,0 @@
 -hyp_hen
 -under_score
-diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/underscore.out b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/underscore.out
+diff --git a/debian/tests/preprocess-data/underscore.out b/debian/tests/preprocess-data/underscore.out
 deleted file mode 100644
 index 001fbd3..0000000
---- a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/underscore.out
+--- a/debian/tests/preprocess-data/underscore.out
 +++ /dev/null
 @@ -1,2 +0,0 @@
 -kernel/drivers/hyp-hen.ko
 -kernel/drivers/under_score.ko
-diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/wilddoublestar.in b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/wilddoublestar.in
+diff --git a/debian/tests/preprocess-data/wilddoublestar.in b/debian/tests/preprocess-data/wilddoublestar.in
 deleted file mode 100644
 index e1d26f4..0000000
---- a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/wilddoublestar.in
+--- a/debian/tests/preprocess-data/wilddoublestar.in
 +++ /dev/null
 @@ -1 +0,0 @@
 -kernel/drivers/**
-diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/wilddoublestar.out b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/wilddoublestar.out
+diff --git a/debian/tests/preprocess-data/wilddoublestar.out b/debian/tests/preprocess-data/wilddoublestar.out
 deleted file mode 100644
 index ccd912a..0000000
---- a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/wilddoublestar.out
+--- a/debian/tests/preprocess-data/wilddoublestar.out
 +++ /dev/null
 @@ -1,5 +0,0 @@
 -kernel/drivers/foo.ko
@@ -1989,26 +1995,26 @@ index ccd912a..0000000
 -kernel/drivers/subdir/bar.ko
 -kernel/drivers/subdir/baz.ko
 -kernel/drivers/under_score.ko
-diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/wildstar.in b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/wildstar.in
+diff --git a/debian/tests/preprocess-data/wildstar.in b/debian/tests/preprocess-data/wildstar.in
 deleted file mode 100644
 index a68e216..0000000
---- a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/wildstar.in
+--- a/debian/tests/preprocess-data/wildstar.in
 +++ /dev/null
 @@ -1 +0,0 @@
 -kernel/drivers/*
-diff --git a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/wildstar.out b/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/wildstar.out
+diff --git a/debian/tests/preprocess-data/wildstar.out b/debian/tests/preprocess-data/wildstar.out
 deleted file mode 100644
 index ad33cd5..0000000
---- a/kernel-wedge-2.104ubuntu1/debian/tests/preprocess-data/wildstar.out
+--- a/debian/tests/preprocess-data/wildstar.out
 +++ /dev/null
 @@ -1,3 +0,0 @@
 -kernel/drivers/foo.ko
 -kernel/drivers/hyp-hen.ko
 -kernel/drivers/under_score.ko
-diff --git a/kernel-wedge-2.104ubuntu1/generic-rules b/kernel-wedge-2.96ubuntu3/generic-rules
+diff --git a/generic-rules b/generic-rules
 index 6ef8263..0bbfe32 100755
---- a/kernel-wedge-2.104ubuntu1/generic-rules
-+++ b/kernel-wedge-2.96ubuntu3/generic-rules
+--- a/generic-rules
++++ b/generic-rules
 @@ -12,7 +12,7 @@ build: debian/control
  
  clean: debian/control
@@ -2018,10 +2024,10 @@ index 6ef8263..0bbfe32 100755
  
  binary-indep:
  
-diff --git a/kernel-wedge-2.104ubuntu1/kernel-wedge b/kernel-wedge-2.96ubuntu3/kernel-wedge
+diff --git a/kernel-wedge b/kernel-wedge
 index 24cd2f5..75758c2 100755
---- a/kernel-wedge-2.104ubuntu1/kernel-wedge
-+++ b/kernel-wedge-2.96ubuntu3/kernel-wedge
+--- a/kernel-wedge
++++ b/kernel-wedge
 @@ -3,8 +3,9 @@ LIBDIR=/usr/share/kernel-wedge/commands
  usage () {
  	echo "Usage: kernel-wedge command options"
@@ -2034,11 +2040,11 @@ index 24cd2f5..75758c2 100755
  	done
  	exit 1
  }
-diff --git a/kernel-wedge-2.96ubuntu3/kernel-wedge.1 b/kernel-wedge-2.96ubuntu3/kernel-wedge.1
+diff --git a/kernel-wedge.1 b/kernel-wedge.1
 new file mode 100644
 index 0000000..ec52db6
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/kernel-wedge.1
++++ b/kernel-wedge.1
 @@ -0,0 +1,15 @@
 +.TH NAME 1
 +.SH NAME
@@ -2055,10 +2061,10 @@ index 0000000..ec52db6
 +See /usr/share/doc/kernel-wedge/README.gz for detailed documentation.
 +.SH AUTHOR
 +Joey Hess <joey@kitenet.net>
-diff --git a/kernel-wedge-2.104ubuntu1/lib/KernelWedge.pm b/kernel-wedge-2.104ubuntu1/lib/KernelWedge.pm
+diff --git a/lib/KernelWedge.pm b/lib/KernelWedge.pm
 deleted file mode 100644
 index a171dfb..0000000
---- a/kernel-wedge-2.104ubuntu1/lib/KernelWedge.pm
+--- a/lib/KernelWedge.pm
 +++ /dev/null
 @@ -1,148 +0,0 @@
 -package KernelWedge;
@@ -2209,10 +2215,10 @@ index a171dfb..0000000
 -}
 -
 -1;
-diff --git a/kernel-wedge-2.104ubuntu1/man/kernel-wedge-build-all.1 b/kernel-wedge-2.104ubuntu1/man/kernel-wedge-build-all.1
+diff --git a/man/kernel-wedge-build-all.1 b/man/kernel-wedge-build-all.1
 deleted file mode 100644
 index 4cfb5ea..0000000
---- a/kernel-wedge-2.104ubuntu1/man/kernel-wedge-build-all.1
+--- a/man/kernel-wedge-build-all.1
 +++ /dev/null
 @@ -1,16 +0,0 @@
 -.TH KERNEL\-WEDGE\-BUILD\-ALL 1 "June 2019" "Kernel-wedge"
@@ -2231,10 +2237,10 @@ index 4cfb5ea..0000000
 -\fBdpkg\-cross\fR must be installed, but you do not need a cross compiler.
 -.SH AUTHOR
 -Joey Hess
-diff --git a/kernel-wedge-2.104ubuntu1/man/kernel-wedge-build-arch.1 b/kernel-wedge-2.104ubuntu1/man/kernel-wedge-build-arch.1
+diff --git a/man/kernel-wedge-build-arch.1 b/man/kernel-wedge-build-arch.1
 deleted file mode 100644
 index 87255c8..0000000
---- a/kernel-wedge-2.104ubuntu1/man/kernel-wedge-build-arch.1
+--- a/man/kernel-wedge-build-arch.1
 +++ /dev/null
 @@ -1,18 +0,0 @@
 -.TH KERNEL\-WEDGE\-BUILD\-ARCH 1 "June 2019" "Kernel-wedge"
@@ -2255,10 +2261,10 @@ index 87255c8..0000000
 -\fBdpkg-cross\fR must be installed, but you do not need a cross compiler.
 -.SH AUTHOR
 -Frans Pop
-diff --git a/kernel-wedge-2.104ubuntu1/man/kernel-wedge-check.1 b/kernel-wedge-2.104ubuntu1/man/kernel-wedge-check.1
+diff --git a/man/kernel-wedge-check.1 b/man/kernel-wedge-check.1
 deleted file mode 100644
 index 03864f2..0000000
---- a/kernel-wedge-2.104ubuntu1/man/kernel-wedge-check.1
+--- a/man/kernel-wedge-check.1
 +++ /dev/null
 @@ -1,12 +0,0 @@
 -.TH KERNEL\-WEDGE\-CHECK 1 "June 2019" "Kernel-wedge"
@@ -2273,10 +2279,10 @@ index 03864f2..0000000
 -non-empty.
 -.SH AUTHOR
 -Joey Hess
-diff --git a/kernel-wedge-2.104ubuntu1/man/kernel-wedge-copy-modules.1 b/kernel-wedge-2.104ubuntu1/man/kernel-wedge-copy-modules.1
+diff --git a/man/kernel-wedge-copy-modules.1 b/man/kernel-wedge-copy-modules.1
 deleted file mode 100644
 index a52fa0d..0000000
---- a/kernel-wedge-2.104ubuntu1/man/kernel-wedge-copy-modules.1
+--- a/man/kernel-wedge-copy-modules.1
 +++ /dev/null
 @@ -1,13 +0,0 @@
 -.TH KERNEL\-WEDGE\-COPY\-MODULES 1 "June 2019" "Kernel-wedge"
@@ -2292,10 +2298,10 @@ index a52fa0d..0000000
 -non-empty.
 -.SH AUTHOR
 -Joey Hess
-diff --git a/kernel-wedge-2.104ubuntu1/man/kernel-wedge-find-dups.1 b/kernel-wedge-2.104ubuntu1/man/kernel-wedge-find-dups.1
+diff --git a/man/kernel-wedge-find-dups.1 b/man/kernel-wedge-find-dups.1
 deleted file mode 100644
 index 450c69b..0000000
---- a/kernel-wedge-2.104ubuntu1/man/kernel-wedge-find-dups.1
+--- a/man/kernel-wedge-find-dups.1
 +++ /dev/null
 @@ -1,13 +0,0 @@
 -.TH KERNEL\-WEDGE\-FIND\-DUPS 1 "June 2019" "Kernel-wedge"
@@ -2311,10 +2317,10 @@ index 450c69b..0000000
 -non-empty or the configuration file 'ignore\-dups' exists.
 -.SH AUTHOR
 -Joey Hess
-diff --git a/kernel-wedge-2.104ubuntu1/man/kernel-wedge-find-unpackaged.1 b/kernel-wedge-2.104ubuntu1/man/kernel-wedge-find-unpackaged.1
+diff --git a/man/kernel-wedge-find-unpackaged.1 b/man/kernel-wedge-find-unpackaged.1
 deleted file mode 100644
 index fd53b2a..0000000
---- a/kernel-wedge-2.104ubuntu1/man/kernel-wedge-find-unpackaged.1
+--- a/man/kernel-wedge-find-unpackaged.1
 +++ /dev/null
 @@ -1,12 +0,0 @@
 -.TH KERNEL\-WEDGE\-FIND\-UNPACKAGED 1 "June 2019" "Kernel-wedge"
@@ -2329,10 +2335,10 @@ index fd53b2a..0000000
 -Always return 0.
 -.SH AUTHOR
 -Ben Hutchings <ben@decadent.org.uk>
-diff --git a/kernel-wedge-2.104ubuntu1/man/kernel-wedge-gen-control.1 b/kernel-wedge-2.104ubuntu1/man/kernel-wedge-gen-control.1
+diff --git a/man/kernel-wedge-gen-control.1 b/man/kernel-wedge-gen-control.1
 deleted file mode 100644
 index 49b4707..0000000
---- a/kernel-wedge-2.104ubuntu1/man/kernel-wedge-gen-control.1
+--- a/man/kernel-wedge-gen-control.1
 +++ /dev/null
 @@ -1,64 +0,0 @@
 -.TH KERNEL\-WEDGE\-GEN\-CONTROL 1 "June 2019" "Kernel-wedge"
@@ -2399,10 +2405,10 @@ index 49b4707..0000000
 -but should be excluded from the control file.
 -.SH AUTHOR
 -Joey Hess, Ben Hutchings <ben@decadent.org.uk>
-diff --git a/kernel-wedge-2.104ubuntu1/man/kernel-wedge-gen-deps.1 b/kernel-wedge-2.104ubuntu1/man/kernel-wedge-gen-deps.1
+diff --git a/man/kernel-wedge-gen-deps.1 b/man/kernel-wedge-gen-deps.1
 deleted file mode 100644
 index c9bf9d8..0000000
---- a/kernel-wedge-2.104ubuntu1/man/kernel-wedge-gen-deps.1
+--- a/man/kernel-wedge-gen-deps.1
 +++ /dev/null
 @@ -1,12 +0,0 @@
 -.TH KERNEL\-WEDGE\-GEN\-DEPS 1 "June 2019" "Kernel-wedge"
@@ -2417,10 +2423,10 @@ index c9bf9d8..0000000
 -the left, and the package it depends on is on the right. It is sorted.
 -.SH AUTHOR
 -Joey Hess
-diff --git a/kernel-wedge-2.104ubuntu1/man/kernel-wedge-help.1 b/kernel-wedge-2.104ubuntu1/man/kernel-wedge-help.1
+diff --git a/man/kernel-wedge-help.1 b/man/kernel-wedge-help.1
 deleted file mode 100644
 index 3f7a246..0000000
---- a/kernel-wedge-2.104ubuntu1/man/kernel-wedge-help.1
+--- a/man/kernel-wedge-help.1
 +++ /dev/null
 @@ -1,11 +0,0 @@
 -.TH KERNEL\-WEDGE\-HELP 1 "June 2019" "Kernel-wedge"
@@ -2434,10 +2440,10 @@ index 3f7a246..0000000
 -command.
 -.SH AUTHOR
 -Joey Hess
-diff --git a/kernel-wedge-2.104ubuntu1/man/kernel-wedge-install-files.1 b/kernel-wedge-2.104ubuntu1/man/kernel-wedge-install-files.1
+diff --git a/man/kernel-wedge-install-files.1 b/man/kernel-wedge-install-files.1
 deleted file mode 100644
 index d0d5da9..0000000
---- a/kernel-wedge-2.104ubuntu1/man/kernel-wedge-install-files.1
+--- a/man/kernel-wedge-install-files.1
 +++ /dev/null
 @@ -1,9 +0,0 @@
 -.TH KERNEL\-WEDGE\-INSTALL\-FILES 1 "June 2019" "Kernel-wedge"
@@ -2449,10 +2455,10 @@ index d0d5da9..0000000
 -Create and populate the package build directories.
 -.SH AUTHOR
 -Joey Hess
-diff --git a/kernel-wedge-2.104ubuntu1/man/kernel-wedge-preprocess.1 b/kernel-wedge-2.104ubuntu1/man/kernel-wedge-preprocess.1
+diff --git a/man/kernel-wedge-preprocess.1 b/man/kernel-wedge-preprocess.1
 deleted file mode 100644
 index ea26e8b..0000000
---- a/kernel-wedge-2.104ubuntu1/man/kernel-wedge-preprocess.1
+--- a/man/kernel-wedge-preprocess.1
 +++ /dev/null
 @@ -1,28 +0,0 @@
 -.TH KERNEL\-WEDGE\-PREPROCESS 1 "June 2019" "Kernel-wedge"
@@ -2483,10 +2489,10 @@ index ea26e8b..0000000
 -treat them as equivalent in module names.
 -.SH AUTHOR
 -Joey Hess, Ben Hutchings <ben@decadent.org.uk>
-diff --git a/kernel-wedge-2.104ubuntu1/man/kernel-wedge.1 b/kernel-wedge-2.104ubuntu1/man/kernel-wedge.1
+diff --git a/man/kernel-wedge.1 b/man/kernel-wedge.1
 deleted file mode 100644
 index ba482e4..0000000
---- a/kernel-wedge-2.104ubuntu1/man/kernel-wedge.1
+--- a/man/kernel-wedge.1
 +++ /dev/null
 @@ -1,15 +0,0 @@
 -.TH KERNEL\-WEDGE 1 "June 2019" "Kernel-wedge"
@@ -2504,81 +2510,81 @@ index ba482e4..0000000
 -See /usr/share/doc/kernel-wedge/README.md.gz for detailed documentation.
 -.SH AUTHOR
 -Joey Hess
-diff --git a/kernel-wedge-2.96ubuntu3/modules/acpi-modules b/kernel-wedge-2.96ubuntu3/modules/acpi-modules
+diff --git a/modules/acpi-modules b/modules/acpi-modules
 new file mode 100644
 index 0000000..d4723a1
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/acpi-modules
++++ b/modules/acpi-modules
 @@ -0,0 +1,2 @@
 +fan
 +thermal
-diff --git a/kernel-wedge-2.96ubuntu3/modules/affs-modules b/kernel-wedge-2.96ubuntu3/modules/affs-modules
+diff --git a/modules/affs-modules b/modules/affs-modules
 new file mode 100644
 index 0000000..ac28259
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/affs-modules
++++ b/modules/affs-modules
 @@ -0,0 +1 @@
 +affs
-diff --git a/kernel-wedge-2.96ubuntu3/modules/ata-modules b/kernel-wedge-2.96ubuntu3/modules/ata-modules
+diff --git a/modules/ata-modules b/modules/ata-modules
 new file mode 100644
 index 0000000..6ca33ce
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/ata-modules
++++ b/modules/ata-modules
 @@ -0,0 +1,2 @@
 +libata
 +ata_generic
-diff --git a/kernel-wedge-2.96ubuntu3/modules/brltty-modules b/kernel-wedge-2.96ubuntu3/modules/brltty-modules
+diff --git a/modules/brltty-modules b/modules/brltty-modules
 new file mode 100644
 index 0000000..4345566
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/brltty-modules
++++ b/modules/brltty-modules
 @@ -0,0 +1 @@
 +brlvger
-diff --git a/kernel-wedge-2.96ubuntu3/modules/btrfs-modules b/kernel-wedge-2.96ubuntu3/modules/btrfs-modules
+diff --git a/modules/btrfs-modules b/modules/btrfs-modules
 new file mode 100644
 index 0000000..00531f6
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/btrfs-modules
++++ b/modules/btrfs-modules
 @@ -0,0 +1 @@
 +btrfs
-diff --git a/kernel-wedge-2.96ubuntu3/modules/cdrom-core-modules b/kernel-wedge-2.96ubuntu3/modules/cdrom-core-modules
+diff --git a/modules/cdrom-core-modules b/modules/cdrom-core-modules
 new file mode 100644
 index 0000000..07d1178
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/cdrom-core-modules
++++ b/modules/cdrom-core-modules
 @@ -0,0 +1,3 @@
 +cdrom ?
 +sr_mod ?
 +ide-cd_mod ?
-diff --git a/kernel-wedge-2.96ubuntu3/modules/core-modules b/kernel-wedge-2.96ubuntu3/modules/core-modules
+diff --git a/modules/core-modules b/modules/core-modules
 new file mode 100644
 index 0000000..d06c2be
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/core-modules
++++ b/modules/core-modules
 @@ -0,0 +1,2 @@
 +bitrev ?
 +led-class ?
-diff --git a/kernel-wedge-2.96ubuntu3/modules/crc-modules b/kernel-wedge-2.96ubuntu3/modules/crc-modules
+diff --git a/modules/crc-modules b/modules/crc-modules
 new file mode 100644
 index 0000000..0b8ec0a
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/crc-modules
++++ b/modules/crc-modules
 @@ -0,0 +1,3 @@
 +crc-ccitt
 +libcrc32c
 +crc32c
-diff --git a/kernel-wedge-2.96ubuntu3/modules/crypto-dm-modules b/kernel-wedge-2.96ubuntu3/modules/crypto-dm-modules
+diff --git a/modules/crypto-dm-modules b/modules/crypto-dm-modules
 new file mode 100644
 index 0000000..189131f
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/crypto-dm-modules
++++ b/modules/crypto-dm-modules
 @@ -0,0 +1 @@
 +dm-crypt
-diff --git a/kernel-wedge-2.96ubuntu3/modules/crypto-modules b/kernel-wedge-2.96ubuntu3/modules/crypto-modules
+diff --git a/modules/crypto-modules b/modules/crypto-modules
 new file mode 100644
 index 0000000..b443ec1
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/crypto-modules
++++ b/modules/crypto-modules
 @@ -0,0 +1,6 @@
 +aes_generic
 +blowfish
@@ -2586,48 +2592,48 @@ index 0000000..b443ec1
 +serpent
 +sha256_generic
 +cbc ?
-diff --git a/kernel-wedge-2.96ubuntu3/modules/efi-modules b/kernel-wedge-2.96ubuntu3/modules/efi-modules
+diff --git a/modules/efi-modules b/modules/efi-modules
 new file mode 100644
 index 0000000..9173272
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/efi-modules
++++ b/modules/efi-modules
 @@ -0,0 +1 @@
 +efivars
-diff --git a/kernel-wedge-2.96ubuntu3/modules/event-modules b/kernel-wedge-2.96ubuntu3/modules/event-modules
+diff --git a/modules/event-modules b/modules/event-modules
 new file mode 100644
 index 0000000..97a5e58
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/event-modules
++++ b/modules/event-modules
 @@ -0,0 +1 @@
 +evdev
-diff --git a/kernel-wedge-2.96ubuntu3/modules/ext2-modules b/kernel-wedge-2.96ubuntu3/modules/ext2-modules
+diff --git a/modules/ext2-modules b/modules/ext2-modules
 new file mode 100644
 index 0000000..43d7af3
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/ext2-modules
++++ b/modules/ext2-modules
 @@ -0,0 +1 @@
 +ext2
-diff --git a/kernel-wedge-2.96ubuntu3/modules/ext3-modules b/kernel-wedge-2.96ubuntu3/modules/ext3-modules
+diff --git a/modules/ext3-modules b/modules/ext3-modules
 new file mode 100644
 index 0000000..1c28572
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/ext3-modules
++++ b/modules/ext3-modules
 @@ -0,0 +1,2 @@
 +ext3
 +jbd
-diff --git a/kernel-wedge-2.96ubuntu3/modules/ext4-modules b/kernel-wedge-2.96ubuntu3/modules/ext4-modules
+diff --git a/modules/ext4-modules b/modules/ext4-modules
 new file mode 100644
 index 0000000..6100342
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/ext4-modules
++++ b/modules/ext4-modules
 @@ -0,0 +1,2 @@
 +ext4
 +jbd2
-diff --git a/kernel-wedge-2.96ubuntu3/modules/fat-modules b/kernel-wedge-2.96ubuntu3/modules/fat-modules
+diff --git a/modules/fat-modules b/modules/fat-modules
 new file mode 100644
 index 0000000..37e6d05
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/fat-modules
++++ b/modules/fat-modules
 @@ -0,0 +1,6 @@
 +fat ?
 +vfat
@@ -2635,51 +2641,51 @@ index 0000000..37e6d05
 +nls_cp437 ?
 +# the default i/o character set for fat (as of 2.6.25)
 +nls_utf8 ?
-diff --git a/kernel-wedge-2.96ubuntu3/modules/firewire-core-modules b/kernel-wedge-2.96ubuntu3/modules/firewire-core-modules
+diff --git a/modules/firewire-core-modules b/modules/firewire-core-modules
 new file mode 100644
 index 0000000..ebfcb22
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/firewire-core-modules
++++ b/modules/firewire-core-modules
 @@ -0,0 +1,5 @@
 +ieee1394 ?
 +ohci1394 ?
 +sbp2 ?
 +firewire-ohci ?
 +firewire-sbp2 ?
-diff --git a/kernel-wedge-2.96ubuntu3/modules/floppy-modules b/kernel-wedge-2.96ubuntu3/modules/floppy-modules
+diff --git a/modules/floppy-modules b/modules/floppy-modules
 new file mode 100644
 index 0000000..8b54ec8
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/floppy-modules
++++ b/modules/floppy-modules
 @@ -0,0 +1 @@
 +floppy
-diff --git a/kernel-wedge-2.96ubuntu3/modules/hfs-modules b/kernel-wedge-2.96ubuntu3/modules/hfs-modules
+diff --git a/modules/hfs-modules b/modules/hfs-modules
 new file mode 100644
 index 0000000..4a31155
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/hfs-modules
++++ b/modules/hfs-modules
 @@ -0,0 +1,2 @@
 +hfs
 +hfsplus
-diff --git a/kernel-wedge-2.96ubuntu3/modules/i2c-modules b/kernel-wedge-2.96ubuntu3/modules/i2c-modules
+diff --git a/modules/i2c-modules b/modules/i2c-modules
 new file mode 100644
 index 0000000..8c51c24
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/i2c-modules
++++ b/modules/i2c-modules
 @@ -0,0 +1 @@
 +i2c-core
-diff --git a/kernel-wedge-2.96ubuntu3/modules/ide-core-modules b/kernel-wedge-2.96ubuntu3/modules/ide-core-modules
+diff --git a/modules/ide-core-modules b/modules/ide-core-modules
 new file mode 100644
 index 0000000..96284d1
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/ide-core-modules
++++ b/modules/ide-core-modules
 @@ -0,0 +1 @@
 +ide-core
-diff --git a/kernel-wedge-2.96ubuntu3/modules/ide-modules b/kernel-wedge-2.96ubuntu3/modules/ide-modules
+diff --git a/modules/ide-modules b/modules/ide-modules
 new file mode 100644
 index 0000000..c8ad937
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/ide-modules
++++ b/modules/ide-modules
 @@ -0,0 +1,32 @@
 +ide-generic ?
 +ide-gd_mod ?
@@ -2713,11 +2719,11 @@ index 0000000..c8ad937
 +via82cxxx ?
 +delkin_cb ?
 +tc86c001 ?
-diff --git a/kernel-wedge-2.96ubuntu3/modules/input-modules b/kernel-wedge-2.96ubuntu3/modules/input-modules
+diff --git a/modules/input-modules b/modules/input-modules
 new file mode 100644
 index 0000000..8134eee
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/input-modules
++++ b/modules/input-modules
 @@ -0,0 +1,8 @@
 +usbhid
 +hid-apple ?
@@ -2727,57 +2733,57 @@ index 0000000..8134eee
 +hid-monterey ?
 +hid-sunplus ?
 +hid-cherry ?
-diff --git a/kernel-wedge-2.96ubuntu3/modules/ipv6-modules b/kernel-wedge-2.96ubuntu3/modules/ipv6-modules
+diff --git a/modules/ipv6-modules b/modules/ipv6-modules
 new file mode 100644
 index 0000000..13ac34b
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/ipv6-modules
++++ b/modules/ipv6-modules
 @@ -0,0 +1 @@
 +ipv6
-diff --git a/kernel-wedge-2.96ubuntu3/modules/isofs-modules b/kernel-wedge-2.96ubuntu3/modules/isofs-modules
+diff --git a/modules/isofs-modules b/modules/isofs-modules
 new file mode 100644
 index 0000000..0f41779
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/isofs-modules
++++ b/modules/isofs-modules
 @@ -0,0 +1 @@
 +isofs
-diff --git a/kernel-wedge-2.96ubuntu3/modules/jffs2-modules b/kernel-wedge-2.96ubuntu3/modules/jffs2-modules
+diff --git a/modules/jffs2-modules b/modules/jffs2-modules
 new file mode 100644
 index 0000000..19f4e10
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/jffs2-modules
++++ b/modules/jffs2-modules
 @@ -0,0 +1 @@
 +jffs2
-diff --git a/kernel-wedge-2.96ubuntu3/modules/jfs-modules b/kernel-wedge-2.96ubuntu3/modules/jfs-modules
+diff --git a/modules/jfs-modules b/modules/jfs-modules
 new file mode 100644
 index 0000000..aa604c4
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/jfs-modules
++++ b/modules/jfs-modules
 @@ -0,0 +1 @@
 +jfs
-diff --git a/kernel-wedge-2.96ubuntu3/modules/loop-aes-modules b/kernel-wedge-2.96ubuntu3/modules/loop-aes-modules
+diff --git a/modules/loop-aes-modules b/modules/loop-aes-modules
 new file mode 100644
 index 0000000..c51e8dc
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/loop-aes-modules
++++ b/modules/loop-aes-modules
 @@ -0,0 +1,4 @@
 +loop-aes
 +loop_twofish
 +loop_blowfish
 +loop_serpent
-diff --git a/kernel-wedge-2.96ubuntu3/modules/loop-modules b/kernel-wedge-2.96ubuntu3/modules/loop-modules
+diff --git a/modules/loop-modules b/modules/loop-modules
 new file mode 100644
 index 0000000..5281728
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/loop-modules
++++ b/modules/loop-modules
 @@ -0,0 +1,2 @@
 +loop
 +cloop ?
-diff --git a/kernel-wedge-2.96ubuntu3/modules/md-modules b/kernel-wedge-2.96ubuntu3/modules/md-modules
+diff --git a/modules/md-modules b/modules/md-modules
 new file mode 100644
 index 0000000..83f3925
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/md-modules
++++ b/modules/md-modules
 @@ -0,0 +1,11 @@
 +linear
 +md-mod
@@ -2790,66 +2796,66 @@ index 0000000..83f3925
 +xor
 +dm-mirror
 +dm-snapshot
-diff --git a/kernel-wedge-2.96ubuntu3/modules/minix-modules b/kernel-wedge-2.96ubuntu3/modules/minix-modules
+diff --git a/modules/minix-modules b/modules/minix-modules
 new file mode 100644
 index 0000000..aa6ca5d
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/minix-modules
++++ b/modules/minix-modules
 @@ -0,0 +1 @@
 +minix
-diff --git a/kernel-wedge-2.96ubuntu3/modules/mmc-core-modules b/kernel-wedge-2.96ubuntu3/modules/mmc-core-modules
+diff --git a/modules/mmc-core-modules b/modules/mmc-core-modules
 new file mode 100644
 index 0000000..67128ea
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/mmc-core-modules
++++ b/modules/mmc-core-modules
 @@ -0,0 +1 @@
 +mmc_core
-diff --git a/kernel-wedge-2.96ubuntu3/modules/mmc-modules b/kernel-wedge-2.96ubuntu3/modules/mmc-modules
+diff --git a/modules/mmc-modules b/modules/mmc-modules
 new file mode 100644
 index 0000000..7d98f69
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/mmc-modules
++++ b/modules/mmc-modules
 @@ -0,0 +1,4 @@
 +mmc_block
 +sdhci
 +ricoh_mmc ?
 +tifm_sd
-diff --git a/kernel-wedge-2.96ubuntu3/modules/mouse-modules b/kernel-wedge-2.96ubuntu3/modules/mouse-modules
+diff --git a/modules/mouse-modules b/modules/mouse-modules
 new file mode 100644
 index 0000000..8d65ba4
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/mouse-modules
++++ b/modules/mouse-modules
 @@ -0,0 +1 @@
 +psmouse
-diff --git a/kernel-wedge-2.96ubuntu3/modules/multipath-modules b/kernel-wedge-2.96ubuntu3/modules/multipath-modules
+diff --git a/modules/multipath-modules b/modules/multipath-modules
 new file mode 100644
 index 0000000..5fa964c
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/multipath-modules
++++ b/modules/multipath-modules
 @@ -0,0 +1,2 @@
 +dm-multipath
 +dm-round-robin
-diff --git a/kernel-wedge-2.96ubuntu3/modules/nbd-modules b/kernel-wedge-2.96ubuntu3/modules/nbd-modules
+diff --git a/modules/nbd-modules b/modules/nbd-modules
 new file mode 100644
 index 0000000..cb3ca60
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/nbd-modules
++++ b/modules/nbd-modules
 @@ -0,0 +1 @@
 +nbd
-diff --git a/kernel-wedge-2.96ubuntu3/modules/nfs-modules b/kernel-wedge-2.96ubuntu3/modules/nfs-modules
+diff --git a/modules/nfs-modules b/modules/nfs-modules
 new file mode 100644
 index 0000000..a5bfd2c
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/nfs-modules
++++ b/modules/nfs-modules
 @@ -0,0 +1,3 @@
 +nfs
 +lockd
 +sunrpc
-diff --git a/kernel-wedge-2.96ubuntu3/modules/nic-extra-modules b/kernel-wedge-2.96ubuntu3/modules/nic-extra-modules
+diff --git a/modules/nic-extra-modules b/modules/nic-extra-modules
 new file mode 100644
 index 0000000..157b5c8
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/nic-extra-modules
++++ b/modules/nic-extra-modules
 @@ -0,0 +1,122 @@
 +# Note that this is an incomplete list that tries to be a common subset
 +# that is right for most kernels. Suppliment with any others.
@@ -2973,11 +2979,11 @@ index 0000000..157b5c8
 +smsc ?
 +ste10Xp ?
 +vitesse ?
-diff --git a/kernel-wedge-2.96ubuntu3/modules/nic-modules b/kernel-wedge-2.96ubuntu3/modules/nic-modules
+diff --git a/modules/nic-modules b/modules/nic-modules
 new file mode 100644
 index 0000000..16f0d8c
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/nic-modules
++++ b/modules/nic-modules
 @@ -0,0 +1,11 @@
 +# Some very common nic modules.
 +3c59x
@@ -2990,11 +2996,11 @@ index 0000000..16f0d8c
 +winbond-840
 +eth1394 ?
 +xen-netfront ?
-diff --git a/kernel-wedge-2.96ubuntu3/modules/nic-pcmcia-modules b/kernel-wedge-2.96ubuntu3/modules/nic-pcmcia-modules
+diff --git a/modules/nic-pcmcia-modules b/modules/nic-pcmcia-modules
 new file mode 100644
 index 0000000..53b32b2
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/nic-pcmcia-modules
++++ b/modules/nic-pcmcia-modules
 @@ -0,0 +1,20 @@
 +# Common pcmcia nic modules.
 +3c574_cs
@@ -3016,11 +3022,11 @@ index 0000000..53b32b2
 +xircom_cb
 +atmel_cs ?
 +wl3501_cs ?
-diff --git a/kernel-wedge-2.96ubuntu3/modules/nic-usb-modules b/kernel-wedge-2.96ubuntu3/modules/nic-usb-modules
+diff --git a/modules/nic-usb-modules b/modules/nic-usb-modules
 new file mode 100644
 index 0000000..064b926
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/nic-usb-modules
++++ b/modules/nic-usb-modules
 @@ -0,0 +1,16 @@
 +catc
 +kaweth
@@ -3038,11 +3044,11 @@ index 0000000..064b926
 +rtl8180 ?
 +rtl8187 ?
 +g_ether ?
-diff --git a/kernel-wedge-2.96ubuntu3/modules/nic-wireless-modules b/kernel-wedge-2.96ubuntu3/modules/nic-wireless-modules
+diff --git a/modules/nic-wireless-modules b/modules/nic-wireless-modules
 new file mode 100644
 index 0000000..d965067
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/nic-wireless-modules
++++ b/modules/nic-wireless-modules
 @@ -0,0 +1,31 @@
 +ieee80211_crypt_wep ?
 +atmel_pci ?
@@ -3075,26 +3081,26 @@ index 0000000..d965067
 +# Crypto modules needed for ieee80211 WEP support
 +ecb ?
 +arc4 ?
-diff --git a/kernel-wedge-2.96ubuntu3/modules/nls-core-modules b/kernel-wedge-2.96ubuntu3/modules/nls-core-modules
+diff --git a/modules/nls-core-modules b/modules/nls-core-modules
 new file mode 100644
 index 0000000..a38fab7
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/nls-core-modules
++++ b/modules/nls-core-modules
 @@ -0,0 +1 @@
 +nls_base
-diff --git a/kernel-wedge-2.96ubuntu3/modules/parport-modules b/kernel-wedge-2.96ubuntu3/modules/parport-modules
+diff --git a/modules/parport-modules b/modules/parport-modules
 new file mode 100644
 index 0000000..2d9f698
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/parport-modules
++++ b/modules/parport-modules
 @@ -0,0 +1,2 @@
 +parport
 +parport_pc
-diff --git a/kernel-wedge-2.96ubuntu3/modules/pata-modules b/kernel-wedge-2.96ubuntu3/modules/pata-modules
+diff --git a/modules/pata-modules b/modules/pata-modules
 new file mode 100644
 index 0000000..4df22e0
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/pata-modules
++++ b/modules/pata-modules
 @@ -0,0 +1,38 @@
 +pata_ali ?
 +pata_amd ?
@@ -3134,11 +3140,11 @@ index 0000000..4df22e0
 +pata_triflex ?
 +pata_via ?
 +pata_winbond ?
-diff --git a/kernel-wedge-2.96ubuntu3/modules/pcmcia-modules b/kernel-wedge-2.96ubuntu3/modules/pcmcia-modules
+diff --git a/modules/pcmcia-modules b/modules/pcmcia-modules
 new file mode 100644
 index 0000000..ab5b4b2
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/pcmcia-modules
++++ b/modules/pcmcia-modules
 @@ -0,0 +1,8 @@
 +pcmcia
 +
@@ -3148,59 +3154,59 @@ index 0000000..ab5b4b2
 +tcic ?
 +yenta_socket
 +pd6729 ?
-diff --git a/kernel-wedge-2.96ubuntu3/modules/pcmcia-storage-modules b/kernel-wedge-2.96ubuntu3/modules/pcmcia-storage-modules
+diff --git a/modules/pcmcia-storage-modules b/modules/pcmcia-storage-modules
 new file mode 100644
 index 0000000..69849ef
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/pcmcia-storage-modules
++++ b/modules/pcmcia-storage-modules
 @@ -0,0 +1,2 @@
 +ide-cs
 +pata_pcmcia ?
-diff --git a/kernel-wedge-2.96ubuntu3/modules/plip-modules b/kernel-wedge-2.96ubuntu3/modules/plip-modules
+diff --git a/modules/plip-modules b/modules/plip-modules
 new file mode 100644
 index 0000000..bcb0ea8
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/plip-modules
++++ b/modules/plip-modules
 @@ -0,0 +1 @@
 +plip
-diff --git a/kernel-wedge-2.96ubuntu3/modules/ppp-modules b/kernel-wedge-2.96ubuntu3/modules/ppp-modules
+diff --git a/modules/ppp-modules b/modules/ppp-modules
 new file mode 100644
 index 0000000..0dd77f0
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/ppp-modules
++++ b/modules/ppp-modules
 @@ -0,0 +1,5 @@
 +ppp_async ?
 +ppp_deflate
 +ppp_synctty ?
 +pppoe
 +pppox
-diff --git a/kernel-wedge-2.96ubuntu3/modules/qnx4-modules b/kernel-wedge-2.96ubuntu3/modules/qnx4-modules
+diff --git a/modules/qnx4-modules b/modules/qnx4-modules
 new file mode 100644
 index 0000000..05d4adc
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/qnx4-modules
++++ b/modules/qnx4-modules
 @@ -0,0 +1 @@
 +qnx4
-diff --git a/kernel-wedge-2.96ubuntu3/modules/reiserfs-modules b/kernel-wedge-2.96ubuntu3/modules/reiserfs-modules
+diff --git a/modules/reiserfs-modules b/modules/reiserfs-modules
 new file mode 100644
 index 0000000..5a01360
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/reiserfs-modules
++++ b/modules/reiserfs-modules
 @@ -0,0 +1 @@
 +reiserfs
-diff --git a/kernel-wedge-2.96ubuntu3/modules/rtc-modules b/kernel-wedge-2.96ubuntu3/modules/rtc-modules
+diff --git a/modules/rtc-modules b/modules/rtc-modules
 new file mode 100644
 index 0000000..0a78e78
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/rtc-modules
++++ b/modules/rtc-modules
 @@ -0,0 +1,2 @@
 +rtc ?
 +rtc-cmos
-diff --git a/kernel-wedge-2.96ubuntu3/modules/sata-modules b/kernel-wedge-2.96ubuntu3/modules/sata-modules
+diff --git a/modules/sata-modules b/modules/sata-modules
 new file mode 100644
 index 0000000..119f13f
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/sata-modules
++++ b/modules/sata-modules
 @@ -0,0 +1,20 @@
 +ata_piix ?
 +sata_nv ?
@@ -3222,31 +3228,31 @@ index 0000000..119f13f
 +sata_mv ?
 +pdc_adma ?
 +sata_inic162x ?
-diff --git a/kernel-wedge-2.96ubuntu3/modules/scsi-common-modules b/kernel-wedge-2.96ubuntu3/modules/scsi-common-modules
+diff --git a/modules/scsi-common-modules b/modules/scsi-common-modules
 new file mode 100644
 index 0000000..9baefe5
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/scsi-common-modules
++++ b/modules/scsi-common-modules
 @@ -0,0 +1,5 @@
 +aic79xx
 +aic7xxx
 +BusLogic ?
 +sym53c8xx
 +sym53c8xx_2 ?
-diff --git a/kernel-wedge-2.96ubuntu3/modules/scsi-core-modules b/kernel-wedge-2.96ubuntu3/modules/scsi-core-modules
+diff --git a/modules/scsi-core-modules b/modules/scsi-core-modules
 new file mode 100644
 index 0000000..372fed5
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/scsi-core-modules
++++ b/modules/scsi-core-modules
 @@ -0,0 +1,3 @@
 +scsi_dh
 +scsi_mod
 +sd_mod
-diff --git a/kernel-wedge-2.96ubuntu3/modules/scsi-extra-modules b/kernel-wedge-2.96ubuntu3/modules/scsi-extra-modules
+diff --git a/modules/scsi-extra-modules b/modules/scsi-extra-modules
 new file mode 100644
 index 0000000..8443e16
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/scsi-extra-modules
++++ b/modules/scsi-extra-modules
 @@ -0,0 +1,35 @@
 +3w-xxxx
 +DAC960
@@ -3283,11 +3289,11 @@ index 0000000..8443e16
 +hptiop ?
 +qla4xxx ?
 +qla2xxx ?
-diff --git a/kernel-wedge-2.96ubuntu3/modules/scsi-modules b/kernel-wedge-2.96ubuntu3/modules/scsi-modules
+diff --git a/modules/scsi-modules b/modules/scsi-modules
 new file mode 100644
 index 0000000..32e606c
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/scsi-modules
++++ b/modules/scsi-modules
 @@ -0,0 +1,28 @@
 +NCR53c406a ?
 +advansys ?
@@ -3317,18 +3323,18 @@ index 0000000..32e606c
 +aic94xx ?
 +stex ?
 +xen-blkfront ?
-diff --git a/kernel-wedge-2.96ubuntu3/modules/serial-modules b/kernel-wedge-2.96ubuntu3/modules/serial-modules
+diff --git a/modules/serial-modules b/modules/serial-modules
 new file mode 100644
 index 0000000..4756752
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/serial-modules
++++ b/modules/serial-modules
 @@ -0,0 +1 @@
 +serial_cs
-diff --git a/kernel-wedge-2.96ubuntu3/modules/sound-modules b/kernel-wedge-2.96ubuntu3/modules/sound-modules
+diff --git a/modules/sound-modules b/modules/sound-modules
 new file mode 100644
 index 0000000..0e0e7c9
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/sound-modules
++++ b/modules/sound-modules
 @@ -0,0 +1,143 @@
 +snd-aaci ?
 +snd-ad1816a ?
@@ -3473,11 +3479,11 @@ index 0000000..0e0e7c9
 +snd-wavefront ?
 +snd-ymfpci ?
 +snd_ps3 ?
-diff --git a/kernel-wedge-2.96ubuntu3/modules/speakup-modules b/kernel-wedge-2.96ubuntu3/modules/speakup-modules
+diff --git a/modules/speakup-modules b/modules/speakup-modules
 new file mode 100644
 index 0000000..59e3f9e
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/speakup-modules
++++ b/modules/speakup-modules
 @@ -0,0 +1,15 @@
 +speakup
 +speakup_acntpc
@@ -3494,42 +3500,42 @@ index 0000000..59e3f9e
 +speakup_soft
 +speakup_spkout
 +speakup_txprt
-diff --git a/kernel-wedge-2.96ubuntu3/modules/squashfs-modules b/kernel-wedge-2.96ubuntu3/modules/squashfs-modules
+diff --git a/modules/squashfs-modules b/modules/squashfs-modules
 new file mode 100644
 index 0000000..7c1157f
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/squashfs-modules
++++ b/modules/squashfs-modules
 @@ -0,0 +1 @@
 +squashfs
-diff --git a/kernel-wedge-2.96ubuntu3/modules/ufs-modules b/kernel-wedge-2.96ubuntu3/modules/ufs-modules
+diff --git a/modules/ufs-modules b/modules/ufs-modules
 new file mode 100644
 index 0000000..19173e9
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/ufs-modules
++++ b/modules/ufs-modules
 @@ -0,0 +1 @@
 +ufs
-diff --git a/kernel-wedge-2.96ubuntu3/modules/uinput-modules b/kernel-wedge-2.96ubuntu3/modules/uinput-modules
+diff --git a/modules/uinput-modules b/modules/uinput-modules
 new file mode 100644
 index 0000000..42bc005
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/uinput-modules
++++ b/modules/uinput-modules
 @@ -0,0 +1 @@
 +uinput
-diff --git a/kernel-wedge-2.96ubuntu3/modules/usb-modules b/kernel-wedge-2.96ubuntu3/modules/usb-modules
+diff --git a/modules/usb-modules b/modules/usb-modules
 new file mode 100644
 index 0000000..ac99de2
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/usb-modules
++++ b/modules/usb-modules
 @@ -0,0 +1,4 @@
 +ehci-hcd ?
 +ohci-hcd ?
 +uhci-hcd ?
 +usbcore ?
-diff --git a/kernel-wedge-2.96ubuntu3/modules/usb-serial-modules b/kernel-wedge-2.96ubuntu3/modules/usb-serial-modules
+diff --git a/modules/usb-serial-modules b/modules/usb-serial-modules
 new file mode 100644
 index 0000000..7726ac5
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/usb-serial-modules
++++ b/modules/usb-serial-modules
 @@ -0,0 +1,7 @@
 +usbserial
 +belkin_sa ?
@@ -3538,11 +3544,11 @@ index 0000000..7726ac5
 +mct_u232 ?
 +pl2303 ?
 +spcp8x5 ?
-diff --git a/kernel-wedge-2.96ubuntu3/modules/usb-storage-modules b/kernel-wedge-2.96ubuntu3/modules/usb-storage-modules
+diff --git a/modules/usb-storage-modules b/modules/usb-storage-modules
 new file mode 100644
 index 0000000..b87ec0a
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/usb-storage-modules
++++ b/modules/usb-storage-modules
 @@ -0,0 +1,12 @@
 +usb-storage
 +ums-jumpshot ?
@@ -3556,11 +3562,11 @@ index 0000000..b87ec0a
 +ums-cypress ?
 +ums-usbat ?
 +ums-sddr55 ?
-diff --git a/kernel-wedge-2.96ubuntu3/modules/virtio-modules b/kernel-wedge-2.96ubuntu3/modules/virtio-modules
+diff --git a/modules/virtio-modules b/modules/virtio-modules
 new file mode 100644
 index 0000000..84d09e4
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/virtio-modules
++++ b/modules/virtio-modules
 @@ -0,0 +1,6 @@
 +virtio_net
 +virtio_blk
@@ -3568,18 +3574,18 @@ index 0000000..84d09e4
 +
 +# Some architectures do not have PCI bus
 +virtio_pci ?
-diff --git a/kernel-wedge-2.96ubuntu3/modules/xfs-modules b/kernel-wedge-2.96ubuntu3/modules/xfs-modules
+diff --git a/modules/xfs-modules b/modules/xfs-modules
 new file mode 100644
 index 0000000..7bd8fb2
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/xfs-modules
++++ b/modules/xfs-modules
 @@ -0,0 +1,2 @@
 +# Not available currently on all kernel versions, so marked optional.
 +xfs ?
-diff --git a/kernel-wedge-2.96ubuntu3/modules/zlib-modules b/kernel-wedge-2.96ubuntu3/modules/zlib-modules
+diff --git a/modules/zlib-modules b/modules/zlib-modules
 new file mode 100644
 index 0000000..322c546
 --- /dev/null
-+++ b/kernel-wedge-2.96ubuntu3/modules/zlib-modules
++++ b/modules/zlib-modules
 @@ -0,0 +1 @@
 +zlib_deflate
