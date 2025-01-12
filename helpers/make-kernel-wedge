@@ -27,6 +27,9 @@ VERSION=0
 
 # Restore udeb build functions for dtbs / firmware packaging on ARM.
 patch_p1 $DATA/diff-kernel-wedge-2105_to_296u3.patch
+# Set legacy compatibility build (only once).
+sed -i '/Build-Depends:/ s|debhelper-compat (= 13)|debhelper-compat (= 9)|' debian/control
+rm debian/compat
 
 changelog "Rollback 2.96ubuntu3 on ecne."
 package
