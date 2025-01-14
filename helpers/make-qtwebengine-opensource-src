@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2022 Luis Guzman <ark@switnet.org>
+#    Copyright (C) 2025 Luis Guzman <ark@switnet.org>
 #    Copyright (C) 2021 Pablo Correa Gómez <ablocorrea@hotmail.com>
 #
 #    This program is free software; you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=4
+VERSION=5
 
 . ./config
 
@@ -62,8 +62,9 @@ src/3rdparty/chromium/third_party/win_build_output
 src/3rdparty/chromium/build/android/CheckInstallApk-debug.apk
 src/3rdparty/chromium/third_party/blink/manual_tests/accessibility/resources/AppletTest.class
 src/3rdparty/chromium/third_party/blink/manual_tests/resources/*.class
+src/3rdparty/chromium/third_party/blink/manual_tests/WebKitSite.webarchive
 EOF
 
-changelog "Removed non-free and prebuilt binaries. Fixes #28287"
+changelog "Removed non-free and prebuilt binaries. Fixes #28287|TPH #196"
 
 package
