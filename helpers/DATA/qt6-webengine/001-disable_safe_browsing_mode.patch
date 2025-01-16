@@ -1,0 +1,14 @@
+diff --git a/cmake/Functions.cmake b/cmake/Functions.cmake_
+index 320a84a2..804d9237 100644
+--- a/cmake/Functions.cmake
++++ b/cmake/Functions.cmake_
+@@ -188,6 +188,9 @@ function(extend_gn_list outList)
+     endif()
+     message(DEBUG "extend_gn_list(${outList} ${GN_ARGS} CONDITION ${GN_CONDITION} ...): Evaluated to ${value}")
+     foreach(gnArg ${GN_ARGS})
++        if(NOT "${gnArg}" MATCHES "safe_browsing_mode")
++            set(${outList} "${${outList}}" "safe_browsing_mode=0")
++        endif()
+         set(${outList} "${${outList}}" "${gnArg}=${value}")
+     endforeach()
+     set(${outList} "${${outList}}" PARENT_SCOPE)
