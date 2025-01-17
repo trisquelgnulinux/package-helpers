@@ -22,8 +22,8 @@ VERSION=5
 
 . ./config
 
-# 'safe_browsing_mode=0' already present by default via
-# 'src/core/CMakeLists.txt'
+# disable safe_browsing_mode by default.
+patch_p1 $DATA/001-disable_safe_browsing_mode.patch
 
 #Increase parallel restriction (it fails at full speed).
 sed -i 's|j2|j4|' debian/rules
