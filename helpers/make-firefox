@@ -2,7 +2,7 @@
 #
 #    Copyright (C) 2008-2023  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C) 2015       Santiago Rodriguez <santi@trisquel.info>
-#    Copyright (C) 2024       Luis Guzman <ark@switnet.org>
+#    Copyright (C) 2025       Luis Guzman <ark@switnet.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -393,6 +393,7 @@ find browser/branding/ -name PrivateBrowsing_150.png | xargs -n1 cp $DATA/debug_
 # Replace addons placeholder for the gnuzilla mozzarella.
 find l10n/ -name aboutAddons.ftl | xargs -r sed -i '/.placeholder/s|addons.mozilla.org|gnuzilla.gnu.org|g'
 sed -i "s|$OLD_WEB_DEV_URL|$WEB_DEV_URL|" devtools/client/menus.js
+grep -lr addons-help toolkit/mozapps/extensions/ | xargs -r sed -i 's|addons-help|abrowser-help|'
 
 #Fixes by patch on source, see DATA/firefox/patches for more info.
 for patch in $(ls -v ${DATA}/patch_changes/*.patch)
