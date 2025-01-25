@@ -280,7 +280,6 @@ pref("extensions.getAddons.discovery.api_url", "");
 pref("extensions.recommendations.privacyPolicyUrl", "https://trisquel.info/legal");
 pref("extensions.getAddons.search.browseURL", "https://trisquel.info/en/browser-plain?keys=%TERMS%&tid=All");
 
-
 // Disable pingback on first run
 pref("browser.newtabpage.activity-stream.fxaccounts.endpoint", "");
 
@@ -304,3 +303,6 @@ pref("browser.ml.chat.enabled", false);
 // Hide from UI
 pref("browser.ml.chat.hideFromLabs", true);
 pref("browser.ml.chat.hideLabsShortcuts", true);
+
+// Disable tab hover preview
+pref("browser.tabs.hoverPreview.enabled", false);
