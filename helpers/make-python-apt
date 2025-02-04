@@ -18,7 +18,12 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=9
+# Bumping 'python-apt' as a mirror list update recommends to also bump
+# 'choose-mirror' package as a dependency for debian-installer, so when
+# a new release of the 'debian-installer' also ships the latest mirror
+# list available on the resulting netinstall (mini.iso) image.
+
+VERSION=10
 COMPONENT=main
 #Be aware to not pull/build before publish date on T12.
 
