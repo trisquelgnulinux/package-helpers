@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=8
+VERSION=9
 COMPONENT=main
 
 . ./config
@@ -26,38 +26,13 @@ COMPONENT=main
 # Fix version number
 export UPSTREAMVERSION="$(sed 's|ubuntu0.20.04.1||' <<< $UPSTREAMVERSION)"
 
-# https://en.wikipedia.org/wiki/ISO_3166-2
-cat << EOF > data/templates/Trisquel.mirrors
-#LOC:AU
-https://mirrors.middlendian.com/trisquel-packages/
-#LOC:BR
-https://trisquel.c3sl.ufpr.br/packages/
-#LOC:CA
-https://mirror.csclub.uwaterloo.ca/trisquel/packages/
-#LOC:CN
-https://mirrors.ustc.edu.cn/trisquel
-https://mirrors.nju.edu.cn/trisquel/
-#LOC:DK
-https://mirrors.dotsrc.org/trisquel/
-#LOC:EC
-https://mirror.cedia.org.ec/trisquel.packages
-#LOC:ES
-https://mirror.librelabucm.org/trisquel/
-#LOC:HU
-https://quantum-mirror.hu/mirrors/pub/trisquel/packages/
-#LOC:JP
-https://repo.jing.rocks/trisquel/
-#LOC:SE
-https://ftp.acc.umu.se/mirror/trisquel/packages/
-https://ftpmirror1.infania.net/mirror/trisquel/packages/
-https://ftp.sunet.se/mirror/trisquel/packages/
-#LOC:US
-https://archive.trisquel.info/trisquel/
-https://archive.trisquel.org/trisquel/
-https://mirror.fsf.org/trisquel/
-https://mirrors.ocf.berkeley.edu/trisquel/
-https://mirror.math.princeton.edu/pub/trisquel-packages/
-EOF
+# Use git Mirrors.masterlist as source.
+Mirrors_masterlist=$(mktemp)
+Mirrors_masterlist_git="trisquel-packages/-/raw/master/extra/mirrors/Mirrors.masterlist"
+
+wget https://gitlab.trisquel.org/trisquel/$Mirrors_masterlist_git -o /dev/null -O $Mirrors_masterlist
+python3 $DATA/parse-mirror-masterlist.py $Mirrors_masterlist > data/templates/Trisquel.mirrors
+rm $Mirrors_masterlist
 
 cat << EOF > data/templates/Trisquel.info.in
 _ChangelogURI: https://packages.trisquel.org/changelogs/pool/%s/%s/%s/%s_%s/changelog
