@@ -23,10 +23,15 @@
 # or fetch such packages from Debian in order to build the required udeb packages.
 ##
 
-VERSION=0
+VERSION=1
 NETINST=true
 . ./config
 
+# Set version number due to source origin change
+export FULLVERSION="$(sed 's|ubuntu0.1||' <<< $FULLVERSION)"
+
+changelog "Fetch and build as udeb dependency for debian-installer."
+head -n1 debian/changelog | grep -q ubuntu && echo "error: update upstream version" && exit
 
 changelog "Rebuild upstream to get udeb dependency for debian-installer."
 package
