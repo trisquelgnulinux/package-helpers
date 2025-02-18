@@ -102,7 +102,8 @@ pref("mail.ignore_thread.learn_more_url", "https://trisquel.info/wiki/icedove");
 pref("mail.pgpmime.addon_url", "https://enigmail.net/");
 pref("app.support.baseURL", "https://trisquel.info/wiki/icedove");
 pref("app.update.url.manual", "https://trisquel.info/wiki/icedove");
-pref("extensions.getAddons.link.url", "https://trisquel.info/en/browser-plain");
+// Send to the Icedove wiki as we have no addon store to recommend
+pref("extensions.getAddons.link.url", "https://trisquel.info/wiki/icedove");
 pref("extensions.getAddons.search.browseURL", "https://trisquel.info/en/browser-plain?keys=%TERMS%&tid=All");
 pref("extensions.getAddons.search.url", "https://trisquel.info/en/browser-plain?keys=%TERMS%&tid=All");
 
@@ -226,7 +227,7 @@ sed 's|https://www.icedove.net/get-involved/|https://trisquel.info/wiki/|' -i co
 sed 's|https://give.icedove.net/.*"|https://trisquel.info/donate/"|' -i comm/mail/base/content/utilityOverlay.js
 sed 's|https://www.icedove.net/.*/features/|https://trisquel.info/wiki/icedove|' -i comm/mailnews/base/content/msgAccountCentral.xhtml
 sed 's|https://give.icedove.net/.*"|https://trisquel.info/donate/"|' -i comm/mailnews/base/content/msgAccountCentral.xhtml
-sed '/app.donation.eoy.url/s|https://www.icedove.net/icedove/.*"|https://trisquel.info/donate/"|' -i comm/mail/app/profile/all-icedove.js
+grep -rl 'https://updates.icedove.net/icedove/' comm/ | xargs -r sed -i '/app.donation.eoy.url/s|https://updates.icedove.net/icedove/.*"|https://trisquel.info/donate/"|'
 sed 's|https://support.mozilla.org/products/icedove|https://trisquel.info/wiki/icedove|' -i comm/mailnews/base/content/msgAccountCentral.xhtml
 sed 's|https://www.icedove.net/.*/get-involved/|https://trisquel.info/wiki/|' -i comm/mailnews/base/content/msgAccountCentral.xhtml
 sed 's|https://developer.icedove.net/|https://gitlab.trisquel.org/trisquel|' -i comm/mailnews/base/content/msgAccountCentral.xhtml
