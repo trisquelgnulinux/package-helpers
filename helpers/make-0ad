@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2022 Luis Guzman <ark@switnet.org>
+#    Copyright (C) 2025 Luis Guzman <ark@switnet.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,13 +17,15 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
-EXTERNAL='deb-src http://ppa.launchpadcontent.net/wfg/0ad/ubuntu $UPSTREAM main'
-REPOKEY="8CA7A6E8E4FA953A"
+VERSION=2
+EXTERNAL="deb-src https://ppa.launchpadcontent.net/oibaf/graphics-drivers/ubuntu noble main"
+REPOKEY="957D2708A03A4626"
 BACKPORTS=true
 BUILD_UNTIL=11.0
 
 . ./config
+
+sed -i 's|libwxgtk3.2-dev|libwxgtk3.0-gtk3-dev|' debian/control
 
 changelog "Backported to get latest version into Trisquel"
 
