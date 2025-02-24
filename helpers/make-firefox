@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=119
+VERSION=120
 EXTERNAL='deb-src http://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu $UPSTREAM main'
 REPOKEY=9BDB3D89CE49EC21
 
@@ -333,15 +333,9 @@ echo ".warning{display: none!important; } .addon[notification=warning]{backgroun
 ## Hide extra links in about box
 #find -wholename '*/brand.dtd' |xargs /bin/sed 's/trademarkInfo.part1.*/trademarkInfo.part1 "">/' -i
 
-for STRING in rights-intro-point-2 rights-intro-point-3 rights-intro-point-4 rights-intro-point-5 rights-intro-point-6 rights-webservices rights-safebrowsing
-do
- find -name aboutRights.ftl | xargs sed -i "s/^$STRING.*/$STRING = /"
-done
 ##Remove invalid policy for trisquel.
-find -name aboutRights.ftl | xargs sed -i '/rights-intro-point-5/,$d'
-find -name aboutRights.xhtml |xargs sed -i "/rights-intro-point-5/,/<\/li>/d"
-find -name aboutRights.xhtml |xargs sed -i "/rights-intro-point-6/,/<\/li>/d"
-find -name aboutRights-unbranded.xhtml |xargs sed -i "/rights-intro-point-5/,/<\/li>/d"
+# see more at DATA/firefox/patch_changes/008_aboutRights_removal_fix.patch
+
 #EO about: mods.
 
 sed -i 's|<a href="http://www.mozilla.org/">Mozilla Project</a>|<a href="http://www.trisquel.info/">Trisquel Project</a>|g' browser/base/content/overrides/app-license.html
