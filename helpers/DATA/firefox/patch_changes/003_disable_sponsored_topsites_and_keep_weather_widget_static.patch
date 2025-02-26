@@ -1,8 +1,8 @@
 diff --git a/browser/app/profile/firefox.js b/browser/app/profile/firefox.js
-index 391bc93e..a7d93085 100644
+index 391bc93e..df6b3f84 100644
 --- a/browser/app/profile/firefox.js
 +++ b/browser/app/profile/firefox.js
-@@ -1718,27 +1718,27 @@ pref("browser.topsites.component.enabled", false);
+@@ -1718,19 +1718,19 @@ pref("browser.topsites.component.enabled", false);
  
  pref("browser.topsites.useRemoteSetting", true);
  // Fetch sponsored Top Sites from Mozilla Tiles Service (Contile)
@@ -28,9 +28,8 @@ index 391bc93e..a7d93085 100644
  
  // Mozilla Ad Routing Service (MARS) unified ads service
  pref("browser.newtabpage.activity-stream.unifiedAds.tiles.enabled", false);
- pref("browser.newtabpage.activity-stream.unifiedAds.spocs.enabled", false);
--pref("browser.newtabpage.activity-stream.unifiedAds.endpoint", "https://ads.mozilla.org/");
-+pref("browser.newtabpage.activity-stream.unifiedAds.endpoint", "");
+@@ -1738,12 +1738,12 @@ pref("browser.newtabpage.activity-stream.unifiedAds.spocs.enabled", false);
+ pref("browser.newtabpage.activity-stream.unifiedAds.endpoint", "https://ads.mozilla.org/");
  
  // Weather widget for newtab
 -pref("browser.newtabpage.activity-stream.showWeather", true);
@@ -38,3 +37,9 @@ index 391bc93e..a7d93085 100644
  pref("browser.newtabpage.activity-stream.weather.query", "");
  pref("browser.newtabpage.activity-stream.weather.display", "simple");
  
+ // enable location search for newtab weather widget
+-pref("browser.newtabpage.activity-stream.weather.locationSearchEnabled", true);
++pref("browser.newtabpage.activity-stream.weather.locationSearchEnabled", false);
+ 
+ // List of regions that get weather by default.
+ pref("browser.newtabpage.activity-stream.discoverystream.region-weather-config", "US,CA");
