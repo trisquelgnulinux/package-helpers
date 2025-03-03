@@ -1,0 +1,15 @@
+Enable restricted dbus configuration usage by pidgin to fix MATE on Noble (Ecne) orca access.
+
+diff --git a/profiles/usr.bin.pidgin b/profiles/usr.bin.pidgin
+index 085301c6..78338084 100644
+--- a/profiles/usr.bin.pidgin
++++ b/profiles/usr.bin.pidgin
+@@ -49,7 +49,7 @@
+   # Uncomment the two following lines if you want to allow Pidgin to update
+   # any DConf setting:
+   # owner @{HOME}/.{cache,config}/dconf/user rw,
+-  # owner /{,var/}run/user/[0-9]*/dconf/user rwk,
++  owner /{,var/}run/user/[0-9]*/dconf/user rwk,
+ 
+   /{usr/,}bin/dash rix,
+   /{usr/,}bin/which rix,
