@@ -1,0 +1,38 @@
+From 70aed868a4ed76d74eecf3b210ce7bf3098ffab4 Mon Sep 17 00:00:00 2001
+From: Jacob K <jacobk@disroot.org>
+Date: Wed, 12 Feb 2025 12:19:24 -0600
+Subject: [PATCH] Add some lines from Atril's profile to fix the screen reader
+
+---
+ profiles/usr.bin.pidgin | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/profiles/usr.bin.pidgin b/profiles/usr.bin.pidgin
+index 5e18702..085301c 100644
+--- a/profiles/usr.bin.pidgin
++++ b/profiles/usr.bin.pidgin
+@@ -8,6 +8,7 @@
+   #include <abstractions/bash>
+   #include <abstractions/dbus-session>
+   #include <abstractions/dbus-strict>
++  #include <abstractions/dbus-accessibility>
+   #include <abstractions/dconf>
+   #include <abstractions/enchant>
+   #include <abstractions/gnome>
+@@ -82,6 +83,13 @@
+   owner @{PROC}/@{pid}/auxv r,
+   owner @{PROC}/@{pid}/fd/ r,
+ 
++  # These lines were copied from Atril's profile to make the screen reader functional
++  owner /{,var/}run/user/*/at-spi2-*/   rw,
++  owner /{,var/}run/user/*/at-spi2-*/** rw,
++  # Allow access to the non-abstract D-Bus socket used by at-spi > 2.42.0
++  #   https://gitlab.gnome.org/GNOME/at-spi2-core/-/issues/43
++  owner /{,var/}run/user/*/at-spi/bus* rw,
++
+   # Site-specific additions and overrides. See local/README for details.
+   #include <local/usr.bin.pidgin>
+ }
+-- 
+2.25.1
+
