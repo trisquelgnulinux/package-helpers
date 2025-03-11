@@ -25,10 +25,11 @@
 
 #STAGE-4-UDEBS || #STAGE-1-DEBOOTSTRAP
 
-VERSION=0
+VERSION=1
 NETINST=true
 . ./config
 
+patch_p1 $DATA/001_add-gpgv-udeb-dependencies-hack.patch
 
 changelog "Fetch and build as udeb dependency for debian-installer."
 package

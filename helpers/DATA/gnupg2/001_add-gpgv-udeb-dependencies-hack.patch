@@ -1,0 +1,17 @@
+diff --git a/debian/control b/debian/control
+index c599ba9e..7215fac0 100644
+--- a/debian/control
++++ b/debian/control
+@@ -388,8 +388,10 @@ Build-Profiles: <!noudeb>
+ Section: debian-installer
+ Architecture: any
+ Depends:
+- ${misc:Depends},
+- ${shlibs:Depends},
++ libc6-udeb (>= 2.39),
++ libgcrypt20-udeb (>= 1.10.3),
++ libgpg-error0-udeb (>= 1.47),
++ zlib1g-udeb (>= 1:1.2.3.3.dfsg-1)
+ Description: minimal signature verification tool
+  GnuPG is GNU's tool for secure communication and data storage.
+  It can be used to encrypt data and to create digital signatures.
