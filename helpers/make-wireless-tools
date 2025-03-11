@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2022  Luis Guzmán <ark@switnet.org>
+#    Copyright (C) 2025  Luis Guzmán <ark@switnet.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -24,6 +24,8 @@
 ##
 
 VERSION=1
+EXTERNAL='deb-src http://ftp.debian.org/debian trixie main'
+REPOKEY=0E98404D386FA1D9
 NETINST=true
 . ./config
 
