@@ -18,22 +18,24 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=36
+VERSION=37
 
 . ./config
 
+Mirrors_masterlist_git="trisquel-packages/-/raw/master/extra/mirrors/Mirrors.masterlist"
+
 # Avoid the need for a custom cdrom:// repo
-patch --no-backup-if-mismatch -p1 < $DATA/grub-installer.patch
+patch_p1 $DATA/grub-installer.patch
 truncate -s 0 d-i/source/apt-setup/generators/40cdrom
 
 # Disable confirmation popups, as they are innacurate and buggy
-patch --no-backup-if-mismatch -p1 < $DATA/no_confrirmation_when_crypto.patch
+patch_p1 $DATA/no_confrirmation_when_crypto.patch
 
 # Fix some gtk labels for Orca
-patch --no-backup-if-mismatch -p1 < $DATA/a11y.patch
+patch_p1 $DATA/a11y.patch
 
 # Point ubiquity crash to trisquel's forge.
-patch --no-backup-if-mismatch -p1 < $DATA/crash_report_point_to_trisquel_forge.patch
+patch_p1 $DATA/crash_report_point_to_trisquel_forge.patch
 
 # Remove test_timezone to prevent error out future builds on different daylight time.
 rm tests/test_timezone.py
@@ -145,7 +147,7 @@ sed 's/ports.ubuntu.com/archive.trisquel.org/g; s/ubuntu-ports/trisquel/g; s/ubu
 sed 's/CC.ports.ubuntu.com/archive.trisquel.org/g; s/.ports.ubuntu.com/archive.trisquel.org/g' -i ./d-i/source/choose-mirror/choose-mirror.c ./d-i/source/choose-mirror/debian/choose-mirror-bin.templates.ftp.sel-in ./d-i/source/choose-mirror/debian/choose-mirror-bin.templates.http-in
 
 # Set Mirrors.masterlist
-wget https://archive.trisquel.org/trisquel/Mirrors.masterlist -O ./d-i/source/choose-mirror/Mirrors.masterlist
+wget https://gitlab.trisquel.org/trisquel/$Mirrors_masterlist_git -O ./d-i/source/choose-mirror/Mirrors.masterlist
 sed '/Location/d; /Comment/d;' -i ./d-i/source/choose-mirror/Mirrors.masterlist
 cp ./d-i/source/choose-mirror/Mirrors.masterlist ./d-i/source/choose-mirror/Mirrors.masterlist.trisquel
 rm ./d-i/source/choose-mirror/Mirrors.masterlist.ubuntu
