@@ -32,9 +32,13 @@ parser.add_argument(
     help="Filter by country (e.g., AU, BR, CA)",
     default=None)
 parser.add_argument(
-    "--mirmon",
+    "--mirmon-https",
     action="store_true",
-    help="List mirrors suitable for mirmon output")
+    help="List https mirrors suitable for mirmon output")
+parser.add_argument(
+    "--mirmon-http",
+    action="store_true",
+    help="List http mirrors suitable for mirmon output")
 args = parser.parse_args()
 
 with open(args.file, 'r') as file:
@@ -72,14 +76,20 @@ for block in blocks:
     mirrors[country][site] = {"https": https_urls, "http": http_urls}
 
 # Print mirmon output if selected
-if args.mirmon:
+if args.mirmon_https:
     for country, sites in sorted(mirrors.items()):
         if args.country and country != args.country:
             continue
         for site, urls in sites.items():
             if urls["https"]:
                 print(f"{country.lower()} {urls['https'][0]}")
-            elif urls["http"]:
+    exit(0)
+if args.mirmon_http:
+    for country, sites in sorted(mirrors.items()):
+        if args.country and country != args.country:
+            continue
+        for site, urls in sites.items():
+            if urls["http"]:
                 print(f"{country.lower()} {urls['http'][0]}")
     exit(0)
 
