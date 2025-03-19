@@ -1,0 +1,15 @@
+diff --git a/Makefile b/Makefile
+index f8bf521f..61d51be1 100644
+--- a/Makefile
++++ b/Makefile
+@@ -34,8 +34,8 @@ LIBS=-ldebconfclient -ldebian-installer
+ STRIP=strip
+ 
+ # Derivative distributions may want to change these.
+-MIRRORLISTURL=https://mirror-master.debian.org/status/Mirrors.masterlist
+-MASTERLIST=Mirrors.masterlist
++MIRRORLISTURL=https://gitlab.trisquel.org/trisquel/trisquel-packages/-/raw/master/extra/mirrors/Mirrors.masterlist
++MASTERLIST=Mirrors.masterlist.trisquel
+ 
+ ifdef DEBUG
+ CFLAGS:=$(CFLAGS) -DDODEBUG
