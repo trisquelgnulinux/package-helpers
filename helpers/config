@@ -222,7 +222,7 @@ cd ..
 mv source $PACKAGE-$FULLVERSION
 dpkg-source -b -I.falsefileextension99 $PACKAGE-$FULLVERSION
 rm -rf ${LOCAL_APT}
-echo "Trisquel source package built!"
+echo -e "Trisquel source package built! - $(date -R)\n"
 
 notify_found_distro_match_on_debian_rules
 }
