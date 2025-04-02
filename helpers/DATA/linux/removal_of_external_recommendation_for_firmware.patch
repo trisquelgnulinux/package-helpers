@@ -1,0 +1,29 @@
+Removal of references to external repositories we can't manage what kind of firmware is pointed to.
+The only firmware we can confirm to work with is the one contained on the packge source code.
+
+diff --git a/drivers/net/wireless/atmel/at76c50x-usb.c b/drivers/net/wireless/atmel/at76c50x-usb.c
+index 86f95bd0..046b298d 100644
+--- a/drivers/net/wireless/atmel/at76c50x-usb.c
++++ b/drivers/net/wireless/atmel/at76c50x-usb.c
+@@ -1612,8 +1612,6 @@ static struct fwentry *at76_load_firmware(struct usb_device *udev,
+ 	if (ret < 0) {
+ 		dev_err(&udev->dev, "firmware %s not found!\n",
+ 			fwe->fwname);
+-		dev_err(&udev->dev,
+-			"you may need to download the firmware from http://developer.berlios.de/projects/at76c503a/\n");
+ 		goto exit;
+ 	}
+ 
+diff --git a/sound/soc/sof/topology.c b/sound/soc/sof/topology.c
+index 1bb2dcf3..ab1c234c 100644
+--- a/sound/soc/sof/topology.c
++++ b/sound/soc/sof/topology.c
+@@ -3710,8 +3710,6 @@ int snd_sof_load_topology(struct snd_soc_component *scomp, const char *file)
+ 	if (ret < 0) {
+ 		dev_err(scomp->dev, "error: tplg request firmware %s failed err: %d\n",
+ 			file, ret);
+-		dev_err(scomp->dev,
+-			"you may need to download the firmware from https://github.com/thesofproject/sof-bin/\n");
+ 		return ret;
+ 	}
+ 
