@@ -734,57 +734,68 @@ diff --color -Nru a/drivers/gpu/drm/radeon/ni.c b/drivers/gpu/drm/radeon/ni.c
  		release_firmware(rdev->pfp_fw);
  		rdev->pfp_fw = NULL;
  		release_firmware(rdev->me_fw);
-diff --color -Nru a/drivers/gpu/drm/radeon/r100.c b/drivers/gpu/drm/radeon/r100.c
---- a/drivers/gpu/drm/radeon/r100.c	2022-07-31 16:03:01.000000000 -0500
-+++ b/drivers/gpu/drm/radeon/r100.c	2023-03-09 11:53:09.993441860 -0600
-@@ -1017,13 +1017,13 @@
- 	if ((rdev->family == CHIP_R100) || (rdev->family == CHIP_RV100) ||
- 	    (rdev->family == CHIP_RV200) || (rdev->family == CHIP_RS100) ||
- 	    (rdev->family == CHIP_RS200)) {
+diff --git a/drivers/gpu/drm/radeon/r100.c b/drivers/gpu/drm/radeon/r100.c
+index b63b6b4e..3dc76b8d 100644
+--- a/drivers/gpu/drm/radeon/r100.c
++++ b/drivers/gpu/drm/radeon/r100.c
+@@ -1021,7 +1021,7 @@ static int r100_cp_init_microcode(struct radeon_device *rdev)
+ 	case CHIP_RV200:
+ 	case CHIP_RS100:
+ 	case CHIP_RS200:
 -		DRM_INFO("Loading R100 Microcode\n");
 +		DRM_INFO("Loading Microcode\n");
  		fw_name = FIRMWARE_R100;
- 	} else if ((rdev->family == CHIP_R200) ||
- 		   (rdev->family == CHIP_RV250) ||
- 		   (rdev->family == CHIP_RV280) ||
- 		   (rdev->family == CHIP_RS300)) {
+ 		break;
+ 
+@@ -1029,7 +1029,7 @@ static int r100_cp_init_microcode(struct radeon_device *rdev)
+ 	case CHIP_RV250:
+ 	case CHIP_RV280:
+ 	case CHIP_RS300:
 -		DRM_INFO("Loading R200 Microcode\n");
 +		DRM_INFO("Loading Microcode\n");
  		fw_name = FIRMWARE_R200;
- 	} else if ((rdev->family == CHIP_R300) ||
- 		   (rdev->family == CHIP_R350) ||
-@@ -1031,19 +1031,19 @@
- 		   (rdev->family == CHIP_RV380) ||
- 		   (rdev->family == CHIP_RS400) ||
- 		   (rdev->family == CHIP_RS480)) {
+ 		break;
+ 
+@@ -1039,25 +1039,25 @@ static int r100_cp_init_microcode(struct radeon_device *rdev)
+ 	case CHIP_RV380:
+ 	case CHIP_RS400:
+ 	case CHIP_RS480:
 -		DRM_INFO("Loading R300 Microcode\n");
 +		DRM_INFO("Loading Microcode\n");
  		fw_name = FIRMWARE_R300;
- 	} else if ((rdev->family == CHIP_R420) ||
- 		   (rdev->family == CHIP_R423) ||
- 		   (rdev->family == CHIP_RV410)) {
+ 		break;
+ 
+ 	case CHIP_R420:
+ 	case CHIP_R423:
+ 	case CHIP_RV410:
 -		DRM_INFO("Loading R400 Microcode\n");
 +		DRM_INFO("Loading Microcode\n");
  		fw_name = FIRMWARE_R420;
- 	} else if ((rdev->family == CHIP_RS690) ||
- 		   (rdev->family == CHIP_RS740)) {
+ 		break;
+ 
+ 	case CHIP_RS690:
+ 	case CHIP_RS740:
 -		DRM_INFO("Loading RS690/RS740 Microcode\n");
 +		DRM_INFO("Loading Microcode\n");
  		fw_name = FIRMWARE_RS690;
- 	} else if (rdev->family == CHIP_RS600) {
+ 		break;
+ 
+ 	case CHIP_RS600:
 -		DRM_INFO("Loading RS600 Microcode\n");
 +		DRM_INFO("Loading Microcode\n");
  		fw_name = FIRMWARE_RS600;
- 	} else if ((rdev->family == CHIP_RV515) ||
- 		   (rdev->family == CHIP_R520) ||
-@@ -1051,16 +1051,16 @@
- 		   (rdev->family == CHIP_R580) ||
- 		   (rdev->family == CHIP_RV560) ||
- 		   (rdev->family == CHIP_RV570)) {
+ 		break;
+ 
+@@ -1067,7 +1067,7 @@ static int r100_cp_init_microcode(struct radeon_device *rdev)
+ 	case CHIP_R580:
+ 	case CHIP_RV560:
+ 	case CHIP_RV570:
 -		DRM_INFO("Loading R500 Microcode\n");
 +		DRM_INFO("Loading Microcode\n");
  		fw_name = FIRMWARE_R520;
- 	}
+ 		break;
+ 
+@@ -1078,10 +1078,10 @@ static int r100_cp_init_microcode(struct radeon_device *rdev)
  
  	err = request_firmware(&rdev->me_fw, fw_name, rdev->dev);
  	if (err) {
