@@ -294,7 +294,7 @@ class UrlClassifierSkipUrls(EmptyRemoteSettings):
 class TippyTopSites(JsonProcessor):
     JSON_PATHS = (
         arguments.MAIN_PATH /
-        'browser/components/newtab/data/content/tippytop/top_sites.json',
+        'browser/components/topsites/content/tippytop/top_sites.json',
         arguments.BRANDING_PATH /
         'tippytop/top_sites.json')
 

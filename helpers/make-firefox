@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=120
+VERSION=120.8
 EXTERNAL='deb-src http://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu $UPSTREAM main'
 REPOKEY=9BDB3D89CE49EC21
 
@@ -67,6 +67,12 @@ grep -rl browser.vpn_promo.enabled | xargs -r sed -i '/browser.vpn_promo.enabled
 sed '/network.connectivity-service.IPv/s/http.*success.txt?ipv[46]//' -i modules/libpref/init/all.js
 sed 's/accounts-static.cdn.mozilla.net.*sync.services.mozilla.com//' -i modules/libpref/init/all.js
 
+# Disable remote connections instead of disable push completely. 'dom.push' values can't
+# be changed on vendor-firefox.js settings only at libpref compilation or by user prefs.
+#sed '/dom.push.enabled/,/mirror/s|true|false|' -i modules/libpref/init/StaticPrefList.yaml
+sed '/dom.push.connection.enabled/s|true|false|' -i modules/libpref/init/all.js
+#sed '/dom.push.serverURL/s|wss.*"|"|' -i modules/libpref/init/all.js
+
 # Disable 106 firefox-view and other firefox-branded popups
 /bin/sed -i '/browser.urlbar.quicksuggest.shouldShowOnboardingDialog/s|true|false|' $BAP_FirefoxJs
 sed -i '/services.sync.prefs.sync.browser.firefox-view.feature-tour/s|true|false|' $BAP_FirefoxJs
@@ -83,8 +89,8 @@ sed -i '/browser.theme.colorway-closet/s|true|false|' $BAP_FirefoxJs
 # keep contentRelevancy disabled (first appearence is false thus using /bin/sed)
 /bin/sed -i '/"toolkit.contentRelevancy.ingestEnabled"/s|,.*)|, false)|' $BAP_FirefoxJs
 
-# Replace ubufox recommendation
-sed 's/xul-ext-ubufox/webext-ublock-origin/' -i debian/control.in
+# Remove ubufox recommendation and lower ublock to suggestion
+# see more at: $DATA/009_remove_ubunfox_suggest_webext-ublock-origin.patch
 
 #Remove exceptions on warnings when installing addons.
 sed -i '/addons.mozilla.org/d' browser/app/permissions
@@ -110,6 +116,7 @@ grep -rl toolkit.telemetry.shutdownPingSender.enabled  | xargs -r sed -i '/toolk
 grep -rl toolkit.telemetry.newProfilePing.enabled | xargs -r sed -i '/toolkit.telemetry.newProfilePing.enabled/s|true|false|'
 grep -rl toolkit.telemetry.firstShutdownPing.enabled | xargs -r sed -i '/toolkit.telemetry.firstShutdownPing.enabled/s|true|false|'
 grep -rl toolkit.telemetry.bhrPing.enabled  | xargs -r sed -i '/toolkit.telemetry.bhrPing.enabled/s|true|false|'
+sed -i '/datareporting.usage.uploadEnabled/s|true|false|' modules/libpref/init/all.js
 # fixed by https://bugzilla.mozilla.org/show_bug.cgi?id=1868988
 #grep -rl security.certerrors.recordEventTelemetry | xargs -r sed -i '/security.certerrors.recordEventTelemetry/s|true|false|'
 grep -rl services.sync.telemetry.maxPayloadCount modules/ | xargs -r sed -i '/services.sync.telemetry.maxPayloadCount/s|500|-1|'
@@ -164,6 +171,7 @@ sed '/gmp-clearkey/d' -i ./debian/firefox.install.in
 # Locale packages should provide firefox-locale-$LANG
 sed "s/Provides.*/Provides: abrowser-locale-@LANGCODE@/" -i debian/control.langpacks
 sed 's/Firefox/Abrowser/' -i debian/control.langpacks
+sed '/This language is unavailable/s|Firefox|Abrowser|' -i debian/control.langpacks.unavail
 
 # Provide firefox
 sed "s/iceweasel,/iceweasel, firefox,/" -i debian/control.in
@@ -173,12 +181,21 @@ sed -i /ubuntu-bookmarks/d debian/patches/series
 rm debian/patches/ubuntu-bookmarks*
 
 # Custom newtab images at DATA/firefox/search-custom/
-
-cp $DATA/newtab/*.ico browser/components/newtab/data/content/tippytop/favicons/
-cp $DATA/newtab/*.png browser/components/newtab/data/content/tippytop/images/
+echo "## dropping unused brands images and favicons."
+for i in $(ls browser/components/topsites/content/tippytop/favicons/|grep -v wikipedia)
+do
+    echo " - removing $i"
+    rm browser/components/topsites/content/tippytop/favicons/$i
+done
+for i in $(ls browser/components/topsites/content/tippytop/images/|grep -v wikipedia)
+do
+    echo " - removing $i"
+    rm browser/components/topsites/content/tippytop/images/$i
+done
+cp $DATA/topsites/*.ico browser/components/topsites/content/tippytop/favicons/
+cp $DATA/topsites/*.png browser/components/topsites/content/tippytop/images/
 
 #Trisquel custom search engines
-#cp -a $DATA/searchplugins/* browser/components/search/extensions/
 /bin/sed "/\"data\": \[/ r $DATA/searchplugins/trisquel-v2.json" -i ./services/settings/dumps/main/search-config-v2.json
 /bin/sed "/\"data\": \[/ r $DATA/searchplugins/trisquel-packages-v2.json" -i ./services/settings/dumps/main/search-config-v2.json
 # Setup trisquel's searchengine icons

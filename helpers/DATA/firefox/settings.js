@@ -1,4 +1,4 @@
-
+:
 // Release notes and vendor URLs
 pref("app.releaseNotesURL", "https://trisquel.info/en/wiki/abrowser-help");
 pref("app.vendorURL", "https://trisquel.info/en/wiki/abrowser-help");
@@ -117,6 +117,7 @@ pref("network.http.sendRefererHeader", 2);
 pref("dom.event.clipboardevents.enabled",false);
 pref("network.prefetch-next", false);
 pref("network.dns.disablePrefetch", true);
+pref("network.dns.disablePrefetchFromHTTPS", true);
 pref("network.http.sendSecureXSiteReferrer", false);
 pref("toolkit.telemetry.enabled", false);
 // Do not tell what plugins do we have enabled: https://mail.mozilla.org/pipermail/firefox-dev/2013-November/001186.html
@@ -126,6 +127,7 @@ pref("plugin.state.flash", 1);
 pref("browser.newtabpage.directory.source", "");
 pref("browser.newtabpage.directory.ping", "");
 pref("browser.newtabpage.introShown", true);
+pref("browser.newtabpage.activity-stream.unifiedAds.endpoint","");
 // Disable home snippets
 pref("browser.aboutHomeSnippets.updateUrl", "");
 // Always ask before restoring the browsing session
@@ -152,6 +154,7 @@ pref("toolkit.telemetry.firstShutdownPing.enabled", false);
 pref("toolkit.telemetry.bhrPing.enabled", false);
 pref("browser.ping-centre.telemetry", false);
 pref("dom.security.unexpected_system_load_telemetry_enabled", false);
+pref("network.connectivity-service.enabled", false);
 
 // Canvas fingerprint protection
 // Disabled, as it breaks things and does little improvements to fingerprinting
@@ -250,9 +253,12 @@ pref("browser.onboarding.enabled", false);
 pref("browser.newtabpage.activity-stream.default.sites", "https://trisquel.info/,https://packages.trisquel.org,https://www.gnu.org/,https://www.fsf.org/,https://directory.fsf.org,https://libreplanet.org/,https://fsfe.org,https://www.wikipedia.org/wiki/,https://www.h-node.org/");
 pref("browser.newtabpage.activity-stream.showTopSites",true);
 pref("browser.newtabpage.activity-stream.feeds.section.topstories",false);
+pref("browser.newtabpage.activity-stream.feeds.discoverystreamfeed", false);
+pref("browser.newtabpage.activity-stream.discoverystream.enabled", false);
+pref("browser.newtabpage.activity-stream.discoverystream.endpoints, "");
 pref("browser.newtabpage.activity-stream.feeds.snippets",false);
 pref("browser.newtabpage.activity-stream.disableSnippets", true);
-user_pref("browser.newtabpage.activity-stream.tippyTop.service.endpoint", "");
+pref("browser.newtabpage.activity-stream.tippyTop.service.endpoint", "");
 
 // Enable xrender
 //pref("gfx.xrender.enabled",true);
@@ -260,7 +266,6 @@ user_pref("browser.newtabpage.activity-stream.tippyTop.service.endpoint", "");
 // Disable push notifications
 pref("dom.webnotifications.enabled",false);
 pref("dom.webnotifications.serviceworker.enabled",false);
-pref("dom.push.enabled",false);
 
 // Disable services server
 pref("services.settings.server", "");
@@ -272,7 +277,7 @@ pref("browser.newtabpage.activity-stream.asrouter.userprefs.cfr.addons", false);
 pref("browser.newtabpage.activity-stream.asrouter.userprefs.cfr.features", false);
 pref("extensions.htmlaboutaddons.discover.enabled", false);
 pref("extensions.htmlaboutaddons.recommendations.enabled", false);
-//pref("browser.newtabpage.activity-stream.asrouterExperimentEnabled", false);
+pref("extensions.getAddons.cache.enabled", false);
 pref("extensions.getAddons.get.url", "");
 pref("extensions.getAddons.link.url", "https://gnuzilla.gnu.org/mozzarella/");
 pref("extensions.getAddons.langpacks.url", "");
@@ -306,3 +311,13 @@ pref("browser.ml.chat.hideLabsShortcuts", true);
 
 // Disable tab hover preview
 pref("browser.tabs.hoverPreview.enabled", false);
+
+// Disable DAP telemetry servers & experiments
+pref("toolkit.telemetry.dap.leader.url", "");
+pref("toolkit.telemetry.dap.helper.url", "");
+pref("messaging-system.rsexperimentloader.enabled", false);
+
+// Disable DoH as third party service, users can restore it at will.
+pref("network.trr.mode", 5);
+pref("doh-rollout.enabled", false);
+pref("doh-rollout.provider-steering.enabled", false);

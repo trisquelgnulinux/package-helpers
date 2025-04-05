@@ -1,0 +1,24 @@
+diff --git a/debian/control.in b/debian/control.in
+index dd3c8daa..911d9667 100644
+--- a/debian/control.in
++++ b/debian/control.in
+@@ -52,8 +52,7 @@ Architecture: any
+ Depends: lsb-release,
+ 	${misc:Depends},
+ 	${shlibs:Depends}
+-Recommends: xul-ext-ubufox,
+-	${support:Recommends},
++Recommends: ${support:Recommends},
+ 	libcanberra0,
+ 	libdbusmenu-glib4,
+ 	libdbusmenu-gtk3-4
+@@ -61,7 +60,8 @@ Provides: www-browser,
+ 	iceweasel, firefox,
+ 	gnome-www-browser,
+ 	${app:Provides}
+-Suggests: fonts-lyx,
++Suggests: webext-ublock-origin,
++	fonts-lyx,
+ 	${support:Suggests}
+ Breaks: ${transitional:Breaks}
+ Replaces: ${transitional:Replaces}
