@@ -29,9 +29,9 @@ NETINST=true
 
 #FIXME:T12
 # Set version number due to source origin change
-export FULLVERSION="$(sed 's|ubuntu0.5||' <<< $FULLVERSION)"
+export FULLVERSION="$(sed 's|ubuntu0.6||' <<< $FULLVERSION)"
 
 changelog "Fetch and build as udeb dependency for debian-installer."
-head -n1 debian/changelog | grep -q ubuntu && echo "error: update upstream version" && exit
+head -n1 debian/changelog | grep -q ubuntu && echo "> error: update upstream version" && exit
 
 package
