@@ -76,7 +76,7 @@ patch_p1 $DATA/rm_init_ubuntu_pro_if_lts.patch
 sed -i '/.TrisquelProPage/d' softwareproperties/gtk/SoftwarePropertiesGtk.py
 
 #Livepatch - aramo
-patch_p1 $DATA/remove_ubuntu_suscription_tab.patch
+patch_p1 $DATA/remove_ubuntu_subscription_tab.patch
 patch_p1 $DATA/remove_proposed_updates.patch
 #Patch codename for PPAs
 patch_p1 $DATA/fix_PPA_upstream_codename.patch

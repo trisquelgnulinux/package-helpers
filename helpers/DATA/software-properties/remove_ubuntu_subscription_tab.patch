@@ -1,8 +1,8 @@
 diff --git a/data/gtkbuilder/main.ui b/data/gtkbuilder/main.ui
-index fe0a50f0..2943052f 100644
+index 01aa294e..9734153f 100644
 --- a/data/gtkbuilder/main.ui
 +++ b/data/gtkbuilder/main.ui
-@@ -1210,423 +1210,6 @@
+@@ -1225,427 +1225,6 @@
                  <property name="position">5</property>
                </packing>
              </child>
@@ -272,7 +272,7 @@ index fe0a50f0..2943052f 100644
 -                                <property name="orientation">vertical</property>
 -                                <property name="spacing">12</property>
 -                                <child>
--                                  <object class="GtkLabel">
+-                                  <object class="GtkLabel" id="label_compliance_and_hardening">
 -                                    <property name="visible">True</property>
 -                                    <property name="label" translatable="yes">&lt;b&gt;Compliance &amp;amp; Hardening&lt;/b&gt;</property>
 -                                    <property name="use_markup">True</property>
@@ -280,7 +280,7 @@ index fe0a50f0..2943052f 100644
 -                                  </object>
 -                                </child>
 -                                <child>
--                                  <object class="GtkLabel">
+-                                  <object class="GtkLabel" id="label_compliance_and_hardening_subtitle">
 -                                    <property name="visible">True</property>
 -                                    <property name="label" translatable="yes">Only recommended to assist with FedRAMP, HIPAA, and other compliance and hardening requirements. Includes FIPS 140-2 certified modules, DISA-STIG, CIS and Common Criteria.</property>
 -                                    <property name="wrap">True</property>
@@ -385,6 +385,10 @@ index fe0a50f0..2943052f 100644
 -                                </child>
 -                              </object>
 -                            </child>
+-                            <accessibility>
+-                              <relation type="labelled-by" target="label_compliance_and_hardening_subtitle"/>
+-                              <relation type="labelled-by" target="label_compliance_and_hardening"/>
+-                            </accessibility>
 -                          </object>
 -                        </child>
 -                      </object>
