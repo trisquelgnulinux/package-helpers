@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=23
+VERSION=24
 EXTERNAL='deb-src http://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu $UPSTREAM main'
 REPOKEY=9BDB3D89CE49EC21
 
@@ -241,7 +241,7 @@ sed -i '/Certificate data/s|Trisquel|Mozilla|' third_party/dump_syms/vendor/webp
 grep -rl 'https://www.icedove.net/participate/' comm/ | xargs -r sed -i 's|https://www.icedove.net/participate/|https://trisquel.info/wiki/|'
 grep -rl 'https://www.icedove.net/donate/' comm/ | xargs -r sed -i 's|https://www.icedove.net/donate/.*"|https://trisquel.info/donate/"|'
 grep -rl 'https://www.icedove.net/donate/' comm/ | xargs -r sed -i 's|https://www.icedove.net/donate/|https://trisquel.info/donate/|'
-grep -rl 'https://updates.icedove.net/icedove/' comm/ | xargs -r sed -i '/app.donation.eoy.url/s|https://updates.icedove.net/icedove/.*"|https://trisquel.info/donate/"|'
+grep -rl 'https://updates.icedove.net/' comm/ | xargs -r sed -i '/"URL":/s|https://updates.icedove.net/.*/appeal/.*"|https://trisquel.info/donate/"|'
 grep -rl 'https://support.mozilla.org/products/icedove' comm/ | xargs -r sed -i 's|https://support.mozilla.org/products/icedove.*"|https://trisquel.info/wiki/icedove"|'
 grep -rl 'https://support.mozilla.org/products/icedove' comm/ | xargs -r sed -i 's|https://support.mozilla.org/products/icedove/|https://trisquel.info/wiki/icedove/|'
 grep -rl 'https://developer.icedove.net/' comm/ | xargs -r sed -i 's|https://developer.icedove.net/|https://gitlab.trisquel.org/trisquel/package-helpers|'
