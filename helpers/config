@@ -353,3 +353,11 @@ for FILE in "${FILES[@]}"; do
     fi
 done
 }
+
+# Set function to apply patches from known directory.
+apply_patch_changes() {
+for patch in $(ls -v ${DATA}/patch_changes/*.patch)
+do
+    patch_p1 $patch
+done
+}
