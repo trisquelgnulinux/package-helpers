@@ -1,0 +1,39 @@
+diff --git a/depthcharge_tools/depthchargectl/_build.py b/depthcharge_tools/depthchargectl/_build.py
+index a605b83c..746e8a51 100644
+--- a/depthcharge_tools/depthchargectl/_build.py
++++ b/depthcharge_tools/depthchargectl/_build.py
+@@ -157,11 +157,12 @@ class depthchargectl_build(
+     @Argument("--kernel-release", nargs=1)
+     def kernel_release(self, name=None):
+         """Release name for the kernel used in image name"""
+-        if name is None and self.kernel_version is not None:
+-            if self.kernel == self.kernel_version.kernel:
+-                name = self.kernel_version.release
+-
+-        return name
++        # Trisquel customization: skip autodetection and honor empty values.
++        if name is not None:
++            return name
++        if self.kernel_version is not None and self.kernel == self.kernel_version.kernel:
++                return self.kernel_version.release
++        return ""
+ 
+     @custom_kernel_options.add
+     @Argument("--kernel", nargs=1)
+diff --git a/depthcharge_tools/depthchargectl/_build.py b/depthcharge_tools/depthchargectl/_build.py
+index 746e8a51..45e0c02c 100644
+--- a/depthcharge_tools/depthchargectl/_build.py
++++ b/depthcharge_tools/depthchargectl/_build.py
+@@ -82,6 +82,12 @@ class depthchargectl_build(
+     @Argument
+     def kernel_version(self, kernel_version=None):
+         """Installed kernel version to build an image for."""
++
++        # Trisquel customization: If --kernel is set but --kernel-version is
++        # not, skip autodetection and return None early
++        if kernel_version is None and self.kernel is not None:
++            return None
++
+         if isinstance(kernel_version, KernelEntry):
+             return kernel_version
+ 
