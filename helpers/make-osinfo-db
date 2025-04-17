@@ -24,11 +24,8 @@ VERSION=8
 
 rd_domain=($(cat $DATA/recommended-distros|grep -v \#|awk '{print$3}'))
 
-# Apply latest patches
-for patch in $(ls -v ${DATA}/*.patch)
-do
-    patch_p1 $patch
-done
+# Apply patches
+apply_patch_changes
 
 # Remove non-free distros references.
 TMPDIR=$(mktemp -d os-XXXX)
