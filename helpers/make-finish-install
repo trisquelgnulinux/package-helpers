@@ -24,12 +24,12 @@
 ##
 
 VERSION=1
-EXTERNAL='deb-src http://ftp.debian.org/debian bullseye main'
+EXTERNAL='deb-src http://ftp.debian.org/debian trixie main'
 REPOKEY=0E98404D386FA1D9
 NETINST=true
 . ./config
 
-patch --no-backup-if-mismatch -p1 < $DATA/fix_keyboard-configure-netinstall.patch
+apply_patch_changes
 
 changelog "Fetch and build as udeb dependency for debian-installer."
 package

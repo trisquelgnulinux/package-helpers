@@ -1,0 +1,16 @@
+diff --git a/finish-install.d/10update-initramfs b/finish-install.d/10update-initramfs
+index f91557cb..6b35ce25 100755
+--- a/finish-install.d/10update-initramfs
++++ b/finish-install.d/10update-initramfs
+@@ -6,8 +6,10 @@ log() {
+ 
+ # If both cryptsetup and console-setup are installed, run update-initramfs to
+ # make sure one can type the passphrase (see #694156, workaround for #696773):
+-if /bin/in-target /bin/sh -c "dpkg-query -s cryptsetup >/dev/null 2>&1 && dpkg-query -s console-setup >/dev/null 2>&1"; then
++if /bin/in-target /bin/sh -c "dpkg-query -s console-setup >/dev/null 2>&1"; then
+     log "refresh initramfs for cryptsetup"
++    # Fix bug keyboard not using the selected layout. --Trisquel
++    /bin/in-target /bin/sh -c "dpkg-reconfigure -f noninteractive keyboard-configuration"
+     refresh=yes
+ fi
+ 
