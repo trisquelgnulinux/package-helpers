@@ -1,0 +1,50 @@
+diff --git a/debian/apt-mirror-setup.templates b/debian/apt-mirror-setup.templates
+index 85baf176..6b330b32 100644
+--- a/debian/apt-mirror-setup.templates
++++ b/debian/apt-mirror-setup.templates
+@@ -3,45 +3,7 @@ Type: text
+ # :sl1:
+ _Description: Scanning the mirror...
+ 
+-Template: apt-setup/non-free-firmware
+-Type: boolean
+-Default: false
+-# :sl5:
+-_Description: Use non-free firmware?
+- Firmware is a kind of software providing low-level control of certain
+- hardware components (such as Wi-Fi cards or audio chipsets), which may not
+- function fully or at all without it.
+- .
+- Although not at all part of Debian, some non-free firmware has been made to
+- work with Debian. This firmware has varying licenses which restrict your
+- freedoms to use, modify, or share the software, and generally does not have
+- source forms that you may study.
+- .
+- Please choose whether you want to have it available anyway.
+ 
+-Template: apt-setup/non-free
+-Type: boolean
+-Default: false
+-# :sl1:
+-_Description: Use non-free software?
+- Some non-free software has been made to work with Debian. Though this
+- software is not at all a part of Debian, standard Debian tools can be used
+- to install it. This software has varying licenses which may prevent you
+- from using, modifying, or sharing it.
+- .
+- Please choose whether you want to have it available anyway.
+-
+-Template: apt-setup/contrib
+-Type: boolean
+-Default: false
+-# :sl1:
+-_Description: Use contrib software?
+- Some additional software has been made to work with Debian. Though this
+- software is free, it depends on non-free software for its operation. This
+- software is not a part of Debian, but standard Debian tools can be
+- used to install it.
+- .
+- Please choose whether you want this software to be made available to you.
+ 
+ Template: apt-setup/mirror/error
+ Type: select

@@ -19,7 +19,7 @@
 #
 
 VERSION=3
-EXTERNAL='deb-src http://ftp.debian.org/debian bullseye main'
+EXTERNAL='deb-src http://ftp.debian.org/debian trixie main'
 REPOKEY=0E98404D386FA1D9
 NETINST=true
 . ./config
@@ -33,19 +33,10 @@ EOF
 rm debian/apt-mirror-setup.templates-ubuntu
 
 # Remove multiarch support
-sed '/chroot/,$d' generators/01setup -i
+#sed '/chroot/,$d' generators/01setup -i
 
-# getline "seed" file
-getline(){
-grep -n "$1" "$2" |cut -d: -f1
-}
-
-START=$(getline apt-setup/non-free debian/apt-mirror-setup.templates)
-END=$(getline "Please choose whether you want to have it available anyway." debian/apt-mirror-setup.templates)
-sed ${START},${END}d debian/apt-mirror-setup.templates -i
-START=$(getline apt-setup/contrib debian/apt-mirror-setup.templates)
-END=$(getline "Please choose whether you want this software to be made available to you." debian/apt-mirror-setup.templates)
-sed ${START},${END}d debian/apt-mirror-setup.templates -i
+# use patch to remove non-free-firmware, non-free, contrib
+apply_patch_changes
 
 #Ubuntu legacy (udeb)
 /bin/sed '/canonical/d;
