@@ -1,0 +1,17 @@
+diff --git a/debian/hw-detect.templates b/debian/hw-detect.templates
+index 790afdbf..db5e2934 100644
+--- a/debian/hw-detect.templates
++++ b/debian/hw-detect.templates
+@@ +79,12 -79,3 @@ Template: hw-detect/load-ide
+ Type: boolean
+ Default: false
+ Description: for internal use; can be preseeded
+-
+-# This is an initial implementation, which might evolve over time (#1029848):
+-Template: hw-detect/firmware-lookup
+-Type: text
+-Default:
+-Description: for expert use; can be preseeded
+- Setting this to "never" makes check-missing-firmware and install-firmware
+- hooks not try to find and install firmware packages (even if available on
+- the installation image).

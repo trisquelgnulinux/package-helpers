@@ -1,0 +1,59 @@
+diff --git a/check-missing-firmware.sh b/check-missing-firmware.sh
+index c6a5a845..3bb4d6a4 100755
+--- a/check-missing-firmware.sh
++++ b/check-missing-firmware.sh
+@@ -361,8 +361,6 @@ check_for_firmware() {
+ # For those who don't want to load any firmware, even if available on
+ # installation images (#1029848). The loop is still entered so that
+ # logs are generated.
+-db_get hw-detect/firmware-lookup
+-firmware_lookup="$RET"
+ 
+ # NOTE: The ask_load_firmware function returns true the first time around,
+ # without asking any questions. For consistency, skip mountmedia calls during
+@@ -373,10 +371,11 @@ while check_missing && ask_load_firmware; do
+ 	loop=$((loop+1))
+ 	log "mainloop iteration #$loop"
+ 
+-	if [ "$firmware_lookup" = "never" ]; then
+-		log "firmware lookup disabled (=$firmware_lookup), exiting"
+-		exit 0
+-	fi
++	# Trisquel: hardcode disable firmware loading
++	# to prevent installation of nonfree blobs. This script
++	# is kept to preserve compatibility with hw-detect.
++	log "firmware lookup disabled (hardcoded), exiting"
++	exit 0
+ 
+ 	# first, check if needed firmware debs are available on the
+ 	# PXE initrd or the installation CD.
+diff --git a/hw-detect.post-base-installer.d/50install-firmware b/hw-detect.post-base-installer.d/50install-firmware
+old mode 100755
+new mode 100644
+index f6e069f3..f69ed994
+--- a/hw-detect.post-base-installer.d/50install-firmware
++++ b/hw-detect.post-base-installer.d/50install-firmware
+@@ -8,12 +8,12 @@ log () {
+ 
+ # For those who don't want to load any firmware, even if available on
+ # installation images (#1029848):
+-db_get hw-detect/firmware-lookup
+-firmware_lookup="$RET"
+-if [ "$firmware_lookup" = "never" ]; then
+-	log "firmware lookup disabled (=$firmware_lookup), exiting"
+-	exit 0
+-fi
++
++# Trisquel: hardcode disable firmware loading
++# to prevent installation of nonfree blobs. This script
++# is kept to preserve compatibility with hw-detect.
++log "firmware lookup disabled (hardcoded), exiting"
++exit 0
+ 
+ # copy any loose firmware files to /target (incl. subdirs)
+ if [ -d /lib/firmware ]; then@@ -56,5 +56,3 @@ done
+ printf "GenuineIntel intel-microcode\nAuthenticAMD amd64-microcode\n" | while read vendor pkg; do
+ 	if grep -qs "^vendor_id.*$vendor$" /proc/cpuinfo; then
+ 		log "queuing $pkg installation ($vendor)"
+-		echo $pkg >> /tmp/microcode.list
+-		mkdir -p /var/cache/firmware
