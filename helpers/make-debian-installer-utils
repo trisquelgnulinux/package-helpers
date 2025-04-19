@@ -23,14 +23,11 @@
 # such packages from Debian in order to build the required udeb packages.
 ##
 
-VERSION=2
-EXTERNAL='deb-src http://ftp.debian.org/debian bullseye main'
+VERSION=3
+EXTERNAL='deb-src http://ftp.debian.org/debian trixie main'
 REPOKEY=0E98404D386FA1D9
 NETINST=true
 . ./config
-
-# Apply patch to fix FTBFS issue.
-patch_p1 $DATA/00_18d772d172963506e42442c8d5e1f546be41913a.patch
 
 # Ensure that /run/systemd/resolve/stub-resolve.conf exists inside /target during in-target execution
 sed '/mount --bind \/run \/target\/run/amkdir -p /run/systemd/resolve; cp /etc/resolv.conf /run/systemd/resolve/stub-resolv.conf' -i chroot-setup.sh
