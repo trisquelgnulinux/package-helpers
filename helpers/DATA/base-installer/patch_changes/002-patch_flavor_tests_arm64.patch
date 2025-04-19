@@ -1,0 +1,66 @@
+diff --git a/kernel/tests/arm64/foundation.test b/kernel/tests/arm64/foundation.test
+index 30027845..882eb192 100644
+--- a/kernel/tests/arm64/foundation.test
++++ b/kernel/tests/arm64/foundation.test
+@@ -1,12 +1,12 @@
+ subarch generic
+ cpuinfo foundation.cpuinfo
+-flavour arm64
++flavour generic
+ majors 3.10
+ machine aarch64
+ kernel-3.10 \
+-  linux-image-arm64
++  linux-image-generic
+ usable \
+-  linux-image-arm64 \
+-  linux-image-3.14-1-arm64
++  linux-image-generic \
++  linux-image-3.14-1-generic
+ unusable \
+-  linux-image-3.14-1-arm64-dbg
++  linux-image-3.14-1-generic-dbg
+diff --git a/kernel/tests/arm64/mustang.test b/kernel/tests/arm64/mustang.test
+index 80ab19f7..e58c06aa 100644
+--- a/kernel/tests/arm64/mustang.test
++++ b/kernel/tests/arm64/mustang.test
+@@ -1,12 +1,12 @@
+ subarch generic
+ cpuinfo mustang.cpuinfo
+-flavour arm64
++flavour generic
+ majors 3.10
+ machine aarch64
+ kernel-3.10 \
+-  linux-image-arm64
++  linux-image-generic
+ usable \
+-  linux-image-arm64 \
+-  linux-image-3.14-1-arm64
++  linux-image-generic \
++  linux-image-3.14-1-generic
+ unusable \
+-  linux-image-3.14-1-arm64-dbg
++  linux-image-3.14-1-generic-dbg
+diff --git a/kernel/tests/arm64/qemu-virt.test b/kernel/tests/arm64/qemu-virt.test
+index 87c39c47..2d880f5c 100644
+--- a/kernel/tests/arm64/qemu-virt.test
++++ b/kernel/tests/arm64/qemu-virt.test
+@@ -1,12 +1,12 @@
+ subarch generic
+ cpuinfo qemu-virt.cpuinfo
+-flavour arm64
++flavour generic
+ majors 3.10
+ machine aarch64
+ kernel-3.10 \
+-  linux-image-arm64
++  linux-image-generic
+ usable \
+-  linux-image-arm64 \
+-  linux-image-3.14-1-arm64
++  linux-image-generic \
++  linux-image-3.14-1-generic
+ unusable \
+-  linux-image-3.14-1-arm64-dbg
++  linux-image-3.14-1-generic-dbg

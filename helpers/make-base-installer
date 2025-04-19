@@ -1,5 +1,6 @@
 #!/bin/sh
 #
+#    Copyright (C) 2025  Luis Guzmán <ark@switnet.org>
 #    Copyright (C) 2009-2020  Rubén Rodríguez <ruben@gnu.org>
 #
 #    This program is free software; you can redistribute it and/or modify
@@ -17,23 +18,23 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
-EXTERNAL='deb-src http://ftp.debian.org/debian bullseye main'
+VERSION=0.10
+EXTERNAL='deb-src http://ftp.debian.org/debian trixie main'
 REPOKEY=0E98404D386FA1D9
 NETINST=true
+
+#THIS IS AN TESTING RELEASE REMOVE THIS LABEL WHEN COMPLETE
 
 . ./config
 
 cp $DATA/archs/* kernel/
-
-#sed s/KERNEL_PRIO=medium/KERNEL_PRIO=high/g library.sh -i #already high
+apply_patch_changes
+sed -i "s|@REVISION@|$REVISION|" kernel/amd64.sh
 
 #sed 's/main,restricted/main/; s/ubuntu/trisquel/' -i library.sh ./debian/bootstrap-base.postinst
 sed 's/archive.gpg/trisquel-archive-keyring.gpg/' -i ./debian/bootstrap-base.postinst
 sed 's/debian-archive-keyring/trisquel-archive-keyring/' -i ./debian/control
 
-#Fix kernel detection
-patch --no-backup-if-mismatch -p1 < $DATA/kernel_update_list.patch
 cat << EOF > kernel/tests/amd64/cittagazze.test
 cpuinfo cittagazze.cpuinfo
 majors 2.6
@@ -41,20 +42,20 @@ flavour amd64
 kernel-2.6 \
   linux-generic \
   linux-image-generic \
-  linux-generic-hwe-20.04 \
-  linux-image-generic-hwe-20.04 \
+  linux-generic-hwe-$REVISION \
+  linux-image-generic-hwe-$REVISION \
   linux-lowlatency \
   linux-image-lowlatency \
-  linux-lowlatency-hwe-20.04 \
-  linux-image-lowlatency-hwe-20.04 \
-  linux-oem-20.04 \
-  linux-image-oem-20.04 \
+  linux-lowlatency-hwe-$REVISION \
+  linux-image-lowlatency-hwe-$REVISION \
+  linux-oem-$REVISION \
+  linux-image-oem-$REVISION \
   linux-virtual \
   linux-image-virtual \
   linux-image-extra-virtual \
-  linux-virtual-hwe-20.04 \
-  linux-image-virtual-hwe-20.04 \
-  linux-image-extra-virtual-hwe-20.04
+  linux-virtual-hwe-$REVISION \
+  linux-image-virtual-hwe-$REVISION \
+  linux-image-extra-virtual-hwe-$REVISION
 usable \
   linux-generic \
   linux-server \
@@ -91,8 +92,8 @@ unusable \
 env KERNEL_FLAVOUR generic
 EOF
 
-#Temporary disable i386
+# Disable i386
 sed -i "/ARCHES =/s|i386 ||" kernel/Makefile
 
-changelog "Rebranded and adapted for Trisquel"
+changelog "Rebranded and adapted for Trisquel - TESTING (remove when complete)"
 package

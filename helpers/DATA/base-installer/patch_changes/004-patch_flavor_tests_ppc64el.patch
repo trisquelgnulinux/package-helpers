@@ -1,0 +1,36 @@
+diff --git a/kernel/tests/ppc64el/postal.test b/kernel/tests/ppc64el/postal.test
+index 9878d14f..33f7c0e3 100644
+--- a/kernel/tests/ppc64el/postal.test
++++ b/kernel/tests/ppc64el/postal.test
+@@ -1,9 +1,9 @@
+ subarch chrp_ibm
+ cpuinfo postal.cpuinfo
+ majors 5.7
+-flavour powerpc64le
++flavour generic
+ kernel-5.7 \
+-  linux-image-powerpc64le
++  linux-image-generic
+ usable \
+-  linux-image-powerpc64le \
+-  linux-image-3.14-1-powerpc64le
++  linux-image-generic \
++  linux-image-3.14-1-generic
+diff --git a/kernel/tests/ppc64el/powernv.test b/kernel/tests/ppc64el/powernv.test
+index 3e7d2250..77b5505a 100644
+--- a/kernel/tests/ppc64el/powernv.test
++++ b/kernel/tests/ppc64el/powernv.test
+@@ -1,9 +1,9 @@
+ subarch chrp_ibm
+ cpuinfo powernv.cpuinfo
+ majors 5.7
+-flavour powerpc64le
++flavour generic
+ kernel-5.7 \
+-  linux-image-powerpc64le
++  linux-image-generic
+ usable \
+-  linux-image-powerpc64le \
+-  linux-image-3.14-1-powerpc64le
++  linux-image-generic \
++  linux-image-3.14-1-generic

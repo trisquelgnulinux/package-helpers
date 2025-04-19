@@ -1,0 +1,108 @@
+diff --git a/kernel/arm64.sh b/kernel/arm64.sh
+index a5a5ec4a..9d5e07b4 100644
+--- a/kernel/arm64.sh
++++ b/kernel/arm64.sh
+@@ -1,5 +1,8 @@
++# Adjusted for Trisquel: use 'generic' flavour on all supported architectures,
++# matching Ubuntu's kernel packaging.
++
+ arch_get_kernel_flavour () {
+-	echo "arm64"
++	echo "generic"
+ 	return 0
+ }
+ 
+@@ -15,5 +18,5 @@ arch_check_usable_kernel () {
+ }
+ 
+ arch_get_kernel () {
+-	echo "linux-image-arm64"
++	echo "linux-image-generic"
+ }
+diff --git a/kernel/armhf.sh b/kernel/armhf.sh
+index 389a416d..b998770e 100644
+--- a/kernel/armhf.sh
++++ b/kernel/armhf.sh
+@@ -1,3 +1,6 @@
++# Adjusted for Trisquel: use 'generic' flavour on all supported architectures,
++# matching Ubuntu's kernel packaging.
++
+ arch_has_lpae () {
+ 	if grep -q '^Features.*\blpae\b' "$CPUINFO"; then
+ 		echo y
+@@ -8,16 +11,13 @@ arch_has_lpae () {
+ 
+ arch_get_kernel_flavour () {
+ 	case "$SUBARCH" in
+-	    omap|mx5|vexpress)
+-		echo "$SUBARCH armmp"
+-		return 0 ;;
+ 	    generic|efi)
+ 		case `arch_has_lpae` in
+ 		    y)
+-			echo "armmp-lpae armmp"
++			echo "generic-lpae generic"
+ 			;;
+ 		    n)
+-			echo "armmp"
++			echo "generic"
+ 			;;
+ 		esac
+ 		return 0 ;;
+diff --git a/kernel/ppc64el.sh b/kernel/ppc64el.sh
+index f21bdab2..2a5a0c5a 100644
+--- a/kernel/ppc64el.sh
++++ b/kernel/ppc64el.sh
+@@ -1,5 +1,8 @@
++# Adjusted for Trisquel: use 'generic' flavour on all supported architectures,
++# matching Ubuntu's kernel packaging.
++
+ arch_get_kernel_flavour () {
+-	echo powerpc64le
++	echo generic
+ 	return 0
+ }
+ 
+@@ -8,5 +11,5 @@ arch_check_usable_kernel () {
+ }
+ 
+ arch_get_kernel () {
+-	echo "linux-image-powerpc64le"
++	echo "linux-image-generic"
+ }
+diff --git a/kernel/riscv64.sh b/kernel/riscv64.sh
+index 9fa410e0..982555ef 100644
+--- a/kernel/riscv64.sh
++++ b/kernel/riscv64.sh
+@@ -4,10 +4,13 @@
+ 
+ # The riscv64 architecture has only a single unified multiplatform kernel
+ # (which uses "riscv64" as its flavour name). Therefore we don't need to
+-# differentiate between multiple flavours here.
++# differentiate between multiple flavours here. (Debian)
++
++## Adjusted for Trisquel: use 'generic' flavour on all supported architectures,
++## matching Ubuntu's kernel packaging.
+ 
+ arch_get_kernel_flavour () {
+-	echo riscv64
++	echo generic
+ }
+ 
+ arch_check_usable_kernel () {
+@@ -17,7 +20,7 @@ arch_check_usable_kernel () {
+ 		# Don't show debug packages in the kernel selection list.
+ 		return 1
+ 		;;
+-	    *-riscv64 | *-riscv64-*)
++	    *-generic | *-generic-*)
+ 		return 0
+ 		;;
+ 	    *)
+@@ -28,5 +31,5 @@ arch_check_usable_kernel () {
+ 
+ arch_get_kernel () {
+ 	# parameters: $1=flavour
+-	echo "linux-image-riscv64"
++	echo "linux-image-generic"
+ }
