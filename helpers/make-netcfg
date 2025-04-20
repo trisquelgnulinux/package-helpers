@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=0.10
+VERSION=0.11
 EXTERNAL='deb-src http://ftp.debian.org/debian trixie main'
 REPOKEY=0E98404D386FA1D9
 NETINST=true
@@ -30,6 +30,7 @@ NETINST=true
 #echo "Applying $patch"
 #patch --no-backup-if-mismatch -Np1 < $patch
 #done
+apply_patch_changes
 
 changelog "Rebranded and adapted for Trisquel"
 package

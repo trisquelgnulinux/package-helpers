@@ -1,0 +1,12 @@
+diff --git a/netplan-conf.c b/netplan-conf.c
+index 89968881..58cce9f9 100644
+--- a/netplan-conf.c
++++ b/netplan-conf.c
+@@ -24,6 +24,7 @@ static void netplan_write_header(FILE *fd)
+     fprintf(fd, "# For more information, see netplan(5).\n");
+     fprintf(fd, "network:\n");
+     fprintf(fd, "  version: 2\n");
++    fprintf(fd, "  renderer: networkd\n");
+ }
+ 
+ static void netplan_write_wireless(FILE *fd, const struct netcfg_interface *interface)
