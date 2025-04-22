@@ -1,0 +1,25 @@
+diff --git a/build/Makefile b/build/Makefile
+index 0aeccf2a..17cf6a43 100644
+--- a/build/Makefile
++++ b/build/Makefile
+@@ -673,7 +673,7 @@ sources.list.udeb:
+ 			echo "deb $(MIRROR) unreleased $(UDEB_COMPONENTS)"; \
+ 		fi \
+ 	else \
+-		gen-sources.list.udeb "$(SYSTEM_SOURCES_LIST)" $(USE_UDEBS_FROM) "$(UDEB_COMPONENTS)" $(USE_PROPOSED_UPDATES); \
++		gen-sources.list.udeb "$(SYSTEM_SOURCES_LIST)" $(USE_UDEBS_FROM) "$(UDEB_COMPONENTS)"; \
+ 		if [ "$(USE_UNRELEASED)" = 1 ]; then \
+ 			gen-sources.list.udeb "$(SYSTEM_SOURCES_LIST)" unreleased "$(UDEB_COMPONENTS)"; \
+ 		fi \
+diff --git a/debian/rules b/debian/rules
+index 371e8b57..6caa6641 100755
+--- a/debian/rules
++++ b/debian/rules
+@@ -13,7 +13,6 @@ TRANSSTATUS=
+ BOOTMENU_BEEP=n
+ else
+ USE_UDEBS_FROM=trixie
+-USE_PROPOSED_UPDATES=0
+ TRANSSTATUS=translation-status
+ BOOTMENU_BEEP=y
+ endif

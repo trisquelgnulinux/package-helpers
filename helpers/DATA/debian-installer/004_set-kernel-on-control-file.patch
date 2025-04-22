@@ -1,0 +1,15 @@
+diff --git a/debian/control b/debian/control
+index c56adcf9..d45d50c4 100644
+--- a/debian/control
++++ b/debian/control
+@@ -168,8 +168,8 @@ Build-Depends:
+ #		when creating ISO hybrid images on amd64 and i386 systems.
+ 	fontconfig,
+ #		Used to generate a font cache through fc-cache, for gtk flavours
+-	linux-image-@@DEBIAN_KERNEL@@-amd64 [amd64],
+-	linux-image-@@DEBIAN_KERNEL@@-arm64 [arm64],
++	linux-image-@@DEBIAN_KERNEL@@-generic [amd64],
++	linux-image-@@DEBIAN_KERNEL@@-generic [arm64],
+ #		Ship some more drm modules, without waiting on fb-modules (#1036019)
+ 
+ Package: debian-installer

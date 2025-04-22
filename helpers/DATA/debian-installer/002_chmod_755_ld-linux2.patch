@@ -1,17 +1,18 @@
 diff --git a/build/Makefile b/build/Makefile
-index c073a32..cace03d 100644
+index d45f982c..353e516e 100644
 --- a/build/Makefile
 +++ b/build/Makefile
-@@ -431,6 +431,12 @@ endif
+@@ -458,6 +458,13 @@ ifneq (,$(filter $(ARCH),amd64 arm64 i386))
+ 	fi
+ endif
  
- ifeq ($(DEB_HOST_ARCH_OS),linux)
- ifdef KERNELVERSION
 +ifneq ($(DEB_HOST_ARCH),ppc64el)
 +	find $(TREE)/lib/$(DEB_HOST_MULTIARCH)/ -name "ld-linux*" | xargs -r chmod 755
 +endif
 +ifeq ($(DEB_HOST_ARCH),ppc64el)
 +	chmod 755 $(TREE)/lib/$(DEB_HOST_MULTIARCH)/ld*.so*
 +endif
++
  	# Set up modules.dep, ensure there is at least one standard dir (kernel
  	# in this case), so depmod will use its prune list for archs with no
  	# modules.

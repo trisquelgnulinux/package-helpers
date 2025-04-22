@@ -1,6 +1,6 @@
 === modified file 'build/Makefile'
-#--- build/Makefile	2011-12-15 15:35:38 +0000
-#+++ build/Makefile	2012-04-18 05:24:59 +0000
+#--- a/build/Makefile	2011-12-15 15:35:38 +0000
+#+++ b/build/Makefile	2012-04-18 05:24:59 +0000
 #@@ -493,6 +493,12 @@
 # 		`find $(TEMP) -type f -a \( -perm +0111 -o -name '*.so' -o -name '*.so.*' \) | \
 # 		 grep -v udeblibs | grep -v 'usr/lib/xorg/modules/.*\.so'`
@@ -16,8 +16,8 @@
 # 	# have the ld.so symlink as the interpreter. Ideally mklibs should
 #
 === modified file 'build/config/armhf.cfg'
---- build/config/armhf.cfg	2012-04-11 08:52:18 +0000
-+++ build/config/armhf.cfg	2012-04-18 05:24:59 +0000
+--- a/build/config/armhf.cfg	2012-04-11 08:52:18 +0000
++++ b/build/config/armhf.cfg	2012-04-18 05:24:59 +0000
 @@ -1,5 +1,7 @@
  SUBARCH_SUPPORTED = omap omap4 armadaxp
  
@@ -28,8 +28,8 @@
  KERNEL_FLAVOUR = di
 
 #=== modified file 'debian/changelog'
-#--- debian/changelog	2012-04-13 13:14:35 +0000
-#+++ debian/changelog	2012-04-18 05:24:59 +0000
+#--- a/debian/changelog	2012-04-13 13:14:35 +0000
+#+++ b/debian/changelog	2012-04-18 05:24:59 +0000
 #@@ -1,3 +1,12 @@
 #+debian-installer (20101020ubuntu134) precise; urgency=low
 #+

@@ -1,0 +1,17 @@
+diff --git a/build/Makefile b/build/Makefile
+index 8a4717cb..c1c1c239 100644
+--- a/build/Makefile
++++ b/build/Makefile
+@@ -428,8 +428,12 @@ ifeq ($(filter $(DEB_HOST_ARCH),mips64el hppa sh4),)
+ 	# though (see KERNELNAME variable).
+ 	VMLINUXZ=`find $(TREE)/boot/ -name 'vmlinu[xz]-*'`; \
+ 	if [ `echo "$$VMLINUXZ" | wc -w` != 1 ]; then \
++	    if [ ! -e $(TREE)/boot/vmlinuz ] && [ ! -e $(TREE)/boot/vmlinux ]; then \
+ 		echo "E: unexpected number of vmlinu[xz]-* in tree: $$VMLINUXZ (expected: 1)" >&2; \
+ 		exit 1; \
++	    else \
++		echo "W: skipping unversioning; vmlinuz/vmlinux already exists" >&2; \
++	    fi; \
+ 	else \
+ 		echo "I: unversioning vmlinu[xz]" >&2; \
+ 		mv -v $$VMLINUXZ $(TREE)/boot/`basename $$VMLINUXZ|sed 's/-.*//'`; \

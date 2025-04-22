@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 #    Copyright (C) 2009-2020 Ruben Rodriguez <ruben@trisquel.info>
-#    Copyright (C) 2023 Luis Guzman <ark@switnet.org>
+#    Copyright (C) 2025 Luis Guzman <ark@switnet.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -18,20 +18,28 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=17
-EXTERNAL='deb-src http://ftp.debian.org/debian bullseye main'
+VERSION=18.9.testing
+EXTERNAL='deb-src http://ftp.debian.org/debian trixie main'
 REPOKEY=0E98404D386FA1D9
 NETINST=true
+
+HWEKR=6.8
+HWE_ENABLED=0
+[ $HWE_ENABLED != 1 ] && \
+CONTROL_PACKAGE=linux
+[ $HWE_ENABLED = 1 ] && \
+CONTROL_PACKAGE=linux-hwe-$HWEKR
+
 . ./config
 
 # Set kernel from release/main packages.
 set_kernel_release() {
-KRNL_REL=6.5
-LASTKERNEL="$(apt-cache madison -c ${LOCAL_APT}/etc/apt_${CODENAME}.conf linux-hwe-$KRNL_REL-tools-common |\
+LASTKERNEL="$(apt-cache madison -c ${LOCAL_APT}/etc/apt_${CODENAME}.conf $CONTROL_PACKAGE-tools-common |\
               grep ${CODENAME}/main |\
               awk '{print$3}'|head -n1 |\
               cut -d. -f1,2,3)"
 }
+DEBIAN_KERNEL="$(awk '/^LINUX_KERNEL_ABI/{print$3}' build/config/common)"
 
 cat << EOF > ${LOCAL_APT}/etc/apt_${CODENAME}.conf
 Dir::State "${LOCAL_APT}/var/lib/apt";
@@ -55,14 +63,36 @@ EOF
 find build/pkg-lists -type f | xargs -r sed -i /media-retriever/d
 apt-get update -c ${LOCAL_APT}/etc/apt_${CODENAME}.conf
 
+# Disable proposed-updates patch
+patch_p1 $DATA/001_remove-proposed-updates.patch
+
+# Ensure that ld-linux is executable
+patch_p1 $DATA/002_chmod_755_ld-linux2.patch
+
+# HACK: include ditto for libassuan.so & libnpth.so from host into iso image, as runtime dependencies of gpgv
+sed '/$(DEB_HOST_MULTIARCH)\/libgcc_s.so/a\\tcp /usr/lib/$(DEB_HOST_MULTIARCH)/libnpth.so* $(TREE)/lib/$(DEB_HOST_MULTIARCH)' -i build/Makefile
+sed '/$(DEB_HOST_MULTIARCH)\/libgcc_s.so/a\\tcp /usr/lib/$(DEB_HOST_MULTIARCH)/libassuan.so* $(TREE)/lib/$(DEB_HOST_MULTIARCH)' -i build/Makefile
+sed '/$(DEB_HOST_MULTIARCH)\/libgcc_s.so/a\\t# HACK ALERT: ditto for libassuan.so & libnpth.so -- Trisquel' -i build/Makefile
+
+# HACK: include ditto liblzma.so and liblz4.so from host into iso image, as runtime dependencies of zstd
+sed '/$(DEB_HOST_MULTIARCH)\/libgcc_s.so/a\\tcp /usr/lib/$(DEB_HOST_MULTIARCH)/liblzma.so.5* $(TREE)/lib/$(DEB_HOST_MULTIARCH)' -i build/Makefile
+sed '/$(DEB_HOST_MULTIARCH)\/libgcc_s.so/a\\tcp /usr/lib/$(DEB_HOST_MULTIARCH)/liblz4.so* $(TREE)/lib/$(DEB_HOST_MULTIARCH)' -i build/Makefile
+sed '/$(DEB_HOST_MULTIARCH)\/libgcc_s.so/a\\t# HACK ALERT: ditto for liblzma & liblz4 -- Trisquel' -i build/Makefile
+sed -i '/Build-Depends:/a\\tliblzma5, liblz4-1,' debian/control
+
+# Fix mini.iso boot on EFI systems
+sed 's|/debian|/trisquel|' -i ./build/util/efi-image
+grep -lr 'EFI/debian' build/config | xargs -r sed -i 's|EFI/debian|EFI/trisquel|'
+
 # Set kernel release for images
 set_kernel_release
 sed -i "s|LINUX_KERNEL_ABI ?= .*|LINUX_KERNEL_ABI ?= $LASTKERNEL|" build/config/common
 sed -i '/LINUX_KERNEL_ABI/d' build/config/ppc64el.cfg
 
 # Patch MEDIUM_SUPPORTED
-patch --no-backup-if-mismatch -p1 < $DATA/medium_supported.patch
-for i in amd64 arm64 armhf ppc64el
+patch_p1 $DATA/003_medium_supported.patch
+# Apply Debian kernel version replacement to Trisquel's
+for i in amd64 arm64 armhf ppc64el riscv64
 do
     sed -i "/^KERNELVERSION =/i BASEVERSION = $LASTKERNEL" build/config/$i.cfg
     sed -i 's/^KERNELVERSION = .*/KERNELVERSION = $(BASEVERSION)-generic/g' build/config/$i.cfg
@@ -70,17 +100,26 @@ do
     sed -i '/^KERNEL_FLAVOUR = di/a KERNELIMAGEVERSION = $(KERNELVERSION)' build/config/$i.cfg
 done
 
+sed -i "/linux-image/s|$DEBIAN_KERNEL|@@DEBIAN_KERNEL@@|" debian/control
+patch_p1 $DATA/004_set-kernel-on-control-file.patch
+sed -i "/linux-image-/s|@@DEBIAN_KERNEL@@|$LASTKERNEL|" debian/control
+patch_p1 $DATA/006_prevent_error_unversioned_kernel_usage.patch
+
 ##TODO: fix the EFI bootloader image
 sed -i '/shim/s|signed|unsigned|g' debian/control
 sed -i 's|grub-efi-amd64-signed|grub-efi-amd64-bin|' debian/control
 sed -i 's|-signed||' debian/control
 sed -i '/win32-loader/d' debian/control
 
-#use unsigned shim
+# use unsigned shim
 grep -rl "efi\.signed" | xargs -r sed -i 's|efi\.signed|efi|g'
-#adjust path and name files from debian to trisquel | $arch-bin efi file (/usr/lib/grub/x86_64-efi/monolithic/grubx64.efi)
+# adjust path and name files from debian to trisquel
+# $arch-bin efi file (/usr/lib/grub/x86_64-efi/monolithic/grubx64.efi)
 sed -i 's|\$platform-signed/grub|\$platform/monolithic/grub|' build/util/efi-image
 sed -i 's|\$efi_name-installer.efi|\$efi_name.efi|' build/util/efi-image
+
+# enable experimental ChromeOS devices support with depthcharge
+patch_p1 $DATA/005_customize-chromeos-devices-build.patch
 ##EO-TODO
 
 rm -r build/boot/artwork/11-homeworld
@@ -93,13 +132,13 @@ grep -rl 'rows 12' build/boot | xargs -r sed -i '/rows/s|12|10|g'
 cat << EOF > build/sources.list.udeb.local
 deb $LOCALMIRROR $CODENAME main/debian-installer
 deb $LOCALMIRROR $CODENAME-updates main/debian-installer
-#deb $LOCALMIRROR $CODENAME-security main/debian-installer
+deb $LOCALMIRROR $CODENAME-security main/debian-installer
 EOF
 
-#firmware-linux-free-udeb is missing
+# firmware-linux-free-udeb is missing
 cat << EOF >> build/pkg-lists/netboot/common
 #open-ath9k-htc-firmware-udeb
-openfwwf-udeb
+#openfwwf-udeb
 EOF
 
 rpl "2004-20.." "2004-20$(date +'%y')" . -R
@@ -120,10 +159,11 @@ rpl ubuntu-archive-keyring trisquel-archive-keyring . -R
 rpl Debian Trisquel . -R
 rpl DEBIAN TRISQUEL . -R
 rpl http://ftp.debian.org/debian http://archive.trisquel.org/trisquel . -R
+rpl http://www.debian.org/doc/ https://trisquel.info/wiki/documentation . -R
 rpl http://www.debian.org/ https://trisquel.info build/boot/ -R
 
 # Replace the debian release for the trisquel one.
-rpl bullseye $CODENAME . -R
+rpl $RELNAME $CODENAME . -R
 rpl debian-archive-keyring trisquel-keyring debian/control
 rpl debian-ports-archive-keyring trisquel-keyring debian/control
 rpl debian-archive-keyring.gpg trisquel-archive-keyring.gpg . -R
@@ -134,30 +174,13 @@ rpl debian-ports-archive-keyring-udeb trisquel-keyring-udeb . -R
 # build/config/common
 grep -rl TRISQUEL_VERSION |xargs -r sed -i "s|TRISQUEL_VERSION =.*|TRISQUEL_VERSION = $REVISION ($CODENAME)|"
 
-# Disable proposed-updates patch
-patch --no-backup-if-mismatch -p1 < $DATA/remove-proposed-updates.patch
-
 echo "# Remove gtk related packages, not looking for graphical installer"
 rm $(find build/pkg-lists -type f  -path "*/gtk/*")
 echo "Remove unused modules from d-i pkg-list"
 grep -rl acpi-modules- build/pkg-lists/ |xargs -r sed -i '/acpi-modules-/d'
 grep -rl cdrom-core-modules- build/pkg-lists/ |xargs -r sed -i '/cdrom-core-modules-/d'
 grep -rl cdebconf-gtk-entropy build/config/ | xargs -r sed -i 's/cdebconf-gtk-entropy//'
-
-# Ensure that ld-linux is executable
-patch --no-backup-if-mismatch -p1 < $DATA/chmod_755_ld-linux2.patch
-
-# HACK: include liblzma.so and liblz4.so from host into iso image, as runtime dependencies of zstd
-sed '/not packaged as a udeb/a\\tcp /lib/$(DEB_HOST_MULTIARCH)/liblzma.so.5* $(TREE)/lib/$(DEB_HOST_MULTIARCH)' -i build/Makefile
-sed '/not packaged as a udeb/a\\tcp /lib/$(DEB_HOST_MULTIARCH)/liblz4.so* $(TREE)/lib/$(DEB_HOST_MULTIARCH)' -i build/Makefile
-sed -i '/Build-Depends:/a\\tliblzma5, liblz4-1,' debian/control
-
-# Fix mini.iso boot on EFI systems
-sed 's|/debian|/trisquel|' -i ./build/util/efi-image
-sed 's|EFI/debian|EFI/trisquel|' -i ./build/config/arm.cfg ./build/config/x86.cfg
-
-#Fix u-boot naming debian>ubuntu
-sed -i 's|.imx|-dtb.imx|g' build/boot/arm/u-boot-image-config
+patch_p1 $DATA/007-remove_graphical_options_from_netinstall.patch
 
 # replace references to the OS as 'Linux' with 'GNU/Linux'
 match_rxs=( # ASSERT: aligns with '$replace_rxs'
@@ -188,8 +211,7 @@ done
 ## https://bazaar.launchpad.net/~xnox/debian-installer/di-focal/changes?filter_path=build/Makefile
 for patch in $(ls -v ${DATA}/di_focal/*.diff)
 do
-    echo "Applying $patch"
-    patch --no-backup-if-mismatch -Np0 < $patch
+    patch_p1 $patch
 done
 
 changelog "Rebranded and adapted for Trisquel"

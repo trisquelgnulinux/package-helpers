@@ -1,0 +1,59 @@
+diff --git a/build/util/grub-gencfg b/build/util/grub-gencfg
+index 6b38cd88..f5df37a5 100755
+--- a/build/util/grub-gencfg
++++ b/build/util/grub-gencfg
+@@ -208,54 +208,18 @@ menuentry("Install");
+ menuentry("Graphical install", Graphical => 1);
+ 
+ start_submenu("Advanced options ...", Hotkey => 'a'); {
+-    menuentry("... Graphical expert install", Graphical => 1, Expert => 1);
+-    menuentry("... Graphical rescue mode", Graphical => 1, Rescue => 1);
+-    menuentry("... Graphical automated install", Graphical => 1, Auto => 1);
+     menuentry("... Expert install", Expert => 1);
+     menuentry("... Rescue mode", Rescue => 1);
+     menuentry("... Automated install", Auto => 1);
+     menuentry("... Expert install with speech synthesis", Expert => 1, Speech => 1, Hotkey => 'x');
+     menuentry("... Rescue mode with speech synthesis", Rescue => 1, Speech => 1, Hotkey => 'r');
+     menuentry("... Automated install with speech synthesis", Auto => 1, Speech => 1, Hotkey => 'a');
+-
+-    start_submenu("... Desktop environment menu ..."); {
+-
+-        foreach ( ["GNOME", "gnome"], ["KDE Plasma", "kde"], ["LXDE", "lxde"] ) {
+-            my ($desktop,$opt) = @{$_};
+-
+-            my $one = sub { my ($title, %xargs) = @_;
+-                            $xargs{Desktop} = $opt;
+-                            menuentry($title, %xargs);
+-            };
+-            start_submenu("... $desktop desktop boot menu ..."); {
+-                $one->("... Install");
+-                $one->("... Graphical install", Graphical => 1);
+-
+-                start_submenu("... $desktop advanced options ..."); {
+-                    $one->("... Graphical expert install", Graphical => 1, Expert => 1);
+-                    $one->("... Graphical automated install", Graphical => 1, Auto => 1);
+-                    $one->("... Expert install", Expert => 1);
+-                    $one->("... Automated install", Auto => 1);
+-                    $one->("... Expert install with speech synthesis", Expert => 1, Speech => 1, Hotkey => 'x');
+-                    $one->("... Automated install with speech synthesis", Auto => 1, Speech => 1, Hotkey => 'a');
+-                } end_submenu(); # $desktop advanced
+-
+-                $one->("... Install with speech synthesis", Graphical => 1, Speech => 1, Hotkey => 's');
+-                $one->("... 32 bit speech install", ThirtyTwo => 1, Graphical => 1, Speech => 1)
+-                    if $thirtytwo;
+-            } end_submenu(); # $desktop submenu
+-        } # Desktop loop
+-    } end_submenu(); # Desktop submenu
+ } end_submenu(); # Advanced
+ 
+ start_submenu("Accessible dark contrast installer menu ...", Hotkey => 'd', Dark => 1); {
+     menuentry("... Install", Dark => 1);
+-    menuentry("... Graphical install", Graphical => 1, Dark => 1);
+ 
+     start_submenu("... Advanced options ...", Hotkey => 'a', Dark => 1); {
+-        menuentry("... Graphical expert install", Graphical => 1, Expert => 1, Dark => 1);
+-        menuentry("... Graphical rescue mode", Graphical => 1, Rescue => 1, Dark => 1);
+-        menuentry("... Graphical automated install", Graphical => 1, Auto => 1, Dark => 1);
+         menuentry("... Expert install", Expert => 1, Dark => 1);
+         menuentry("... Rescue mode", Rescue => 1, Dark => 1);
+         menuentry("... Automated install", Auto => 1, Dark => 1);
