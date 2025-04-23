@@ -1,0 +1,61 @@
+diff --git a/debian/rules b/debian/rules
+index 43eae8d5..c81721bc 100755
+--- a/debian/rules
++++ b/debian/rules
+@@ -136,11 +136,18 @@ clean: debian/control debian/canonical-certs.pem debian/canonical-revoked-certs.
+ 	dh_testroot
+ 	dh_clean
+ 
++	# d-i stuff
++	rm -rf $(DEBIAN)/d-i-$(arch)
++	# Generated on the fly.
++	rm -f $(DEBIAN)/d-i/firmware/$(arch)/kernel-image
++
+ 	# normal build junk
+ 	rm -rf $(DEBIAN)/abi
+ 	rm -rf $(builddir) $(stampdir)
+ 	rm -rf debian/linux-*/
+ 
++	# This gets rid of the d-i packages in control
++	cp -f $(DEBIAN)/control.stub $(DROOT)/control
+ 	cp $(DEBIAN)/changelog debian/changelog
+ 
+ 	# Install the copyright information.
+@@ -213,7 +221,14 @@ $(DEBIAN)/control.stub: 				\
+ 
+ .PHONY: debian/control
+ debian/control: $(DEBIAN)/control.stub
++	echo "# placebo control.stub for kernel-wedge flow change" >debian/control.stub
+ 	cp $(DEBIAN)/control.stub debian/control
++	# append udeb packages
++	export KW_DEFCONFIG_DIR=$(DEBIAN)/d-i && \
++	export KW_CONFIG_DIR=$(DEBIAN)/d-i && \
++	LANG=C kernel-wedge gen-control $(release)-$(abinum) | \
++		grep-dctrl -FArchitecture $(arch) \
++		>>$(CURDIR)/debian/control
+ 
+ debian/canonical-certs.pem: $(wildcard $(DROOT)/certs/*-all.pem) $(wildcard $(DROOT)/certs/*-$(arch).pem) $(wildcard $(DEBIAN)/certs/*-all.pem) $(wildcard $(DEBIAN)/certs/*-$(arch).pem)
+ 	for cert in $(sort $(notdir $^));					\
+diff --git a/debian/rules.d/2-binary-arch.mk b/debian/rules.d/2-binary-arch.mk
+index fe66f8a0..e934f797 100644
+--- a/debian/rules.d/2-binary-arch.mk
++++ b/debian/rules.d/2-binary-arch.mk
+@@ -145,10 +145,14 @@ endif
+ 	install -m600 $(builddir)/build-$*/System.map \
+ 		$(pkgdir)/boot/System.map-$(abi_release)-$*
+ 
+-ifeq ($(do_dtbs),true)
+-	$(kmake) O=$(builddir)/build-$* $(conc_level) dtbs_install \
+-		INSTALL_DTBS_PATH=$(pkgdir)/lib/firmware/$(abi_release)-$*/device-tree
+-endif
++	if [ "$(filter true,$(do_dtbs))" ]; then \
++		$(kmake) O=$(builddir)/build-$* $(conc_level) dtbs_install \
++			INSTALL_DTBS_PATH=$(pkgdir)/lib/firmware/$(abi_release)-$*/device-tree; \
++		( cd $(pkgdir)/lib/firmware/$(abi_release)-$*/ && find device-tree -print ) | \
++		while read dtb_file; do \
++			echo "$$dtb_file ?" >> $(DEBIAN)/d-i/firmware/$(arch)/kernel-image; \
++		done; \
++	fi
+ 
+ ifeq ($(no_dumpfile),)
+ 	makedumpfile -g $(pkgdir)/boot/vmcoreinfo-$(abi_release)-$* \

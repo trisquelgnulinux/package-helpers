@@ -1,0 +1,20 @@
+Debian doesn't use zstd compression for kernel modules by default, and
+kernel-wedge does not currently support this compression. It is recommended
+to continue using XZ compression to maintain compatibility with udeb
+packages in Trisquel, at least while this changes.
+
+diff --git a/debian/rules.d/0-common-vars.mk b/debian/rules.d/0-common-vars.mk
+index d832106b..4afdd290 100644
+--- a/debian/rules.d/0-common-vars.mk
++++ b/debian/rules.d/0-common-vars.mk
+@@ -154,6 +154,10 @@ do_zstd_ko=true
+ ifeq ($(series),jammy)
+ do_zstd_ko=
+ endif
++# Trisquel use udebs, so it disable zstd by default.
++ifeq (yes,$(shell dpkg-vendor --is Trisquel && echo yes))
++do_zstd_ko=
++endif
+ 
+ # Support parallel=<n> in DEB_BUILD_OPTIONS (see #209008)
+ #
