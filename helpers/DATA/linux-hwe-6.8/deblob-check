@@ -7308,8 +7308,10 @@ set_except () {
     blobname 'gsl1680-globalspace-solt-ivw116\.fw' drivers/platform/x86/touchscreen_dmi.c
     blobname 'E\.WSA116_8\.E1\.042\.bin' drivers/platform/x86/touchscreen_dmi.c
     blobname 'qcom[/]sdm850[/]LENOVO[/]81JL[/]ipa_fws\.elf' arch/arm64/boot/dts/qcom/sdm850-lenovo-yoga-c630.dts
+    blobname '\(cdsp[01]\|gpdsp[01]\|adsp\)\.mbn' drivers/remoteproc/qcom_q6v5_pas.c
+    ## New in 6.11.3, 6.10.14, 6.6.55, 6.1.113, 5.15.168, 5.10.227.
     blobname 'gsl1680-rwc-nanote-next\.fw' drivers/platform/x86/touchscreen_dmi.c
-
+    #EO Trisquel changes
     ;;
 
   */*freedo*.patch | */*logo*.patch)
