@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2024  Luis Guzman <ark@switnet.org>
+#    Copyright (C) 2025  Luis Guzman <ark@switnet.org>
 #    Copyright (C) 2022  Ruben Rodriguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
@@ -18,8 +18,9 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
-EXTERNAL='deb-src http://ftp.debian.org/debian bookworm main'
+#VERSION=3
+VERSION=0.10
+EXTERNAL='deb-src http://ftp.debian.org/debian trixie main'
 REPOKEY=0E98404D386FA1D9
 NETINST=true
 
@@ -50,11 +51,7 @@ diff -ru a/grub-installer b/grub-installer
 EOF
 
 # Apply newer fixes over stable release (bookworm) using git patches.
-for patch in $(ls -v ${DATA}/custom/*.patch)
-do
-    echo "> Applying $patch"
-    patch --no-backup-if-mismatch -Np1 < $patch
-done
+#apply_patch_changes
 
 changelog "Remove grub-efi-amd64-signed dependency. | Non-fatal fail if mkdir efivars fails."
 
