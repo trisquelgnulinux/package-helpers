@@ -32,6 +32,10 @@ CONTROL_PACKAGE=linux-hwe-$HWEKR
 
 . ./config
 
+# Keep legacy version format ("+12.0trisquelx") exclusively for
+# identification purposes on makeiso.
+export FULLVERSION=$(sed "s|trisquel|+${REVISION}trisquel|" <<< $FULLVERSION)
+
 # Set kernel from release/main packages.
 set_kernel_release() {
 LASTKERNEL="$(apt-cache madison -c ${LOCAL_APT}/etc/apt_${CODENAME}.conf $CONTROL_PACKAGE-tools-common |\
