@@ -23,10 +23,11 @@
 # such packages from Debian in order to build the required udeb packages.
 ##
 
-VERSION=0
+VERSION=1
 NETINST=true
 . ./config
 
+patch_p1 $DATA/001-reduce_gpg-wks-server_dependency_to_match_later_releases.patch
 
 changelog "Fetch and build as udeb dependency for debian-installer."
 package

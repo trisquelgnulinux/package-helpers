@@ -1,0 +1,35 @@
+diff --git a/debian/control b/debian/control
+index c6a9778..ca0b1f0 100644
+--- a/debian/control
++++ b/debian/control
+@@ -254,8 +254,6 @@ Depends:
+  gpg-agent (>= ${source:Version}),
+  gpg-wks-client (<< ${source:Version}.1~),
+  gpg-wks-client (>= ${source:Version}),
+- gpg-wks-server (<< ${source:Version}.1~),
+- gpg-wks-server (>= ${source:Version}),
+  gpgsm (<< ${source:Version}.1~),
+  gpgsm (>= ${source:Version}),
+  gpgv (<< ${source:Version}.1~),
+@@ -265,6 +263,8 @@ Depends:
+ Recommends:
+  ${shlibs:Recommends},
+ Suggests:
++ gpg-wks-server (<< ${source:Version}.1~),
++ gpg-wks-server (>= ${source:Version}),
+  parcimonie,
+  xloadimage,
+ Breaks:
+diff --git a/debian/control b/debian/control
+index ca0b1f0..dc1d5cd 100644
+--- a/debian/control
++++ b/debian/control
+@@ -279,6 +279,8 @@ Breaks:
+  python-apt (<= 1.1.0~beta4),
+  python-gnupg (<< 0.3.8-3),
+  python3-apt (<= 1.1.0~beta4),
++Conflicts:
++ gpg-wks-server (<= 2.2.27-3ubuntu2.3+11.0trisquel0),
+ Replaces:
+  gnupg2 (<< 2.1.11-7+exp1),
+ Description: GNU privacy guard - a free PGP replacement
