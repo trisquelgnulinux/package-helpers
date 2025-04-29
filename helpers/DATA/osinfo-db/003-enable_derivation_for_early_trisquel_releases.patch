@@ -1,0 +1,139 @@
+This patch provides a 'Trisquelization' of the osinfo-db, it proposes to set a derivation
+from earlier releases keeping the upstream devices compatibility and resources.
+So VM machine design keeps in sync with the upstream ones, as we support currently only LTS
+releases we should match STS changes to the following Trisquel LTS one.
+-- Ark74 Tue, 29 Apr 2025 03:58:04 -0600
+
+
+diff --git a/data/os/trisquel.info/trisquel-10.xml.in b/data/os/trisquel.info/trisquel-10.xml.in
+index 78fd5bdd..cc4960bd 100644
+--- a/data/os/trisquel.info/trisquel-10.xml.in
++++ b/data/os/trisquel.info/trisquel-10.xml.in
+@@ -12,7 +12,7 @@
+     <distro>trisquel</distro>
+     <codename>Nabia</codename>
+     <upgrades id="http://trisquel.info/trisquel/9"/>
+-    <derives-from id="http://ubuntu.com/ubuntu/20.04"/>
++    <derives-from id="http://trisquel.info/trisquel/9"/>
+ 
+     <release-date>2022-02-01</release-date>
+ 
+diff --git a/data/os/trisquel.info/trisquel-11.xml.in b/data/os/trisquel.info/trisquel-11.xml.in
+index 8619adb1..a11347bf 100644
+--- a/data/os/trisquel.info/trisquel-11.xml.in
++++ b/data/os/trisquel.info/trisquel-11.xml.in
+@@ -12,7 +12,7 @@
+     <distro>trisquel</distro>
+     <codename>Aramo</codename>
+     <upgrades id="http://trisquel.info/trisquel/10"/>
+-    <derives-from id="http://ubuntu.com/ubuntu/22.04"/>
++    <derives-from id="http://trisquel.info/trisquel/10"/>
+ 
+     <release-date>2023-03-19</release-date>
+ 
+@@ -82,5 +82,9 @@
+       </recommended>
+     </resources>
+ 
++    <devices>
++      <device id="http://pcisig.com/pci/1af4/1050" supported="false"/> <!-- virtio1.0-gpu -->
++    </devices>
++
+   </os>
+ </libosinfo>
+diff --git a/data/os/trisquel.info/trisquel-12.xml.in b/data/os/trisquel.info/trisquel-12.xml.in
+new file mode 100644
+index 00000000..0dbfe6f1
+--- /dev/null
++++ b/data/os/trisquel.info/trisquel-12.xml.in
+@@ -0,0 +1,90 @@
++<?xml version="1.0"?>
++<libosinfo version="0.0.1">
++  <!-- Licensed under the GNU General Public License version 2 or later.
++     See http://www.gnu.org/licenses/ for a copy of the license text -->
++  <os id="http://trisquel.info/trisquel/12">
++    <short-id>trisquel12</short-id>
++    <short-id>trisquel-ecne</short-id>
++    <name>Trisquel 12.0 LTS</name>
++    <version>12</version>
++    <vendor>The Trisquel Project</vendor>
++    <family>linux</family>
++    <distro>trisquel</distro>
++    <codename>Ecne</codename>
++    <upgrades id="http://trisquel.info/trisquel/11"/>
++    <derives-from id="http://trisquel.info/trisquel/11"/>
++
++    <release-date>2025-12-31</release-date>
++
++    <variant id="trisquel">
++      <name>Trisquel 12</name>
++    </variant>
++    <variant id="triskel">
++      <name>Triskel 12</name>
++    </variant>
++    <variant id="mini">
++      <name>Trisquel 12 Mini</name>
++    </variant>
++    <variant id="sugar-toast">
++      <name>Trisquel 12 Sugar Toast</name>
++    </variant>
++
++    <!-- x86_64 -->
++    <media arch="x86_64" live="true" installer-script="false">
++      <variant id="trisquel"/>
++<!--      <url>https://cdimage.trisquel.info/trisquel-images/trisquel_12.0_amd64.iso</url> -->
++      <iso>
++        <volume-id>trisquel 12.\d(.\d+)? amd64.*</volume-id>
++      </iso>
++      <kernel>casper/vmlinuz</kernel>
++      <initrd>casper/initrd</initrd>
++    </media>
++    <media arch="x86_64" live="true" installer-script="false">
++      <variant id="mini"/>
++<!--      <url>https://cdimage.trisquel.info/trisquel-images/trisquel-mini_12.0_amd64.iso</url> -->
++      <iso>
++        <volume-id>trisquel-mini 12.\d(.\d+)? amd64.*</volume-id>
++      </iso>
++      <kernel>casper/vmlinuz</kernel>
++      <initrd>casper/initrd</initrd>
++    </media>
++    <media arch="x86_64" live="true" installer-script="false">
++      <variant id="sugar-toast"/>
++<!--      <url>https://cdimage.trisquel.info/trisquel-images/trisquel-sugar_12.0_amd64.iso</url> -->
++      <iso>
++        <volume-id>trisquel-sugar 12.\d(.\d+)? amd64.*</volume-id>
++      </iso>
++      <kernel>casper/vmlinuz</kernel>
++      <initrd>casper/initrd</initrd>
++    </media>
++    <media arch="x86_64" live="true" installer-script="false">
++      <variant id="triskel"/>
++<!--      <url>https://cdimage.trisquel.info/trisquel-images/triskel_12.0_amd64.iso</url> -->
++      <iso>
++        <volume-id>triskel 12.\d(.\d+)? amd64.*</volume-id>
++      </iso>
++      <kernel>casper/vmlinuz</kernel>
++      <initrd>casper/initrd</initrd>
++    </media>
++
++
++    <resources arch="all">
++      <minimum>
++        <cpu>1000000000</cpu>
++        <n-cpus>1</n-cpus>
++        <ram>3221225472</ram>
++        <storage>21474836480</storage>
++      </minimum>
++      <recommended>
++        <cpu>2000000000</cpu>
++        <ram>4294967296</ram>
++        <storage>26843545600</storage>
++      </recommended>
++    </resources>
++
++    <devices>
++      <device id="http://pcisig.com/pci/1af4/1050"/> <!-- virtio1.0-gpu -->
++    </devices>
++
++  </os>
++</libosinfo>
