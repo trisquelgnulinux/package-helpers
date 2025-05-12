@@ -30,7 +30,7 @@ cat << EOF > debian/rules
 	dh \$@
 EOF
 
-rm debian/apt-mirror-setup.templates-ubuntu
+find debian -name apt-mirror-setup.templates-ubuntu | xargs -r rm
 
 # Remove multiarch support
 #sed '/chroot/,$d' generators/01setup -i
@@ -82,7 +82,8 @@ done
 find archive.trisquel.org/ |egrep '(index.html|robots.txt)'|xargs rm
 cd ..
 
-rm generators/9[1-9]* generators/50mirror generators/50mirror.ubuntu
+rm generators/9[1-9]* generators/50mirror
+find generators -name 50mirror.ubuntu | xargs -r rm
 sed -i '/generators\/9[1-9]*/d' debian/apt-setup-udeb.install
 
 echo "generators/50mirror.trisquel usr/lib/apt-setup/generators
