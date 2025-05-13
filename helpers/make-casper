@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2012-2022  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2012-2025  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C) 2023 Luis Guzmán <ark@switnet.org>
 #
 #    This program is free software; you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=19
+VERSION=20
 
 . ./config
 
@@ -42,6 +42,13 @@ sed "s/head -n1/sed -n 1p/" -i scripts/casper-functions
 
 # Set trisquel isos as default suggestion.
 patch --no-backup-if-mismatch -p1 < $DATA/set_trisquel_iso_suggestion.patch
+
+# Enable abrowser apparmor profile
+cat << EOF > scripts/casper-bottom/35-apparmor-abrowser
+#!/bin/sh
+apparmor_parser -r /etc/apparmor.d/abrowser
+EOF
+chmod 755 scripts/casper-bottom/35-apparmor-abrowser
 
 changelog "Compiled for Trisquel"
 
