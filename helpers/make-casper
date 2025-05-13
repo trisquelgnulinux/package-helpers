@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=20
+VERSION=21
 
 . ./config
 
@@ -44,10 +44,7 @@ sed "s/head -n1/sed -n 1p/" -i scripts/casper-functions
 patch --no-backup-if-mismatch -p1 < $DATA/set_trisquel_iso_suggestion.patch
 
 # Enable abrowser apparmor profile
-cat << EOF > scripts/casper-bottom/35-apparmor-abrowser
-#!/bin/sh
-apparmor_parser -r /etc/apparmor.d/abrowser
-EOF
+cp $DATA/35-apparmor-abrowser scripts/casper-bottom
 chmod 755 scripts/casper-bottom/35-apparmor-abrowser
 
 changelog "Compiled for Trisquel"
