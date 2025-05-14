@@ -20,6 +20,11 @@ esac
 
 log_begin_msg "$DESCRIPTION"
 
-chroot /root /sbin/apparmor_parser -r /etc/apparmor.d/abrowser
+cat << EOF > /root/etc/rc.local
+#!/bin/sh
+# Enable apparmor profile during live session to allow Abrowser to create user namespaces
+[ -d /rofs ] && apparmor_parser -a /etc/apparmor.d/abrowser
+EOF
+chmod 755 /root/etc/rc.local
 
 log_end_msg
