@@ -1,0 +1,12 @@
+diff --git a/debian/control b/debian/control
+index 0327415f..e97daaf3 100644
+--- a/debian/control
++++ b/debian/control
+@@ -103,6 +103,7 @@ Depends:
+  ungoogled-chromium-common (= ${binary:Version}),
+ Recommends:
+  ungoogled-chromium-sandbox,
++ webext-ublock-origin-chromium,
+ Suggests:
+  ungoogled-chromium-l10n,
+  ungoogled-chromium-shell,

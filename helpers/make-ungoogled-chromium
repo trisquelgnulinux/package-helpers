@@ -70,6 +70,8 @@ EOF
 # https://github.com/llebout/ungoogled-chromium
 sed -i '/Architecture:/s|ppc64el||' debian/control
 
+apply_patch_changes
+
 changelog "Backported ungoogled-chromium package from xtradeb community."
 
 package
