@@ -1,0 +1,15 @@
+Based on 
+https://salsa.debian.org/debian/transmission/-/commit/4c54d7e15dbb7bd81cbb50f9f9dbc9c37e584966
+
+More info about the DEP17 migration at: https://dep-team.pages.debian.net/deps/dep17/
+
+diff --git a/debian/transmission-daemon.install b/debian/transmission-daemon.install
+index 697f57e2..4c65104a 100644
+--- a/debian/transmission-daemon.install
++++ b/debian/transmission-daemon.install
+@@ -1,4 +1,4 @@
+-daemon/transmission-daemon.service lib/systemd/system
++daemon/transmission-daemon.service usr/lib/systemd/system
+ debian/README.json etc/transmission-daemon
+ debian/settings.json etc/transmission-daemon
+ usr/bin/transmission-daemon
