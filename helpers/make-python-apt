@@ -24,7 +24,7 @@
 # list available on the resulting netinstall (mini.iso) image.
 # The same way as 'ubiquity' is for for the next Live Desktop ISOs.
 
-VERSION=10
+VERSION=11
 COMPONENT=main
 #Be aware to not pull/build before publish date on T12.
 
@@ -34,6 +34,7 @@ COMPONENT=main
 Mirrors_masterlist=$(mktemp)
 Mirrors_masterlist_git="trisquel-packages/-/raw/master/extra/mirrors/Mirrors.masterlist"
 
+#FIXME: Propose a way to integrate from git and avoid fetching via wget/curl.
 wget https://gitlab.trisquel.org/trisquel/$Mirrors_masterlist_git -o /dev/null -O $Mirrors_masterlist
 python3 $DATA/parse-mirror-masterlist.py $Mirrors_masterlist > data/templates/Trisquel.mirrors
 rm $Mirrors_masterlist

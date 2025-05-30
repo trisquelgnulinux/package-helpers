@@ -18,12 +18,13 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=8
+VERSION=9
 EXTERNAL='deb-src http://ftp.debian.org/debian trixie main'
 REPOKEY=0E98404D386FA1D9
 NETINST=true
 . ./config
 
+#FIXME: Propose a way to integrate from git and avoid fetching via wget/curl.
 Mirrors_masterlist_git="trisquel-packages/-/raw/master/extra/mirrors/Mirrors.masterlist"
 patch_p1 $DATA/Makefile_mirrors-masterlist.patch
 patch_p1 $DATA/choose-mirror-bin.templates-in.patch
