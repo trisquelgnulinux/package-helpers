@@ -17,13 +17,9 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 
 . ./config
-
-# Apply fix for pipewire on apparmor, see more at:
-# https://bugs.launchpad.net/apparmor/+bug/2003702
-patch_p1 $DATA/001-b5a7641dd3502fcfb897d3b96e197628b674ce3c.patch
 
 # Add custom unconfined profiles for abrowser and icedove, deliberately patch
 # upon an original upstream profile copy to force track original files and
