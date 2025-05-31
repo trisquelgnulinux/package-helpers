@@ -1,0 +1,54 @@
+diff --git a/profiles/apparmor.d/transmission b/profiles/apparmor.d/transmission
+index 6cd67adf..6aa4214a 100644
+--- a/profiles/apparmor.d/transmission
++++ b/profiles/apparmor.d/transmission
+@@ -5,7 +5,7 @@ abi <abi/4.0>,
+ 
+ include <tunables/global>
+ 
+-profile transmission-daemon /usr/bin/transmission-daemon flags=(complain) {
++profile transmission-daemon /usr/bin/transmission-daemon flags=(complain,attach_disconnected) {
+   # Don't use abstractions/transmission-common here, as the
+   # access needed is narrower than the user applications
+   include <abstractions/base>
+@@ -17,6 +17,8 @@ profile transmission-daemon /usr/bin/transmission-daemon flags=(complain) {
+   network inet  stream,
+   network inet6 stream,
+ 
++  /usr/bin/transmission-daemon mr,
++
+   owner @{PROC}/@{pid}/mounts r,
+   @{PROC}/sys/kernel/random/uuid r,
+ 
+@@ -42,17 +44,21 @@ profile transmission-cli /usr/bin/transmission-cli flags=(complain) {
+   include <abstractions/transmission-common>
+   include <abstractions/consoles>
+ 
++  /usr/bin/transmission-cli mr,
++
+   # Site-specific additions and overrides. See local/README for details.
+   include if exists <local/transmission>
+   include if exists <local/transmission-cli>
+ }
+ 
+-profile transmission-gtk /usr/bin/transmission-gtk flags=(complain) {
++profile transmission-gtk /usr/bin/transmission-gtk flags=(complain,attach_disconnected) {
+   include <abstractions/transmission-common>
+   include <abstractions/dbus-session-strict>
+   include <abstractions/dconf>
+   include <abstractions/gnome>
+ 
++  /usr/bin/transmission-gtk mr,
++
+   owner @{run}/user/*/dconf/user w,
+ 
+   # Site-specific additions and overrides. See local/README for details.
+@@ -70,6 +76,8 @@ profile transmission-qt /usr/bin/transmission-qt flags=(complain) {
+   include <abstractions/qt5>
+   include <abstractions/qt5-settings-write>
+ 
++  /usr/bin/transmission-qt mr,
++
+   # Site-specific additions and overrides. See local/README for details.
+   include if exists <local/transmission>
+   include if exists <local/transmission-qt>
