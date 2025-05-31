@@ -17,7 +17,7 @@ index 01493260d..dd783992d 100644
  /etc/wildmidi/wildmidi.cfg r,
  
 +# pipewire
-+/usr/share/pipewire/client.conf r,
++/usr/share/pipewire/client{,-rt}.conf r,
 +
    # Include additions to the abstraction
    include if exists <abstractions/audio.d>
