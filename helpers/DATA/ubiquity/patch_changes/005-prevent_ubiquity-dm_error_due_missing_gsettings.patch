@@ -1,0 +1,21 @@
+# Present in first alpha Ecne ISO.
+
+diff --git a/bin/ubiquity-dm b/bin/ubiquity-dm
+index 67ffdb27..ea14e068 100755
+--- a/bin/ubiquity-dm
++++ b/bin/ubiquity-dm
+@@ -505,9 +505,11 @@ EndSection
+                     gsettings_keys.append(
+                         ('org.gnome.settings-daemon.plugins.background',
+                          'active', 'false'))
+-                    gsettings_keys.remove(
+-                        ('org.gnome.desktop.wm.preferences', 'num-workspaces',
+-                         '1'))
++                    # Prevent error out if settings aren't there
++                    key = ('org.gnome.desktop.wm.preferences', 'num-workspaces', '1')
++                    if key in gsettings_keys:
++                        gsettings_keys.remove(key)
++
+                     os.environ['XDG_SESSION_TYPE'] = 'x11'
+ 
+                 if (osextras.find_on_path('gnome-shell')):

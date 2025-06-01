@@ -1,6 +1,7 @@
 #!/bin/sh
 #
 #    Copyright (C) 2011-2025  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C)      2025  Luis Guzmán <ark@switnet.org>
 #    Copyright (C)      2019  Mason Hock <mason@masonhock.com>
 #
 #    This program is free software; you can redistribute it and/or modify
@@ -18,24 +19,20 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=38
+VERSION=39
 
 . ./config
 
 Mirrors_masterlist_git="trisquel-packages/-/raw/master/extra/mirrors/Mirrors.masterlist"
 
-# Avoid the need for a custom cdrom:// repo
-patch_p1 $DATA/grub-installer.patch
+## Apply patches upfront
+# Avoid the need for a custom cdrom:// repo - 001-grub-installer.patch
 truncate -s 0 d-i/source/apt-setup/generators/40cdrom
-
-# Disable confirmation popups, as they are innacurate and buggy
-patch_p1 $DATA/no_confrirmation_when_crypto.patch
-
-# Fix some gtk labels for Orca
-patch_p1 $DATA/a11y.patch
-
-# Point ubiquity crash to trisquel's forge.
-patch_p1 $DATA/crash_report_point_to_trisquel_forge.patch
+# Disable confirmation popups, as they are innacurate and buggy - 002-no_confrirmation_when_crypto.patch
+# Fix some gtk labels for Orca - 003-a11y.patch
+# Point ubiquity crash to trisquel's forge. - 004-crash_report_point_to_trisquel_forge.patch
+# Prevent ubiquity-dm to error out due missing settings - 005-prevent_ubiquity-dm_error_due_missing_gsettings.patch
+apply_patch_changes
 
 # Remove test_timezone to prevent error out future builds on different daylight time.
 rm tests/test_timezone.py
