@@ -16,15 +16,21 @@
 #    along with this program; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
+#STAGE-5-DESKTOP|ARTWORK
 
-VERSION=12
+VERSION=12.1
 
 . ./config
+
+# Previos release 'til the next artwork is ready
+CURRENT_RELEASE="Aramo"
+SUFFIX_ARTWORK=".jpg"
 
 # Rebrand logo
 rm desktop/usr-share/kubuntu-circle-128.png
 cp $DATA/TrisquelLogo.png desktop/usr-share/
 cp $DATA/TrisquelLogo.png desktop/kubuntu-logo.png
+cp $DATA/face.icon desktop/sddm/themes/kubuntu/faces/.face.icon
 sed 's/kubuntu-circle-128\.png/TrisquelLogo\.png/' -i $(find -name 'kcm-about-distrorc')
 
 sed '/plymouth-theme-kubuntu-logo/,$d; /ttf-ubuntu/d' -i debian/control
@@ -71,8 +77,8 @@ X-KDE-PluginInfo-EnabledByDefault=true
 X-Plasma-API=5.0
  
 [Wallpaper]
-defaultWallpaperTheme=Aramo
-defaultFileSuffix=.jpg
+defaultWallpaperTheme=$CURRENT_RELEASE
+defaultFileSuffix=$SUFFIX_ARTWORK
 defaultWidth=5120
 defaultHeight=2880
 
@@ -200,6 +206,8 @@ sed '1s/triskel/kubuntu/' -i debian/control
 
 cp $DATA/start.svgz desktop/theme/desktoptheme/triskel/icons/start.svgz
 cp $DATA/fullscreenpreview.jpg $DATA/preview.png desktop/theme/look-and-feel/org.triskel.desktop/contents/previews/
+sed -i "s|TriskelLight|$CURRENT_RELEASE|" desktop/sddm/themes/triskel/theme.conf
+sed -i "/background/s|.png|$SUFFIX_ARTWORK|" desktop/sddm/themes/triskel/theme.conf
 
 # Use regular task manager instead of icon-only version
 sed 's/plasma.icontasks/plasma.taskmanager/' -i desktop/theme/layout-templates/org.triskel.desktop.defaultPanel/contents/layout.js
