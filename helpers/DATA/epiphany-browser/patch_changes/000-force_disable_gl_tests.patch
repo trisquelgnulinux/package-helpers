@@ -1,0 +1,32 @@
+diff --git a/tests/meson.build b/tests/meson.build
+index 5528a6e4..4b63cb85 100644
+--- a/tests/meson.build
++++ b/tests/meson.build
+@@ -31,16 +31,17 @@ if get_option('unit_tests').enabled()
+   #      env: envs
+   # )
+ 
+-  embed_shell_test = executable('test-ephy-embed-shell',
+-    'ephy-embed-shell-test.c',
+-    adguard_resources,
+-    dependencies: ephymain_dep,
+-    c_args: test_cargs + ['-DTEST_DIR="' + meson.current_source_dir() + '"'],
+-  )
+-  test('Embed shell test',
+-       embed_shell_test,
+-       env: envs
+-  )
++  # TRISQUEL: Disabled test due builds env don't support OpenGL.
++  #embed_shell_test = executable('test-ephy-embed-shell',
++  #  'ephy-embed-shell-test.c',
++  #  adguard_resources,
++  #  dependencies: ephymain_dep,
++  #  c_args: test_cargs + ['-DTEST_DIR="' + meson.current_source_dir() + '"'],
++  #)
++  #test('Embed shell test',
++  #     embed_shell_test,
++  #     env: envs
++  #)
+ 
+   embed_utils_test = executable('test-ephy-embed-utils',
+     'ephy-embed-utils-test.c',
