@@ -1,0 +1,33 @@
+diff --git a/tools/main.cpp b/tools/main.cpp
+index 813aba5a..5f91e057 100644
+--- a/tools/main.cpp
++++ b/tools/main.cpp
+@@ -37,6 +37,8 @@
+ 
+ #include <DebconfGui.h>
+ 
++#include <pwd.h>
++
+ using namespace DebconfKde;
+ 
+ // Handle SIGQUIT. Clients (e.g. packagekit) may use QUIT which would otherwise
+@@ -73,6 +76,19 @@ static void setupQuitHandler() {
+ 
+ int main(int argc, char **argv)
+ {
++    /* TPH: #212 | LP: #1851573 — When the helper is started through pkexec/aptdaemon
++     * the environment may arrive without $HOME.  Without HOME, KConfig writes
++     * to "//.config/..." and shows a "not writable" dialog for every debconf
++     * question.  Substitute the passwd entry’s home directory.
++     */
++    const char *homeEnv = getenv("HOME");
++    if (!homeEnv || homeEnv[0] == '\0') {
++        struct passwd *pw = getpwuid(getuid());
++        if (pw && pw->pw_dir) {
++            setenv("HOME", pw->pw_dir, /* overwrite = */ 1);
++        }
++    }
++
+     QApplication app(argc, argv);
+     setupQuitHandler();
+ 
