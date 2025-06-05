@@ -46,8 +46,9 @@ export RELEASE=trisquel
 export DOMAIN=trisquel.info
 export UPSTREAM=noble
 export UPSTREAMRELEASE=24.04
-MIRROR=http://archive.ubuntu.com/ubuntu
+MIRROR=http://mirrors.ocf.berkeley.edu/ubuntu/
 LOCALMIRROR=http://archive.trisquel.org/trisquel
+GIT_TPH_REPO=https://gitlab.trisquel.org/trisquel/package-helpers
 LOCAL_APT=`mktemp -d` 
 if [[ "$PACKAGE" =~ ^linux(-hwe-[0-9]+\.[0-9]+)?$ && -n "$LP_VERSION" ]]; then
 # Function to truncate the version string to the major version (e.g., 6.5.0)
