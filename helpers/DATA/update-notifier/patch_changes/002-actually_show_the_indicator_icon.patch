@@ -1,0 +1,14 @@
+# Actually show the indicator icon
+
+diff --git a/src/update.c b/src/update.c
+index 588fa66..951a24f 100644
+--- a/src/update.c
++++ b/src/update.c
+@@ -687,7 +687,6 @@ update_check (TrayApplet *ta)
+ 
+       g_child_watch_add (pid, launch_update_manager, NULL);
+    }
+-   return TRUE;
+ 
+    // if we are already visible, skip the rest
+    if(tray_applet_ui_get_visible (ta))

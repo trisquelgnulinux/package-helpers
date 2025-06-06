@@ -27,8 +27,6 @@ COMPONENT=main
 sed '/update-manager/s/--no-update/--no-update", "--no-check-screen/' -i data/backend_helper.py
 # Actually install all upgrades in "Install all upgrades" menu entry
 sed '/client.upgrade_system/s/safe_mode=True/safe_mode=False/' -i data/backend_helper.py
-# Check updates with update-notifier instead of aptdaemon
-patch_p1 $DATA/check_updates_with_update_manager.patch
 # Shorter check times for apt task ending
 sed '/TIMEOUT_APT_RUN/s/600/60/g' -i src/update-notifier.c
 # Set the right path for 'check-new-release-gtk' and 'trisquel-release-upgrader'
@@ -36,9 +34,6 @@ grep -rl check-new-release-gtk | xargs -r sed -i '/check-new-release-gtk/s|ubunt
 grep -rl lib/ubuntu-release-upgrader | xargs -r sed -i 's|lib/ubuntu-release-upgrader|lib/trisquel-release-upgrader|'
 # Use update-manager to checks for dist-upgrades.
 #FIXME: sed '/RELEASE_UPGRADE_CHECKER/s|/usr/lib/ubuntu-release-upgrader/check-new-release-gtk|sleep 5; nice ionice -c3 /usr/lib/update-notifier/backend_helper.py reminder_check|' -i src/update-notifier.h
-
-# Reduce the timeout to refresh the status of the tray icon
-patch_p1 $DATA/improve_responsiveness.patch
 
 #Use custom apt-check to fix motd update notification by striping esm stuff.
 cp $DATA/apt_check.py data/apt_check.py
@@ -57,21 +52,7 @@ sed '/Update-Package-Lists/s/1/0/' -i debian/10periodic
 # Allow to run under KDE
 sed '/NotShowIn=KDE/d' -i data/update-notifier.desktop.in
 
-# Actually show the indicator icon
-cat << EOF | patch --no-backup-if-mismatch -p1
-diff --git a/src/update.c b/src/update.c
-index 588fa66..951a24f 100644
---- a/src/update.c
-+++ b/src/update.c
-@@ -687,7 +687,6 @@ update_check (TrayApplet *ta)
- 
-       g_child_watch_add (pid, launch_update_manager, NULL);
-    }
--   return TRUE;
- 
-    // if we are already visible, skip the rest
-    if(tray_applet_ui_get_visible (ta))
-EOF
+apply_patch_changes
 
 # Custom icons
 cp $DATA/icons/* ./pixmaps/scalable
@@ -82,47 +63,6 @@ sed '/usr\/share\/icons\/hicolor\/..x../d' -i debian/update-notifier.install
 
 # Disable livepatch
 sed '/livepatch/d' -i debian/update-notifier.install
-
-# Wayland compatibility
-cat << EOF | patch --no-backup-if-mismatch -p1
---- a/src/update-notifier.c	2023-01-20 13:50:39.000000000 -0500
-+++ b/src/update-notifier.c	2023-02-07 11:08:58.883996715 -0500
-@@ -168,7 +168,13 @@
- 
-    // normal launch
-    context = gdk_display_get_app_launch_context (gdk_display_get_default ());
--   guint32 timestamp =  gdk_x11_get_server_time (gtk_widget_get_window (w));
-+   guint32 timestamp;
-+#ifdef GDK_WINDOWING_X11
-+   if (GDK_IS_X11_DISPLAY (gdk_display_get_default ()))
-+      timestamp =  gdk_x11_get_server_time (gtk_widget_get_window (w));
-+   else
-+#endif
-+   timestamp = (guint32) (g_get_monotonic_time () / 1000);
-    appinfo = g_app_info_create_from_commandline(cmd, 
- 						cmd, 
- 						G_APP_INFO_CREATE_NONE,
-EOF
-
-# Removal of whoopsie & apport
-cat << EOF | patch --no-backup-if-mismatch -p1
---- a/debian/control	2023-04-06 12:43:17.147156435 -0600
-+++ b/debian/control	2023-04-06 12:46:32.883071182 -0600
-@@ -34,11 +34,9 @@
-          ubuntu-release-upgrader-gtk,
-          gnome-shell <!s390x> | notification-daemon <!s390x>,
-          policykit-1
--Recommends: apport-gtk (>=2.8-0ubuntu3), 
--            python3-aptdaemon.gtk3widgets | synaptic (>= 0.75.12), 
-+Recommends: python3-aptdaemon.gtk3widgets | synaptic (>= 0.75.12), 
-             software-properties-gtk, 
--            python3-aptdaemon,
--            whoopsie (>= 0.2.77)
-+            python3-aptdaemon
- Description: Daemon which notifies about package updates
-  Puts an icon in the user's notification area when package updates are
-  available.
-EOF
 
 # Removal daemons from ubuntu-advantage
 truncate -s 0 data/ubuntu-advantage-notification.desktop.in
@@ -137,10 +77,6 @@ rm -rf /etc/xdg/autostart/ubuntu-advantage-notification.desktop
 
 #DEBHELPER#
 EOF
-
-## Force removal of old services on previous version. #Not needed for ecne maybe keep around if necessary later.
-#sed -i '/Description: Daemon/i Breaks: update-notifier-common (<= 3.192.54.6+11.0trisquel8)' debian/control
-#sed -i '/Suggests: policykit-1/i Breaks: update-notifier-common (<= 3.192.54.6+11.0trisquel8)' debian/control
 
 # Improve gtk dependency
 sed '/Package: update-notifier$/,/^$/s/policykit-1/policykit-1, python3-aptdaemon.gtk3widgets/' -i debian/control

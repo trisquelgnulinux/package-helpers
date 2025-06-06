@@ -1,0 +1,30 @@
+diff --git a/src/update-notifier.c b/src/update-notifier.c
+index ea81f78f..4c678b2e 100644
+--- a/src/update-notifier.c
++++ b/src/update-notifier.c
+@@ -163,6 +163,7 @@ void invoke(const gchar *cmd, const gchar *desktop, gboolean with_pkexec)
+ 
+    // normal launch
+    context = gdk_display_get_app_launch_context (gdk_display_get_default ());
++   #ifdef GDK_WINDOWING_X11
+    if (GDK_IS_X11_DISPLAY (gdk_display_get_default ())) {
+       // fake window to get the current server time *urgh*
+       if (!w) {
+@@ -172,8 +173,16 @@ void invoke(const gchar *cmd, const gchar *desktop, gboolean with_pkexec)
+ 
+       guint32 timestamp =  gdk_x11_get_server_time (gtk_widget_get_window (w));
+       gdk_app_launch_context_set_timestamp (context, timestamp);
++   } else {
++      guint32 timestamp =  (guint32) (g_get_monotonic_time () / 1000);
++      gdk_app_launch_context_set_timestamp (context, timestamp);
+    }
+-
++   #else
++   {
++      guint32 timestamp =  (guint32) (g_get_monotonic_time () / 1000);
++      gdk_app_launch_context_set_timestamp (context, timestamp);
++   }
++   #endif
+    appinfo = g_app_info_create_from_commandline(cmd, 
+ 						cmd, 
+ 						G_APP_INFO_CREATE_NONE,
