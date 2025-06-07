@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=0
+VERSION=1
 EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu noble main universe'
 BACKPORTS=true
 
@@ -26,6 +26,8 @@ BACKPORTS=true
 # Set distro as part of matching upstream one.
 sed -i "s|$UPSTREAM|$UPSTREAM $CODENAME|" debian/rules
 
-changelog "Import as dependency of newer abrowser/icedove deb dependencies."
+apply_patch_changes
+
+changelog "Import as dependency of newer abrowser/icedove deb dependencies. | Enable compiler-rt runtime again for 32bit time_t64 architectures."
 
 package

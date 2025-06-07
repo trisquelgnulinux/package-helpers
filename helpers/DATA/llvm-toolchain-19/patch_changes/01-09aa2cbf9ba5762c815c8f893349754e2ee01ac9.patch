@@ -1,0 +1,25 @@
+From 09aa2cbf9ba5762c815c8f893349754e2ee01ac9 Mon Sep 17 00:00:00 2001
+From: Samuel Thibault <samuel.thibault@ens-lyon.org>
+Date: Sun, 27 Oct 2024 10:45:40 +0100
+Subject: [PATCH] Really re-enable compiler-rt for 32bit time_t64
+ architectures.
+
+---
+ debian/rules | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/debian/rules b/debian/rules
+index 1e4e4726c..cc4a1696a 100755
+--- a/debian/rules
++++ b/debian/rules
+@@ -34,7 +34,6 @@ else
+   RUNTIMES = compiler-rt;libcxx;libcxxabi
+   ifeq ($(DEB_HOST_ARCH_BITS),32)
+     export DEB_BUILD_MAINT_OPTIONS = reproducible=-fixfilepath,-fixdebugpath optimize=-lto abi=+time64,+lfs
+-    skip_packages = -Nlibclang-rt-$(LLVM_VERSION)-dev
+   else
+     ifeq ($(DEB_HOST_ARCH),mips64el)
+         export DEB_BUILD_MAINT_OPTIONS = reproducible=-fixfilepath,-fixdebugpath optimize=-lto hardening=-stackprotector,-stackprotectorstrong
+-- 
+GitLab
+
