@@ -1,0 +1,75 @@
+From 01c886f572c7efff994eb748f52f505edfe31bcb Mon Sep 17 00:00:00 2001
+From: Matthias Klose <doko@ubuntu.com>
+Date: Fri, 8 Mar 2024 15:44:50 +0100
+Subject: [PATCH] Enable compiler-rt runtime again for 32bit time_t64
+ architectures.
+
+---
+ debian/changelog                          | 1 +
+ debian/libclang-common-X.Y-dev.install.in | 4 ++--
+ debian/rules                              | 3 +--
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
+#diff --git a/debian/changelog b/debian/changelog
+#index e39fbda2e..cd8a61bc8 100644
+#--- a/debian/changelog
+#+++ b/debian/changelog
+#@@ -6,6 +6,7 @@ llvm-toolchain-19 (1:19.1.2-2) UNRELEASED; urgency=medium
+# 
+#   [ Sylvestre Ledru ]
+#   * Use the | hello trick for g++-multilib for s390x / Ubuntu Oracular
+#+  * Enable compiler-rt runtime again for 32bit time_t64 architectures.
+# 
+#  -- Sylvestre Ledru <sylvestre@debian.org>  Mon, 21 Oct 2024 10:20:12 +0200
+ 
+#diff --git a/debian/libclang-common-X.Y-dev.install.in b/debian/libclang-common-X.Y-dev.install.in
+#index 7b9dc1723..e15ef67ae 100644
+#--- a/debian/libclang-common-X.Y-dev.install.in
+#+++ b/debian/libclang-common-X.Y-dev.install.in
+#@@ -2,8 +2,8 @@
+# 
+# usr/lib/llvm-@LLVM_VERSION@/lib/clang/@LLVM_VERSION@*/include/*.h
+# usr/lib/llvm-@LLVM_VERSION@/lib/clang/@LLVM_VERSION@*/include/module.modulemap
+#-[!armel !armhf !powerpc !x32 !hurd-any] usr/lib/llvm-@LLVM_VERSION@/lib/clang/@LLVM_VERSION@*/include/xray/
+#-[!armel !armhf !powerpc !x32 !hurd-any] usr/lib/llvm-@LLVM_VERSION@/lib/clang/@LLVM_VERSION@*/include/profile/
+#+[!powerpc !x32 !hurd-any] usr/lib/llvm-@LLVM_VERSION@/lib/clang/@LLVM_VERSION@*/include/xray/
+#+[!powerpc !x32 !hurd-any] usr/lib/llvm-@LLVM_VERSION@/lib/clang/@LLVM_VERSION@*/include/profile/
+# usr/lib/llvm-@LLVM_VERSION@/lib/clang/@LLVM_VERSION@*/include/ppc_wrappers/
+# usr/lib/llvm-@LLVM_VERSION@/lib/clang/@LLVM_VERSION@*/include/openmp_wrappers/
+# usr/lib/llvm-@LLVM_VERSION@/lib/clang/@LLVM_VERSION@*/include/cuda_wrappers/
+diff --git a/debian/rules b/debian/rules
+index 5e4aba682..32b372bf4 100755
+--- a/debian/rules
++++ b/debian/rules
+@@ -31,12 +31,11 @@ ifeq ($(DEB_HOST_ARCH),i386)
+   RUNTIMES = compiler-rt;libcxx;libcxxabi
+   export DEB_BUILD_MAINT_OPTIONS = reproducible=-fixfilepath,-fixdebugpath optimize=-lto
+ else
++  RUNTIMES = compiler-rt;libcxx;libcxxabi
+   ifeq ($(DEB_HOST_ARCH_BITS),32)
+-    RUNTIMES = libcxx;libcxxabi
+     export DEB_BUILD_MAINT_OPTIONS = reproducible=-fixfilepath,-fixdebugpath optimize=-lto abi=+time64,+lfs
+     skip_packages = -Nlibclang-rt-$(LLVM_VERSION)-dev
+   else
+-    RUNTIMES = compiler-rt;libcxx;libcxxabi
+     ifeq ($(DEB_HOST_ARCH),mips64el)
+         export DEB_BUILD_MAINT_OPTIONS = reproducible=-fixfilepath,-fixdebugpath optimize=-lto hardening=-stackprotector,-stackprotectorstrong
+     else
+-- 
+GitLab
+
+diff --git a/debian/libclang-common-X.Y-dev.install.in b/debian/libclang-common-X.Y-dev.install.in
+index 571a6619..a6451d70 100644
+--- a/debian/libclang-common-X.Y-dev.install.in
++++ b/debian/libclang-common-X.Y-dev.install.in
+@@ -2,8 +2,8 @@
+ 
+ usr/lib/llvm-@LLVM_VERSION@/lib/clang/@LLVM_VERSION@*/include/*.h
+ usr/lib/llvm-@LLVM_VERSION@/lib/clang/@LLVM_VERSION@*/include/module.modulemap
+-[!armel !armhf !x32] usr/lib/llvm-@LLVM_VERSION@/lib/clang/@LLVM_VERSION@*/include/xray/
+-[!armel !armhf !x32] usr/lib/llvm-@LLVM_VERSION@/lib/clang/@LLVM_VERSION@*/include/profile/
++[!x32] usr/lib/llvm-@LLVM_VERSION@/lib/clang/@LLVM_VERSION@*/include/xray/
++[!x32] usr/lib/llvm-@LLVM_VERSION@/lib/clang/@LLVM_VERSION@*/include/profile/
+ usr/lib/llvm-@LLVM_VERSION@/lib/clang/@LLVM_VERSION@*/include/ppc_wrappers/
+ usr/lib/llvm-@LLVM_VERSION@/lib/clang/@LLVM_VERSION@*/include/openmp_wrappers/
+ usr/lib/llvm-@LLVM_VERSION@/lib/clang/@LLVM_VERSION@*/include/cuda_wrappers/
