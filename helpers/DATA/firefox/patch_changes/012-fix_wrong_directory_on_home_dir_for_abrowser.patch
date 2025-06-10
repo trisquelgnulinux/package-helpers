@@ -1,0 +1,12 @@
+diff --git a/debian/config/mozconfig.in b/debian/config/mozconfig.in
+index aee1b988..291b4683 100644
+--- a/debian/config/mozconfig.in
++++ b/debian/config/mozconfig.in
+@@ -71,6 +71,7 @@ ac_add_options --disable-av1
+ %%endif
+ %%if MOZ_APP_NAME != MOZ_DEFAULT_APP_NAME
+ ac_add_options --with-app-name=@MOZ_APP_NAME@
++ac_add_options --with-app-basename=@MOZ_APP_NAME@
+ %%endif
+ %%if DISTRIB == Ubuntu
+ #ac_add_options --with-ua-vendor=Ubuntu

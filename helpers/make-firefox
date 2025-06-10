@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=121
+VERSION=122
 EXTERNAL='deb-src http://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu $UPSTREAM main'
 REPOKEY=9BDB3D89CE49EC21
 
@@ -263,6 +263,7 @@ echo '#warningDesc, #communityExperimentalDesc, #communityDesc, #contributeDesc 
 for i in $(find . -name brandings.ftl)
 do
     /bin/sed -i '/firefoxview-brand-name/s|Firefox View|Abrowser View|' $i
+    /bin/sed -i '/firefox-home-brand-name/s|Firefox Home|Abrowser Home|' $i
     sed -i 's|= Firefox |= |' $i
 done
 
