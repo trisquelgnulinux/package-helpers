@@ -26,14 +26,15 @@ index 3b9eaa58..d44040d5 100644
          self.update_list = None
          self.meta_release = None
          self.hwe_replacement_packages = None
-@@ -287,42 +286,6 @@ class UpdateManager(Gtk.Window):
+@@ -286,43 +286,6 @@ class UpdateManager(Gtk.Window):
                 and pkg.installed:
                  self.oem_metapackages.add(pkg)
  
 -    def _fetch_ua_updates(self):
 -        try:
 -            self.ua_updates = ua.updates().updates
--        except:
+-        except Exception as e:
+-            print("Error running updates end-point: ", e)
 -            self.ua_updates = []
 -
 -    def _get_ua_security_status(self):
