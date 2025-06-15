@@ -1,5 +1,6 @@
 #!/bin/sh
 #
+#    Copyright (C)      2025  Luis Guzmán <ark@switnet.org>
 #    Copyright (C) 2008-2024  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C)      2014  Santiago Rodriguez <santi@trisquel.info>
 #    Copyright (C)      2019  Mason Hock <mason@masonhock.com>
@@ -24,13 +25,20 @@
 # Also, don't forget to update the meta-release files at archive and packages.t.i
 # The "obsoletes" list from ubuntu has been removed
 
-VERSION=16
+VERSION=16.1
 
 . ./config
+# Previous upstream release name, update for each release.
+PREV_UPS_REL=jammy
+PREV_TRIS_REL=aramo
+# Use git Mirrors.masterlist as source.
+Mirrors_masterlist=$(mktemp)
+Mirrors_masterlist_git="trisquel-packages/-/raw/master/extra/mirrors/Mirrors.masterlist"
+TPH_GIT_URL="https://gitlab.trisquel.org/trisquel/package-helpers/"
 
 # Fix PEP440 version compatibility
 # https://salsa.debian.org/debian/distro-info/-/commit/e2877dc44659d034155495e91976874c209a3c02
-patch --no-backup-if-mismatch -Np1 < $DATA/pep440.patch
+patch_p1 $DATA/pep440.patch
 
 #%FSDG: Remove functions to deal with proprietary drivers
 rm ./DistUpgrade/xorg_fix_proprietary.py
@@ -226,25 +234,11 @@ trisquel-release-upgrader-core
 EOF
 
 rm data/mirrors.cfg
-#https://mirmon.trisquel.org/conf.txt
-cat << EOF > data/mirrors.cfg
-https://archive.trisquel.info/trisquel/
-https://archive.trisquel.org/trisquel/
-https://mirror.fsf.org/trisquel/
-https://mirror.cedia.org.ec/trisquel.packages/
-https://mirrors.ustc.edu.cn/trisquel/
-https://ftp.caliu.cat/pub/distribucions/trisquel/packages/
-https://ftp.acc.umu.se/mirror/trisquel/packages/
-https://mirrors.ocf.berkeley.edu/trisquel/
-https://mirror.librelabucm.org/trisquel/
-https://mirror.linux.pizza/trisquel/packages/
-https://quantum-mirror.hu/mirrors/pub/trisquel/packages/
-https://mirror.csclub.uwaterloo.ca/trisquel/packages/
-https://ftpmirror1.infania.net/mirror/trisquel/packages/
-https://mirrors.nju.edu.cn/trisquel/
-https://mirror.math.princeton.edu/pub/trisquel-packages/
-https://mirrors.dotsrc.org/trisquel/
-EOF
+# https://gitlab.trisquel.org/trisquel/trisquel-packages/-/tree/master/extra/mirrors
+# FIXME: Propose a way to integrate from git and avoid fetching via wget/curl.
+wget https://gitlab.trisquel.org/trisquel/$Mirrors_masterlist_git -o /dev/null -O $Mirrors_masterlist
+python3 $DATA/../python-apt/parse-mirror-masterlist.py $Mirrors_masterlist|grep https|sort > data/mirrors.cfg
+rm $Mirrors_masterlist
 
 replace changelogs.ubuntu.com packages.trisquel.org .
 
@@ -288,16 +282,23 @@ rpl noble ecne . -R
 rm data/DistUpgrade.cfg*
 cp $DATA/DistUpgrade.cfg* data/
 
-cat << EOF >> data/demoted.cfg
+cat << EOF | tee -a utils/demoted.cfg utils/demoted.cfg.$PREV_UPS_REL
 notification-daemon
 resolvconf
 eom
+desktop-common
 EOF
 
-sed 's|.ubuntu-bug ubuntu-release-upgrader-core. in a terminal|https://gitlab.trisquel.org/trisquel/package-helpers in a browser.|' DistUpgrade/DistUpgradeCache.py -i
-replace "https*://launchpad.net/ubuntu/+source/ubuntu-release-upgrader/+filebug" "https://gitlab.trisquel.org/trisquel/package-helpers/-/issues" .
-replace "https*://launchpad.net/ubuntu/+source/ubuntu-release-upgrader" "https://gitlab.trisquel.org/trisquel/package-helpers/" .
-replace "https*://bugs.launchpad.net/ubuntu/+source/ubuntu-release-upgrader/+filebug" "https://gitlab.trisquel.org/trisquel/package-helpers/-/issues" .
+for i in utils/demoted.cfg utils/demoted.cfg.$PREV_UPS_REL
+do
+    sort -o $i $i
+done
+mv data/demoted.cfg.$PREV_UPS_REL data/demoted.cfg.$PREV_TRIS_REL
+
+sed -i "s|the command .ubuntu-bug ubuntu-release-upgrader-core. in a terminal|$TPH_GIT_URL|" DistUpgrade/DistUpgradeCache.py
+replace "https*://launchpad.net/ubuntu/+source/ubuntu-release-upgrader/+filebug" "${TPH_GIT_URL}-/issues" .
+replace "https*://launchpad.net/ubuntu/+source/ubuntu-release-upgrader" "$TPH_GIT_URL" .
+replace "https*://bugs.launchpad.net/ubuntu/+source/ubuntu-release-upgrader/+filebug" "${TPH_GIT_URL}-/issues" .
 find -type f |xargs rename 's/ubuntu-release-upgrader/trisquel-release-upgrader/g'
 replace  "ubuntu-release-upgrader" "trisquel-release-upgrader" .
 mv kubuntu-devel-release-upgrade triskel-devel-release-upgrade
@@ -325,12 +326,28 @@ rpl "main restricted" "main" DistUpgrade -R
 replace Ubuntu Trisquel
 replace Canonical Trisquel
 replace "https*://www.ubuntu.com/" "https://trisquel.info" .
-replace "https*://wiki.ubuntu.com/X/Bugs/" "https://gitlab.trisquel.org/trisquel/package-helpers/-/issues" .
+replace "https*://wiki.ubuntu.com/X/Bugs/" "${TPH_GIT_URL}-/issues" .
 replace "https*://wiki.ubuntu.com/" "https://trisquel.info/wiki" .
 replace "https*://help.ubuntu.com/community" "https://trisquel.info/wiki" .
 
+/bin/sed -i \
+  -e 's/kubuntu/triskel/g' \
+  -e 's/xubuntu/trisquel-mini/g' \
+  -e 's/�~Lubuntu/�~Ltrisquel/g' \
+  -e 's/被ubuntu/被trisquel/g' \
+  -e "s#http://launchpad.net/ubuntu/+source/%s/%s/+changelog#$TPH_GIT_URL#g" \
+  -e 's/<.*@ubuntu.com/<info@trisquel.info/g' \
+  -e 's/ ubuntu\n/ trisquel\n/g' \
+  -e 's/ubuntu\ /trisquel\ /g' \
+  -e 's/\ ubuntu/\ trisquel/g' \
+  -e 's/Ubuntu/Trisquel/g' \
+  -e 's/ubuntu-desktop/trisquel-/g' \
+  -e 's/www.ubuntu.com/trisquel.info/g' \
+  -e 's/www.ubuntulinux.org/trisquel.info/g' \
+  po/*.po \
+  $(find -type f -name '*.py') \
+  $(find -type f -name '*.glade')
 
-/bin/sed -i 's/kubuntu/triskel/g; s/xubuntu/trisquel-mini/g; s/�~Lubuntu/�~Ltrisquel/g; s/被ubuntu/被trisquel/g; s#http://launchpad.net/ubuntu/+source/%s/%s/+changelog#https://gitlab.trisquel.org/trisquel/package-helpers#g; s/<.*@ubuntu.com/<info@trisquel.info/g; s/ ubuntu\n/ trisquel\n/g; s/ubuntu\ /trisquel\ /g; s/\ ubuntu/\ trisquel/g; s/Ubuntu/Trisquel/g; s/ubuntu-desktop/trisquel-/g; s/www.ubuntu.com/trisquel.info/g; s/www.ubuntulinux.org/trisquel.info/g ' po/*.po $(find -type f | grep py$) $(find -type f | grep '\.glade$')
 replace Trisquel-Gettext Ubuntu-Gettext
 
 sed '1s/trisquel/ubuntu/' debian/control -i

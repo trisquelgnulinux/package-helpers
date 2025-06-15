@@ -1,0 +1,42 @@
+diff --git a/DistUpgrade/DistUpgradeQuirks.py b/DistUpgrade/DistUpgradeQuirks.py
+index 9423f091..00d9b84c 100644
+--- a/DistUpgrade/DistUpgradeQuirks.py
++++ b/DistUpgrade/DistUpgradeQuirks.py
+@@ -2000,17 +2000,27 @@ class DistUpgradeQuirks(object):
+                 break
+ 
+         if fail:
+-            logging.debug('System is not /usr-merged!')
+-            self._view.error(
+-                _(
+-                    f'Cannot upgrade system with unmerged /usr'
+-                ),
+-                _(
+-                    'Please install the usrmerge package to fix this, '
+-                    'and then try the upgrade again.'
+-                ),
++            logging.warning(
++                "System is not /usr-merged. Installing usrmerge before continuing..."
++            )
++            res = subprocess.run(["apt-get", "update"])
++            res2 = subprocess.run(["apt-get", "-y", "install", "usrmerge"])
++
++            if res2.returncode != 0:
++                # Installation failed, abort the upgrade with a clear message
++                self.controller.error(_(
++                    "The system is not /usr-merged and 'usrmerge' could not be "
++                    "installed automatically. Please install it manually and "
++                    "try again."
++                ))
++                return
++
++            # Re-check that /usr merge is now in place
++            # (ensure /bin -> /usr/bin, /lib -> /usr/lib, etc.)
++            logging.info(
++                "usrmerge installed successfully; system is now /usr-merged. "
++                "Proceeding with the upgrade."
+             )
+-            self.controller.abort()
+ 
+     def _disable_cloud_init(self):
+         """
