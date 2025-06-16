@@ -1,0 +1,12 @@
+diff --git a/debian/control b/debian/control
+index 43e3abe5..1677a89d 100644
+--- a/debian/control
++++ b/debian/control
+@@ -32,6 +32,7 @@ Package: kolourpaint
+ Section: graphics
+ Architecture: any
+ Depends: ${misc:Depends}, ${shlibs:Depends}
++Recommends: breeze-icon-theme
+ Breaks: kolourpaint4 (<< 4:17.04)
+ Replaces: kolourpaint4 (<< 4:17.04)
+ Description: simple image editor and drawing application
