@@ -17,15 +17,14 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
+BUILD_UNTIL=12
 
 . ./config
 
-rm debian/examples/crontab2english.pl 
+patch_p1 $DATA/license-info-fix.patch
 
-sed '/crontab2english.pl/,/License: Artistic/d;/License: Artistic/,/common-licenses/d' -i debian/copyright 
-
-changelog "Removed non-free example #10868"
+changelog "Corrected license info (package-helpers issue #199)"
 
 package
 
