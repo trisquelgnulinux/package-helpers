@@ -1,0 +1,18 @@
+diff --git a/debian/rules b/debian/rules
+index 5651361f..26738cfd 100755
+--- a/debian/rules
++++ b/debian/rules
+@@ -70,9 +70,13 @@ ifneq (,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
+ ifeq ($(DEB_HOST_ARCH),riscv64)
+ NJOBS := -j $(patsubst parallel=%,%,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
+ else
++ifeq ($(DEB_HOST_ARCH),amd64)
++NJOBS := -j 8
++else
+ NJOBS := -j 4
+ endif
+ endif
++endif
+ RUSTBUILD = RUST_BACKTRACE=1 python3 src/bootstrap/bootstrap.py $(NJOBS)
+ RUSTBUILD_FLAGS = --stage 2 --config debian/config.toml --on-fail env
+ # rust-tidy depends on lots of modules that we strip out of the build.

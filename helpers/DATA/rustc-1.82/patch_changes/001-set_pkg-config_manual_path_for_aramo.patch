@@ -1,0 +1,12 @@
+diff --git a/debian/rules b/debian/rules
+index 5651361f..2cc90e7b 100755
+--- a/debian/rules
++++ b/debian/rules
+@@ -4,6 +4,7 @@
+ # The build regressed back when LTO was systematized in Ubuntu.
+ # This should be periodically revisited.
+ export DEB_BUILD_MAINT_OPTIONS=optimize=-lto
++export PKG_CONFIG=/usr/bin/pkg-config
+ 
+ include /usr/share/dpkg/pkg-info.mk
+ include /usr/share/dpkg/vendor.mk
