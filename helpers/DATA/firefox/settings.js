@@ -1,4 +1,3 @@
-:
 // Release notes and vendor URLs
 pref("app.releaseNotesURL", "https://trisquel.info/en/wiki/abrowser-help");
 pref("app.vendorURL", "https://trisquel.info/en/wiki/abrowser-help");
@@ -255,7 +254,7 @@ pref("browser.newtabpage.activity-stream.showTopSites",true);
 pref("browser.newtabpage.activity-stream.feeds.section.topstories",false);
 pref("browser.newtabpage.activity-stream.feeds.discoverystreamfeed", false);
 pref("browser.newtabpage.activity-stream.discoverystream.enabled", false);
-pref("browser.newtabpage.activity-stream.discoverystream.endpoints, "");
+pref("browser.newtabpage.activity-stream.discoverystream.endpoints", "");
 pref("browser.newtabpage.activity-stream.feeds.snippets",false);
 pref("browser.newtabpage.activity-stream.disableSnippets", true);
 pref("browser.newtabpage.activity-stream.tippyTop.service.endpoint", "");

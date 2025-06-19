@@ -19,8 +19,8 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=120.8
-EXTERNAL='deb-src http://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu $UPSTREAM main'
+VERSION=123
+EXTERNAL='deb-src http://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu noble main'
 REPOKEY=9BDB3D89CE49EC21
 
 . ./config
@@ -43,9 +43,9 @@ sed "/async download.*/a\ \ \ \ console.warn(\"Function 'fetchLatestChanges' dis
 
 # Disable activity-stream antifeatures.
 # These are not condensed into a single sed script to make it fail on individual commands that didn't change the source
-ActivityStream=browser/components/newtab/lib/ActivityStream.sys.mjs
+ActivityStream=browser/extensions/newtab/lib/ActivityStream.sys.mjs
 BAP_FirefoxJs=browser/app/profile/firefox.js
-sed '/^const DEFAULT_SITES/,/^])\;/c const DEFAULT_SITES = new Map\([[""]]\);' -i browser/components/newtab/lib/DefaultSites.sys.mjs
+sed '/^const DEFAULT_SITES/,/^])\;/c const DEFAULT_SITES = new Map\([[""]]\);' -i browser/extensions/newtab/lib/DefaultSites.sys.mjs
 sed '/"showSponsored"/,/value/s/value: true/value: false/' -i $ActivityStream
 sed '/"telemetry"/,/value/s/value: true/value: false/' -i $ActivityStream
 sed '/"section.highlights.includePocket"/,/value/s/value: true/value: false/' -i $ActivityStream
@@ -81,7 +81,7 @@ sed -i '/services.sync.prefs.sync.browser.firefox-view.feature-tour/s|true|false
 ##disable ui tour
 sed -i '/browser.uitour.enabled/s|true|false|' $BAP_FirefoxJs
 ##disable colorways closet
-sed -i '/browser.theme.colorway-closet/s|true|false|' $BAP_FirefoxJs
+#sed -i '/browser.theme.colorway-closet/s|true|false|' $BAP_FirefoxJs
 ##disable newtab intro - check adjustment for versions greater than 106
 #grep -rl browser.newtabpage.introShown |xargs -r sed -i '/browser.newtabpage.introShown/s|true|false|'
 ##Remove mailto handlers. 110
@@ -135,6 +135,9 @@ sed -i '/media.gmp-manager.chromium-update-url/s|https://update.googleapis.com/s
 sed -i 's|\(pref("media\.gmp-widevinecdm-l1\.chromium-guid", \)"[^"]*"|\1""|' $BAP_FirefoxJs
 sed -i 's|\(pref("media\.gmp-widevinecdm\.chromium-guid", \)"[^"]*"|\1""|' $BAP_FirefoxJs
 
+# Replace mozilla url addons button
+sed -i '/extensions.getAddons.link.url/s|https://addons.mozilla.org/%LOCALE%/firefox/|https://gnuzilla.gnu.org/mozzarella/|' $BAP_FirefoxJs
+
 # Update third_party/rust/glean/src/configuration.rs sha256sum at third_party/rust/glean/.cargo-checksum.json
 GLEAN_CONF_RS_MODIFIED=$(sha256sum third_party/rust/glean/src/configuration.rs|awk '{print$1}')
 sed_csum $GLEAN_CONF_RS_INITIAL \
@@ -145,7 +148,9 @@ sed '/Google API/,/google-api-keyfile/ d' debian/config/mozconfig.in -i
 sed '/"geo.provider.network.url"/s|https.*"|"|' -i modules/libpref/init/all.js
 
 # Disable save password in browser suggestion.
-#grep -lr '^pref("signon.rememberSignons"'| xargs sed -i "/^pref(\"signon.rememberSignons\"/s|true|false|" modules/libpref/init/all.js
+#grep -lr '^pref("signon.rememberSignons"'| \
+#    xargs sed -i "/^pref(\"signon.rememberSignons\"/s|true|false|" \
+#    modules/libpref/init/all.js
 
 # Org branding
 sed 's/com.ubuntu/org.trisquel/' -i debian/config/mozconfig.in
@@ -251,12 +256,14 @@ cp -a $DATA/branding/* browser/branding/nightly
 cp -a $DATA/branding/* browser/branding/aurora
 # We are using unofficial but also should have abrowser word on the about window.
 cp browser/branding/official/content/jar.mn browser/branding/unofficial/content/jar.mn
-echo '#warningDesc, #communityExperimentalDesc, #communityDesc, #contributeDesc {display:none!important}' >> browser/base/content/aboutDialog.css
+echo '#warningDesc, #communityExperimentalDesc, #communityDesc, #contributeDesc {display:none!important}' >> \
+    browser/base/content/aboutDialog.css
 
 # Replace/remove brand name on used view(s) to avoid branding issues.
 for i in $(find . -name brandings.ftl)
 do
     /bin/sed -i '/firefoxview-brand-name/s|Firefox View|Abrowser View|' $i
+    /bin/sed -i '/firefox-home-brand-name/s|Firefox Home|Abrowser Home|' $i
     sed -i 's|= Firefox |= |' $i
 done
 
@@ -295,10 +302,14 @@ s|firefox-help|abrowser-help|g;
 "
 
 echo "Running batch replace operation"
-find . -type f -not -iregex '.*changelog.*' -not -iregex '.*copyright.*' -not -iregex '.*third_party/.*' -execdir /bin/sed --follow-symlinks -i "$SEDSCRIPT" '{}' ';'
+find . -type f -not -iregex '.*changelog.*' \
+       -not -iregex '.*copyright.*' -not -iregex '.*third_party/.*' \
+       -execdir /bin/sed --follow-symlinks -i "$SEDSCRIPT" '{}' ';'
 
 echo "Replacing Firefox with Abrowser on ./l10n"
-find l10n -type f  -not -iregex '.*changelog.*' -not -iregex '.*copyright.*' -execdir /bin/sed --follow-symlinks -i "s/Firefox/Abrowser/" '{}' ';'
+find l10n -type f  -not -iregex '.*changelog.*' \
+          -not -iregex '.*copyright.*' \
+          -execdir /bin/sed --follow-symlinks -i "s/Firefox/Abrowser/" '{}' ';'
 
 sed 's/Firefox/Abrowser/' -i debian/control.in \
                              browser/locales/en-US/chrome/overrides/appstrings.properties
@@ -328,11 +339,14 @@ cat << EOF >> toolkit/mozapps/extensions/content/extensions.css
 EOF
 
 # Hide mobile promo
-echo ".fxaMobilePromo {  display: none !important; }" >> browser/themes/shared/preferences/preferences.inc.css
+echo ".fxaMobilePromo {  display: none !important; }" >> \
+    browser/themes/shared/preferences/preferences.inc.css
 # Hide unwanted elements on about:addons
-echo ".discopane-notice, .privacy-policy-link, #main header, #plugindeprecation-notice {  display: none !important; }" >> toolkit/mozapps/extensions/content/aboutaddons.css
+echo ".discopane-notice, .privacy-policy-link, #main header, #plugindeprecation-notice {  display: none !important; }" >> \
+    toolkit/mozapps/extensions/content/aboutaddons.css
 # Hide warnings on unsigned extensions
-echo ".warning{display: none!important; } .addon[notification=warning]{background-image: none!important;}" >> toolkit/mozapps/extensions/content/extensions.css
+echo ".warning{display: none!important; } .addon[notification=warning]{background-image: none!important;}" >> \
+    toolkit/mozapps/extensions/content/extensions.css
 # Hide extra links in about box
 
 # about: page mods, like rights.
@@ -344,8 +358,10 @@ echo ".warning{display: none!important; } .addon[notification=warning]{backgroun
 
 #EO about: mods.
 
-sed -i 's|<a href="http://www.mozilla.org/">Mozilla Project</a>|<a href="http://www.trisquel.info/">Trisquel Project</a>|g' browser/base/content/overrides/app-license.html
-sed -i 's|https://firefox-source-docs.mozilla.org/contributing/contribution_quickref.html|https://gitlab.trisquel.org/trisquel/package-helpers|' toolkit/content/license.html
+sed -i 's|<a href="http://www.mozilla.org/">Mozilla Project</a>|<a href="http://www.trisquel.info/">Trisquel Project</a>|g' \
+    browser/base/content/overrides/app-license.html
+sed -i "s|https://firefox-source-docs.mozilla.org/contributing/contribution_quickref.html|$GIT_TPH_REPO|" \
+    toolkit/content/license.html
 
 # We went too far...
 #sed -i 's/iceweasel, abrowser, icecat,/iceweasel, firefox, icecat,/g' debian/control.in
@@ -405,12 +421,12 @@ find browser/branding/ -name PrivateBrowsing_150.png | xargs -n1 cp $DATA/debug_
 find l10n/ -name aboutAddons.ftl | xargs -r sed -i '/.placeholder/s|addons.mozilla.org|gnuzilla.gnu.org|g'
 sed -i "s|$OLD_WEB_DEV_URL|$WEB_DEV_URL|" devtools/client/menus.js
 grep -lr addons-help toolkit/mozapps/extensions/ | xargs -r sed -i 's|addons-help|abrowser-help|'
+#sed -i '/domain ==/s|addons.mozilla.org|gnuzilla.gnu.org|' netwerk/protocol/http/nsHttpChannel.cpp
+sed -i "/browser.discovery.sites/s|addons.mozilla.org|gnuzilla.gnu.org|" $BAP_FirefoxJs
+sed -i "/lightweightThemes.getMoreURL/s|https://addons.mozilla.org/.*themes||" $BAP_FirefoxJs
 
 #Fixes by patch on source, see DATA/firefox/patches for more info.
-for patch in $(ls -v ${DATA}/patch_changes/*.patch)
-do
-    patch_p1 $patch
-done
+apply_patch_changes
 
 # Postinst script to manage profile migration and system links
 echo '

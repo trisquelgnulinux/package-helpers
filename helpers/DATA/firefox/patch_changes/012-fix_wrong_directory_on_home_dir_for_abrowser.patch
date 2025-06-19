@@ -1,0 +1,14 @@
+diff --git a/toolkit/xre/nsXREDirProvider.cpp b/toolkit/xre/nsXREDirProvider.cpp
+index 9c94cb88..0c19fad9 100644
+--- a/toolkit/xre/nsXREDirProvider.cpp
++++ b/toolkit/xre/nsXREDirProvider.cpp
+@@ -1232,7 +1232,8 @@ nsresult nsXREDirProvider::AppendProfilePath(nsIFile* aFile, bool aLocal) {
+   if (gAppData->profile) {
+     profile = gAppData->profile;
+   } else {
+-    appName = gAppData->name;
++    // For Abrowser compatibility: force use of ~/.mozilla/abrowser
++    appName.AssignLiteral("abrowser");
+     vendor = gAppData->vendor;
+   }
+ 

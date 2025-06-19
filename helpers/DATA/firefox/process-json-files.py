@@ -324,7 +324,7 @@ class TopSites(RemoteSettings):
 
     @classmethod
     def should_drop_record(cls, site):
-        return site['url'] != 'https://www.wikipedia.org/'
+        return True
 
     @classmethod
     def process_record(cls, site):
