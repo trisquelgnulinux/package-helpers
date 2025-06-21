@@ -1,0 +1,102 @@
+Enables Firefox based browser 'Abrowser' with custom folder (.mozilla/abrowser)
+to use the --cookies-from-browser feature, might also work for other customized
+browser in similar cases.
+
+
+diff --git a/yt_dlp/cookies.py b/yt_dlp/cookies.py
+index 5675445a..7afd324b 100644
+--- a/yt_dlp/cookies.py
++++ b/yt_dlp/cookies.py
+@@ -47,7 +47,7 @@
+ from .utils.networking import normalize_url
+ 
+ CHROMIUM_BASED_BROWSERS = {'brave', 'chrome', 'chromium', 'edge', 'opera', 'vivaldi', 'whale'}
+-SUPPORTED_BROWSERS = CHROMIUM_BASED_BROWSERS | {'firefox', 'safari'}
++SUPPORTED_BROWSERS = CHROMIUM_BASED_BROWSERS | {'abrowser', 'firefox', 'safari'}
+ 
+ 
+ class YDLLogger(_YDLLogger):
+@@ -114,8 +114,8 @@ def load_cookies(cookie_file, browser_specification, ydl):
+ 
+ 
+ def extract_cookies_from_browser(browser_name, profile=None, logger=YDLLogger(), *, keyring=None, container=None):
+-    if browser_name == 'firefox':
+-        return _extract_firefox_cookies(profile, container, logger)
++    if browser_name in ('firefox', 'abrowser'):
++        return _extract_firefox_cookies(profile, container, logger, browser_name)
+     elif browser_name == 'safari':
+         return _extract_safari_cookies(profile, logger)
+     elif browser_name in CHROMIUM_BASED_BROWSERS:
+@@ -124,15 +124,15 @@ def extract_cookies_from_browser(browser_name, profile=None, logger=YDLLogger(),
+         raise ValueError(f'unknown browser: {browser_name}')
+ 
+ 
+-def _extract_firefox_cookies(profile, container, logger):
+-    logger.info('Extracting cookies from firefox')
++def _extract_firefox_cookies(profile, container, logger, browser_name):
++    logger.info(f'Extracting cookies from {browser_name}')
+     if not sqlite3:
+-        logger.warning('Cannot extract cookies from firefox without sqlite3 support. '
++        logger.warning(f'Cannot extract cookies from {browser_name} without sqlite3 support. '
+                        'Please use a Python interpreter compiled with sqlite3 support')
+         return YoutubeDLCookieJar()
+ 
+     if profile is None:
+-        search_roots = list(_firefox_browser_dirs())
++        search_roots = list(_firefox_browser_dirs(browser_name))
+     elif _is_path(profile):
+         search_roots = [profile]
+     else:
+@@ -141,7 +141,7 @@ def _extract_firefox_cookies(profile, container, logger, browser_name):
+ 
+     cookie_database_path = _newest(_firefox_cookie_dbs(search_roots))
+     if cookie_database_path is None:
+-        raise FileNotFoundError(f'could not find firefox cookies database in {search_root}')
++        raise FileNotFoundError(f'could not find {browser_name} cookies database in {search_root}')
+     logger.debug(f'Extracting cookies from: "{cookie_database_path}"')
+ 
+     container_id = None
+@@ -156,7 +156,7 @@ def _extract_firefox_cookies(profile, container, logger, browser_name):
+             try_call(lambda: re.fullmatch(r'userContext([^\.]+)\.label', context['l10nID']).group()),
+         )), None)
+         if not isinstance(container_id, int):
+-            raise ValueError(f'could not find firefox container "{container}" in containers.json')
++            raise ValueError(f'could not find {browser_name} container "{container}" in containers.json')
+ 
+     with tempfile.TemporaryDirectory(prefix='yt_dlp') as tmpdir:
+         cursor = None
+@@ -164,7 +164,7 @@ def _extract_firefox_cookies(profile, container, logger, browser_name):
+             cursor = _open_database_copy(cookie_database_path, tmpdir)
+             if isinstance(container_id, int):
+                 logger.debug(
+-                    f'Only loading cookies from firefox container "{container}", ID {container_id}')
++                    f'Only loading cookies from {browser_name} container "{container}", ID {container_id}')
+                 cursor.execute(
+                     'SELECT host, name, value, path, expiry, isSecure FROM moz_cookies WHERE originAttributes LIKE ? OR originAttributes LIKE ?',
+                     (f'%userContextId={container_id}', f'%userContextId={container_id}&%'))
+@@ -186,14 +186,14 @@ def _extract_firefox_cookies(profile, container, logger):
+                         path=path, path_specified=bool(path), secure=is_secure, expires=expiry, discard=False,
+                         comment=None, comment_url=None, rest={})
+                     jar.set_cookie(cookie)
+-            logger.info(f'Extracted {len(jar)} cookies from firefox')
++            logger.info(f'Extracted {len(jar)} cookies from {browser_name}')
+             return jar
+         finally:
+             if cursor is not None:
+                 cursor.connection.close()
+ 
+ 
+-def _firefox_browser_dirs():
++def _firefox_browser_dirs(browser_name='firefox'):
+     if sys.platform in ('cygwin', 'win32'):
+         yield from map(os.path.expandvars, (
+             R'%APPDATA%\Mozilla\Firefox\Profiles',
+@@ -205,7 +205,7 @@ def _firefox_browser_dirs():
+ 
+     else:
+         yield from map(os.path.expanduser, (
+-            '~/.mozilla/firefox',
++            f'~/.mozilla/{browser_name}',
+             '~/snap/firefox/common/.mozilla/firefox',
+             '~/.var/app/org.mozilla.firefox/.mozilla/firefox',
+         ))
