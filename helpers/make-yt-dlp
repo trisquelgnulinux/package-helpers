@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 EXTERNAL='deb-src http://deb.debian.org/debian sid main'
 REPOKEY=0E98404D386FA1D9
 BACKPORTS=true
@@ -31,6 +31,8 @@ sed -i "/Currently supported/s|are:|are at:|" debian/control
 # Make sure it fails if we don't get the wanted output.
 [ "$SUPPORTED_SITES" != "$(tail -n2 debian/control|awk NF|sed 's|^ ||')" ] && \
   echo -e ">>>Site replacement needs fixing, exiting...<<<\n" && exit
+
+apply_patch_changes
 
 changelog "Remove explicit site listing, redirecting to website author."
 
