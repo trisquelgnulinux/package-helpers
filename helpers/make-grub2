@@ -19,17 +19,13 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=9
+VERSION=10
 COMPONENT=main
 DEPENDS=base-files
 
 . ./config
 
-# http://grub.johnlane.ie/
-## updated to 2.04-1 on https://aur.archlinux.org/packages/grub-luks-keyfile/
-for i in $DATA/*.patch; do
-  patch_p1 $i
-done
+apply_patch_changes
 
 # Remove patch renaming GNU/Linux as default distributor.
 remove_patch ubuntu-zfs-mkconfig-ubuntu-distributor.patch
