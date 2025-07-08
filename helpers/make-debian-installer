@@ -184,7 +184,7 @@ echo "Remove unused modules from d-i pkg-list"
 grep -rl acpi-modules- build/pkg-lists/ |xargs -r sed -i '/acpi-modules-/d'
 grep -rl cdrom-core-modules- build/pkg-lists/ |xargs -r sed -i '/cdrom-core-modules-/d'
 grep -rl cdebconf-gtk-entropy build/config/ | xargs -r sed -i 's/cdebconf-gtk-entropy//'
-patch_p1 $DATA/007-remove_graphical_options_from_netinstall.patch
+apply_patch_changes
 
 # replace references to the OS as 'Linux' with 'GNU/Linux'
 match_rxs=( # ASSERT: aligns with '$replace_rxs'

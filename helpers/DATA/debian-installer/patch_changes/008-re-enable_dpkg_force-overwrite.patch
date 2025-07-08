@@ -1,0 +1,16 @@
+We'll remove the force-overwrite flag once we conclude the riscv rework on the kernel and new arch implementation.
+-- ark74 - Mon, 07 Jul 2025 23:27:26 -0600
+
+diff --git a/build/config/common b/build/config/common
+index 6e58ca8f..5953b26f 100644
+--- a/build/config/common
++++ b/build/config/common
+@@ -41,7 +41,7 @@ PRESEED =
+ # Options to pass to dpkg when it is unpacking the udebs to create the
+ # image. None should be needed, but --force-overwrite might need to be
+ # enabled from time to time if udebs have conflicting files.
+-DPKG_UNPACK_OPTIONS =
++DPKG_UNPACK_OPTIONS = --force-overwrite
+ 
+ # The codename of the Trisquel release that should be installed by default.
+ TRISQUEL_RELEASE = ecne
