@@ -62,7 +62,7 @@ pref("general.useragent.compatMode.abrowser",true);
 pref ("browser.startup.homepage_override.mstone", "ignore");
 
 // Preferences for the Get Add-ons panel
-pref ("extensions.webservice.discoverURL", "https://gnuzilla.gnu.org/mozzarella/");
+pref ("extensions.webservice.discoverURL", "https://gnuzilla.gnu.org/");
 pref ("extensions.getAddons.search.url", "https://trisquel.info");
 
 // Help URL
@@ -278,11 +278,11 @@ pref("extensions.htmlaboutaddons.discover.enabled", false);
 pref("extensions.htmlaboutaddons.recommendations.enabled", false);
 pref("extensions.getAddons.cache.enabled", false);
 pref("extensions.getAddons.get.url", "");
-pref("extensions.getAddons.link.url", "https://gnuzilla.gnu.org/mozzarella/");
+pref("extensions.getAddons.link.url", "https://gnuzilla.gnu.org/");
 pref("extensions.getAddons.langpacks.url", "");
 pref("extensions.getAddons.discovery.api_url", "");
 pref("extensions.recommendations.privacyPolicyUrl", "https://trisquel.info/legal");
-pref("extensions.getAddons.search.browseURL", "https://gnuzilla.gnu.org/mozzarella/search.php?q=%TERMS%");
+pref("extensions.getAddons.search.browseURL", "https://gnuzilla.gnu.org/search.php?q=%TERMS%");
 
 // Disable pingback on first run
 pref("browser.newtabpage.activity-stream.fxaccounts.endpoint", "");

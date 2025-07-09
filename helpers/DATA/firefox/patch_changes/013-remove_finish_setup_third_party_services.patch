@@ -1,0 +1,98 @@
+diff --git a/browser/components/aboutwelcome/modules/AboutWelcomeDefaults.sys.mjs b/browser/components/aboutwelcome/modules/AboutWelcomeDefaults.sys.mjs
+index ba47adb6..c4b29ec4 100644
+--- a/browser/components/aboutwelcome/modules/AboutWelcomeDefaults.sys.mjs
++++ b/browser/components/aboutwelcome/modules/AboutWelcomeDefaults.sys.mjs
+@@ -704,7 +704,7 @@ const MR_ABOUT_WELCOME_DEFAULT = {
+           action: {
+             type: "OPEN_URL",
+             data: {
+-              args: "https://addons.mozilla.org/en-US/firefox/collections/4757633/b4d5649fb087446aa05add5f0258c3/?page=1&collection_sort=-popularity",
++              args: "https://gnuzilla.gnu.org/",
+               where: "tabshifted",
+             },
+             navigate: true,
+@@ -750,49 +750,6 @@ const MR_ABOUT_WELCOME_DEFAULT = {
+       },
+       targeting: "isFxASignedIn",
+     },
+-    {
+-      id: "AW_ACCOUNT_LOGIN",
+-      content: {
+-        fullscreen: true,
+-        position: "split",
+-        split_narrow_bkg_position: "-228px",
+-        image_alt_text: {
+-          string_id: "mr2022-onboarding-gratitude-image-alt",
+-        },
+-        background:
+-          "url('chrome://activity-stream/content/data/content/assets/fox-doodle-waving-laptop.svg') center center / 80% no-repeat var(--mr-screen-background-color)",
+-        progress_bar: true,
+-        logo: {},
+-        title: {
+-          string_id: "onboarding-sign-up-title",
+-        },
+-        subtitle: {
+-          string_id: "onboarding-sign-up-description",
+-        },
+-        secondary_button: {
+-          label: {
+-            string_id: "mr2-onboarding-start-browsing-button-label",
+-          },
+-          style: "secondary",
+-          action: {
+-            navigate: true,
+-          },
+-        },
+-        primary_button: {
+-          label: {
+-            string_id: "onboarding-sign-up-button",
+-          },
+-          action: {
+-            data: {
+-              entrypoint: "newuser-onboarding-desktop",
+-            },
+-            type: "FXA_SIGNIN_FLOW",
+-            navigate: true,
+-          },
+-        },
+-      },
+-      targeting: "!isFxASignedIn",
+-    },
+   ],
+ };
+ 
+diff --git a/browser/components/asrouter/modules/FeatureCalloutMessages.sys.mjs b/browser/components/asrouter/modules/FeatureCalloutMessages.sys.mjs
+index 29d2ca46..41b65ac4 100644
+--- a/browser/components/asrouter/modules/FeatureCalloutMessages.sys.mjs
++++ b/browser/components/asrouter/modules/FeatureCalloutMessages.sys.mjs
+@@ -885,7 +885,7 @@ const MESSAGES = () => {
+                   dismiss: true,
+                   type: "OPEN_URL",
+                   data: {
+-                    args: "https://addons.mozilla.org/en-US/firefox/collections/4757633/36d285535db74c6986abbeeed3e214/?page=1&collection_sort=added",
++                    args: "https://gnuzilla.gnu.org/",
+                     where: "tabshifted",
+                   },
+                 },
+diff --git a/browser/components/asrouter/modules/OnboardingMessageProvider.sys.mjs b/browser/components/asrouter/modules/OnboardingMessageProvider.sys.mjs
+index abc6db68..0c86955f 100644
+--- a/browser/components/asrouter/modules/OnboardingMessageProvider.sys.mjs
++++ b/browser/components/asrouter/modules/OnboardingMessageProvider.sys.mjs
+@@ -1226,7 +1226,7 @@ const BASE_MESSAGES = () => [
+                         {
+                           type: "OPEN_URL",
+                           data: {
+-                            args: "https://addons.mozilla.org/en-US/firefox/collections/4757633/b4d5649fb087446aa05add5f0258c3/?page=1&collection_sort=-popularity",
++                            args: "https://gnuzilla.gnu.org/",
+                             where: "current",
+                           },
+                         },
+@@ -1430,7 +1430,7 @@ const BASE_MESSAGES = () => [
+                         {
+                           type: "OPEN_URL",
+                           data: {
+-                            args: "https://addons.mozilla.org/en-US/firefox/collections/4757633/b4d5649fb087446aa05add5f0258c3/?page=1&collection_sort=-popularity",
++                            args: "https://gnuzilla.gnu.org/",
+                             where: "current",
+                           },
+                         },

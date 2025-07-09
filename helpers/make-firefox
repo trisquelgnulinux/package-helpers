@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=123
+VERSION=124
 EXTERNAL='deb-src http://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu $UPSTREAM main'
 REPOKEY=9BDB3D89CE49EC21
 
@@ -29,7 +29,7 @@ REPOKEY=9BDB3D89CE49EC21
 GLEAN_CONF_RS_INITIAL=$(sha256sum third_party/rust/glean/src/configuration.rs|awk '{print$1}')
 # GNUZILLA ADDON REPLACEMENT
 OLD_WEB_DEV_URL="https://addons.mozilla.org/firefox/collections/mozilla/webdeveloper/"
-WEB_DEV_URL="https://gnuzilla.gnu.org/mozzarella/category.php?id=web-development"
+WEB_DEV_URL="https://gnuzilla.gnu.org/category.php?id=web-development"
 
 rm debian/control
 sed "s|Safe and easy web browser from Mozilla|Safe and easy web browser from Mozilla by Trisquel|" \
@@ -136,7 +136,7 @@ sed -i 's|\(pref("media\.gmp-widevinecdm-l1\.chromium-guid", \)"[^"]*"|\1""|' $B
 sed -i 's|\(pref("media\.gmp-widevinecdm\.chromium-guid", \)"[^"]*"|\1""|' $BAP_FirefoxJs
 
 # Replace mozilla url addons button
-sed -i '/extensions.getAddons.link.url/s|https://addons.mozilla.org/%LOCALE%/firefox/|https://gnuzilla.gnu.org/mozzarella/|' $BAP_FirefoxJs
+sed -i '/extensions.getAddons.link.url/s|https://addons.mozilla.org/%LOCALE%/firefox/|https://gnuzilla.gnu.org/|' $BAP_FirefoxJs
 
 # Update third_party/rust/glean/src/configuration.rs sha256sum at third_party/rust/glean/.cargo-checksum.json
 GLEAN_CONF_RS_MODIFIED=$(sha256sum third_party/rust/glean/src/configuration.rs|awk '{print$1}')
@@ -425,7 +425,7 @@ grep -lr addons-help toolkit/mozapps/extensions/ | xargs -r sed -i 's|addons-hel
 sed -i "/browser.discovery.sites/s|addons.mozilla.org|gnuzilla.gnu.org|" $BAP_FirefoxJs
 sed -i "/lightweightThemes.getMoreURL/s|https://addons.mozilla.org/.*themes||" $BAP_FirefoxJs
 
-#Fixes by patch on source, see DATA/firefox/patches for more info.
+# Fixes by patch on source, see DATA/firefox/patch_changes for more info.
 apply_patch_changes
 
 # Postinst script to manage profile migration and system links
