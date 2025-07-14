@@ -1,0 +1,27 @@
+From 8b1135b857eb684296013c92487532a903039102 Mon Sep 17 00:00:00 2001
+From: kurokawachan <kurokawapopochan@gmail.com>
+Date: Sat, 21 Sep 2024 20:16:48 -0700
+Subject: [PATCH] Pop down a menu before detaching it
+
+If we detach a GtkMenu while it is still being displayed,
+it will freeze the entire panel.
+
+This fixes github issue #83, reported by make-your-soft-better.
+
+(commit message slightly amended by committer)
+---
+ plugins/task-button.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/plugins/task-button.c b/plugins/task-button.c
+index 3744cc79..f90da5c8 100644
+--- a/plugins/task-button.c
++++ b/plugins/task-button.c
+@@ -1544,6 +1544,7 @@ void task_button_update_windows_list(TaskButton *button, Window *list, gint n)
+         for (l = menu_list; l; l = l->next)
+         {
+             GtkMenu *menu = GTK_MENU(l->data);
++            gtk_menu_popdown(menu);
+             gtk_menu_detach(menu);
+         }
+         g_list_free(menu_list);

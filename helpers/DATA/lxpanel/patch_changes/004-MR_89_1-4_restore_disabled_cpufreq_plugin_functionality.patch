@@ -1,0 +1,237 @@
+From dfa4708213c65b734b0d724de8290d4da3ba5af4 Mon Sep 17 00:00:00 2001
+From: rofl0r <rofl0r@users.noreply.github.com>
+Date: Wed, 12 Mar 2025 00:35:15 +0000
+Subject: [PATCH 1/4] Restore disabled cpufreq plugin functionality
+
+According to the comment used, this was apparently disabled because
+someone thought that changing CPU governors requires root permissions,
+but that can be easily changed using a rc script running on system
+start.
+
+Probably the most sensible setup to modify the governors from a
+restricted user account is to add it to a dedicated group with
+write access to the corresponding sysfs files.
+
+For instance:
+
+  for i in /sys/devices/system/cpu/cpu[0-9]*/cpufreq/scaling_governor \
+           /sys/devices/system/cpu/cpu[0-9]*/cpufreq/scaling_setspeed ; do
+      chown root:cpufreq "$i"
+      chmod 664 "$i"
+  done
+---
+ plugins/cpufreq/cpufreq.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/plugins/cpufreq/cpufreq.c b/plugins/cpufreq/cpufreq.c
+index 05f41e0d..24e819ea 100644
+--- a/plugins/cpufreq/cpufreq.c
++++ b/plugins/cpufreq/cpufreq.c
+@@ -99,7 +99,7 @@ get_cur_freq(cpufreq *cf){
+     }
+ }
+ 
+-/*static void
++static void
+ get_governors(cpufreq *cf){
+     FILE *fp;
+     GList *l;
+@@ -189,7 +189,7 @@ frequency_menu(cpufreq *cf){
+ 
+     fclose(fp);
+     return GTK_WIDGET(menu);
+-}*/
++}
+ 
+ static void
+ get_cpus(cpufreq *cf)
+@@ -228,7 +228,7 @@ get_cpus(cpufreq *cf)
+     g_dir_close(cpuDirectory);
+ }
+ 
+-/*static void
++static void
+ cpufreq_set_governor(GtkWidget *widget, Param* p){
+     FILE *fp;
+     char buf[ 100 ], sstmp [ 256 ];
+@@ -291,7 +291,7 @@ cpufreq_menu(cpufreq *cf){
+     }
+ 
+     return GTK_WIDGET (menu);
+-}*/
++}
+ 
+ 
+ 
+@@ -303,9 +303,9 @@ clicked(GtkWidget *widget, GdkEventButton *evt, LXPanel *panel)
+     /* Standard right-click handling. */
+     if( evt->button == 1 )
+     {
+-// Setting governor can't work without root privilege
+-//      gtk_menu_popup( cpufreq_menu((cpufreq*)plugin->priv), NULL, NULL, NULL, NULL,
+-//                      evt->button, evt->time );
++      cpufreq *cf = lxpanel_plugin_get_data(widget);
++      gtk_menu_popup( GTK_MENU(cpufreq_menu(cf)), NULL, NULL, NULL, NULL,
++                      evt->button, evt->time );
+       return TRUE;
+     }
+ 
+
+From 6c35362e69030f6e1bd360f1d8d8171135943c85 Mon Sep 17 00:00:00 2001
+From: rofl0r <rofl0r@users.noreply.github.com>
+Date: Wed, 12 Mar 2025 09:57:01 +0000
+Subject: [PATCH 2/4] Factor out identical code in cpufreq_set_gov/frequency
+
+---
+ plugins/cpufreq/cpufreq.c | 36 ++++++++++++++++++++++--------------
+ 1 file changed, 22 insertions(+), 14 deletions(-)
+
+diff --git a/plugins/cpufreq/cpufreq.c b/plugins/cpufreq/cpufreq.c
+index 24e819ea..48ff25d0 100644
+--- a/plugins/cpufreq/cpufreq.c
++++ b/plugins/cpufreq/cpufreq.c
+@@ -138,19 +138,34 @@ get_governors(cpufreq *cf){
+ }
+ 
+ static void
+-cpufreq_set_freq(GtkWidget *widget, Param* p){
++set_file(const char* cpu, const char* val, const char* file) {
+     FILE *fp;
+-    char buf[ 100 ], sstmp [ 256 ];
++    char path [ 256 ];
+ 
+-    if(strcmp(p->cf->cur_governor, "userspace")) return;
++    snprintf(path, sizeof(path), "%s/%s", cpu, file);
+ 
+-    sprintf(sstmp,"%s/%s",p->cf->cpus->data, SCALING_SETFREQ);
+-    if ((fp = fopen( sstmp, "w")) != NULL) {
+-        fprintf(fp,"%s",p->data);
++    if ((fp = fopen( path, "w")) != NULL) {
++        fprintf(fp,"%s",val);
+         fclose(fp);
+     }
+ }
+ 
++static void
++set_freq(const char* cpu, const char* val) {
++    set_file(cpu, val, SCALING_SETFREQ);
++}
++
++static void
++set_gov(const char* cpu, const char* val) {
++    set_file(cpu, val, SCALING_GOV);
++}
++
++static void
++cpufreq_set_freq(GtkWidget *widget, Param* p){
++    if(strcmp(p->cf->cur_governor, "userspace")) return;
++    set_freq(p->cf->cpus->data, p->data);
++}
++
+ static GtkWidget *
+ frequency_menu(cpufreq *cf){
+     FILE *fp;
+@@ -230,14 +245,7 @@ get_cpus(cpufreq *cf)
+ 
+ static void
+ cpufreq_set_governor(GtkWidget *widget, Param* p){
+-    FILE *fp;
+-    char buf[ 100 ], sstmp [ 256 ];
+-
+-    sprintf(sstmp, "%s/%s", p->cf->cpus->data, SCALING_GOV);
+-    if ((fp = fopen( sstmp, "w")) != NULL) {
+-        fprintf(fp,"%s",p->data);
+-        fclose(fp);
+-    }
++    set_gov(p->cf->cpus->data, p->data);
+ }
+ 
+ static GtkWidget *
+
+From c0831241f801f321ddfd48f7acc1e61574640a38 Mon Sep 17 00:00:00 2001
+From: rofl0r <rofl0r@users.noreply.github.com>
+Date: Wed, 12 Mar 2025 10:00:20 +0000
+Subject: [PATCH 3/4] Apply chosen governor/frequency to all CPUs
+
+Previously, governor and frequency were only changed for the
+first CPU/core in the system, but all others were left untouched.
+A user changing those generally wants the setting applied
+to all cores (for example to powersave governor if on battery).
+---
+ plugins/cpufreq/cpufreq.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/plugins/cpufreq/cpufreq.c b/plugins/cpufreq/cpufreq.c
+index 48ff25d0..9c194ca0 100644
+--- a/plugins/cpufreq/cpufreq.c
++++ b/plugins/cpufreq/cpufreq.c
+@@ -162,8 +162,12 @@ set_gov(const char* cpu, const char* val) {
+ 
+ static void
+ cpufreq_set_freq(GtkWidget *widget, Param* p){
++    GList *curr;
++
+     if(strcmp(p->cf->cur_governor, "userspace")) return;
+-    set_freq(p->cf->cpus->data, p->data);
++
++    for(curr = p->cf->cpus; curr; curr = curr->next)
++        set_freq(curr->data, p->data);
+ }
+ 
+ static GtkWidget *
+@@ -245,7 +249,10 @@ get_cpus(cpufreq *cf)
+ 
+ static void
+ cpufreq_set_governor(GtkWidget *widget, Param* p){
+-    set_gov(p->cf->cpus->data, p->data);
++    GList *curr;
++
++    for(curr = p->cf->cpus; curr; curr = curr->next)
++        set_gov(curr->data, p->data);
+ }
+ 
+ static GtkWidget *
+
+From e8db3d47a308e43c44e0b036fa66df448a246e51 Mon Sep 17 00:00:00 2001
+From: rofl0r <rofl0r@users.noreply.github.com>
+Date: Fri, 14 Mar 2025 07:23:20 +0000
+Subject: [PATCH 4/4] Cosmetic change: move cpufreq_set_governor up
+
+---
+ plugins/cpufreq/cpufreq.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/plugins/cpufreq/cpufreq.c b/plugins/cpufreq/cpufreq.c
+index 9c194ca0..9e1bb0f1 100644
+--- a/plugins/cpufreq/cpufreq.c
++++ b/plugins/cpufreq/cpufreq.c
+@@ -170,6 +170,14 @@ cpufreq_set_freq(GtkWidget *widget, Param* p){
+         set_freq(curr->data, p->data);
+ }
+ 
++static void
++cpufreq_set_governor(GtkWidget *widget, Param* p) {
++    GList *curr;
++
++    for(curr = p->cf->cpus; curr; curr = curr->next)
++        set_gov(curr->data, p->data);
++}
++
+ static GtkWidget *
+ frequency_menu(cpufreq *cf){
+     FILE *fp;
+@@ -247,14 +255,6 @@ get_cpus(cpufreq *cf)
+     g_dir_close(cpuDirectory);
+ }
+ 
+-static void
+-cpufreq_set_governor(GtkWidget *widget, Param* p){
+-    GList *curr;
+-
+-    for(curr = p->cf->cpus; curr; curr = curr->next)
+-        set_gov(curr->data, p->data);
+-}
+-
+ static GtkWidget *
+ cpufreq_menu(cpufreq *cf){
+     GList *l;

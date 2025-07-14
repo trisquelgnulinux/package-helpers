@@ -1,0 +1,37 @@
+#!/bin/sh
+#
+#    Copyright (C) 2025  Luis Guzmán <ark@switnet.org>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+VERSION=1
+
+. ./config
+
+apply_patch_changes
+
+# To use the multi-line change log, the message must be enclosed in quotes.
+changelog "Backport patches from upstream lxpanel to improve stability and functionality:
+
+  Fix scrolling issue in volume plugin (MR#46)/(TPH#218).
+  Handle 'not charging' battery state correctly (MR#53).
+  Prevent wincmd plugin from triggering button clicks incorrectly (MR#78).
+  Avoid panel freeze caused by pop-down menu detach (MR#84).
+  Restore disabled functionality in cpufreq plugin (MR#89, 4 commits).
+
+These changes improve reliability in power and task management plugins."
+
+package

@@ -1,0 +1,28 @@
+From 8b2d1ead714529f3abe00fff282607a4f9eb47b7 Mon Sep 17 00:00:00 2001
+From: kurokawachan <kurokawapopochan@gmail.com>
+Date: Fri, 23 Aug 2024 04:11:55 -0700
+Subject: [PATCH] Do not trigger wincmd_button_clicked() by GDK_2BUTTON_PRESS
+ events
+
+If the toggle is clicked too quickly, it is considered a double-click
+and three button-press events are generated instead of the usual two,
+resulting in unwanted behavior.
+
+This fixes https://github.com/lxde/lxpanel/issues/77.
+---
+ plugins/wincmd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/plugins/wincmd.c b/plugins/wincmd.c
+index 9b4ae48e..ae8db997 100644
+--- a/plugins/wincmd.c
++++ b/plugins/wincmd.c
+@@ -124,7 +124,7 @@ static gboolean wincmd_button_clicked(GtkWidget * widget, GdkEventButton * event
+     WinCmdPlugin * wc = lxpanel_plugin_get_data(widget);
+ 
+     /* Left-click to iconify. */
+-    if (event->button == 1)
++    if (event->button == 1 && event->type == GDK_BUTTON_PRESS)
+     {
+         GdkScreen* screen = gtk_widget_get_screen(widget);
+         Screen *xscreen = GDK_SCREEN_XSCREEN(screen);

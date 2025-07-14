@@ -1,0 +1,72 @@
+From 44df20a33645b4a645b547725c75904cee46dfba Mon Sep 17 00:00:00 2001
+From: Nicolas Salguero <nicolas.salguero@laposte.net>
+Date: Thu, 21 Jul 2022 12:54:07 +0200
+Subject: [PATCH 1/2] Fix a scrolling issue with the GTK3 volume plugin
+
+Scrolling with the mouse wheel in the volume plugin window only reduces
+the volume, because the GDK_SCROLL_SMOOTH direction is not taken into
+account.
+
+This fixes github issue #27, reported by martenwa,
+part of github issue #45, reported by nsalguero, and
+part of https://bugs.debian.org/1052050.
+
+(commit and message amended by committer)
+---
+ plugins/volumealsa/volumealsa.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/plugins/volumealsa/volumealsa.c b/plugins/volumealsa/volumealsa.c
+index 5c410511..74b49f90 100644
+--- a/plugins/volumealsa/volumealsa.c
++++ b/plugins/volumealsa/volumealsa.c
+@@ -796,6 +796,17 @@ static void volumealsa_popup_scale_scrolled(GtkScale * scale, GdkEventScroll * e
+     /* Dispatch on scroll direction to update the value. */
+     if ((evt->direction == GDK_SCROLL_UP) || (evt->direction == GDK_SCROLL_LEFT))
+         val += 2;
++#if GTK_CHECK_VERSION(3, 4, 0)
++    else if (evt->direction == GDK_SCROLL_SMOOTH)
++    {
++        gdouble delta_x, delta_y;
++        gdk_event_get_scroll_deltas((GdkEvent *) evt, &delta_x, &delta_y);
++        if ((delta_y < 0) || (delta_x < 0))
++            val += 2;
++        else
++            val -= 2;
++    }
++#endif
+     else
+         val -= 2;
+ 
+
+From a9c1c58558ec066b6e086230abcf70c7793583c8 Mon Sep 17 00:00:00 2001
+From: Nicolas Salguero <nicolas.salguero@laposte.net>
+Date: Thu, 21 Jul 2022 12:54:07 +0200
+Subject: [PATCH 2/2] Fix a scrolling issue with the GTK3 volume plugin
+
+Scrolling with the mouse wheel on the volume plugin icon does nothing
+because GDK_SCROLL events are missing. To receive these events, widgets
+must set either GDK_SCROLL_MASK or GDK_SMOOTH_SCROLL_MASK.
+
+This fixes part of github issue #45, reported by nsalguero,
+and part of https://bugs.debian.org/1052050.
+
+(commit and message amended by committer)
+---
+ plugins/volumealsa/volumealsa.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/plugins/volumealsa/volumealsa.c b/plugins/volumealsa/volumealsa.c
+index 74b49f90..13693773 100644
+--- a/plugins/volumealsa/volumealsa.c
++++ b/plugins/volumealsa/volumealsa.c
+@@ -991,6 +991,9 @@ static GtkWidget *volumealsa_constructor(LXPanel *panel, config_setting_t *setti
+     vol->tray_icon = lxpanel_image_new_for_icon(panel, "audio-volume-muted-panel",
+                                                 -1, ICONS_MUTE);
+     gtk_container_add(GTK_CONTAINER(p), vol->tray_icon);
++#if GTK_CHECK_VERSION(3, 4, 0)
++    gtk_widget_add_events(p, GDK_SCROLL_MASK);
++#endif
+ 
+     /* Initialize window to appear when icon clicked. */
+     volumealsa_build_popup_window(p);
