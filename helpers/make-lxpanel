@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 
 . ./config
 
@@ -31,6 +31,7 @@ changelog "Backport patches from upstream lxpanel to improve stability and funct
   Prevent wincmd plugin from triggering button clicks incorrectly (MR#78).
   Avoid panel freeze caused by pop-down menu detach (MR#84).
   Restore disabled functionality in cpufreq plugin (MR#89, 4 commits).
+  Add debian changes to fix armhf cpufreq plugin.
 
 These changes improve reliability in power and task management plugins."
 
