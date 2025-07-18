@@ -1,8 +1,8 @@
 diff --git a/profiles/apparmor/profiles/extras/firefox.sh b/profiles/apparmor/profiles/extras/firefox.sh
-index fb75c5b6..83a7404c 100644
+index fb75c5b6..7b23cd83 100644
 --- a/profiles/apparmor/profiles/extras/firefox.sh
 +++ b/profiles/apparmor/profiles/extras/firefox.sh
-@@ -22,3 +22,22 @@ profile firefox.sh /usr/lib/firefox/firefox.sh {
+@@ -22,3 +22,41 @@ profile firefox.sh /usr/lib/firefox/firefox.sh {
    # Site-specific additions and overrides. See local/README for details.
    include if exists <local/firefox.sh>
  }
@@ -20,6 +20,25 @@ index fb75c5b6..83a7404c 100644
 +  /etc/magic r,
 +  /usr/bin/file rix,
 +  /usr/lib/abrowser/abrowser px,
++  /usr/share/misc/magic.mgc r,
++
++  # Site-specific additions and overrides. See local/README for details.
++  include if exists <local/firefox.sh>
++}
++
++profile firefox.sh /usr/lib/icecat/firefox.sh {
++  include <abstractions/base>
++  include <abstractions/bash>
++  include <abstractions/consoles>
++
++  deny capability sys_ptrace,
++
++  /{usr/,}bin/basename rix,
++  /{usr/,}bin/bash rix,
++  /{usr/,}bin/grep rix,
++  /etc/magic r,
++  /usr/bin/file rix,
++  /usr/lib/icecat/icecat px,
 +  /usr/share/misc/magic.mgc r,
 +
 +  # Site-specific additions and overrides. See local/README for details.

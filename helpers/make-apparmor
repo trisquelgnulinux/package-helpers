@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2024 Luis Guzmán <ark@switnet.org>
+#    Copyright (C) 2025 Luis Guzmán <ark@switnet.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
+VERSION=4
 
 . ./config
 
@@ -28,17 +28,27 @@ VERSION=3
 # https://ubuntu.com/blog/ubuntu-23-10-restricted-unprivileged-user-namespaces
 
 cp profiles/apparmor.d/{thunderbird,icedove}
-cp profiles/apparmor.d/{firefox,abrowser}
-patch_p1 $DATA/002-add-unconfined-profile-firefox-icedove.patch
+for i in abrowser icecat
+do
+    cp profiles/apparmor.d/firefox profiles/apparmor.d/$i
+done
+patch_p1 $DATA/002-add-unconfined-profile-firefox-icedove-icecat.patch
 
-cp profiles/apparmor/profiles/extras/{firefox,abrowser}
-patch_p1 $DATA/003-add-extra-abrowser-profile.patch
+for i in abrowser icecat
+do
+    cp profiles/apparmor/profiles/extras/firefox \
+       profiles/apparmor/profiles/extras/$i
+done
+patch_p1 $DATA/003-add-extra-profile-for-abrowser-icecat.patch
 # Note: look for updates on abrowser.sh profile on each helper/patch change:
 patch_p1 $DATA/004-update-profile-extra-firefox-sh.patch
 
 # Update trasnmission apparmor profile to fix daemon management
 patch_p1 $DATA/005-update_trasnmission_profile_for_daemon_service_fix.patch
 
-changelog "Apply fix LP:2003702 for pidgin like clients. | Add unconfined profiles for firefox and icedove. | Improve transmission daemon service profile to improve management."
+changelog "Apply fix LP:2003702 for pidgin like clients.
+Add unconfined profiles for firefox and icedove.
+Improve transmission daemon service profile to improve management.
+Add custom profiles for icecat"
 
 package

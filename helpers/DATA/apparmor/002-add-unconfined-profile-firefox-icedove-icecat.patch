@@ -30,8 +30,24 @@ index 060eb24d..667b1674 100644
 -  include if exists <local/thunderbird>
 +  include if exists <local/icedove>
  }
+diff --git a/profiles/apparmor.d/icecat b/profiles/apparmor.d/icecat
+index 4071c345..148e445e 100644
+--- a/profiles/apparmor.d/icecat
++++ b/profiles/apparmor.d/icecat
+@@ -4,9 +4,9 @@
+ abi <abi/4.0>,
+ include <tunables/global>
+ 
+-profile firefox /{usr/lib/firefox{,-esr,-beta,-devedition,-nightly},opt/firefox}/firefox{,-esr,-bin} flags=(unconfined) {
++profile icecat /{usr/lib/icecat{,-esr,-beta,-devedition,-nightly},opt/icecat}/icecat{,-esr,-bin} flags=(unconfined) {
+   userns,
+ 
+   # Site-specific additions and overrides. See local/README for details.
+-  include if exists <local/firefox>
++  include if exists <local/icecat>
+ }
 diff --git a/debian/apparmor.install b/debian/apparmor.install
-index 79c8700e..2971e426 100644
+index 9cdaa3a2..d9ee697c 100644
 --- a/debian/apparmor.install
 +++ b/debian/apparmor.install
 @@ -68,6 +68,7 @@ etc/apparmor.d/sbuild-update
@@ -42,11 +58,13 @@ index 79c8700e..2971e426 100644
  etc/apparmor.d/thunderbird
  etc/apparmor.d/toybox
  etc/apparmor.d/trinity
-@@ -83,6 +84,7 @@ etc/apparmor.d/1password
+@@ -83,7 +84,9 @@ etc/apparmor.d/1password
  etc/apparmor.d/Discord
  etc/apparmor.d/MongoDB_Compass
  etc/apparmor.d/code
 +etc/apparmor.d/abrowser
  etc/apparmor.d/firefox
++etc/apparmor.d/icecat
  etc/apparmor.d/github-desktop
  etc/apparmor.d/obsidian
+ etc/apparmor.d/opera
