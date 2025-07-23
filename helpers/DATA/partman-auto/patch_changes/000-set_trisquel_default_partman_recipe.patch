@@ -1,0 +1,169 @@
+diff --git a/recipes-alpha/multi b/recipes-alpha/multi
+index 186decf7..5916d8ee 100644
+--- a/recipes-alpha/multi
++++ b/recipes-alpha/multi
+@@ -10,7 +10,7 @@ partman-auto/text/multi_scheme ::
+ 	filesystem{ ext2 }
+ 	mountpoint{ /boot } .
+ 
+-2000 3500 25000 $default_filesystem
++8000 10000 50000 $default_filesystem
+ 	method{ format }
+ 	format{ }
+ 	use_filesystem{ }
+diff --git a/recipes-armel-kirkwood/multi b/recipes-armel-kirkwood/multi
+index 690676a3..bcdea3fa 100644
+--- a/recipes-armel-kirkwood/multi
++++ b/recipes-armel-kirkwood/multi
+@@ -9,7 +9,7 @@ partman-auto/text/multi_scheme ::
+ 	filesystem{ ext2 }
+ 	mountpoint{ /boot } .
+ 
+-2000 3500 25000 $default_filesystem
++8000 10000 50000 $default_filesystem
+ 	$lvmok{ }
+ 	$primary{ }
+ 	method{ format }
+diff --git a/recipes-armel-orion5x/multi b/recipes-armel-orion5x/multi
+index 690676a3..bcdea3fa 100644
+--- a/recipes-armel-orion5x/multi
++++ b/recipes-armel-orion5x/multi
+@@ -9,7 +9,7 @@ partman-auto/text/multi_scheme ::
+ 	filesystem{ ext2 }
+ 	mountpoint{ /boot } .
+ 
+-2000 3500 25000 $default_filesystem
++8000 10000 50000 $default_filesystem
+ 	$lvmok{ }
+ 	$primary{ }
+ 	method{ format }
+diff --git a/recipes-armhf-efikasb/multi b/recipes-armhf-efikasb/multi
+index 690676a3..bcdea3fa 100644
+--- a/recipes-armhf-efikasb/multi
++++ b/recipes-armhf-efikasb/multi
+@@ -9,7 +9,7 @@ partman-auto/text/multi_scheme ::
+ 	filesystem{ ext2 }
+ 	mountpoint{ /boot } .
+ 
+-2000 3500 25000 $default_filesystem
++8000 10000 50000 $default_filesystem
+ 	$lvmok{ }
+ 	$primary{ }
+ 	method{ format }
+diff --git a/recipes-hppa/multi b/recipes-hppa/multi
+index c984ae28..eabbfbb4 100644
+--- a/recipes-hppa/multi
++++ b/recipes-hppa/multi
+@@ -12,7 +12,7 @@ partman-auto/text/multi_scheme ::
+ 	filesystem{ ext4 }
+ 	mountpoint{ /boot } .
+ 
+-2000 3500 25000 $default_filesystem
++8000 10000 50000 $default_filesystem
+ 	$lvmok{ }
+ 	$bootable{ }
+ 	method{ format }
+diff --git a/recipes-mipsel-loongson-2f/multi b/recipes-mipsel-loongson-2f/multi
+index cf0e860a..0eab6089 100644
+--- a/recipes-mipsel-loongson-2f/multi
++++ b/recipes-mipsel-loongson-2f/multi
+@@ -9,7 +9,7 @@ partman-auto/text/multi_scheme ::
+ 	filesystem{ ext2 }
+ 	mountpoint{ /boot } .
+ 
+-2000 3500 25000 $default_filesystem
++8000 10000 50000 $default_filesystem
+ 	$lvmok{ }
+ 	method{ format }
+ 	format{ }
+diff --git a/recipes-powerpc-apus/multi b/recipes-powerpc-apus/multi
+index 1ac8e5d9..5dd492ce 100644
+--- a/recipes-powerpc-apus/multi
++++ b/recipes-powerpc-apus/multi
+@@ -14,7 +14,7 @@ partman-auto/text/multi_scheme ::
+ 	filesystem{ ext2 }
+ 	mountpoint{ /boot } .
+ 
+-2000 3500 25000 $default_filesystem
++8000 10000 50000 $default_filesystem
+ 	$lvmok{ }
+ 	$primary{ }
+ 	method{ format }
+diff --git a/recipes-powerpc-chrp_ibm/multi b/recipes-powerpc-chrp_ibm/multi
+index f42943e8..341d40fc 100644
+--- a/recipes-powerpc-chrp_ibm/multi
++++ b/recipes-powerpc-chrp_ibm/multi
+@@ -14,7 +14,7 @@ partman-auto/text/multi_scheme ::
+ 	filesystem{ ext2 }
+ 	mountpoint{ /boot } .
+ 
+-2000 3500 25000 $default_filesystem
++8000 10000 50000 $default_filesystem
+ 	$lvmok{ }
+ 	$primary{ }
+ 	method{ format }
+diff --git a/recipes-powerpc-chrp_pegasos/multi b/recipes-powerpc-chrp_pegasos/multi
+index d8effcff..b947d8d6 100644
+--- a/recipes-powerpc-chrp_pegasos/multi
++++ b/recipes-powerpc-chrp_pegasos/multi
+@@ -7,7 +7,7 @@ partman-auto/text/multi_scheme ::
+ 	filesystem{ ext2 }
+ 	mountpoint{ /boot } .
+ 
+-2000 3500 25000 $default_filesystem
++8000 10000 50000 $default_filesystem
+ 	$lvmok{ }
+ 	method{ format }
+ 	format{ }
+diff --git a/recipes-powerpc-powermac_newworld/multi b/recipes-powerpc-powermac_newworld/multi
+index 1d3b421b..c213840b 100644
+--- a/recipes-powerpc-powermac_newworld/multi
++++ b/recipes-powerpc-powermac_newworld/multi
+@@ -7,7 +7,7 @@ partman-auto/text/multi_scheme ::
+ 	filesystem{ hfs }
+ 	mountpoint{ /boot/grub } .
+ 
+-2000 3500 25000 $default_filesystem
++8000 10000 50000 $default_filesystem
+ 	$lvmok{ }
+ 	method{ format }
+ 	format{ }
+diff --git a/recipes-powerpc-powermac_oldworld/multi b/recipes-powerpc-powermac_oldworld/multi
+index d8effcff..b947d8d6 100644
+--- a/recipes-powerpc-powermac_oldworld/multi
++++ b/recipes-powerpc-powermac_oldworld/multi
+@@ -7,7 +7,7 @@ partman-auto/text/multi_scheme ::
+ 	filesystem{ ext2 }
+ 	mountpoint{ /boot } .
+ 
+-2000 3500 25000 $default_filesystem
++8000 10000 50000 $default_filesystem
+ 	$lvmok{ }
+ 	method{ format }
+ 	format{ }
+diff --git a/recipes-powerpc-prep/multi b/recipes-powerpc-prep/multi
+index f206800c..43c4774a 100644
+--- a/recipes-powerpc-prep/multi
++++ b/recipes-powerpc-prep/multi
+@@ -5,7 +5,7 @@ partman-auto/text/multi_scheme ::
+ 	$bootable{ }
+ 	method{ prep } .
+ 
+-2000 3500 25000 $default_filesystem
++8000 10000 50000 $default_filesystem
+ 	$lvmok{ }
+ 	$primary{ }
+ 	method{ format }
+diff --git a/recipes-sparc/multi b/recipes-sparc/multi
+index ed9aec7e..4b950102 100644
+--- a/recipes-sparc/multi
++++ b/recipes-sparc/multi
+@@ -14,7 +14,7 @@ partman-auto/text/multi_scheme ::
+ 	filesystem{ ext2 }
+ 	mountpoint{ /boot } .
+ 
+-2000 3500 25000 $default_filesystem
++8000 10000 50000 $default_filesystem
+ 	$lvmok{ }
+ 	method{ format }
+ 	format{ }
