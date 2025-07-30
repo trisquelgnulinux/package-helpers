@@ -24,9 +24,6 @@ BACKPORT=true
 
 . ./config
 
-# Set version available at aramo/jammy
-sed -i '/python3-requests/s|2.28|2.25|' debian/control
-
 changelog "Backported from official PPA for videomass"
 
 package
