@@ -18,7 +18,7 @@
 #
 #STAGE-5-DESKTOP|ARTWORK
 
-VERSION=13
+VERSION=13.1
 
 . ./config
 
@@ -210,6 +210,7 @@ cp $DATA/start.svgz desktop/theme/desktoptheme/triskel/icons/start.svgz
 cp $DATA/fullscreenpreview.jpg $DATA/preview.png desktop/theme/look-and-feel/org.triskel.desktop/contents/previews/
 sed -i "s|TriskelLight|$CURRENT_RELEASE|" desktop/sddm/themes/triskel/theme.conf
 sed -i "/background/s|.png|$SUFFIX_ARTWORK|" desktop/sddm/themes/triskel/theme.conf
+sed -i "/trisquel.info/s|feature-tour/|wiki/$CODENAME|" desktop/plasma/plasma-welcome-extra-pages/01-Kubuntu.qml
 
 # Use regular task manager instead of icon-only version
 sed 's/plasma.icontasks/plasma.taskmanager/' -i desktop/theme/layout-templates/org.triskel.desktop.defaultPanel/contents/layout.js
