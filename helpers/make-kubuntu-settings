@@ -18,7 +18,7 @@
 #
 #STAGE-5-DESKTOP|ARTWORK
 
-VERSION=12.1
+VERSION=13
 
 . ./config
 
@@ -28,9 +28,11 @@ SUFFIX_ARTWORK=".jpg"
 
 # Rebrand logo
 rm desktop/usr-share/kubuntu-circle-128.png
+rm desktop/usr-share/kubuntu*.svg
 cp $DATA/TrisquelLogo.png desktop/usr-share/
 cp $DATA/TrisquelLogo.png desktop/kubuntu-logo.png
 cp $DATA/face.icon desktop/sddm/themes/kubuntu/faces/.face.icon
+cp $DATA/usr-share/* desktop/usr-share/
 sed 's/kubuntu-circle-128\.png/TrisquelLogo\.png/' -i $(find -name 'kcm-about-distrorc')
 
 sed '/plymouth-theme-kubuntu-logo/,$d; /ttf-ubuntu/d' -i debian/control
@@ -211,6 +213,9 @@ sed -i "/background/s|.png|$SUFFIX_ARTWORK|" desktop/sddm/themes/triskel/theme.c
 
 # Use regular task manager instead of icon-only version
 sed 's/plasma.icontasks/plasma.taskmanager/' -i desktop/theme/layout-templates/org.triskel.desktop.defaultPanel/contents/layout.js
+
+# Apply patches
+apply_patch_changes
 
 changelog "Adapted for Triskel"
 

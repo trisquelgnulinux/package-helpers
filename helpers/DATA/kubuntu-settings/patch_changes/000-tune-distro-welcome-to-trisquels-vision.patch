@@ -1,0 +1,41 @@
+diff --git a/desktop/plasma/plasma-welcome-extra-pages/01-Kubuntu.qml b/desktop/plasma/plasma-welcome-extra-pages/01-Kubuntu.qml_
+index ecb6354a..fcede269 100644
+--- a/desktop/plasma/plasma-welcome-extra-pages/01-Kubuntu.qml
++++ b/desktop/plasma/plasma-welcome-extra-pages/01-Kubuntu.qml_
+@@ -1,6 +1,7 @@
+ /*
+  *  SPDX-FileCopyrightText: 2021 Felipe Kinoshita <kinofhek@gmail.com>
+  *  SPDX-FileCopyrightText: 2022 Nate Graham <nate@kde.org>
++ *  SPDX-FileCopyrightText: 2025 Luis Guzmán <ark@switnet.org>
+  *
+  *  SPDX-License-Identifier: GPL-2.0-only OR GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
+  */
+@@ -17,22 +18,21 @@ import org.kde.plasma.welcome 1.0
+ GenericPage {
+     heading: i18nc("@info:window", "Welcome to Triskel | Friendly Computing")
+     description: i18nc("@info:usagetip",
+-    '<p>You are using the Triskel® Linux distribution, an official Ubuntu® flavor.
+-      It is used by millions around the world who value:</p>
++    '<p>You are using the Triskel GNU/Linux distribution, an official Trisquel flavor.
++      It is used by users around the world who value:</p>
+ 
+     <ul>
+       <li>The beautiful and intuitive KDE Plasma desktop and KDE apps</li>
+-      <li>The breadth and compatibility of the full Ubuntu
+-      archive</li>
++      <li>The breadth and compatibility of the full Trisquel archive</li>
+       <li>Frequent security updates</li>
+       <li>Current, reliable core apps for productivity, office, email,
+       graphics, and music</li>
+-      <li>The availability of Triskel-optimized hardware and commercial support</li>
++      <li>Software Freedom along with the availability of Trisquel-community support</li>
+     </ul>
+ 
+-    <p>Triskel is free software developed by members of the global Ubuntu®
++    <p>Triskel is free software developed by members of the global
+     community. Please donate today to support its continued development. All
+-    proceeds fund the Triskel Developer Team!</p>
++    proceeds fund the continuity of the Trisquel's developement!</p>
+     ');
+ 
+     RowLayout {
