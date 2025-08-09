@@ -25,7 +25,7 @@
 # Also, don't forget to update the meta-release files at archive and packages.t.i
 # The "obsoletes" list from ubuntu has been removed
 
-VERSION=16.2
+VERSION=16.4
 
 . ./config
 # Previous upstream release name, update for each release.
@@ -369,6 +369,9 @@ URI_LTS = https://archive.trisquel.org/trisquel/meta-release
 URI_UNSTABLE_POSTFIX = -development
 URI_PROPOSED_POSTFIX = -proposed
 MR-FILE
+
+# Apply custom patches for Trisquel
+apply_patch_changes
 
 # Modify build-scripts
 sed -i "s|DIST=.*|DIST=$CODENAME|" DistUpgrade/build-dist.sh

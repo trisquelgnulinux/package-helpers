@@ -1,0 +1,82 @@
+diff --git a/DistUpgrade/DistUpgradeQuirks.py b/DistUpgrade/DistUpgradeQuirks.py
+index 9423f091..c20e3079 100644
+--- a/DistUpgrade/DistUpgradeQuirks.py
++++ b/DistUpgrade/DistUpgradeQuirks.py
+@@ -190,6 +190,7 @@ class DistUpgradeQuirks(object):
+         """ run right before calculating the dist-upgrade """
+         logging.debug("running Quirks.PreDistUpgradeCache")
+         # self._install_python_is_python2()
++        self._protect_essential_gui()
+         self._maybe_remove_gpg_wks_server()
+         self._install_t64_replacement_packages()
+         self._install_pipewire_audio_on_ubuntu_studio()
+@@ -204,6 +205,69 @@ class DistUpgradeQuirks(object):
+         self._disable_cloud_init()
+ 
+     # helpers
++    def _is_lxde_system(self):
++        """Return True if LXDE (trisquel-mini) is detected as installed."""
++        cache = self.controller.cache
++        for name in ("lxsession", "lxpanel", "lxde-core", "trisquel-mini"):
++            try:
++                if name in cache and getattr(cache[name], "is_installed", False):
++                    return True
++            except Exception:
++                pass
++        return False
++
++    def _protect_essential_gui(self):
++        """
++        Prevent the solver from removing essential GUI session packages
++        (LightDM/LXDE). Only acts on packages that are already present.
++        """
++        # Skip on non-LXDE systems to avoid touching other desktops (KDE/Xfce, etc.)
++        if not self._is_lxde_system():
++            logging.debug("protect_essential_gui: not an LXDE system, skipping")
++            return
++
++        essential = {
++            "lightdm",
++            "lightdm-gtk-greeter",
++            "lxsession",
++            "lxpanel",
++            "lxsession-logout",
++        }
++        cache = self.controller.cache
++        resolver = apt.ProblemResolver(self.controller.cache)
++        logging.info("protect_essential_gui: conservative protection enabled")
++
++        for name in essential:
++            if name not in cache:
++                # Not in cache (e.g. different desktop), do nothing.
++                continue
++            pkg = cache[name]
++            # Keep package from being considered auto-removable in the future
++            try:
++                if hasattr(pkg, "mark_auto"):
++                    pkg.mark_auto(auto=False)
++            except Exception:
++                logging.debug("protect_essential_gui: mark_auto(False) failed for %s", name)
++            # If installed, mark as user-requested and protect in the solver
++            try:
++                if getattr(pkg, "is_installed", False):
++                    pkg.mark_install(from_user=True, auto_fix=True)
++                    try:
++                        resolver.protect(pkg)
++                    except Exception:
++                        logging.debug("protect_essential_gui: protect() failed for %s", name)
++            except Exception:
++                logging.debug("protect_essential_gui: keep/install failed for %s", name)
++
++        # Diagnostics: warn if APT still plans to remove any essential package
++        try:
++            to_remove = {p.name for p in cache.get_changes() if getattr(p, "marked_delete", False)}
++            bad = sorted(essential & to_remove)
++            if bad:
++                logging.warning("APT still wants to remove essential GUI packages: %s", ", ".join(bad))
++        except Exception:
++            pass
++
+     def _get_pci_ids(self):
+         """ return a set of pci ids of the system (using lspci -n) """
+         lspci = set()
