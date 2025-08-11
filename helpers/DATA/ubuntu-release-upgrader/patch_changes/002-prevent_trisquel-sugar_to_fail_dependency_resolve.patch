@@ -1,0 +1,50 @@
+diff --git a/DistUpgrade/DistUpgradeQuirks.py b/DistUpgrade/DistUpgradeQuirks.py
+index f7427ac2..51f85b32 100644
+--- a/DistUpgrade/DistUpgradeQuirks.py
++++ b/DistUpgrade/DistUpgradeQuirks.py
+@@ -190,6 +190,7 @@ class DistUpgradeQuirks(object):
+         """ run right before calculating the dist-upgrade """
+         logging.debug("running Quirks.PreDistUpgradeCache")
+         # self._install_python_is_python2()
++        self._t64_transition_helper()
+         self._protect_essential_gui()
+         self._maybe_remove_gpg_wks_server()
+         self._install_t64_replacement_packages()
+@@ -205,6 +206,37 @@ class DistUpgradeQuirks(object):
+         self._disable_cloud_init()
+ 
+     # helpers
++    def _t64_transition_helper(self):
++        """
++        Provides a minimal t64 transition focused on GLib and Qt5Core.
++        Marks the t64 variants for installation if the older packages are
++        installed. Idempotent and conservative for initial testing.
++        """
++        cache = self.controller.cache
++        log = logging.getLogger("DistUpgrade")
++
++        # Run only if at least one of the target t64 packages is in the cache.
++        if "libglib2.0-0t64" not in cache and "libqt5core5t64" not in cache:
++            log.debug("t64-helper: no target t64 packages in cache; skipping")
++            return
++
++        pairs = [
++            ("libglib2.0-0", "libglib2.0-0t64"),
++            ("libqt5core5a", "libqt5core5t64"),
++        ]
++
++        touched = []
++        for old, new in pairs:
++            try:
++                if old in cache and cache[old].is_installed and new in cache:
++                    cache[new].mark_install(True, True, False)
++                    touched.append(f"{old}->{new}")
++            except Exception as e:
++                log.warning("t64-helper: error marking %s->%s: %s", old, new, e)
++
++        if touched:
++            log.info("t64-helper: touched=%s", ", ".join(touched))
++
+     def _is_lxde_system(self):
+         """Return True if LXDE (trisquel-mini) is detected as installed."""
+         cache = self.controller.cache

@@ -1,0 +1,102 @@
+diff --git a/DistUpgrade/DistUpgradeQuirks.py b/DistUpgrade/DistUpgradeQuirks.py
+index 243efc14..a63db6bb 100644
+--- a/DistUpgrade/DistUpgradeQuirks.py
++++ b/DistUpgrade/DistUpgradeQuirks.py
+@@ -196,6 +196,8 @@ class DistUpgradeQuirks(object):
+         self._install_t64_replacement_packages()
+         self._install_pipewire_audio_on_ubuntu_studio()
+         self._handle_ufw_breaks()
++        cache = self._get_cache()
++        self._prefer_ecne_suffix(cache)
+ 
+     # individual quirks handler that run *after* the dist-upgrade was
+     # calculated in the cache
+@@ -206,6 +208,88 @@ class DistUpgradeQuirks(object):
+         self._disable_cloud_init()
+ 
+     # helpers
++    def _get_cache(self):
++        """
++        Return the active apt cache used by the upgrader, regardless of how
++        this DistUpgradeQuirks instance was wired in this fork.
++        """
++        for attr in ("cache", "_cache", "apt_cache"):
++            c = getattr(self, attr, None)
++            if c is not None:
++                return c
++        ctrl = getattr(self, "controller", None) or getattr(self, "_controller", None)
++        if ctrl:
++            for attr in ("cache", "_cache"):
++                c = getattr(ctrl, attr, None)
++                if c is not None:
++                    return c
++        return None
++
++    def _prefer_ecne_suffix(self, cache):
++        """
++        Force candidate versions to Ecne-style (e.g. '101trisquel1') when the
++        installed version uses the older '+11.0trisquel' scheme. This avoids
++        holding back old packages and enables the intended transition/downgrade.
++        """
++        import logging
++        import apt_pkg
++
++        if cache is None or not hasattr(cache, "_depcache"):
++            logging.debug("prefer-ecne-suffix: cache not available, skipping")
++            return
++
++        changed = 0
++        depcache = cache._depcache
++
++        for pkg in cache:
++            # Only act on installed packages with the old '+11.0trisquel' suffix
++            if not getattr(pkg, "is_installed", False):
++                continue
++            inst = pkg.installed
++            if not inst:
++                continue
++            inst_ver = getattr(inst, "version", "")
++            if "+11.0trisquel" not in inst_ver:
++                continue
++
++            # Find a target version that is trisquel*-style but NOT '+11.0trisquel'
++            target = None
++            for ver in pkg.versions:
++                vstr = getattr(ver, "version", "")
++                if "+11.0trisquel" in vstr:
++                    continue
++                if "trisquel" in vstr:
++                    target = ver
++                    break
++            if not target:
++                continue
++
++            # Resolve the underlying apt_pkg.Version so we can set it as candidate
++            aptpkg_pkg = pkg._pkg
++            aptpkg_ver = None
++            for v in aptpkg_pkg.version_list:
++                if v.ver_str == target.version:
++                    aptpkg_ver = v
++                    break
++            if aptpkg_ver is None:
++                continue
++
++            # Force candidate and request an upgrade/install to pull it in
++            depcache.set_candidate_ver(aptpkg_pkg, aptpkg_ver)
++            try:
++                pkg.mark_upgrade()
++            except Exception:
++                try:
++                    pkg.mark_install()
++                except Exception:
++                    continue
++            changed += 1
++
++        if changed:
++            logging.info("prefer-ecne-suffix: changed packages=%d", changed)
++        else:
++            logging.debug("prefer-ecne-suffix: no candidates changed")
++
+     def _t64_transition_helper(self):
+         """
+         Provides a minimal t64 transition focused on GLib and Qt5Core.
