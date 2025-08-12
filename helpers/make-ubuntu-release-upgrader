@@ -25,7 +25,7 @@
 # Also, don't forget to update the meta-release files at archive and packages.t.i
 # The "obsoletes" list from ubuntu has been removed
 
-VERSION=16.5
+VERSION=16.7
 
 . ./config
 # Previous upstream release name, update for each release.
@@ -370,7 +370,8 @@ URI_UNSTABLE_POSTFIX = -development
 URI_PROPOSED_POSTFIX = -proposed
 MR-FILE
 
-# Apply custom patches for Trisquel
+# Apply custom patches for Trisquel 12, Ecne
+# make sure to remove helpers no longer valid for further releases.
 apply_patch_changes
 
 # Modify build-scripts

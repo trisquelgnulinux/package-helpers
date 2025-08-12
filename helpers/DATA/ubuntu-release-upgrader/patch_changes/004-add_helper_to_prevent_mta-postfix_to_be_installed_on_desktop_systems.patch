@@ -1,0 +1,246 @@
+diff --git a/DistUpgrade/DistUpgradeQuirks.py b/DistUpgrade/DistUpgradeQuirks.py
+index a63db6bb..c91dff31 100644
+--- a/DistUpgrade/DistUpgradeQuirks.py
++++ b/DistUpgrade/DistUpgradeQuirks.py
+@@ -27,6 +27,7 @@ import logging
+ import os
+ import pwd
+ import re
++import errno
+ import hashlib
+ import subprocess
+ import pathlib
+@@ -113,7 +113,10 @@ class DistUpgradeQuirks(object):
+     def PreCacheOpen(self):
+         """ run before the apt cache is opened the first time """
+         logging.debug("running Quirks.PreCacheOpen")
+-        self._add_apport_ignore_list()
++        if hasattr(self, "_add_apport_ignore_list"):
++            self._add_apport_ignore_list()
++        self._wks_write_pin_if_desktop()
++        self._mta_write_pin_if_desktop()
+ 
+     # individual quirks handler that run *after* the cache is opened
+     def ecnePostInitialUpdate(self):
+@@ -148,6 +151,8 @@ class DistUpgradeQuirks(object):
+             self._calculateSnapSizeRequirements()
+ 
+     def ecnePostUpgrade(self):
++        self._wks_remove_pin()
++        self._mta_remove_pin()
+         logging.debug("running Quirks.ecnePostUpgrade")
+         cache = self.controller.cache
+         if 'snapd' not in cache:
+@@ -173,7 +176,8 @@ class DistUpgradeQuirks(object):
+     def PostCleanup(self):
+         " run after cleanup "
+         logging.debug("running Quirks.PostCleanup")
+-        self._remove_apport_ignore_list()
++        if hasattr(self, "_remove_apport_ignore_list"):
++            self._remove_apport_ignore_list()
+ 
+     # run right before the first packages get installed
+     def StartUpgrade(self):
+@@ -186,13 +191,24 @@ class DistUpgradeQuirks(object):
+ 
+     # individual quirks handler that run *right before* the dist-upgrade
+     # is calculated in the cache
++    # --- WKS hard-block config ---
++    WKS_BLOCK_PREF = "/etc/apt/preferences.d/zz-urug-block-wks.pref"
++    WKS_PACKAGES   = ("gpg-wks-server", "gnupg-wks-server")
++    DESKTOP_METAS  = ("trisquel", "trisquel-mini", "trisquel-sugar",
++                      "trisquel-gnome", "triskel", "trisquel-desktop-common")
++
++    # --- MTA hard-block config (postfix only, temporary during upgrade) ---
++    MTA_BLOCK_PREF = "/etc/apt/preferences.d/zz-urug-block-mta-postfix.pref"
++
+     def PreDistUpgradeCache(self):
+         """ run right before calculating the dist-upgrade """
+         logging.debug("running Quirks.PreDistUpgradeCache")
+         # self._install_python_is_python2()
++        self._wks_purge_from_cache()
++        self._mta_cancel_selection()
+         self._t64_transition_helper()
+         self._protect_essential_gui()
+-        self._maybe_remove_gpg_wks_server()
++        # self._maybe_remove_gpg_wks_server()
+         self._install_t64_replacement_packages()
+         self._install_pipewire_audio_on_ubuntu_studio()
+         self._handle_ufw_breaks()
+@@ -206,8 +222,176 @@ class DistUpgradeQuirks(object):
+         logging.debug("running Quirks.PostDistUpgradeCache")
+         self._install_linux_metapackage()
+         self._disable_cloud_init()
++        self._wks_purge_from_cache()
+ 
+     # helpers
++    def _dpkg_has(self, pkgname):
++        """
++        Checks /var/lib/dpkg/status to see if 'pkgname' is installed.
++        Does not depend on apt.Cache(), useful in PreCacheOpen.
++        """
++        try:
++            with open("/var/lib/dpkg/status", "r", encoding="utf-8", errors="ignore") as f:
++                name = None
++                installed = False
++                for line in f:
++                    if line.startswith("Package: "):
++                        # New block
++                        if name == pkgname and installed:
++                            return True
++                        name = line.split(":", 1)[1].strip()
++                        installed = False
++                    elif line.startswith("Status: ") and " installed" in line:
++                        if name:
++                            installed = True
++                # Last block
++                return (name == pkgname and installed)
++        except FileNotFoundError:
++            return False
++
++    def _is_desktop_system(self):
++        """
++        Detects 'desktop' by already installed Trisquel metapackages,
++        without opening apt.Cache().
++        """
++        for meta in self.DESKTOP_METAS:
++            if self._dpkg_has(meta):
++                return True
++        return False
++
++    def _wks_write_pin_if_desktop(self):
++        """
++        If it's a desktop, write an APT pin that prevents installing/upgrading
++        gpg-wks-server/gnupg-wks-server during the upgrade.
++        """
++        if not self._is_desktop_system():
++            logging.debug("wks-pin: no-desktop detected, skipping pin write")
++            return
++        try:
++            os.makedirs(os.path.dirname(self.WKS_BLOCK_PREF), exist_ok=True)
++            content = (
++                "# Block WKS only during release-upgrade to avoid MTA pull-in\n"
++                "Package: gpg-wks-server\n"
++                "Pin: version *\n"
++                "Pin-Priority: -1000\n\n"
++                "Package: gnupg-wks-server\n"
++                "Pin: version *\n"
++                "Pin-Priority: -1000\n"
++            )
++            with open(self.WKS_BLOCK_PREF, "w", encoding="utf-8") as f:
++                f.write(content)
++            logging.info("wks-pin: wrote %s", self.WKS_BLOCK_PREF)
++        except Exception as e:
++            logging.warning("wks-pin: failed to write pin: %s", e)
++
++    def _wks_remove_pin(self):
++        """ Remove the APT pin at the end of the process. """
++        try:
++            os.unlink(self.WKS_BLOCK_PREF)
++            logging.info("wks-pin: removed %s", self.WKS_BLOCK_PREF)
++        except FileNotFoundError:
++            pass
++        except Exception as e:
++            logging.warning("wks-pin: failed to remove pin: %s", e)
++
++    def _wks_purge_from_cache(self):
++        """
++        Ensures that WKS packages are neither installed nor marked
++        for installation/update in the resolver cache.
++        """
++        cache = self._get_cache()
++        if cache is None:
++            logging.debug("wks-purge: no cache available; skipping")
++            return
++
++        removed = []
++        kept = []
++        for name in self.WKS_PACKAGES:
++            if name not in cache:
++                continue
++            try:
++                pkg = cache[name]
++                if getattr(pkg, "is_installed", False):
++                    logging.info("wks-purge: removing %s", name)
++                    pkg.mark_delete(purge=True)
++                    removed.append(name)
++                elif getattr(pkg, "marked_install", False) or getattr(pkg, "marked_upgrade", False):
++                    logging.info("wks-purge: unmark %s (keep)", name)
++                    pkg.mark_keep()
++                    kept.append(name)
++            except Exception as e:
++                logging.debug("wks-purge: failed processing %s: %s", name, e)
++
++        if removed:
++            logging.info("wks-purge: marked for removal: %s", ", ".join(sorted(set(removed))))
++        if kept:
++            logging.info("wks-purge: kept (unmarked): %s", ", ".join(sorted(set(kept))))
++
++    def _mta_write_pin_if_desktop(self):
++        """
++        If this is a desktop system and *postfix* is not already installed,
++        write a temporary APT pin to block postfix from being pulled in
++        (e.g. via WKS or virtual default-mta) during the release-upgrade.
++        Removed at the end of the upgrade.
++        """
++        try:
++            if not self._is_desktop_system():
++                return
++            if self._dpkg_has("postfix"):
++                return
++            os.makedirs(os.path.dirname(self.MTA_BLOCK_PREF), exist_ok=True)
++            content = (
++                "# Block postfix only during release-upgrade to avoid unwanted MTA install\n"
++                "Package: postfix\n"
++                "Pin: version *\n"
++                "Pin-Priority: -1000\n"
++            )
++            with open(self.MTA_BLOCK_PREF, "w", encoding="utf-8") as f:
++                f.write(content)
++            logging.info("mta-pin: wrote %s", self.MTA_BLOCK_PREF)
++        except Exception as e:
++            logging.warning("mta-pin: failed to write pin: %s", e)
++
++    def _mta_remove_pin(self):
++        "Remove the temporary postfix APT pin created for the upgrade."
++        try:
++            os.unlink(self.MTA_BLOCK_PREF)
++            logging.info("mta-pin: removed %s", self.MTA_BLOCK_PREF)
++        except FileNotFoundError:
++            pass
++        except Exception as e:
++            logging.warning("mta-pin: failed to remove pin: %s", e)
++
++    def _mta_cancel_selection(self):
++        """
++        Safety net: if postfix somehow ended up selected for install/upgrade
++        in the resolver cache, cancel that selection (keep state).
++        """
++        cache = self._get_cache()
++        if cache is None or "postfix" not in cache:
++            return
++        try:
++            pkg = cache["postfix"]
++            if getattr(pkg, "marked_install", False) or getattr(pkg, "marked_upgrade", False):
++                logging.info("mta-pin: unmark install/upgrade for postfix")
++                pkg.mark_keep()
++        except Exception as e:
++            logging.debug("mta-pin: unable to unmark postfix: %s", e)
++            for n in self.WKS_PACKAGES:
++                if n not in cache:
++                    continue
++                try:
++                    pkg = cache[n]
++                    if getattr(pkg, "is_installed", False):
++                        logging.info("wks-purge: removing %s", n)
++                        # mark_delete(purge=True) if you want to purge conffiles
++                        pkg.mark_delete()
++                    elif getattr(pkg, "marked_install", False) or getattr(pkg, "marked_upgrade", False):
++                        logging.info("wks-purge: unmark %s (keep)", n)
++                        pkg.mark_keep()
++                except Exception as e:
++                    logging.info("wks-purge: failed processing %s: %s", n, e)
++
+     def _get_cache(self):
+         """
+         Return the active apt cache used by the upgrader, regardless of how
