@@ -1,0 +1,14 @@
+diff --git a/bin/ubiquity b/bin/ubiquity
+index e3f07a0c..5254f1f7 100755
+--- a/bin/ubiquity
++++ b/bin/ubiquity
+@@ -22,6 +22,9 @@ import locale
+ from operator import attrgetter
+ import optparse
+ import os
++# Force software GL for the installer; overridable by environment. (TPH!1804)
++if 'LIBGL_ALWAYS_SOFTWARE' not in os.environ:
++    os.environ['LIBGL_ALWAYS_SOFTWARE'] = '1'
+ import pwd
+ import shutil
+ import subprocess
