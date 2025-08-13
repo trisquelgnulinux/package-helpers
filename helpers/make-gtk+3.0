@@ -22,8 +22,9 @@ VERSION=1
 . ./config
 
 # TODO: Keep an eye on this final fix to match changes accordingly.
+# - 000-fix_tooltip_gtk+3.0_lxde.patch
 # https://gitlab.gnome.org/GNOME/gtk/-/merge_requests/8216
-patch_p1 $DATA/000-fix_tooltip_gtk+3.0_lxde.patch
+apply_patch_changes
 
 changelog "Apply fix for tooltip on lxde / trisquel-mini."
 
