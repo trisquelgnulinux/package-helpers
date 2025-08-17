@@ -1,0 +1,22 @@
+diff --git a/debian/control b/debian/control
+index e0f0285c..5cc1787e 100644
+--- a/debian/control
++++ b/debian/control
+@@ -22,7 +22,7 @@ Recommends: polkitd,
+             lxterminal | x-terminal-emulator,
+             notification-daemon,
+             xscreensaver
+-Suggests: firefox-esr | firefox | www-browser,
++Suggests: abrowser | icecat | www-browser,
+           lxde,
+           lxlauncher
+ Description: metapackage for the LXDE core
+@@ -59,7 +59,7 @@ Recommends: connman-gtk | network-manager-gnome | wicd,
+             smplayer | vlc | mplayer-gui, gnome-colors,
+             gnome-system-tools,
+             gucharmap,
+-            firefox-esr | firefox | www-browser,
++            abrowser | icecat | www-browser,
+             lightdm | x-display-manager,
+             lxmusic | audacious, lxpolkit,
+             parcellite | clipit | copyq, numlockx, usermode,
