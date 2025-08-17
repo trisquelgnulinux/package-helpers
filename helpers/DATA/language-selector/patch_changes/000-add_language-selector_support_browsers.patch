@@ -1,0 +1,24 @@
+Add icedove and abrowser, and other browsers to the supported language-selector apps.
+
+diff --git a/data/pkg_depends b/data/pkg_depends
+index 73d0d019..f38d68a6 100644
+--- a/data/pkg_depends
++++ b/data/pkg_depends
+@@ -11,13 +11,15 @@ tr::gvfs:language-pack-gnome-
+ # Format: %LCODE% or %LCODE%-%CCODE%
+ tr::libreoffice-common:libreoffice-l10n-
+ tr::libreoffice-common:libreoffice-help-
+-tr::thunderbird:thunderbird-locale-
++tr::icedove:icedove-locale-
++tr::abrowser:abrowser-locale-
++tr::icecat:icecat-locale-
+ tr::lightning-extension:lightning-extension-locale-
+ tr::sunbird:sunbird-locale-
+ tr::sword-text-gerlut1545:sword-language-pack-
+ tr::gimp:gimp-help-
+ tr::evolution:evolution-documentation-
+-tr::chromium-browser:chromium-browser-l10n
++tr::ungoogled-chromium:ungoogled-chromium-l10n
+ tr::sylpheed:sylpheed-i18n
+ tr::amarok:amarok-help-
+ tr::gnome-user-docs:gnome-user-docs-
