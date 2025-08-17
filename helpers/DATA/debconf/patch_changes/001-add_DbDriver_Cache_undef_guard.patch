@@ -1,0 +1,12 @@
+diff --git a/Debconf/DbDriver/Cache.pm b/Debconf/DbDriver/Cache.pm
+index 1b0e36fb..2e80d3bb 100644
+--- a/Debconf/DbDriver/Cache.pm
++++ b/Debconf/DbDriver/Cache.pm
+@@ -122,6 +122,7 @@ undef -- marked as deleted in the cache, so does not exist
+ sub exists {
+ 	my $this=shift;
+ 	my $item=shift;
++	return 0 unless defined $item && length $item;
+ 
+ 	return $this->{cache}->{$item}
+ 		if exists $this->{cache}->{$item};

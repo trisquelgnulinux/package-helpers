@@ -1,0 +1,12 @@
+diff --git a/Debconf/Template.pm b/Debconf/Template.pm
+index 9ab4833d..c3649929 100644
+--- a/Debconf/Template.pm
++++ b/Debconf/Template.pm
+@@ -140,6 +140,7 @@ Get an existing template (it may be pulled out of the database, etc).
+ sub get {
+ 	my Debconf::Template $this=shift;
+ 	my $template=shift;
++	return unless defined $template && length $template;
+ 	return $template{$template} if exists $template{$template};
+ 	if ($Debconf::Db::templates->exists($template)) {
+ 		$this = fields::new($this);
