@@ -1,0 +1,24 @@
+diff --git a/debian/postinst b/debian/postinst
+index 2f35032b..da97a4c7 100755
+--- a/debian/postinst
++++ b/debian/postinst
+@@ -158,8 +158,18 @@ fi
+ if db_get pkgsel/run_tasksel && [ "$RET" = true ]; then
+     log "starting tasksel"
+     db_progress INFO pkgsel/progress/tasksel
++    # Propagate installer-chosen locale to tasksel so tests/lang can auto-select l10n
++    db_get debian-installer/locale || true
++    LOCALE="$RET"
++    if [ -n "$LOCALE" ]; then
++        LANG="$LOCALE"
++        NOENC="${LOCALE%%.*}"
++        BASE="${NOENC%%_*}"
++        LANGUAGE="${NOENC}:${BASE}"
++        export LANG LANGUAGE
++    fi
+     apt-install tasksel  # ensure tasksel is installed
+-    DEBIAN_TASKS_ONLY=1 in-target sh -c "tasksel --new-install --debconf-apt-progress='--from $tasksel_start --to $tasksel_end --logstderr'" || aptfailed
++    DEBIAN_TASKS_ONLY=1 in-target sh -c "LANG='$LANG' LANGUAGE='$LANGUAGE' tasksel --new-install --debconf-apt-progress='--from $tasksel_start --to $tasksel_end --logstderr'" || aptfailed
+ fi
+ 
+ if db_get pkgsel/include/install-recommends; then
