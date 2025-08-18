@@ -10,8 +10,21 @@ UDESCDIR=trisquel-tasks
 DESCPO=$(DESCDIR)/po
 VERSION=$(shell expr "`dpkg-parsechangelog 2>/dev/null |grep Version:`" : '.*Version: \(.*\)' | cut -d - -f 1)
 LANGS=ar bg bn bs ca cs cy da de dz el eo es et eu fa fi fr gl gu he hi hr hu hy id it ja km ko lt lv mg mk nb ne nl nn pa pl pt_BR pt ro ru sk sl sq sv ta te th tl tr uk vi wo zh_CN zh_TW
-LANGS_DESC=ar bg bn bs ca cs cy da de dz el eo es et et eu fi fr gl gu he hi hr hu id it ja km ko lt lv mg mk nb ne nl nn pa pl pt_BR pt ro ru sk sl sq sv te th tl tr uk vi wo zh_CN zh_TW
+LANGS_DESC=ar bg bn bs ca cs cy da de dz el eo es et eu fi fr gl gu he hi hr hu id it ja km ko lt lv mg mk nb ne nl nn pa pl pt_BR pt ro ru sk sl sq sv te th tl tr uk vi wo zh_CN zh_TW
 LOCALEDIR=$(DESTDIR)/usr/share/locale
+
+# ---- L10N generation ----
+# l10n base
+L10N_PKGS = language-pack hunspell hyphen mythes
+# Desktops l10n
+L10N_PKGS += language-pack-gnome language-pack-kde
+# Apps l10n (condition in runtime)
+L10N_PKGS += abrowser-locale icedove-locale libreoffice-l10n
+GEN_LANG_STAMP = $(UDESCDIR)/.lang_generated
+
+$(GEN_LANG_STAMP): lang-gen.sh
+	./lang-gen.sh "$(LANGS_DESC)" "$(L10N_PKGS)" $(UDESCDIR)
+	touch $@
 
 all: $(UTASKDESC) po/build_stamp
 
@@ -22,8 +35,10 @@ $(TASKDESC): makedesc.pl $(DESCDIR)/[a-z]??*
 $(UDESCDIR): trisquel-seeds.pl
 USUITE=$CODENAME
 
-$(UTASKDESC): makedesc.pl $(UDESCDIR)/[a-z]??*
+$(UTASKDESC): $(GEN_LANG_STAMP) makedesc.pl $(UDESCDIR)/*
 	./makedesc.pl $(UDESCDIR) $(UTASKDESC)
+	# drop a blank first line if present to avoid parser warnings
+	sed -i '1{/^$$/d}' $(UTASKDESC)
 
 %.o: %.c
 	$(COMPILE) $<
@@ -56,10 +71,12 @@ install:
 	pod2man --section=8 --center "Debian specific manpage" --release $(VERSION) tasksel.pod | gzip -9c > $(DESTDIR)/usr/share/man/man8/tasksel.8.gz
 	for lang in $(LANGS); do \
 		[ ! -d $(LOCALEDIR)/$$lang/LC_MESSAGES/ ] && mkdir -p $(LOCALEDIR)/$$lang/LC_MESSAGES/; \
-		install -m 644 po/$$lang.mo $(LOCALEDIR)/$$lang/LC_MESSAGES/tasksel.mo; \
+		if [ -f po/$$lang.mo ]; then \
+			install -m 644 po/$$lang.mo $(LOCALEDIR)/$$lang/LC_MESSAGES/tasksel.mo; \
+		fi; \
 	done
 
-install-data:
+install-data: $(UTASKDESC)
 	install -d $(DESTDIR)$(TASKDIR)/descs \
 		$(DESTDIR)/usr/lib/tasksel/info \
 		$(DESTDIR)/usr/lib/tasksel/tests
@@ -77,15 +94,9 @@ install-data:
 		[ "$$package" = "packages/list" ] && continue; \
 		install -m 755 $$package $(DESTDIR)/usr/lib/tasksel/packages/; \
 	done
-#Dropped
-#	for lang in $(LANGS_DESC); do \
-#		[ ! -d $(LOCALEDIR)/$$lang/LC_MESSAGES/ ] && mkdir -p $(LOCALEDIR)/$$lang/LC_MESSAGES/; \
-#		install -m 644 $(DESCDIR)/po/$$lang.mo $(LOCALEDIR)/$$lang/LC_MESSAGES/$(DOMAIN).mo; \
-#	done
 
 clean:
 	rm -f $(TASKDESC) $(UTASKDESC) *~
 	rm -rf debian/external-overrides
 	$(MAKE) -C po clean
 	$(MAKE) -C $(DESCPO) clean
-

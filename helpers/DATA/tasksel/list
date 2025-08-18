@@ -1,0 +1,57 @@
+#!/bin/sh
+# $1 = task name, $2..$N = packages (from "Packages: list")
+# Runtime policy:
+#  - language-pack-gnome-* > MATE/GNOME/LXDE
+#  - language-pack-kde-*   > KDE (Triskel)
+#  - abrowser-/firefox-locale-* > all desktops (MATE/GNOME/LXDE/KDE), not console
+#  - libreoffice-l10n-*, icedove-locale-* > MATE/GNOME/KDE; not LXDE/console
+#  - skip non-existent candidates (avoid APT 100)
+
+shift 1
+
+debconf_get() {
+  [ -x /usr/bin/debconf-communicate ] || return
+  printf 'GET %s\n' "$1" | /usr/bin/debconf-communicate 2>/dev/null \
+    | awk 'NR==1 && $1==0 { $1=""; sub(/^ /,""); print }'
+}
+
+has_pkg() { /usr/bin/dpkg-query -W -f='${Status}\n' "$1" 2>/dev/null | grep -q 'ok installed'; }
+exists()  { LC_ALL=C /usr/bin/apt-cache policy "$1" 2>/dev/null | awk '/Candidate:/ {print $2}' | grep -qxv '(none)'; }
+
+sel="$(debconf_get pkgsel/desktop) $(debconf_get tasksel/first)"
+case "$sel" in
+  *triskel*)          FLAVOR=kde   ;;
+  *trisquel-mini*)    FLAVOR=lxde  ;;
+  *trisquel-gnome*)   FLAVOR=gnome ;;
+  *trisquel-desktop*) FLAVOR=mate  ;;
+  *)                  FLAVOR=unknown ;;
+esac
+
+if [ "$FLAVOR" = unknown ]; then
+  if   has_pkg triskel || has_pkg plasma-desktop; then FLAVOR=kde
+  elif has_pkg trisquel-mini || has_pkg lxde-core;    then FLAVOR=lxde
+  elif has_pkg trisquel-gnome || has_pkg gnome-shell; then FLAVOR=gnome
+  elif has_pkg trisquel-desktop || has_pkg mate-desktop-environment; then FLAVOR=mate
+  else FLAVOR=console
+  fi
+fi
+
+is_kde=false; [ "$FLAVOR" = kde ] && is_kde=true
+is_gtk=false; echo "$FLAVOR" | grep -Eq '^(mate|gnome|lxde)$' && is_gtk=true
+is_console=false; [ "$FLAVOR" = console ] && is_console=true
+is_desktop=true; $is_console && is_desktop=false
+
+emit() {
+  p="$1"; [ -n "$p" ] || return
+  case "$p" in
+    language-pack-gnome-*) $is_gtk || return ;;
+    language-pack-kde-*)   $is_kde || return ;;
+    abrowser-l10n-*|abrowser-locale-*|firefox-locale-*)
+                           $is_desktop || return ;;
+    libreoffice-l10n-*)    echo "$FLAVOR" | grep -Eq '^(lxde|console)$' && return ;;
+    icedove-locale-*)      echo "$FLAVOR" | grep -Eq '^(lxde|console)$' && return ;;
+  esac
+  exists "$p" && printf '%s\n' "$p"
+}
+
+for p in "$@"; do emit "$p"; done
