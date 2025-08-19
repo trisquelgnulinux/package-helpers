@@ -18,9 +18,9 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
+VERSION=3.1 #TODO
 EXTERNAL='deb-src http://ftp.debian.org/debian trixie main'
-REPOKEY=0E98404D386FA1D9
+REPOKEY=78DBA3BC47EF2265
 NETINST=true
 . ./config
 
@@ -89,116 +89,7 @@ sed -i '/generators\/9[1-9]*/d' debian/apt-setup-udeb.install
 echo "generators/50mirror.trisquel usr/lib/apt-setup/generators
 release-files/archive.trisquel.org usr/share/apt-setup/release-files" > debian/apt-mirror-setup.install
 
-echo '#!/bin/sh
-set -e
-
-. /usr/share/debconf/confmodule
-
-file="$1"
-
-log() {
-	logger -t apt-setup "$@"
-}
-warning() {
-	log "warning: $@"
-}
-
-# Ask if a mirror should be used if the base system can be installed from CD
-if [ -e /cdrom/.disk/base_installable ] || [ "$OVERRIDE_BASE_INSTALLABLE" ]; then
-	if ! search-path choose-mirror; then
-		warning "choose-mirror is not available; cannot offer network mirror"
-		exit 1
-	fi
-
-	# Default to false if no network selected in netcfg
-	if db_get netcfg/dhcp_options && \
-	   [ "$RET" = "Do not configure the network at this time" ]; then
-		use_mirror=false
-	fi
-
-	# Set default if no value (see Debian mirror generator)
-	db_get apt-setup/use_mirror
-	[ "$RET" ] || db_set apt-setup/use_mirror true 
-
-	# Text is variable for Debian
-	db_metaget apt-mirror/use/netinst_old description
-	db_subst apt-setup/use_mirror EXPLANATION "$RET"
-
-	db_input medium apt-setup/use_mirror || [ $? -eq 30 ]
-	db_go # or exit 10
-
-	db_get apt-setup/use_mirror
-	if [ "$RET" = false ]; then
-		exit 1
-	fi
-
-	if db_get cdrom/codename && [ "$RET" ]; then
-		db_set mirror/codename $RET
-	fi
-	if db_get cdrom/suite && [ "$RET" ]; then
-		db_set mirror/suite $RET
-	fi
-	choose-mirror -n # no progress bar
-fi
-
-db_input low apt-setup/backports || true
-
-dists="main"
-
-db_get mirror/protocol
-protocol="$RET"
-db_get mirror/codename
-codename="$RET"
-db_get mirror/$protocol/hostname
-hostname="$RET"
-db_get mirror/$protocol/directory
-directory="/${RET#/}"
-
-if [ "$protocol" = http ]; then
-	db_get mirror/$protocol/proxy
-	proxy="$RET"
-	if [ -n "$proxy" ]; then
-		if ! grep -iq "Acquire::$protocol::Proxy" $ROOT/etc/apt/apt.conf.new; then
-			echo "Acquire::$protocol::Proxy \"$proxy\";" >> $ROOT/etc/apt/apt.conf.new
-		fi
-	fi
-fi
-
-
-cat > $file <<EOF
-# See http://trisquel.info/wiki/ for how to upgrade to
-# newer versions of the distribution.
-
-deb $protocol://$hostname$directory $codename $dists
-deb-src $protocol://$hostname$directory $codename $dists
-
-deb $protocol://$hostname$directory $codename-updates $dists
-deb-src $protocol://$hostname$directory $codename-updates $dists
-
-deb $protocol://$hostname$directory $codename-security $dists
-deb-src $protocol://$hostname$directory $codename-security $dists
-EOF
-
-# Even if the backports repository is not enabled, we write example lines for
-# it.
-echo >> $file
-if db_get apt-setup/backports && [ "$RET" = true ]; then
-	COMMENT=
-else
-	cat >> $file <<EOF
-EOF
-	COMMENT="# "
-fi
-cat >> $file <<EOF
-# Uncomment this lines to enable the backports optional repository
-${COMMENT}deb $protocol://$hostname$directory $codename-backports main
-${COMMENT}deb-src $protocol://$hostname$directory $codename-backports main
-EOF
-
-#apt-setup-signed-release archive.trisquel.org "$file"
-
-exit 0
-' > generators/50mirror.trisquel
+cp $DATA/50mirror.trisquel generators/
 
 #sed '/The partner/,/^*/d; s/services-select-ubuntu/services-select-trisquel/' -i debian/apt-setup-udeb.templates
 sed 's/services-select/services-select-trisquel/' -i debian/apt-setup-udeb.templates

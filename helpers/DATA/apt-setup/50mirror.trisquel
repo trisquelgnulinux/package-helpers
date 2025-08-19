@@ -1,0 +1,121 @@
+#!/bin/sh
+set -e
+
+. /usr/share/debconf/confmodule
+
+file="$1"
+
+log() {
+	logger -t apt-setup "$@"
+}
+warning() {
+	log "warning: $@"
+}
+
+# Ask if a mirror should be used if the base system can be installed from CD
+if [ -e /cdrom/.disk/base_installable ] || [ "$OVERRIDE_BASE_INSTALLABLE" ]; then
+	if ! search-path choose-mirror; then
+		warning "choose-mirror is not available; cannot offer network mirror"
+		exit 1
+	fi
+
+	# Default to false if no network selected in netcfg
+	if db_get netcfg/dhcp_options && \
+	   [ "$RET" = "Do not configure the network at this time" ]; then
+		use_mirror=false
+	fi
+
+	# Set default if no value (see Debian mirror generator)
+	db_get apt-setup/use_mirror
+	[ "$RET" ] || db_set apt-setup/use_mirror true
+
+	# Text is variable for Debian
+	db_metaget apt-mirror/use/netinst_old description
+	db_subst apt-setup/use_mirror EXPLANATION "$RET"
+
+	db_input medium apt-setup/use_mirror || [ $? -eq 30 ]
+	db_go # or exit 10
+
+	db_get apt-setup/use_mirror
+	if [ "$RET" = false ]; then
+		exit 1
+	fi
+
+	if db_get cdrom/codename && [ "$RET" ]; then
+		db_set mirror/codename $RET
+	fi
+	if db_get cdrom/suite && [ "$RET" ]; then
+		db_set mirror/suite $RET
+	fi
+	choose-mirror -n # no progress bar
+fi
+
+db_input low apt-setup/backports || true
+
+dists="main"
+
+db_get mirror/protocol
+protocol="$RET"
+db_get mirror/codename
+codename="$RET"
+db_get mirror/$protocol/hostname
+hostname="$RET"
+db_get mirror/$protocol/directory
+directory="/${RET#/}"
+
+if [ "$protocol" = http ]; then
+	db_get mirror/$protocol/proxy
+	proxy="$RET"
+	if [ -n "$proxy" ]; then
+		if ! grep -iq "Acquire::$protocol::Proxy" $ROOT/etc/apt/apt.conf.new; then
+			echo "Acquire::$protocol::Proxy \"$proxy\";" >> $ROOT/etc/apt/apt.conf.new
+		fi
+	fi
+fi
+
+# Trisquel: Deb822-first, keep legacy clean
+: "${ROOT:=/target}"
+SD="$ROOT/etc/apt/sources.list.d"
+SF="$SD/trisquel.sources"
+LEGACY="$ROOT/etc/apt/sources.list"
+MSG="# Trisquel sources have moved to /etc/apt/sources.list.d/trisquel.sources"
+mkdir -p "$SD"
+
+# Use keyring in /usr/share/keyrings
+SIGNED_BY="/usr/share/keyrings/trisquel-archive-keyring.gpg"
+
+# Canonical URI for Deb822 (trailing slash)
+uri="$protocol://$hostname$directory"
+case "$uri" in */) : ;; *) uri="$uri/";; esac
+
+# Write Deb822 sources file in the requested structure
+cat << EOF > "$SF"
+# Trisquel repositories for supported software and updates
+Types: deb
+URIs: ${uri}
+Suites: ${codename} ${codename}-updates ${codename}-security
+Components: main
+Signed-By: ${SIGNED_BY}
+
+# Source package repositories
+Types: deb-src
+URIs: ${uri}
+Suites: ${codename} ${codename}-updates ${codename}-security
+Components: main
+Signed-By: ${SIGNED_BY}
+
+# Optional backports repository
+Enabled: no
+Types: deb deb-src
+URIs: ${uri}
+Suites: ${codename}-backports
+Components: main
+Signed-By: ${SIGNED_BY}
+EOF
+
+# Keep the legacy file and the pipeline temp file as a single breadcrumb line
+printf '%s\n' "$MSG" > "$LEGACY"
+printf '%s\n' "$MSG" > "$file"
+
+exit 0
+
