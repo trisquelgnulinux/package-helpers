@@ -19,19 +19,14 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=42
+VERSION=43
 
 . ./config
 
 Mirrors_masterlist_git="trisquel-packages/-/raw/master/extra/mirrors/Mirrors.masterlist"
 
 ## Apply patches upfront
-# Avoid the need for a custom cdrom:// repo - 001-grub-installer.patch
-truncate -s 0 d-i/source/apt-setup/generators/40cdrom
-# Disable confirmation popups, as they are innacurate and buggy - 002-no_confrirmation_when_crypto.patch
-# Fix some gtk labels for Orca - 003-a11y.patch
-# Point ubiquity crash to trisquel's forge. - 004-crash_report_point_to_trisquel_forge.patch
-# Prevent ubiquity-dm to error out due missing settings - 005-prevent_ubiquity-dm_error_due_missing_gsettings.patch
+# Please look for DATA/ubiquity/patch_changes for more info on applied patches by function:
 apply_patch_changes
 
 # Remove test_timezone to prevent error out future builds on different daylight time.
@@ -81,7 +76,7 @@ sed 's:\(targetdb)\):\1\n        os.system("sudo chmod 644 /target/var/cache/deb
 # Fix https://bugs.launchpad.net/ubuntu/+source/ubiquity/+bug/1080701
 sed '/from ubiquity import osextras/s/$/\nos.system("sudo swapoff -a")/' bin/ubiquity-wrapper -i
 
-for i in $(ls -1 d-i/source/apt-setup/generators |grep -v 01setup|grep -v 40cdrom) canonical.com security.ubuntu.com extras.ubuntu.com
+for i in $(ls -1 d-i/source/apt-setup/generators |grep -v 01setup) canonical.com security.ubuntu.com extras.ubuntu.com
 do
     /bin/sed /$i/d -i debian/ubiquity.install-any d-i/source/apt-setup/debian/*.install
 done
@@ -91,52 +86,8 @@ echo "d-i/source/apt-setup/generators/99trisquel usr/lib/ubiquity/apt-setup/gene
 cp $DATA/trisquel.png data/ubiquity.png
 
 # remove Ubuntu apt setup for the installer
-find d-i/source/apt-setup/generators -type f | grep -v 01setup |grep -v 40cdrom| xargs -r rm
-cat << EOF1 > d-i/source/apt-setup/generators/99trisquel
-#!/bin/sh
-set -e
-
-file="\$1"
-
-FASTEST=https://archive.trisquel.org/trisquel/
-SPEED=1000000000000
-
-if nm-online -xq
-then
-    for i in \$(grep '//' /usr/share/python-apt/templates/Trisquel.mirrors | sed 's|/$||')
-    do
-        echo Testing \$i
-        TIME=\$(date +%s%N)
-        wget --no-check-certificate -t 1 -T 5 --max-redirect=0 -o /dev/null -O /dev/null \$i/speedtest || continue
-        TIME2=\$(date +%s%N)
-        ELAPSED=\$(expr \$TIME2 - \$TIME)
-        echo Time: \$ELAPSED
-        if [ \$ELAPSED -lt \$SPEED ]
-        then
-            FASTEST=\$i
-            SPEED=\$ELAPSED
-        fi
-    done
-fi
-
-echo "Selected mirror: \$FASTEST"
-
-MIRROR=\$FASTEST
-RELEASE=\$(lsb_release -c | cut -f 2)
-
-cat << EOF > \$file
-# Trisquel repositories for supported software and updates
-deb \$MIRROR \$RELEASE main
-deb-src \$MIRROR \$RELEASE main
-deb \$MIRROR \$RELEASE-security main
-deb-src \$MIRROR \$RELEASE-security main
-deb \$MIRROR \$RELEASE-updates main
-deb-src \$MIRROR \$RELEASE-updates main
-#deb \$MIRROR \$RELEASE-backports main
-#deb-src \$MIRROR \$RELEASE-backports main
-EOF
-EOF1
-chmod 755 d-i/source/apt-setup/generators/99trisquel
+find d-i/source/apt-setup/generators -type f | grep -v 01setup | xargs -r rm
+cp $DATA/99trisquel d-i/source/apt-setup/generators/
 
 # Redirect ports.ubuntu.com
 sed '/ports.ubuntu.com/d' -i ./d-i/source/apt-setup/debian/apt-mirror-setup.install

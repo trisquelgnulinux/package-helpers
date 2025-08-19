@@ -1,0 +1,30 @@
+diff --git a/d-i/source/apt-setup/generators/01setup b/d-i/source/apt-setup/generators/01setup
+index b4b0ea40..c4933286 100755
+--- a/d-i/source/apt-setup/generators/01setup
++++ b/d-i/source/apt-setup/generators/01setup
+@@ -5,6 +5,25 @@ set -e
+ 
+ file="$1"
+ 
++# Ensure ROOT default; allow override
++: "${ROOT:=/target}"
++
++# If Deb822 sources already exist in the target, keep legacy minimal and clean.
++if [ -d "$ROOT/etc/apt/sources.list.d" ] && ls "$ROOT/etc/apt/sources.list.d/"*.sources >/dev/null 2>&1; then
++    msg="# Trisquel sources have moved to /etc/apt/sources.list.d/trisquel.sources"
++    # Temp file consumed by the generators pipeline (must exist, but keep it clean)
++    printf '%s\n' "$msg" > "$file"
++    # Ensure the target legacy file exists and contains only the breadcrumb
++    printf '%s\n' "$msg" > "$ROOT/etc/apt/sources.list"
++else
++    # Fallback: add old file as comments (tolerant if missing)
++    if [ -r "$ROOT/etc/apt/sources.list" ]; then
++        sed 's/^/# /' < "$ROOT/etc/apt/sources.list" | sed 's/^# # */# /' > "$file"
++    else
++        : > "$file"
++    fi
++fi
++
+ # add old file as comments
+ sed 's/^/# /' < $ROOT/etc/apt/sources.list | sed 's/^# # */# /' > $file
+ 
