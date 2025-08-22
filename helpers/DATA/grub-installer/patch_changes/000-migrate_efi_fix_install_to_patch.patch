@@ -1,0 +1,18 @@
+diff --git a/grub-installer b/grub-installer
+index 4fdbb30e..af19a59f 100755
+--- a/grub-installer
++++ b/grub-installer
+@@ -533,8 +533,12 @@ case "$grub_package" in
+ 		grub-efi-ia32-bin grub-efi-ia32
+     ;;
+     grub-efi*)
++        export DEBIAN_PRIORITY=critical
++        export DEBIAN_FRONTEND=noninteractive
++        unset DEBIAN_HAS_FRONTEND
++        unset DEBCONF_REDIR
+ 	log-output -t grub-installer $chroot $ROOT dpkg -P \
+-		grub grub-legacy grub-pc-bin grub-pc
++		grub grub-legacy grub-pc-bin grub-pc grub-gfxpayload-lists
+     ;;
+ esac
+ 

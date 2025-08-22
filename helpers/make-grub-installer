@@ -18,10 +18,9 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-#VERSION=3
-VERSION=0.10
+VERSION=3.1
 EXTERNAL='deb-src http://ftp.debian.org/debian trixie main'
-REPOKEY=0E98404D386FA1D9
+REPOKEY=6ED0E7B82643E131
 NETINST=true
 
 . ./config
@@ -30,28 +29,8 @@ replace grub-efi-amd64-signed grub-efi-amd64
 
 sed 's/shim-signed/shim/' -i grub-installer
 
-cat << EOF | patch --no-backup-if-mismatch -p1
-diff -ru a/grub-installer b/grub-installer
---- a/grub-installer	2022-11-25 19:04:53.765346384 -0500
-+++ b/grub-installer	2022-11-25 19:16:10.042175329 -0500
-@@ -508,8 +508,12 @@
- 		grub-efi-ia32-bin grub-efi-ia32
-     ;;
-     grub-efi*)
-+	export DEBIAN_PRIORITY=critical
-+	export DEBIAN_FRONTEND=noninteractive
-+	unset DEBIAN_HAS_FRONTEND
-+	unset DEBCONF_REDIR
- 	log-output -t grub-installer \$chroot \$ROOT dpkg -P \\
--		grub grub-legacy grub-pc-bin grub-pc
-+		grub grub-legacy grub-pc-bin grub-pc grub-gfxpayload-lists
-     ;;
- esac
- 
-EOF
-
-# Apply newer fixes over stable release (bookworm) using git patches.
-#apply_patch_changes
+# Apply patches for this release
+apply_patch_changes
 
 changelog "Remove grub-efi-amd64-signed dependency. | Non-fatal fail if mkdir efivars fails."
 

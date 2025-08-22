@@ -1,0 +1,46 @@
+diff --git a/grub-installer b/grub-installer
+index 3d80321f..a1793ee5 100755
+--- a/grub-installer
++++ b/grub-installer
+@@ -475,23 +475,24 @@ case $grub_package in
+ 		NV_PRIO=high
+ 	fi
+ 
+-	# Should we force a copy of grub-efi to be installed
+-	# to the removable media path too? Set default to true
+-	# if the removable media path is empty, then ask at low
+-	# priority, or can also be pre-seeded of course
+-	if ! [ -e /var/lib/grub-installer/removable_media_path_checked ]; then
+-		info "Checking removable media path $ROOT/boot/efi/EFI/BOOT/BOOT${EFI_SUFFIX}.EFI"
+-		if ! [ -f $ROOT/boot/efi/EFI/BOOT/BOOT${EFI_SUFFIX}.EFI ]; then
+-			info "Removable media path is empty"
+-			db_fget grub-installer/force-efi-extra-removable seen
+-			if [ "$RET" = false ]; then
+-				info "force-efi-extra-removable not preseeded, set it true"
+-				db_set grub-installer/force-efi-extra-removable true
+-			fi
+-		fi
+-		mkdir -p /var/lib/grub-installer
+-		touch /var/lib/grub-installer/removable_media_path_checked
+-	fi
++# Mimic ubiquity 1.128ubuntu15 behaviour and only bypass low priority question. -- Ark74
++#	# Should we force a copy of grub-efi to be installed
++#	# to the removable media path too? Set default to true
++#	# if the removable media path is empty, then ask at low
++#	# priority, or can also be pre-seeded of course
++#	if ! [ -e /var/lib/grub-installer/removable_media_path_checked ]; then
++#		info "Checking removable media path $ROOT/boot/efi/EFI/BOOT/BOOT${EFI_SUFFIX}.EFI"
++#		if ! [ -f $ROOT/boot/efi/EFI/BOOT/BOOT${EFI_SUFFIX}.EFI ]; then
++#			info "Removable media path is empty"
++#			db_fget grub-installer/force-efi-extra-removable seen
++#			if [ "$RET" = false ]; then
++#				info "force-efi-extra-removable not preseeded, set it true"
++#				db_set grub-installer/force-efi-extra-removable true
++#			fi
++#		fi
++#		mkdir -p /var/lib/grub-installer
++#		touch /var/lib/grub-installer/removable_media_path_checked
++#	fi
+ 	db_input $ER_PRIO grub-installer/force-efi-extra-removable || [ $? -eq 30 ]
+ 	db_go || exit 10
+ 	db_get grub-installer/force-efi-extra-removable
