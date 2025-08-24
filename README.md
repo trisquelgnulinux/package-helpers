@@ -13,7 +13,7 @@ Once a new package is added, it takes priority over the original one from Ubuntu
 so they never enter into the repo from upstream and need to be
 compiled with this helpers and pushed into reprepro.
 
-To add a package to the list, follow the [CONTRIBUTING](https://gitlab.trisquel.org/trisquel/package-helpers/blob/nabia/CONTRIBUTING.md) guidelines.
+To add a package to the list, follow the [CONTRIBUTING](CONTRIBUTING.md) guidelines.
 
 ## Steps
 
