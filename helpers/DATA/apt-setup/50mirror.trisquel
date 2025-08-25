@@ -113,9 +113,15 @@ Components: main
 Signed-By: ${SIGNED_BY}
 EOF
 
+{
+    echo "deb ${uri} ${codename} main"
+    echo "deb ${uri} ${codename}-updates main"
+    echo "deb ${uri} ${codename}-security main"
+} >> "$file"
+
 # Keep the legacy file and the pipeline temp file as a single breadcrumb line
 printf '%s\n' "$MSG" > "$LEGACY"
-printf '%s\n' "$MSG" > "$file"
+printf '%s\n' "$MSG" >> "$file"
 
 exit 0
 
