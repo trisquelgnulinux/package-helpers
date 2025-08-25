@@ -77,8 +77,6 @@ fi
 : "${ROOT:=/target}"
 SD="$ROOT/etc/apt/sources.list.d"
 SF="$SD/trisquel.sources"
-LEGACY="$ROOT/etc/apt/sources.list"
-MSG="# Trisquel sources have moved to /etc/apt/sources.list.d/trisquel.sources"
 mkdir -p "$SD"
 
 # Use keyring in /usr/share/keyrings
@@ -113,15 +111,12 @@ Components: main
 Signed-By: ${SIGNED_BY}
 EOF
 
+# Set legacy format for apt-setup to apply updates correctly.
 {
     echo "deb ${uri} ${codename} main"
     echo "deb ${uri} ${codename}-updates main"
     echo "deb ${uri} ${codename}-security main"
 } >> "$file"
-
-# Keep the legacy file and the pipeline temp file as a single breadcrumb line
-printf '%s\n' "$MSG" > "$LEGACY"
-printf '%s\n' "$MSG" >> "$file"
 
 exit 0
 
