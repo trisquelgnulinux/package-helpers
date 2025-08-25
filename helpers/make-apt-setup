@@ -18,17 +18,11 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=4
+VERSION=4.3
 EXTERNAL='deb-src http://ftp.debian.org/debian trixie main'
 REPOKEY=78DBA3BC47EF2265
 NETINST=true
 . ./config
-
-cat << EOF > debian/rules
-#! /usr/bin/make -f
-%:
-	dh \$@
-EOF
 
 find debian -name apt-mirror-setup.templates-ubuntu | xargs -r rm
 
