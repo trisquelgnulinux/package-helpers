@@ -6,12 +6,13 @@ file="$1"
 ROOT="${ROOT:-/target}"
 LEGACY="$ROOT/etc/apt/sources.list"
 SD="$ROOT/etc/apt/sources.list.d"
+SAVETO="$ROOT/etc/apt/sources.list.new"
 
 # If .sources exist, leave sources.list reduced only as a breadcrumb
 if ls "$SD"/*.sources >/dev/null 2>&1; then
     MSG="# Trisquel sources have moved to /etc/apt/sources.list.d/trisquel.sources"
-    printf '%s\n' "$MSG" > "$LEGACY"
-    printf '%s\n' "$MSG" > "$file"
+    : > "$SAVETO"
+    printf '%s\n' "$MSG" > "$file"    # lo que verify appenderá
 fi
 
 exit 0
