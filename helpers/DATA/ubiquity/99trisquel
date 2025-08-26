@@ -71,7 +71,7 @@ Signed-By: ${SIGNED_BY}
 EOF
 
 # Keep the legacy file and the pipeline temp file as a single breadcrumb line
-: > "$SAVETO"
-printf '%s\n' "$MSG" > "$file"
+printf '%s\n' "$MSG" > "$SAVETO"
+: > "$file"
 
 exit 0
