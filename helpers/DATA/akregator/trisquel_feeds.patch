@@ -1,5 +1,5 @@
---- src/akregator_part.cpp	2020-06-05 11:41:23.000000000 -0500
-+++ src/akregator_part_trisquel.cpp	2020-06-05 12:46:05.914051386 -0500
+--- a/src/akregator_part.cpp	2020-06-05 11:41:23.000000000 -0500
++++ b/src/akregator_part.cpp	2020-06-05 12:46:05.914051386 -0500
 @@ -189,6 +189,61 @@
      wire.setAttribute(QStringLiteral("xmlUrl"), QStringLiteral("http://wire.kubuntu.org/?feed=rss2"));
      kubuntuFolder.appendChild(wire);
