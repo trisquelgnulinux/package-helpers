@@ -1,5 +1,5 @@
 #!/bin/sh
 set -e
 LEGACY_SF=/target/etc/apt/sources.list
-# If first line is empy / only spaces, delete it.
-sed -i '1{/^[[:space:]]*$/d;}' "$LEGACY_SF"
+MSG="# Trisquel sources have moved to /etc/apt/sources.list.d/trisquel.sources"
+printf '%s\n' "$MSG" > "$LEGACY_SF"
