@@ -3,12 +3,11 @@ set -e
 
 file="$1"
 
-# Trisquel: Deb822-first, keep legacy clean
 : "${ROOT:=/target}"
 SD="$ROOT/etc/apt/sources.list.d"
 SF="$SD/trisquel.sources"
-LEGACY="$ROOT/etc/apt/sources.list"
 MSG="# Trisquel sources have moved to /etc/apt/sources.list.d/trisquel.sources"
+SAVETO="$ROOT/etc/apt/sources.list.new"
 mkdir -p "$SD"
 
 FASTEST=https://archive.trisquel.org/trisquel/
@@ -72,6 +71,7 @@ Signed-By: ${SIGNED_BY}
 EOF
 
 # Keep the legacy file and the pipeline temp file as a single breadcrumb line
-printf '%s\n' "$MSG" > "$LEGACY"
+: > "$SAVETO"
 printf '%s\n' "$MSG" > "$file"
+
 exit 0
