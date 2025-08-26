@@ -1,0 +1,5 @@
+#!/bin/sh
+set -e
+LEGACY_SF=/target/etc/apt/sources.list
+# If first line is empy / only spaces, delete it.
+sed -i '1{/^[[:space:]]*$/d;}' "$LEGACY_SF"
