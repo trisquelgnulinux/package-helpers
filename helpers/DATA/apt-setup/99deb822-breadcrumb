@@ -1,18 +1,7 @@
 #!/bin/sh
 set -e
-. /usr/share/debconf/confmodule
 
-file="$1"
-ROOT="${ROOT:-/target}"
-LEGACY="$ROOT/etc/apt/sources.list"
-SD="$ROOT/etc/apt/sources.list.d"
-SAVETO="$ROOT/etc/apt/sources.list.new"
+LEGACY="/target/etc/apt/sources.list"
+MSG="# Trisquel sources have moved to /etc/apt/sources.list.d/trisquel.sources"
 
-# If .sources exist, leave sources.list reduced only as a breadcrumb
-if ls "$SD"/*.sources >/dev/null 2>&1; then
-    MSG="# Trisquel sources have moved to /etc/apt/sources.list.d/trisquel.sources"
-    : > "$SAVETO"
-    printf '%s\n' "$MSG" > "$file"    # lo que verify appenderá
-fi
-
-exit 0
+printf '%s\n' "$MSG" > "$LEGACY"
