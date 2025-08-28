@@ -27,13 +27,11 @@ index 5675445a..7afd324b 100644
      elif browser_name == 'safari':
          return _extract_safari_cookies(profile, logger)
      elif browser_name in CHROMIUM_BASED_BROWSERS:
-@@ -124,15 +124,15 @@ def extract_cookies_from_browser(browser_name, profile=None, logger=YDLLogger(),
-         raise ValueError(f'unknown browser: {browser_name}')
+@@ -127,14 +127,14 @@ def extract_cookies_from_browser(browser_name, profile=None, logger=YDLLogger(),
+ def _extract_firefox_cookies(profile, container, logger):
+     MAX_SUPPORTED_DB_SCHEMA_VERSION = 16
  
- 
--def _extract_firefox_cookies(profile, container, logger):
 -    logger.info('Extracting cookies from firefox')
-+def _extract_firefox_cookies(profile, container, logger, browser_name):
 +    logger.info(f'Extracting cookies from {browser_name}')
      if not sqlite3:
 -        logger.warning('Cannot extract cookies from firefox without sqlite3 support. '
@@ -74,16 +72,13 @@ index 5675445a..7afd324b 100644
                  cursor.execute(
                      'SELECT host, name, value, path, expiry, isSecure FROM moz_cookies WHERE originAttributes LIKE ? OR originAttributes LIKE ?',
                      (f'%userContextId={container_id}', f'%userContextId={container_id}&%'))
-@@ -186,14 +186,14 @@ def _extract_firefox_cookies(profile, container, logger):
+@@ -194,11 +194,11 @@ def _extract_firefox_cookies(profile, container, logger):
                          path=path, path_specified=bool(path), secure=is_secure, expires=expiry, discard=False,
                          comment=None, comment_url=None, rest={})
                      jar.set_cookie(cookie)
 -            logger.info(f'Extracted {len(jar)} cookies from firefox')
 +            logger.info(f'Extracted {len(jar)} cookies from {browser_name}')
              return jar
-         finally:
-             if cursor is not None:
-                 cursor.connection.close()
  
  
 -def _firefox_browser_dirs():
