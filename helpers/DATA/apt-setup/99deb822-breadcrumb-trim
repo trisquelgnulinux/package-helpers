@@ -1,5 +1,0 @@
-#!/bin/sh
-set -e
-LEGACY_SF=/target/etc/apt/sources.list
-MSG="# Trisquel sources have moved to /etc/apt/sources.list.d/trisquel.sources"
-printf '%s\n' "$MSG" > "$LEGACY_SF"

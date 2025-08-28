@@ -12,7 +12,7 @@ SAVETO="$ROOT/etc/apt/sources.list.new"
 if ls "$SD"/*.sources >/dev/null 2>&1; then
     MSG="# Trisquel sources have moved to /etc/apt/sources.list.d/trisquel.sources"
     : > "$SAVETO"
-    printf '%s\n' "$MSG" > "$file"    # lo que verify appenderá
+    printf '%s\n' "$MSG" > "$file"
 fi
 
 exit 0

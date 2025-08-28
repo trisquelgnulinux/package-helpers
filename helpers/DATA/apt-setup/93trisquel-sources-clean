@@ -1,0 +1,11 @@
+#!/bin/sh
+set -e
+
+LEGACY=/target/etc/apt/sources.list
+SD=/target/etc/apt/sources.list.d
+
+if ls "$SD"/*.sources >/dev/null 2>&1; then
+    MSG="# Trisquel sources have moved to /etc/apt/sources.list.d/trisquel.sources"
+    printf '%s\n' "$MSG" > "$LEGACY"
+fi
+exit 0

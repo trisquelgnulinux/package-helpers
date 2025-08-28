@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=4.9.1
+VERSION=4.10
 EXTERNAL='deb-src http://ftp.debian.org/debian trixie main'
 REPOKEY=78DBA3BC47EF2265
 NETINST=true
@@ -80,8 +80,13 @@ rm generators/9[1-9]* generators/50mirror
 find generators -name 50mirror.ubuntu | xargs -r rm
 sed -i '/generators\/9[1-9]*/d' debian/apt-setup-udeb.install
 
+# Set custom scripts
+cp $DATA/50mirror.trisquel generators/
+cp $DATA/99deb822-breadcrumb generators/
+cp $DATA/93trisquel-sources-clean finish-install.d/
+
 cat << EOF >> debian/apt-setup-udeb.install
-post-base-installer.d/99deb822-breadcrumb-trim usr/lib/post-base-installer.d
+finish-install.d/93trisquel-sources-clean usr/lib/finish-install.d
 EOF
 
 cat << EOF > debian/apt-mirror-setup.install
@@ -89,10 +94,6 @@ generators/50mirror.trisquel usr/lib/apt-setup/generators
 generators/99deb822-breadcrumb usr/lib/apt-setup/generators
 release-files/archive.trisquel.org usr/share/apt-setup/release-files
 EOF
-
-cp $DATA/50mirror.trisquel generators/
-cp $DATA/99deb822-breadcrumb generators/
-cp $DATA/99deb822-breadcrumb-trim post-base-installer.d/
 
 #sed '/The partner/,/^*/d; s/services-select-ubuntu/services-select-trisquel/' -i debian/apt-setup-udeb.templates
 sed 's/services-select/services-select-trisquel/' -i debian/apt-setup-udeb.templates
