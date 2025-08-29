@@ -2,10 +2,17 @@ diff --git a/services/settings/RemoteSettingsClient.sys.mjs b/services/settings/
 index 7e98e6d..7716e41 100644
 --- a/services/settings/RemoteSettingsClient.sys.mjs
 +++ b/services/settings/RemoteSettingsClient.sys.mjs
-@@ -227,6 +227,8 @@ class AttachmentDownloader extends Downloader {
+@@ -229,13 +229,8 @@ class AttachmentDownloader extends Downloader {
     * @see Downloader.download
     */
    async download(record, options) {
+-    await lazy.UptakeTelemetry.report(
+-      TELEMETRY_COMPONENT,
+-      lazy.UptakeTelemetry.STATUS.DOWNLOAD_START,
+-      {
+-        source: this._client.identifier,
+-      }
+-    );
 +    console.warn("Function 'download' disabled in Abrowser due privacy concerns.");
 +    return null;
      try {

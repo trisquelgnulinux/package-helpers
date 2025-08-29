@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=124
+VERSION=124.1
 EXTERNAL='deb-src http://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu $UPSTREAM main'
 REPOKEY=9BDB3D89CE49EC21
 
@@ -48,7 +48,7 @@ BAP_FirefoxJs=browser/app/profile/firefox.js
 sed '/^const DEFAULT_SITES/,/^])\;/c const DEFAULT_SITES = new Map\([[""]]\);' -i browser/extensions/newtab/lib/DefaultSites.sys.mjs
 sed '/"showSponsored"/,/value/s/value: true/value: false/' -i $ActivityStream
 sed '/"telemetry"/,/value/s/value: true/value: false/' -i $ActivityStream
-sed '/"section.highlights.includePocket"/,/value/s/value: true/value: false/' -i $ActivityStream
+#141#sed '/"section.highlights.includePocket"/,/value/s/value: true/value: false/' -i $ActivityStream
 sed '/"telemetry.structuredIngestion.endpoint"/,/value/s/value: .*/value: ""/' -i $ActivityStream
 sed '/read_more_endpoint/,+1s/http.*/",/' -i $ActivityStream
 sed '/stories_endpoint/s/getpocket.cdn.mozilla.net/127.0.0.1/' -i $ActivityStream
@@ -264,7 +264,7 @@ for i in $(find . -name brandings.ftl)
 do
     /bin/sed -i '/firefoxview-brand-name/s|Firefox View|Abrowser View|' $i
     /bin/sed -i '/firefox-home-brand-name/s|Firefox Home|Abrowser Home|' $i
-    sed -i 's|= Firefox |= |' $i
+    /bin/sed -i 's|= Firefox |= |' $i
 done
 
 # Disable preprocessor
