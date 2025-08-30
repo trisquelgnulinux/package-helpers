@@ -1,0 +1,13 @@
+diff --git a/scripts/casper-bottom/34disable_kde_services b/scripts/casper-bottom/34disable_kde_services
+index f368ec2e..caa76986 100755
+--- a/scripts/casper-bottom/34disable_kde_services
++++ b/scripts/casper-bottom/34disable_kde_services
+@@ -20,7 +20,7 @@ esac
+ 
+ log_begin_msg "$DESCRIPTION"
+ 
+-for pkg in kubuntu-default-settings ubuntustudio; do
++for pkg in triskel-default-settings kubuntu-default-settings ubuntustudio; do
+ 	settingsdir="/root/usr/share/$pkg/kf5-settings"
+ 	[ -d "$settingsdir" ] || continue
+ 	printf "[Daemon]\nTimeout=0\nAutolock=false\nLockOnResume=false\n" >> "$settingsdir"/kscreenlockerrc

@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=24
+VERSION=25
 
 . ./config
 
@@ -40,8 +40,8 @@ rm scripts/casper-bottom/33enable_apport_crashes
 sed "s/cut/cut -d: -f2- | cut/" -i scripts/casper-functions
 sed "s/head -n1/sed -n 1p/" -i scripts/casper-functions
 
-# Set trisquel isos as default suggestion.
-patch_p1 $DATA/set_trisquel_iso_suggestion.patch
+# Apply custom trisquel patches
+apply_patch_changes
 
 # Enable abrowser apparmor profile
 cp $DATA/35apparmor_browsers scripts/casper-bottom
