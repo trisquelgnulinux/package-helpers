@@ -258,6 +258,7 @@ pref("browser.newtabpage.activity-stream.discoverystream.endpoints", "");
 pref("browser.newtabpage.activity-stream.feeds.snippets",false);
 pref("browser.newtabpage.activity-stream.disableSnippets", true);
 pref("browser.newtabpage.activity-stream.tippyTop.service.endpoint", "");
+pref("browser.newtabpage.activity-stream.showSponsoredCheckboxes", false);
 
 // Enable xrender
 //pref("gfx.xrender.enabled",true);
