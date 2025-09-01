@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=0.12
+VERSION=1
 EXTERNAL='deb-src http://ftp.debian.org/debian trixie main'
 REPOKEY=0E98404D386FA1D9
 NETINST=true
@@ -26,11 +26,6 @@ NETINST=true
 
 # Re apply upstream behavior and configuration features from last release (focal).
 # https://git.launchpad.net/ubuntu/+source/netcfg/log/?h=ubuntu/focal
-#for patch in $(ls -v ${DATA}/*.patch)
-#do
-#echo "Applying $patch"
-#patch --no-backup-if-mismatch -Np1 < $patch
-#done
 apply_patch_changes
 
 changelog "Rebranded and adapted for Trisquel"
