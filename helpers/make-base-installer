@@ -18,12 +18,10 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=0.10
+VERSION=1
 EXTERNAL='deb-src http://ftp.debian.org/debian trixie main'
 REPOKEY=0E98404D386FA1D9
 NETINST=true
-
-#THIS IS AN TESTING RELEASE REMOVE THIS LABEL WHEN COMPLETE
 
 . ./config
 
@@ -95,5 +93,5 @@ EOF
 # Disable i386
 sed -i "/ARCHES =/s|i386 ||" kernel/Makefile
 
-changelog "Rebranded and adapted for Trisquel - TESTING (remove when complete)"
+changelog "Rebranded and adapted for Trisquel"
 package
