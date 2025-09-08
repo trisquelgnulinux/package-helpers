@@ -3,65 +3,47 @@
 # Runs before 10update-initramfs, so we only call update-grub here.
 #
 
-set -e
-
-# UEFI only in installer env
+# Run only on UEFI installs
 [ -d /sys/firmware/efi ] || exit 0
 
-# Desktop detection (target): Trisquel desktop metas OR common DMs
-if in-target dpkg -s trisquel-desktop-common >/dev/null 2>&1 \
-   || in-target dpkg -s triskel >/dev/null 2>&1 \
-   || in-target dpkg -s trisquel-gnome >/dev/null 2>&1 \
-   || in-target dpkg -s trisquel-mini  >/dev/null 2>&1 \
-   || in-target dpkg -s lightdm >/dev/null 2>&1 \
-   || in-target dpkg -s gdm3   >/dev/null 2>&1 \
-   || in-target dpkg -s sddm   >/dev/null 2>&1; then
-    logger -t trisquel-uefi-splash "desktop detected (packages)"
-else
-    logger -t trisquel-uefi-splash "no desktop; skip"
-    exit 0
+# Require plymouth in the target system (otherwise splash is pointless)
+in-target dpkg -s plymouth >/dev/null 2>&1 || exit 0
+
+# Heuristic “desktop present?” check — avoid debconf; rely on packages/DM.
+if ! in-target sh -c '
+  dpkg -s trisquel-desktop-common >/dev/null 2>&1 ||
+  dpkg -s triskel                 >/dev/null 2>&1 ||
+  dpkg -s trisquel-gnome          >/dev/null 2>&1 ||
+  dpkg -s trisquel-mini           >/dev/null 2>&1 ||
+  dpkg -s lightdm                 >/dev/null 2>&1 ||
+  dpkg -s gdm3                    >/dev/null 2>&1 ||
+  dpkg -s sddm                    >/dev/null 2>&1
+'; then
+# No desktop, then do nothing
+  exit 0
 fi
 
-# Plymouth present in target?
-in-target dpkg -s plymouth >/dev/null 2>&1 || { logger -t trisquel-uefi-splash "no plymouth; skip"; exit 0; }
+CFG=/target/etc/default/grub
+[ -f "$CFG" ] || exit 0
 
-# Edit /etc/default/grub inside target: ensure GRUB_CMDLINE_LINUX_DEFAULT includes 'splash'
-in-target sh -s <<'INCHROOT'
-set -e
-CFG="/etc/default/grub"
-[ -f "$CFG" ] || touch "$CFG"
+# If the key is missing entirely, create it with just "splash"
+grep -q '^GRUB_CMDLINE_LINUX_DEFAULT=' "$CFG" \
+  || echo 'GRUB_CMDLINE_LINUX_DEFAULT="splash"' >> "$CFG"
 
-awk -v key="GRUB_CMDLINE_LINUX_DEFAULT" '
-BEGIN{done=0}
-# Match the variable (with or without quotes around value)
-($0 ~ "^"key"=") {
-  line = $0
-  val = $0
-  sub("^"key"=","",val)
-  # strip surrounding double quotes if present
-  if (val ~ /^"/) sub(/^"/,"",val)
-  if (val ~ /"$/) sub(/"$/,"",val)
-  # normalize trailing spaces
-  gsub(/[[:space:]]+$/, "", val)
-  # check presence of splash
-  found=0
-  n=split(val, tok, /[[:space:]]+/)
-  for (i=1;i<=n;i++) if (tok[i]=="splash") { found=1; break }
-  if (!found) {
-    if (val == "") val = "quiet splash"; else val = val " splash"
-  }
-  print key "=\"" val "\""
-  done=1
-  next
-}
-{ print }
-END{
-  if (!done) print key "=\"quiet splash\""
-}
-' "$CFG" > "$CFG.tmp" && mv "$CFG.tmp" "$CFG"
+# Normalize trivial cases:
+#    - empty quotes > "splash"
+#    - unquoted value > quote it
+sed -i -r \
+  -e 's/^GRUB_CMDLINE_LINUX_DEFAULT=""$/GRUB_CMDLINE_LINUX_DEFAULT="splash"/' \
+  -e 's/^(GRUB_CMDLINE_LINUX_DEFAULT)=([^"].*)$/\1="\2"/' \
+  "$CFG"
 
-update-grub || true
-INCHROOT
+# If 'splash' is already present, leave as-is; otherwise append it
+grep -q '^GRUB_CMDLINE_LINUX_DEFAULT=.*\bsplash\b' "$CFG" || \
+  sed -i -r 's/^(GRUB_CMDLINE_LINUX_DEFAULT="[^"]*)"/\1 splash"/' "$CFG"
 
-logger -t trisquel-uefi-splash "splash ensured; update-grub called"
+# Regenerate grub.cfg; never fail finish-install
+in-target update-grub >/dev/null 2>&1 || true
+
+# Always succeed so remaining finish-install hooks run
 exit 0
