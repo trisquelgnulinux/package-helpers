@@ -5,61 +5,63 @@
 
 set -e
 
-# UEFI only
+# UEFI only in installer env
 [ -d /sys/firmware/efi ] || exit 0
 
-# Check for desktop environmtn task selected
-SELECTION="$(debconf-get tasksel/first 2>/dev/null || true)"
-if echo "$SELECTION" | grep -Eq '\b(trisquel-desktop|trisquel-gnome|trisquel-mini|triskel)\b'; then
-    : # desktop confirmed by tasksel
+# Desktop detection (target): Trisquel desktop metas OR common DMs
+if in-target dpkg -s trisquel-desktop-common >/dev/null 2>&1 \
+   || in-target dpkg -s triskel >/dev/null 2>&1 \
+   || in-target dpkg -s trisquel-gnome >/dev/null 2>&1 \
+   || in-target dpkg -s trisquel-mini  >/dev/null 2>&1 \
+   || in-target dpkg -s lightdm >/dev/null 2>&1 \
+   || in-target dpkg -s gdm3   >/dev/null 2>&1 \
+   || in-target dpkg -s sddm   >/dev/null 2>&1; then
+    logger -t trisquel-uefi-splash "desktop detected (packages)"
 else
-    # Fallback: desktop present if any of these is installed in target
-    if in-target dpkg -s trisquel-desktop-common >/dev/null 2>&1 \
-       || in-target dpkg -s triskel >/dev/null 2>&1 \
-       || in-target dpkg -s trisquel-gnome >/dev/null 2>&1 \
-       || in-target dpkg -s trisquel-mini >/dev/null 2>&1 \
-       || in-target dpkg -s lightdm >/dev/null 2>&1 \
-       || in-target dpkg -s gdm3   >/dev/null 2>&1 \
-       || in-target dpkg -s sddm   >/dev/null 2>&1; then
-        : # desktop detected by packages
-    else
-        exit 0
-    fi
+    logger -t trisquel-uefi-splash "no desktop; skip"
+    exit 0
 fi
 
-# Check for plymouth installed in target
-in-target dpkg -s plymouth >/dev/null 2>&1 || exit 0
+# Plymouth present in target?
+in-target dpkg -s plymouth >/dev/null 2>&1 || { logger -t trisquel-uefi-splash "no plymouth; skip"; exit 0; }
 
-# Debconf-first approach inside target; fallback to minimal edit if needed.
+# Edit /etc/default/grub inside target: ensure GRUB_CMDLINE_LINUX_DEFAULT includes 'splash'
 in-target sh -s <<'INCHROOT'
 set -e
-. /usr/share/debconf/confmodule
-
-# Read current value; default to "quiet" if empty
-db_get grub2/linux_cmdline_default || true
-CURRENT_CMDLINE="${RET:-quiet}"
-
-# If 'splash' already present, nothing to do
-echo "$CURRENT_CMDLINE" | grep -qw splash && exit 0
-
-# Set debconf value to include splash
-db_set grub2/linux_cmdline_default "$CURRENT_CMDLINE splash" || true
-
-# Reconfigure grub2-common (may or may not rewrite the conffile in d-i flows)
-dpkg-reconfigure -f noninteractive grub2-common || true
-
-# Fallback: minimally ensure GRUB_CMDLINE_LINUX_DEFAULT contains 'splash'
 CFG="/etc/default/grub"
-if ! grep -q '^GRUB_CMDLINE_LINUX_DEFAULT=' "$CFG"; then
-    printf 'GRUB_CMDLINE_LINUX_DEFAULT="%s"\n' "quiet splash" >> "$CFG"
-else
-    GRUB_CMDLINE_VALUE="$(sed -n 's/^GRUB_CMDLINE_LINUX_DEFAULT="\{0,1\}\(.*\)"\{0,1\}$/\1/p' "$CFG" | head -n1)"
-    echo "$GRUB_CMDLINE_VALUE" | grep -qw splash || \
-        sed -i -E 's|^(GRUB_CMDLINE_LINUX_DEFAULT="[^"]*)(".*)?$|\1 splash"\2|; t; s|^(GRUB_CMDLINE_LINUX_DEFAULT=)(.*)$|\1"quiet splash"|' "$CFG"
-fi
+[ -f "$CFG" ] || touch "$CFG"
 
-# Regenerate grub.cfg now; initramfs will be refreshed by 10update-initramfs next
+awk -v key="GRUB_CMDLINE_LINUX_DEFAULT" '
+BEGIN{done=0}
+# Match the variable (with or without quotes around value)
+($0 ~ "^"key"=") {
+  line = $0
+  val = $0
+  sub("^"key"=","",val)
+  # strip surrounding double quotes if present
+  if (val ~ /^"/) sub(/^"/,"",val)
+  if (val ~ /"$/) sub(/"$/,"",val)
+  # normalize trailing spaces
+  gsub(/[[:space:]]+$/, "", val)
+  # check presence of splash
+  found=0
+  n=split(val, tok, /[[:space:]]+/)
+  for (i=1;i<=n;i++) if (tok[i]=="splash") { found=1; break }
+  if (!found) {
+    if (val == "") val = "quiet splash"; else val = val " splash"
+  }
+  print key "=\"" val "\""
+  done=1
+  next
+}
+{ print }
+END{
+  if (!done) print key "=\"quiet splash\""
+}
+' "$CFG" > "$CFG.tmp" && mv "$CFG.tmp" "$CFG"
+
 update-grub || true
 INCHROOT
 
+logger -t trisquel-uefi-splash "splash ensured; update-grub called"
 exit 0
