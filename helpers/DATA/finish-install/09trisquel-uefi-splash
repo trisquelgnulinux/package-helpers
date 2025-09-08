@@ -1,0 +1,50 @@
+#!/bin/sh
+# Enable 'splash' only on UEFI desktop installs, and only if Plymouth is present.
+# Runs before 10update-initramfs, so we only call update-grub here.
+#
+
+set -e
+
+# UEFI only
+[ -d /sys/firmware/efi ] || exit 0
+
+# Check for desktop environmtn task selected
+SELECTION="$(debconf-get tasksel/first 2>/dev/null || true)"
+echo "$SELECTION" | grep -Eq '\b(trisquel-(desktop|gnome|mini)|triskel)\b' || exit 0
+
+# Check for plymouth installed in target
+in-target dpkg -s plymouth >/dev/null 2>&1 || exit 0
+
+# Debconf-first approach inside target; fallback to minimal edit if needed.
+in-target sh -s <<'INCHROOT'
+set -e
+. /usr/share/debconf/confmodule
+
+# Read current value; default to "quiet" if empty
+db_get grub2/linux_cmdline_default || true
+CURRENT_CMDLINE="${RET:-quiet}"
+
+# If 'splash' already present, nothing to do
+echo "$CURRENT_CMDLINE" | grep -qw splash && exit 0
+
+# Set debconf value to include splash
+db_set grub2/linux_cmdline_default "$CURRENT_CMDLINE splash" || true
+
+# Reconfigure grub2-common (may or may not rewrite the conffile in d-i flows)
+dpkg-reconfigure -f noninteractive grub2-common || true
+
+# Fallback: minimally ensure GRUB_CMDLINE_LINUX_DEFAULT contains 'splash'
+CFG="/etc/default/grub"
+if ! grep -q '^GRUB_CMDLINE_LINUX_DEFAULT=' "$CFG"; then
+    printf 'GRUB_CMDLINE_LINUX_DEFAULT="%s"\n' "quiet splash" >> "$CFG"
+else
+    GRUB_CMDLINE_VALUE="$(sed -n 's/^GRUB_CMDLINE_LINUX_DEFAULT="\{0,1\}\(.*\)"\{0,1\}$/\1/p' "$CFG" | head -n1)"
+    echo "$GRUB_CMDLINE_VALUE" | grep -qw splash || \
+        sed -i -E 's|^(GRUB_CMDLINE_LINUX_DEFAULT="[^"]*)(".*)?$|\1 splash"\2|; t; s|^(GRUB_CMDLINE_LINUX_DEFAULT=)(.*)$|\1"quiet splash"|' "$CFG"
+fi
+
+# Regenerate grub.cfg now; initramfs will be refreshed by 10update-initramfs next
+update-grub || true
+INCHROOT
+
+exit 0
