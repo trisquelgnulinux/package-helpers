@@ -10,7 +10,22 @@ set -e
 
 # Check for desktop environmtn task selected
 SELECTION="$(debconf-get tasksel/first 2>/dev/null || true)"
-echo "$SELECTION" | grep -Eq '\b(trisquel-(desktop|gnome|mini)|triskel)\b' || exit 0
+if echo "$SELECTION" | grep -Eq '\b(trisquel-desktop|trisquel-gnome|trisquel-mini|triskel)\b'; then
+    : # desktop confirmed by tasksel
+else
+    # Fallback: desktop present if any of these is installed in target
+    if in-target dpkg -s trisquel-desktop-common >/dev/null 2>&1 \
+       || in-target dpkg -s triskel >/dev/null 2>&1 \
+       || in-target dpkg -s trisquel-gnome >/dev/null 2>&1 \
+       || in-target dpkg -s trisquel-mini >/dev/null 2>&1 \
+       || in-target dpkg -s lightdm >/dev/null 2>&1 \
+       || in-target dpkg -s gdm3   >/dev/null 2>&1 \
+       || in-target dpkg -s sddm   >/dev/null 2>&1; then
+        : # desktop detected by packages
+    else
+        exit 0
+    fi
+fi
 
 # Check for plymouth installed in target
 in-target dpkg -s plymouth >/dev/null 2>&1 || exit 0
