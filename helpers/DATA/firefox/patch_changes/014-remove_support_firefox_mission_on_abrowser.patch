@@ -1,0 +1,138 @@
+diff --git a/browser/components/preferences/home.inc.xhtml b/browser/components/preferences/home.inc.xhtml
+index c0094fe0..08856c78 100644
+--- a/browser/components/preferences/home.inc.xhtml
++++ b/browser/components/preferences/home.inc.xhtml
+@@ -101,15 +101,6 @@
+   <vbox id="trending-searches" />
+   <vbox id="topsites" />
+   <vbox id="topstories" />
+-  <vbox id="support-firefox" />
+-
+-  <html:moz-box-item class="mission-message">
+-    <html:span data-l10n-id="home-prefs-mission-message" />
+-    <html:a is="moz-support-link"
+-            support-page="sponsor-privacy"
+-            data-l10n-id="home-prefs-mission-message-learn-more-link" />
+-  </html:moz-box-item>
+-
+   <vbox id="highlights" />
+ </groupbox>
+ </html:template>
+diff --git a/browser/extensions/newtab/lib/AboutPreferences.sys.mjs b/browser/extensions/newtab/lib/AboutPreferences.sys.mjs
+index 0d43919b..f2e0fbd0 100644
+--- a/browser/extensions/newtab/lib/AboutPreferences.sys.mjs
++++ b/browser/extensions/newtab/lib/AboutPreferences.sys.mjs
+@@ -120,37 +120,6 @@ const PREFS_FOR_SETTINGS = () => [
+     ),
+     eventSource: "TOP_STORIES",
+   },
+-  {
+-    id: "support-firefox",
+-    pref: {
+-      feed: "showSponsoredCheckboxes",
+-      titleString: "home-prefs-support-firefox-header",
+-      nestedPrefs: [
+-        {
+-          name: "showSponsoredTopSites",
+-          titleString: "home-prefs-shortcuts-by-option-sponsored",
+-          eventSource: "SPONSORED_TOP_SITES",
+-        },
+-        {
+-          name: "showSponsored",
+-          titleString: "home-prefs-recommended-by-option-sponsored-stories",
+-          eventSource: "POCKET_SPOCS",
+-          shouldHidePref: !Services.prefs.getBoolPref(
+-            "browser.newtabpage.activity-stream.feeds.system.topstories",
+-            true
+-          ),
+-          shouldDisablePref: !Services.prefs.getBoolPref(
+-            "browser.newtabpage.activity-stream.feeds.section.topstories",
+-            true
+-          ),
+-        },
+-      ],
+-    },
+-    shouldHidePref: !Services.prefs.getBoolPref(
+-      "browser.newtabpage.activity-stream.system.showSponsoredCheckboxes",
+-      false
+-    ),
+-  },
+ ];
+ 
+ export class AboutPreferences {
+@@ -351,41 +320,8 @@ export class AboutPreferences {
+       }
+     });
+ 
+-    // Special cases to like the nested prefs with another pref,
+-    // so we can disable it real time.
+-    if (id === "support-firefox") {
+-      function setupSupportFirefoxSubCheck(triggerPref, subPref) {
+-        const subCheckFullName = `browser.newtabpage.activity-stream.${triggerPref}`;
+-        const subCheckPref = Preferences.get(subCheckFullName);
+-
+-        subCheckPref?.on("change", () => {
+-          const showSponsoredFullName = `browser.newtabpage.activity-stream.${subPref}`;
+-          const showSponsoredSubcheck = subChecks.find(
+-            subcheck =>
+-              subcheck.getAttribute("preference") === showSponsoredFullName
+-          );
+-          if (showSponsoredSubcheck) {
+-            showSponsoredSubcheck.disabled = !Services.prefs.getBoolPref(
+-              subCheckFullName,
+-              true
+-            );
+-          }
+-        });
+-      }
+-
+-      setupSupportFirefoxSubCheck("feeds.section.topstories", "showSponsored");
+-      setupSupportFirefoxSubCheck("feeds.topsites", "showSponsoredTopSites");
+-    }
+-
+     pref.on("change", () => {
+       subChecks.forEach(subcheck => {
+-        // Update child preferences for the "Support Firefox" checkbox group
+-        // so that they're turned on and off at the same time.
+-        if (id === "support-firefox") {
+-          const subPref = Preferences.get(subcheck.getAttribute("preference"));
+-          subPref.value = pref.value;
+-        }
+-
+         // Disable any nested checkboxes if the parent pref is not enabled.
+         subcheck.disabled = !pref._value;
+       });
+diff --git a/browser/locales/en-US/browser/preferences/preferences.ftl b/browser/locales/en-US/browser/preferences/preferences.ftl
+index 269eca10..4c35b53f 100644
+--- a/browser/locales/en-US/browser/preferences/preferences.ftl
++++ b/browser/locales/en-US/browser/preferences/preferences.ftl
+@@ -749,11 +749,7 @@ home-prefs-trending-search-header =
+ home-prefs-trending-search-description = Popular and frequently searched topics
+ 
+ # "Support" here means to help sustain or contribute to something, especially through funding or sponsorship.
+-home-prefs-support-firefox-header =
+-    .label = Support { -brand-product-name }
+-
+-home-prefs-mission-message = Our sponsors support our mission to build a better web
+-home-prefs-mission-message-learn-more-link = Find out how
++## Removed by Abrowser customization process.
+ 
+ # Variables:
+ #   $num (number) - Number of rows displayed
+diff --git a/browser/themes/shared/preferences/preferences.css b/browser/themes/shared/preferences/preferences.css
+index 9c8155e5..4718341f 100644
+--- a/browser/themes/shared/preferences/preferences.css
++++ b/browser/themes/shared/preferences/preferences.css
+@@ -1541,12 +1541,3 @@ richlistitem .text-link:hover {
+ .search-header:has(.section-heading) {
+   margin: 0;
+ }
+-
+-/* Styles for the "sponsors support our mission" message and link on the Home tab */
+-.mission-message {
+-  margin-block-start: var(--space-large);
+-
+-  > a {
+-    font-size: var(--font-size-small);
+-  }
+-}
