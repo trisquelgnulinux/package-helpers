@@ -1,0 +1,16 @@
+diff --git a/installer/core_install.py b/installer/core_install.py
+index 1c8af23e..9595b2c7 100644
+--- a/installer/core_install.py
++++ b/installer/core_install.py
+@@ -644,6 +644,11 @@ class CoreInstall(object):
+         ld = distro.linux_distribution(full_distribution_name=False)
+         name = ld[0]
+         ver = ld[1]
++        # Ensure variable exists (used below for MX detection)
++        try:
++            distro_release_name = distro.name(pretty=True) or ""
++        except Exception:
++            distro_release_name = ""
+ 
+         found = True
+ 

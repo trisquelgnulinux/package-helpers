@@ -2,6 +2,7 @@
 #
 #    Copyright (C) 2011 MPA
 #    Copyright (C) 2013-2021 Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2025  Luis Guzmán <ark@switnet.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -18,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
+VERSION=4
 
 # note, we need version 3.20.6 or higher, the binary plugin requirement
 # was reworked on that version.
@@ -109,6 +110,10 @@ cat << RULES >> debian/rules
 override_dh_missing:
 	dh_missing --list-missing
 RULES
+
+# Change CRLF to LF to avoid issues.
+sed -i 's/\r$//' installer/distros.dat
+apply_patch_changes
 
 changelog "Removed printers with propietary drivers"
 
