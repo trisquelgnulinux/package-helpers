@@ -1,0 +1,75 @@
+diff --git a/lib/Sbuild/Conf.pm b/lib/Sbuild/Conf.pm
+index 79ae1c15..4ae269ce 100644
+--- a/lib/Sbuild/Conf.pm
++++ b/lib/Sbuild/Conf.pm
+@@ -42,9 +42,35 @@ BEGIN {
+     @EXPORT = qw(new setup read);
+ }
+ 
+-my $ubuntu_mmdebstrap_extra_args = {};
+ use Debian::DistroInfo;
+-for my $series (UbuntuDistroInfo->new()->supported()) {
++
++# Add distro-info provider auto-detect switch
++our $DISTROINFO_CLASS;
++our $IS_TRISQUEL = 0;
++BEGIN {
++    eval {
++         require Debian::DistroInfo;
++         Debian::DistroInfo->import();
++         1;
++    };
++    if (defined &UbuntuDistroInfo::new) {
++        $DISTROINFO_CLASS = 'UbuntuDistroInfo';
++        warn "sbuild: Debian::DistroInfo used: Ubuntu\n";
++    } elsif (defined &TrisquelDistroInfo::new) {
++        $DISTROINFO_CLASS = 'TrisquelDistroInfo';
++        $IS_TRISQUEL = 1;
++        warn "sbuild: Debian::DistroInfo used: Trisquel\n";
++    } else {
++        $DISTROINFO_CLASS = undef;
++        warn "sbuild: Debian::DistroInfo not available; mmdebstrap extras disabled at build-time\n";
++    }
++}
++
++my $ubuntu_mmdebstrap_extra_args = {};
++my $trisquel_mmdebstrap_extra_args = {};
++
++if (defined $DISTROINFO_CLASS && $DISTROINFO_CLASS eq 'UbuntuDistroInfo') {
++    for my $series (UbuntuDistroInfo->new()->supported()) {
+     $ubuntu_mmdebstrap_extra_args->{$series} = [ '--components=main,universe' ];
+     # We use snapshot.ubuntu.com here so it works both for ports and non-ports architectures without having to do complicated architecture detection logic
+     $ubuntu_mmdebstrap_extra_args->{"$series-proposed"} = [
+@@ -63,6 +83,32 @@ for my $series (UbuntuDistroInfo->new()->supported()) {
+         '--components=main,universe',
+         '--setup-hook=sed -i /-updates/d "$1"/etc/apt/sources.list',
+     ];
++    }
++}
++
++if (defined $DISTROINFO_CLASS && $DISTROINFO_CLASS eq 'TrisquelDistroInfo') {
++    for my $series (TrisquelDistroInfo->new()->supported()) {
++        $trisquel_mmdebstrap_extra_args->{$series} = [ '--components=main' ];
++        $trisquel_mmdebstrap_extra_args->{"$series-updates"} = [
++            '--components=main',
++            '--include=ca-certificates',
++            '--setup-hook=echo "deb [signed-by=/usr/share/keyrings/trisquel-archive-keyring.gpg] https://archive.trisquel.org/trisquel ' . $series . '-updates main" > "$1"/etc/apt/sources.list.d/updates.list'
++        ];
++        $trisquel_mmdebstrap_extra_args->{"$series-security"} = [
++            '--components=main',
++            '--include=ca-certificates',
++            '--setup-hook=echo "deb [signed-by=/usr/share/keyrings/trisquel-archive-keyring.gpg] https://archive.trisquel.org/trisquel ' . $series . '-security main" > "$1"/etc/apt/sources.list.d/security.list'
++        ];
++        $trisquel_mmdebstrap_extra_args->{"$series-backports"} = [
++            '--components=main',
++            '--include=ca-certificates',
++            '--setup-hook=echo "deb [signed-by=/usr/share/keyrings/trisquel-archive-keyring.gpg] https://archive.trisquel.org/trisquel ' . $series . '-backports main" > "$1"/etc/apt/sources.list.d/backports.list'
++        ];
++    }
++}
++
++if ($IS_TRISQUEL) {
++    $ubuntu_mmdebstrap_extra_args = $trisquel_mmdebstrap_extra_args;
+ }
+ 
+ sub setup ($);
