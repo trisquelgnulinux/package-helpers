@@ -1,0 +1,61 @@
+#!/bin/sh
+
+PREREQ=""
+DESCRIPTION="Enabling Live apparmor profiles..."
+
+prereqs()
+{
+       echo "$PREREQ"
+}
+
+case $1 in
+# get pre-requisites
+prereqs)
+       prereqs
+       exit 0
+       ;;
+esac
+
+. /scripts/casper-functions
+
+log_begin_msg "$DESCRIPTION"
+
+RC_EXIST=0
+
+if [ ! -e /root/etc/rc.local ]; then
+  umask 022
+  mkdir -p /root/etc
+  cat << 'EOF' > /root/etc/rc.local
+#!/bin/sh
+exit 0
+EOF
+  chmod 755 /root/etc/rc.local
+  RC_EXIST=1
+fi
+
+if [ "$RC_EXIST" -eq 0 ]; then
+  head -n1 /root/etc/rc.local | grep -q '^#!' || sed -i '1s|^|#!/bin/sh\n|' /root/etc/rc.local
+  sed -i 's/\r$//' /root/etc/rc.local
+  chmod 755 /root/etc/rc.local
+fi
+
+if ! grep -q 'BEGIN trisquel-live-apparmor' /root/etc/rc.local 2>/dev/null; then
+  sed -i '/^exit 0$/d' /root/etc/rc.local
+  cat << 'EOF' >> /root/etc/rc.local
+# --- BEGIN trisquel-live-apparmor ---
+if [ -d /rofs ]; then
+  /usr/lib/casper/casper-apparmor-live || true
+fi
+# --- END trisquel-live-apparmor ---
+EOF
+  echo 'exit 0' >> /root/etc/rc.local
+fi
+
+mkdir -p /root/etc/apt/apt.conf.d
+cat << 'APT' > /root/etc/apt/apt.conf.d/99-apparmor-live-hook
+# /etc/apt/apt.conf.d/99-apparmor-live-hook
+DPkg::Post-Invoke { "sh -c '[ -d /rofs ] && /usr/lib/casper/casper-apparmor-live || true'"; };
+APT
+chmod 644 /root/etc/apt/apt.conf.d/99-apparmor-live-hook
+
+log_end_msg

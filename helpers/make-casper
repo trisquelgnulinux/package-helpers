@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=25
+VERSION=26
 
 . ./config
 
@@ -43,9 +43,9 @@ sed "s/head -n1/sed -n 1p/" -i scripts/casper-functions
 # Apply custom trisquel patches
 apply_patch_changes
 
-# Enable abrowser apparmor profile
-cp $DATA/35apparmor_browsers scripts/casper-bottom
-chmod 755 scripts/casper-bottom/35apparmor_browsers
+# Enable apparmor profiles for live even on installation
+cp $DATA/36apparmor_live scripts/casper-bottom
+chmod 755 scripts/casper-bottom/36apparmor_live
 
 changelog "Compiled and customized for Trisquel enviroment."
 

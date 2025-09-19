@@ -1,0 +1,29 @@
+diff --git a/debian/casper.install b/debian/casper.install
+index 5eb58de8..248d17d0 100644
+--- a/debian/casper.install
++++ b/debian/casper.install
+@@ -10,4 +10,5 @@ bin/casper-update-initramfs	usr/share/casper
+ hooks				usr/share/initramfs-tools
+ scripts				usr/share/initramfs-tools
+ casper-md5check/casper-md5check	usr/lib/casper
++extra/casper-apparmor-live	usr/lib/casper
+ casper.conf			etc
+diff --git a/extra/casper-apparmor-live b/extra/casper-apparmor-live
+new file mode 100755
+index 00000000..c11b80ad
+--- /dev/null
++++ b/extra/casper-apparmor-live
+@@ -0,0 +1,13 @@
++#!/bin/sh
++# /usr/lib/casper/casper-apparmor-live
++[ -d /rofs ] || exit 0
++find /etc/apparmor.d -type f \
++  ! -path "/etc/apparmor.d/abstractions/*" \
++  ! -path "/etc/apparmor.d/tunables/*" \
++  ! -path "/etc/apparmor.d/local/*" \
++  ! -path "/etc/apparmor.d/disable/*" \
++  ! -path "/etc/apparmor.d/rsyslog.d/*" \
++  ! -path "/etc/apparmor.d/force-complain/*" \
++  ! -path "/etc/apparmor.d/apache2.d/*" \
++  ! -path "/etc/apparmor.d/abi/*" \
++  -print0 | xargs -0 -r -n1 apparmor_parser -r -T -W || true
