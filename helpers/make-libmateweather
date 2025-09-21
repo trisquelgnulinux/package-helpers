@@ -17,17 +17,12 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 BUILD_UNTIL=11.0
 
 . ./config
 
-# Apply patches from upstream for URL weather change and FTBFS on current
-# aramo release.
-for i in $DATA/*.patch; do
-    echo Applying patch $i
-patch --no-backup-if-mismatch -p1 < $i
-done
+apply_patch_changes
 
 changelog "Fix dataserver weather url change."
 
