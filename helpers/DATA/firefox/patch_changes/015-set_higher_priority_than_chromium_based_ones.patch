@@ -1,0 +1,17 @@
+diff --git a/debian/firefox.postinst.in b/debian/firefox.postinst.in
+index 4cb73f02..44e9261a 100644
+--- a/debian/firefox.postinst.in
++++ b/debian/firefox.postinst.in
+@@ -36,10 +36,10 @@ finish_rm_conffile() {
+ 
+ if [ "$1" = "configure" ] || [ "$1" = "abort-upgrade" ] || [ "$1" = "abort-remove" ] ; then
+     update-alternatives --install /usr/bin/gnome-www-browser \
+-        gnome-www-browser /usr/bin/$MOZ_APP_NAME 40
++        gnome-www-browser /usr/bin/$MOZ_APP_NAME 240
+ 
+     update-alternatives --install /usr/bin/x-www-browser \
+-        x-www-browser /usr/bin/$MOZ_APP_NAME 40
++        x-www-browser /usr/bin/$MOZ_APP_NAME 240
+ fi
+ 
+ if [ "$1" = "configure" ] ; then
