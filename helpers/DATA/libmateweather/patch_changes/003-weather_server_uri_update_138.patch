@@ -31,7 +31,7 @@ index 7bc24fc9..4698a077 100644
      }
  
      msg = soup_form_request_new (
--        "GET", "https://aviationweather.gov/cgi-bin/data/dataserver.php",
+-        "GET", "https://www.aviationweather.gov/cgi-bin/data/dataserver.php",
 +        "GET", "https://aviationweather.gov/api/data/dataserver",
          "dataSource", "metars",
          "requestType", "retrieve",
