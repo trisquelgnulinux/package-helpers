@@ -1,0 +1,13 @@
+diff --git a/pyproject.toml b/pyproject.toml
+index f2211ef1..313fde99 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -23,7 +23,7 @@ keywords = [
+     "yt-dlp",
+ ]
+ license = "Unlicense"
+-license-files = ["LICENSE"]
++license-files = { paths = ["LICENSE"] }
+ classifiers = [
+     "Topic :: Multimedia :: Video",
+     "Development Status :: 5 - Production/Stable",
