@@ -1,0 +1,12 @@
+diff --git a/debian/control b/debian/control
+index 2dc835cb..d7ec094e 100644
+--- a/debian/control
++++ b/debian/control
+@@ -102,6 +102,7 @@ Depends: debconf-kde-helper,
+          python3-pyqt6,
+          python3-sip,
+          python3-software-properties (= ${binary:Version}),
++         pyqt6-dev-tools,
+          software-properties-common,
+          ${misc:Depends},
+          ${python3:Depends}
