@@ -1,5 +1,6 @@
 #!/bin/sh
 #
+#    Copyright (C) 2025       Luis Guzmán <ark@switnet.org>
 #    Copyright (C) 2008-2018  Rubén Rodríguez <ruben@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
@@ -19,8 +20,10 @@
 
 #STAGE-1-DEBOOTSTRAP
 
-VERSION=4
+VERSION=5
 COMPONENT=main
+EXTERNAL='deb-src http://ftp.debian.org/debian trixie main'
+REPOKEY=6ED0E7B82643E131
 
 . ./config
 
@@ -31,8 +34,12 @@ replace Ubuntu Trisquel .
 sed -i "s|trisquel-codename \".*\"|trisquel-codename \"$CODENAME\"|" doc/apt-verbatim.ent
 
 replace "http://archive.ubuntu.com/ubuntu/project/ubuntu-archive-keyring.gpg" "http://archive.trisquel.org/trisquel/trisquel-archive-signkey.gpg" .
+replace http://security.ubuntu.com/ubuntu http://archive.trisquel.org/trisquel .
+replace http://archive.ubuntu.com/ubuntu/ http://archive.trisquel.org/trisquel .
 replace ubuntu-keyring trisquel-keyring .
 replace ubuntu-archive-keyring trisquel-archive-keyring .
+sed -i  's|https://snapshot.ubuntu.com/ubuntu/|https://archive.trisquel.org/trisquel/|' abicheck/symbol-merge.py
+sed -i 's|debian.sources|trisquel.sources|' abicheck/symbol-merge.py
 
 # hack, preserve this test untouched
 cp test/libapt/cdromfindpackages_test.cc /tmp
@@ -105,7 +112,8 @@ EOF
 ## end non-free examples
 
 
-/bin/sed -i 's_http://archive.ubuntu.com/ubuntu/project/_http://archive.trisquel.info/trisquel/_g; s/ubuntu-archive-keyring/trisquel-archive-keyring/g; s/ubuntu-keyring/trisquel-keyring/g; ' cmdline/apt-key.in debian/control*
+/bin/sed -i 's_http://archive.ubuntu.com/ubuntu/project/_http://archive.trisquel.info/trisquel/_g; s/ubuntu-archive-keyring/trisquel-archive-keyring/g; s/ubuntu-keyring/trisquel-keyring/g; ' debian/control* 
+#cmdline/apt-key.in
 replace Ubuntu Trisquel  methods/http.cc
 replace ubuntu-archive.gpg trisquel-archive.gpg .
 
