@@ -17,13 +17,15 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 
 . ./config
 
 sed -i  's/changelogs\.ubuntu\.com/packages\.trisquel\.org/g' debian/patches/04_changelog
 sed -i 's/Ubuntu/Trisquel/g' debian/patches/04_changelog
 
-changelog "Imported into Trisquel"
+# Note: i386 rebuild requires no change on helper or other helpers as binaries can be
+# easily recompiled from the jenkins dashboard by arch specific, avoiding helpers
 
+changelog "Imported into Trisquel"
 package
