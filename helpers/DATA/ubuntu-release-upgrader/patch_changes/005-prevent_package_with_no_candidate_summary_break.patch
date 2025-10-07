@@ -1,0 +1,13 @@
+diff --git a/DistUpgrade/DistUpgradeViewGtk3.py b/DistUpgrade/DistUpgradeViewGtk3.py
+index f656c611..a291e321 100644
+--- a/DistUpgrade/DistUpgradeViewGtk3.py
++++ b/DistUpgrade/DistUpgradeViewGtk3.py
+@@ -736,7 +736,7 @@ class DistUpgradeViewGtk3(DistUpgradeView,SimpleGtkbuilderApp):
+                                                 [parent_text % len(details_list)])
+                 for pkg in details_list:
+                     self.details_list.append(node, ["<b>%s</b> - %s" % (
+-                          pkg.name, GLib.markup_escape_text(getattr(pkg.candidate, "summary", None)))])
++                          pkg.name, GLib.markup_escape_text(getattr(pkg.candidate, "summary", "") or ""))])
+         # prepare dialog
+         self.dialog_changes.realize()
+         self.dialog_changes.set_transient_for(self.window_main)
