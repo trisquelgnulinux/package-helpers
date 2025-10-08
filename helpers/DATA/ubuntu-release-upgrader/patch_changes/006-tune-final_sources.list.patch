@@ -1,0 +1,61 @@
+diff --git a/DistUpgrade/DistUpgradeController.py b/DistUpgrade/DistUpgradeController.py
+index a03dad7a..1f1b74df 100644
+--- a/DistUpgrade/DistUpgradeController.py
++++ b/DistUpgrade/DistUpgradeController.py
+@@ -174,15 +174,11 @@ class DistUpgradeController(object):
+         # Defaults for deb sources
+         self.default_sources_filepath = os.path.join(
+             apt_pkg.config.find_dir("Dir::Etc::sourceparts"),
+-            "ubuntu.sources"
++            "trisquel.sources"
+         )
+ 
+-        if self.arch in ("amd64", "i386"):
+-            self.default_source_uri = "http://{}archive.trisquel.org/trisquel".format(country_mirror())
+-            self.security_source_uri = "http://archive.trisquel.org/trisquel"
+-        else:
+-            self.default_source_uri = "http://ports.ubuntu.com/ubuntu-ports"
+-            self.security_source_uri = "http://ports.ubuntu.com/ubuntu-ports"
++        self.default_source_uri = "http://{}archive.trisquel.org/trisquel".format(country_mirror())
++        self.security_source_uri = "http://archive.trisquel.org/trisquel"
+ 
+         # we run with --force-overwrite by default
+         if "RELEASE_UPGRADE_NO_FORCE_OVERWRITE" not in os.environ:
+@@ -932,8 +928,8 @@ class DistUpgradeController(object):
+             # Figure out where this new entry is going.
+             if entry.file == sourcelist_file:
+                 if self.isMirror(entry.uri):
+-                    # sources.list -> sources.list.d/ubuntu.sources
+-                    new_filepath = os.path.join(sourceparts_dir, 'ubuntu.sources')
++                    # sources.list -> sources.list.d/trisquel.sources
++                    new_filepath = os.path.join(sourceparts_dir, 'trisquel.sources')
+                 else:
+                     # sources.list -> sources.list.d/third-party.sources
+                     new_filepath = os.path.join(sourceparts_dir, 'third-party.sources')
+@@ -989,7 +985,7 @@ class DistUpgradeController(object):
+         for entry in index.values():
+             filepath = entry['filepath']
+ 
+-            if filepath == os.path.join(sourceparts_dir, 'ubuntu.sources'):
++            if filepath == os.path.join(sourceparts_dir, 'trisquel.sources'):
+                 entry['signed-by'] = ' /usr/share/keyrings/trisquel-archive-keyring.gpg'
+             else:
+                 # Check if there is a ppa.gpg corresponding to ppa.list.
+@@ -1046,7 +1042,7 @@ class DistUpgradeController(object):
+         # the migration.
+         with open(sourcelist_file, 'w') as f:
+             f.write('# Trisquel sources have moved to {}\n'
+-                    .format(os.path.join(sourceparts_dir, 'ubuntu.sources')))
++                    .format(os.path.join(sourceparts_dir, 'trisquel.sources')))
+ 
+     def _addDefaultSources(self):
+         e = self.sources.add(
+@@ -1281,7 +1277,7 @@ class DistUpgradeController(object):
+                     and self.useNetwork):
+                     #hm, still nothing useful ...
+                     prim = _("Generate default sources?")
+-                    secon = _("After scanning your 'ubuntu.sources' no "
++                    secon = _("After scanning your 'trisquel.sources' no "
+                               "valid entry for '%s' was found.\n\n"
+                               "Should default entries for '%s' be "
+                               "added? If you select 'No', the upgrade "
