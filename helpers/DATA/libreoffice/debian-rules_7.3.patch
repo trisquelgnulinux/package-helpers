@@ -1,17 +1,18 @@
---- a/debian/rules	2022-01-26 09:57:22.000000000 -0600
-+++ b/debian/rules	2022-02-04 09:48:40.142753566 -0600
-@@ -667,8 +667,8 @@
-   BULLSEYE_BACKPORT=y
-   ENABLE_LTO=n
- endif
--
+diff --git a/debian/rules b/debian/rules
+index 06de6171..b930f423 100755
+--- a/debian/rules
++++ b/debian/rules
+@@ -824,7 +824,8 @@ endif
+ # for t64
+ BUILD_DEPS += , dpkg-dev (>= 1.22.5) [$(filter-out i386,$(OOO_32BIT_ARCHS))]
+ 
 -ifeq "$(DEB_VENDOR)" "Ubuntu"
 +ifeq ("$(DEB_VENDOR)",$(filter "$(DEB_VENDOR)","Ubuntu" "Trisquel"))
 +  ifeq "$(DEB_VENDOR)" "Ubuntu"
    # Set up Google API keys, see http://www.chromium.org/developers/how-tos/api-keys .
    # Note: these are for Ubuntu use ONLY. For your own distribution,
    # please get your own set of keys.
-@@ -679,7 +679,7 @@
+@@ -835,7 +835,7 @@
    GOOGLEAPI_CLIENTID_UBUNTU := 424119844901-gee57209rkbo1rgula4i0arilvgv3lsf.apps.googleusercontent.com
    GOOGLEAPI_CLIENTSECRET_UBUNTU := 3h1DknIrVsq2wEhIuADVxQ3E
    CONFIGURE_FLAGS += --with-gdrive-client-id=$(GOOGLEAPI_CLIENTID_UBUNTU) --with-gdrive-client-secret=$(GOOGLEAPI_CLIENTSECRET_UBUNTU)
