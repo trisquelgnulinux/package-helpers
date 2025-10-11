@@ -1,0 +1,76 @@
+diff --git a/src/user-admin.c b/src/user-admin.c
+index c51a2022..a4fb6941 100644
+--- a/src/user-admin.c
++++ b/src/user-admin.c
+@@ -23,8 +23,10 @@
+ #include <pwd.h>
+ #include <libintl.h>
+ #include <locale.h>
++#include <glib.h>
+ #include <glib/gi18n.h>
+ #include <grp.h>
++#include <string.h>
+ #include <sys/types.h>
+ #include <libgroupservice/gas-group.h>
+ #include <libgroupservice/gas-group-manager.h>
+@@ -285,6 +287,51 @@ static gboolean UserNameValidCheck (const gchar *UserName, gchar **Message)
+     valid = TRUE;
+     if (!in_use && !empty && !home_use)
+     {
++        /* Follow adduser(8) policy:
++         * Read NAME_REGEX from /etc/adduser.conf, compile an anchored regex,
++         * and require the username to fully match it. If unavailable or
++         * invalid, fall back to current Debian/Ubuntu default: ^[a-z][-a-z0-9_]*$
++         * (lowercase first char; then lowercase, digits, '-' and '_').
++         */
++        {
++            gchar *contents = NULL, *rx_s = NULL;
++            gsize len = 0;
++            const gchar *fallback = "^[a-z][-a-z0-9_]*$";
++            if (g_file_get_contents("/etc/adduser.conf", &contents, &len, NULL)) {
++                gchar **lines = g_strsplit(contents, "\n", -1);
++                for (gchar **p = lines; p && *p; ++p) {
++                    gchar *line = g_strstrip(*p);
++                    if (!line || !*line || line[0] == '#')
++                        continue;
++                    if (g_str_has_prefix(line, "NAME_REGEX")) {
++                        /* Accept forms like: NAME_REGEX="...pattern..." */
++                        gchar *q1 = strchr(line, '"');
++                        if (q1) {
++                            gchar *q2 = strrchr(q1 + 1, '"');
++                            if (q2 && q2 > q1 + 1)
++                                rx_s = g_strndup(q1 + 1, (gsize)(q2 - (q1 + 1)));
++                        }
++                        break;
++                    }
++                }
++                g_strfreev(lines);
++                g_free(contents);
++            }
++
++            GError *rx_err = NULL;
++            GRegex *rx = g_regex_new(rx_s ? rx_s : fallback, G_REGEX_ANCHORED, 0, &rx_err);
++            g_free(rx_s);
++            if (rx) {
++                if (!g_regex_match(rx, UserName, 0, NULL)) {
++                    valid = FALSE;
++                }
++                g_regex_unref(rx);
++            } else {
++                /* If regex cannot compile, be conservative */
++                if (rx_err) g_error_free(rx_err);
++                valid = FALSE;
++            }
++        }
+         for (c = UserName; *c; c++)
+         {
+             if (! ((*c >= 'a' && *c <= 'z') ||
+@@ -313,7 +360,7 @@ static gboolean UserNameValidCheck (const gchar *UserName, gchar **Message)
+         }
+         else
+         {
+-            *Message = g_strdup (_("The username should only consist of upper and lower case \nletters from a-z,digits and the following characters: . - _"));
++            *Message = g_strdup (_("The username first character must be lower case, use only \nlowercase letters (a–z), digits and the following characters: -_"));
+         }
+     }
+ 
