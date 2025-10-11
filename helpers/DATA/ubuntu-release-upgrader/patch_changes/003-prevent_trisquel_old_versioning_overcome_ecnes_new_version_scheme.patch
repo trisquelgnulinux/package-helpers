@@ -2,15 +2,25 @@ diff --git a/DistUpgrade/DistUpgradeQuirks.py b/DistUpgrade/DistUpgradeQuirks.py
 index 243efc14..a63db6bb 100644
 --- a/DistUpgrade/DistUpgradeQuirks.py
 +++ b/DistUpgrade/DistUpgradeQuirks.py
-@@ -196,6 +196,8 @@ class DistUpgradeQuirks(object):
-         self._install_t64_replacement_packages()
-         self._install_pipewire_audio_on_ubuntu_studio()
-         self._handle_ufw_breaks()
+@@ -189,6 +189,18 @@ class DistUpgradeQuirks(object):
+     def PreDistUpgradeCache(self):
+         """ run right before calculating the dist-upgrade """
+         logging.debug("running Quirks.PreDistUpgradeCache")
++
 +        cache = self._get_cache()
++        self.__resolver = None
++        # Ensure recommends are ON for desktops, avoids resolver dead-ends
++        try:
++            self.ensure_recommends_are_installed_on_desktops()
++        except Exception as e:
++            logging.debug("ensure_recommends skipped: %s", e)
++
++        # Prefer Ecne-style candidates before marking transitions
 +        self._prefer_ecne_suffix(cache)
- 
-     # individual quirks handler that run *after* the dist-upgrade was
-     # calculated in the cache
++
+         # self._install_python_is_python2()
+         self._t64_transition_helper()
+         self._protect_essential_gui()
 @@ -206,6 +208,88 @@ class DistUpgradeQuirks(object):
          self._disable_cloud_init()
  

@@ -10,40 +10,56 @@ index f7427ac2..51f85b32 100644
          self._protect_essential_gui()
          self._maybe_remove_gpg_wks_server()
          self._install_t64_replacement_packages()
-@@ -205,6 +206,37 @@ class DistUpgradeQuirks(object):
+@@ -205,6 +206,53 @@ class DistUpgradeQuirks(object):
          self._disable_cloud_init()
  
      # helpers
 +    def _t64_transition_helper(self):
 +        """
-+        Provides a minimal t64 transition focused on GLib and Qt5Core.
-+        Marks the t64 variants for installation if the older packages are
-+        installed. Idempotent and conservative for initial testing.
++        Help the resolver by preferring t64 variants for commonly-blocking libs.
++        Safe to run multiple times.
 +        """
-+        cache = self.controller.cache
-+        log = logging.getLogger("DistUpgrade")
-+
-+        # Run only if at least one of the target t64 packages is in the cache.
-+        if "libglib2.0-0t64" not in cache and "libqt5core5t64" not in cache:
-+            log.debug("t64-helper: no target t64 packages in cache; skipping")
++        cache = getattr(self.controller, "cache", None)
++        if cache is None:
 +            return
++        log = logging.getLogger("DistUpgrade")
 +
 +        pairs = [
 +            ("libglib2.0-0", "libglib2.0-0t64"),
 +            ("libqt5core5a", "libqt5core5t64"),
++            ("libelf1", "libelf1t64"),
++            ("libssl3", "libssl3t64"),
++            ("libpsl5", "libpsl5t64"),
++            ("libdb5.3", "libdb5.3t64"),
++            ("libgdbm6", "libgdbm6t64"),
++            ("libpng16-16", "libpng16-16t64"),
++            ("libtevent0", "libtevent0t64"),
++            ("libmtdev1", "libmtdev1t64"),
++            ("libts0", "libts0t64"),
++            ("libtirpc3", "libtirpc3t64"),
++            ("libqt6core6", "libqt6core6t64"),
++            ("libqt6dbus6", "libqt6dbus6t64"),
++            ("libparted2", "libparted2t64"),
 +        ]
 +
++        # Run only if at least one of the target t64 packages is in the cache.
++        if not any(new in cache for _, new in pairs):
++            log.debug("t64-helper: no target t64 packages in cache; skipping")
++            return
++
 +        touched = []
-+        for old, new in pairs:
-+            try:
-+                if old in cache and cache[old].is_installed and new in cache:
-+                    cache[new].mark_install(True, True, False)
-+                    touched.append(f"{old}->{new}")
-+            except Exception as e:
-+                log.warning("t64-helper: error marking %s->%s: %s", old, new, e)
++        for old, newpkg in pairs:
++            if old in cache and newpkg in cache:
++                try:
++                    if getattr(cache[old], "is_installed", False) or getattr(cache[old], "marked_install", False):
++                        cache[newpkg].mark_install(from_user=True, auto_fix=True)
++                        touched.append(newpkg)
++                except Exception as e:
++                    log.debug("t64-helper: mark_install(%s) failed: %s", newpkg, e)
 +
 +        if touched:
-+            log.info("t64-helper: touched=%s", ", ".join(touched))
++            log.info("t64-helper: forced %s", ", ".join(touched))
++
 +
      def _is_lxde_system(self):
          """Return True if LXDE (trisquel-mini) is detected as installed."""

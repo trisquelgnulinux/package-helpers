@@ -25,7 +25,7 @@
 # Also, don't forget to update the meta-release files at archive and packages.t.i
 # The "obsoletes" list from ubuntu has been removed
 
-VERSION=19
+VERSION=20
 
 . ./config
 # Previous upstream release name, update for each release.
@@ -213,12 +213,12 @@ perl $DATA/parsewiki DistUpgrade/DevelReleaseAnnouncement > DistUpgrade/DevelRel
 
 cat <<EOF > data/removal_denylist.cfg
 # list of packages that should never be removed
-trisquel-base
-trisquel-minimal
-trisquel-desktop-common
-trisquel-mini
-triskel
-trisquel-sugar
+^trisquel-base$
+^trisquel-minimal$
+^trisquel-desktop-common$
+^trisquel-mini$
+^triskel$
+^trisquel-sugar$
 # update-manager should not remove itself
 update-manager
 update-manager-core

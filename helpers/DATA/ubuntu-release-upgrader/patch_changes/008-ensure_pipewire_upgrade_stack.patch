@@ -1,0 +1,64 @@
+diff --git a/DistUpgrade/DistUpgradeQuirks.py b/DistUpgrade/DistUpgradeQuirks.py
+index 35ed55bd..b70a8899 100644
+--- a/DistUpgrade/DistUpgradeQuirks.py
++++ b/DistUpgrade/DistUpgradeQuirks.py
+@@ -209,6 +209,7 @@ class DistUpgradeQuirks(object):
+         self._wks_purge_from_cache()
+         self._mta_cancel_selection()
+         self._t64_transition_helper()
++        self._ensure_pipewire_stack()
+         self._ensure_trisquel_meta_selected()
+         self._protect_essential_gui()
+         # self._maybe_remove_gpg_wks_server()
+@@ -605,6 +606,51 @@ class DistUpgradeQuirks(object):
+         except Exception:
+             pass
+ 
++    def _ensure_pipewire_stack(self):
++        """
++        Nudge APT to pick the PipeWire stack so desktop metas can upgrade.
++        Also remove PulseAudio family to resolve Conflicts/Breaks with pipewire-audio.
++        """
++        cache = getattr(self.controller, "cache", None)
++        if cache is None:
++            return
++        log = logging.getLogger("DistUpgrade")
++
++        touched_i, touched_d = [], []
++
++        # Full PipeWire stack
++        for n in ("pipewire-audio", "pipewire-alsa", "pipewire-pulse", "gstreamer1.0-pipewire", "wireplumber"):
++            if self._apt_mark_install(n, protect=True): touched_i.append(n)
++
++        # Remove PulseAudio family to avoid conflicts
++        for n in ("pulseaudio", "pulseaudio-module-bluetooth", "pulseaudio-module-gsettings", "pulseaudio-module-jack", "pulseaudio-utils"):
++            if self._apt_mark_delete(n): touched_d.append(n)
++
++        if touched_i or touched_d:
++            log.info("pipewire-helper: install=%s remove=%s",
++                     ", ".join(touched_i) if touched_i else "-",
++                     ", ".join(touched_d) if touched_d else "-")
++
++
++        def mark(name):
++            if name in cache and getattr(cache[name], "candidate", None):
++                try:
++                    cache[name].mark_install(from_user=True)
++                    return True
++                except Exception:
++                    pass
++            return False
++
++        touched = []
++        for n in ("pipewire-alsa", "pipewire-audio", "gstreamer1.0-pipewire"):
++            if mark(n):
++                touched.append(n)
++
++        if touched:
++            logging.getLogger("DistUpgrade").info(
++                "pipewire-helper: preselected %s", ", ".join(touched)
++            )
++
+     def _get_pci_ids(self):
+         """ return a set of pci ids of the system (using lspci -n) """
+         lspci = set()

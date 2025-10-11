@@ -1,0 +1,46 @@
+diff --git a/DistUpgrade/DistUpgradeQuirks.py b/DistUpgrade/DistUpgradeQuirks.py
+index 4c599207..2c3fd680 100644
+--- a/DistUpgrade/DistUpgradeQuirks.py
++++ b/DistUpgrade/DistUpgradeQuirks.py
+@@ -202,6 +202,41 @@ class DistUpgradeQuirks(object):
+     # --- MTA hard-block config (postfix only, temporary during upgrade) ---
+     MTA_BLOCK_PREF = "/etc/apt/preferences.d/zz-urug-block-mta-postfix.pref"
+ 
++    def _resolver(self):
++        # use only one ProblemResolver per stage
++        if not hasattr(self, "__resolver") or self.__resolver is None:
++            try:
++                import apt
++                self.__resolver = apt.ProblemResolver(self._get_cache())
++            except Exception:
++                self.__resolver = None
++        return self.__resolver
++
++    def _apt_mark_install(self, name, protect=False, auto_fix=True, from_user=True):
++        cache = self._get_cache()
++        if cache and name in cache and getattr(cache[name], "candidate", None):
++            try:
++                cache[name].mark_install(from_user=from_user, auto_fix=auto_fix)
++                if protect and self._resolver():
++                    try: self._resolver().protect(cache[name])
++                    except Exception: pass
++                return True
++            except Exception:
++                return False
++        return False
++
++    def _apt_mark_delete(self, name, purge=False):
++        cache = self._get_cache()
++        if cache and name in cache:
++            pkg = cache[name]
++            if getattr(pkg, "is_installed", False) or getattr(pkg, "marked_install", False):
++                try:
++                    pkg.mark_delete(auto_fix=False)
++                    return True
++                except Exception:
++                    return False
++        return False
++
+     def PreDistUpgradeCache(self):
+         """ run right before calculating the dist-upgrade """
+         logging.debug("running Quirks.PreDistUpgradeCache")

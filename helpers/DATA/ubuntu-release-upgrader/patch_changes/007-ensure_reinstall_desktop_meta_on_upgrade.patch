@@ -1,0 +1,49 @@
+diff --git a/DistUpgrade/DistUpgradeQuirks.py b/DistUpgrade/DistUpgradeQuirks.py
+index f1337e12..9250dd3a 100644
+--- a/DistUpgrade/DistUpgradeQuirks.py
++++ b/DistUpgrade/DistUpgradeQuirks.py
+@@ -209,6 +209,7 @@ class DistUpgradeQuirks(object):
+         self._wks_purge_from_cache()
+         self._mta_cancel_selection()
+         self._t64_transition_helper()
++        self._ensure_trisquel_meta_selected()
+         self._protect_essential_gui()
+         # self._maybe_remove_gpg_wks_server()
+         self._install_t64_replacement_packages()
+@@ -476,6 +477,36 @@ class DistUpgradeQuirks(object):
+         else:
+             logging.debug("prefer-ecne-suffix: no candidates changed")
+ 
++    def _ensure_trisquel_meta_selected(self):
++        """
++        Ensure base Trisquel meta-packages are explicitly selected for installation/upgrade.
++        This nudges APT's resolver to plan the transition (e.g., PipeWire replacing PulseAudio)
++        in the same run, instead of deferring meta-packages as "Not Upgrading".
++        """
++        # Get the apt cache from the controller (attribute name varies across releases)
++        cache = getattr(self.controller, "cache", None) or getattr(self.controller, "_cache", None)
++        if cache is None:
++            # Best effort: nothing to do if cache is not yet attached here
++            return
++
++        # Root meta-packages by flavour plus the common desktop pivot
++        roots = [
++            "trisquel", "triskel", "trisquel-mini", "trisquel-gnome", "trisquel-sugar",
++            "trisquel-desktop-common",
++        ]
++        for name in roots:
++            try:
++                pkg = cache[name]
++            except KeyError:
++                continue  # package not present in this flavour
++            if getattr(pkg, "is_installed", False):
++                try:
++                    # Mark as user-requested so the resolver upgrades it with its peers
++                    pkg.mark_install(from_user=True)
++                except Exception:
++                    # Non-fatal: keep going
++                    pass
++
+     def _t64_transition_helper(self):
+         """
+         Provides a minimal t64 transition focused on GLib and Qt5Core.

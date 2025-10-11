@@ -1,0 +1,57 @@
+diff --git a/DistUpgrade/DistUpgradeQuirks.py b/DistUpgrade/DistUpgradeQuirks.py
+index 484ceaae..c390003a 100644
+--- a/DistUpgrade/DistUpgradeQuirks.py
++++ b/DistUpgrade/DistUpgradeQuirks.py
+@@ -209,6 +209,7 @@ class DistUpgradeQuirks(object):
+         self._wks_purge_from_cache()
+         self._mta_cancel_selection()
+         self._t64_transition_helper()
++        self._parted_transition_helper()
+         self._ensure_pipewire_stack()
+         self._ensure_trisquel_meta_selected()
+         self._protect_essential_gui()
+@@ -618,6 +624,44 @@ class DistUpgradeQuirks(object):
+         except Exception:
+             pass
+ 
++
++    def _parted_transition_helper(self):
++        """
++        Handle libparted/udisks2 transition seen in logs:
++        - Remove libparted-fs-resize0 (obsolete transitional)
++        - Prefer libparted2t64 when available, else libparted2
++        - Protect libblockdev-fs2 and udisks2 from accidental removal
++        """
++        cache = getattr(self.controller, "cache", None)
++        if cache is None:
++            return
++        log = logging.getLogger("DistUpgrade")
++
++        touched_i, touched_d = [], []
++
++        if self._apt_mark_delete("libparted-fs-resize0"):
++            touched_d.append("libparted-fs-resize0")
++
++        # Prefer t64 if present
++        if "libparted2t64" in cache:
++            if self._apt_mark_install("libparted2t64"):
++                touched_i.append("libparted2t64")
++        else:
++            if self._apt_mark_install("libparted2"):
++                touched_i.append("libparted2")
++
++        # Keep storage stack in place
++        for keep in ("libblockdev-fs2", "udisks2"):
++            try:
++                if keep in cache and (getattr(cache[keep], "is_installed", False) or getattr(cache[keep], "marked_install", False)):
++                    if self._resolver(): self._resolver().protect(cache[keep])
++            except Exception: pass
++
++        if touched_i or touched_d:
++            log.info("parted-helper: install=%s remove=%s",
++                     ", ".join(touched_i) if touched_i else "-",
++                     ", ".join(touched_d) if touched_d else "-")
++
+     def _ensure_pipewire_stack(self):
+         """
+         Nudge APT to pick the PipeWire stack so desktop metas can upgrade.
