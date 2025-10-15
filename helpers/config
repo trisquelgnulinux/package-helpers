@@ -80,12 +80,33 @@ pkgversion(){
 replace(){
 find ${@:3} -type f -not -iregex '.*changelog.*' -not -iregex '.*copyright.*' -execdir /bin/sed --follow-symlinks -i s^"$1"^"$2"^g {} \;
 }
+changelog_multiline() {
+  local msg="$1"
+  local version="${2:-$FULLVERSION}"
+  local dist="${3:-$REPO}"
+
+  if ! grep -q "$version" debian/changelog 2>/dev/null; then
+    dch -v "$version" -D "$dist" ""
+  fi
+
+  local count=0
+
+  while IFS= read -r line || [ -n "$line" ]; do
+    dch -a "$line"
+    count=$((count + 1))
+  done <<< "$msg"
+
+  if [ "$count" -gt 0 ]; then
+    dch -r ""
+  fi
+}
 changelog(){
 head -n 1 debian/changelog | grep -q $UPSTREAM-security && REPO=$CODENAME-security || REPO=$CODENAME
 [ "$SECURITY" = true ] && REPO=${CODENAME}-security
 [ "$BACKPORT" = true ] || [ "$BACKPORTS" = true ] && REPO=${CODENAME}-backports
 #Name convention issue "+" breaking packages build like console-setup, using "-" instead.
-echo | dch -D $REPO -v $FULLVERSION "$1"
+local msg="$1"
+changelog_multiline "$msg" "$FULLVERSION" "$REPO"
 
 # Make sure the changelog file is identical between archs
 /bin/sed "/-- Trisquel/s/.*/ -- Trisquel GNU\/Linux developers <trisquel-devel@listas.trisquel.info>  $DATE/" -i debian/changelog
