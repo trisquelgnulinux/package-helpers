@@ -86,7 +86,6 @@ changelog_multiline() {
   local version="${2:-$FULLVERSION}"
   local dist="${3:-$REPO}"
 
-  # Iniciar changelog si la versión aún no está
   if ! grep -q "$version" debian/changelog 2>/dev/null; then
     dch -v "$version" -D "$dist" ""
   fi
