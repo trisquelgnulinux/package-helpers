@@ -1,0 +1,103 @@
+diff --git a/capplets/time-admin/src/main.c b/capplets/time-admin/src/main.c
+index a15254e6..ac9adb43 100644
+--- a/capplets/time-admin/src/main.c
++++ b/capplets/time-admin/src/main.c
+@@ -156,8 +156,14 @@ static void InitMainWindow(TimeAdmin *ta)
+ 
+     /* NTP sync switch */
+     ta->NtpState = GetNtpState(ta);
++    /* If there is no NTP provider, then disable ntp switch and manually set NtpState = FALSE */
++    if (!GetCanNtp(ta)) {
++        gtk_widget_set_sensitive (ta->NtpSyncSwitch, FALSE);
++        ta->NtpState = FALSE;
++    }
+     gtk_switch_set_state (GTK_SWITCH(ta->NtpSyncSwitch), ta->NtpState);
+-
++    /* Refresh the tooltip state consistently */
++    ChangeSpinBttonState (ta);
+     /* Time zone */
+     SetupTimezoneDialog(ta);
+     const char *TimeZone = GetTimeZone(ta);
+diff --git a/capplets/time-admin/src/time-tool.c b/capplets/time-admin/src/time-tool.c
+index 664f6284..ac41545a 100644
+--- a/capplets/time-admin/src/time-tool.c
++++ b/capplets/time-admin/src/time-tool.c
+@@ -138,6 +138,45 @@ EXIT:
+ 
+ }
+ 
++/* Returns TRUE if timedated reports a network time provider (CanNTP == TRUE). */
++gboolean GetCanNtp(TimeAdmin *ta)
++{
++    GDBusProxy *proxy = NULL;
++    GError     *error = NULL;
++    GVariant   *ret;
++    GVariant   *canntp;
++
++    proxy = g_dbus_proxy_new_sync (ta->Connection,
++                                   G_DBUS_PROXY_FLAGS_NONE,
++                                   NULL,
++                                  "org.freedesktop.timedate1",
++                                  "/org/freedesktop/timedate1",
++                                  "org.freedesktop.DBus.Properties",
++                                   NULL,
++                                   &error);
++    if (proxy == NULL)
++        goto EXIT;
++
++    ret = g_dbus_proxy_call_sync (proxy,
++                                 "Get",
++                                  g_variant_new ("(ss)",
++                                 "org.freedesktop.timedate1",
++                                 "CanNTP"),
++                                  G_DBUS_CALL_FLAGS_NONE,
++                                 -1,
++                                  NULL,
++                                  &error);
++    if (ret == NULL)
++        goto EXIT;
++
++    g_variant_get (ret, "(v)", &canntp);
++    return g_variant_get_boolean (canntp);
++
++EXIT:
++    ErrorMessage (_("GetNtpState"), error ? error->message : _("Unknown error"));
++    if (error) g_error_free (error);
++    return FALSE;
++}
+ const gchar *GetTimeZone(TimeAdmin *ta)
+ {
+     GDBusProxy *proxy = NULL;
+@@ -200,10 +238,16 @@ void SetTimeZone(GDBusProxy *proxy,const char *zone)
+     }
+ }
+ 
+-static void
++void
+ ChangeSpinBttonState (TimeAdmin *ta)
+ {
++    /* Enable/disable manual edit widgets based on NTP state */
+     gtk_widget_set_sensitive (ta->SaveButton, !ta->NtpState);
++    gtk_widget_set_sensitive (ta->HourSpin,   !ta->NtpState);
++    gtk_widget_set_sensitive (ta->MinuteSpin, !ta->NtpState);
++    gtk_widget_set_sensitive (ta->SecondSpin, !ta->NtpState);
++    gtk_widget_set_sensitive (ta->Calendar,   !ta->NtpState);
++
+     SetTooltip (ta->SaveButton, !ta->NtpState);
+     SetTooltip (ta->HourSpin,   !ta->NtpState);
+     SetTooltip (ta->MinuteSpin, !ta->NtpState);
+diff --git a/capplets/time-admin/src/time-tool.h b/capplets/time-admin/src/time-tool.h
+index 9c17703e..dfb0e601 100644
+--- a/capplets/time-admin/src/time-tool.h
++++ b/capplets/time-admin/src/time-tool.h
+@@ -42,6 +42,10 @@ void          SaveModifyTime    (GtkButton   *button,
+ 
+ gboolean      GetNtpState       (TimeAdmin   *ta);
+ 
++gboolean      GetCanNtp         (TimeAdmin   *ta);
++
++void          ChangeSpinBttonState (TimeAdmin *ta);
++
+ const gchar  *GetTimeZone       (TimeAdmin   *ta);
+ 
+ void          SetTimeZone       (GDBusProxy  *proxy,
