@@ -19,12 +19,9 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=5
+VERSION=6
 
 . ./config
-
-# Add trisquel logo patch.
-patch_p1 $DATA/001_add_trisquel_gnome-boxes_logo.patch
 
 remove_patch Update-recommended-downloads.patch
 
@@ -44,7 +41,6 @@ cat << recommended-os > data/recommended-downloads.xml
  -->
 <list>
   <os_id>http://trisquel.info/trisquel/11</os_id>
-  <os_id>http://trisquel.info/trisquel/10</os_id>
   <os_id>http://guix.gnu.org/guix/1.3</os_id>
   <os_id>http://hyperbola.info/hyperbola/03</os_id>
   <os_id>http://pureos.net/pureos/8</os_id>
@@ -53,6 +49,9 @@ recommended-os
 
 # Remove gnome recommendation.
 grep -rl "<url>.*.iso.*</url>" data/osinfo/|xargs -r sed -i "/.iso/d"
+
+# Apply patch_changes
+apply_patch_changes
 
 changelog "Replace recommended downloads."
 

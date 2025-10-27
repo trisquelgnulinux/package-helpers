@@ -1,0 +1,30 @@
+From 333dfad568ba77456ff3b00e6c2750d6a2cf0d73 Mon Sep 17 00:00:00 2001
+From: Felipe Borges <felipeborges@gnome.org>
+Date: Wed, 10 Aug 2022 09:54:41 +0200
+Subject: [PATCH] util-app: Make recommended-downloads parsing handle empty
+ media lists
+
+---
+ src/util-app.vala | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/src/util-app.vala b/src/util-app.vala
+index c0a42a94d..c5f47ae22 100644
+--- a/src/util-app.vala
++++ b/src/util-app.vala
+@@ -250,7 +250,11 @@ private async GLib.List<Osinfo.Media>? parse_recommended_downloads_file (string
+                 continue;
+             }
+ 
+-            var media = os.get_media_list ().get_nth (0) as Osinfo.Media;
++            var media_list = os.get_media_list ();
++            if (media_list == null || media_list.get_length () == 0)
++                continue;
++
++            var media = media_list.get_nth (0) as Osinfo.Media;
+             if (media.url != null || os_id.has_prefix ("http://redhat.com"))
+                 list.append (media);
+ 
+-- 
+GitLab
+
