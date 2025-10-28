@@ -1,0 +1,15 @@
+diff --git a/profiles/usr.bin.pidgin b/profiles/usr.bin.pidgin
+index 78338084..6d18657d 100644
+--- a/profiles/usr.bin.pidgin
++++ b/profiles/usr.bin.pidgin
+@@ -90,6 +90,10 @@
+   #   https://gitlab.gnome.org/GNOME/at-spi2-core/-/issues/43
+   owner /{,var/}run/user/*/at-spi/bus* rw,
+ 
++  # Allow IBus private socket under HOME cache (used by some IBus setups)
++  owner @{HOME}/.cache/ibus/ r,
++  owner @{HOME}/.cache/ibus/* rw,
++
+   # Site-specific additions and overrides. See local/README for details.
+   #include <local/usr.bin.pidgin>
+ }

@@ -2,6 +2,7 @@
 #
 #    Copyright (C) 2008-2010  Rubén Rodríguez <ruben@trisquel.info>
 #    Copyright (C) 2025       Jacob K <jacobk@disroot.org>
+#    Copyright (C) 2025       Luis Guzmán <ark@switnet.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -18,18 +19,19 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 
 . ./config
 
 # Apply patches for screen reader on in pidgin, see more at:
 # https://gitlab.trisquel.org/trisquel/package-helpers/-/issues/198
-for patch in $(ls -v ${DATA}/*.patch)
-do
-    patch_p1 $patch
-done
+
+apply_patch_changes
 
 
-changelog "Apply fix for issue TPH#198 for using pidgin with the screen reader."
+changelog "
+Apply fix for issue TPH#198 for using pidgin with the screen reader.
+Apply fix for pidgin not able to access ibus socket
+"
 
 package
