@@ -19,8 +19,11 @@
 
 #STAGE-5-DESKTOP|ARTWORK
 
-VERSION=2
+VERSION=3
 . ./config
+
+# Set default trisquel wallpaper variable
+TRISQUEL_WALLP="$(find $DATA/../trisquel-wallpapers/ -name $CODENAME.*|xargs basename)"
 
 # Rebrand and tweak
 grep -rl 'font-name='|xargs -r sed -i '/font-name/s|Ubuntu 11|Sans 11|'
@@ -39,7 +42,7 @@ cp $DATA/trisquel-budgie-logo_200_solid.png usr/share/plymouth/themes/trisquel-b
 cp $DATA/trisquel-budgie-logo_200_alpha.png usr/share/plymouth/themes/trisquel-budgie-logo/trisquel-budgie-logo@2.png
 
 #Background
-sed -i "s|background=.*|background=\'/usr/share/backgrounds/$CODENAME.jpg\'|g" debian/budgie-lightdm-theme.gsettings-override
+sed -i "s|background=.*|background=\'/usr/share/backgrounds/$TRISQUEL_WALLP\'|g" debian/budgie-lightdm-theme.gsettings-override
 
 changelog "Rebuild for trisquel"
 package
