@@ -46,14 +46,14 @@ fun init () {
     resized_logo_image = logo.image.Scale(Window.GetHeight() / logoscale, Window.GetHeight() / logoscale);
     logo.sprite = Sprite(resized_logo_image);
     logo.opacity_angle = 0;
-    logo.sprite.SetX (Window.GetX() + Window.GetWidth()  / 2 - resized_logo_image.GetWidth()  / 2);
-    logo.sprite.SetY (Window.GetY() + Window.GetHeight() / 2.3 - resized_logo_image.GetHeight() / 2);
+    logo.sprite.SetX (Window.GetWidth()  / 2 - resized_logo_image.GetWidth()  / 2);
+    logo.sprite.SetY (Window.GetHeight() / 2.3 - resized_logo_image.GetHeight() / 2);
     logo.sprite.SetOpacity (1);
  
     resized_logobg_image = logobg.image.Scale(Window.GetHeight() / logoscale, Window.GetHeight() / logoscale);
     logobg.sprite = Sprite(resized_logobg_image);
-    logobg.sprite.SetX (Window.GetX() + Window.GetWidth()  / 2 - resized_logobg_image.GetWidth()  / 2);
-    logobg.sprite.SetY (Window.GetY() + Window.GetHeight() / 2.3 - resized_logobg_image.GetHeight() / 2);
+    logobg.sprite.SetX (Window.GetWidth()  / 2 - resized_logobg_image.GetWidth()  / 2);
+    logobg.sprite.SetY (Window.GetHeight() / 2.3 - resized_logobg_image.GetHeight() / 2);
     if (logofile == "trisquel_logo.png")
       logobg.sprite.SetOpacity (1);
   }
@@ -63,14 +63,15 @@ fun init () {
 
 fun refresh_callback ()
   {
-    if (initialwidth != Window.GetWidth()) {
-      initialwidth = Window.GetWidth();
-      logo.sprite.SetOpacity (0);
-      logobg.sprite.SetOpacity (0);
-      init();
-    }
     if ((status == "normal") && (bits_per_pixel != 4))
-      {
+     {
+       if (initialwidth != Window.GetWidth())
+        {
+          initialwidth = Window.GetWidth();
+          logo.sprite.SetOpacity (0);
+          logobg.sprite.SetOpacity (0);
+          init();
+        }
         logo.opacity_angle += ((2 * 3.14) / 50) * 0.25;  # 0.25 HZ
         min_opacity = 0.25;
         opacity = (Math.Cos(logo.opacity_angle) + 1) / 2;
