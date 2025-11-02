@@ -153,16 +153,13 @@ sed 's/script/glow/g' -i themes/glow/meson.build
 sed 's/rtoken/script/g' -i themes/glow/meson.build
 cp $DATA/sugar.png $DATA/trisquel_logo16.png $DATA/trisquel_logo-sugar.png themes/glow/
 /bin/sed -i s/background/sugar/g themes/glow/*
-sed -i 's_special://logo_trisquel\_logo-sugar.png_g; s/0.3/0.8/' themes/glow/*.script
+sed -i '/^logofile/s/trisquel_logo.png/trisquel_logo-sugar.png/g; s/0.3/0.8/' themes/glow/*.script
 rename s/script.script/glow.script/g themes/glow/*
 rename s/script.plymouth.in/glow.plymouth.in/g themes/glow/*
 for i in trisquel_logo-sugar.png trisquel_logo16.png sugar.png
 do
     sed -i "/'progress_bar.png'/a\ \ '$i'," themes/glow/meson.build
 done
-
-# explicit calling logo
-sed -i 's|special://logo|trisquel_logo.png|' themes/trisquel-logo/*.script
 
 find -type d |xargs rename s/glow/sugar/g
 find -type f |xargs rename s/glow/sugar/g

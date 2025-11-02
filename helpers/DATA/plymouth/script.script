@@ -1,11 +1,13 @@
 initialwidth = Window.GetWidth();
 
+logofile = "trisquel_logo.png";
+
 bits_per_pixel = Window.GetBitsPerPixel ();
 if (bits_per_pixel == 4) {
     Window.SetBackgroundColor (0, 0, 0);
     logo.image = Image("trisquel_logo16.png");
 } else {
-    logo.image = Image("trisquel_logo.png");
+    logo.image = Image(logofile);
     logobg.image = Image("trisquel_logo-bg.png");
     bg.image = Image("background.png");
   }
@@ -52,7 +54,8 @@ fun init () {
     logobg.sprite = Sprite(resized_logobg_image);
     logobg.sprite.SetX (Window.GetX() + Window.GetWidth()  / 2 - resized_logobg_image.GetWidth()  / 2);
     logobg.sprite.SetY (Window.GetY() + Window.GetHeight() / 2.3 - resized_logobg_image.GetHeight() / 2);
-    logobg.sprite.SetOpacity (1);
+    if (logofile == "trisquel_logo.png")
+      logobg.sprite.SetOpacity (1);
   }
 
   if (bits_per_pixel != 4)
@@ -74,7 +77,8 @@ fun refresh_callback ()
         opacity *= 1 - min_opacity;
         opacity += min_opacity;
         logo.sprite.SetOpacity (opacity);
-        logobg.sprite.SetOpacity (1);
+        if (logofile == "trisquel_logo.png")
+          logobg.sprite.SetOpacity (1);
       }
   }
   
