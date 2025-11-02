@@ -58,19 +58,20 @@ index a9e8501a..02328371 100644
 #     </hbox>
 #   </vbox>
 # </groupbox>
-diff --git a/browser/components/preferences/privacy.inc.xhtml b/browser/components/preferences/privacy.inc.xhtml
-index 205c0e01..029b9925 100644
---- a/browser/components/preferences/privacy.inc.xhtml
-+++ b/browser/components/preferences/privacy.inc.xhtml
-@@ -372,10 +372,7 @@
-           support-page="global-privacy-control" />
-     </hbox>
-     <hbox id="doNotTrackBox" flex="1" align="center" hidden="true">
--      <html:a is="moz-support-link"
--          id="doNotTrackRemoval"
--          support-page="how-do-i-turn-do-not-track-feature"
--          data-l10n-id="do-not-track-removal" />
-+      <html:a class="learnMore" href="https://trisquel.info/en/wiki/abrowser-help" target="_blank"/>
-     </hbox>
-   </vbox>
- </groupbox>
+# dropped 144
+#diff --git a/browser/components/preferences/privacy.inc.xhtml b/browser/components/preferences/privacy.inc.xhtml
+#index 205c0e01..029b9925 100644
+#--- a/browser/components/preferences/privacy.inc.xhtml
+#+++ b/browser/components/preferences/privacy.inc.xhtml
+#@@ -372,10 +372,7 @@
+#           support-page="global-privacy-control" />
+#     </hbox>
+#     <hbox id="doNotTrackBox" flex="1" align="center" hidden="true">
+#-      <html:a is="moz-support-link"
+#-          id="doNotTrackRemoval"
+#-          support-page="how-do-i-turn-do-not-track-feature"
+#-          data-l10n-id="do-not-track-removal" />
+#+      <html:a class="learnMore" href="https://trisquel.info/en/wiki/abrowser-help" target="_blank"/>
+#     </hbox>
+#   </vbox>
+# </groupbox>
