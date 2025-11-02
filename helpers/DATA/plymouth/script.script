@@ -1,45 +1,80 @@
-# This is an example plymouth plugin script
+initialwidth = Window.GetWidth();
 
 bits_per_pixel = Window.GetBitsPerPixel ();
 if (bits_per_pixel == 4) {
     Window.SetBackgroundColor (0, 0, 0);
     logo.image = Image("trisquel_logo16.png");
 } else {
-    logo.image = Image("special://logo");
+    logo.image = Image("trisquel_logo.png");
+    logobg.image = Image("trisquel_logo-bg.png");
+    bg.image = Image("background.png");
+  }
 
-    bg_image = Image("background.png");
-    bg_sprite = Sprite(bg_image);
-
+fun init () {
     customlogo.image = Image("custom.png");
     customlogo.sprite = Sprite(customlogo.image);
     customlogo.sprite.SetX (0);
     customlogo.sprite.SetY (0);
     customlogo.sprite.SetOpacity (1);
+    screen_aspect = Window.GetWidth() / Window.GetHeight();
 
-    screen_width = Window.GetWidth();
-    screen_height = Window.GetHeight();
-    resized_bg_image = bg_image.Scale(screen_width, screen_height);
-    bg_sprite.SetImage(resized_bg_image);
-}
+    bg_width  = bg.image.GetWidth();
+    bg_height = bg.image.GetHeight();
+    bg_aspect = bg_width / bg_height;
 
+    if (bg_aspect > screen_aspect) {
+      scale_factor = Window.GetHeight() / bg_height;
+    } else {
+      scale_factor = Window.GetWidth() / bg_width;
+    }
 
-resized_logo_image = logo.image.Scale(screen_height / 3, screen_height / 3);
-logo.sprite = Sprite(resized_logo_image);
-logo.opacity_angle = 0;
-logo.sprite.SetX (Window.GetX() + Window.GetWidth()  / 2 - resized_logo_image.GetWidth()  / 2);
-logo.sprite.SetY (Window.GetY() + (Window.GetHeight() / 2) - resized_logo_image.GetHeight() / 2);
-logo.sprite.SetOpacity (1);
+    new_width  = bg_width * scale_factor;
+    new_height = bg_height * scale_factor;
+    scaled_bg_img = bg.image.Scale(new_width, new_height);
+
+    crop_x = (new_width - Window.GetWidth()) / 2;
+    crop_y = (new_height - Window.GetHeight()) / 2;
+
+    resized_bg_img = scaled_bg_img.Crop(crop_x, crop_y, Window.GetWidth(), Window.GetHeight());
+
+    bg.sprite = Sprite(bg.image);
+    bg.sprite.SetImage(resized_bg_img);
+
+    logoscale = 1.2;
+    resized_logo_image = logo.image.Scale(Window.GetHeight() / logoscale, Window.GetHeight() / logoscale);
+    logo.sprite = Sprite(resized_logo_image);
+    logo.opacity_angle = 0;
+    logo.sprite.SetX (Window.GetX() + Window.GetWidth()  / 2 - resized_logo_image.GetWidth()  / 2);
+    logo.sprite.SetY (Window.GetY() + Window.GetHeight() / 2.3 - resized_logo_image.GetHeight() / 2);
+    logo.sprite.SetOpacity (1);
+ 
+    resized_logobg_image = logobg.image.Scale(Window.GetHeight() / logoscale, Window.GetHeight() / logoscale);
+    logobg.sprite = Sprite(resized_logobg_image);
+    logobg.sprite.SetX (Window.GetX() + Window.GetWidth()  / 2 - resized_logobg_image.GetWidth()  / 2);
+    logobg.sprite.SetY (Window.GetY() + Window.GetHeight() / 2.3 - resized_logobg_image.GetHeight() / 2);
+    logobg.sprite.SetOpacity (1);
+  }
+
+  if (bits_per_pixel != 4)
+    init();
 
 fun refresh_callback ()
   {
+    if (initialwidth != Window.GetWidth()) {
+      initialwidth = Window.GetWidth();
+      logo.sprite.SetOpacity (0);
+      logobg.sprite.SetOpacity (0);
+      init();
+    }
     if ((status == "normal") && (bits_per_pixel != 4))
       {
         logo.opacity_angle += ((2 * 3.14) / 50) * 0.25;  # 0.25 HZ
-        min_opacity = 0.3;
+        min_opacity = 0.25;
         opacity = (Math.Cos(logo.opacity_angle) + 1) / 2;
         opacity *= 1 - min_opacity;
         opacity += min_opacity;
         logo.sprite.SetOpacity (opacity);
+        logobg.sprite.SetOpacity (1);
       }
   }
   
@@ -51,6 +86,7 @@ status = "normal";
 
 fun dialog_setup()
   {
+    dialog_opacity (1);
     local.box;
     local.lock;
     local.entry;
@@ -66,13 +102,13 @@ fun dialog_setup()
     box.sprite.SetPosition(box.x, box.y, box.z);
     
     lock.sprite = Sprite(lock.image);
-    lock.x = box.x + box.image.GetWidth()/2 - (lock.image.GetWidth() + entry.image.GetWidth()) / 2;
+    lock.x = box.x - 10 + box.image.GetWidth()/2 - (lock.image.GetWidth() + entry.image.GetWidth()) / 2;
     lock.y = box.y + box.image.GetHeight()/2 - lock.image.GetHeight()/2;
     lock.z = box.z + 1;
     lock.sprite.SetPosition(lock.x, lock.y, lock.z);
     
     entry.sprite = Sprite(entry.image);
-    entry.x = lock.x + lock.image.GetWidth();
+    entry.x = lock.x + lock.image.GetWidth() + 10;
     entry.y = box.y + box.image.GetHeight()/2 - entry.image.GetHeight()/2;
     entry.z = box.z + 1;
     entry.sprite.SetPosition(entry.x, entry.y, entry.z);
@@ -81,12 +117,12 @@ fun dialog_setup()
     global.dialog.lock = lock;
     global.dialog.entry = entry;
     global.dialog.bullet_image = Image("bullet.png");
-    dialog_opacity (1);
   }
     
 fun dialog_opacity(opacity)
   {
     logo.sprite.SetOpacity (0);
+    logobg.sprite.SetOpacity (0);
     dialog.box.sprite.SetOpacity (opacity);
     dialog.lock.sprite.SetOpacity (opacity);
     dialog.entry.sprite.SetOpacity (opacity);
@@ -99,6 +135,7 @@ fun dialog_opacity(opacity)
 fun display_normal_callback ()
   {
     global.status = "normal";
+    logo.opacity_angle = 0;
     if (global.dialog)
       dialog_opacity (0);
   }
@@ -110,12 +147,12 @@ fun display_password_callback (prompt, bullets)
 	dialog_setup();
     else
 	dialog_opacity(1);
-    for (index = 0; dialog.bullet[index] || index < bullets; index++)
+    for (index = 0; dialog.bullet[index] || index < 27; index++)
       {
         if (!dialog.bullet[index])
           {
             dialog.bullet[index].sprite = Sprite(dialog.bullet_image);
-            dialog.bullet[index].x = dialog.entry.x + index * dialog.bullet_image.GetWidth();
+            dialog.bullet[index].x = dialog.entry.x + index * dialog.bullet_image.GetWidth() + 5;
             dialog.bullet[index].y = dialog.entry.y + dialog.entry.image.GetHeight() / 2 - dialog.bullet_image.GetHeight() / 2;
             dialog.bullet[index].z = dialog.entry.z + 1;
             dialog.bullet[index].sprite.SetPosition(dialog.bullet[index].x, dialog.bullet[index].y, dialog.bullet[index].z);
@@ -135,6 +172,7 @@ Plymouth.SetDisplayPasswordFunction(display_password_callback);
 fun quit_callback ()
 {
   logo.sprite.SetOpacity (1);
+  logobg.sprite.SetOpacity (1);
 }
 
 Plymouth.SetQuitFunction(quit_callback);
@@ -143,11 +181,44 @@ Plymouth.SetQuitFunction(quit_callback);
 
 message_sprite = Sprite();
 message_sprite.SetPosition(10, 10, 10000);
+message2_sprite = Sprite();
+message2_sprite.SetPosition(10, 10, 10000);
 
+textbg_sprite = Sprite();
 fun message_callback (text)
 {
-  my_image = Image.Text(text, 1, 1, 1);
-  message_sprite.SetImage(my_image);
+  my_image = Image.Text(text, 0, 0, 0);
+
+  # scale proportionally to vertical resolution
+  scaling = 1;
+  if (Window.GetHeight() > 720)
+    scaling = Window.GetHeight() / 720;
+  # but no bigger than screen width
+  if ((my_image.GetWidth() * scaling) > Window.GetWidth() - 40)
+    scaling = Window.GetWidth() / (my_image.GetWidth() + 40);
+  message_sprite.SetImage(my_image.Scale(my_image.GetWidth() * scaling, my_image.GetHeight() * scaling));
+  message_x = (Window.GetX() + Window.GetWidth()  / 2 - my_image.GetWidth() * scaling / 2);
+  message_y = (Window.GetY() + Window.GetHeight() / 1.4 - my_image.GetHeight() / 2);
+  message_z = 10001;
+
+  ## debug text
+  #my_image2 = Image.Text(message_x, 0, 0, 0);
+  #message2_sprite.SetImage(my_image2);
+
+  textbg_img = Image("entry.png");
+  textbg_scaled = textbg_img.Scale(my_image.GetWidth() * scaling + 16, my_image.GetHeight() * scaling + 10);
+  
+  textbg_sprite.SetImage(textbg_scaled);
+  textbg_x = (Window.GetX() + Window.GetWidth()  / 2 - my_image.GetWidth() * scaling / 2);
+  textbg_y = (Window.GetY() + Window.GetHeight() / 1.4 - my_image.GetHeight() / 2);
+  textbg_sprite.SetOpacity(0.8);
+  if (my_image.GetWidth() == 0)
+    textbg_sprite.SetOpacity(0);
+  textbg_z = 10000;
+
+  textbg_sprite.SetPosition(textbg_x, textbg_y, textbg_z);
+  message_sprite.SetPosition(message_x + 8, message_y + 5, message_z);
+
 }
 
 Plymouth.SetMessageFunction(message_callback);
