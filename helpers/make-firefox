@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=126
+VERSION=127
 EXTERNAL='deb-src http://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu $UPSTREAM main'
 REPOKEY=9BDB3D89CE49EC21
 
@@ -50,10 +50,7 @@ sed '/"showSponsored"/,/value/s/value: true/value: false/' -i $ActivityStream
 sed '/"telemetry"/,/value/s/value: true/value: false/' -i $ActivityStream
 #141#sed '/"section.highlights.includePocket"/,/value/s/value: true/value: false/' -i $ActivityStream
 sed '/"telemetry.structuredIngestion.endpoint"/,/value/s/value: .*/value: ""/' -i $ActivityStream
-sed '/read_more_endpoint/,+1s/http.*/",/' -i $ActivityStream
-sed '/stories_endpoint/s/getpocket.cdn.mozilla.net/127.0.0.1/' -i $ActivityStream
-sed '/stories_referrer/s/http.*/",/' -i $ActivityStream
-sed '/topics_endpoint/s/getpocket.cdn.mozilla.net/127.0.0.1/' -i $ActivityStream
+# feeds.section.topstories.options removed at 144.0.2
 sed 's/preffedRegions.includes.geo. .. ..locales .. locales.includes.locale./false/' -i $ActivityStream
 #sed 's/Ubuntu, //' -i browser/components/newtab/css/activity-stream*.css
 #echo "#header-asrouter-container{display: none!important;}" >> browser/components/newtab/css/activity-stream-linux.css
@@ -61,7 +58,7 @@ sed 's/preffedRegions.includes.geo. .. ..locales .. locales.includes.locale./fal
 sed '/"showSponsoredTopSites"/,/value/s/value: true/value: false/' -i $ActivityStream
 sed -i '/activity-stream.showSponsored/s|true|false|g' $BAP_FirefoxJs
 #Disable «Mozilla VPN» - firefox 94
-sed '/"browser.privatebrowsing.vpnpromourl"/s/https.*"/"/' -i $BAP_FirefoxJs
+# browser.privatebrowsing.vpnpromourl at 144.0.2
 grep -rl browser.vpn_promo.enabled | xargs -r sed -i '/browser.vpn_promo.enabled/s|true|false|'
 
 sed '/network.connectivity-service.IPv/s/http.*success.txt?ipv[46]//' -i modules/libpref/init/all.js
@@ -88,6 +85,17 @@ sed -i '/browser.uitour.enabled/s|true|false|' $BAP_FirefoxJs
 ##More info at $DATA/patch_changes/006_remova_mailto_handlers_correctly.patch
 # keep contentRelevancy disabled (first appearence is false thus using /bin/sed)
 /bin/sed -i '/"toolkit.contentRelevancy.ingestEnabled"/s|,.*)|, false)|' $BAP_FirefoxJs
+# 144.0.2 -- disabled settings
+for i in browser.urlbar.allowSearchSuggestionsForSimpleOrigins \
+         browser.urlbar.quicksuggest.online.enabled \
+         browser.urlbar.suggest.yelpRealtime \
+         browser.search.suggest.ohttp.enabled \
+         browser.newtabpage.activity-stream.discoverystream.reportAds.enabled \
+         browser.newtabpage.activity-stream.discoverystream.publisherFavicon.enabled \
+         browser.ml.chat.page
+do
+    sed -i "/${i}/s|true|false|" $BAP_FirefoxJs
+done
 
 # Remove ubufox recommendation and lower ublock to suggestion
 # see more at: $DATA/009_remove_ubunfox_suggest_webext-ublock-origin.patch

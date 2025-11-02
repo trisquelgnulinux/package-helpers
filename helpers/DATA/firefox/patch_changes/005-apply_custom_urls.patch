@@ -19,35 +19,59 @@ with is="" and support-page="..."
 
 Cheers!
 
-diff --git a/browser/components/preferences/privacy.inc.xhtml b/browser/components/preferences/privacy.inc.xhtml_
-index 77ea8f5d..62c3ce8e 100644
+diff --git a/browser/components/preferences/privacy.inc.xhtml b/browser/components/preferences/privacy.inc.xhtml
+index a9e8501a..02328371 100644
 --- a/browser/components/preferences/privacy.inc.xhtml
 +++ b/browser/components/preferences/privacy.inc.xhtml
-@@ -372,10 +372,7 @@
-           support-page="global-privacy-control" />
-     </hbox>
-     <hbox id="doNotTrackBox" flex="1" align="center" hidden="true">
--      <html:a is="moz-support-link"
--          id="doNotTrackRemoval"
--          support-page="how-do-i-turn-do-not-track-feature"
--          data-l10n-id="do-not-track-removal" />
-+      <html:a class="learnMore" href="https://trisquel.info/en/wiki/abrowser-help" target="_blank"/>
-     </hbox>
-   </vbox>
- </groupbox>
-@@ -388,11 +385,10 @@
-     <vbox flex="1">
-       <description class="description-with-side-element description-deemphasized" flex="1">
-         <html:span id="totalSiteDataSize"></html:span>
+@@ -21,13 +21,13 @@
+     <hbox align="start">
+       <image id="trackingProtectionShield"/>
+       <description class="description-with-side-element" flex="1">
+-        <html:span id="contentBlockingDescription" data-l10n-id="content-blocking-section-top-level-description"></html:span>
 -        <html:a is="moz-support-link"
--                id="siteDataLearnMoreLink"
--                data-l10n-id="sitedata-learn-more"
--                support-page="storage-permissions"
+-                id="contentBlockingLearnMore"
+-                class="learnMore"
+-                data-l10n-id="content-blocking-learn-more"
+-                support-page="enhanced-tracking-protection"
 -        />
-+        <html:a id="doNotTrackLearnMoreLink"
-+            href="https://trisquel.info/en/wiki/abrowser-help"
-+            data-l10n-id="do-not-track-learn-more"
-+            target="_blank"/>
++          <html:span id="contentBlockingDescription" data-l10n-id="content-blocking-section-top-level-description"></html:span>
++          <html:a id="contentBlockingLearnMore"
++             class="learnMore"
++             data-l10n-id="content-blocking-learn-more"
++             href="https://trisquel.info/en/wiki/abrowser-help"
++             target="_blank"
++          />
        </description>
-       <hbox flex="1" id="deleteOnCloseNote" class="info-box-container smaller-font-size">
-         <hbox class="info-icon-container">
+       <button id="trackingProtectionExceptions"
+               is="highlightable-button"
+#@@ -389,9 +386,10 @@
+#               class="tail-with-learn-more"
+#               preference="privacy.donottrackheader.enabled"
+#               data-l10n-id="do-not-track-description2" />
+#-      <html:a is="moz-support-link"
+#-          id="doNotTrackLearnMoreLink"
+#-          support-page="how-do-i-turn-do-not-track-feature" />
+#+      <html:a id="doNotTrackLearnMoreLink"
+#+          href="https://trisquel.info/en/wiki/abrowser-help"
+#+          data-l10n-id="do-not-track-learn-more"
+#+          target="_blank"/>
+#     </hbox>
+#   </vbox>
+# </groupbox>
+# dropped 144
+#diff --git a/browser/components/preferences/privacy.inc.xhtml b/browser/components/preferences/privacy.inc.xhtml
+#index 205c0e01..029b9925 100644
+#--- a/browser/components/preferences/privacy.inc.xhtml
+#+++ b/browser/components/preferences/privacy.inc.xhtml
+#@@ -372,10 +372,7 @@
+#           support-page="global-privacy-control" />
+#     </hbox>
+#     <hbox id="doNotTrackBox" flex="1" align="center" hidden="true">
+#-      <html:a is="moz-support-link"
+#-          id="doNotTrackRemoval"
+#-          support-page="how-do-i-turn-do-not-track-feature"
+#-          data-l10n-id="do-not-track-removal" />
+#+      <html:a class="learnMore" href="https://trisquel.info/en/wiki/abrowser-help" target="_blank"/>
+#     </hbox>
+#   </vbox>
+# </groupbox>
