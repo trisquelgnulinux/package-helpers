@@ -17,7 +17,9 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=5
+#STAGE-5-DESKTOP|ARTWORK
+
+VERSION=6
 COMPONENT=main
 
 . ./config
@@ -43,7 +45,7 @@ cat << EOF > debian/01_trisquel.conf
 # screensaver-timeout = Timeout (in seconds) until the screen blanks when the greeter is called as lockscreen
 #
 [greeter]
-background=/usr/share/backgrounds/aramo.jpg
+background=/usr/share/backgrounds/$CODENAME.jpg
 theme-name=Trisquel-dark
 icon-theme-name=trisquel
 indicators = ~clock;~spacer;~host;~spacer;~a11y;~language;~session;~power
