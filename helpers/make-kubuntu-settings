@@ -19,13 +19,16 @@
 #STAGE-5-DESKTOP|ARTWORK
 #TODO: reuse the wallpaper at DATA/trisquel-wallpaper
 
-VERSION=15
+VERSION=16
 
 . ./config
 
-# Previos release 'til the next artwork is ready
+# Update current release values 'til the next artwork is ready.
 CURRENT_RELEASE="Ecne"
 SUFFIX_ARTWORK=".jpg"
+TW_FSIZE="3840x2160"
+TW_WIDTH="${TW_FSIZE%x*}"
+TW_HEIGHT="${TW_FSIZE#*x}"
 
 # Rebrand logo
 rm desktop/usr-share/kubuntu-circle-128.png
@@ -76,14 +79,14 @@ X-KDE-PluginInfo-Website=http://plasma.kde.org
 X-KDE-PluginInfo-Category=
 X-KDE-PluginInfo-Depends=
 X-KDE-PluginInfo-License=LGPLv2+
-X-KDE-PluginInfo-EnabledByDefault=true 
+X-KDE-PluginInfo-EnabledByDefault=true
 X-Plasma-API=5.0
- 
+
 [Wallpaper]
 defaultWallpaperTheme=$CURRENT_RELEASE
 defaultFileSuffix=$SUFFIX_ARTWORK
-defaultWidth=5120
-defaultHeight=2880
+defaultWidth=$TW_WIDTH
+defaultHeight=$TW_HEIGHT
 
 [ContrastEffect]
 enabled=true
@@ -186,7 +189,7 @@ dpkg-divert --package trisquel-desktop-common-data --add --rename --divert "\$it
 
 cat << EOF > \$item
 include "/usr/share/themes/Breeze/gtk-2.0/gtkrc"
-style "user-font" 
+style "user-font"
 {
         font_name="Noto Sans Regular"
 }
@@ -210,8 +213,12 @@ sed '1s/triskel/kubuntu/' -i debian/control
 cp $DATA/start.svgz desktop/theme/desktoptheme/triskel/icons/start.svgz
 cp $DATA/fullscreenpreview.jpg $DATA/preview.png desktop/theme/look-and-feel/org.triskel.desktop/contents/previews/
 sed -i "s|TriskelLight|$CURRENT_RELEASE|" desktop/sddm/themes/triskel/theme.conf
-sed -i "/background/s|.png|$SUFFIX_ARTWORK|" desktop/sddm/themes/triskel/theme.conf
 sed -i "/trisquel.info/s|feature-tour/|wiki/$CODENAME|" desktop/plasma/plasma-welcome-extra-pages/01-Kubuntu.qml
+
+# Replace original image with new release value
+ORIG_SIZE_FILE="$(grep ^background desktop/sddm/themes/triskel/theme.conf | \
+                xargs basename)"
+sed -i "/background/s|$ORIG_SIZE_FILE|$TW_FSIZE$SUFFIX_ARTWORK|" desktop/sddm/themes/triskel/theme.conf
 
 # Use regular task manager instead of icon-only version
 sed 's/plasma.icontasks/plasma.taskmanager/' -i desktop/theme/layout-templates/org.triskel.desktop.defaultPanel/contents/layout.js
