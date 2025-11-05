@@ -295,7 +295,7 @@ class UrlClassifierSkipUrls(EmptyRemoteSettings):
 class TippyTopSites(JsonProcessor):
     JSON_PATHS = (
         arguments.MAIN_PATH /
-        'browser/components/newtab/data/content/tippytop/top_sites.json',
+        'browser/components/topsites/content/tippytop/top_sites.json',
         arguments.BRANDING_PATH /
         'tippytop/top_sites.json')
 
@@ -325,7 +325,7 @@ class TopSites(RemoteSettings):
 
     @classmethod
     def should_drop_record(cls, site):
-        return site['url'] != 'https://www.wikipedia.org/'
+        return True
 
     @classmethod
     def process_record(cls, site):

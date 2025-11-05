@@ -19,21 +19,13 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=24
+VERSION=25
 EXTERNAL='deb-src http://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu $UPSTREAM main'
-REPOKEY=9BDB3D89CE49EC21
+REPOKEY=AEBDF4819BE21867
 
 . ./config
 
 # Get initial SHA256 hashes.
-SHA256_F1=$(sha256sum third_party/cbindgen/vendor/winnow/examples/http/main.rs|awk '{print$1}')
-SHA256_F2=$(sha256sum third_party/cbindgen/vendor/winnow/examples/http/bench.rs|awk '{print$1}')
-SHA256_F3=$(sha256sum third_party/dump_syms/vendor/httparse/benches/parse.rs|awk '{print$1}')
-SHA256_F4=$(sha256sum third_party/dump_syms/vendor/httparse/src/lib.rs|awk '{print$1}')
-SHA256_F5=$(sha256sum third_party/dump_syms/vendor/hyper-rustls/src/connector/builder.rs|awk '{print$1}')
-SHA256_F6=$(sha256sum third_party/dump_syms/vendor/rustls/src/lib.rs|awk '{print$1}')
-SHA256_F7=$(sha256sum third_party/dump_syms/vendor/rustls-webpki/src/subject_name/dns_name.rs|awk '{print$1}')
-SHA256_F8=$(sha256sum third_party/dump_syms/vendor/rustls-webpki/src/verify_cert.rs|awk '{print$1}')
 SHA256_F9=$(sha256sum comm/third_party/rust/glean/src/configuration.rs|awk '{print$1}')
 
 # Copy in our local Trisquel branding files.
@@ -143,11 +135,14 @@ pref("datareporting.healthreport.infoURL", "https://trisquel.info/legal");
 EOF
 #cp toolkit/components/telemetry/healthreport-prefs.js mobile/android/chrome/content/healthreport-prefs.js
 # Browser legal page
-sed 's%https://www.mozilla.org/legal/privacy/%https://trisquel.info/legal%' -i ./browser/app/profile/firefox.js ./toolkit/content/aboutRights.xhtml
 sed -i 's|https://www.mozilla.org/thunderbird/legal/privacy/|https://trisquel.info/legal|' comm/mail/app/profile/all-thunderbird.js
 sed -i 's|https://www.mozilla.org/en-US/privacy/thunderbird/|https://trisquel.info/legal|' comm/mail/app/profile/all-thunderbird.js
 sed -i 's|https://www.mozilla.org/privacy/thunderbird/|https://trisquel.info/legal|' comm/mail/components/accountcreation/content/accountSetup.xhtml
-grep -rl https://www.mozilla.org/privacy/thunderbird/ | xargs -r sed -i 's|https://www.mozilla.org/privacy/thunderbird/|https://trisquel.info/legal|g'
+grep -rl https://www.mozilla.org/legal/privacy/ | \
+    xargs -r sed -i 's|https://www.mozilla.org/legal/privacy/.*"|https://trisquel.info/legal"|'
+
+grep -rl https://mozilla.org/privacy/firefox/ | xargs -r \
+    sed -i 's|https://mozilla.org/privacy/firefox/.*"|https://trisquel.info/en/privacy"|'
 
 # Disable telemetry pings
 grep -rl TELEMETRY_BASE_URL | xargs -r sed -i 's|"https://incoming.telemetry.mozilla.org/submit"|""|'
@@ -161,7 +156,7 @@ grep -rl toolkit.telemetry.newProfilePing.enabled | xargs -r sed -i '/toolkit.te
 grep -rl toolkit.telemetry.firstShutdownPing.enabled | xargs -r sed -i '/toolkit.telemetry.firstShutdownPing.enabled/s|true|false|'
 grep -rl toolkit.telemetry.bhrPing.enabled  | xargs -r sed -i '/toolkit.telemetry.bhrPing.enabled/s|true|false|'
 grep -rl browser.ping-centre.telemetry | xargs -r sed -i '/browser.ping-centre.telemetry/s|true|false|'
-grep -rl security.certerrors.recordEventTelemetry | xargs -r sed -i '/security.certerrors.recordEventTelemetry/s|true|false|'
+#grep -rl security.certerrors.recordEventTelemetry | xargs -r sed -i '/security.certerrors.recordEventTelemetry/s|true|false|'
 grep -rl services.sync.telemetry.maxPayloadCount modules/ | xargs -r sed -i '/services.sync.telemetry.maxPayloadCount/s|500|-1|'
 grep -rl services.sync.telemetry.submissionInterval modules/ | xargs -r sed -i '/services.sync.telemetry.submissionInterval/s|43200|-1|'
 grep -rl '"datareporting.healthreport.uploadEnabled"'| xargs -r sed -i '/"datareporting.healthreport.uploadEnabled"/s|[Tt]rue|false|'
@@ -221,8 +216,10 @@ echo "Running batch replace operation"
 find . -type f \
     -not -iregex '.*changelog.*' \
     -not -iregex '.*copyright.*' \
-    -not -iregex '.*third_party/rust.*' \
     -not -iregex '.*comm/rust.*' \
+    -not -iregex '.*third_party/rust.*' \
+    -not -iregex '.*third_party/dump_syms.*' \
+    -not -iregex '.*third_party/cbindgen.*' \
     -execdir /bin/sed --follow-symlinks -i "$SEDSCRIPT" '{}' ';'
 
 # Fix wrong changes, restore changes to reduce diff with previous sed script.
@@ -231,20 +228,33 @@ grep -rl "AbrowserGraphics" | xargs -r sed -i "/github/s|AbrowserGraphics|Firefo
 grep -rl IcedoveProfileImporter. | xargs -r sed -i 's|IcedoveProfileImporter|ThunderbirdProfileImporter|g'
 grep -rl IcedoveProfileMigrator | xargs -r sed -i 's|IcedoveProfileMigrator|ThunderbirdProfileMigrator|g'
 grep -rl AbrowserViewTestUtils | xargs -r sed -i 's|AbrowserViewTestUtils|FirefoxViewTestUtils|g'
+grep -rl Abrowserview | xargs -r sed -i 's|Abrowserview|Firefoxview|g'
 grep -rl AbrowserRelay | xargs -r sed -i 's|AbrowserRelay|FirefoxRelay|g'
+grep -rl test_AbrowserLabs.js | xargs -r sed -i 's|AbrowserLabs|FirefoxLabs|g'
+grep -rl AbrowserLabs.sys.mjs | xargs -r sed -i 's|AbrowserLabs|FirefoxLabs|g'
 sed -i '/TB_/s|mozilla-icedove|mozilla-thunderbird|' debian/rules
+# Or missing ones.
+sed -i '/brand.ftl/s|thunderbird|icedove|' comm/rust/sys_tray/src/locales.rs
+
 #Fix 1 character bigger than allowed yml line (81 > 80)
 sed -i "s|Abrowser is not running.  It|Abrowser isn't running. It|" toolkit/mozapps/update/pings.yaml
-sed -i '/Certificate data/s|Trisquel|Mozilla|' third_party/dump_syms/vendor/webpki-roots/LICENSE
+#140#sed -i '/Certificate data/s|Trisquel|Mozilla|' third_party/dump_syms/vendor/webpki-roots/LICENSE
 
 # Set main links - check comm/mailnews/base/content/msgAccountCentral.xhtml for main class & id links.
-grep -rl 'https://www.icedove.net/participate/' comm/ | xargs -r sed -i 's|https://www.icedove.net/participate/|https://trisquel.info/wiki/|'
-grep -rl 'https://www.icedove.net/donate/' comm/ | xargs -r sed -i 's|https://www.icedove.net/donate/.*"|https://trisquel.info/donate/"|'
-grep -rl 'https://www.icedove.net/donate/' comm/ | xargs -r sed -i 's|https://www.icedove.net/donate/|https://trisquel.info/donate/|'
-grep -rl 'https://updates.icedove.net/' comm/ | xargs -r sed -i '/"URL":/s|https://updates.icedove.net/.*/appeal/.*"|https://trisquel.info/donate/"|'
-grep -rl 'https://support.mozilla.org/products/icedove' comm/ | xargs -r sed -i 's|https://support.mozilla.org/products/icedove.*"|https://trisquel.info/wiki/icedove"|'
-grep -rl 'https://support.mozilla.org/products/icedove' comm/ | xargs -r sed -i 's|https://support.mozilla.org/products/icedove/|https://trisquel.info/wiki/icedove/|'
-grep -rl 'https://developer.icedove.net/' comm/ | xargs -r sed -i 's|https://developer.icedove.net/|https://gitlab.trisquel.org/trisquel/package-helpers|'
+grep -rl 'https://www.icedove.net/participate/' comm/ | xargs -r \
+    sed -i 's|https://www.icedove.net/participate/|https://trisquel.info/wiki/|'
+grep -rl 'https://www.icedove.net/donate/' comm/ | xargs -r \
+    sed -i 's|https://www.icedove.net/donate/.*"|https://trisquel.info/donate/"|'
+grep -rl 'https://www.icedove.net/donate/' comm/ | xargs -r \
+    sed -i 's|https://www.icedove.net/donate/|https://trisquel.info/donate/|'
+grep -rl 'https://updates.icedove.net/' comm/ | xargs -r \
+    sed -i '/"URL":/s|https://updates.icedove.net/.*/appeal/.*"|https://trisquel.info/donate/"|'
+grep -rl 'https://support.mozilla.org/products/icedove' comm/ | xargs -r \
+    sed -i 's|https://support.mozilla.org/products/icedove.*"|https://trisquel.info/wiki/icedove"|'
+grep -rl 'https://support.mozilla.org/products/icedove' comm/ | xargs -r \
+    sed -i 's|https://support.mozilla.org/products/icedove/|https://trisquel.info/wiki/icedove/|'
+grep -rl 'https://developer.icedove.net/' comm/ | xargs -r \
+    sed -i 's|https://developer.icedove.net/|https://gitlab.trisquel.org/trisquel/package-helpers|'
 
 replace Daily Trisquel comm/mail/branding/
 # Remove Thunderbird branding
@@ -258,41 +268,19 @@ sed 's/Provides: mail-reader,/Provides: mail-reader, thunderbird,/' -i debian/co
 sed "s/Provides.*/Provides: icedove-locale-@LANGCODE@/" -i debian/control.langpacks
 
 # Set and replace sha256 checksums to match our changes.
-SHA256_F1_MOD=$(sha256sum third_party/cbindgen/vendor/winnow/examples/http/main.rs|awk '{print$1}')
-SHA256_F2_MOD=$(sha256sum third_party/cbindgen/vendor/winnow/examples/http/bench.rs|awk '{print$1}')
-SHA256_F3_MOD=$(sha256sum third_party/dump_syms/vendor/httparse/benches/parse.rs|awk '{print$1}')
-SHA256_F4_MOD=$(sha256sum third_party/dump_syms/vendor/httparse/src/lib.rs|awk '{print$1}')
-SHA256_F5_MOD=$(sha256sum third_party/dump_syms/vendor/hyper-rustls/src/connector/builder.rs|awk '{print$1}')
-SHA256_F6_MOD=$(sha256sum third_party/dump_syms/vendor/rustls/src/lib.rs|awk '{print$1}')
-SHA256_F7_MOD=$(sha256sum third_party/dump_syms/vendor/rustls-webpki/src/subject_name/dns_name.rs|awk '{print$1}')
-SHA256_F8_MOD=$(sha256sum third_party/dump_syms/vendor/rustls-webpki/src/verify_cert.rs|awk '{print$1}')
 SHA256_F9_MOD=$(sha256sum comm/third_party/rust/glean/src/configuration.rs|awk '{print$1}')
 
-sed_csum $SHA256_F1 $SHA256_F1_MOD
-sed_csum $SHA256_F2 $SHA256_F2_MOD
-sed_csum $SHA256_F3 $SHA256_F3_MOD
-sed_csum $SHA256_F4 $SHA256_F4_MOD
-sed_csum $SHA256_F5 $SHA256_F5_MOD
-sed_csum $SHA256_F6 $SHA256_F6_MOD
-sed_csum $SHA256_F7 $SHA256_F7_MOD
-sed_csum $SHA256_F8 $SHA256_F8_MOD
 sed_csum $SHA256_F9 $SHA256_F9_MOD
 #EO Manual fixing.
 
 # about: page mods, like rights.
 ## Hide extra links in about box
-find -wholename '*/brand.dtd' |xargs /bin/sed 's/trademarkInfo.part1.*/trademarkInfo.part1 "">/' -i
+find -wholename '*/brand.dtd' | xargs -r \
+    perl -0777 -i -pe 's/<!ENTITY\s+trademarkInfo\.part1\s*"(?:[^"]|\n)*">/<!ENTITY  trademarkInfo.part1   " ">/g'
 
-for STRING in rights-intro-point-2 rights-intro-point-3 rights-intro-point-4 rights-intro-point-5 rights-intro-point-6 rights-webservices rights-safebrowsing
-do
- find -name aboutRights.ftl | xargs -r sed -i "s/^$STRING.*/$STRING = /"
-done
 ##Remove invalid policy for trisquel, make sure to check for changes on
 ##each release as they silently update and change.
-find -name aboutRights.ftl | xargs -r sed -i '/rights-intro-point-3/,/li>/d'
-find -name aboutRights.xhtml |xargs -r sed -i "/rights-intro-point-5/,/li>/d"
-find -name aboutRights.xhtml |xargs -r sed -i "/rights-intro-point-6/d"
-find -name aboutRights-unbranded.xhtml |xargs -r sed -i "/rights-intro-point-5/,/li>/d"
+## see more at DATA/thunderbird/patch_changes/008-aboutRights_removal_fix.patch
 
 sed -i 's/<a\ href\=\"https\:\/\/www.icedove.net\/\">Icedove\ Project<\/a>/<a\ href\=\"https\:\/\/www.trisquel.info\/\"\>Trisquel\ Project<\/a>/g' \
     comm/mail/base/content/overrides/app-license.html
@@ -303,7 +291,10 @@ find devtools/client/themes/images/ -name aboutdebugging-firefox-*.svg | xargs -
 find devtools/client/themes/images/ -name aboutdebugging-fenix*.svg | xargs -n1 cp $DATA/debug_brand/debuglogo.svg
 find devtools/client/themes/images/ -name aboutdebugging-firefox-logo.svg | xargs -n1 cp $DATA/debug_brand/debuglogo_gray.svg
 
-cp $DATA/debug_brand/about-logo.svg comm/mail/branding/icedove/TB-symbolic.svg
+for i in icedove nightly
+do
+    cp $DATA/debug_brand/about-logo.svg comm/mail/branding/$i/TB-symbolic.svg
+done
 cp $DATA/debug_brand/about-logo.svg comm/mail/themes/shared/mail/icons/aboutdebugging-logo.svg
 cp $DATA/debug_brand/icon.png    comm/mail/themes/icon.png
 cp $DATA/debug_brand/icon64.png  comm/mail/themes/icon64.png
@@ -327,7 +318,6 @@ done
 
 echo "Customizing search engines..."
 # Reprocess search preconfiguration dump
-python3 $DATA/process-json-files.py . browser/components/extensions/schemas/
 python3 $DATA/process-json-files-v2.py . $DATA/search-custom/
 
 #EO Debbuging tools
@@ -356,6 +346,7 @@ grep -rl 'qr-export-no-accounts =' | xargs -r sed -i '/^qr-export-no-accounts =/
     s| supported by  for | supported for |g
 }'
 
+# As non-official we always use nightly, pending cleaning branding.
 cat << EOF > comm/mail/branding/nightly/locales/en-US/brand.dtd
 <!-- This Source Code Form is subject to the terms of the Mozilla Public
    - License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -368,7 +359,7 @@ cat << EOF > comm/mail/branding/nightly/locales/en-US/brand.dtd
    This brand name can be used in messages where the product name needs to
    remain unchanged across different versions (Trisquel, Beta, etc.). -->
 <!ENTITY  brandProductName      "Icedove">
-<!ENTITY  vendorShortName       "mozilla.org">
+<!ENTITY  vendorShortName       "Mozilla">
 <!ENTITY  trademarkInfo.part1   " ">
 EOF
 
