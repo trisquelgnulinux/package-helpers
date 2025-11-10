@@ -17,13 +17,17 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 
 . ./config
 
-# Debian MATE and Ubuntu Mate both show System Tools, we don't, so we customize it.
+# Debian MATE and Ubuntu Mate both show System Tools, we don't, so we
+# customize it.
 sed -i "s|^NoDisplay=true|#NoDisplay=true|" data/caja.desktop.in.in
 
-changelog "Enable display caja desktop for Trisquel menu"
+apply_patch_changes
+
+changelog "Apply fallback to fast-content-type patch
+Enable display caja desktop for Trisquel menu"
 
 package
