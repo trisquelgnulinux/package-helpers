@@ -1,0 +1,406 @@
+From 1dcda49f5ca719dfea822a34ac7925246875240f Mon Sep 17 00:00:00 2001
+From: Victor Kareh <vkareh@redhat.com>
+Date: Thu, 24 Jul 2025 09:23:56 -0400
+Subject: [PATCH 1/2] EomUtil: Add helper to get content type from GFileInfos
+
+This prefers the real content type, but automatically falls back to the
+fast content type the other one isn't set in the GFileInfo.
+
+Backported from https://gitlab.gnome.org/GNOME/eog/-/commit/4f80d090fd8f27c8d430dfe5931ea53446643ec7
+---
+ src/eom-util.c | 18 ++++++++++++++++++
+ src/eom-util.h |  3 +++
+ 2 files changed, 21 insertions(+)
+
+diff --git a/src/eom-util.c b/src/eom-util.c
+index e9142235..a839f6fd 100644
+--- a/src/eom-util.c
++++ b/src/eom-util.c
+@@ -482,3 +482,21 @@ eom_notebook_scroll_event_cb (GtkWidget         *widget,
+ 
+     return TRUE;
+ }
++
++const char*
++eom_util_get_content_type_with_fallback (GFileInfo *file_info)
++{
++	g_return_val_if_fail (file_info != NULL, NULL);
++
++	if (g_file_info_has_attribute (file_info,
++				       G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE))
++		return g_file_info_get_content_type (file_info);
++	else if (g_file_info_has_attribute (file_info,
++					    G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE))
++		return g_file_info_get_attribute_string (file_info,
++							 G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE);
++	else
++		g_warn_if_reached ();
++
++	return NULL;
++}
+diff --git a/src/eom-util.h b/src/eom-util.h
+index d08b88ae..9f2c3704 100644
+--- a/src/eom-util.h
++++ b/src/eom-util.h
+@@ -68,6 +68,9 @@ void     eom_util_show_file_in_filemanager   (GFile *file,
+ gboolean eom_notebook_scroll_event_cb        (GtkWidget      *notebook,
+                                               GdkEventScroll *event);
+ 
++G_GNUC_INTERNAL
++const     char *eom_util_get_content_type_with_fallback	(GFileInfo *file_info);
++
+ G_END_DECLS
+ 
+ #endif /* __EOM_UTIL_H__ */
+
+From f1275445e638d3c38c93457227602b7314f59d86 Mon Sep 17 00:00:00 2001
+From: Victor Kareh <vkareh@redhat.com>
+Date: Thu, 24 Jul 2025 09:26:33 -0400
+Subject: [PATCH 2/2] Eom*: Use fast content type as fallback
+
+It turns out that, depending on the responsible GVfs implementation,
+a GFileInfo may not actually set the content type attribute even if
+requested. Since knowing the content type is rather critical for eom
+try to use the fast content type as a fallback in those cases.
+
+The fast content type should be hardly unknown as it is usually just
+based on the file extension.
+
+Fixes #360.
+
+Backported from https://gitlab.gnome.org/GNOME/eog/-/commit/de19faf73c8d8627193320d512c8b97316d9740c
+---
+ src/eom-file-chooser.c      |  6 ++++--
+ src/eom-image.c             |  8 +++++---
+ src/eom-jobs.c              |  7 +++++--
+ src/eom-list-store.c        | 18 ++++++++++++------
+ src/eom-metadata-sidebar.c  |  5 +++--
+ src/eom-properties-dialog.c |  5 +++--
+ src/eom-thumb-view.c        |  6 ++++--
+ src/eom-thumbnail.c         |  4 +++-
+ src/eom-window.c            | 10 ++++++----
+ 9 files changed, 45 insertions(+), 24 deletions(-)
+
+diff --git a/src/eom-file-chooser.c b/src/eom-file-chooser.c
+index 5d82901d..5c366fae 100644
+--- a/src/eom-file-chooser.c
++++ b/src/eom-file-chooser.c
+@@ -22,6 +22,7 @@
+ #include "eom-file-chooser.h"
+ #include "eom-config-keys.h"
+ #include "eom-pixbuf-util.h"
++#include "eom-util.h"
+ 
+ #include <stdlib.h>
+ 
+@@ -333,7 +334,8 @@ update_preview_cb (GtkFileChooser *file_chooser, gpointer data)
+ 				       G_FILE_ATTRIBUTE_TIME_MODIFIED ","
+ 				       G_FILE_ATTRIBUTE_STANDARD_TYPE ","
+ 				       G_FILE_ATTRIBUTE_STANDARD_SIZE ","
+-				       G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE,
++				       G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE","
++				       G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE,
+ 				       0, NULL, NULL);
+ 	g_object_unref (file);
+ 
+@@ -352,7 +354,7 @@ update_preview_cb (GtkFileChooser *file_chooser, gpointer data)
+ 			/* read files smaller than 100kb directly */
+ 
+ 			gchar *mime_type = g_content_type_get_mime_type (
+-						g_file_info_get_content_type (file_info));
++						eom_util_get_content_type_with_fallback (file_info));
+ 
+ 			if (G_LIKELY (mime_type)) {
+ 				gboolean can_thumbnail, has_failed;
+diff --git a/src/eom-image.c b/src/eom-image.c
+index f24b5282..e9741efe 100644
+--- a/src/eom-image.c
++++ b/src/eom-image.c
+@@ -589,7 +589,8 @@ eom_image_get_file_info (EomImage *img,
+ 
+ 	file_info = g_file_query_info (img->priv->file,
+ 				       G_FILE_ATTRIBUTE_STANDARD_SIZE ","
+-				       G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE,
++				       G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE ","
++				       G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE,
+ 				       0, NULL, error);
+ 
+ 	if (file_info == NULL) {
+@@ -607,8 +608,9 @@ eom_image_get_file_info (EomImage *img,
+ 		if (bytes)
+ 			*bytes = g_file_info_get_size (file_info);
+ 
+-		if (mime_type)
+-			*mime_type = g_strdup (g_file_info_get_content_type (file_info));
++		if (mime_type) {
++			*mime_type = g_strdup (eom_util_get_content_type_with_fallback (file_info));
++		}
+ 		g_object_unref (file_info);
+ 	}
+ }
+diff --git a/src/eom-jobs.c b/src/eom-jobs.c
+index 71042681..0b518004 100644
+--- a/src/eom-jobs.c
++++ b/src/eom-jobs.c
+@@ -30,6 +30,7 @@
+ #include "eom-list-store.h"
+ #include "eom-thumbnail.h"
+ #include "eom-pixbuf-util.h"
++#include "eom-util.h"
+ 
+ #include <gdk-pixbuf/gdk-pixbuf.h>
+ 
+@@ -385,7 +386,9 @@ filter_files (GSList *files, GList **file_list, GList **error_list)
+ 
+ 		if (file != NULL) {
+ 			file_info = g_file_query_info (file,
+-						       G_FILE_ATTRIBUTE_STANDARD_TYPE","G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE,
++						       G_FILE_ATTRIBUTE_STANDARD_TYPE","
++						       G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE","
++						       G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE,
+ 						       0, NULL, NULL);
+ 			if (file_info == NULL) {
+ 				type = G_FILE_TYPE_UNKNOWN;
+@@ -397,7 +400,7 @@ filter_files (GSList *files, GList **file_list, GList **error_list)
+ 				if (G_UNLIKELY (type == G_FILE_TYPE_UNKNOWN)) {
+ 					const gchar *ctype;
+ 
+-					ctype = g_file_info_get_content_type (file_info);
++					ctype = eom_util_get_content_type_with_fallback (file_info);
+ 
+ 					/* If the content type is supported
+ 					   adjust the file_type */
+diff --git a/src/eom-list-store.c b/src/eom-list-store.c
+index 3d1a9c68..9336614b 100644
+--- a/src/eom-list-store.c
++++ b/src/eom-list-store.c
+@@ -26,6 +26,7 @@
+ #include "eom-image.h"
+ #include "eom-job-queue.h"
+ #include "eom-jobs.h"
++#include "eom-util.h"
+ 
+ #include <string.h>
+ 
+@@ -378,12 +379,13 @@ file_monitor_changed_cb (GFileMonitor *monitor,
+ 	case G_FILE_MONITOR_EVENT_CHANGES_DONE_HINT:
+ 		file_info = g_file_query_info (file,
+ 					       G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE ","
++					       G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE ","
+ 					       G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME,
+ 					       0, NULL, NULL);
+ 		if (file_info == NULL) {
+ 			break;
+ 		}
+-		mimetype = g_file_info_get_content_type (file_info);
++		mimetype = eom_util_get_content_type_with_fallback (file_info);
+ 
+ 		if (is_file_in_list_store_file (store, file, &iter)) {
+ 			if (eom_image_is_supported_mime_type (mimetype)) {
+@@ -419,12 +421,13 @@ file_monitor_changed_cb (GFileMonitor *monitor,
+ 		if (!is_file_in_list_store_file (store, file, NULL)) {
+ 			file_info = g_file_query_info (file,
+ 						       G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE ","
++						       G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE ","
+ 						       G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME,
+ 						       0, NULL, NULL);
+ 			if (file_info == NULL) {
+ 				break;
+ 			}
+-			mimetype = g_file_info_get_content_type (file_info);
++			mimetype = eom_util_get_content_type_with_fallback (file_info);
+ 
+ 			if (eom_image_is_supported_mime_type (mimetype)) {
+ 				const gchar *caption;
+@@ -437,12 +440,13 @@ file_monitor_changed_cb (GFileMonitor *monitor,
+ 		break;
+ 	case G_FILE_MONITOR_EVENT_ATTRIBUTE_CHANGED:
+ 		file_info = g_file_query_info (file,
+-					       G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE,
++					       G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE ","
++					       G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE,
+ 					       0, NULL, NULL);
+ 		if (file_info == NULL) {
+ 			break;
+ 		}
+-		mimetype = g_file_info_get_content_type (file_info);
++		mimetype = eom_util_get_content_type_with_fallback (file_info);
+ 		if (is_file_in_list_store_file (store, file, &iter) &&
+ 		    eom_image_is_supported_mime_type (mimetype)) {
+ 			eom_list_store_thumbnail_refresh (store, &iter);
+@@ -468,7 +472,7 @@ directory_visit (GFile *directory,
+ 	gboolean load_uri = FALSE;
+ 	const char *mime_type, *name;
+ 
+-	mime_type = g_file_info_get_content_type (children_info);
++	mime_type = eom_util_get_content_type_with_fallback (children_info);
+ 	name = g_file_info_get_name (children_info);
+ 
+ 	if (!g_str_has_prefix (name, ".")) {
+@@ -512,6 +516,7 @@ eom_list_store_append_directory (EomListStore *store,
+ 
+ 	file_enumerator = g_file_enumerate_children (file,
+ 						     G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE ","
++						     G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE ","
+ 						     G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME ","
+ 						     G_FILE_ATTRIBUTE_STANDARD_NAME,
+ 						     0, NULL, NULL);
+@@ -565,6 +570,7 @@ eom_list_store_add_files (EomListStore *store, GList *file_list, gboolean preser
+ 		file_info = g_file_query_info (file,
+ 					       G_FILE_ATTRIBUTE_STANDARD_TYPE","
+ 					       G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE","
++					       G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE","
+ 					       G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME,
+ 					       0, NULL, NULL);
+ 		if (file_info == NULL) {
+@@ -578,7 +584,7 @@ eom_list_store_add_files (EomListStore *store, GList *file_list, gboolean preser
+ 		if (G_UNLIKELY (file_type == G_FILE_TYPE_UNKNOWN)) {
+ 			const gchar *ctype;
+ 
+-			ctype = g_file_info_get_content_type (file_info);
++			ctype = eom_util_get_content_type_with_fallback (file_info);
+ 
+ 			/* If the content type is supported adjust file_type */
+ 			if (eom_image_is_supported_mime_type (ctype))
+diff --git a/src/eom-metadata-sidebar.c b/src/eom-metadata-sidebar.c
+index 9b8fc8b8..2dbde74b 100644
+--- a/src/eom-metadata-sidebar.c
++++ b/src/eom-metadata-sidebar.c
+@@ -158,14 +158,15 @@ eom_metadata_sidebar_update_general_section (EomMetadataSidebar *sidebar)
+ 
+ 	file = eom_image_get_file (img);
+ 	file_info = g_file_query_info (file,
+-				       G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE,
++				       G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE","
++				       G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE,
+ 				       0, NULL, NULL);
+ 	if (file_info == NULL) {
+ 		str = g_strdup (_("Unknown"));
+ 	} else {
+ 		const gchar *mime_str;
+ 
+-		mime_str = g_file_info_get_content_type (file_info);
++		mime_str = eom_util_get_content_type_with_fallback (file_info);
+ 		str = g_content_type_get_description (mime_str);
+ 		g_object_unref (file_info);
+ 	}
+diff --git a/src/eom-properties-dialog.c b/src/eom-properties-dialog.c
+index 0bad997d..480b3f74 100644
+--- a/src/eom-properties-dialog.c
++++ b/src/eom-properties-dialog.c
+@@ -173,12 +173,13 @@ pd_update_general_tab (EomPropertiesDialog *prop_dlg,
+ 
+ 	file = eom_image_get_file (image);
+ 	file_info = g_file_query_info (file,
+-				       G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE,
++				       G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE","
++				       G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE,
+ 				       0, NULL, NULL);
+ 	if (file_info == NULL) {
+ 		type_str = g_strdup (_("Unknown"));
+ 	} else {
+-		mime_str = g_file_info_get_content_type (file_info);
++		mime_str = eom_util_get_content_type_with_fallback (file_info);
+ 		type_str = g_content_type_get_description (mime_str);
+ 		g_object_unref (file_info);
+ 	}
+diff --git a/src/eom-thumb-view.c b/src/eom-thumb-view.c
+index 0b28440d..332d180a 100644
+--- a/src/eom-thumb-view.c
++++ b/src/eom-thumb-view.c
+@@ -27,6 +27,7 @@
+ #include "eom-list-store.h"
+ #include "eom-image.h"
+ #include "eom-job-queue.h"
++#include "eom-util.h"
+ 
+ #ifdef HAVE_EXIF
+ #include "eom-exif-util.h"
+@@ -494,7 +495,8 @@ thumbview_get_tooltip_string (EomImage *image)
+ 
+ 	file = eom_image_get_file (image);
+ 	file_info = g_file_query_info (file,
+-				       G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE,
++				       G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE","
++				       G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE,
+ 				       0, NULL, NULL);
+ 	g_object_unref (file);
+ 	if (file_info == NULL) {
+@@ -502,7 +504,7 @@ thumbview_get_tooltip_string (EomImage *image)
+ 		return NULL;
+ 	}
+ 
+-	mime_str = g_file_info_get_content_type (file_info);
++	mime_str = eom_util_get_content_type_with_fallback (file_info);
+ 
+ 	if (G_UNLIKELY (mime_str == NULL)) {
+ 		g_free (bytes);
+diff --git a/src/eom-thumbnail.c b/src/eom-thumbnail.c
+index 6a278b31..30a5760a 100644
+--- a/src/eom-thumbnail.c
++++ b/src/eom-thumbnail.c
+@@ -36,6 +36,7 @@
+ #include "eom-thumbnail.h"
+ #include "eom-list-store.h"
+ #include "eom-debug.h"
++#include "eom-util.h"
+ 
+ #define EOM_THUMB_ERROR eom_thumb_error_quark ()
+ 
+@@ -161,6 +162,7 @@ eom_thumb_data_new (GFile *file, GError **error)
+ 
+ 	file_info = g_file_query_info (file,
+ 				       G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE ","
++				       G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE ","
+ 				       G_FILE_ATTRIBUTE_TIME_MODIFIED ","
+ 				       G_FILE_ATTRIBUTE_THUMBNAIL_PATH ","
+ 				       G_FILE_ATTRIBUTE_THUMBNAILING_FAILED ","
+@@ -176,7 +178,7 @@ eom_thumb_data_new (GFile *file, GError **error)
+ 		/* if available, copy data */
+ 		data->mtime = g_file_info_get_attribute_uint64 (file_info,
+ 								G_FILE_ATTRIBUTE_TIME_MODIFIED);
+-		data->mime_type = g_strdup (g_file_info_get_content_type (file_info));
++		data->mime_type = g_strdup (eom_util_get_content_type_with_fallback (file_info));
+ 
+ 		data->thumb_exists = (g_file_info_get_attribute_byte_string (file_info,
+ 					                                     G_FILE_ATTRIBUTE_THUMBNAIL_PATH) != NULL);
+diff --git a/src/eom-window.c b/src/eom-window.c
+index c039d67c..3d572f9d 100644
+--- a/src/eom-window.c
++++ b/src/eom-window.c
+@@ -738,7 +738,8 @@ add_file_to_recent_files (GFile *file)
+ 		return FALSE;
+ 
+ 	file_info = g_file_query_info (file,
+-				       G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE,
++				       G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE","
++				       G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE,
+ 				       0, NULL, NULL);
+ 	if (file_info == NULL)
+ 		return FALSE;
+@@ -746,7 +747,7 @@ add_file_to_recent_files (GFile *file)
+ 	recent_data = g_slice_new (GtkRecentData);
+ 	recent_data->display_name = NULL;
+ 	recent_data->description = NULL;
+-	recent_data->mime_type = (gchar *) g_file_info_get_content_type (file_info);
++	recent_data->mime_type = (gchar *) eom_util_get_content_type_with_fallback (file_info);
+ 	recent_data->app_name = EOM_RECENT_FILES_APP_NAME;
+ 	recent_data->app_exec = g_strjoin(" ", g_get_prgname (), "%u", NULL);
+ 	recent_data->groups = groups;
+@@ -955,13 +956,14 @@ eom_window_update_openwith_menu (EomWindow *window, EomImage *image)
+ 
+ 	file = eom_image_get_file (image);
+ 	file_info = g_file_query_info (file,
+-				       G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE,
++				       G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE","
++				       G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE,
+ 				       0, NULL, NULL);
+ 
+ 	if (file_info == NULL)
+ 		return;
+ 	else {
+-		mime_type = g_file_info_get_content_type (file_info);
++		mime_type = eom_util_get_content_type_with_fallback (file_info);
+ 	}
+ 
+ 	if (priv->open_with_menu_id != 0) {
