@@ -34,6 +34,9 @@ sed -i "/Currently supported/s|are:|are at:|" debian/control
 
 apply_patch_changes
 
+echo "> Freeze build until there is new info for javascript dependency."
+exit 1
+
 changelog "Track latest release and remove explicit site listing, redirecting to website author."
 
 package
