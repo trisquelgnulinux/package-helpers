@@ -120,14 +120,13 @@ index 269eca10..4c35b53f 100644
  # Variables:
  #   $num (number) - Number of rows displayed
 diff --git a/browser/themes/shared/preferences/preferences.css b/browser/themes/shared/preferences/preferences.css
-index 9c8155e5..4718341f 100644
+index 3b0f222f..60e0dc1d 100644
 --- a/browser/themes/shared/preferences/preferences.css
 +++ b/browser/themes/shared/preferences/preferences.css
-@@ -1541,12 +1541,3 @@ richlistitem .text-link:hover {
- .search-header:has(.section-heading) {
+@@ -1470,15 +1470,6 @@ richlistitem .text-link:hover {
    margin: 0;
  }
--
+ 
 -/* Styles for the "sponsors support our mission" message and link on the Home tab */
 -.mission-message {
 -  margin-block-start: var(--space-large);
@@ -136,3 +135,7 @@ index 9c8155e5..4718341f 100644
 -    font-size: var(--font-size-small);
 -  }
 -}
+-
+ /* START SRD temp page header styles (bug 1948415) */
+ .page-header {
+   gap: var(--space-small);
