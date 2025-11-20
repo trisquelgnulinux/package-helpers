@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 #
 
-VERSION=5
+VERSION=6
 
 . ./config
 
@@ -39,6 +39,10 @@ adjustment-method=randr
 
 ; The location provider and adjustment method settings
 ; are in their own sections.
+; When the local-provider is set to 'manual', you can obtain city latitude/longitude
+; values from the libgweather-common package:
+; libgweather-4-common: /usr/share/libgweather-4/Locations.xml
+
 [manual]
 lat=0.0
 lon=0.0
