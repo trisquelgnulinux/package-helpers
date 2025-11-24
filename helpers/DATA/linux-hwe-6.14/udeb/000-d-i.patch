@@ -1,0 +1,67 @@
+diff --git a/debian/rules b/debian/rules
+index a625a4c5..35f2aa25 100755
+--- a/debian/rules
++++ b/debian/rules
+@@ -176,6 +176,9 @@ debian/control: debian/canonical-revoked-certs.pem $(DEBIAN)/changelog FORCE
+ 		-e 's|\(^Maintainer:.*\)|\1\nXSC-Ubuntu-Compatible-Signing: $(UBUNTU_COMPATIBLE_SIGNING)|g' \
+ 		-e 's/\(^Build-Depends:$$\)/\1\n$(GCC_BUILD_DEPENDS)/g'         \
+ 	$@
++	KW_DEFCONFIG_DIR=$(DEBIAN)/d-i KW_CONFIG_DIR=$(DEBIAN)/d-i \
++	LANG=C kernel-wedge gen-control $(DEB_VERSION_UPSTREAM)-$(abinum) | \
++	grep-dctrl -FArchitecture $(arch) >> $@
+ 
+ debian/canonical-certs.pem: $(wildcard debian/certs/*.pem $(DEBIAN)/certs/*.pem)
+ 	for cert in $(sort $(notdir $^));					\
+ 
+diff --git a/debian/rules b/debian/rules_
+index a625a4c5..1d9b5834 100755
+--- a/debian/rules
++++ b/debian/rules_
+@@ -129,10 +129,10 @@ do_any_tools=$(sort $(filter-out false,$(do_linux_tools) $(do_cloud_tools)))
+ 
+ # Debian Build System targets
+ .PHONY: binary
+-binary: binary-indep binary-arch
++binary: debian/control binary-indep binary-arch
+ 
+ .PHONY: build
+-build: build-arch build-indep
++build: debian/control build-arch build-indep
+ 
+ .PHONY: clean
+ clean: debian/control debian/canonical-certs.pem debian/canonical-revoked-certs.pem
+@@ -140,6 +140,11 @@ clean: debian/control debian/canonical-certs.pem debian/canonical-revoked-certs.
+ 	dh_testroot
+ 	dh_clean
+ 
++	# d-i stuff
++	rm -rf $(DEBIAN)/d-i-$(arch)
++	# Generated on the fly.
++	rm -f $(DEBIAN)/d-i/firmware/$(arch)/kernel-image
++
+ 	# normal build junk
+ 	rm -rf $(DEBIAN)/abi
+ 	rm -rf $(builddir) $(stampdir)
+diff --git a/debian/rules.d/2-binary-arch.mk b/debian/rules.d/2-binary-arch.mk
+index 41985338..3943d0da 100644
+--- a/debian/rules.d/2-binary-arch.mk
++++ b/debian/rules.d/2-binary-arch.mk
+@@ -181,10 +181,14 @@ endif
+ 	install -m600 $(build_dir)/System.map \
+ 		$(pkgdir)/boot/System.map-$(abi_release)-$*
+ 
+-ifeq ($(do_dtbs),true)
+-	$(kmake) O=$(build_dir) $(conc_level) dtbs_install \
+-		INSTALL_DTBS_PATH=$(pkgdir)/lib/firmware/$(abi_release)-$*/device-tree
+-endif
++	if [ "$(filter true,$(do_dtbs))" ]; then \
++		$(kmake) O=$(build_dir) $(conc_level) dtbs_install \
++			INSTALL_DTBS_PATH=$(pkgdir)/lib/firmware/$(abi_release)-$*/device-tree; \
++		( cd $(pkgdir)/lib/firmware/$(abi_release)-$*/ && find device-tree -print ) | \
++		while read dtb_file; do \
++			echo "$$dtb_file ?" >> $(DEBIAN)/d-i/firmware/$(arch)/kernel-image; \
++		done; \
++	fi
+ 
+ ifeq ($(no_dumpfile),)
+ 	makedumpfile -g $(pkgdir)/boot/vmcoreinfo-$(abi_release)-$* \
