@@ -8041,7 +8041,13 @@ set_except () {
     blobname 'amdgpu[/]%s' drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c
 
     # New in 6.16.1 and 6.15.10.
+    accept '[\t]pas->firmware[ ]=' drivers/remoteproc/qcom_q6v5_pas.c
+    accept '[\t ]*dev_err[(]pas->dev[,][ ]["]request_firmware[ ]failed' drivers/remoteproc/qcom_q6v5_pas.c
     blobname 'imx[/]xcvr[/]xcvr-imx95\.bin' sound/soc/fsl/fsl_xcvr.c
+
+    # New in 6.16-rc.
+    blobname 'qcom[/]sc8280xp[/]LENOVO[/]21BX[/]qcslpi8280\.mbn' arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
+    blobname 'qcom[/]sc8280xp[/]LENOVO[/]21BX[/]qcvss8280\.mbn' arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
    # EOT
 
     # Add new patterns above.
