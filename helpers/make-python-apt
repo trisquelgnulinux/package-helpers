@@ -24,7 +24,9 @@
 # list available on the resulting netinstall (mini.iso) image.
 # The same way as 'ubiquity' is for for the next Live Desktop ISOs.
 
-VERSION=11
+VERSION=12
+EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu resolute main'
+REPOKEY=871920D1991BC93C
 COMPONENT=main
 #Be aware to not pull/build before publish date on T12.
 
@@ -39,7 +41,7 @@ wget https://gitlab.trisquel.org/trisquel/$Mirrors_masterlist_git -o /dev/null -
 python3 $DATA/parse-mirror-masterlist.py $Mirrors_masterlist > data/templates/Trisquel.mirrors
 rm $Mirrors_masterlist
 
-cat << EOF > data/templates/Trisquel.info.in
+cat << EOF > data/templates/trisquel.info.in
 _ChangelogURI: https://packages.trisquel.org/changelogs/pool/%s/%s/%s/%s_%s/changelog
 
 Suite: $CODENAME
