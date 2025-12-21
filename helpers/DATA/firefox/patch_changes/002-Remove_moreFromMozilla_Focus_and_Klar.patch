@@ -7,14 +7,12 @@ diff --git a/browser/app/profile/firefox.js b/browser/app/profile/firefox.js
 index c5f7cf3a..f0124235 100644
 --- a/browser/app/profile/firefox.js
 +++ b/browser/app/profile/firefox.js
-@@ -1251,11 +1251,11 @@ pref("accessibility.typeaheadfind.linksonly", false);
+@@ -1368,9 +1368,9 @@ pref("accessibility.typeaheadfind.linksonly", false);
  pref("accessibility.typeaheadfind.flashBar", 1);
  
- // Whether we can show the "Firefox Labs" section.
--pref("browser.preferences.experimental", true);
-+pref("browser.preferences.experimental", false);
  // Whether we had to hide the "Firefox Labs" section because it would be empty.
- pref("browser.preferences.experimental.hidden", false);
+-pref("browser.preferences.experimental.hidden", false);
++pref("browser.preferences.experimental.hidden", true);
  // Whether we show the "More from Mozilla" section.
 -pref("browser.preferences.moreFromMozilla", true);
 +pref("browser.preferences.moreFromMozilla", false);

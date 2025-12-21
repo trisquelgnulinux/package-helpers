@@ -305,9 +305,12 @@ pref("dom.private-attribution.submission.enabled", false);
 
 // Disable Machine Learning
 pref("browser.ml.chat.enabled", false);
+pref("browser.tabs.groups.smart.enabled", false);
+
 // Hide from UI
 pref("browser.ml.chat.hideFromLabs", true);
 pref("browser.ml.chat.hideLabsShortcuts", true);
+pref("browser.tabs.groups.smart.userEnabled", false);
 
 // Disable tab hover preview
 pref("browser.tabs.hoverPreview.enabled", false);
