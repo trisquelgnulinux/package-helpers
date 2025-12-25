@@ -1,0 +1,136 @@
+diff --git a/casper-md5check/casper-md5check.c b/casper-md5check/casper-md5check.c
+index a1e4f753..5213fd3d 100644
+--- a/casper-md5check/casper-md5check.c
++++ b/casper-md5check/casper-md5check.c
+@@ -39,6 +39,10 @@
+ 
+ #define MD5_LEN 16
+ 
++/* Show a human-friendly percent message every N percent points.
++ * Script themes like trisquel-logo display messages but ignore fsck: status updates. */
++#define PLYMOUTH_PERCENT_STEP 5
++
+ #define RESULT_FILE "/run/casper-md5check.json"
+ #define BROKEN_FILE "  \"checksum_missmatch\": [ "
+ #define RESULT_PASS "  \"result\": \"pass\"\n}\n"
+@@ -215,14 +219,36 @@ void plymouth_success(ply_boot_client_t *client, char *format, ...) {
+ }
+ 
+ void plymouth_progress(ply_boot_client_t *client, int progress, char *checkfile) {
+-  static int prevprogress = -1;
+-  char *s;
++  static int prev_bucket = -1;
++  int bucket = progress / PLYMOUTH_PERCENT_STEP;
++  char *s = NULL;
++  char *m = NULL;
+ 
+-  if (progress == prevprogress)
++  if (bucket == prev_bucket)
+     return;
+-  prevprogress = progress;
++  prev_bucket = bucket;
+ 
+   if (got_plymouth) {
++    /* Always emit a visible message with percent; trisquel-logo shows this. */
++    const char *name = checkfile;
++    if (name) {
++      const char *slash = strrchr(name, '/');
++      if (slash && slash[1])
++        name = slash + 1;
++    }
++    if (name)
++      asprintf(&m, "Checking integrity: %03d%% (%s)", progress, name);
++    else
++      asprintf(&m, "Checking integrity: %03d%%", progress);
++
++    if (m) {
++      ply_boot_client_tell_daemon_to_display_message(client, m,
++                                                    plymouth_response,
++                                                    plymouth_response, NULL);
++      ply_boot_client_flush(client);
++      free(m);
++    }
++
+     if (checkfile) {
+       if (spinner_theme)
+         asprintf(&s, "fsckd:1:%d:Checking %s", progress, checkfile);
+@@ -260,10 +260,12 @@ void plymouth_progress(ply_boot_client_t *client, int progress, char *checkfile)
+       else
+         asprintf(&s, "fsck:md5sums:%d", progress);
+     }
+-    ply_boot_client_update_daemon(client, s, plymouth_response,
+-                                  plymouth_response, NULL);
+-    ply_boot_client_flush(client);
+-    free(s);
++    if (s) {
++      ply_boot_client_update_daemon(client, s, plymouth_response,
++                                    plymouth_response, NULL);
++      ply_boot_client_flush(client);
++      free(s);
++    }
+   } else {
+     printf(".");
+     fflush(stdout);
+@@ -304,7 +304,7 @@ int main(int argc, char **argv) {
+   
+   parse_cmdline();
+ 
+-  //client = ply_boot_client_new();
++  client = ply_boot_client_new();
+   if (client)
+     ply_event_loop = ply_event_loop_new();
+   if (ply_event_loop)
+@@ -445,6 +445,7 @@ cmdline_skip:
+   if (skip_and_exit) {
+     result = RESULT_SKIP;
+     plymouth_urgent(client, "Check skipped.");
++    sleep(3);
+   } else if (failed) {
+     result = RESULT_FAIL;
+     plymouth_urgent(client, "Check finished: errors found in %d files! You might encounter errors.", failed);
+@@ -452,9 +453,11 @@ cmdline_skip:
+   } else {
+     result = RESULT_PASS;
+     plymouth_urgent(client, "Check finished: no errors found.");
++    sleep(3);
+   }
++
+   fprintf(result_file, "%s", result);
+   fclose(result_file);
+   plymouth_urgent(client, "");
+   return 0;
+ }
+
+diff --git a/debian/casper.casper-md5check.service b/debian/casper.casper-md5check.service_
+index 0af66ec2..6a5860fa 100644
+--- a/debian/casper.casper-md5check.service
++++ b/debian/casper.casper-md5check.service_
+@@ -1,12 +1,26 @@
+ [Unit]
+ Description=casper-md5check Verify Live ISO checksums
+-After=multi-user.target
++ConditionKernelCommandLine=integrity-check
++After=local-fs.target plymouth-start.service
++Before=multi-user.target plymouth-quit.service plymouth-quit-wait.service display-manager.service graphical.target
+ 
+ [Service]
+ Type=oneshot
++
++# /cdrom is typically mounted by casper/initramfs (not systemd), and cdrom.mount may be masked.
++# So we wait until /cdrom is mounted and md5sum.txt exists instead of RequiresMountsFor=/cdrom.
++ExecStartPre=/bin/sh -c 'i=0; while [ "$i" -lt 200 ]; do grep -qs " /cdrom " /proc/mounts && [ -f /cdrom/md5sum.txt ] && exit 0; i=$((i+1)); sleep 0.1; done; echo "casper-md5check: /cdrom no listo" >&2; exit 1'
++
+ ExecStart=/usr/lib/casper/casper-md5check /cdrom /cdrom/md5sum.txt
+-Nice=19
+ RemainAfterExit=yes
++StandardOutput=journal+console
++StandardError=journal+console
++
++# casper-md5check uses libplymouth; give it a controlling TTY or it may abort.
++StandardInput=tty
++TTYPath=/dev/console
++
++Nice=19
+ IOSchedulingClass=idle
+ IOSchedulingPriority=7
+ 
