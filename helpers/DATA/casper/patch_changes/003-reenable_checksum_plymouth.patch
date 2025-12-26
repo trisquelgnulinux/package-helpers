@@ -8,7 +8,7 @@ index a1e4f753..5213fd3d 100644
  
 +/* Show a human-friendly percent message every N percent points.
 + * Script themes like trisquel-logo display messages but ignore fsck: status updates. */
-+#define PLYMOUTH_PERCENT_STEP 5
++#define PLYMOUTH_PERCENT_STEP 1
 +
  #define RESULT_FILE "/run/casper-md5check.json"
  #define BROKEN_FILE "  \"checksum_missmatch\": [ "
@@ -101,10 +101,10 @@ index a1e4f753..5213fd3d 100644
    return 0;
  }
 
-diff --git a/debian/casper.casper-md5check.service b/debian/casper.casper-md5check.service_
+diff --git a/debian/casper.casper-md5check.service b/debian/casper.casper-md5check.service
 index 0af66ec2..6a5860fa 100644
 --- a/debian/casper.casper-md5check.service
-+++ b/debian/casper.casper-md5check.service_
++++ b/debian/casper.casper-md5check.service
 @@ -1,12 +1,26 @@
  [Unit]
  Description=casper-md5check Verify Live ISO checksums
@@ -134,3 +134,42 @@ index 0af66ec2..6a5860fa 100644
  IOSchedulingClass=idle
  IOSchedulingPriority=7
  
+diff --git a/bin/casper-stop b/bin/casper-stop
+index 56174681..5fab7c36 100755
+--- a/bin/casper-stop
++++ b/bin/casper-stop
+@@ -100,31 +100,9 @@ do_stop ()
+         return 0
+     fi
+ 
+-    # XXX - i18n
+-    MSG="Please remove the installation medium, then press ENTER: "
+-    MSG_FALLBACK="Please remove the installation medium, then reboot."
+-
+-    if [ "$prompt" ]; then
+-        if [ -x /bin/plymouth ] && plymouth --ping; then
+-            chvt 63
+-            plymouth message --text="$MSG"
+-            clear > /dev/tty1
+-            echo $MSG_FALLBACK > /dev/tty1
+-        else
+-            stty sane < /dev/console
+-            echo $MSG > /dev/console
+-        fi
+-    fi
+-
+-    eject -p -m $device >/dev/null 2>&1
+-
+-    [ "$prompt" ] || return 0
+-
+-    if [ -x /bin/plymouth ] && plymouth --ping; then
+-        plymouth watch-keystroke > /dev/null
+-    else
+-        read x < /dev/console
+-    fi
++    # Trisquel: We no longer block shutdown/reboot waiting for user input.
++    eject -p -m "$device" >/dev/null 2>&1 || true
++    return 0
+ }
+ 
+ do_stop
