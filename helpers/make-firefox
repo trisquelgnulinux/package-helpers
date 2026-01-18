@@ -19,9 +19,9 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=128
+VERSION=129
 EXTERNAL='deb-src http://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu $UPSTREAM main'
-REPOKEY=9BDB3D89CE49EC21
+REPOKEY=AEBDF4819BE21867
 
 . ./config
 
@@ -89,7 +89,6 @@ sed -i '/browser.uitour.enabled/s|true|false|' $BAP_FirefoxJs
 for i in browser.urlbar.allowSearchSuggestionsForSimpleOrigins \
          browser.urlbar.quicksuggest.online.enabled \
          browser.urlbar.suggest.yelpRealtime \
-         browser.search.suggest.ohttp.enabled \
          browser.newtabpage.activity-stream.discoverystream.reportAds.enabled \
          browser.newtabpage.activity-stream.discoverystream.publisherFavicon.enabled \
          browser.ml.chat.page
@@ -311,13 +310,15 @@ s|firefox-help|abrowser-help|g;
 
 echo "Running batch replace operation"
 find . -type f -not -iregex '.*changelog.*' \
-       -not -iregex '.*copyright.*' -not -iregex '.*third_party/.*' \
-       -execdir /bin/sed --follow-symlinks -i "$SEDSCRIPT" '{}' ';'
+               -not -iregex '.*copyright.*' \
+               -not -iregex '.*third_party/.*' \
+               -not -iregex '.*/mozglue/static/rust/.*' \
+               -execdir /bin/sed --follow-symlinks -i "$SEDSCRIPT" '{}' ';'
 
 echo "Replacing Firefox with Abrowser on ./l10n"
-find l10n -type f  -not -iregex '.*changelog.*' \
-          -not -iregex '.*copyright.*' \
-          -execdir /bin/sed --follow-symlinks -i "s/Firefox/Abrowser/" '{}' ';'
+find l10n -type f -not -iregex '.*changelog.*' \
+                  -not -iregex '.*copyright.*' \
+                  -execdir /bin/sed --follow-symlinks -i "s/Firefox/Abrowser/" '{}' ';'
 
 sed 's/Firefox/Abrowser/' -i debian/control.in \
                              browser/locales/en-US/chrome/overrides/appstrings.properties
