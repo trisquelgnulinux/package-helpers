@@ -1,0 +1,23 @@
+diff --git a/setup.py b/setup.py
+index 9648d871..a63a2c66 100644
+--- a/setup.py
++++ b/setup.py
+@@ -6,6 +6,7 @@ import os
+ import shutil
+ import subprocess
+ import sys
++import re
+ 
+ from setuptools import Extension, setup
+ from setuptools.command.install import install
+@@ -64,6 +64,10 @@ def get_version():
+     version = version.replace("tanglu", "+tanglu")
+     version = version.split("build")[0]
+ 
++    # Trisquel-style suffix: "3.1.0trisquel12" -> "3.1.0+trisquel12" (PEP 440 local)
++    if "+" not in version:
++        version = re.sub(r"(?<=\d)([A-Za-z])", r"+\1", version, count=1)
++
+     return version
+ 
+ 

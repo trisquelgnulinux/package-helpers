@@ -24,7 +24,7 @@
 # list available on the resulting netinstall (mini.iso) image.
 # The same way as 'ubiquity' is for for the next Live Desktop ISOs.
 
-VERSION=12
+VERSION=13
 EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu resolute main'
 REPOKEY=871920D1991BC93C
 COMPONENT=main
@@ -89,9 +89,12 @@ diff -ru source.orig/apt/progress/base.py source/apt/progress/base.py
                  self.percent = float(percent)
 EOF
 
+apply_patch_changes
+
 export DEB_BUILD_OPTIONS=nocheck
 
-changelog "Compiled for Trisquel"
+changelog "Compiled for Trisquel
+Fixed PEP440 version issue."
 
 package
 
