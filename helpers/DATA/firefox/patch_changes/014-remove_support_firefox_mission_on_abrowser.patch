@@ -116,10 +116,10 @@ index 269eca10..4c35b53f 100644
  # Variables:
  #   $num (number) - Number of rows displayed
 diff --git a/browser/themes/shared/preferences/preferences.css b/browser/themes/shared/preferences/preferences.css
-index 3b0f222f..60e0dc1d 100644
+index 701d29be..769791d7 100644
 --- a/browser/themes/shared/preferences/preferences.css
 +++ b/browser/themes/shared/preferences/preferences.css
-@@ -1475,11 +1475,3 @@ richlistitem .text-link:hover {
+@@ -1478,15 +1478,6 @@ setting-group[groupid="home"] {
    margin: 0;
  }
  
@@ -131,3 +131,7 @@ index 3b0f222f..60e0dc1d 100644
 -    font-size: var(--font-size-small);
 -  }
 -}
+-
+ #dohProviderSelect {
+   --select-max-width: 235px;
+ }

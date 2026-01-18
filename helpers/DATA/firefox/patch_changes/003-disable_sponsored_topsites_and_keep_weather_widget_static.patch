@@ -1,33 +1,32 @@
 diff --git a/browser/app/profile/firefox.js b/browser/app/profile/firefox.js
-index 52a520fd..81cc685d 100644
+index 217ed280..d91cde94 100644
 --- a/browser/app/profile/firefox.js
 +++ b/browser/app/profile/firefox.js
-@@ -1718,19 +1718,19 @@
- pref("browser.topsites.component.enabled", false);
+@@ -1806,16 +1806,16 @@ pref("browser.topsites.component.enabled", false);
+ 
  pref("browser.topsites.useRemoteSetting", true);
  // Fetch sponsored Top Sites from Mozilla Tiles Service (Contile)
 -pref("browser.topsites.contile.enabled", true);
 -pref("browser.topsites.contile.endpoint", "https://contile.services.mozilla.com/v1/tiles");
 +pref("browser.topsites.contile.enabled", false);
 +pref("browser.topsites.contile.endpoint", "");
-
- // Whether to enable the Share-of-Voice feature for Sponsored Topsites via Contile.
--pref("browser.topsites.contile.sov.enabled", true);
-+pref("browser.topsites.contile.sov.enabled", false);
-
+ 
  // The base URL for the Quick Suggest anonymizing proxy. To make a request to
  // the proxy, include a campaign ID in the path.
 -pref("browser.partnerlink.attributionURL", "https://topsites.services.mozilla.com/cid/");
 -pref("browser.partnerlink.campaign.topsites", "amzn_2020_a1");
 +pref("browser.partnerlink.attributionURL", "");
 +pref("browser.partnerlink.campaign.topsites", "");
-
+ 
  // Activates preloading of the new tab url.
 -pref("browser.newtab.preload", true);
 +pref("browser.newtab.preload", false);
-
- pref("browser.preonboarding.onTrainRolloutPopulation",  0);
-
+ 
+ // Do not enable the preonboarding experience on Linux
+ #ifdef XP_LINUX
+@@ -1856,24 +1856,24 @@ pref("browser.newtabpage.activity-stream.mobileDownloadModal.variant-c", false);
+ pref("browser.newtabpage.activity-stream.discoverystream.refinedCardsLayout.enabled", true);
+ 
  // Mozilla Ad Routing Service (MARS) unified ads service
 -pref("browser.newtabpage.activity-stream.unifiedAds.tiles.enabled", true);
 -pref("browser.newtabpage.activity-stream.unifiedAds.spocs.enabled", true);
@@ -36,19 +35,23 @@ index 52a520fd..81cc685d 100644
 +pref("browser.newtabpage.activity-stream.unifiedAds.spocs.enabled", false);
 +pref("browser.newtabpage.activity-stream.unifiedAds.endpoint", "");
  pref("browser.newtabpage.activity-stream.unifiedAds.adsFeed.enabled", false);
- pref("browser.newtabpage.activity-stream.unifiedAds.adsFeed.tiles.enabled", false);
-
+ pref("browser.newtabpage.activity-stream.unifiedAds.ohttp.enabled", false);
+ 
  // Weather widget for newtab
 -pref("browser.newtabpage.activity-stream.showWeather", true);
 +pref("browser.newtabpage.activity-stream.showWeather", false);
  pref("browser.newtabpage.activity-stream.weather.query", "");
  pref("browser.newtabpage.activity-stream.weather.display", "simple");
-
-+pref("browser.newtabpage.activity-stream.images.smart", true);
-
+ 
+ pref("browser.newtabpage.activity-stream.images.smart", true);
+ 
  // enable location search for newtab weather widget
 -pref("browser.newtabpage.activity-stream.weather.locationSearchEnabled", true);
 +pref("browser.newtabpage.activity-stream.weather.locationSearchEnabled", false);
-
+ 
  // List of regions that get weather by default.
- pref("browser.newtabpage.activity-stream.discoverystream.region-weather-config", "US,CA")
+-pref("browser.newtabpage.activity-stream.discoverystream.region-weather-config", "US,CA");
++pref("browser.newtabpage.activity-stream.discoverystream.region-weather-config", "");
+ 
+ // List of locales that weather widget supports.
+ pref("browser.newtabpage.activity-stream.discoverystream.locale-weather-config", "en-US,en-GB,en-CA");
