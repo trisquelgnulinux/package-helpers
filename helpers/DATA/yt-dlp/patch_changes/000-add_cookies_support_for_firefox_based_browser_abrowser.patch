@@ -86,12 +86,15 @@ index 5675445a..7afd324b 100644
      if sys.platform in ('cygwin', 'win32'):
          yield from map(os.path.expandvars, (
              R'%APPDATA%\Mozilla\Firefox\Profiles',
-@@ -205,7 +205,7 @@ def _firefox_browser_dirs():
- 
-     else:
+@@ -214,9 +214,9 @@ def _firefox_browser_dirs(browser_name='firefox'):
          yield from map(os.path.expanduser, (
+             # New installations of FF147+ respect the XDG base directory specification
+             # Ref: https://bugzilla.mozilla.org/show_bug.cgi?id=259356
+-            os.path.join(_config_home(), 'mozilla/firefox'),
++            os.path.join(_config_home(), 'mozilla/{browser_name}'),
+             # Existing FF version<=146 installations
 -            '~/.mozilla/firefox',
-+            f'~/.mozilla/{browser_name}',
-             '~/snap/firefox/common/.mozilla/firefox',
++            '~/.mozilla/{browser_name}',
+             # Flatpak XDG: https://docs.flatpak.org/en/latest/conventions.html#xdg-base-directories
+             '~/.var/app/org.mozilla.firefox/config/mozilla/firefox',
              '~/.var/app/org.mozilla.firefox/.mozilla/firefox',
-         ))
