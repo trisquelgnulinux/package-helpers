@@ -1,0 +1,35 @@
+diff --git a/yt_dlp/cookies.py b/yt_dlp/cookies.py
+index 8c05a09f..8b6f6613 100644
+--- a/yt_dlp/cookies.py
++++ b/yt_dlp/cookies.py
+@@ -1238,15 +1238,27 @@ def load(self, data):
+                 else:
+                     value, _ = self.value_decode(value)
+ 
+-                morsel[key] = value
++                try:
++                    morsel[key] = value
++                except http.cookies.CookieError:
++                    # Lenient mode: ignore invalid attributes
++                    pass
+ 
+             elif is_attribute:
+                 morsel = None
+ 
+             elif value is not None:
+-                morsel = self.get(key, http.cookies.Morsel())
++                morsel = self.get(key) or http.cookies.Morsel()
+                 real_value, coded_value = self.value_decode(value)
+-                morsel.set(key, real_value, coded_value)
++                try:
++                    morsel.set(key, real_value, coded_value)
++                except http.cookies.CookieError:
++                    # Python 3.12+ rejects control characters in cookies.
++                    # LenientSimpleCookie should accept them (yt-dlp tests expect this), so
++                    # bypass Morsel.set() validation, assign underlying fields to read-only props.
++                    morsel._key = key
++                    morsel._value = real_value
++                    morsel._coded_value = coded_value
+                 self[key] = morsel
+ 
+             else:
