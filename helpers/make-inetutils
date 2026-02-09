@@ -17,6 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
+BUILD_UNTIL=12.0
 VERSION=0
 
 . ./config
@@ -25,8 +26,9 @@ VERSION=0
 # Applying these patches is a proactive mitigation effort for known issues and does not
 # endorse continued use of telnetd. The patch co-author recommends deprecating it.
 
-apply_patch_changes
+# Remove patch now applied upstream
 
-changelog "Apply security patches to mitigate known issues proactively; telnetd is not recommended: avoid in production."
+changelog "Restore build to upstream changes
+Apply security patches to mitigate known issues proactively; telnetd is not recommended: avoid in production."
 
 package
