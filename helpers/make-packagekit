@@ -27,6 +27,8 @@ REPOKEY=871920D1991BC93C
 #Recommend trisquel-app-installer over gnome-software
 sed 's/gnome-software/trisquel-app-install | gnome-software/g' -i debian/control
 
+! grep -q "Priority:" debian/control && sed -i '/Section:/a Priority: optional' debian/control
+
 changelog "Recommend trisquel-app-install over gnome software."
 
 package
