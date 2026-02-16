@@ -66,10 +66,6 @@ src/3rdparty/chromium/third_party/blink/manual_tests/resources/*.class
 src/3rdparty/chromium/third_party/blink/manual_tests/WebKitSite.webarchive
 EOF
 
-# TODO: study implementarion of ppc64el changes to actually build it.
-# https://github.com/llebout/ungoogled-chromium
-sed -i '/Architecture:/s|ppc64el||' debian/control
-
 apply_patch_changes
 
 changelog "Backported ungoogled-chromium package from xtradeb community."
