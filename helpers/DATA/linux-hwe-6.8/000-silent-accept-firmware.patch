@@ -1503,16 +1503,19 @@ diff --color -Nru a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/sw.c b/driver
  	err = request_firmware_nowait(THIS_MODULE, 1,
  				      wowlan_fw_name,
  				      rtlpriv->io.dev, GFP_KERNEL, hw,
-diff -Nru --color a/drivers/gpu/drm/amd/amdgpu/amdgpu_discovery.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_discovery.c
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_discovery.c	2023-03-13 07:14:05.000000000 +0000
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_discovery.c	2023-03-13 07:46:23.778827386 +0000
-@@ -223,8 +223,7 @@
- 
- 	r = request_firmware(&fw, fw_name, adev->dev);
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_discovery.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_discovery.c
+index 36d0deef..5f03247f 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_discovery.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_discovery.c
+@@ -289,9 +289,9 @@ static int amdgpu_discovery_read_binary_from_file(struct amdgpu_device *adev,
+ 	r = firmware_request_nowarn(&fw, fw_name, adev->dev);
  	if (r) {
--		dev_err(adev->dev, "can't load firmware \"%s\"\n",
--			fw_name);
-+		dev_err(adev->dev, "can't load firmware\n");
+ 		if (amdgpu_discovery == 2)
+-			dev_err(adev->dev, "can't load firmware \"%s\"\n", fw_name);
++			dev_err(adev->dev, "can't load firmware\n");
+ 		else
+-			drm_info(&adev->ddev, "Optional firmware \"%s\" was not found\n", fw_name);
++			drm_info(&adev->ddev, "Optional firmware was not found\n");
  		return r;
  	}
  
