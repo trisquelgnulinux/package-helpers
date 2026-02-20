@@ -19,9 +19,9 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=37
+VERSION=38
 HWEKR=6.14
-DI_ENABLED=0
+DI_ENABLED=1
 HWE_ENABLED=1
 SEARCH_MISSING_CASES=0
 
@@ -72,6 +72,7 @@ for DIR in $PRESERVEDIRS; do
   cp $DIR $TMPDIR --parents -a
 done
 
+deblob_kernel() {
 sh $DATA/deblob-$HWEKR
 
 echo "Reverting deblobbing for files patched by 000-silent-accept-firmware"
@@ -81,6 +82,8 @@ rm -rf $TMPDIR
 for PATCH in $DATA/*.patch ; do
   patch_p1 $PATCH
 done
+}
+[ "$DEBLOB" = 1 ] && deblob_kernel
 
 ## Simple test for finding missing cases of silent_accept_firmware method
 search_for_missing_cases_silent_patch() {
@@ -100,7 +103,18 @@ for PATCH in $DATA/udeb/*.patch ; do
 done
 
 cp $DATA/udeb/5-udebs.mk debian/rules.d
+mkdir -p debian/scripts
+cp $DATA/udeb/trisquel-gen-udeb-control.sh debian/scripts/
 cp -a $DATA/udeb/d-i $DEBIAN_PATH
+
+{
+  echo ""
+  echo "# Rules for building Trisquel's udebs"
+  echo "include debian/rules.d/5-udebs.mk"
+} >> debian/rules
+
+# Clean d-i on clean target
+sed -i '/dh_clean/a \	# Trisquel d-i cleanup\n	rm -rf $(DEBIAN)/d-i-$(arch)\n	rm -f $(DEBIAN)/d-i/firmware/$(arch)/kernel-image' debian/rules
 
 cat << EOF >> debian/control
 Package: $CONTROL_PACKAGE-udebs-generic
@@ -134,20 +148,23 @@ Description: Metapackage depending on kernel udebs
  for easier version and migration tracking.
 EOF
 
-cat << EOF >> $DEBIAN_PATH/control.d/flavour-control.stub
+cat << 'EOF' >> $DEBIAN_PATH/control.d/flavour-control.stub
 Package: SRCPKGNAME-udebs-FLAVOUR
 Build-Profiles: <!stage1> <!noudeb> <!cross> <!autopkgtest>
 XC-Package-Type: udeb
 Section: debian-installer
 Architecture: ARCH
-Depends: \${udeb:Depends}
+Depends: ${udeb:Depends}
 Description: Metapackage depending on kernel udebs
  This package depends on the all udebs that the kernel build generated,
  for easier version and migration tracking.
 EOF
 
-sed '/include.*2-binary-arch.mk/a\\n# Rules for building the udebs ($(DEBIAN)-installer)\ninclude debian/rules.d/5-udebs.mk' -i debian/rules
-sed 's/+= binary-debs/+= binary-udebs/' -i debian/rules.d/2-binary-arch.mk
+# Hook to generate debian/control
+sed -i '/^[[:space:]]*\$@$/a \
+	@if [ -z "$(disable_d_i)" ] && ! echo " $(DEB_BUILD_PROFILES) " | grep -q " noudeb " ; then \\\
+		bash debian/scripts/trisquel-gen-udeb-control.sh $(arch) $(DEBIAN) $(DEB_VERSION_UPSTREAM) $(abinum) $@; \\\
+	fi' debian/rules
 
 for i in dctrl-tools kernel-wedge
 do
@@ -245,7 +262,7 @@ echo 'skipretpoline = true' | tee -a 	$DEBIAN_PATH/rules.d/0-common-vars.mk \
 
 # Do not label packages as unsigned
 sed '/bin_pkg_name_unsigned/s/linux-image-unsigned/linux-image/' -i debian/rules.d/0-common-vars.mk
-sed 's/.unsigned//' -i debian/scripts/control-create
+# (RIFO: change applied via patch)
 sed '/Package:/s/.unsigned//;/This package /s/.unsigned//' -i debian/control
 
 line=$(grep -n ')-Ubuntu' debian/rules.d/0-common-vars.mk|cut -d: -f1)
