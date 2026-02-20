@@ -6,12 +6,12 @@ ifeq ($(disable_d_i),)
 		do-binary-udebs
 endif
 
-# Hook into Ubuntu's architecture build process seamlessly
+# Hook into Ubuntu's architecture build process without modifying their files
 binary-arch: binary-udebs
 
 # Prefer DEB_SOURCE when available; fallback to src_pkg_name; otherwise "linux"
 do-binary-udebs: linux_udeb_name=$(if $(DEB_SOURCE),$(DEB_SOURCE),$(if $(src_pkg_name),$(src_pkg_name),linux))
-do-binary-udebs: debian/control extract-dtbs-for-udebs
+do-binary-udebs: debian/control
 	@echo Debug: $@
 	dh_testdir
 	dh_testroot
@@ -36,6 +36,7 @@ do-binary-udebs: debian/control extract-dtbs-for-udebs
 	      fi; \
 	  done; \
 	  if [ "$$found" = 0 ]; then \
+	    echo "E: missing .deb for $$i in $$outdir (DPKG_BUILDPACKAGE_OUTPUT_DIR)." >&2; \
 	    ls -1 "$$outdir"/linux-image-$$i\_*_${arch}.deb \
 	          "$$outdir"/linux-image-unsigned-$$i\_*_${arch}.deb \
 	          "$$outdir"/linux-modules-$$i\_*_${arch}.deb \
@@ -48,10 +49,20 @@ do-binary-udebs: debian/control extract-dtbs-for-udebs
 	    ln -s ../usr/lib/modules debian/d-i-${arch}/lib/modules; \
 	  fi; \
 	  if [ ! -d debian/d-i-${arch}/lib/modules/$$i ]; then \
-	    find debian/d-i-${arch} -maxdepth 6 -type d -name modules -print >&2 || true; \
+	    echo "E: missing debian/d-i-${arch}/lib/modules/$$i" >&2; \
 	    exit 1; \
 	  fi; \
 	  /sbin/depmod -b debian/d-i-${arch} -- $$i; \
+	  if [ "$(filter true,$(do_dtbs))" ]; then \
+	    if [ -d debian/d-i-${arch}/lib/firmware/$$i/device-tree ]; then \
+	      echo ">> Trisquel: Extracting dtbs for $$i..."; \
+	      mkdir -p $(CURDIR)/$(DEBIAN)/d-i/firmware/${arch}; \
+	      ( cd debian/d-i-${arch}/lib/firmware/$$i/ && find device-tree -print 2>/dev/null || true ) | \
+	      while read dtb_file; do \
+	        echo "$$dtb_file ?" >> $(CURDIR)/$(DEBIAN)/d-i/firmware/${arch}/kernel-image; \
+	      done; \
+	    fi; \
+	  fi; \
 	done
 
 	# kernel-wedge will error if no modules unless this is touched
@@ -107,14 +118,3 @@ do-binary-udebs: debian/control extract-dtbs-for-udebs
 	        dh_builddeb -p$$i; \
 	    fi; \
 	done <$(builddir)/udeb-meta-packages.list
-
-# Split dtbs logic to prevent patching 2-binary-arch.mk
-.PHONY: extract-dtbs-for-udebs
-extract-dtbs-for-udebs:
-	@if [ "$(filter true,$(do_dtbs))" ]; then \
-		echo ">> Extracting dtbs for d-i..."; \
-		( cd $(pkgdir)/lib/firmware/$(abi_release)-$*/ && find device-tree -print 2>/dev/null || true ) | \
-		while read dtb_file; do \
-			echo "$$dtb_file ?" >> $(CURDIR)/$(DEBIAN)/d-i/firmware/$(arch)/kernel-image; \
-		done; \
-	fi
