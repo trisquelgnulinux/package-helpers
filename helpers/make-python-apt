@@ -23,14 +23,14 @@
 # a new release of the 'debian-installer' also ships the latest mirror
 # list available on the resulting netinstall (mini.iso) image.
 
-VERSION=11
+VERSION=12
 COMPONENT=main
 #Be aware to not pull/build before publish date on T12.
 
 . ./config
 
 # Fix version number due to early release.
-export FULLVERSION="$(sed 's|ubuntu4||' <<< $FULLVERSION)"
+FULLVERSION="$(sed -E 's/^(.*)ubuntu([^+]+)(\+.*)$/\1\3~ubuntu\2/' <<< $FULLVERSION)"
 
 # Use git Mirrors.masterlist as source.
 Mirrors_masterlist=$(mktemp)
@@ -92,7 +92,6 @@ EOF
 export DEB_BUILD_OPTIONS=nocheck
 
 changelog "Compiled for Trisquel"
-head -n1 debian/changelog | grep -q ubuntu && echo "error: update FULLVERSION value" && exit
 
 package
 
