@@ -18,12 +18,12 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=5
+VERSION=6
 
 . ./config
 
 # Set version number due to source origin change
-export FULLVERSION="$(sed 's|ubuntu0.22.04.1||' <<< $FULLVERSION)"
+export FULLVERSION="$(sed -E 's/^(.*)ubuntu([^+]+)(\+.*)$/\1\3~ubuntu\2/' <<< $FULLVERSION)"
 
 cp $DATA/Trisquel-mirror.list debian/
 
@@ -54,7 +54,6 @@ index e9c85e9..b6c1c97 100755
 EOF
 
 changelog "Added config and update manpage for Trisquel."
-head -n1 debian/changelog | grep -q ubuntu && echo "error: update upstream version" && exit
 
 package
 
