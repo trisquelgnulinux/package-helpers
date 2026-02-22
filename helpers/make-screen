@@ -23,10 +23,12 @@
 # or fetch such packages from Debian in order to build the required udeb packages.
 ##
 
-VERSION=0
+VERSION=1
 NETINST=true
 . ./config
 
+# Fix version number due to early release.
+FULLVERSION="$(sed -E 's/^(.*)ubuntu([^+]+)(\+.*)$/\1\3~ubuntu\2/' <<< $FULLVERSION)"
 
 changelog "Rebuild upstream to get udeb dependency for debian-installer."
 package
