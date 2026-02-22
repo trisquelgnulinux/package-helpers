@@ -17,20 +17,18 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
+VERSION=4
 EXTERNAL='deb-src http://archive.ubuntu.com/ubuntu noble universe'
 
 . ./config
 
 # Set version number due to source origin change
-export FULLVERSION="$(sed 's|build3||' <<< $FULLVERSION)"
+FULLVERSION=$(sed -E 's/^(.*)build([0-9]+)(\+.*)$/\1\3~build\2/' <<< $FULLVERSION)
 
 # Add cracklib-runtime dependency to debian/control
 apply_patch_changes
 
 changelog "Added cracklib-runtime dependency.
 Added custom implementation to use adduser regex for user creation"
-
-head -n1 debian/changelog | grep -q build && echo "error: update upstream version" && exit
 
 package
