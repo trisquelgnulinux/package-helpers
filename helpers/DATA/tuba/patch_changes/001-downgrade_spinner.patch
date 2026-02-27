@@ -1,0 +1,211 @@
+diff --git a/src/Dialogs/Composer/AttachmentsPage.vala b/src_/Dialogs/Composer/AttachmentsPage.vala
+index 5d4e1057..6e640d8b 100644
+--- a/src/Dialogs/Composer/AttachmentsPage.vala
++++ b/src_/Dialogs/Composer/AttachmentsPage.vala
+@@ -30,7 +30,7 @@ public class Tuba.AttachmentsPage : ComposerPage {
+ 		"video/x-ms-asf"
+ 	};
+ 
+-	private Adw.Spinner spinner;
++	private Gtk.Spinner spinner;
+ 	public GLib.ListStore attachments;
+ 	public Adw.ToastOverlay toast_overlay;
+ 	public bool media_sensitive { get; set; default = false; }
+@@ -267,7 +267,7 @@ public class Tuba.AttachmentsPage : ComposerPage {
+ 		stack.add_named (list, "list");
+ 		stack.add_named (empty_state, "empty");
+ 
+-		spinner = new Adw.Spinner () {
++		spinner = new Gtk.Spinner () {
+ 			halign = Gtk.Align.CENTER,
+ 			valign = Gtk.Align.CENTER,
+ 			vexpand = true,
+diff --git a/src/Dialogs/Composer/EditorPage.vala b/src_/Dialogs/Composer/EditorPage.vala
+index d485b08e..dbbca094 100644
+--- a/src/Dialogs/Composer/EditorPage.vala
++++ b/src_/Dialogs/Composer/EditorPage.vala
+@@ -262,39 +262,7 @@ public class Tuba.EditorPage : ComposerPage {
+ 		var adw_manager = Adw.StyleManager.get_default ();
+ 
+ 		string scheme_name = "Fedi";
+-		if (adw_manager.get_system_supports_accent_colors ()) {
+-			switch (adw_manager.get_accent_color ()) {
+-				case Adw.AccentColor.YELLOW:
+-					scheme_name += "-yellow";
+-					break;
+-				case Adw.AccentColor.TEAL:
+-					scheme_name += "-teal";
+-					break;
+-				case Adw.AccentColor.PURPLE:
+-					scheme_name += "-purple";
+-					break;
+-				case Adw.AccentColor.RED:
+-					scheme_name += "-red";
+-					break;
+-				case Adw.AccentColor.GREEN:
+-					scheme_name += "-green";
+-					break;
+-				case Adw.AccentColor.ORANGE:
+-					scheme_name += "-orange";
+-					break;
+-				case Adw.AccentColor.SLATE:
+-					scheme_name += "-slate";
+-					break;
+-				case Adw.AccentColor.PINK:
+-					scheme_name += "-pink";
+-					break;
+-				default:
+-					scheme_name += "-blue";
+-					break;
+-			}
+-		} else {
+-			scheme_name += "-blue";
+-		}
++		scheme_name += "-blue";
+ 
+ 		if (adw_manager.dark) scheme_name += "-dark";
+ 		((GtkSource.Buffer) editor.buffer).style_scheme = manager.get_scheme (scheme_name);
+diff --git a/src/Dialogs/Report.vala b/src_/Dialogs/Report.vala
+index 8cb9e09f..4fb86765 100644
+--- a/src/Dialogs/Report.vala
++++ b/src_/Dialogs/Report.vala
+@@ -229,7 +229,7 @@ public class Tuba.Dialogs.Report : Adw.Dialog {
+ 			hexpand = true,
+ 			valign = Gtk.Align.CENTER
+ 		};
+-		page_3_stack.add_named (new Adw.Spinner () {
++		page_3_stack.add_named (new Gtk.Spinner () {
+ 			halign = Gtk.Align.CENTER,
+ 			valign = Gtk.Align.CENTER,
+ 			vexpand = true,
+diff --git a/src/Views/Admin/Pages/Base.vala b/src_/Views/Admin/Pages/Base.vala
+index 3c5d6d20..803a6b4b 100644
+--- a/src/Views/Admin/Pages/Base.vala
++++ b/src_/Views/Admin/Pages/Base.vala
+@@ -1,7 +1,7 @@
+ public class Tuba.Views.Admin.Page.Base : Adw.NavigationPage {
+ 	protected Gtk.Widget page { get; set; }
+ 	private Gtk.ScrolledWindow scroller;
+-	private Adw.Spinner spinner;
++	private Gtk.Spinner spinner;
+ 	private Adw.ToastOverlay toast_overlay;
+ 	protected Adw.HeaderBar headerbar;
+ 	protected Adw.ToolbarView toolbar_view;
+@@ -29,7 +29,7 @@ public class Tuba.Views.Admin.Page.Base : Adw.NavigationPage {
+ 
+ 	construct {
+ 		headerbar = new Adw.HeaderBar ();
+-		spinner = new Adw.Spinner () {
++		spinner = new Gtk.Spinner () {
+ 			valign = Gtk.Align.CENTER,
+ 			hexpand = true,
+ 			vexpand = true,
+diff --git a/src/Views/MediaViewer.vala b/src_/Views/MediaViewer.vala
+index 205bd303..c41beb11 100644
+--- a/src/Views/MediaViewer.vala
++++ b/src_/Views/MediaViewer.vala
+@@ -70,7 +70,7 @@ public class Tuba.Views.MediaViewer : Gtk.Widget, Gtk.Buildable, Adw.Swipeable {
+ 	public class Item : Adw.Bin {
+ 		private Gtk.Stack stack;
+ 		private Gtk.Overlay overlay;
+-		private Adw.Spinner spinner;
++		private Gtk.Spinner spinner;
+ 		private Gtk.ScrolledWindow scroller;
+ 		public signal void zoom_changed ();
+ 
+@@ -212,7 +212,7 @@ public class Tuba.Views.MediaViewer : Gtk.Widget, Gtk.Buildable, Adw.Swipeable {
+ 				vexpand = true,
+ 				hexpand = true
+ 			};
+-			spinner = new Adw.Spinner () {
++			spinner = new Gtk.Spinner () {
+ 				halign = Gtk.Align.CENTER,
+ 				valign = Gtk.Align.CENTER,
+ 				vexpand = true,
+diff --git a/src/Views/Profile.vala b/src_/Views/Profile.vala
+index 5c93aa6a..b1de6a7e 100644
+--- a/src/Views/Profile.vala
++++ b/src_/Views/Profile.vala
+@@ -431,7 +431,7 @@ public class Tuba.Views.Profile : Views.Accounts {
+ 	}
+ 
+ 	public Adw.Dialog create_ar_list_dialog () {
+-		var spinner = new Adw.Spinner () {
++		var spinner = new Gtk.Spinner () {
+ 			halign = Gtk.Align.CENTER,
+ 			valign = Gtk.Align.CENTER,
+ 			vexpand = true,
+diff --git a/src/Views/Timeline.vala b/src_/Views/Timeline.vala
+index 01bcdd07..1ffd503b 100644
+--- a/src/Views/Timeline.vala
++++ b/src_/Views/Timeline.vala
+@@ -17,7 +17,7 @@ public class Tuba.Views.Timeline : AccountHolder, Streamable, Views.ContentBase
+ 		protected int entity_queue_size { get; set; default=0; }
+ 	#endif
+ 
+-	private Adw.Spinner pull_to_refresh_spinner;
++	private Gtk.Spinner pull_to_refresh_spinner;
+ 	private bool _is_pulling = false;
+ 	private bool is_pulling {
+ 		get {
+@@ -72,7 +72,7 @@ public class Tuba.Views.Timeline : AccountHolder, Streamable, Views.ContentBase
+ 	construct {
+ 		empty_state_title = _("No Posts");
+ 
+-		pull_to_refresh_spinner = new Adw.Spinner () {
++		pull_to_refresh_spinner = new Gtk.Spinner () {
+ 			height_request = 32,
+ 			width_request = 32,
+ 			margin_top = 32,
+diff --git a/src/Widgets/AudioPlayer/Visualizer.vala b/src_/Widgets/AudioPlayer/Visualizer.vala
+index d4815b15..d684f349 100644
+--- a/src/Widgets/AudioPlayer/Visualizer.vala
++++ b/src_/Widgets/AudioPlayer/Visualizer.vala
+@@ -45,28 +45,17 @@ public class Tuba.Widgets.Audio.Visualizer : Gtk.Widget {
+ 			    color.blue = float.min (1, color.blue + 0.3f);
+ 			}
+ 		} else {
+-			var default_sm = Adw.StyleManager.get_default ();
+-			if (default_sm.system_supports_accent_colors) {
+-				default_sm.notify["accent-color-rgba"].connect (update_accent_color);
+-				update_accent_color ();
+-			} else {
+-				color = {
+-					120 / 255.0f,
+-					174 / 255.0f,
+-					237 / 255.0f,
+-					ALPHA
+-				};
+-			}
++			color = {
++				120 / 255.0f,
++				174 / 255.0f,
++				237 / 255.0f,
++				ALPHA
++			};
+ 		}
+ 
+ 		cover_texture = texture;
+ 	}
+ 
+-	private void update_accent_color () {
+-		color = Adw.StyleManager.get_default ().get_accent_color_rgba ();
+-		color.alpha = ALPHA;
+-	}
+-
+ 	public override void snapshot (Gtk.Snapshot snapshot) {
+ 		int win_w = this.get_width ();
+ 		int win_h = this.get_height ();
+diff --git a/data/ui/views/base.ui b/data/ui/views/base.ui_
+index e715278d..5594d72a 100644
+--- a/data/ui/views/base.ui
++++ b/data/ui/views/base.ui_
+@@ -123,7 +123,7 @@
+                                           <object class="GtkStackPage">
+                                             <property name="name">spinner</property>
+                                             <property name="child">
+-                                              <object class="AdwSpinner" id="status_spinner">
++                                              <object class="GtkSpinner" id="status_spinner">
+                                                 <property name="height_request">32</property>
+                                                 <property name="valign">center</property>
+                                               </object>
