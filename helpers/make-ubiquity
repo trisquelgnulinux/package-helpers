@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=44
+VERSION=45
 
 . ./config
 
@@ -275,6 +275,9 @@ sed -i '/ubuntu-artwork,/d' debian/control
 
 # Only warn about missing efi partition when running on efi mode
 sed 's|/var/lib/partman/efi|/sys/firmware/efi|' -i d-i/source/partman-efi/check.d/efi
+
+# Run ubiquity with sudo in kde, avoids pkexec password prompt
+sed 's/Exec=ubiquity/Exec=sudo ubiquity/' -i ./data/ubiquity-kdeui.desktop.in
 
 changelog "Adapted for Trisquel"
 
