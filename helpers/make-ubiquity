@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2011-2025  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2011-2026  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C)      2025  Luis Guzmán <ark@switnet.org>
 #    Copyright (C)      2019  Mason Hock <mason@masonhock.com>
 #
@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=45
+VERSION=46
 
 . ./config
 
@@ -277,7 +277,7 @@ sed -i '/ubuntu-artwork,/d' debian/control
 sed 's|/var/lib/partman/efi|/sys/firmware/efi|' -i d-i/source/partman-efi/check.d/efi
 
 # Run ubiquity with sudo in kde, avoids pkexec password prompt
-sed 's/Exec=ubiquity/Exec=sudo ubiquity/' -i ./data/ubiquity-kdeui.desktop.in
+sed "s/Exec=ubiquity.*/Exec=sudo --preserve-env=DBUS_SESSION_BUS_ADDRESS,XDG_DATA_DIRS,XDG_RUNTIME_DIR,GTK_THEME sh -c 'ubiquity kde_ui'/" -i ./data/ubiquity-kdeui.desktop.in
 
 changelog "Adapted for Trisquel"
 
