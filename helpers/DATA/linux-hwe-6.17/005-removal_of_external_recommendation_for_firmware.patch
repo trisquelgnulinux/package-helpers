@@ -1,0 +1,34 @@
+Removal of references to external repositories we can't manage what kind of firmware is pointed to.
+The only firmware we can confirm to work with is the one contained on the packge source code.
+
+Update: Linux-libre has debblobed the external URL, we remove the whole thing.
+diff --git a/drivers/net/wireless/atmel/at76c50x-usb.c b/drivers/net/wireless/atmel/at76c50x-usb.c
+index 447b51cf..898b83af 100644
+--- a/drivers/net/wireless/atmel/at76c50x-usb.c
++++ b/drivers/net/wireless/atmel/at76c50x-usb.c
+@@ -1619,8 +1619,6 @@ static struct fwentry *at76_load_firmware(struct usb_device *udev,
+ 	if (ret < 0) {
+ 		dev_err(&udev->dev, "firmware %s not found!\n",
+ 			fwe->fwname);
+-		dev_err(&udev->dev,
+-			"you may need to download the firmware from http://developer.berlios.de/projects/at76c503a/\n");
+ 		goto exit;
+ 	}
+ 
+diff --git a/Documentation/admin-guide/media/ivtv.rst b/Documentation/admin-guide/media/ivtv.rst
+index 101f16d0..2eb77c08 100644
+--- a/Documentation/admin-guide/media/ivtv.rst
++++ b/Documentation/admin-guide/media/ivtv.rst
+@@ -12,10 +12,7 @@ Hauppauge PVR-350.
+ 
+ .. note::
+ 
+-   #) This driver requires the latest encoder firmware (version 2.06.039, size
+-      376836 bytes). Get the firmware from here:
+-
+-      https://linuxtv.org/downloads/firmware/#conexant
++   #) This driver requires the latest encoder firmware
+ 
+    #) 'normal' TV applications do not work with this driver, you need
+       an application that can handle MPEG input such as mplayer, xine, MythTV,
+ 
