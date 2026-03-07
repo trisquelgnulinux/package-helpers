@@ -1,0 +1,200 @@
+--- a/ubiquity/plugins/ubi-language.py	2026-03-07 19:13:15.199000000 +0000
++++ b/ubiquity/plugins/ubi-language.py	2026-03-07 19:13:25.118000000 +0000
+@@ -91,21 +91,6 @@
+         self.release_notes_url = ''
+         self.update_installer = True
+         self.updating_installer = False
+-        self.release_notes_label = builder.get_object('release_notes_label')
+-        self.release_notes_found = False
+-        if self.release_notes_label:
+-            self.release_notes_label.connect(
+-                'activate-link', self.on_link_clicked)
+-            if self.controller.oem_config or auto_update.already_updated():
+-                self.update_installer = False
+-            try:
+-                with open(_release_notes_url_path) as release_notes:
+-                    self.release_notes_url = release_notes.read().rstrip('\n')
+-                self.release_notes_found = True
+-            except (KeyboardInterrupt, SystemExit):
+-                raise
+-            except Exception:
+-                pass
+         self.install_ubuntu = builder.get_object('install_ubuntu')
+         self.try_ubuntu = builder.get_object('try_ubuntu')
+         if not self.only:
+@@ -290,21 +275,11 @@
+         else:
+             next_button.set_size_request(install_w, -1)
+ 
+-        self.update_release_notes_label()
+         for w in self.page.get_children():
+             w.show()
+ 
+     def plugin_set_online_state(self, state):
+         from gi.repository import GLib
+-        if self.release_notes_label:
+-            if self.timeout_id:
+-                GLib.source_remove(self.timeout_id)
+-            if state:
+-                self.release_notes_label.show()
+-                self.timeout_id = GLib.timeout_add(
+-                    300, self.check_returncode)
+-            else:
+-                self.release_notes_label.hide()
+ 
+     def check_returncode(self, *args):
+         import subprocess
+@@ -320,32 +295,8 @@
+                 self.update_installer = True
+             else:
+                 self.update_installer = False
+-            self.update_release_notes_label()
+             return False
+ 
+-    def update_release_notes_label(self):
+-        print("update_release_notes_label()")
+-        lang = self.get_language()
+-        if not lang:
+-            return
+-        # strip encoding; we use UTF-8 internally no matter what
+-        lang = lang.split('.')[0]
+-        # Either leave the release notes label alone (both release notes and a
+-        # critical update are available), set it to just the release notes,
+-        # just the critical update, or neither, as appropriate.
+-        if self.release_notes_label:
+-            if self.release_notes_found and self.update_installer:
+-                text = i18n.get_string('release_notes_label', lang)
+-                self.release_notes_label.set_markup(text)
+-            elif self.release_notes_found:
+-                text = i18n.get_string('release_notes_only', lang)
+-                self.release_notes_label.set_markup(text)
+-            elif self.update_installer:
+-                text = i18n.get_string('update_installer_only', lang)
+-                self.release_notes_label.set_markup(text)
+-            else:
+-                self.release_notes_label.set_markup('')
+-
+     def set_oem_id(self, text):
+         return self.oem_id_entry.set_text(text)
+ 
+@@ -366,9 +317,9 @@
+                 # no updates, so don't check again
+                 if self.release_notes_url:
+                     text = i18n.get_string('release_notes_only', lang)
+-                    self.release_notes_label.set_markup(text)
++                    True
+                 else:
+-                    self.release_notes_label.hide()
++                    True
+             self.updating_installer = False
+         elif uri == 'release-notes':
+             uri = self.release_notes_url.replace('${LANG}', lang)
+@@ -435,12 +386,6 @@
+             except Exception:
+                 pass
+ 
+-            if self.release_notes_url:
+-                self.page.release_notes_label.linkActivated.connect(
+-                    self.on_release_notes_link)
+-            else:
+-                self.page.release_notes_label.hide()
+-
+             if 'UBIQUITY_GREETER' not in os.environ:
+                 self.page.try_ubuntu.hide()
+                 self.page.try_install_text_label.hide()
+@@ -474,23 +419,6 @@
+         self.controller._wizard.current_page = None
+         self.controller.dbfilter.ok_handler()
+ 
+-    def on_release_notes_link(self, link):
+-        lang = self.selected_language()
+-        if link == "release-notes":
+-            if lang:
+-                lang = lang.split('.')[0].lower()
+-                url = self.release_notes_url.replace('${LANG}', lang)
+-                self.openURL(url)
+-        elif link == "update":
+-            if self.updating_installer:
+-                return
+-            self.updating_installer = True
+-            if not auto_update.update(self.controller._wizard):
+-                # no updates, so don't check again
+-                text = i18n.get_string('release_notes_only', lang)
+-                self.page.release_notes_label.setText(text)
+-            self.updating_installer = False
+-
+     def openURL(self, url):
+         from PyQt5.QtGui import QDesktopServices
+         from PyQt5.QtCore import QUrl
+@@ -556,22 +484,12 @@
+                 text = text.replace('Trisquel', 'Triskel')
+                 widget.setText(text)
+ 
+-        self.update_release_notes_label()
+         for w in self.widgetHidden:
+             w.show()
+         self.widgetHidden = []
+ 
+     def plugin_set_online_state(self, state):
+         from PyQt5.QtCore import QTimer
+-        if self.page.release_notes_label:
+-            if state:
+-                self.page.release_notes_label.show()
+-                QTimer.singleShot(300, self.check_returncode)
+-                self.timer = QTimer(self.page)
+-                self.timer.timeout.connect(self.check_returncode)
+-                self.timer.start(300)
+-            else:
+-                self.page.release_notes_label.hide()
+ 
+     def check_returncode(self, *args):
+         import subprocess
+@@ -587,29 +505,8 @@
+                 self.update_installer = True
+             else:
+                 self.update_installer = False
+-            self.update_release_notes_label()
+             self.timer.timeout.disconnect(self.check_returncode)
+ 
+-    def update_release_notes_label(self):
+-        lang = self.selected_language()
+-        if not lang:
+-            return
+-        # strip encoding; we use UTF-8 internally no matter what
+-        lang = lang.split('.')[0]
+-        # Either leave the release notes label alone (both release notes and a
+-        # critical update are available), set it to just the release notes,
+-        # just the critical update, or neither, as appropriate.
+-        if self.page.release_notes_label:
+-            if self.release_notes_found and self.update_installer:
+-                text = i18n.get_string('release_notes_label', lang)
+-                self.page.release_notes_label.setText(text)
+-            elif self.release_notes_found:
+-                text = i18n.get_string('release_notes_only', lang)
+-                self.page.release_notes_label.setText(text)
+-            elif self.update_installer:
+-                text = i18n.get_string('update_installer_only', lang)
+-                self.page.release_notes_label.setText(text)
+-
+     def set_oem_id(self, text):
+         return self.page.oem_id_entry.setText(text)
+ 
+--- a/gui/qt/stepLanguage.ui	2026-02-28 12:58:50.608050948 -0500
++++ b/gui/qt/stepLanguage.ui	2026-03-07 14:18:21.940484523 -0500
+@@ -33,16 +33,6 @@
+      </property>
+     </spacer>
+    </item>
+-   <item row="9" column="0" colspan="5">
+-    <widget class="QLabel" name="release_notes_label">
+-     <property name="text">
+-      <string>If you have Internet access, read the release notes for information on problems that may affect you.</string>
+-     </property>
+-     <property name="wordWrap">
+-      <bool>true</bool>
+-     </property>
+-    </widget>
+-   </item>
+    <item row="8" column="0" colspan="5">
+     <widget class="QLabel" name="try_install_text_label">
+      <property name="text">
