@@ -19,12 +19,13 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=129
+VERSION=129.1
 EXTERNAL='deb-src http://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu $UPSTREAM main'
 REPOKEY=AEBDF4819BE21867
 
 . ./config
 
+MAIN_REBRANDING_ENABLED=1
 # SHA256 HASHES UPDATES
 GLEAN_CONF_RS_INITIAL=$(sha256sum third_party/rust/glean/src/configuration.rs|awk '{print$1}')
 # GNUZILLA ADDON REPLACEMENT
@@ -287,6 +288,7 @@ MOZ_ENABLE_BREAKPAD     = 0
 MOZ_ENABLE_TELEMETRY    = 0
 EOF
 
+main_rebranding() {
 SEDSCRIPT="
 s|Updates from { -vendor-short-name } and { -brand-product-name }|Updates from { -vendor-short-name }|;
 s/Try Firefox/Try Abrowser/g;
@@ -322,6 +324,9 @@ find l10n -type f -not -iregex '.*changelog.*' \
 
 sed 's/Firefox/Abrowser/' -i debian/control.in \
                              browser/locales/en-US/chrome/overrides/appstrings.properties
+}
+# Useful when trying to catch patch issues faster.
+[ "$MAIN_REBRANDING_ENABLED" = 1 ] && main_rebranding
 
 sed s/ubuntu/trisquel/g debian/distribution.ini -i
 sed "s/ubuntu_version/trisquel_version/; s/Ubuntu 10.10/Trisquel $REVISION/; s/1010/40/" -i debian/firefox.postinst.in

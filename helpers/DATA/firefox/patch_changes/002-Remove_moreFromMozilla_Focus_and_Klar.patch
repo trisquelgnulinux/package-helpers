@@ -4,10 +4,10 @@ Based on https://git.parabola.nu/abslibre.git/diff/libre/iceweasel/9004-FSDG-mis
 - Remove promos of Firefox Focus and Klar from Private Browsing
 
 diff --git a/browser/app/profile/firefox.js b/browser/app/profile/firefox.js
-index c5f7cf3a..f0124235 100644
+index f9a558a1..9c171c72 100644
 --- a/browser/app/profile/firefox.js
 +++ b/browser/app/profile/firefox.js
-@@ -1368,9 +1368,9 @@ pref("accessibility.typeaheadfind.linksonly", false);
+@@ -1366,11 +1366,11 @@ pref("accessibility.typeaheadfind.linksonly", false);
  pref("accessibility.typeaheadfind.flashBar", 1);
  
  // Whether we had to hide the "Firefox Labs" section because it would be empty.
@@ -16,6 +16,9 @@ index c5f7cf3a..f0124235 100644
  // Whether we show the "More from Mozilla" section.
 -pref("browser.preferences.moreFromMozilla", true);
 +pref("browser.preferences.moreFromMozilla", false);
+ // Whether we show the "AI Controls" pane.
+-pref("browser.preferences.aiControls", true);
++pref("browser.preferences.aiControls", false);
  
  // Used by settings to track whether the user customized advanced
  // performance settings. Not used directly elsewhere.
@@ -736,10 +739,10 @@ index 3888af10..1d6c606f 100644
    "chrome://browser/content/asrouter/assets/fox-with-devices.svg",
    "chrome://browser/content/asrouter/assets/fox-with-locked-box.svg",
 diff --git a/browser/components/preferences/moreFromMozilla.js b/browser/components/preferences/moreFromMozilla.js
-index 8807b5d3..82367922 100644
+index 109d334e..ee49d63f 100644
 --- a/browser/components/preferences/moreFromMozilla.js
 +++ b/browser/components/preferences/moreFromMozilla.js
-@@ -81,51 +81,7 @@ var gMoreFromMozillaPane = {
+@@ -81,50 +81,7 @@ var gMoreFromMozillaPane = {
  
    renderProducts() {
      const isRegionUS = Region.home.toLowerCase() === "us";
@@ -777,9 +780,8 @@ index 8807b5d3..82367922 100644
 -      {
 -        id: "mozilla-monitor",
 -        title_string_id: "more-from-moz-mozilla-monitor-title",
--        description_string_id: isRegionUS
--          ? "more-from-moz-mozilla-monitor-us-description"
--          : "more-from-moz-mozilla-monitor-global-description",
+-        description_string_id:
+-          "more-from-moz-mozilla-monitor-global-description",
 -        region: isRegionUS ? "us" : "global",
 -        button: {
 -          id: "mozillaMonitor",

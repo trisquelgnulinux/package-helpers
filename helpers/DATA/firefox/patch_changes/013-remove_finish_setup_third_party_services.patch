@@ -11,53 +11,53 @@ index ba47adb6..c4b29ec4 100644
                where: "tabshifted",
              },
              navigate: true,
-@@ -750,49 +750,6 @@ const MR_ABOUT_WELCOME_DEFAULT = {
+@@ -865,6 +865,49 @@ const MR_ABOUT_WELCOME_DEFAULT = {
        },
        targeting: "isFxASignedIn",
      },
--    {
--      id: "AW_ACCOUNT_LOGIN",
--      content: {
--        fullscreen: true,
--        position: "split",
--        split_narrow_bkg_position: "-228px",
--        image_alt_text: {
--          string_id: "mr2022-onboarding-gratitude-image-alt",
--        },
--        background:
--          "url('chrome://activity-stream/content/data/content/assets/fox-doodle-waving-laptop.svg') center center / 80% no-repeat var(--mr-screen-background-color)",
--        progress_bar: true,
--        logo: {},
--        title: {
--          string_id: "onboarding-sign-up-title",
--        },
--        subtitle: {
--          string_id: "onboarding-sign-up-description",
--        },
--        secondary_button: {
--          label: {
--            string_id: "mr2-onboarding-start-browsing-button-label",
--          },
--          style: "secondary",
--          action: {
--            navigate: true,
--          },
--        },
--        primary_button: {
--          label: {
--            string_id: "onboarding-sign-up-button",
--          },
--          action: {
--            data: {
--              entrypoint: "newuser-onboarding-desktop",
--            },
--            type: "FXA_SIGNIN_FLOW",
--            navigate: true,
--          },
--        },
--      },
--      targeting: "!isFxASignedIn",
--    },
++    {
++      id: "AW_ACCOUNT_LOGIN",
++      content: {
++        fullscreen: true,
++        position: "split",
++        split_narrow_bkg_position: "-228px",
++        image_alt_text: {
++          string_id: "mr2022-onboarding-gratitude-image-alt",
++        },
++        background:
++          "url('chrome://activity-stream/content/data/content/assets/br-fxa-fox-mirror.svg') var(--mr-secondary-position) no-repeat light-dark(rgba(252, 245, 240, 1), rgba(33, 3, 64, 1))",
++        progress_bar: true,
++        logo: {},
++        title: {
++          string_id: "onboarding-sign-up-title",
++        },
++        subtitle: {
++          string_id: "onboarding-sign-up-description",
++        },
++        secondary_button: {
++          label: {
++            string_id: "mr2-onboarding-start-browsing-button-label",
++          },
++          style: "secondary",
++          action: {
++            navigate: true,
++          },
++        },
++        primary_button: {
++          label: {
++            string_id: "onboarding-sign-up-button",
++          },
++          action: {
++            data: {
++              entrypoint: "newuser-onboarding-desktop",
++            },
++            type: "FXA_SIGNIN_FLOW",
++            navigate: true,
++          },
++        },
++      },
++      targeting: "!isFxASignedIn",
++    },
    ],
  };
  
