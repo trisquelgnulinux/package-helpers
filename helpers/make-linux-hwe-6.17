@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=39
+VERSION=40
 HWEKR=6.17
 DI_ENABLED=1
 HWE_ENABLED=1
@@ -349,6 +349,11 @@ else
         echo "> Modifying $i annotations value:"
         python3 debian/scripts/misc/annotations -f $DEBIAN_PATH/config/annotations \
             --arch amd64 --flavour generic --config $i --write -
+    done
+    for arch in amd64 arm64 ; do
+        echo "> Modifying CONFIG_NOVA_CORE annotations value on $arch:"
+        python3 debian/scripts/misc/annotations -f $DEBIAN_PATH/config/annotations \
+            --arch $arch --flavour generic --config CONFIG_NOVA_CORE --write -
     done
     # More changes for HWE 6.17
         echo "> Modifying CONFIG_RUST annotations value:"
