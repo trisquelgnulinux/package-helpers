@@ -293,7 +293,7 @@ export KERNEL_CONFIG_ANNOTATIONS="$DEBIAN_PATH/config/annotations"
 
 # $arch/generic
 python3 $DATA/../kernel/apply_policies.py << 'EOF'
-{ 
+{
 "CONFIG_UBUNTU_ODM_DRIVERS": {"amd64": "n", "arm64": "n", "arm64/generic-64k": "n", "armhf": "n", "ppc64el": "n", "riscv64": "n"},
 "CONFIG_GPIO_AAEON": {"amd64": "-", "arm64": "-", "arm64/generic-64k": "-", "armhf": "-", "ppc64el": "n", "riscv64": "-"},
 "CONFIG_LEDS_AAEON": {"amd64": "-", "arm64": "-", "arm64/generic-64k": "-", "armhf": "-", "ppc64el": "n", "riscv64": "-"},
@@ -304,15 +304,17 @@ EOF
 
 ## Disable ppc64el Werroron amdgpu
 python3 $DATA/../kernel/apply_policies.py << 'EOF'
-{ 
+{
 "CONFIG_DRM_AMDGPU_WERROR": {"ppc64el": "n"}
 }
 EOF
 
 # Disable using udev as a fallback for firmware loading
 python3 $DATA/../kernel/apply_policies.py << 'EOF'
-{ 
-"CONFIG_FW_LOADER_USER_HELPER": {"amd64": "n", "arm64": "n", "arm64/generic-64k": "n", "armhf": "n", "ppc64el": "n", "riscv64": "n"}
+{
+"CONFIG_FW_LOADER_USER_HELPER": {"amd64": "n", "arm64": "n", "arm64/generic-64k": "n", "armhf": "n", "ppc64el": "n", "riscv64": "n"},
+"CONFIG_FW_LOADER_USER_HELPER_FALLBACK": {"amd64": "-", "arm64": "-", "arm64/generic-64k": "-", "armhf": "-", "ppc64el": "-", "riscv64": "-"},
+"CONFIG_DELL_RBU": {"amd64": "n", "arm64": "-", "arm64/generic-64k": "-", "armhf": "-", "ppc64el": "-", "riscv64": "-"}
 }
 EOF
 
