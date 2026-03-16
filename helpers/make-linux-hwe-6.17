@@ -287,32 +287,34 @@ find debian* -type f -name *control* -exec sed 's/ with Ubuntu patches//; s/Linu
 #echo > ./debian.master/d-i/firmware/nic-modules
 #echo > ./debian.master/d-i/firmware/scsi-modules
 
-# Disable using udev as a fallback for firmware loading
-# Read more at: Documentation/driver-api/firmware/fallback-mechanisms.rst
-#replace "CONFIG_FW_LOADER_USER_HELPER=y" "CONFIG_FW_LOADER_USER_HELPER=n" $DEBIAN_PATH/config
+# General changes to annotations on kernel (base or HWE).
+## Disable Ubuntu ODM drivers & AAEON.
+export KERNEL_CONFIG_ANNOTATIONS="$DEBIAN_PATH/config/annotations"
 
-# Disable aaeon & ubuntu odm drivers, remove on both paths to match annotations.
-for i in CONFIG_GPIO_AAEON CONFIG_LEDS_AAEON CONFIG_MFD_AAEON CONFIG_SENSORS_AAEON
-do
-    echo "> Modifying $i annotations value:"
-    python3 debian/scripts/misc/annotations -f $DEBIAN_PATH/config/annotations \
-        --arch amd64 --flavour generic --config $i --write -
-done
-for i in amd64 arm64 armhf ppc64el riscv64 s390x
-do
-    echo "> Modifying CONFIG_UBUNTU_ODM_DRIVERS for arch $i:"
-    python3 debian/scripts/misc/annotations -f $DEBIAN_PATH/config/annotations \
-            --arch $i --flavour generic --config CONFIG_UBUNTU_ODM_DRIVERS --write n
-done
-python3 debian/scripts/misc/annotations -f $DEBIAN_PATH/config/annotations \
-            --arch arm64 --flavour generic-64k --config CONFIG_UBUNTU_ODM_DRIVERS --write n
-
-python3 debian/scripts/misc/annotations -f $DEBIAN_PATH/config/annotations \
-            --arch amd64 --flavour generic --config CONFIG_RUST --write -
+# $arch/generic
+python3 $DATA/../kernel/apply_policies.py << 'EOF'
+{ 
+"CONFIG_UBUNTU_ODM_DRIVERS": {"amd64": "n", "arm64": "n", "arm64/generic-64k": "n", "armhf": "n", "ppc64el": "n", "riscv64": "n"},
+"CONFIG_GPIO_AAEON": {"amd64": "-", "arm64": "-", "arm64/generic-64k": "-", "armhf": "-", "ppc64el": "n", "riscv64": "-"},
+"CONFIG_LEDS_AAEON": {"amd64": "-", "arm64": "-", "arm64/generic-64k": "-", "armhf": "-", "ppc64el": "n", "riscv64": "-"},
+"CONFIG_MFD_AAEON": {"amd64": "-", "arm64": "-", "arm64/generic-64k": "-", "armhf": "-", "ppc64el": "n", "riscv64": "-"},
+"CONFIG_SENSORS_AAEON": {"amd64": "-", "arm64": "-", "arm64/generic-64k": "-", "armhf": "-", "ppc64el": "n", "riscv64": "-"}
+}
+EOF
 
 ## Disable ppc64el Werroron amdgpu
-python3 debian/scripts/misc/annotations -f $DEBIAN_PATH/config/annotations \
-    --arch ppc64el --flavour generic --config CONFIG_DRM_AMDGPU_WERROR --write n
+python3 $DATA/../kernel/apply_policies.py << 'EOF'
+{ 
+"CONFIG_DRM_AMDGPU_WERROR": {"ppc64el": "n"}
+}
+EOF
+
+# Disable using udev as a fallback for firmware loading
+python3 $DATA/../kernel/apply_policies.py << 'EOF'
+{ 
+"CONFIG_FW_LOADER_USER_HELPER": {"amd64": "n", "arm64": "n", "arm64/generic-64k": "n", "armhf": "n", "ppc64el": "n", "riscv64": "n"}
+}
+EOF
 
 ## Remove disabled modules from generic list (starting at 6.2)
 for module in gpio-aaeon hwmon-aaeon leds-aaeon mfd-aaeon spl
@@ -322,43 +324,14 @@ do
         sed -i "/^$module$/d" $i
     done
 done
-# Custom changes for linux and linux-hwe.
-if [ $HWE_ENABLED != 1 ]; then
-## HWEKR - 6.8
-    for i in CONFIG_AX88796B_RUST_PHY CONFIG_CONSTRUCTORS CONFIG_RUST_BUILD_ASSERT_ALLOW \
-        CONFIG_RUST_DEBUG_ASSERTIONS CONFIG_RUST_OVERFLOW_CHECKS CONFIG_RUST_PHYLIB_ABSTRACTIONS \
-        CONFIG_SAMPLES_RUST
-    do
-        echo "> Modifying $i annotations value:"
-        python3 debian/scripts/misc/annotations -f $DEBIAN_PATH/config/annotations \
-            --arch amd64 --flavour generic --config $i --write -
-    done
+
+# Custom annotations changes for linux and linux-hwe.
+if [ "$HWE_ENABLED" != 1 ]; then
+    echo "# Additional custom changes on KRN - 6.8 annotations"
+    echo "... nothing here"
 else
-    echo "# Custom change on HWEKR - 6.17 to match previous changes"
-    for i in  CONFIG_BLK_DEV_RUST_NULL \
-              CONFIG_CONSTRUCTORS \
-              CONFIG_DRM_NOVA \
-              CONFIG_DRM_PANIC_SCREEN_QR_CODE \
-              CONFIG_RUST_BUILD_ASSERT_ALLOW \
-              CONFIG_RUST_DEBUG_ASSERTIONS \
-              CONFIG_RUST_FW_LOADER_ABSTRACTIONS \
-              CONFIG_RUST_OVERFLOW_CHECKS \
-              CONFIG_RUST_PHYLIB_ABSTRACTIONS \
-              CONFIG_SAMPLES_RUST
-    do
-        echo "> Modifying $i annotations value:"
-        python3 debian/scripts/misc/annotations -f $DEBIAN_PATH/config/annotations \
-            --arch amd64 --flavour generic --config $i --write -
-    done
-    for arch in amd64 arm64 ; do
-        echo "> Modifying CONFIG_NOVA_CORE annotations value on $arch:"
-        python3 debian/scripts/misc/annotations -f $DEBIAN_PATH/config/annotations \
-            --arch $arch --flavour generic --config CONFIG_NOVA_CORE --write -
-    done
-    # More changes for HWE 6.17
-        echo "> Modifying CONFIG_RUST annotations value:"
-        python3 debian/scripts/misc/annotations -f $DEBIAN_PATH/config/annotations \
-            --arch amd64 --flavour generic --config CONFIG_RUST --write n
+    echo "# Additional custom changes on HWEKRN - 6.17 annotations"
+    echo "... nothing here"
 fi
 
 grep -rl '^Vcs-Git:' | \
