@@ -295,10 +295,10 @@ export KERNEL_CONFIG_ANNOTATIONS="$DEBIAN_PATH/config/annotations"
 python3 $DATA/../kernel/apply_policies.py << 'EOF'
 {
 "CONFIG_UBUNTU_ODM_DRIVERS": {"amd64": "n", "arm64": "n", "arm64/generic-64k": "n", "armhf": "n", "ppc64el": "n", "riscv64": "n"},
-"CONFIG_GPIO_AAEON": {"amd64": "-", "arm64": "-", "arm64/generic-64k": "-", "armhf": "-", "ppc64el": "n", "riscv64": "-"},
-"CONFIG_LEDS_AAEON": {"amd64": "-", "arm64": "-", "arm64/generic-64k": "-", "armhf": "-", "ppc64el": "n", "riscv64": "-"},
-"CONFIG_MFD_AAEON": {"amd64": "-", "arm64": "-", "arm64/generic-64k": "-", "armhf": "-", "ppc64el": "n", "riscv64": "-"},
-"CONFIG_SENSORS_AAEON": {"amd64": "-", "arm64": "-", "arm64/generic-64k": "-", "armhf": "-", "ppc64el": "n", "riscv64": "-"}
+"CONFIG_GPIO_AAEON": {"amd64": "-", "arm64": "-", "arm64/generic-64k": "-", "armhf": "-", "ppc64el": "-", "riscv64": "-"},
+"CONFIG_LEDS_AAEON": {"amd64": "-", "arm64": "-", "arm64/generic-64k": "-", "armhf": "-", "ppc64el": "-", "riscv64": "-"},
+"CONFIG_MFD_AAEON": {"amd64": "-", "arm64": "-", "arm64/generic-64k": "-", "armhf": "-", "ppc64el": "-", "riscv64": "-"},
+"CONFIG_SENSORS_AAEON": {"amd64": "-", "arm64": "-", "arm64/generic-64k": "-", "armhf": "-", "ppc64el": "-", "riscv64": "-"}
 }
 EOF
 
