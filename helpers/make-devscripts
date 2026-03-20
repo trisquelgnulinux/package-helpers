@@ -18,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 
 . ./config
 
@@ -26,7 +26,6 @@ VERSION=2
 sed -i 's|UbuntuDistroInfo|TrisquelDistroInfo|' scripts/debchange.pl
 
 #Prevent debian test failing.
-sed -i '/verifyGuessedDistribution/s|buster-backports|bookworm-backports|g' test/test_debchange
 rm scripts/devscripts/test/test_flake8.py
 
 changelog "Make use of TrisquelDistroInfo from distro-info package."
