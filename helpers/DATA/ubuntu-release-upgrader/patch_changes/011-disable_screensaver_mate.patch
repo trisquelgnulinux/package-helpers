@@ -1,0 +1,27 @@
+diff --git a/DistUpgrade/DistUpgradeController.py b/DistUpgrade/DistUpgradeController.py
+index b7dd0af7..c06166b6 100644
+--- a/DistUpgrade/DistUpgradeController.py
++++ b/DistUpgrade/DistUpgradeController.py
+@@ -2708,10 +2708,18 @@ class DistUpgradeController(object):
+             # exits, the connection will be closed and screen inhibition
+             # will be removed.
+             self._session_bus = dbus.SessionBus()
+-            proxy = self._session_bus.get_object('org.freedesktop.ScreenSaver',
+-                                                 '/org/freedesktop/ScreenSaver')
+-            screensaver = dbus.Interface(proxy, dbus_interface='org.freedesktop.ScreenSaver')
+-            screensaver.Inhibit('trisquel-release-upgrader', 'Upgrading Trisquel')
++            try:
++                # Attempt standar "generic"
++                proxy = self._session_bus.get_object('org.freedesktop.ScreenSaver',
++                                                     '/org/freedesktop/ScreenSaver')
++                screensaver = dbus.Interface(proxy, dbus_interface='org.freedesktop.ScreenSaver')
++                screensaver.Inhibit('ubuntu-release-upgrader', 'Upgrading Ubuntu')
++            except Exception:
++                # Attempt MATE specific
++                proxy = self._session_bus.get_object('org.mate.ScreenSaver',
++                                                     '/org/mate/ScreenSaver')
++                screensaver = dbus.Interface(proxy, dbus_interface='org.mate.ScreenSaver')
++                screensaver.Inhibit('ubuntu-release-upgrader', 'Upgrading Ubuntu')
+ 
+             summary = _("Lock screen disabled")
+             message = _("Your lock screen has been "
