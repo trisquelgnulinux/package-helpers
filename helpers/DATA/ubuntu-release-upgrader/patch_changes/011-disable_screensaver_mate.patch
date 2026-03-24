@@ -1,40 +1,94 @@
 diff --git a/DistUpgrade/DistUpgradeController.py b/DistUpgrade/DistUpgradeController.py
-index b7dd0af7..ffc66293 100644
+index b7dd0af7..dd9d171d 100644
 --- a/DistUpgrade/DistUpgradeController.py
 +++ b/DistUpgrade/DistUpgradeController.py
-@@ -2708,10 +2708,31 @@ class DistUpgradeController(object):
+@@ -2700,18 +2700,84 @@ class DistUpgradeController(object):
+ 
+         try:
+             import dbus
++            import dbus.bus
+ 
++            # Root D-Bus bridge
++            bus_address = None
++            try:
++                uid_str = os.environ.get('SUDO_UID') or os.environ.get('PKEXEC_UID')
++                if uid_str:
++                    import subprocess
++                    # Find the PID of mate-session for this user
++                    pid = subprocess.check_output(["pgrep", "-u", uid_str, "-n", "mate-session"]).decode().strip()
++                    if pid:
++                        with open(f"/proc/{pid}/environ", "r") as f:
++                            for line in f.read().split('\0'):
++                                if line.startswith("DBUS_SESSION_BUS_ADDRESS="):
++                                    bus_address = line.split("=", 1)[1]
++                                    os.environ["DBUS_SESSION_BUS_ADDRESS"] = bus_address
++                                    logging.debug("D-Bus successfully bridged: " + bus_address)
++                                    break
++            except Exception as e:
++                logging.debug("Failed to create D-Bus bridge: " + str(e))
++
++            # Drop root privileges
+             self._setNonRootEUID()
+ 
+             # The org.freedesktop.ScreenSaver.Inhibit effect lasts only
+             # as long as the dbus connection remains open. Once u-r-u
              # exits, the connection will be closed and screen inhibition
              # will be removed.
-             self._session_bus = dbus.SessionBus()
+-            self._session_bus = dbus.SessionBus()
 -            proxy = self._session_bus.get_object('org.freedesktop.ScreenSaver',
 -                                                 '/org/freedesktop/ScreenSaver')
 -            screensaver = dbus.Interface(proxy, dbus_interface='org.freedesktop.ScreenSaver')
 -            screensaver.Inhibit('trisquel-release-upgrader', 'Upgrading Trisquel')
++            if bus_address:
++                self._session_bus = dbus.bus.BusConnection(bus_address)
++            else:
++                self._session_bus = dbus.SessionBus()
 +
++            inhibited = False
++
++            # Attempt 1: Generic Freedesktop
 +            try:
-+                # Attempt standar "generic"
 +                proxy = self._session_bus.get_object('org.freedesktop.ScreenSaver',
 +                                                     '/org/freedesktop/ScreenSaver')
 +                screensaver = dbus.Interface(proxy, dbus_interface='org.freedesktop.ScreenSaver')
-+                screensaver.Inhibit('trisquel-release-upgrader', 'Upgrading System')
-+            except Exception:
-+                try:
-+                    # Attempt MATE specific
-+                    proxy_ss = self._session_bus.get_object('org.mate.ScreenSaver',
-+                                                            '/org/mate/ScreenSaver')
-+                    screensaver_mate = dbus.Interface(proxy_ss, dbus_interface='org.mate.ScreenSaver')
-+                    screensaver_mate.Inhibit('trisquel-release-upgrader', 'Upgrading System')
++                screensaver.Inhibit('trisquel-release-upgrader', 'Upgrading System', timeout=2)
++                logging.debug('Freedesktop ScreenSaver inhibited')
++                inhibited = True
++            except Exception as e:
++                logging.debug('Freedesktop Inhibit failed: ' + str(e))
 +
-+                    # DPMS management
++            # Attempt 2: MATE ScreenSaver
++            try:
++                proxy_ss = self._session_bus.get_object('org.mate.ScreenSaver',
++                                                        '/org/mate/ScreenSaver')
++                screensaver_mate = dbus.Interface(proxy_ss, dbus_interface='org.mate.ScreenSaver')
++                screensaver_mate.Inhibit('trisquel-release-upgrader', 'Upgrading System')
++                logging.debug('MATE ScreenSaver successfully inhibited')
++                inhibited = True
++            except Exception as e:
++                logging.debug('Failed to inhibit MATE ScreenSaver: ' + str(e))
++
++            # Attempt 3: SessionManager - MATE, fallback to GNOME namespace
++            try:
++                try:
 +                    proxy_sm = self._session_bus.get_object('org.mate.SessionManager',
 +                                                            '/org/mate/SessionManager')
 +                    session_mate = dbus.Interface(proxy_sm, dbus_interface='org.mate.SessionManager')
 +                    session_mate.Inhibit('trisquel-release-upgrader', 0, 'Upgrading System', 8)
++                except Exception:
++                    # Fallback for MATE systems using legacy GNOME namespace
++                    proxy_sm = self._session_bus.get_object('org.gnome.SessionManager',
++                                                            '/org/gnome/SessionManager')
++                    session_mate = dbus.Interface(proxy_sm, dbus_interface='org.gnome.SessionManager')
++                    session_mate.Inhibit('trisquel-release-upgrader', 0, 'Upgrading System', 8)
 +
-+                    logging.debug('MATE Session and Screensaver successfully inhibited')
-+                except Exception as mate_e:
-+                    logging.debug('Failed to inhibit MATE specifically: ' + str(mate_e))
-+                    raise
++                logging.debug('SessionManager DPMS successfully inhibited')
++                inhibited = True
++            except Exception as e:
++                logging.debug('Failed to inhibit SessionManager DPMS: ' + str(e))
++
++            if not inhibited:
++                raise Exception("Neither Freedesktop, nor MATE, nor GNOME namespaces could be inhibited")
  
              summary = _("Lock screen disabled")
              message = _("Your lock screen has been "
