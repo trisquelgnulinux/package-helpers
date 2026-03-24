@@ -1,8 +1,8 @@
 diff --git a/DistUpgrade/DistUpgradeController.py b/DistUpgrade/DistUpgradeController.py
-index b7dd0af7..c06166b6 100644
+index b7dd0af7..ffc66293 100644
 --- a/DistUpgrade/DistUpgradeController.py
 +++ b/DistUpgrade/DistUpgradeController.py
-@@ -2708,10 +2708,18 @@ class DistUpgradeController(object):
+@@ -2708,10 +2708,31 @@ class DistUpgradeController(object):
              # exits, the connection will be closed and screen inhibition
              # will be removed.
              self._session_bus = dbus.SessionBus()
@@ -10,18 +10,31 @@ index b7dd0af7..c06166b6 100644
 -                                                 '/org/freedesktop/ScreenSaver')
 -            screensaver = dbus.Interface(proxy, dbus_interface='org.freedesktop.ScreenSaver')
 -            screensaver.Inhibit('trisquel-release-upgrader', 'Upgrading Trisquel')
++
 +            try:
 +                # Attempt standar "generic"
 +                proxy = self._session_bus.get_object('org.freedesktop.ScreenSaver',
 +                                                     '/org/freedesktop/ScreenSaver')
 +                screensaver = dbus.Interface(proxy, dbus_interface='org.freedesktop.ScreenSaver')
-+                screensaver.Inhibit('ubuntu-release-upgrader', 'Upgrading Ubuntu')
++                screensaver.Inhibit('trisquel-release-upgrader', 'Upgrading System')
 +            except Exception:
-+                # Attempt MATE specific
-+                proxy = self._session_bus.get_object('org.mate.ScreenSaver',
-+                                                     '/org/mate/ScreenSaver')
-+                screensaver = dbus.Interface(proxy, dbus_interface='org.mate.ScreenSaver')
-+                screensaver.Inhibit('ubuntu-release-upgrader', 'Upgrading Ubuntu')
++                try:
++                    # Attempt MATE specific
++                    proxy_ss = self._session_bus.get_object('org.mate.ScreenSaver',
++                                                            '/org/mate/ScreenSaver')
++                    screensaver_mate = dbus.Interface(proxy_ss, dbus_interface='org.mate.ScreenSaver')
++                    screensaver_mate.Inhibit('trisquel-release-upgrader', 'Upgrading System')
++
++                    # DPMS management
++                    proxy_sm = self._session_bus.get_object('org.mate.SessionManager',
++                                                            '/org/mate/SessionManager')
++                    session_mate = dbus.Interface(proxy_sm, dbus_interface='org.mate.SessionManager')
++                    session_mate.Inhibit('trisquel-release-upgrader', 0, 'Upgrading System', 8)
++
++                    logging.debug('MATE Session and Screensaver successfully inhibited')
++                except Exception as mate_e:
++                    logging.debug('Failed to inhibit MATE specifically: ' + str(mate_e))
++                    raise
  
              summary = _("Lock screen disabled")
              message = _("Your lock screen has been "
