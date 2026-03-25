@@ -32,7 +32,9 @@ COMPONENT=main
 
 . ./config
 
-FULLVERSION=$(sed -E 's/^(.*)build([0-9]+)trisquel([0-9]+)$/\1trisquel\3~build\2/' <<< $FULLVERSION)
+# FIXME: Version locked hack + PEP440; don't reuse on other helpers.
+FULLVERSION=$(sed -E 's/^(.*)build([0-9]+)trisquel([0-9]+)$/\1trisquel\3build\2/' <<< $FULLVERSION)
+
 # Use git Mirrors.masterlist as source.
 Mirrors_masterlist=$(mktemp)
 Mirrors_masterlist_git="trisquel-packages/-/raw/master/extra/mirrors/Mirrors.masterlist"
