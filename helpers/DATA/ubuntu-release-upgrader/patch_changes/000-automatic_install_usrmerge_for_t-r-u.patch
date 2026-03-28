@@ -23,7 +23,7 @@ index 9423f091..00d9b84c 100644
 +
 +            if res2.returncode != 0:
 +                # Installation failed, abort the upgrade with a clear message
-+                self.controller.error(_(
++                self.controller._view.error(_(
 +                    "The system is not /usr-merged and 'usrmerge' could not be "
 +                    "installed automatically. Please install it manually and "
 +                    "try again."
