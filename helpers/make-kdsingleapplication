@@ -1,0 +1,30 @@
+#!/bin/sh
+#
+#    Copyright (C) 2026  Luis Guzmán <ark@switnet.org>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+
+VERSION=1
+EXTERNAL='deb-src http://ppa.launchpad.net/nextcloud-devs/client/ubuntu $UPSTREAM main'
+REPOKEY="60EE47FBAD3DD469"
+BACKPORT=true
+
+. ./config
+
+#sed -i "s|Utility|Network|" mirall.desktop.in
+
+#Prevent ppc64el arch since qtwebengine is not build for ppc64el.
+sed -i 's|Architecture: any|Architecture: amd64 arm64 armhf i386 mips64el mipsel|g' debian/control
+
+changelog "Backported into Trisquel as nextcloud-desktop client dependency"
+
+package
