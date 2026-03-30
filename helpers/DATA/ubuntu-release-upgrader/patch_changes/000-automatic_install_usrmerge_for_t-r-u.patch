@@ -2,7 +2,7 @@ diff --git a/DistUpgrade/DistUpgradeQuirks.py b/DistUpgrade/DistUpgradeQuirks.py
 index 9423f091..00d9b84c 100644
 --- a/DistUpgrade/DistUpgradeQuirks.py
 +++ b/DistUpgrade/DistUpgradeQuirks.py
-@@ -2000,17 +2000,27 @@ class DistUpgradeQuirks(object):
+@@ -2000,17 +2000,28 @@ class DistUpgradeQuirks(object):
                  break
  
          if fail:
@@ -23,12 +23,13 @@ index 9423f091..00d9b84c 100644
 +
 +            if res2.returncode != 0:
 +                # Installation failed, abort the upgrade with a clear message
-+                self.controller._view.error(_(
-+                    "The system is not /usr-merged and 'usrmerge' could not be "
-+                    "installed automatically. Please install it manually and "
-+                    "try again."
-+                ))
-+                return
++                self.controller._view.error(
++                    _("Cannot upgrade: System is not /usr-merged"),
++                    _("The system is not /usr-merged and 'usrmerge' could not be "
++                      "installed automatically. Please install it manually and "
++                      "try again.")
++                )
++                self.controller.abort()
 +
 +            # Re-check that /usr merge is now in place
 +            # (ensure /bin -> /usr/bin, /lib -> /usr/lib, etc.)
