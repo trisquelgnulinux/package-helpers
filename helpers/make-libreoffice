@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2023  Luis Guzmán <ark@switnet.org>
+#    Copyright (C) 2026  Luis Guzmán <ark@switnet.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,14 +17,14 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=5
+VERSION=6
 EXTERNAL='deb-src http://ppa.launchpad.net/libreoffice/ppa/ubuntu $UPSTREAM main'
 REPOKEY="83FBA1751378B444"
 BACKPORT=true
 
 . ./config
 
-patch_p1 $DATA/debian-rules_7.3.patch
+apply_patch_changes
 
 # Increase CPU usage for amd64 build.
 sed -i "/NUM_CPUS=/s|3|7|" debian/rules
