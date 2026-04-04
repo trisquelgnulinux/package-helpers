@@ -29,9 +29,7 @@ patch_p1 $DATA/debian-rules_7.3.patch
 # Increase CPU usage for amd64 build.
 sed -i "/NUM_CPUS=/s|3|7|" debian/rules
 
-# Remote pip test
-rm pyuno/qa/pytests/testpip.py
-sed -i '/python3-pip/d' debian/control
+# Profile 'nopython'
 
 changelog "Backport libreoffice fresh into Trisquel"
 
