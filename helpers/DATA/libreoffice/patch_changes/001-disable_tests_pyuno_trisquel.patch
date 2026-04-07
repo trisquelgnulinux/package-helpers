@@ -1,0 +1,34 @@
+diff --git a/debian/control b/debian/control
+index b0f95119..073ece8e 100644
+--- a/debian/control
++++ b/debian/control
+@@ -196,9 +196,7 @@ Build-Depends-Arch: at-spi2-core [amd64 arm64 armhf] <!nocheck>,
+                     poppler-data [amd64 arm64 armhf] <!nocheck>,
+                     pstoedit [amd64 arm64 armhf] <!nocheck>,
+                     python3-lxml [!ppc64el !riscv64 !s390x] <!nocheck !nopython>,
+-                    python3-pip [!ppc64el !riscv64 !s390x] <!nocheck !nopython>,
+                     python3-setuptools [!ppc64el !riscv64 !s390x] <!nocheck !nopython>,
+-                    python3-venv [!ppc64el !riscv64 !s390x] <!nocheck !nopython>,
+                     qt5-qmake,
+                     qtbase5-dev,
+                     qtbase5-dev-tools,
+diff --git a/pyuno/qa/pytests/testimports.py b/pyuno/qa/pytests/testimports.py
+index 29b14736..85ed1a53 100644
+--- a/pyuno/qa/pytests/testimports.py
++++ b/pyuno/qa/pytests/testimports.py
+@@ -33,6 +33,7 @@ class ImportsTest(unittest.TestCase):
+             print(str(ssl), file=devnull)
+ 
+     # tdf#162786: make sure importing pip works on all platforms
++    @unittest.skip("Test disabled on Trisquel")
+     def test_pip_import(self):
+         import pip
+ 
+@@ -40,6 +41,7 @@ class ImportsTest(unittest.TestCase):
+         with open(os.devnull, "w") as devnull:
+             print(str(pip), file=devnull)
+ 
++    @unittest.skip("Test disabled on Trisquel")
+     def test_venv_import(self):
+         import venv
+ 
