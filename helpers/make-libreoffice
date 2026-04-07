@@ -29,8 +29,7 @@ apply_patch_changes
 # Increase CPU usage for amd64 build.
 sed -i "/NUM_CPUS=/s|3|7|" debian/rules
 
-# Profile 'nopython'
-
-changelog "Backport libreoffice fresh into Trisquel"
+changelog "Disabled python-pip/venv tests for Trisquel
+Backport libreoffice fresh into Trisquel"
 
 package
