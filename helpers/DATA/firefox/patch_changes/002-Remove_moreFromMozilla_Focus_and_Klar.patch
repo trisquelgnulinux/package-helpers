@@ -4,10 +4,10 @@ Based on https://git.parabola.nu/abslibre.git/diff/libre/iceweasel/9004-FSDG-mis
 - Remove promos of Firefox Focus and Klar from Private Browsing
 
 diff --git a/browser/app/profile/firefox.js b/browser/app/profile/firefox.js
-index f9a558a1..9c171c72 100644
+index cc42846d..52d35d49 100644
 --- a/browser/app/profile/firefox.js
 +++ b/browser/app/profile/firefox.js
-@@ -1366,11 +1366,11 @@ pref("accessibility.typeaheadfind.linksonly", false);
+@@ -1388,11 +1388,11 @@ pref("accessibility.typeaheadfind.linksonly", false);
  pref("accessibility.typeaheadfind.flashBar", 1);
  
  // Whether we had to hide the "Firefox Labs" section because it would be empty.
@@ -19,9 +19,9 @@ index f9a558a1..9c171c72 100644
  // Whether we show the "AI Controls" pane.
 -pref("browser.preferences.aiControls", true);
 +pref("browser.preferences.aiControls", false);
- 
- // Used by settings to track whether the user customized advanced
- // performance settings. Not used directly elsewhere.
+ // Whether to show unavailable AI controls regardless of region/locale
+ // restrictions. This is intended for localizers to be able to see the strings.
+ pref("browser.preferences.aiControls.showUnavailable", false);
 @@ -2281,7 +2281,7 @@ pref("browser.contentblocking.report.vpn_regions", "ca,my,nz,sg,gb,gg,im,io,je,u
  pref("browser.promo.focus.disallowed_regions", "cn");
  
@@ -459,17 +459,19 @@ index b5ff592..22cdf39 100644
    {
      id: "PB_NEWTAB_VPN_PROMO",
      template: "pb_newtab",
-diff -Nru a/browser/components/preferences/jar.mn b/browser/components/preferences/jar.mn
---- a/browser/components/preferences/jar.mn	2022-05-22 09:35:55.400673986 +0000
-+++ b/browser/components/preferences/jar.mn	2022-05-22 21:45:51.512354083 +0000
-@@ -18,7 +18,5 @@
+diff --git a/browser/components/preferences/jar.mn b/browser/components/preferences/jar.mn
+index bd094a48..ac07e826 100644
+--- a/browser/components/preferences/jar.mn
++++ b/browser/components/preferences/jar.mn
+@@ -19,8 +19,6 @@ browser.jar:
     content/browser/preferences/fxaPairDevice.xhtml
     content/browser/preferences/fxaPairDevice.js
     content/browser/preferences/findInPage.js
 -   content/browser/preferences/more-from-mozilla-qr-code-simple.svg
 -   content/browser/preferences/more-from-mozilla-qr-code-simple-cn.svg
+    content/browser/preferences/browser-layout-horizontal.svg
+    content/browser/preferences/browser-layout-vertical.svg
     content/browser/preferences/web-appearance-dark.svg
-    content/browser/preferences/web-appearance-light.svg
 diff --git a/browser/components/preferences/more-from-mozilla-qr-code-simple-cn.svg b/browser/components/preferences/more-from-mozilla-qr-code-simple-cn.svg
 index edcad0f3..e69de29b 100644
 --- a/browser/components/preferences/more-from-mozilla-qr-code-simple-cn.svg
