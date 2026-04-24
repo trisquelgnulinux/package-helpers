@@ -19,21 +19,31 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=40
+VERSION=40.20
 HWEKR=6.17
 DI_ENABLED=1
 HWE_ENABLED=1
+RISCV_ENABLED=0
 SEARCH_MISSING_CASES=0
 
 # DI_ENABLED = 1, enables udeb build, 0 or any other value disables them.
 # HWE_ENABLED = 1, enables HWE stack build, 0 or any other value disables it.
 # SEARCH_MISSING_CASES = 1, enabled the function that shows possible firmware silent cases.
-[ $HWE_ENABLED != 1 ] && \
-DEBIAN_PATH=debian.master && \
+if [ $HWE_ENABLED = 0 ] && [ $RISCV_ENABLED = 0 ] ; then
+DEBIAN_PATH=debian.master
 CONTROL_PACKAGE=linux
-[ $HWE_ENABLED = 1 ] && \
-DEBIAN_PATH=debian.hwe-$HWEKR && \
+elif [ $HWE_ENABLED = 1 ] && [ $RISCV_ENABLED = 0 ] ; then
+DEBIAN_PATH=debian.hwe-$HWEKR
 CONTROL_PACKAGE=linux-hwe-$HWEKR
+elif [ $HWE_ENABLED = 0 ] && [ $RISCV_ENABLED = 1 ] ; then
+DEBIAN_PATH=debian.riscv
+CONTROL_PACKAGE=linux-riscv
+elif [ $HWE_ENABLED = 1 ] && [ $RISCV_ENABLED = 1 ] ; then
+DEBIAN_PATH=debian.riscv-$HWEKR && \
+CONTROL_PACKAGE=linux-riscv-$HWEKR
+else
+echo "> No possible outcome from your kernel settings" && exit 1
+fi
 
 . ./config
 
@@ -263,7 +273,11 @@ echo 'skipretpoline = true' | tee -a 	$DEBIAN_PATH/rules.d/0-common-vars.mk \
 # Do not label packages as unsigned
 sed '/bin_pkg_name_unsigned/s/linux-image-unsigned/linux-image/' -i debian/rules.d/0-common-vars.mk
 # (RIFO: change applied via patch)
-sed '/Package:/s/.unsigned//;/This package /s/.unsigned//' -i debian/control
+if [ $RISCV_ENABLED = 0 ]; then
+  sed '/Package:/s/.unsigned//;/This package /s/.unsigned//' -i debian/control
+else
+  : # no match on riscv
+fi
 
 line=$(grep -n ')-Ubuntu' debian/rules.d/0-common-vars.mk|cut -d: -f1)
 sed $(expr $line - 1 ),$(expr $line + 1 )d debian/rules.d/0-common-vars.mk -i
