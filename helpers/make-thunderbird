@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#    Copyright (C) 2025  Luis Guzmán <ark@switnet.org>
+#    Copyright (C) 2026  Luis Guzmán <ark@switnet.org>
 #    Copyright (C) 2020  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C) 2019  David Trudgian <dave@trudgian.net>
 #
@@ -19,12 +19,13 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=26
+VERSION=27
 EXTERNAL='deb-src http://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu $UPSTREAM main'
 REPOKEY=AEBDF4819BE21867
 
 . ./config
 
+MAIN_REBRANDING_ENABLED=1
 # Get initial SHA256 hashes.
 SHA256_F9=$(sha256sum comm/third_party/rust/glean/src/configuration.rs|awk '{print$1}')
 
@@ -188,6 +189,7 @@ MOZ_WANT_UNIT_TESTS = 0
 MOZ_ENABLE_BREAKPAD = 0
 EOF
 
+main_rebranding() {
 # Replace Thunderbird branding
 find -type d -name '*thunderbird*' | xargs rename s/thunderbird/icedove/
 find -type f -name '*thunderbird*' | xargs rename s/thunderbird/icedove/
@@ -362,6 +364,10 @@ cat << EOF > comm/mail/branding/nightly/locales/en-US/brand.dtd
 <!ENTITY  vendorShortName       "Mozilla">
 <!ENTITY  trademarkInfo.part1   " ">
 EOF
+}
+
+# Useful when trying to catch patch issues faster, careful with mixed branding issues.
+[ "$MAIN_REBRANDING_ENABLED" = 1 ] && main_rebranding
 
 debian/rules debian/control
 touch -d "yesterday" debian/control
