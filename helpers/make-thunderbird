@@ -249,8 +249,8 @@ grep -rl 'https://www.icedove.net/donate/' comm/ | xargs -r \
     sed -i 's|https://www.icedove.net/donate/.*"|https://trisquel.info/donate/"|'
 grep -rl 'https://www.icedove.net/donate/' comm/ | xargs -r \
     sed -i 's|https://www.icedove.net/donate/|https://trisquel.info/donate/|'
-grep -rl 'https://updates.icedove.net/' comm/ | xargs -r \
-    sed -i '/"URL":/s|https://updates.icedove.net/.*/appeal/.*"|https://trisquel.info/donate/"|'
+#grep -rl 'https://updates.icedove.net/' comm/ | xargs -r \
+#    sed -i '/"URL":/s|https://updates.icedove.net/.*/appeal/.*"|https://trisquel.info/donate/"|'
 grep -rl 'https://support.mozilla.org/products/icedove' comm/ | xargs -r \
     sed -i 's|https://support.mozilla.org/products/icedove.*"|https://trisquel.info/wiki/icedove"|'
 grep -rl 'https://support.mozilla.org/products/icedove' comm/ | xargs -r \
