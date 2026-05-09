@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 
 . ./config
 
@@ -26,6 +26,7 @@ apply_patch_changes
 # To use the multi-line change log, the message must be enclosed in quotes.
 changelog "Backport patches from upstream lxpanel to improve stability and functionality:
 
+  Correct icon-grid width under GTK3 (TPH#256)
   Fix scrolling issue in volume plugin (MR#46)/(TPH#218).
   Handle 'not charging' battery state correctly (MR#53).
   Prevent wincmd plugin from triggering button clicks incorrectly (MR#78).
