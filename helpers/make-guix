@@ -30,4 +30,13 @@ done
 
 changelog "Apply latest fix for #73919 on Ecne"
 
+# Add missing AppArmor profiles for the guix command and
+# daemon.
+for patch in $(ls -v ${DATA}/apparmor/*.patch)
+do
+    patch_p1 $patch
+done
+
+changelog "Apply apparmor fixes on Ecne"
+
 package

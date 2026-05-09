@@ -1,0 +1,39 @@
+From ee98e3a1ccc4d60daad48767e1466586f23521a3 Mon Sep 17 00:00:00 2001
+From: Denis 'GNUtoo' Carikli <GNUtoo@cyberdimension.org>
+Date: Wed, 6 May 2026 07:41:12 +0200
+Subject: [PATCH] debian: build apparmor profile.
+
+Signed-off-by: Denis 'GNUtoo' Carikli <GNUtoo@cyberdimension.org>
+---
+ debian/control | 1 +
+ debian/rules   | 2 ++
+ 2 files changed, 3 insertions(+)
+
+diff --git a/debian/control b/debian/control
+index 242c44f9be..675ff59936 100644
+--- a/debian/control
++++ b/debian/control
+@@ -4,6 +4,7 @@ Priority: optional
+ Maintainer: Trisquel GNU/Linux developers <trisquel-devel@listas.trisquel.info>
+ XSBC-Original-Maintainer: Vagrant Cascadian <vagrant@debian.org>
+ Build-Depends: debhelper-compat (=13),
++ dh-apparmor,
+  gettext,
+ # git and gnupg are used for tests/guix-build-branch.sh.
+  git <!nocheck>,
+diff --git a/debian/rules b/debian/rules
+index 8a71f3cdea..8b9f71e7e6 100755
+--- a/debian/rules
++++ b/debian/rules
+@@ -68,6 +68,8 @@ override_dh_install:
+ 	printf '  (tag\n   (guix import)\n   )\n  )\n )\n' >> debian/guix/etc/guix/acl
+ 	rmdir debian/guix/usr/lib/*/systemd/system/
+ 	rmdir debian/guix/usr/lib/*/systemd/
++	dh_apparmor --profile-name=guix        -pguix
++	dh_apparmor --profile-name=guix-daemon -pguix
+ 
+ override_dh_auto_clean:
+ 	dh_auto_clean
+-- 
+2.43.0
+

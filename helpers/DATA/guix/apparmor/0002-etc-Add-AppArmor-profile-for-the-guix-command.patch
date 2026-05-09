@@ -1,0 +1,50 @@
+From 1de980051855bafb37d7e7df6e7d0e1739a46167 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?No=C3=A9=20Lopez?= <noelopez@free.fr>
+Date: Mon, 15 Dec 2025 01:03:36 +0100
+Subject: [PATCH 2/2] etc: Add AppArmor profile for the guix command.
+
+* etc/apparmor.d/guix: New file.
+* Makefile.am (nodist_apparmor_profile_DATA): Add it.
+
+Change-Id: I3d61238203d7663ce582717f8e4eac4c6f679928
+Signed-off-by: Rutherther <rutherther@ditigal.xyz>
+---
+ Makefile.am         |  1 +
+ etc/apparmor.d/guix | 12 ++++++++++++
+ 2 files changed, 13 insertions(+)
+ create mode 100644 etc/apparmor.d/guix
+
+diff --git a/Makefile.am b/Makefile.am
+index b54b217416..a811d952c2 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -662,6 +662,7 @@ nodist_selinux_policy_DATA = etc/guix-daemon.cil
+ 
+ # AppArmor profiles.
+ nodist_apparmor_profile_DATA =	\
++  etc/apparmor.d/guix		\
+   etc/apparmor.d/guix-daemon
+ 
+ nodist_apparmor_profile_tunables_DATA = \
+diff --git a/etc/apparmor.d/guix b/etc/apparmor.d/guix
+new file mode 100644
+index 0000000000..f1442cf5d3
+--- /dev/null
++++ b/etc/apparmor.d/guix
+@@ -0,0 +1,12 @@
++abi <abi/4.0>,
++
++include <tunables/global>
++include <tunables/guix>
++
++# There’s no point in confining the guix executable, since it can run
++# any user code and so everything is expected.  We just need to
++# explicitely enable userns for systems with the
++# kernel.apparmor_restrict_unprivileged_userns sysctl.
++profile guix @{guix_storedir}/{*-guix-command,*-guix-*/bin/guix} flags=(unconfined) {
++  userns,
++}
+\ No newline at end of file
+-- 
+2.43.0
+

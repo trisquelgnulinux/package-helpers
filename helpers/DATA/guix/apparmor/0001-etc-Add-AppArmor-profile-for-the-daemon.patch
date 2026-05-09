@@ -1,0 +1,266 @@
+From bfa24370939620efd8b3220bd1206f92fc235107 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?No=C3=A9=20Lopez?= <noelopez@free.fr>
+Date: Mon, 8 Dec 2025 16:39:11 +0100
+Subject: [PATCH 1/2] etc: Add AppArmor profile for the daemon.
+
+* .gitignore: Add etc/apparmor.d/tunables/guix.
+* Makefile.am (nodist_apparmor_profile_DATA)
+(nodist_apparmor_profile_tunables_DATA): Define it.
+* configure.ac: Generate etc/apparmor.d/tunables/guix. Add
+--with-apparmor-profile-dir option.
+* etc/apparmor.d/guix-daemon: New file.
+* etc/apparmor.d/tunables/guix.in: New file.
+* doc/guix.texi: Document AppArmor profiles.
+* gnu/packages/package-management.scm (guix): Add future changes commented.
+
+Change-Id: Iac7df9d642383cc46a2d450c3badef31199ab041
+GNUtoo: rebased:
+- removed .gitignore changes
+- removed manual changes in the "Migrating to the Unprivileged Daemon"
+  subsection.
+Signed-off-by: Rutherther <rutherther@ditigal.xyz>
+---
+ Makefile.am                         |  7 +++
+ configure.ac                        | 10 ++++
+ doc/guix.texi                       | 39 +++++++++++++
+ etc/apparmor.d/guix-daemon          | 88 +++++++++++++++++++++++++++++
+ etc/apparmor.d/tunables/guix.in     |  5 ++
+ gnu/packages/package-management.scm |  4 ++
+ 6 files changed, 153 insertions(+)
+ create mode 100644 etc/apparmor.d/guix-daemon
+ create mode 100644 etc/apparmor.d/tunables/guix.in
+
+diff --git a/Makefile.am b/Makefile.am
+index 28546be18c..b54b217416 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -660,6 +660,13 @@ dist_fishcompletion_DATA = etc/completion/fish/guix.fish
+ # SELinux policy
+ nodist_selinux_policy_DATA = etc/guix-daemon.cil
+ 
++# AppArmor profiles.
++nodist_apparmor_profile_DATA =	\
++  etc/apparmor.d/guix-daemon
++
++nodist_apparmor_profile_tunables_DATA = \
++  etc/apparmor.d/tunables/guix
++
+ EXTRA_DIST +=						\
+   .dir-locals.el					\
+   .guix-authorizations					\
+diff --git a/configure.ac b/configure.ac
+index 92dede8014..73c7448758 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -64,6 +64,15 @@ AC_ARG_WITH([selinux-policy-dir],
+   [selinux_policydir='${datadir}/selinux/'])
+ AC_SUBST([selinux_policydir])
+ 
++AC_ARG_WITH([apparmor-profile-dir],
++  AS_HELP_STRING([--with-apparmor-profile-dir=DIR],
++    [name of the AppArmor profile directory]),
++  [apparmor_profiledir="$withval"],
++  [apparmor_profiledir='${sysconfdir}/apparmor.d'])
++AC_SUBST([apparmor_profiledir])
++apparmor_profile_tunablesdir='${apparmor_profiledir}/tunables'
++AC_SUBST([apparmor_profile_tunablesdir])
++
+ dnl Better be verbose.
+ AC_MSG_CHECKING([for the store directory])
+ AC_MSG_RESULT([$storedir])
+@@ -271,6 +280,7 @@ AC_CONFIG_FILES([Makefile
+                  po/guix/Makefile.in
+                  po/packages/Makefile.in
+                  etc/guix-daemon.cil
++                 etc/apparmor.d/tunables/guix
+                  guix/config.scm])
+ 
+ AC_CONFIG_FILES([etc/committer.scm], [chmod +x etc/committer.scm])
+diff --git a/doc/guix.texi b/doc/guix.texi
+index 784114f0bb..f0954f0d5d 100644
+--- a/doc/guix.texi
++++ b/doc/guix.texi
+@@ -109,6 +109,7 @@ Copyright @copyright{} 2022 Reily Siegel@*
+ Copyright @copyright{} 2022 Simon Streit@*
+ Copyright @copyright{} 2022 (@*
+ Copyright @copyright{} 2022 John Kehayias@*
++Copyright @copyright{} 2025 Noé Lopez@*
+ 
+ Permission is granted to copy, distribute and/or modify this document
+ under the terms of the GNU Free Documentation License, Version 1.3 or
+@@ -1137,6 +1138,7 @@ the daemon to download pre-built binaries.
+ * Build Environment Setup::     Preparing the isolated build environment.
+ * Daemon Offload Setup::        Offloading builds to remote machines.
+ * SELinux Support::             Using an SELinux policy for the daemon.
++* AppArmor Support::            Using an AppArmor profile for the daemon.
+ @end menu
+ 
+ @node Build Environment Setup
+@@ -1593,6 +1595,43 @@ installation time whenever the Guix package that provides the
+ effectively running @code{guix-daemon} executable is upgraded.
+ @end enumerate
+ 
++@node AppArmor Support
++@subsection AppArmor Support
++
++@cindex AppArmor
++
++Guix includes an AppArmor profile for the build daemon in
++@file{etc/apparmor.d/guix-daemon} that can be installed on systems with
++strict AppArmor policies to allow it to run unprivileged
++(@pxref{Build Environment Setup}).  Indeed, the unprivileged daemon makes
++use of Linux user namespaces but these are disallowed
++without an AppArmor policy on some systems like Ubuntu.
++
++To know if this applies to you, check if the
++@code{kernel.apparmor_restrict_unprivileged_userns} kernel parameter is
++enabled.
++
++@subsubsection Installing the AppArmor profile
++@cindex AppArmor, profile installation
++
++@quotation Note
++The @code{guix-install.sh} binary installation script offers to perform
++the steps below for you (@pxref{Binary Installation}).
++@end quotation
++
++Run these commands as root to install the profile:
++
++@example
++export apparmor_sources=/var/guix/profiles/per-user/root/current-guix/etc/apparmor.d
++cp -f -t /etc/apparmor.d/tunables "$apparmor_sources/tunables/guix"
++cp -f -t /etc/apparmor.d "$apparmor_sources/guix-daemon"
++cp -f -t /etc/apparmor.d "$apparmor_sources/guix"
++apparmor_parser -r /etc/apparmor.d/guix-daemon
++apparmor_parser -r /etc/apparmor.d/guix
++@end example
++
++After this, the build daemon will be able to function correctly.
++
+ @node Invoking guix-daemon
+ @section Invoking @command{guix-daemon}
+ @cindex @command{guix-daemon}
+diff --git a/etc/apparmor.d/guix-daemon b/etc/apparmor.d/guix-daemon
+new file mode 100644
+index 0000000000..cb1ee92685
+--- /dev/null
++++ b/etc/apparmor.d/guix-daemon
+@@ -0,0 +1,88 @@
++abi <abi/4.0>,
++
++include <tunables/global>
++include <tunables/guix>
++
++profile guix-daemon @{guix_storedir}/*-{guix-daemon,guix}-*/bin/guix-daemon flags=(enforce,attach_disconnected.path=/disconnected) {
++  include <abstractions/base>
++
++  userns,
++  signal,
++  capability sys_admin,
++  capability net_admin,
++  capability sys_chroot,
++  capability setgid,
++  capability chown,
++  network dgram,
++  umount,
++  mount,
++  pivot_root,
++  # Paths inside build chroot
++  /real-root/ w,
++  / w,
++
++  @{guix_localstatedir}/guix/** rwk,
++  /var/log/guix/** w,
++  owner @{PROC}/@{pid}/{fd/,environ} r,
++  owner @{PROC}/@{pid}/oom_score_adj w,
++  owner @{PROC}/@{pid}/uid_map rw,
++  owner @{PROC}/@{pid}/gid_map rw,
++  owner @{PROC}/@{pid}/setgroups w,
++  @{guix_storedir}/ r,
++  @{guix_storedir}/** rwlmk,
++  @{guix_storedir}/*/bin/guile cx -> guix-builder,
++  @{guix_storedir}/*-guix-command cx -> guix-helper,
++  @{guix_storedir}/*-guix-*/bin/guix cx -> guix-helper,
++  @{etc_rw}/nsswitch.conf r,
++  @{etc_rw}/passwd r,
++  @{etc_rw}/group r,
++  owner /tmp/** rwl,
++  owner /var/tmp/** rwl,
++
++  /usr/bin/newgidmap Ux,
++
++  # Site-specific additions and overrides. See local/README for details.
++  include if exists <local/guix-daemon>
++
++  profile guix-builder flags=(enforce,attach_disconnected.path=/disconnected) {
++    include <abstractions/base>
++
++    signal (receive),
++
++    @{guix_storedir}/** rwlmkux,
++
++    owner /tmp/** rw,
++
++    @{PROC}/@{pid}/fd/ r,
++
++    /disconnected/** rw,
++  }
++
++  # This is for any time guix is called by the daemon as a helper:
++  # - guix download
++  # - guix discover
++  # - guix gc --list-busy
++  # - probably more?
++  profile guix-helper flags=(enforce,attach_disconnected.path=/disconnected) {
++    include <abstractions/base>
++    include <abstractions/nameservice>
++
++    signal (receive),
++    ptrace (read) peer=guix-daemon,
++
++    /disconnected/run/dbus/system_bus_socket rw,
++    dbus (send, receive),
++    @{guix_localstatedir}/guix/discover/ rw,
++    @{guix_localstatedir}/guix/discover/* rw,
++
++    @{guix_localstatedir}/guix/substitute/ rw,
++    @{guix_localstatedir}/guix/substitute/** rwk,
++
++    @{guix_sysconfdir}/guix/** r,
++
++    @{guix_storedir}/** rwlmix,
++
++    @{PROC}/ r,
++    owner @{PROC}/@{pid}/{fd/,environ} r,
++  }
++}
+diff --git a/etc/apparmor.d/tunables/guix.in b/etc/apparmor.d/tunables/guix.in
+new file mode 100644
+index 0000000000..e93f7caeb7
+--- /dev/null
++++ b/etc/apparmor.d/tunables/guix.in
+@@ -0,0 +1,5 @@
++@{guix_storedir} = @storedir@
++@{guix_sysconfdir} = @guix_sysconfdir@
++@{guix_localstatedir} = @guix_localstatedir@
++
++include if exists <tunables/guix.d>
+\ No newline at end of file
+diff --git a/gnu/packages/package-management.scm b/gnu/packages/package-management.scm
+index 5a09b1fcf8..9f92e6fdaa 100644
+--- a/gnu/packages/package-management.scm
++++ b/gnu/packages/package-management.scm
+@@ -199,6 +199,10 @@ (define-public guix
+                             (string-append "--with-bash-completion-dir="
+                                            (assoc-ref %outputs "out")
+                                            "/etc/bash_completion.d")
++                            ;; TODO: Uncomment after guix is updated.
++                            ;; (string-append "--with-apparmor-profile-dir="
++                            ;;                (assoc-ref %outputs "out")
++                            ;;                "/etc/apparmor.d")
+ 
+                             ;; Set 'DOT_USER_PROGRAM' to the empty string so
+                             ;; we don't keep a reference to Graphviz, whose
+-- 
+2.43.0
+
