@@ -1,0 +1,28 @@
+diff --git a/debian/control.in b/debian/control.in
+index 758352f8..26383a38 100644
+--- a/debian/control.in
++++ b/debian/control.in
+@@ -43,8 +43,8 @@ Build-Depends: cdbs,
+ 	libclang-22-dev | libclang-21-dev | libclang-20-dev | libclang-19-dev | libclang-18-dev,
+ 	llvm-22-dev | llvm-21-dev | llvm-20-dev | llvm-19-dev | llvm-18-dev,
+ 	lld-22 | lld-21 | lld-20 | lld-19 | lld-18,
+-	cargo-1.90,
+-	rustc-1.90,
++	cargo-1.91 | cargo-1.90,
++	rustc-1.91 | rustc-1.90,
+ 	nodejs (>= 12.22.12)
+ Standards-Version: 3.9.1
+ 
+diff --git a/debian/build/rules.mk b/debian/build/rules.mk
+index 896150e7..413e34fc 100644
+--- a/debian/build/rules.mk
++++ b/debian/build/rules.mk
+@@ -109,7 +109,7 @@ LLVM_VERSIONS = 22 21 20 19 18
+ DEB_LLVM_VERSION = $(firstword $(foreach llvm_version, $(LLVM_VERSIONS), \
+ 	$(if $(shell which clang-$(llvm_version)), $(llvm_version))))
+ 
+-RUSTC_VERSIONS = 1.90
++RUSTC_VERSIONS = 1.91 1.90
+ DEB_RUSTC_VERSION = $(firstword $(foreach rustc_version, $(RUSTC_VERSIONS), \
+ 	$(if $(shell which rustc-$(rustc_version)), $(rustc_version))))
+ 

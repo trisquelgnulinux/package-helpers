@@ -1,0 +1,28 @@
+diff --git a/browser/extensions/newtab/lib/Wallpapers/WallpaperFeed.sys.mjs b/browser/extensions/newtab/lib/Wallpapers/WallpaperFeed.sys.mjs
+index 72df22b3..24f2f807 100644
+--- a/browser/extensions/newtab/lib/Wallpapers/WallpaperFeed.sys.mjs
++++ b/browser/extensions/newtab/lib/Wallpapers/WallpaperFeed.sys.mjs
+@@ -156,7 +156,9 @@ export class WallpaperFeed {
+           ...record,
+           ...(record.attachment
+             ? {
+-                wallpaperUrl: `${baseAttachmentURL}${record.attachment.location}`,
++                wallpaperUrl: record.attachment.location.includes("trisquel")
++                  ? `https://trisquel.cmxsl.org/newtab/${record.attachment.filename.replace(".avif", ".webp")}`
++                  : `${baseAttachmentURL}${record.attachment.location}`,
+               }
+             : {}),
+           background_position: record.background_position || "center",
+diff --git a/services/settings/remote-settings.sys.mjs b/services/settings/remote-settings.sys.mjs
+index 2330fb01..2c4062d1 100644
+--- a/services/settings/remote-settings.sys.mjs
++++ b/services/settings/remote-settings.sys.mjs
+@@ -301,7 +301,7 @@ function remoteSettingsFunction() {
+           bucketName: bucket,
+           signerName,
+         });
+-        if (client.verifySignature) {
++        if (client.verifySignature && collection!== "newtab-wallpapers-v2") {
+           lazy.console.debug(
+             `${identifier}: Verify signature of bundled changeset`
+           );
