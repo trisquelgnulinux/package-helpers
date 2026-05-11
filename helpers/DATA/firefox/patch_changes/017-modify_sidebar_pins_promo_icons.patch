@@ -1,0 +1,38 @@
+diff --git a/browser/themes/shared/jar.inc.mn b/browser/themes/shared/jar.inc.mn
+index 3a12a7a3..ac1245a9 100644
+--- a/browser/themes/shared/jar.inc.mn
++++ b/browser/themes/shared/jar.inc.mn
+@@ -266,10 +266,10 @@
+   skin/classic/browser/search-indicator-badge-add.svg          (../shared/search/search-indicator-badge-add.svg)
+   skin/classic/browser/searchbar.css                           (../shared/search/searchbar.css)
+ 
+-  skin/classic/browser/sidebar/firefox.svg                     (../shared/sidebar/firefox.svg)
+-  skin/classic/browser/sidebar/foxy.svg                        (../shared/sidebar/foxy.svg)
+-  skin/classic/browser/sidebar/gmail.svg                       (../shared/sidebar/gmail.svg)
+-  skin/classic/browser/sidebar/slack.svg                       (../shared/sidebar/slack.svg)
++  skin/classic/browser/sidebar/trisquel.svg                     (../shared/sidebar/trisquel.svg)
++  skin/classic/browser/sidebar/fsf.svg                        (../shared/sidebar/fsf.svg)
++  skin/classic/browser/sidebar/wikipedia.svg                       (../shared/sidebar/wikipedia.svg)
++  skin/classic/browser/sidebar/liberachat.svg                       (../shared/sidebar/liberachat.svg)
+ 
+   skin/classic/browser/tabbrowser/content-area.css             (../shared/tabbrowser/content-area.css)
+   skin/classic/browser/tabbrowser/crashed.svg                  (../shared/tabbrowser/crashed.svg)
+diff --git a/browser/components/sidebar/sidebar-pins-promo.mjs b/browser/components/sidebar/sidebar-pins-promo.mjs
+index beac7ea4..538ae9aa 100644
+--- a/browser/components/sidebar/sidebar-pins-promo.mjs
++++ b/browser/components/sidebar/sidebar-pins-promo.mjs
+@@ -56,10 +56,10 @@ export default class SidebarPinsPromo extends MozLitElement {
+     this.launcherObserver = new MutationObserver(() => this.requestUpdate());
+   }
+   #icons = [
+-    { name: "firefox", src: "chrome://browser/skin/sidebar/firefox.svg" },
+-    { name: "slack", src: "chrome://browser/skin/sidebar/slack.svg" },
+-    { name: "foxy", src: "chrome://browser/skin/sidebar/foxy.svg" },
+-    { name: "gmail", src: "chrome://browser/skin/sidebar/gmail.svg" },
++    { name: "trisquel", src: "chrome://browser/skin/sidebar/trisquel.svg" },
++    { name: "liberachat", src: "chrome://browser/skin/sidebar/liberachat.svg" },
++    { name: "fsf", src: "chrome://browser/skin/sidebar/fsf.svg" },
++    { name: "wikipedia", src: "chrome://browser/skin/sidebar/wikipedia.svg" },
+   ];
+ 
+   connectedCallback() {

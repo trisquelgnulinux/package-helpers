@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=131
+VERSION=132
 EXTERNAL='deb-src http://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu $UPSTREAM main'
 REPOKEY=AEBDF4819BE21867
 
@@ -275,6 +275,26 @@ do
     /bin/sed -i 's|= Firefox |= |' $i
 done
 
+# Replace sidebar icons
+rm -rf browser/themes/shared/sidebar
+cp -R $DATA/ui_branding/sidebar browser/themes/shared/
+
+python3 $DATA/ui_branding/wallpaper-replace.py --source $DATA/ui_branding/build.json \
+                                               --replace services/settings/dumps/main/newtab-wallpapers-v2.json
+
+# Graphic Debranding
+cp $DATA/ui_branding/debranding/assets/puzzle-fox.svg browser/extensions/newtab/data/content/assets/puzzle-fox.svg
+## replace multiple firefox qr codes.
+for qr in download-qr-code-var-a.png download-qr-code-var-b.png download-qr-code-var-c.png
+do
+  cp $DATA/ui_branding/debranding/assets/trisquel_qr.png browser/extensions/newtab/data/content/assets/$qr
+done
+## Remove mascot
+for graph  in history-empty.svg synced-tabs-empty.svg synced-tabs-error.svg
+do
+  cp $DATA/ui_branding/debranding/content/$graph browser/components/firefoxview/content/$graph
+done
+
 # Disable preprocessor
 sed 's/_PP//' -i browser/branding/branding-common.mozbuild
 #Prevent duplicated values.
@@ -328,7 +348,7 @@ sed 's/Firefox/Abrowser/' -i debian/control.in \
 # Useful when trying to catch patch issues faster.
 [ "$MAIN_REBRANDING_ENABLED" = 1 ] && main_rebranding
 
-sed s/ubuntu/trisquel/g debian/distribution.ini -i
+sed "s/ubuntu/trisquel/g" -i debian/distribution.ini
 sed "s/ubuntu_version/trisquel_version/; s/Ubuntu 10.10/Trisquel $REVISION/; s/1010/40/" -i debian/firefox.postinst.in
 
 # Delete stuff we don't use and that may contain trademaked logos
