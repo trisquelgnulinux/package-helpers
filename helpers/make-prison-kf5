@@ -22,6 +22,8 @@ VERSION=0
 
 . ./config
 
+# Add the build missing dependency
+sed -i 's/libzxing-dev/qtmultimedia5-dev, libzxing-dev/' debian/control
 
 # Restore the base scanner library into the main package
 echo "usr/lib/*/libKF5PrisonScanner.so.*" >> debian/libkf5prison5.install
