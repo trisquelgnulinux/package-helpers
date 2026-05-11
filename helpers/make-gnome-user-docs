@@ -1,6 +1,7 @@
 #!/bin/sh
 #
 #    Copyright (C) 2020  Rubén Rodríguez <ruben@trisquel.info>
+#    Copyright (C) 2026  Denis 'GNUtoo' Carikli <GNUtoo@cyberdimension.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,15 +18,20 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 COMPONENT=main
 
 . ./config
 
 sed '/ubuntu-docs/d' -i debian/control*
+
+# Ubuntu overrides all the files defined in the DO_NOT_INSTALL
+# variable by deleting them. Since we don't use ubuntu-docs, we do
+# want these files.
+sed '/rm \$(DO_NOT_INSTALL); \\/d' -i debian/rules
+
 touch AUTHORS
 
 changelog "Removed ubuntu-docs dependency"
 
 package
-
