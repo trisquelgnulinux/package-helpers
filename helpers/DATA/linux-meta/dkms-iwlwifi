@@ -1,0 +1,12 @@
+
+Package: linux-modules-iwlwifi-generic${variant:suffix}
+Architecture: amd64
+Section: kernel
+Provides: ${dkms:iwlwifi-modules}
+Depends:
+ ${misc:Depends},
+ linux-modules-${kernel-abi-version}-generic,
+Description: Transitional package for free iwlwifi modules (generic)
+ This is a transitional dummy package. In Trisquel, the deblobbed 
+ iwlwifi modules are now included directly in the standard 
+ linux-modules package. It is safe to remove this package.

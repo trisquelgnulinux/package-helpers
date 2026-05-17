@@ -22,7 +22,7 @@
 # Advice: fixes to 000-silent-accept-firmware.patch could speed up by testing changes
 # disabling deblob in order to apply changes.
 
-VERSION=35
+VERSION=36
 HWEKR=6.8
 DI_ENABLED=1
 HWE_ENABLED=0
@@ -235,6 +235,10 @@ done
 #/bin/sed '/ifeq ($(do_dkms_wireguard),false)/,/endif$/d' -i debian/rules
 #sed '/do_dkms_wireguard/d' -i debian/rules.d/2-binary-arch.mk
 #/bin/sed '/do_dkms_wireguard/d' -i $DEBIAN_PATH/rules.d/*
+
+# iwlwifi mods
+sed -i '/^Package: linux-modules-iwlwifi/,/^$/d' debian/control
+sed -i 's/^Package: linux-modules-\([0-9].*generic.*\)/Package: linux-modules-\1\nProvides: linux-modules-iwlwifi-\1/g' debian/control
 
 # Compile with less modules and avoid abi check
 echo -e 'skipmodule = true\nskipabi = true' | tee -a 	$DEBIAN_PATH/rules.d/0-common-vars.mk \
