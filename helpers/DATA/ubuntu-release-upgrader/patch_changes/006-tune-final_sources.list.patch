@@ -59,3 +59,42 @@ index a03dad7a..1f1b74df 100644
                                "valid entry for '%s' was found.\n\n"
                                "Should default entries for '%s' be "
                                "added? If you select 'No', the upgrade "
+diff --git a/DistUpgrade/DistUpgradeController.py b/DistUpgrade/DistUpgradeController.py
+index dd9d171d..10e545fb 100644
+--- a/DistUpgrade/DistUpgradeController.py
++++ b/DistUpgrade/DistUpgradeController.py
+@@ -781,16 +781,6 @@ class DistUpgradeController(object):
+                     self.sources_disabled = True
+                     logging.debug("entry '%s' was disabled (unknown dist)" % get_string_with_no_auth_from_source_entry(entry))
+ 
+-                # if we make it to this point, we have an official or
+-                # third-party mirror check if the arch is one not on the main
+-                # archive and if so, transition to ports.ubuntu.com
+-                if (entry.type == "deb" and
+-                    ("archive.trisquel.org" in entry.uri or
+-                     "archive.trisquel.org" in entry.uri) and
+-                    (self.arch not in ("amd64", "i386"))):
+-                    logging.debug("moving %s source entry to 'ports.ubuntu.com' " % self.arch)
+-                    entry.uri = "http://ports.ubuntu.com/ubuntu-ports/"
+-
+                 # gather what components are enabled and are inconsistent
+                 for d in ["%s" % self.toDist,
+                           "%s-updates" % self.toDist,
+@@ -1202,8 +1192,7 @@ class DistUpgradeController(object):
+ 
+             # deb-src entries, security archive URIs, and sources without only
+             # -security or -backports enabled are not valid "to" sources.
+-            valid_uris = [u for u in entry.uris \
+-                          if "/archive.trisquel.org" not in u]
++            valid_uris = entry.uris
+             valid_suites = [s for s in entry.suites \
+                             if s.rsplit('-', 1)[-1] not in ["backports", "security"]]
+             valid_to = "deb" in entry.types and valid_uris and valid_suites
+@@ -2254,7 +2243,6 @@ class DistUpgradeController(object):
+                 self.isMirror(entry.uri) and
+                 "main" in entry.comps and
+                 "%s-updates" % self.fromDist in entry.dist and
+-                not entry.uri.startswith("http://archive.trisquel.org") and
+                 not entry.uri.startswith("http://archive.trisquel.org") ):
+                 new_line = "deb %s %s-updates main\n" % (entry.uri, self.fromDist)
+                 if not new_line in lines:
