@@ -131,6 +131,7 @@ cp -a $DATA/udeb/d-i $DEBIAN_PATH
 sed -i '/dh_clean/a \	# Trisquel d-i cleanup\n	rm -rf $(DEBIAN)/d-i-$(arch)\n	rm -f $(DEBIAN)/d-i/firmware/$(arch)/kernel-image' debian/rules
 
 cat << EOF >> debian/control
+
 Package: $CONTROL_PACKAGE-udebs-generic
 Build-Profiles: <!stage1> <!noudeb> <!cross> <!autopkgtest>
 XC-Package-Type: udeb
@@ -144,6 +145,7 @@ EOF
 
 if [ "$RISCV_ENABLED" = 0 ]; then
 cat << EOF >> debian/control
+
 Package: $CONTROL_PACKAGE-udebs-generic-lpae
 Build-Profiles: <!stage1> <!noudeb> <!cross> <!autopkgtest>
 XC-Package-Type: udeb
@@ -167,6 +169,7 @@ EOF
 fi
 
 cat << 'EOF' >> $DEBIAN_PATH/control.d/flavour-control.stub
+
 Package: SRCPKGNAME-udebs-FLAVOUR
 Build-Profiles: <!stage1> <!noudeb> <!cross> <!autopkgtest>
 XC-Package-Type: udeb
