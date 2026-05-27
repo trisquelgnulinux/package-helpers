@@ -210,7 +210,7 @@ pref("media.gmp-widevinecdm.enabled", false);
 pref("media.eme.enabled", false);
 
 //Disable middle click content load
-//Avoid loading urls by mistake 
+//Avoid loading urls by mistake
 pref("middlemouse.contentLoadURL", false);
 
 //Disable heartbeat
@@ -324,3 +324,6 @@ pref("messaging-system.rsexperimentloader.enabled", false);
 pref("network.trr.mode", 5);
 pref("doh-rollout.enabled", false);
 pref("doh-rollout.provider-steering.enabled", false);
+
+// Disable remote rollouts
+pref("nimbus.rollouts.enabled", false);

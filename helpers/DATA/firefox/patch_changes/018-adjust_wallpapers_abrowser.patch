@@ -8,7 +8,7 @@ index 72df22b3..24f2f807 100644
              ? {
 -                wallpaperUrl: `${baseAttachmentURL}${record.attachment.location}`,
 +                wallpaperUrl: record.attachment.location.includes("trisquel")
-+                  ? `https://trisquel.cmxsl.org/newtab/${record.attachment.filename.replace(".avif", ".webp")}`
++                  ? `chrome://browser/content/wallpapers/${record.attachment.filename.replace(".avif", ".webp")}`
 +                  : `${baseAttachmentURL}${record.attachment.location}`,
                }
              : {}),

@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=132
+VERSION=133
 EXTERNAL='deb-src http://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu $UPSTREAM main'
 REPOKEY=AEBDF4819BE21867
 
@@ -278,9 +278,30 @@ done
 # Replace sidebar icons
 rm -rf browser/themes/shared/sidebar
 cp -R $DATA/ui_branding/sidebar browser/themes/shared/
+# Replace brand illustrations
+grep -rl kit-concerned.svg | xargs -r sed -i 's|kit-concerned.svg|abrowser-offline.svg|g'
+grep -rl kit-happy.svg | xargs -r sed -i 's|kit-happy.svg|abrowser-online.svg|g'
+cp $DATA/ui_branding/illustrations/* toolkit/themes/shared/illustrations/
+for i in kit-concerned.svg kit-happy.svg
+do
+  echo "> removing replaced illustration $i"
+  rm toolkit/themes/shared/illustrations/$i
+done
 
 python3 $DATA/ui_branding/wallpaper-replace.py --source $DATA/ui_branding/build.json \
                                                --replace services/settings/dumps/main/newtab-wallpapers-v2.json
+
+# Static wallpapers
+mkdir -p browser/base/content/wallpapers/
+cp $DATA/ui_branding/wallpapers/*.webp browser/base/content/wallpapers/
+
+echo "" >> browser/base/jar.mn
+echo "browser.jar:" >> browser/base/jar.mn
+
+for img in browser/base/content/wallpapers/*.webp; do
+    filename=$(basename "$img")
+    echo "  content/browser/wallpapers/$filename (content/wallpapers/$filename)" >> browser/base/jar.mn
+done
 
 # Graphic Debranding
 cp $DATA/ui_branding/debranding/assets/puzzle-fox.svg browser/extensions/newtab/data/content/assets/puzzle-fox.svg

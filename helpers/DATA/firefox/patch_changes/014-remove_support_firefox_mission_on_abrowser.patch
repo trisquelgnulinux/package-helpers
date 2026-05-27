@@ -19,43 +19,43 @@ index c0094fe0..08856c78 100644
  </groupbox>
  </html:template>
 diff --git a/browser/extensions/newtab/lib/AboutPreferences.sys.mjs b/browser/extensions/newtab/lib/AboutPreferences.sys.mjs
-index 0d43919b..f2e0fbd0 100644
+index eec8eb86..1aed35a8 100644
 --- a/browser/extensions/newtab/lib/AboutPreferences.sys.mjs
 +++ b/browser/extensions/newtab/lib/AboutPreferences.sys.mjs
-@@ -88,33 +88,6 @@ const PREFS_FOR_SETTINGS = () => [
-     ),
-     eventSource: "TOP_STORIES",
-   },
--  {
--    id: "support-firefox",
--    pref: {
--      feed: "showSponsoredCheckboxes",
--      titleString: "home-prefs-support-firefox-header",
--      nestedPrefs: [
--        {
--          name: "showSponsoredTopSites",
--          titleString: "home-prefs-shortcuts-by-option-sponsored",
--          eventSource: "SPONSORED_TOP_SITES",
--        },
--        {
--          name: "showSponsored",
--          titleString: "home-prefs-recommended-by-option-sponsored-stories",
--          eventSource: "POCKET_SPOCS",
--          shouldHidePref: !Services.prefs.getBoolPref(
--            "browser.newtabpage.activity-stream.feeds.system.topstories",
--            true
--          ),
--          shouldDisablePref: !Services.prefs.getBoolPref(
--            "browser.newtabpage.activity-stream.feeds.section.topstories",
--            true
--          ),
--        },
--      ],
+@@ -90,33 +90,6 @@ const PREFS_FOR_SETTINGS = () => {
+       ),
+       eventSource: "TOP_STORIES",
+     },
+-    {
+-      id: "support-firefox",
+-      pref: {
+-        feed: "showSponsoredCheckboxes",
+-        titleString: "home-prefs-support-firefox-header",
+-        nestedPrefs: [
+-          {
+-            name: "showSponsoredTopSites",
+-            titleString: "home-prefs-shortcuts-by-option-sponsored",
+-            eventSource: "SPONSORED_TOP_SITES",
+-          },
+-          {
+-            name: "showSponsored",
+-            titleString: "home-prefs-recommended-by-option-sponsored-stories",
+-            eventSource: "POCKET_SPOCS",
+-            shouldHidePref: !Services.prefs.getBoolPref(
+-              "browser.newtabpage.activity-stream.feeds.system.topstories",
+-              true
+-            ),
+-            shouldDisablePref: !Services.prefs.getBoolPref(
+-              "browser.newtabpage.activity-stream.feeds.section.topstories",
+-              true
+-            ),
+-          },
+-        ],
+-      },
 -    },
--  },
- ];
+   ];
+ };
  
- export class AboutPreferences {
 @@ -344,41 +317,9 @@ export class AboutPreferences {
        }
      });
