@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=40.20
+VERSION=42
 HWEKR=6.17
 DI_ENABLED=1
 HWE_ENABLED=1
@@ -32,15 +32,19 @@ SEARCH_MISSING_CASES=0
 if [ $HWE_ENABLED = 0 ] && [ $RISCV_ENABLED = 0 ] ; then
 DEBIAN_PATH=debian.master
 CONTROL_PACKAGE=linux
+UDEB_ARCHS="amd64 armhf arm64 ppc64el s390x"
 elif [ $HWE_ENABLED = 1 ] && [ $RISCV_ENABLED = 0 ] ; then
 DEBIAN_PATH=debian.hwe-$HWEKR
 CONTROL_PACKAGE=linux-hwe-$HWEKR
+UDEB_ARCHS="amd64 armhf arm64 ppc64el s390x"
 elif [ $HWE_ENABLED = 0 ] && [ $RISCV_ENABLED = 1 ] ; then
 DEBIAN_PATH=debian.riscv
 CONTROL_PACKAGE=linux-riscv
+UDEB_ARCHS="riscv64"
 elif [ $HWE_ENABLED = 1 ] && [ $RISCV_ENABLED = 1 ] ; then
 DEBIAN_PATH=debian.riscv-$HWEKR && \
 CONTROL_PACKAGE=linux-riscv-$HWEKR
+UDEB_ARCHS="riscv64"
 else
 echo "> No possible outcome from your kernel settings" && exit 1
 fi
@@ -131,12 +135,15 @@ Package: $CONTROL_PACKAGE-udebs-generic
 Build-Profiles: <!stage1> <!noudeb> <!cross> <!autopkgtest>
 XC-Package-Type: udeb
 Section: debian-installer
-Architecture: amd64 armhf arm64 ppc64el s390x
+Architecture: $UDEB_ARCHS
 Depends: \${udeb:Depends}
 Description: Metapackage depending on kernel udebs
  This package depends on the all udebs that the kernel build generated,
  for easier version and migration tracking.
+EOF
 
+if [ "$RISCV_ENABLED" = 0 ]; then
+cat << EOF >> debian/control
 Package: $CONTROL_PACKAGE-udebs-generic-lpae
 Build-Profiles: <!stage1> <!noudeb> <!cross> <!autopkgtest>
 XC-Package-Type: udeb
@@ -157,6 +164,7 @@ Description: Metapackage depending on kernel udebs
  This package depends on the all udebs that the kernel build generated,
  for easier version and migration tracking.
 EOF
+fi
 
 cat << 'EOF' >> $DEBIAN_PATH/control.d/flavour-control.stub
 Package: SRCPKGNAME-udebs-FLAVOUR

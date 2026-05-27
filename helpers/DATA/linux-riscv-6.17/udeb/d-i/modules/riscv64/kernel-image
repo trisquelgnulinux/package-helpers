@@ -16,3 +16,7 @@ drivers/rtc/**
 # Force the inclusion of the mtd module, as anyway it is added through the
 # following dependency: mpfs-rng -> mpfs-sys-controller -> mtd
 mtd ?
+
+# trisquel's riscv udeb rebuild
+nls_utf8 ?
+crc-itu-t ?

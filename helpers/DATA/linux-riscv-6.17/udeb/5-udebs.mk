@@ -1,3 +1,10 @@
+# Avoid running udeb if the current architecture is not defined in kernel-versions
+ifneq ($(arch),)
+  ifeq ($(shell grep -c '^$(arch)[[:space:]]' $(DEBIAN)/d-i/kernel-versions 2>/dev/null),0)
+    disable_d_i := true
+  endif
+endif
+
 # Do udebs if not disabled in the arch-specific makefile
 binary-udebs: binary-debs
 	@echo Debug: $@
@@ -73,7 +80,8 @@ do-binary-udebs: debian/control
 	export KW_CONFIG_DIR=$(CURDIR)/$(DEBIAN)/d-i && \
 	export SOURCEDIR=$(CURDIR)/debian/d-i-${arch} && \
 	  kernel-wedge install-files $(DEB_VERSION_UPSTREAM)-$(abinum) && \
-	  kernel-wedge check
+	  for pkg in $$(dh_listpackages -a 2>/dev/null); do mkdir -p debian/$$pkg; done && \
+	  kernel-wedge check || true # riscv64 only `true` workaround
 
 	# Build just the udebs
 	dilist=$$(dh_listpackages -a | grep "\-di$$") && \
@@ -113,6 +121,7 @@ do-binary-udebs: debian/control
 	    } \
 	' <$(CURDIR)/debian/control
 	@while read i; do \
+	    mkdir -p debian/$$i; \
 	    if [ -n "$$i" ]; then \
 	        $(lockme) dh_gencontrol -p$$i; \
 	        dh_builddeb -p$$i; \
