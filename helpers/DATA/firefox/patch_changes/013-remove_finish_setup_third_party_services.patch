@@ -61,19 +61,6 @@ index ba47adb6..c4b29ec4 100644
    ],
  };
  
-diff --git a/browser/components/asrouter/modules/FeatureCalloutMessages.sys.mjs b/browser/components/asrouter/modules/FeatureCalloutMessages.sys.mjs
-index 29d2ca46..41b65ac4 100644
---- a/browser/components/asrouter/modules/FeatureCalloutMessages.sys.mjs
-+++ b/browser/components/asrouter/modules/FeatureCalloutMessages.sys.mjs
-@@ -885,7 +885,7 @@ const MESSAGES = () => {
-                   dismiss: true,
-                   type: "OPEN_URL",
-                   data: {
--                    args: "https://addons.mozilla.org/en-US/firefox/collections/4757633/36d285535db74c6986abbeeed3e214/?page=1&collection_sort=added",
-+                    args: "https://gnuzilla.gnu.org/",
-                     where: "tabshifted",
-                   },
-                 },
 diff --git a/browser/components/asrouter/modules/OnboardingMessageProvider.sys.mjs b/browser/components/asrouter/modules/OnboardingMessageProvider.sys.mjs
 index abc6db68..0c86955f 100644
 --- a/browser/components/asrouter/modules/OnboardingMessageProvider.sys.mjs
