@@ -81,7 +81,7 @@ do-binary-udebs: debian/control
 	export SOURCEDIR=$(CURDIR)/debian/d-i-${arch} && \
 	  kernel-wedge install-files $(DEB_VERSION_UPSTREAM)-$(abinum) && \
 	  for pkg in $$(dh_listpackages -a 2>/dev/null); do mkdir -p debian/$$pkg; done && \
-	  kernel-wedge check || true # riscv64 only `true` workaround
+	  kernel-wedge check || true # TODO: # Prevent build failure due to upstream Debian/Ubuntu d-i modules desyncs
 
 	# Build just the udebs
 	dilist=$$(dh_listpackages -a | grep "\-di$$") && \
