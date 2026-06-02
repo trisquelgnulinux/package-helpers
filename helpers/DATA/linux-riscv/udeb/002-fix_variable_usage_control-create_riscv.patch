@@ -1,0 +1,21 @@
+diff --git a/debian/scripts/control-create b/debian/scripts/control-create_
+index f2af8b9b..cd54c86d 100644
+--- a/debian/scripts/control-create
++++ b/debian/scripts/control-create_
+@@ -11,15 +11,9 @@ any_signed=$2
+ 
+ flavour=$(basename $vars | sed 's/.*\.//')
+ stub="${DEBIAN}/control.d/flavour-control.stub debian/control.d/flavour-buildinfo.stub"
+-if [ "$any_signed" = 'true' ]; then
+-	sign_me_pkg="-unsigned"
+-	sign_me_txt=" unsigned"
+-	sign_peer_pkg=""
+-else
+ 	sign_me_pkg=""
+ 	sign_me_txt=""
+-	sign_peer_pkg="-unsigned"
+-fi
++	sign_peer_pkg=""
+ 
+ cat $stub | grep -v '^#' | sed \
+ 	-e "s#FLAVOUR#$flavour#g"		\

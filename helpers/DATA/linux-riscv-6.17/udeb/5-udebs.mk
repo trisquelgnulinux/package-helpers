@@ -29,7 +29,7 @@ do-binary-udebs: debian/control
 	outdir="$${DPKG_BUILDPACKAGE_OUTPUT_DIR:-..}" && \
 	imagelist=$$(cat $(CURDIR)/$(DEBIAN)/d-i/kernel-versions | grep ^${arch} | gawk '{print $$3}') && \
 	for flavour in $$imagelist; do \
-	  i=$(DEB_VERSION_UPSTREAM)-$(abinum)-$$flavour; \
+	  i=$(or $(DEB_VERSION_UPSTREAM),$(release))-$(abinum)-$$flavour; \
 	  found=0; \
 	  for deb in \
 	    "$$outdir"/linux-image-$$i\_*_${arch}.deb \
