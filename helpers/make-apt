@@ -20,7 +20,7 @@
 
 #STAGE-1-DEBOOTSTRAP
 
-VERSION=5
+VERSION=6
 COMPONENT=main
 EXTERNAL='deb-src http://ftp.debian.org/debian trixie main'
 REPOKEY=6ED0E7B82643E131
@@ -116,6 +116,8 @@ EOF
 #cmdline/apt-key.in
 replace Ubuntu Trisquel  methods/http.cc
 replace ubuntu-archive.gpg trisquel-archive.gpg .
+
+apply_patch_changes
 
 changelog "Ubuntu keyring replaced with Trisquel's"
 

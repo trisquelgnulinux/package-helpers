@@ -1,0 +1,38 @@
+From 02ee82958b5caef9efb49992870d149907869893 Mon Sep 17 00:00:00 2001
+From: Julian Andres Klode <jak@debian.org>
+Date: Sat, 4 Oct 2025 14:28:01 +0200
+Subject: [PATCH] =?UTF-8?q?Move=20"Tried=20to=20start=20delayed=20item=20[?=
+ =?UTF-8?q?=E2=80=A6],=20but=20failed"=20to=20debugging?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+We don't quite know why a stuck queue cannot get unstuck here,
+and it's possible that this is causing the queue to stall, but
+shrug.
+
+Closes: #1111554
+---
+ apt-pkg/acquire.cc | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/apt-pkg/acquire.cc b/apt-pkg/acquire.cc
+index d2d32e52e..17caa42b6 100644
+--- a/apt-pkg/acquire.cc
++++ b/apt-pkg/acquire.cc
+@@ -741,10 +741,8 @@ pkgAcquire::RunResult pkgAcquire::Run(int PulseInterval)
+ 	    if (not I->Cycle()) // Queue got stuck, unstuck it.
+ 	       goto stop;
+ 	    fetchAfter = now; // need to time out in select() below
+-	    if (I->Items->Owner->Status == pkgAcquire::Item::StatIdle)
+-	    {
+-	       _error->Warning("Tried to start delayed item %s, but failed", I->Items->Description.c_str());
+-	    }
++	    if (Debug && I->Items->Owner->Status == pkgAcquire::Item::StatIdle)
++	       clog << "Tried to start delayed item but failed:" << I->Items->Description.c_str() << std::endl;
+ 	 }
+ 	 else if (f < fetchAfter || fetchAfter == time_point{})
+ 	 {
+-- 
+GitLab
+
