@@ -1,0 +1,14 @@
+diff --git a/debian/rules b/debian/rules
+index 361f721d..cda3c945 100755
+--- a/debian/rules
++++ b/debian/rules
+@@ -16,7 +16,9 @@ override_dh_clean:
+ 	dh_clean
+ 
+ override_dh_auto_test:
++ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS) $(DEB_BUILD_PROFILES)))
+ 	make offlinetest PYTHON=python3
++endif
+ 
+ override_dh_installchangelogs:
+ 	DEB_BUILD_OPTIONS=notrimdch dh_installchangelogs Changelog.md
