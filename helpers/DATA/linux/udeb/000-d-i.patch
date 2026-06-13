@@ -31,7 +31,7 @@ index 43eae8d5..c81721bc 100755
 +	export KW_CONFIG_DIR=$(DEBIAN)/d-i && \
 +	LANG=C kernel-wedge gen-control $(release)-$(abinum) | \
 +		grep-dctrl -FArchitecture $(arch) \
-+		>>$(CURDIR)/debian/control
++		>>$(CURDIR)/debian/control || true
 +
  
  debian/canonical-certs.pem: $(wildcard $(DROOT)/certs/*-all.pem) $(wildcard $(DROOT)/certs/*-$(arch).pem) $(wildcard $(DEBIAN)/certs/*-all.pem) $(wildcard $(DEBIAN)/certs/*-$(arch).pem)
