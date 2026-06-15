@@ -1,0 +1,24 @@
+Fix compilation with APT 3.0 (std::string_view conversion)
+
+diff --git a/src/generic/apt/pkg_acqfile.cc b/src/generic/apt/pkg_acqfile.cc_
+index 4a4da6fa..461af801 100644
+--- a/src/generic/apt/pkg_acqfile.cc
++++ b/src/generic/apt/pkg_acqfile.cc_
+@@ -76,7 +76,7 @@ bool get_archive(pkgAcquire *Owner, pkgSourceList *Sources,
+       StoreFilename = QuoteString(Version.ParentPkg().Name(),"_:") + '_' +
+ 	QuoteString(Version.VerStr(),"_:") + '_' +
+ 	QuoteString(Version.Arch(),"_:.") + 
+-	"." + flExtension(Parse.FileName());
++	"." + std::string(flExtension(Parse.FileName()));
+     }
+ 
+    for (; Vf.end() == false; Vf++)
+@@ -104,7 +104,7 @@ bool get_archive(pkgAcquire *Owner, pkgSourceList *Sources,
+ 			       Version.ParentPkg().FullName().c_str());
+ 	}
+ 
+-      std::string DestFile = directory + "/" + flNotDir(StoreFilename);
++      std::string DestFile = directory + "/" + std::string(flNotDir(StoreFilename));
+ 
+       // Create the item
+       new pkgAcqFile(Owner,

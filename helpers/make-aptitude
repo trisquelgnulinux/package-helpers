@@ -1,5 +1,6 @@
 #!/bin/sh
 #
+#    Copyright (C) 2026  Luis Guzman <ark@switnet.org>
 #    Copyright (C) 2015  Santiago Rodríguez <santi@trisquel.info>
 #
 #    This program is free software; you can redistribute it and/or modify
@@ -17,7 +18,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=2
+VERSION=3
 
 . ./config
 
@@ -26,6 +27,8 @@ sed -i 's/Ubuntu/Trisquel/g' debian/patches/04_changelog
 
 # Note: i386 rebuild requires no change on helper or other helpers as binaries can be
 # easily recompiled from the jenkins dashboard by arch specific, avoiding helpers
+
+apply_patch_changes
 
 changelog "Imported into Trisquel"
 package
