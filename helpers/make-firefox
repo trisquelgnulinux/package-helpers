@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=133
+VERSION=134
 EXTERNAL='deb-src http://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu $UPSTREAM main'
 REPOKEY=AEBDF4819BE21867
 
@@ -289,7 +289,8 @@ do
 done
 
 python3 $DATA/ui_branding/wallpaper-replace.py --source $DATA/ui_branding/build.json \
-                                               --replace services/settings/dumps/main/newtab-wallpapers-v2.json
+                                               --replace services/settings/dumps/main/newtab-wallpapers-v2.json \
+                                               --sanitize
 
 # Static wallpapers
 mkdir -p browser/base/content/wallpapers/

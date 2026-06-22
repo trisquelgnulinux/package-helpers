@@ -24,15 +24,15 @@ index 217ed280..d91cde94 100644
  
  // Do not enable the preonboarding experience on Linux
  #ifdef XP_LINUX
-@@ -1886,24 +1886,24 @@ pref("browser.newtabpage.activity-stream.mobileDownloadModal.variant-b", false);
+@@ -1857,24 +1857,24 @@ pref("browser.newtabpage.activity-stream.mobileDownloadModal.variant-b", false);
  pref("browser.newtabpage.activity-stream.mobileDownloadModal.variant-c", false);
  
  // Mozilla Ad Routing Service (MARS) unified ads service
 -pref("browser.newtabpage.activity-stream.unifiedAds.tiles.enabled", true);
--pref("browser.newtabpage.activity-stream.unifiedAds.spocs.enabled", true);
--pref("browser.newtabpage.activity-stream.unifiedAds.endpoint", "https://ads.mozilla.org/");
 +pref("browser.newtabpage.activity-stream.unifiedAds.tiles.enabled", false);
+-pref("browser.newtabpage.activity-stream.unifiedAds.spocs.enabled", true);
 +pref("browser.newtabpage.activity-stream.unifiedAds.spocs.enabled", false);
+-pref("browser.newtabpage.activity-stream.unifiedAds.endpoint", "https://ads.mozilla.org/");
 +pref("browser.newtabpage.activity-stream.unifiedAds.endpoint", "");
  pref("browser.newtabpage.activity-stream.unifiedAds.adsFeed.enabled", false);
 -pref("browser.newtabpage.activity-stream.unifiedAds.ohttp.enabled", true);
@@ -51,8 +51,9 @@ index 217ed280..d91cde94 100644
 +pref("browser.newtabpage.activity-stream.weather.locationSearchEnabled", false);
  
  // List of regions that get weather by default.
--pref("browser.newtabpage.activity-stream.discoverystream.region-weather-config", "US,CA");
+-pref("browser.newtabpage.activity-stream.discoverystream.region-weather-config", "AT,BE,BG,CA,CH,CY,CZ,DE,DK,EE,ES,FI,FR,GB,GR,HR,HU,IE,IS,IT,LI,LT,LV,MT,NL,NO,PL,PT,RO,SE,SI,SK,US");
 +pref("browser.newtabpage.activity-stream.discoverystream.region-weather-config", "");
  
  // List of locales that weather widget supports.
- pref("browser.newtabpage.activity-stream.discoverystream.locale-weather-config", "en-US,en-GB,en-CA");
+ pref("browser.newtabpage.activity-stream.discoverystream.locale-weather-config", "bg,cs,da,de,el,en-CA,en-GB,en-US,es-ES,et,fi,fr,hr,hu,is,it,lv,nb-NO,nl,pl,pt-PT,ro,sk,sl,sv-SE,tr");
+
