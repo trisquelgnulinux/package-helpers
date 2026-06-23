@@ -16,6 +16,7 @@ import os
 import time
 import argparse
 import sys
+from collections import Counter
 
 def calculate_sha256_hash(file_path):
     """
@@ -88,9 +89,11 @@ def build_step(config_path, output_path):
 
     print(f"\nSUCCESS: Generated standalone artifact at '{output_path}'.")
 
-def replace_step(source_path, target_path):
+def replace_step(source_path, target_path, sanitize=False):
     """
     Step 2: Injects the build.json data into the target Firefox JSON database.
+    If sanitize=True, keeps ONLY the wallpapers defined in build.json (drops the
+    rest that upstream Firefox ships), so the newtab picker shows only Trisquel's.
     """
     print(f"\n--- Step 2: Injecting into target JSON ---")
 
@@ -136,6 +139,39 @@ def replace_step(source_path, target_path):
             print(f"Updated ID: {item_id} with file '{new_data['attachment']['filename']}'")
             modified_count += 1
 
+    if sanitize:
+        SECTION = 'firefox'  # "Firefox/Abrowser" section category
+        data = target_db['data']
+
+        in_section = [it for it in data if it.get('category') == SECTION]
+        tris_in = [it for it in in_section if it.get('id') in build_data]
+        moz_in  = [it for it in in_section if it.get('id') not in build_data]
+        print(f"SANITIZE: section '{SECTION}' before: {len(in_section)} "
+              f"({len(tris_in)} Trisquel + {len(moz_in)} from Firefox)")
+        if moz_in:
+            print("SANITIZE: to remove from the section: "
+                  + ", ".join(sorted(it.get('title', '?') for it in moz_in)))
+        missing = [u for u in build_data if u not in {it.get('id') for it in tris_in}]
+        if missing:
+            print(f"WARNING: {len(missing)} UUID(s) from build.json are not in the section "
+                  f"'{SECTION}': {missing}")
+
+        # Remove ONLY the items in the 'abrowser' section that are NOT from Trisquel.
+        # Leave the rest of the categories (photographs, solid-colors, abstracts, celestial...) untouched.
+        kept = [it for it in data
+                if not (it.get('category') == SECTION and it.get('id') not in build_data)]
+
+        # Order the Trisquel items within the section according to the order in build.json.
+        tris_order = {u: n for n, u in enumerate(build_data.keys())}
+        for it in kept:
+            if it.get('id') in tris_order:
+                it['order'] = tris_order[it['id']]
+
+        removed = len(data) - len(kept)
+        target_db['data'] = kept
+        print(f"SANITIZE: removed {removed} from section '{SECTION}'; total now {len(kept)}.")
+        print(f"SANITIZE: resulting categories: {dict(Counter(it.get('category') for it in kept))}")
+
     if modified_count > 0:
         target_db['timestamp'] = current_timestamp
         with open(target_path, 'w', encoding='utf-8') as f:
@@ -149,6 +185,7 @@ def main():
     parser.add_argument('--config', type=str, nargs='?', const='./config.json', help="Step 1: Path to config.json.")
     parser.add_argument('--replace', type=str, help="Step 2: Path to target Firefox JSON file to be modified.")
     parser.add_argument('--source', type=str, default='./build.json', help="Step 2: Path to the standalone build.json.")
+    parser.add_argument('--sanitize', action='store_true', help="Step 2: keep ONLY the wallpapers defined in build.json (remove all upstream ones).")
 
     args = parser.parse_args()
 
@@ -157,7 +194,7 @@ def main():
         sys.exit(1)
 
     if args.config: build_step(args.config, './build.json')
-    if args.replace: replace_step(args.source, args.replace)
+    if args.replace: replace_step(args.source, args.replace, args.sanitize)
 
 if __name__ == "__main__":
     main()

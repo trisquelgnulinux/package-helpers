@@ -1,23 +1,45 @@
-diff --git a/toolkit/mozapps/extensions/content/aboutaddons.html b/toolkit/mozapps/extensions/content/aboutaddons.html
-index 77702576..35cf6593 100644
---- a/toolkit/mozapps/extensions/content/aboutaddons.html
-+++ b/toolkit/mozapps/extensions/content/aboutaddons.html
-@@ -799,18 +799,6 @@
-       <footer is="recommended-footer" class="view-footer"></footer>
-     </template>
+diff --git a/toolkit/mozapps/extensions/content/components/recommended-themes-footer.mjs b/toolkit/mozapps/extensions/content/components/recommended-themes-footer.mjs
+--- a/toolkit/mozapps/extensions/content/components/recommended-themes-footer.mjs
++++ b/toolkit/mozapps/extensions/content/components/recommended-themes-footer.mjs
+@@ -10,18 +10,7 @@
+ class RecommendedThemesFooter extends AboutAddonsHTMLElement {
+   static get markup() {
+     return `
+-      <template>
+-        <p data-l10n-id="recommended-theme-1" class="theme-recommendation">
+-          <a data-l10n-name="link" target="_blank"></a>
+-        </p>
+-        <div class="amo-link-container view-footer-item">
+-          <button
+-            class="primary"
+-            action="open-amo"
+-            data-l10n-id="find-more-themes"
+-          ></button>
+-        </div>
+-      </template>
++      <template></template>
+     `;
+   }
  
--    <template name="recommended-themes-footer">
--      <p data-l10n-id="recommended-theme-1" class="theme-recommendation">
--        <a data-l10n-name="link" target="_blank"></a>
--      </p>
--      <div class="amo-link-container view-footer-item">
--        <button
--          class="primary"
--          action="open-amo"
--          data-l10n-id="find-more-themes"
--        ></button>
--      </div>
--    </template>
- 
-    <template name="recommended-themes-section">
-      <h2
+@@ -29,13 +18,15 @@
+     if (this.childElementCount == 0) {
+       this.appendChild(RecommendedThemesFooter.fragment);
+       let themeRecommendationRow = this.querySelector(".theme-recommendation");
+-      let themeRecommendationUrl = Services.prefs.getStringPref(
+-        PREF_THEME_RECOMMENDATION_URL
+-      );
+-      if (themeRecommendationUrl) {
+-        themeRecommendationRow.querySelector("a").href = themeRecommendationUrl;
++      if (themeRecommendationRow) {
++        let themeRecommendationUrl = Services.prefs.getStringPref(
++          PREF_THEME_RECOMMENDATION_URL
++        );
++        if (themeRecommendationUrl) {
++          themeRecommendationRow.querySelector("a").href = themeRecommendationUrl;
++        }
++        themeRecommendationRow.hidden = !themeRecommendationUrl;
+       }
+-      themeRecommendationRow.hidden = !themeRecommendationUrl;
+       this.addEventListener("click", this);
+     }
+   }
