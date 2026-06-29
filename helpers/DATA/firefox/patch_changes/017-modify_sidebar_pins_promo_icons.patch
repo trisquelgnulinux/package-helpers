@@ -2,7 +2,7 @@ diff --git a/browser/themes/shared/jar.inc.mn b/browser/themes/shared/jar.inc.mn
 index 3a12a7a3..ac1245a9 100644
 --- a/browser/themes/shared/jar.inc.mn
 +++ b/browser/themes/shared/jar.inc.mn
-@@ -266,10 +266,10 @@
+@@ -266,10 +266,11 @@
    skin/classic/browser/search-indicator-badge-add.svg          (../shared/search/search-indicator-badge-add.svg)
    skin/classic/browser/searchbar.css                           (../shared/search/searchbar.css)
  
@@ -14,6 +14,7 @@ index 3a12a7a3..ac1245a9 100644
 +  skin/classic/browser/sidebar/fsf.svg                        (../shared/sidebar/fsf.svg)
 +  skin/classic/browser/sidebar/wikipedia.svg                       (../shared/sidebar/wikipedia.svg)
 +  skin/classic/browser/sidebar/liberachat.svg                       (../shared/sidebar/liberachat.svg)
++  skin/classic/browser/sidebar/abrowser.svg                         (../shared/sidebar/abrowser.svg)
  
    skin/classic/browser/tabbrowser/content-area.css             (../shared/tabbrowser/content-area.css)
    skin/classic/browser/tabbrowser/crashed.svg                  (../shared/tabbrowser/crashed.svg)
@@ -36,3 +37,39 @@ index beac7ea4..538ae9aa 100644
    ];
  
    connectedCallback() {
+diff --git a/browser/components/preferences/preferences.xhtml b/browser/components/preferences/preferences.xhtml
+--- a/browser/components/preferences/preferences.xhtml
++++ b/browser/components/preferences/preferences.xhtml
+@@ -191,7 +191,7 @@
+       </html:moz-page-nav-button>
+       <html:moz-page-nav-button id="category-about-firefox"
+         view="paneAbout"
+-        iconsrc="chrome://browser/skin/sidebar/firefox.svg"
++        iconsrc="chrome://browser/skin/sidebar/abrowser.svg"
+         data-l10n-id="pane-about-firefox-title">
+       </html:moz-page-nav-button>
+       <html:moz-page-nav-button id="category-more-from-mozilla"
+diff --git a/browser/components/preferences/preferences.js b/browser/components/preferences/preferences.js
+--- a/browser/components/preferences/preferences.js
++++ b/browser/components/preferences/preferences.js
+@@ -225,7 +225,7 @@
+ const CONFIG_PANES = Object.freeze({
+   about: {
+     l10nId: "about-firefox-header",
+-    iconSrc: "chrome://browser/skin/sidebar/firefox.svg",
++    iconSrc: "chrome://browser/skin/sidebar/abrowser.svg",
+     groupIds: ["updates", "support"],
+     module: "chrome://browser/content/preferences/config/about-firefox.mjs",
+     visible: () => srdSectionPrefs.all,
+diff --git a/browser/components/preferences/config/languages.mjs b/browser/components/preferences/config/languages.mjs
+--- a/browser/components/preferences/config/languages.mjs
++++ b/browser/components/preferences/config/languages.mjs
+@@ -849,7 +849,7 @@
+     inProgress: true,
+     l10nId: "browser-language-heading",
+     headingLevel: 2,
+-    iconSrc: "chrome://browser/skin/sidebar/firefox.svg",
++    iconSrc: "chrome://browser/skin/sidebar/abrowser.svg",
+     items: [
+       {
+         id: "browserLanguagePreferred",
