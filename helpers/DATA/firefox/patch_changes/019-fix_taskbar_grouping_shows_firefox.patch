@@ -1,0 +1,15 @@
+diff --git a/toolkit/xre/nsAppRunner.cpp b/toolkit/xre/nsAppRunner.cpp
+--- a/toolkit/xre/nsAppRunner.cpp
++++ b/toolkit/xre/nsAppRunner.cpp
+@@ -5043,7 +5043,10 @@
+   }
+ #endif
+ #if defined(MOZ_WIDGET_GTK)
+-  g_set_application_name(mAppData->name);
++  // Use MOZ_APP_DISPLAYNAME ("Abrowser") instead of name MOZ_APP_BASENAME,
++  // ("Firefox"), so window list applets (e.g. mate-panel/libwnck) group
++  // Abrowser windows separately from Firefox ones
++  g_set_application_name(MOZ_APP_DISPLAYNAME);
+
+ #endif /* defined(MOZ_WIDGET_GTK) */
+ #ifdef MOZ_X11

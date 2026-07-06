@@ -1,0 +1,14 @@
+diff --git a/toolkit/xre/nsAppRunner.cpp b/toolkit/xre/nsAppRunner.cpp
+--- a/toolkit/xre/nsAppRunner.cpp
++++ b/toolkit/xre/nsAppRunner.cpp
+@@ -2820,7 +2820,9 @@
+     sbs->CreateBundle(kProfileProperties, getter_AddRefs(sb));
+     NS_ENSURE_TRUE_LOG(sbs, NS_ERROR_FAILURE);
+
+-    NS_ConvertUTF8toUTF16 appName(gAppData->name);
++    // Use MOZ_APP_DISPLAYNAME ("Abrowser") instead of gAppData->name
++    // on the profile-locked dialog
++    NS_ConvertUTF8toUTF16 appName(MOZ_APP_DISPLAYNAME);
+     AutoTArray<nsString, 3> params = {appName, appName, appName};
+
+     nsAutoString killMessage;
