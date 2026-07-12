@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#    Copyright (C)      2025  Luis Guzmán <ark@switnet.org>
+#    Copyright (C)      2026  Luis Guzmán <ark@switnet.org>
 #    Copyright (C) 2008-2020  Ruben Rodriguez <ruben@trisquel.info>
 #    Copyright (C)      2014  Santiago Rodriguez <santi@trisquel.info>
 #    Copyright (C)      2019  David Trudgian <dave@trudgian.net>
@@ -40,17 +40,17 @@ fi
 export DEBIAN_FRONTEND=noninteractive
 export DEBEMAIL=trisquel-devel@listas.trisquel.info
 export DEBFULLNAME="Trisquel GNU/Linux developers"
-export CODENAME=ecne
-export REVISION=12.0
+export CODENAME=xolotl
+export REVISION=13.0
 export RELEASE=trisquel
 export DOMAIN=trisquel.info
-export UPSTREAM=noble
-export UPSTREAMRELEASE=24.04
+export UPSTREAM=resolute
+export UPSTREAMRELEASE=26.04
 export DEBLOB=1
 MIRROR=http://archive.ubuntu.com/ubuntu
 LOCALMIRROR=http://archive.trisquel.org/trisquel
 GIT_TPH_REPO=https://gitlab.trisquel.org/trisquel/package-helpers
-LOCAL_APT=`mktemp -d` 
+LOCAL_APT=`mktemp -d`
 if [[ "$PACKAGE" =~ ^linux(-hwe-[0-9]+\.[0-9]+)?$ && -n "$LP_VERSION" ]]; then
 # Function to truncate the version string to the major version (e.g., 6.5.0)
 truncate_version() {
@@ -80,7 +80,9 @@ pkgversion(){
     dpkg-parsechangelog --show-field Version
 }
 replace(){
-find ${@:3} -type f -not -iregex '.*changelog.*' -not -iregex '.*copyright.*' -execdir /bin/sed --follow-symlinks -i s^"$1"^"$2"^g {} \;
+find ${@:3} -type f -not -iregex '.*changelog.*' \
+            -not -iregex '.*copyright.*' \
+            -execdir /bin/sed --follow-symlinks -i s^"$1"^"$2"^g {} \;
 }
 changelog_multiline() {
   local msg="$1"
@@ -140,9 +142,11 @@ EOF
 
 fetchkey(){
     echo Fetching key $1 from hkps://keyserver.ubuntu.com:443
-    if ! gpg -q --no-default-keyring --keyring gnupg-ring:${LOCAL_APT}/etc/apt/trusted.gpg.d/keyring.gpg --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys $1 ; then
+    if ! gpg -q --no-default-keyring --keyring gnupg-ring:${LOCAL_APT}/etc/apt/trusted.gpg.d/keyring.gpg \
+             --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys $1 ; then
          echo "W: invalid key from keyserver.ubuntu.com, fetching from db.debian.org"
-         gpg -q --no-default-keyring --keyring gnupg-ring:${LOCAL_APT}/etc/apt/trusted.gpg.d/keyring.gpg --keyserver hkps://keyring.debian.org:443 --recv-keys $1
+         gpg -q --no-default-keyring --keyring gnupg-ring:${LOCAL_APT}/etc/apt/trusted.gpg.d/keyring.gpg \
+             --keyserver hkps://keyring.debian.org:443 --recv-keys $1
     fi
 }
 
@@ -166,7 +170,8 @@ if [ "1$EXTERNAL" != "1" ]; then
    echo "deb-src http://archive.ubuntu.com/ubuntu/ $RELNAME $COMPONENTS" > ${LOCAL_APT}/etc/apt/sources.list
    echo "deb-src http://archive.ubuntu.com/ubuntu/ ${RELNAME}-updates $COMPONENTS" >> ${LOCAL_APT}/etc/apt/sources.list
    echo "deb-src http://archive.ubuntu.com/ubuntu/ ${RELNAME}-security $COMPONENTS" >> ${LOCAL_APT}/etc/apt/sources.list
- elif eval echo "$EXTERNAL" | grep "ftp.debian.org" |grep -qv -e updates -e security -e backports -e testing -e sid -e unstable -e experimental -e proposed ; then
+ elif eval echo "$EXTERNAL" | grep "ftp.debian.org" | \
+               grep -qv -e updates -e security -e backports -e testing -e sid -e unstable -e experimental -e proposed ; then
    RELNAME=$(eval echo "$EXTERNAL" | cut -d' ' -f 3)
    COMPONENTS=$(eval echo "$EXTERNAL" | cut -d' ' -f 4-)
    echo "deb-src http://deb.debian.org/debian $RELNAME $COMPONENTS" > ${LOCAL_APT}/etc/apt/sources.list
@@ -202,7 +207,8 @@ else
     # Verify it first
     if grep -q "BEGIN PGP SIGNATURE" *.dsc; then
       KEY=$(gpg2 --keyid-format 0xlong --verify  *.dsc  2>&1 | grep -oE '[0-9A-F]{16,40}' | tail -1 || true)
-      [ -z "$KEY" ] && KEY=$(gpgv --keyring ${LOCAL_APT}/etc/apt/trusted.gpg.d/keyring *.dsc 2>&1 | egrep ".SA key" | sed 's/.*.SA key //' || true)
+      [ -z "$KEY" ] && KEY=$(gpgv --keyring ${LOCAL_APT}/etc/apt/trusted.gpg.d/keyring *.dsc 2>&1 |
+                             egrep ".SA key" | sed 's/.*.SA key //' || true)
       fetchkey $KEY
       gpg2 --verify --keyring ${LOCAL_APT}/etc/apt/trusted.gpg.d/keyring.gpg *.dsc
       [ -n SCHROOT_COMMAND ] && gpgconf --kill gpg-agent
