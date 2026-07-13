@@ -211,7 +211,7 @@ else
                              egrep ".SA key" | sed 's/.*.SA key //' || true)
       fetchkey $KEY
       gpg2 --verify --keyring ${LOCAL_APT}/etc/apt/trusted.gpg.d/keyring.gpg *.dsc
-      [ -n SCHROOT_COMMAND ] && gpgconf --kill gpg-agent
+      [ -n $SCHROOT_COMMAND ] && gpgconf --kill gpg-agent
     else
       echo WARNING! The dsc file is not gpg signed!
       [ -z "$EXTERNAL" ] && exit 1
