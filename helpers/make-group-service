@@ -1,0 +1,29 @@
+#!/bin/sh
+#
+#    Copyright (C) 2026 Luis Guzmán <ark@switnet.org>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program.
+#
+
+VERSION=1
+
+. ./config
+
+# Replace groupmems(8) with gpasswd(8) in the D-Bus daemon so that adding or
+# removing supplementary group members actually persists.
+apply_patch_changes
+
+changelog "Use gpasswd instead of groupmems to manage group membership. Refs Debian #1109067, #1109770, Ubuntu LP #2039541."
+
+package
