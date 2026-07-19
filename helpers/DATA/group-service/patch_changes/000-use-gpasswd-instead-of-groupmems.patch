@@ -1,0 +1,44 @@
+# Use gpasswd(8) instead of groupmems(8) to add/remove supplementary group members.
+#
+# gpasswd, run as root by the daemon, edits /etc/group and /etc/gshadow directly
+# without any PAM interaction, so add/remove persist reliably. Note the argument
+# order differs: groupmems -g GROUP -{a,d} USER  vs  gpasswd -{a,d} USER GROUP.
+#
+# Refs: Debian #1109067, Debian #1109770, Ubuntu LP #2039541, Debian #1004472
+diff --git a/src/group.c b/src/group.c
+--- a/src/group.c
++++ b/src/group.c
+@@ -211,11 +211,11 @@
+         sys_log (Invocation, "%s user '%s' %s group '%s'","add",
+                 name,"to",group_get_group_name (g));
+
+-        argv[0] = "/usr/sbin/groupmems";
+-        argv[1] = "-g";
+-        argv[2] = group_get_group_name (g);
+-        argv[3] = "-a";
+-        argv[4] = name;
++        argv[0] = "/usr/bin/gpasswd";
++        argv[1] = "-a";
++        argv[2] = name;
++        argv[3] = group_get_group_name (g);
++        argv[4] = NULL;
+         argv[5] = NULL;
+
+         if (!spawn_with_login_uid (Invocation, argv, &error))
+@@ -377,11 +377,11 @@
+         sys_log (Invocation, "%s user '%s' %s group '%s'","remove",
+                 name,"from",group_get_group_name (g));
+
+-        argv[0] = "/usr/sbin/groupmems";
+-        argv[1] = "-g";
+-        argv[2] = group_get_group_name (g);
+-        argv[3] = "-d";
+-        argv[4] = name;
++        argv[0] = "/usr/bin/gpasswd";
++        argv[1] = "-d";
++        argv[2] = name;
++        argv[3] = group_get_group_name (g);
++        argv[4] = NULL;
+         argv[5] = NULL;
+
+         if (!spawn_with_login_uid (Invocation, argv, &error))
