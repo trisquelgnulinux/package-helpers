@@ -1,0 +1,14 @@
+# trisquel golden manifest
+# package:      compiz
+# blessed-by:   ark@switnet.org
+# blessed-at:   2026-07-25T08:57:41+00:00
+# upstream:     noble (24.04)  helper-version: 2
+# upstream-version: 0.9.14.2+22.10.20220822-0ubuntu12
+# blessed-with: AUDIT_BLESS=1
+# body-sha256:  df6338014d7e6bd4ee128b3ddb313c39a2659087caff62ae908d13370bd1cace
+--- manifest ---
+0	43	debian/patches/64-bit-time-t-compat.patch
+0	1	debian/patches/series
+6	3	plugins/workarounds/src/workarounds.cpp
+1	0	plugins/workarounds/src/workarounds.h
+0	5	plugins/workarounds/workarounds.xml.in

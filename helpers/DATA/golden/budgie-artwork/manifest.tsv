@@ -1,0 +1,191 @@
+# trisquel golden manifest
+# package:      budgie-artwork
+# blessed-by:   ark@switnet.org
+# blessed-at:   2026-07-25T08:54:16+00:00
+# upstream:     noble (24.04)  helper-version: 3
+# upstream-version: 0.19.0
+# blessed-with: AUDIT_BLESS=1
+# body-sha256:  a220b3d599981ee8f6857a13ffea8797529ff4799d465d67d55a8bf7f916c38f
+--- manifest ---
+5	5	README.md
+2	2	debian/budgie-lightdm-theme.gsettings-override
+20	20	debian/control
+2	0	debian/plymouth-theme-trisquel-budgie-logo.install
+11	0	debian/plymouth-theme-trisquel-budgie-logo.prerm
+1	0	debian/plymouth-theme-trisquel-budgie-text.install
+12	0	debian/plymouth-theme-trisquel-budgie-text.prerm
+0	2	debian/plymouth-theme-ubuntu-budgie-logo.install
+0	11	debian/plymouth-theme-ubuntu-budgie-logo.prerm
+0	1	debian/plymouth-theme-ubuntu-budgie-text.install
+0	12	debian/plymouth-theme-ubuntu-budgie-text.prerm
+1	1	debian/rules
+2	2	debian/{plymouth-theme-ubuntu-budgie-logo.postinst => plymouth-theme-trisquel-budgie-logo.postinst}
+0	0	debian/{plymouth-theme-ubuntu-budgie-logo.postrm => plymouth-theme-trisquel-budgie-logo.postrm}
+5	5	debian/{plymouth-theme-ubuntu-budgie-text.postinst => plymouth-theme-trisquel-budgie-text.postinst}
+0	0	debian/{plymouth-theme-ubuntu-budgie-text.postrm => plymouth-theme-trisquel-budgie-text.postrm}
+0	0	debian/{plymouth-theme-ubuntu-budgie-text.triggers => plymouth-theme-trisquel-budgie-text.triggers}
+0	0	debian/{ubuntu-budgie-themes.install => trisquel-budgie-themes.install}
+2	2	pocillo-theme-compiled/Pocillo-dark/INSTALL_GDM_THEME.md
+2	2	pocillo-theme-compiled/Pocillo-light/INSTALL_GDM_THEME.md
+2	2	pocillo-theme-compiled/Pocillo-slim-dark/INSTALL_GDM_THEME.md
+2	2	pocillo-theme-compiled/Pocillo-slim-light/INSTALL_GDM_THEME.md
+2	2	pocillo-theme-compiled/Pocillo-slim/INSTALL_GDM_THEME.md
+2	2	pocillo-theme-compiled/Pocillo/INSTALL_GDM_THEME.md
+1	1	pocillo-theme/HACKING.md
+2	2	pocillo-theme/INSTALL.md
+2	2	pocillo-theme/INSTALL_GDM_THEME.md
+1	1	pocillo-theme/README.md
+1	1	pocillo-theme/src/gtk-3.0/sass/apps/_unity.scss
+2	2	pocillo/.github/FUNDING.yml
+0	862	pocillo/IconRequests/Template.svg
+0	763	pocillo/IconRequests/livepatch-new.svg
+bin	bin	pocillo/IconRequests/livepatch-template.png
+0	1	pocillo/IconRequests/livepatch.svg
+0	533	pocillo/IconRequests/livepatch1.svg
+0	414	pocillo/IconRequests/livepatch2.svg
+0	1162	pocillo/IconRequests/livepatch_icon.svg
+1	1	pocillo/Pocillo/64/apps/{ubuntu-logo-icon.svg => trisquel-logo-icon.svg}
+1	1	pocillo/Pocillo/index.theme
+3	3	pocillo/README.md
+7	7	qogir-theme/InstallBudgie
+3	3	qogir-theme/README.md
+1	1	qogir-theme/clean-old-theme.sh
+7	7	qogir-theme/install.sh
+1	1	qogir-theme/src/_sass/_colors.scss
+1	1	qogir-theme/src/_sass/gtk/apps/_gnome-3.0.scss
+2	2	qogir-theme/src/cinnamon/thumbnail.svg
+84	0	qogir-theme/src/gnome-shell/logos/logo-trisquel.svg
+0	5	qogir-theme/src/gnome-shell/logos/logo-ubuntu.svg
+1	1	qogir-theme/src/gtk-2.0/assets/assets-Ubuntu-Dark.svg
+1	1	qogir-theme/src/gtk-2.0/assets/assets-Ubuntu.svg
+1	1	qogir-theme/src/gtk-2.0/assets/render-assets.sh
+84	0	qogir-theme/src/gtk/assets/logos/logo-trisquel.svg
+0	5	qogir-theme/src/gtk/assets/logos/logo-ubuntu.svg
+0	0	qogir-theme/src/gtk/assets/logos/{logo@2-ubuntu.svg => logo@2-trisquel.svg}
+1	1	qogir-theme/src/gtk/assets/render-assets.sh
+2	2	qogir-theme/src/gtk/assets/thumbnail.svg
+1	1	tela-icon-theme/README.md
+3	3	tela-icon-theme/install.sh
+0	0	tela-icon-theme/src/16/panel/{ubuntuone-client-error.svg => trisquelone-client-error.svg}
+0	0	tela-icon-theme/src/16/panel/{ubuntuone-client-idle.svg => trisquelone-client-idle.svg}
+0	0	tela-icon-theme/src/16/panel/{ubuntuone-client-offline.svg => trisquelone-client-offline.svg}
+0	0	tela-icon-theme/src/16/panel/{ubuntuone-client-paused.svg => trisquelone-client-paused.svg}
+0	0	tela-icon-theme/src/16/panel/{ubuntuone-client-updating.svg => trisquelone-client-updating.svg}
+0	0	tela-icon-theme/src/22/panel/{ubuntuone-client-error.svg => trisquelone-client-error.svg}
+0	0	tela-icon-theme/src/22/panel/{ubuntuone-client-idle.svg => trisquelone-client-idle.svg}
+0	0	tela-icon-theme/src/22/panel/{ubuntuone-client-offline.svg => trisquelone-client-offline.svg}
+0	0	tela-icon-theme/src/22/panel/{ubuntuone-client-paused.svg => trisquelone-client-paused.svg}
+0	0	tela-icon-theme/src/22/panel/{ubuntuone-client-updating.svg => trisquelone-client-updating.svg}
+0	0	tela-icon-theme/src/24/panel/{ubuntuone-client-error.svg => trisquelone-client-error.svg}
+0	0	tela-icon-theme/src/24/panel/{ubuntuone-client-idle.svg => trisquelone-client-idle.svg}
+0	0	tela-icon-theme/src/24/panel/{ubuntuone-client-offline.svg => trisquelone-client-offline.svg}
+0	0	tela-icon-theme/src/24/panel/{ubuntuone-client-paused.svg => trisquelone-client-paused.svg}
+0	0	tela-icon-theme/src/24/panel/{ubuntuone-client-updating.svg => trisquelone-client-updating.svg}
+0	0	tela-icon-theme/src/scalable/apps/{distributor-logo-kubuntu.svg => distributor-logo-ktrisquel.svg}
+0	0	tela-icon-theme/src/scalable/apps/{distributor-logo-lubuntu.svg => distributor-logo-ltrisquel.svg}
+2	2	tela-icon-theme/src/scalable/apps/{distributor-logo-ubuntu-budgie.svg => distributor-logo-trisquel-budgie.svg}
+0	0	tela-icon-theme/src/scalable/apps/{distributor-logo-ubuntu-gnome.svg => distributor-logo-trisquel-gnome.svg}
+0	0	tela-icon-theme/src/scalable/apps/{distributor-logo-ubuntu-mate.svg => distributor-logo-trisquel-mate.svg}
+0	0	tela-icon-theme/src/scalable/apps/{distributor-logo-ubuntu-studio.svg => distributor-logo-trisquel-studio.svg}
+0	0	tela-icon-theme/src/scalable/apps/{distributor-logo-ubuntu.svg => distributor-logo-trisquel.svg}
+0	0	tela-icon-theme/src/scalable/apps/{distributor-logo-xubuntu.svg => distributor-logo-xtrisquel.svg}
+0	0	tela-icon-theme/src/scalable/apps/{org.ubuntubudgie.budgiewpreviews.svg => org.trisquelbudgie.budgiewpreviews.svg}
+0	0	tela-icon-theme/src/scalable/apps/{org.ubuntubudgie.quickchar.svg => org.trisquelbudgie.quickchar.svg}
+0	0	tela-icon-theme/src/scalable/apps/{ubuntuone.svg => trisquelone.svg}
+1	1	tela-icon-theme/src/symbolic/actions/contact-new-symbolic.svg
+1	1	tela-icon-theme/src/symbolic/actions/document-edit-symbolic.svg
+1	1	tela-icon-theme/src/symbolic/actions/zoom-original-symbolic.svg
+1	1	tela-icon-theme/src/symbolic/apps/address-book-app-symbolic.svg
+1	1	tela-icon-theme/src/symbolic/apps/error-app-symbolic.svg
+1	1	tela-icon-theme/src/symbolic/apps/mail-app-symbolic.svg
+1	1	tela-icon-theme/src/symbolic/apps/messaging-app-symbolic.svg
+1	1	tela-icon-theme/src/symbolic/apps/org.gnome.Lollypop-artists-list-symbolic.svg
+0	0	tela-icon-theme/src/symbolic/apps/{preferences-ubuntu-panel-symbolic.svg => preferences-trisquel-panel-symbolic.svg}
+1	1	tela-icon-theme/src/symbolic/status/media-playlist-repeat-one-symbolic-rtl.svg
+1	1	tela-icon-theme/src/symbolic/status/media-playlist-repeat-one-symbolic.svg
+bin	bin	usr/share/plymouth/themes/trisquel-budgie-logo/trisquel-budgie-logo.png
+bin	bin	usr/share/plymouth/themes/trisquel-budgie-logo/trisquel-budgie-logo16.png
+bin	bin	usr/share/plymouth/themes/trisquel-budgie-logo/trisquel-budgie-logo16@2.png
+bin	bin	usr/share/plymouth/themes/trisquel-budgie-logo/trisquel-budgie-logo@2.png
+11	0	usr/share/plymouth/themes/trisquel-budgie-text/trisquel-budgie-text.plymouth.in
+0	11	usr/share/plymouth/themes/ubuntu-budgie-text/ubuntu-budgie-text.plymouth.in
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/animation-0001.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/animation-0002.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/animation-0003.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/animation-0004.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/animation-0005.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/animation-0006.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/animation-0007.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/animation-0008.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/animation-0009.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/animation-0010.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/animation-0011.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/animation-0012.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/animation-0013.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/animation-0014.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/animation-0015.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/animation-0016.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/animation-0017.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/animation-0018.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/animation-0019.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/animation-0020.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/animation-0021.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/animation-0022.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/animation-0023.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/animation-0024.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/animation-0025.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/animation-0026.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/animation-0027.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/animation-0028.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/animation-0029.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/animation-0030.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/animation-0031.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/animation-0032.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/animation-0033.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/animation-0034.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/animation-0035.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/animation-0036.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/bgrt-fallback.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/bullet.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/capslock.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/entry-nolock.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/entry.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/keyboard.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/keymap-render.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/lock.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/progress-00.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/throbber-0001.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/throbber-0002.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/throbber-0003.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/throbber-0004.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/throbber-0005.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/throbber-0006.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/throbber-0007.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/throbber-0008.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/throbber-0009.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/throbber-0010.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/throbber-0011.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/throbber-0012.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/throbber-0013.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/throbber-0014.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/throbber-0015.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/throbber-0016.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/throbber-0017.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/throbber-0018.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/throbber-0019.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/throbber-0020.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/throbber-0021.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/throbber-0022.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/throbber-0023.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/throbber-0024.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/throbber-0025.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/throbber-0026.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/throbber-0027.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/throbber-0028.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/throbber-0029.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/throbber-0030.png
+0	0	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/throbber.svg
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo => trisquel-budgie-logo}/watermark.png
+bin	bin	usr/share/plymouth/themes/{ubuntu-budgie-logo/ubuntu-budgie-logo.blend => trisquel-budgie-logo/trisquel-budgie-logo.blend}
+3	3	usr/share/plymouth/themes/{ubuntu-budgie-logo/ubuntu-budgie-logo.plymouth => trisquel-budgie-logo/trisquel-budgie-logo.plymouth}
+bin	bin	usr/share/plymouth/{ubuntu-budgie-logo.png => trisquel-budgie-logo.png}

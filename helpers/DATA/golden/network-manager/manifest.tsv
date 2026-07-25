@@ -1,0 +1,12 @@
+# trisquel golden manifest
+# package:      network-manager
+# blessed-by:   ark@switnet.org
+# blessed-at:   2026-07-25T13:52:58+00:00
+# upstream:     noble (24.04)  helper-version: 4
+# upstream-version: 1.46.0-1ubuntu2.7
+# blessed-with: AUDIT_BLESS=1
+# body-sha256:  ffc9bb3a2ec642c23412c35764dcf4076f0e2665de787a58501fb6e417fb999b
+--- manifest ---
+1	1	debian/rules
+4	4	src/core/dhcp/nm-dhcp-dhclient-utils.c
+25	25	src/core/dhcp/tests/test-dhcp-dhclient.c

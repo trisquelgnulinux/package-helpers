@@ -1,0 +1,13 @@
+# trisquel golden manifest
+# package:      redshift
+# blessed-by:   ark@switnet.org
+# blessed-at:   2026-07-25T14:12:54+00:00
+# upstream:     noble (24.04)  helper-version: 6
+# upstream-version: 1.12-4.2ubuntu4
+# blessed-with: AUDIT_BLESS=1
+# body-sha256:  ef5bf1a0ad44fc736b08e6db6842a6a905ea9faf61fd85a49f25d27da24193e3
+--- manifest ---
+0	1	debian/control
+2	1	debian/patches/Fix-AppArmor-profile-for-Wayland.patch
+28	0	debian/redshift.conf
+1	0	debian/redshift.install

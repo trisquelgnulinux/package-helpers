@@ -1,0 +1,36 @@
+# trisquel golden manifest
+# package:      nginx
+# blessed-by:   ark@switnet.org
+# blessed-at:   2026-07-25T13:54:04+00:00
+# upstream:     noble (24.04)  helper-version: 1
+# upstream-version: 1.24.0-2ubuntu7.15
+# blessed-with: AUDIT_BLESS=1
+# body-sha256:  8809f9d2b5c4ee4421d8a79fe673e212a73b659b787d7377bd7aa60f5af7de0b
+--- manifest ---
+1	0	auto/modules
+3	3	debian/patches/ubuntu-branding.patch
+21	3	src/core/nginx.c
+11	0	src/core/nginx.h
+32	0	src/event/ngx_event_openssl.c
+11	0	src/event/ngx_event_openssl_stapling.c
+10	14	src/http/modules/ngx_http_charset_filter_module.c
+26	13	src/http/modules/ngx_http_dav_module.c
+44	0	src/http/modules/ngx_http_grpc_module.c
+27	16	src/http/modules/ngx_http_mp4_module.c
+5	0	src/http/modules/ngx_http_proxy_module.c
+6	0	src/http/modules/ngx_http_scgi_module.c
+6	0	src/http/modules/ngx_http_uwsgi_module.c
+73	0	src/http/ngx_http_core_module.c
+14	0	src/http/ngx_http_header_count.hh
+59	4	src/http/ngx_http_request.c
+14	7	src/http/ngx_http_script.c
+9	0	src/http/ngx_http_upstream.c
+1	0	src/http/ngx_http_variables.c
+29	0	src/http/v2/ngx_http_v2.c
+2	0	src/http/v2/ngx_http_v2.h
+1	1	src/mail/ngx_mail_auth_http_module.c
+22	16	src/mail/ngx_mail_handler.c
+45	0	src/mail/ngx_mail_smtp_handler.c
+6	2	src/os/unix/ngx_daemon.c
+4	1	src/os/unix/ngx_posix_config.h
+10	0	src/stream/ngx_stream_ssl_module.c

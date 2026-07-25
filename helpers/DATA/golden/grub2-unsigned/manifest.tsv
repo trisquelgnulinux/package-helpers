@@ -1,0 +1,183 @@
+# trisquel golden manifest
+# package:      grub2-unsigned
+# blessed-by:   ark@switnet.org
+# blessed-at:   2026-07-25T09:36:23+00:00
+# upstream:     noble (24.04)  helper-version: 10
+# upstream-version: 2.12-1ubuntu7.3
+# blessed-with: AUDIT_BLESS=1
+# body-sha256:  06b0449de74a99ae6506f7f09efde51d9f31b1a58037992d031177cbde4ef389
+--- manifest ---
+4	4	Makefile.am
+16	16	Makefile.in
+12	12	conf/Makefile.extra-dist
+3	3	configure
+2	2	debian/build-efi-images
+5	5	debian/control
+1	1	debian/default/grub
+1	1	debian/default/grub.md5sum
+3	3	debian/grub.d/05_debian_theme
+2	2	debian/legacy/{update-grub.ubuntu.patch => update-grub.trisquel.patch}
+3	3	debian/patches/blacklist-1440x900x32.patch
+2	2	debian/patches/default-grub-d.patch
+2	2	debian/patches/efi-variable-storage-minimise-writes.patch
+1	1	debian/patches/gettext-quiet.patch
+5	5	debian/patches/gfxpayload-dynamic.patch
+4	4	debian/patches/grub-install-efi-title.patch
+1	1	debian/patches/hwmatch-only-on-grub-pc-platform.patch
+1	1	debian/patches/ieee1275-clear-reset.patch
+4	4	debian/patches/install-efi-adjust-distributor.patch
+1	1	debian/patches/install-efi-fallback.patch
+3	3	debian/patches/install-locale-langpack.patch
+4	4	debian/patches/maybe-quiet.patch
+2	2	debian/patches/mkconfig-loopback.patch
+2	2	debian/patches/mkconfig-nonexistent-loopback.patch
+5	5	debian/patches/mkconfig-recovery-title.patch
+0	36	debian/patches/mkconfig-ubuntu-distributor.patch
+1	1	debian/patches/network/rhboot-http-message-field-size.patch
+2	2	debian/patches/probe-fusionio.patch
+2	2	debian/patches/quick-boot-lvm.patch
+5	5	debian/patches/quick-boot.patch
+1	1	debian/patches/secure-boot/efi-use-peimage-shim.patch
+26	28	debian/patches/series
+0	36	debian/patches/ubuntu-zfs-mkconfig-ubuntu-distributor.patch
+4	4	debian/patches/vt-handoff.patch
+1	1	debian/patches/zpool-full-device-name.patch
+13	13	debian/patches/{mkconfig-ubuntu-recovery.patch => mkconfig-trisquel-recovery.patch}
+3	3	debian/patches/{ubuntu-add-devicetree-command-support.patch => trisquel-add-devicetree-command-support.patch}
+2	2	debian/patches/{ubuntu-add-initrd-less-boot-fallback.patch => trisquel-add-initrd-less-boot-fallback.patch}
+2	2	debian/patches/{ubuntu-add-initrd-less-boot-messages.patch => trisquel-add-initrd-less-boot-messages.patch}
+3	3	debian/patches/{ubuntu-boot-from-multipath-dependent-symlink.patch => trisquel-boot-from-multipath-dependent-symlink.patch}
+1	1	debian/patches/{ubuntu-dont-verify-loopback-images.patch => trisquel-dont-verify-loopback-images.patch}
+1	1	debian/patches/{ubuntu-fix-lzma-decompressor-objcopy.patch => trisquel-fix-lzma-decompressor-objcopy.patch}
+1	1	debian/patches/{ubuntu-grub-install-extra-removable.patch => trisquel-grub-install-extra-removable.patch}
+6	6	debian/patches/{ubuntu-install-signed.patch => trisquel-install-signed.patch}
+1	1	debian/patches/{ubuntu-mkconfig-leave-breadcrumbs.patch => trisquel-mkconfig-leave-breadcrumbs.patch}
+1	1	debian/patches/{ubuntu-os-prober-auto.patch => trisquel-os-prober-auto.patch}
+1	1	debian/patches/{ubuntu-recovery-dis_ucode_ldr.patch => trisquel-recovery-dis_ucode_ldr.patch}
+1	1	debian/patches/{ubuntu-resilient-boot-boot-order.patch => trisquel-resilient-boot-boot-order.patch}
+1	1	debian/patches/{ubuntu-resilient-boot-ignore-alternative-esps.patch => trisquel-resilient-boot-ignore-alternative-esps.patch}
+2	2	debian/patches/{ubuntu-shorter-version-info.patch => trisquel-shorter-version-info.patch}
+7	7	debian/patches/{ubuntu-speed-zsys-history.patch => trisquel-speed-zsys-history.patch}
+1	1	debian/patches/{ubuntu-support-initrd-less-boot.patch => trisquel-support-initrd-less-boot.patch}
+1	1	debian/patches/{ubuntu-verifiers-last.patch => trisquel-verifiers-last.patch}
+9	9	debian/patches/{ubuntu-zfs-enhance-support.patch => trisquel-zfs-enhance-support.patch}
+5	5	debian/patches/{ubuntu-zfs-gfxpayload-dynamic.patch => trisquel-zfs-gfxpayload-dynamic.patch}
+1	1	debian/patches/{ubuntu-zfs-gfxpayload-keep-default.patch => trisquel-zfs-gfxpayload-keep-default.patch}
+0	0	debian/patches/{ubuntu-zfs-insmod-xzio-and-lzopio-on-xen.patch => trisquel-zfs-insmod-xzio-and-lzopio-on-xen.patch}
+3	3	debian/patches/{ubuntu-zfs-mkconfig-recovery-title.patch => trisquel-zfs-mkconfig-recovery-title.patch}
+2	2	debian/patches/{ubuntu-zfs-mkconfig-signed-kernel.patch => trisquel-zfs-mkconfig-signed-kernel.patch}
+6	6	debian/patches/{ubuntu-zfs-mkconfig-ubuntu-recovery.patch => trisquel-zfs-mkconfig-ubuntu-recovery.patch}
+3	3	debian/patches/{ubuntu-zfs-vt-handoff.patch => trisquel-zfs-vt-handoff.patch}
+1	1	debian/po/ta.po
+2	2	debian/postinst.in
+12	12	debian/rules
+1	1	debian/{sbat.ubuntu.csv.in => sbat.trisquel.csv.in}
+1	1	grub-core/lib/syslinux_parse.c
+2	2	grub-core/tests/gfxterm_menu.c
+2	2	m4/threadlib.m4
+bin	bin	po/ast.gmo
+36	36	po/ast.po
+bin	bin	po/ca.gmo
+34	34	po/ca.po
+bin	bin	po/da.gmo
+34	34	po/da.po
+bin	bin	po/de.gmo
+41	41	po/de.po
+bin	bin	po/de@hebrew.gmo
+19	19	po/de@hebrew.po
+bin	bin	po/de_CH.gmo
+41	41	po/de_CH.po
+bin	bin	po/en@arabic.gmo
+18	18	po/en@arabic.po
+bin	bin	po/en@cyrillic.gmo
+18	18	po/en@cyrillic.po
+bin	bin	po/en@greek.gmo
+18	18	po/en@greek.po
+bin	bin	po/en@hebrew.gmo
+18	18	po/en@hebrew.po
+bin	bin	po/en@piglatin.gmo
+18	18	po/en@piglatin.po
+bin	bin	po/en@quot.gmo
+35	35	po/en@quot.po
+bin	bin	po/eo.gmo
+18	18	po/eo.po
+bin	bin	po/es.gmo
+36	36	po/es.po
+bin	bin	po/fi.gmo
+37	37	po/fi.po
+bin	bin	po/fr.gmo
+37	37	po/fr.po
+bin	bin	po/gl.gmo
+25	25	po/gl.po
+18	18	po/grub.pot
+bin	bin	po/he.gmo
+18	18	po/he.po
+bin	bin	po/hr.gmo
+37	37	po/hr.po
+bin	bin	po/hu.gmo
+37	37	po/hu.po
+bin	bin	po/id.gmo
+42	42	po/id.po
+bin	bin	po/it.gmo
+33	33	po/it.po
+bin	bin	po/ja.gmo
+23	23	po/ja.po
+bin	bin	po/ka.gmo
+27	27	po/ka.po
+bin	bin	po/ko.gmo
+21	21	po/ko.po
+18	18	po/lg.po
+bin	bin	po/lt.gmo
+34	34	po/lt.po
+bin	bin	po/nb.gmo
+38	38	po/nb.po
+bin	bin	po/nl.gmo
+38	38	po/nl.po
+bin	bin	po/pa.gmo
+18	18	po/pa.po
+bin	bin	po/pl.gmo
+25	25	po/pl.po
+bin	bin	po/pt.gmo
+37	37	po/pt.po
+bin	bin	po/pt_BR.gmo
+35	35	po/pt_BR.po
+bin	bin	po/ro.gmo
+38	38	po/ro.po
+bin	bin	po/ru.gmo
+36	36	po/ru.po
+bin	bin	po/sl.gmo
+25	25	po/sl.po
+bin	bin	po/sr.gmo
+19	19	po/sr.po
+bin	bin	po/sv.gmo
+36	36	po/sv.po
+bin	bin	po/tr.gmo
+35	35	po/tr.po
+bin	bin	po/uk.gmo
+37	37	po/uk.po
+bin	bin	po/vi.gmo
+37	37	po/vi.po
+bin	bin	po/zh_CN.gmo
+39	39	po/zh_CN.po
+bin	bin	po/zh_TW.gmo
+27	27	po/zh_TW.po
+1	0	tests/grub_cmd_set_date.in
+0	0	tests/syslinux/{ubuntu10.04 => trisquel10.04}/isolinux/adtxt.cfg
+0	0	tests/syslinux/{ubuntu10.04 => trisquel10.04}/isolinux/dtmenu.cfg
+0	0	tests/syslinux/{ubuntu10.04 => trisquel10.04}/isolinux/exithelp.cfg
+0	0	tests/syslinux/{ubuntu10.04 => trisquel10.04}/isolinux/gfxboot.cfg
+0	0	tests/syslinux/{ubuntu10.04 => trisquel10.04}/isolinux/isolinux.cfg
+0	0	tests/syslinux/{ubuntu10.04 => trisquel10.04}/isolinux/menu.cfg
+0	0	tests/syslinux/{ubuntu10.04 => trisquel10.04}/isolinux/po4a.cfg
+0	0	tests/syslinux/{ubuntu10.04 => trisquel10.04}/isolinux/prompt.cfg
+0	0	tests/syslinux/{ubuntu10.04 => trisquel10.04}/isolinux/rqtxt.cfg
+0	0	tests/syslinux/{ubuntu10.04 => trisquel10.04}/isolinux/stdmenu.cfg
+4	4	tests/syslinux/{ubuntu10.04 => trisquel10.04}/isolinux/txt.cfg
+27	27	tests/syslinux/{ubuntu10.04_grub.cfg.in => trisquel10.04_grub.cfg.in}
+3	3	tests/syslinux_test.in
+1	1	util/grub.d/10_hurd.in
+1	1	util/grub.d/10_illumos.in
+1	1	util/grub.d/10_kfreebsd.in
+11	4	util/grub.d/10_linux.in
+1	1	util/grub.d/20_linux_xen.in
+6	6	util/grub.d/30_os-prober.in

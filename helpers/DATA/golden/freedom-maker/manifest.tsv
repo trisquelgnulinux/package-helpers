@@ -1,0 +1,32 @@
+# trisquel golden manifest
+# package:      freedom-maker
+# blessed-by:   ark@switnet.org
+# blessed-at:   2026-07-25T09:29:03+00:00
+# upstream:     noble (24.04)  helper-version: 1
+# upstream-version: 0.33
+# blessed-with: AUDIT_BLESS=1
+# body-sha256:  20317e80a82d7bca99d8525315a742af1e7445cad61dd8fa36b3b2fb4adac717
+--- manifest ---
+72	56	README.md
+1	1	debian/control
+8	19	doc/freedom-maker.xml
+9	1	freedommaker/__main__.py
+3	3	freedommaker/application.py
+6	3	freedommaker/builder.py
+0	8	freedommaker/builders/__init__.py
+1	1	freedommaker/builders/a20.py
+1	1	freedommaker/builders/a64.py
+1	1	freedommaker/builders/amd64.py
+1	1	freedommaker/builders/arm64.py
+1	1	freedommaker/builders/armhf.py
+1	1	freedommaker/builders/beaglebone.py
+1	1	freedommaker/builders/i386.py
+1	1	freedommaker/builders/qemu_amd64.py
+1	1	freedommaker/builders/qemu_i386.py
+0	15	freedommaker/builders/raspberry_pi_2.py
+0	15	freedommaker/builders/raspberry_pi_3.py
+0	46	freedommaker/builders/raspberry_pi_64bit.py
+0	46	freedommaker/builders/raspberry_pi_with_uboot.py
+0	56	freedommaker/builders/vagrant.py
+4	4	freedommaker/library.py
+25	19	freedommaker/tests/test_library.py

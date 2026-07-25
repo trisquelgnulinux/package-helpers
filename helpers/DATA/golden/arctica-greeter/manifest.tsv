@@ -1,0 +1,25 @@
+# trisquel golden manifest
+# package:      arctica-greeter
+# blessed-by:   ark@switnet.org
+# blessed-at:   2026-07-25T08:50:12+00:00
+# upstream:     noble (24.04)  helper-version: 4
+# upstream-version: 0.99.5.0-3ubuntu2
+# blessed-with: AUDIT_BLESS=1
+# body-sha256:  33663ce1cad6df731409ccd4f09476f6dbc82b6a1bf12ee0fbcd613a2b525654
+--- manifest ---
+0	3	data/90-arctica-greeter.conf
+1	1	data/Makefile.am
+1	1	data/badges/COPYING.badges
+bin	bin	data/badges/trisquel_badge.png
+bin	bin	data/badges/unknown_badge.png
+bin	bin	data/cof.png
+bin	bin	data/logo-bare.png
+bin	bin	data/logo.png
+31	159	data/org.ArcticaProject.arctica-greeter.gschema.xml
+bin	bin	data/sounds/stereo/system-ready.ogg
+0	2	debian/control
+0	1	debian/rules
+bin	bin	logo.png
+1	1	src/dash-box.vala
+1	1	src/session-list.vala
+2	0	src/toggle-box.vala

@@ -1,0 +1,19 @@
+# trisquel golden manifest
+# package:      qtwebengine-opensource-src
+# blessed-by:   ark@switnet.org
+# blessed-at:   2026-07-25T14:10:36+00:00
+# upstream:     noble (24.04)  helper-version: 5
+# upstream-version: 5.15.16+dfsg-3
+# blessed-with: AUDIT_BLESS=1
+# body-sha256:  ad6a67bcc7564a0bed8ca86021469ea1b58a5720f8e7e925b1ee313a1926d220
+--- manifest ---
+1	1	debian/rules
+0	9	src/3rdparty/chromium/third_party/arcore-android-sdk/BUILD.gn
+0	158	src/3rdparty/chromium/third_party/arcore-android-sdk/LICENSE
+0	6	src/3rdparty/chromium/third_party/arcore-android-sdk/OWNERS
+0	45	src/3rdparty/chromium/third_party/arcore-android-sdk/README.chromium
+0	7	src/3rdparty/chromium/third_party/arcore-android-sdk/test-apks/arcore/apk_version_history.txt
+0	1	src/3rdparty/chromium/third_party/arcore-android-sdk/test-apks/arcore/arcore_current.apk.sha1
+0	26	src/3rdparty/chromium/third_party/arcore-android-sdk/test-apks/update.py
+bin	bin	src/3rdparty/chromium/third_party/blink/manual_tests/WebKitSite.webarchive
+1	0	src/core/config/common.pri

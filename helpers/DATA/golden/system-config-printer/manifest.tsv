@@ -1,0 +1,14 @@
+# trisquel golden manifest
+# package:      system-config-printer
+# blessed-by:   ark@switnet.org
+# blessed-at:   2026-07-25T14:18:33+00:00
+# upstream:     noble (24.04)  helper-version: 3
+# upstream-version: 1.5.18-1ubuntu9
+# blessed-with: AUDIT_BLESS=1
+# body-sha256:  20a698a6cac80605f8cc05678ee09c8fff005ba14823c639ebfedc83384b16df
+--- manifest ---
+2	2	debian/control
+0	20	debian/patches/Allow-installing-non-free-drivers-from-OpenPrinting.patch
+0	21	debian/patches/Allow-installing-packages-from-OpenPrinting.patch
+1	1	debian/patches/Do-not-autostart-the-applet-on-LXDE-or-Unity.patch
+0	2	debian/patches/series

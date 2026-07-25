@@ -1,0 +1,16 @@
+# trisquel golden manifest
+# package:      apache2
+# blessed-by:   ark@switnet.org
+# blessed-at:   2026-07-25T08:47:02+00:00
+# upstream:     noble (24.04)  helper-version: 3
+# upstream-version: 2.4.58-1ubuntu8.15
+# blessed-with: AUDIT_BLESS=1
+# body-sha256:  d08dd036b7e321f50dd7400babb1d9d87c8b82cde6b1207655f95a9251143119
+--- manifest ---
+1	0	debian/apache2.postrm
+bin	bin	debian/icons/trisquel-logo.png
+bin	bin	debian/icons/ubuntu-logo.png
+62	72	debian/index.html
+1	1	debian/rules
+1	1	debian/source/include-binaries
+1	1	debian/tests/check-ubuntu-branding

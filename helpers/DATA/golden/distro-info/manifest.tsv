@@ -1,0 +1,36 @@
+# trisquel golden manifest
+# package:      distro-info
+# blessed-by:   ark@switnet.org
+# blessed-at:   2026-07-25T09:03:24+00:00
+# upstream:     noble (24.04)  helper-version: 2
+# upstream-version: 1.7build1
+# blessed-with: AUDIT_BLESS=1
+# body-sha256:  6dd79019695517fb3153aece583ec619d1d111d0955c525e62686f70c238899e
+--- manifest ---
+5	5	Makefile
+4	4	debian/control
+2	2	debian/tests/control
+8	30	distro-info-util.c
+1	1	doc/debian-distro-info.1
+2	2	doc/distro-info.1
+3	3	doc/ubuntu-distro-info.1
+52	52	haskell/DistroInfo.hs
+4	4	haskell/Makefile
+34	34	haskell/TestDistroInfo.hs
+16	16	haskell/{UbuntuDistroInfo.hs => TrisquelDistroInfo.hs}
+3	3	perl/Debian/DistroInfo.pm
+37	55	perl/test.pl
+8	21	python/distro_info.py
+1	1	python/distro_info_test/__init__.py
+42	43	python/distro_info_test/test_distro_info.py
+1	1	python/distro_info_test/test_mypy.py
+9	9	python/distro_info_test/test_setup.py
+1	1	python/setup.py
+8	8	python/{ubuntu-distro-info => trisquel-distro-info}
+3	3	shell/Makefile
+1	1	shell/debian-distro-info.in
+17	17	shell/distro-info-util.sh
+6	6	shell/{ubuntu-distro-info.in => trisquel-distro-info.in}
+282	0	test-trisquel-distro-info
+59	59	test-ubuntu-distro-info
+5	5	ubuntu-distro-info.c => trisquel-distro-info.c

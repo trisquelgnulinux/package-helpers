@@ -1,0 +1,15 @@
+# trisquel golden manifest
+# package:      command-not-found
+# blessed-by:   ark@switnet.org
+# blessed-at:   2026-07-25T08:57:29+00:00
+# upstream:     noble (24.04)  helper-version: 3
+# upstream-version: 23.04.0
+# blessed-with: AUDIT_BLESS=1
+# body-sha256:  9c7ff9cc0dba39666ed3568b81c8f355c55c4533f115fdf5cb32e79b9be7cffc
+--- manifest ---
+1	6	CommandNotFound/CommandNotFound.py
+0	6	CommandNotFound/db/creator.py
+18	22	CommandNotFound/db/tests/test_db.py
+0	1	debian/control
+6	6	mirror/do-mirror
+0	13	update-from-web.sh

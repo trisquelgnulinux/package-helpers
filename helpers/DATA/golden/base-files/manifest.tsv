@@ -1,0 +1,28 @@
+# trisquel golden manifest
+# package:      base-files
+# blessed-by:   ark@switnet.org
+# blessed-at:   2026-07-25T08:51:33+00:00
+# upstream:     noble (24.04)  helper-version: 7
+# upstream-version: 13ubuntu10.4
+# blessed-with: AUDIT_BLESS=1
+# body-sha256:  65136ce7dd07ca78ff5009544eede1adda9bce4eaa322da44d726c822ebfffbd
+--- manifest ---
+1	0	debian/conffiles
+0	19	debian/motd-news
+0	1	debian/motd-news-config.install
+0	5	debian/motd-news-config.lintian-overrides
+0	55	debian/motd-news-config.postinst
+0	8	debian/motd-news.service
+0	11	debian/motd-news.timer
+1	5	debian/rules
+1	1	etc/issue
+1	1	etc/issue.net
+5	5	etc/legal
+4	4	etc/lsb-release
+11	12	etc/os-release
+0	0	motd/00-header
+13	0	motd/01-banner
+2	25	motd/10-help-text
+0	146	motd/50-motd-news
+4	0	origins/trisquel
+19	0	share/dot.bashrc

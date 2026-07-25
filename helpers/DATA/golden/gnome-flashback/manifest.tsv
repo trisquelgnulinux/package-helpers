@@ -1,0 +1,17 @@
+# trisquel golden manifest
+# package:      gnome-flashback
+# blessed-by:   ark@switnet.org
+# blessed-at:   2026-07-25T09:32:06+00:00
+# upstream:     noble (24.04)  helper-version: 1
+# upstream-version: 3.52.1-2ubuntu1.1
+# blessed-with: AUDIT_BLESS=1
+# body-sha256:  b6d79ec3b16be8adbf3f8a088a7cef3400668ae22e29ca2e2866ee5594c9f092
+--- manifest ---
+0	1	data/menus/Makefile.am
+0	1	data/menus/Makefile.in
+0	225	data/menus/gnome-flashback-applications.menu
+0	1	debian/gnome-flashback-common.install
+0	38	debian/gnome-session-flashback.gsettings-override
+1	1	debian/gnome-session-flashback.postinst
+0	1	debian/patches/series
+0	33	debian/patches/snap_store.diff

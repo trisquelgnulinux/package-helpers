@@ -1,0 +1,13 @@
+# trisquel golden manifest
+# package:      electrum
+# blessed-by:   ark@switnet.org
+# blessed-at:   2026-07-25T09:05:56+00:00
+# upstream:     noble (24.04)  helper-version: 3
+# upstream-version: 4.3.4+dfsg1-1+deb12u1
+# blessed-with: AUDIT_BLESS=1
+# body-sha256:  77c82b7bd0e03ecf0bdbf67c68dac3ba0c2f252a1c45a1938a688827a32cb194
+--- manifest ---
+2	1	debian/control
+0	21	debian/patches/Replace-vendored-distutils.patch
+0	1	debian/patches/series
+3	3	electrum/gui/qt/update_checker.py

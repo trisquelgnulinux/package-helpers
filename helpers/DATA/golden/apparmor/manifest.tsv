@@ -1,0 +1,18 @@
+# trisquel golden manifest
+# package:      apparmor
+# blessed-by:   ark@switnet.org
+# blessed-at:   2026-07-25T08:47:56+00:00
+# upstream:     noble (24.04)  helper-version: 4
+# upstream-version: 4.0.1really4.0.1-0ubuntu0.24.04.7
+# blessed-with: AUDIT_BLESS=1
+# body-sha256:  c0b9da269d3837c4917171861b585aa69e9fc774be11a868b003b2b17ac05d05
+--- manifest ---
+3	0	debian/apparmor.install
+12	0	profiles/apparmor.d/abrowser
+12	0	profiles/apparmor.d/icecat
+12	0	profiles/apparmor.d/icedove
+10	2	profiles/apparmor.d/transmission
+470	0	profiles/apparmor/profiles/extras/abrowser
+14	14	profiles/apparmor/profiles/extras/firefox
+38	0	profiles/apparmor/profiles/extras/firefox.sh
+470	0	profiles/apparmor/profiles/extras/icecat

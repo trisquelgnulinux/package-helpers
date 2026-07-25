@@ -1,0 +1,166 @@
+# trisquel golden manifest
+# package:      kubuntu-settings
+# blessed-by:   ark@switnet.org
+# blessed-at:   2026-07-25T09:49:59+00:00
+# upstream:     noble (24.04)  helper-version: 16
+# upstream-version: 24.04.13
+# blessed-with: AUDIT_BLESS=1
+# body-sha256:  c8c6e68b2f85f9752f2fc2ddb3684e678e062529bc09f1563b09e2ad9c66fc05
+--- manifest ---
+10	39	debian/control
+0	4	debian/kubuntu-settings-desktop.links
+0	1	debian/plymouth-theme-kubuntu-logo.install
+0	39	debian/plymouth-theme-kubuntu-logo.postinst
+0	43	debian/plymouth-theme-kubuntu-logo.postrm
+0	1	debian/plymouth-theme-kubuntu-text.install
+0	50	debian/plymouth-theme-kubuntu-text.postinst
+0	19	debian/plymouth-theme-kubuntu-text.postrm
+0	20	debian/plymouth-theme-kubuntu-text.prerm
+0	1	debian/plymouth-theme-kubuntu-text.triggers
+4	0	debian/triskel-settings-desktop.links
+49	0	debian/triskel-settings-desktop.preinst
+0	0	debian/{kubuntu-settings-desktop.dirs => triskel-settings-desktop.dirs}
+4	3	debian/{kubuntu-settings-desktop.install => triskel-settings-desktop.install}
+1	1	debian/{kubuntu-settings-desktop.maintscript => triskel-settings-desktop.maintscript}
+4	4	debian/{kubuntu-settings-desktop.postinst => triskel-settings-desktop.postinst}
+0	0	debian/{kubuntu-settings-desktop.postrm => triskel-settings-desktop.postrm}
+0	0	desktop/bin/{kubuntu-driver-manager => triskel-driver-manager}
+2	2	desktop/color-schemes/KubuntuLight.colors
+0	2	desktop/etc/X11/Xsession.d/70xdg-kubuntu-dir
+2	0	desktop/etc/X11/Xsession.d/70xdg-triskel-dir
+0	0	desktop/etc/X11/Xsession.d/{80kubuntu-xmodmap => 80triskel-xmodmap}
+0	0	desktop/etc/fonts/conf.avail/{56-kubuntu-noto.conf => 56-triskel-noto.conf}
+1	1	desktop/etc/kde4rc
+1	1	desktop/etc/sddm.conf.d/default.conf
+0	0	desktop/etc/sddm.conf.d/{kubuntu_settings.conf => triskel_settings.conf}
+bin	bin	desktop/etc/skel/.face
+3	3	desktop/etc/xdg/kcm-about-distrorc
+2	2	desktop/etc/xdg/kickoffrc
+1	1	desktop/etc/xdg/plasma-workspace/env/env.sh
+0	0	desktop/etc/{kubuntu-default-settings => triskel-default-settings}/directory-home
+0	0	desktop/etc/{kubuntu-default-settings => triskel-default-settings}/directory-media
+0	0	desktop/etc/{kubuntu-default-settings => triskel-default-settings}/hidden-media
+1	1	desktop/kcm/kcm_driver_manager.desktop
+3	3	desktop/kf5-settings/kcm-about-distrorc
+2	0	desktop/kf5-settings/kcminputrc
+9	2	desktop/kf5-settings/kdeglobals
+2	2	desktop/kf5-settings/kscreenlockerrc
+2	0	desktop/kf5-settings/ksmserverrc
+3	0	desktop/kf5-settings/ksplashrc
+1	1	desktop/kf5-settings/muondatasourcesrc
+1	1	desktop/kf5-settings/plasmarc
+bin	bin	desktop/kubuntu-logo.png
+0	0	desktop/live/usr-share/initramfs-tools/scripts/casper-bottom/{40kubuntu_setup => 40triskel_setup}
+14	14	desktop/plasma/plasma-welcome-extra-pages/01-Kubuntu.qml
+bin	bin	desktop/sddm/themes/kubuntu/faces/.face.icon
+0	8	desktop/sddm/themes/kubuntu/theme.conf
+366	0	desktop/sddm/themes/triskel/faces/.face.icon
+8	0	desktop/sddm/themes/triskel/theme.conf
+0	0	desktop/sddm/themes/{kubuntu => triskel}/Background.qml
+0	0	desktop/sddm/themes/{kubuntu => triskel}/KeyboardButton.qml
+0	0	desktop/sddm/themes/{kubuntu => triskel}/Login.qml
+0	0	desktop/sddm/themes/{kubuntu => triskel}/Main.qml
+0	0	desktop/sddm/themes/{kubuntu => triskel}/SessionButton.qml
+0	0	desktop/sddm/themes/{kubuntu => triskel}/components/ActionButton.qml
+0	0	desktop/sddm/themes/{kubuntu => triskel}/components/Battery.qml
+0	0	desktop/sddm/themes/{kubuntu => triskel}/components/Clock.qml
+0	0	desktop/sddm/themes/{kubuntu => triskel}/components/SessionManagementScreen.qml
+0	0	desktop/sddm/themes/{kubuntu => triskel}/components/UserDelegate.qml
+0	0	desktop/sddm/themes/{kubuntu => triskel}/components/UserList.qml
+0	0	desktop/sddm/themes/{kubuntu => triskel}/components/VirtualKeyboard.qml
+0	0	desktop/sddm/themes/{kubuntu => triskel}/components/VirtualKeyboard_wayland.qml
+0	0	desktop/sddm/themes/{kubuntu => triskel}/components/WallpaperFader.qml
+0	0	desktop/sddm/themes/{kubuntu => triskel}/components/animation/RejectPasswordAnimation.qml
+0	0	desktop/sddm/themes/{kubuntu => triskel}/components/animation/RejectPasswordPathAnimation.qml
+bin	bin	desktop/sddm/themes/{kubuntu => triskel}/components/artwork/logout_primary.svgz
+bin	bin	desktop/sddm/themes/{kubuntu => triskel}/components/artwork/restart_primary.svgz
+bin	bin	desktop/sddm/themes/{kubuntu => triskel}/components/artwork/shutdown_primary.svgz
+0	0	desktop/sddm/themes/{kubuntu => triskel}/default-logo.svg
+3	3	desktop/sddm/themes/{kubuntu => triskel}/metadata.desktop
+bin	bin	desktop/sddm/themes/{kubuntu => triskel}/preview.png
+bin	bin	desktop/theme/desktoptheme/kubuntu/icons/start.svgz
+bin	bin	desktop/theme/desktoptheme/triskel/icons/start.svgz
+26	0	desktop/theme/desktoptheme/triskel/metadata.desktop
+0	0	desktop/theme/desktoptheme/{kubuntu => triskel}/colors
+4	4	desktop/theme/desktoptheme/{kubuntu => triskel}/metadata.json
+0	71	desktop/theme/layout-templates/org.kubuntu.desktop.defaultPanel/metadata.json
+71	0	desktop/theme/layout-templates/org.triskel.desktop.defaultPanel/metadata.json
+9	6	desktop/theme/layout-templates/{org.kubuntu.desktop.defaultPanel => org.triskel.desktop.defaultPanel}/contents/layout.js
+50	50	desktop/theme/layout-templates/{org.kubuntu.desktop.defaultPanel => org.triskel.desktop.defaultPanel}/metadata.desktop
+0	33	desktop/theme/look-and-feel/org.kubuntu.desktop/contents/defaults
+bin	bin	desktop/theme/look-and-feel/org.kubuntu.desktop/contents/previews/fullscreenpreview.jpg
+bin	bin	desktop/theme/look-and-feel/org.kubuntu.desktop/contents/previews/preview.png
+17	0	desktop/theme/look-and-feel/org.triskel.desktop/contents/defaults
+bin	bin	desktop/theme/look-and-feel/org.triskel.desktop/contents/previews/fullscreenpreview.jpg
+bin	bin	desktop/theme/look-and-feel/org.triskel.desktop/contents/previews/preview.png
+1	1	desktop/theme/look-and-feel/{org.kubuntu.desktop => org.triskel.desktop}/contents/layouts/org.kde.plasma.desktop-layout.js
+6	6	desktop/theme/look-and-feel/{org.kubuntu.desktop => org.triskel.desktop}/metadata.desktop
+6	6	desktop/theme/look-and-feel/{org.kubuntu.desktop => org.triskel.desktop}/metadata.json
+bin	bin	desktop/triskel-logo.png
+11	0	desktop/usr-share/README.md
+bin	bin	desktop/usr-share/TrisquelLogo.png
+bin	bin	desktop/usr-share/kubuntu-circle-128.png
+0	78	desktop/usr-share/kubuntu_donate.svg
+0	111	desktop/usr-share/kubuntu_tour.svg
+1	1	desktop/usr-share/settings.ini
+102	0	desktop/usr-share/triskel_donate.svg
+482	0	desktop/usr-share/triskel_tour.svg
+0	43	plymouth/kubuntu-logo/README.md
+bin	bin	plymouth/kubuntu-logo/bullet.png
+bin	bin	plymouth/kubuntu-logo/capslock.png
+bin	bin	plymouth/kubuntu-logo/entry-nolock.png
+bin	bin	plymouth/kubuntu-logo/entry.png
+bin	bin	plymouth/kubuntu-logo/keyboard.png
+0	4	plymouth/kubuntu-logo/keyboard_24px.svg
+0	4	plymouth/kubuntu-logo/keyboard_48px.svg
+bin	bin	plymouth/kubuntu-logo/keymap-render.png
+0	10	plymouth/kubuntu-logo/kubuntu-logo.grub
+0	58	plymouth/kubuntu-logo/kubuntu-logo.plymouth
+0	514	plymouth/kubuntu-logo/kubuntu-logo.script
+bin	bin	plymouth/kubuntu-logo/lock.png
+0	283	plymouth/kubuntu-logo/lock.svg
+bin	bin	plymouth/kubuntu-logo/progress-00.png
+bin	bin	plymouth/kubuntu-logo/throbber-0001.png
+bin	bin	plymouth/kubuntu-logo/throbber-0002.png
+bin	bin	plymouth/kubuntu-logo/throbber-0003.png
+bin	bin	plymouth/kubuntu-logo/throbber-0004.png
+bin	bin	plymouth/kubuntu-logo/throbber-0005.png
+bin	bin	plymouth/kubuntu-logo/throbber-0006.png
+bin	bin	plymouth/kubuntu-logo/throbber-0007.png
+bin	bin	plymouth/kubuntu-logo/throbber-0008.png
+bin	bin	plymouth/kubuntu-logo/throbber-0009.png
+bin	bin	plymouth/kubuntu-logo/throbber-0010.png
+bin	bin	plymouth/kubuntu-logo/throbber-0011.png
+bin	bin	plymouth/kubuntu-logo/throbber-0012.png
+bin	bin	plymouth/kubuntu-logo/throbber-0013.png
+bin	bin	plymouth/kubuntu-logo/throbber-0014.png
+bin	bin	plymouth/kubuntu-logo/throbber-0015.png
+bin	bin	plymouth/kubuntu-logo/throbber-0016.png
+bin	bin	plymouth/kubuntu-logo/throbber-0017.png
+bin	bin	plymouth/kubuntu-logo/throbber-0018.png
+bin	bin	plymouth/kubuntu-logo/throbber-0019.png
+bin	bin	plymouth/kubuntu-logo/throbber-0020.png
+bin	bin	plymouth/kubuntu-logo/throbber-0021.png
+bin	bin	plymouth/kubuntu-logo/throbber-0022.png
+bin	bin	plymouth/kubuntu-logo/throbber-0023.png
+bin	bin	plymouth/kubuntu-logo/throbber-0024.png
+bin	bin	plymouth/kubuntu-logo/throbber-0025.png
+bin	bin	plymouth/kubuntu-logo/throbber-0026.png
+bin	bin	plymouth/kubuntu-logo/throbber-0027.png
+bin	bin	plymouth/kubuntu-logo/throbber-0028.png
+bin	bin	plymouth/kubuntu-logo/throbber-0029.png
+bin	bin	plymouth/kubuntu-logo/throbber-0030.png
+bin	bin	plymouth/kubuntu-logo/throbber-0031.png
+bin	bin	plymouth/kubuntu-logo/throbber-0032.png
+bin	bin	plymouth/kubuntu-logo/throbber.xcf
+bin	bin	plymouth/kubuntu-logo/watermark.png
+0	15	plymouth/kubuntu-text/kubuntu-text.plymouth.in
+bin	bin	wallpaper/Aramo/contents/images/5120x2880.jpg
+bin	bin	wallpaper/Aramo/contents/screenshot.png
+4	0	wallpaper/Aramo/metadata.desktop
+bin	bin	wallpaper/Ecne/contents/images/3840x2160.jpg
+bin	bin	wallpaper/Ecne/contents/screenshot.jpg
+4	0	wallpaper/Ecne/metadata.desktop
+bin	bin	wallpaper/Nabia/contents/images/4494x3000.jpg
+bin	bin	wallpaper/Nabia/contents/screenshot.png
+4	0	wallpaper/Nabia/metadata.desktop

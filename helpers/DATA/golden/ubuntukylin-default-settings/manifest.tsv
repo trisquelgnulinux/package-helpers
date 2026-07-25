@@ -1,0 +1,31 @@
+# trisquel golden manifest
+# package:      ubuntukylin-default-settings
+# blessed-by:   ark@switnet.org
+# blessed-at:   2026-07-25T14:50:59+00:00
+# upstream:     noble (24.04)  helper-version: 2
+# upstream-version: 24.04.1
+# blessed-with: AUDIT_BLESS=1
+# body-sha256:  a553886994a4f659d7191d39a91aea8e44c6c3e82cf55e3e12cdc97a3804913c
+--- manifest ---
+1	0	debian/apport/trisquelkylin
+0	1	debian/apport/ubuntukylin
+4	4	debian/control
+6	0	debian/trisquelkylin-default-settings.install
+0	6	debian/ubuntukylin-default-settings.install
+5	5	debian/ukui-mimeapps.list
+1	1	debian/{20_ubuntukylin-default-settings.gschema.override => 20_trisquelkylin-default-settings.gschema.override}
+1	1	debian/{firefox/browser/defaults/preferences/all-ubuntukylin.js => abrowser/browser/defaults/preferences/all-trisquelkylin.js}
+1	1	debian/{firefox/ubuntukylin.cfg => abrowser/trisquelkylin.cfg}
+4	4	debian/{ubuntukylin-default-settings.postinst => trisquelkylin-default-settings.postinst}
+5	5	debian/{ubuntukylin-default-settings.postrm => trisquelkylin-default-settings.postrm}
+4	4	debian/{ubuntukylin-default-settings.preinst => trisquelkylin-default-settings.preinst}
+0	0	debian/{ubuntukylin-live-settings.install => trisquelkylin-live-settings.install}
+12	12	hooks/chroot
+bin	bin	icons/{ubuntu_installed.png => trisquel_installed.png}
+2	2	usr/lib/systemd/user/{ubuntu-kylin-installer.service => trisquel-kylin-installer.service}
+bin	bin	usr/share/desktop-provision/images/{ubuntukylinlogo.jpg => trisquelkylinlogo.jpg}
+2	2	usr/share/desktop-provision/slides/1/slide_en_US.html
+2	2	usr/share/desktop-provision/slides/1/slide_zh_CN.html
+2	2	usr/share/desktop-provision/slides/4/slide_en_US.html
+1	1	usr/share/desktop-provision/slides/4/slide_zh_CN.html
+10	10	usr/share/desktop-provision/whitelabel.yml

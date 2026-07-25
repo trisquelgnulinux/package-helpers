@@ -1,0 +1,19 @@
+# trisquel golden manifest
+# package:      budgie-desktop-environment
+# blessed-by:   ark@switnet.org
+# blessed-at:   2026-07-25T08:54:34+00:00
+# upstream:     noble (24.04)  helper-version: 3
+# upstream-version: 0.20.13
+# blessed-with: AUDIT_BLESS=1
+# body-sha256:  29296150e33ca832cef06d47e7181895c0de31ee42232341938a8c700f425def
+--- manifest ---
+bin	bin	codename-wallpapers/budgie-codename.png
+bin	bin	codename-wallpapers/ecne.jpg
+1	1	codename-wallpapers/ubuntu-budgie-codename-wallpapers.xml
+1	1	debian/budgie-desktop-environment.install
+2	2	debian/control
+84	0	distrologo/trisquel-logo.svg
+6	6	etc/budgie-desktop/defaults.list
+0	2	home-folder/.config/plank/dock1/launchers/budgie-welcome.dockitem
+0	2	home-folder/.config/plank/dock1/launchers/org.gnome.Software.dockitem
+6	6	schemas/25_budgie-desktop-environment.gschema.override

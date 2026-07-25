@@ -1,0 +1,12 @@
+# trisquel golden manifest
+# package:      hw-detect
+# blessed-by:   ark@switnet.org
+# blessed-at:   2026-07-25T09:39:53+00:00
+# upstream:     noble (24.04)  helper-version: 2
+# upstream-version: 1.171
+# blessed-with: AUDIT_BLESS=1
+# body-sha256:  ce95b62df18d285579e57e27e419ecc6b7bcbfd2443344e7ed0529dee7e3d937
+--- manifest ---
+5	6	check-missing-firmware.sh
+0	22	debian/hw-detect.templates
+6	24	hw-detect.post-base-installer.d/50install-firmware

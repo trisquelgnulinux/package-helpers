@@ -1,0 +1,32 @@
+# trisquel golden manifest
+# package:      unity-greeter
+# blessed-by:   ark@switnet.org
+# blessed-at:   2026-07-25T15:01:45+00:00
+# upstream:     noble (24.04)  helper-version: 6
+# upstream-version: 24.04.1-0ubuntu1
+# blessed-with: AUDIT_BLESS=1
+# body-sha256:  347a05ea960b0571351db119ced85376c81beb93ce71a8c65e6fc26173538a83
+--- manifest ---
+1	1	data/Makefile.am
+bin	bin	data/cof.png
+6	6	data/com.canonical.unity-greeter.gschema.xml
+bin	bin	data/logo-bare.png
+bin	bin	data/logo.png
+bin	bin	data/trisquel_badge.png
+bin	bin	data/unknown_badge.png
+0	1	debian/control
+0	2	debian/rules
+bin	bin	logo.png
+1	1	src/background.vala
+1	1	src/dash-box.vala
+1	1	src/dash-button.vala
+2	2	src/dash-entry.vala
+1	1	src/logo-generator.vala
+2	2	src/menubar.vala
+3	3	src/prompt-box.vala
+1	1	src/session-list.vala
+1	1	src/settings-daemon.vala
+3	3	src/shutdown-dialog.vala
+1	1	src/toggle-box.vala
+2	2	src/unity-greeter.vala
+1	1	src/user-list.vala

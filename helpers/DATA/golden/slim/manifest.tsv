@@ -1,0 +1,17 @@
+# trisquel golden manifest
+# package:      slim
+# blessed-by:   ark@switnet.org
+# blessed-at:   2026-07-25T14:17:54+00:00
+# upstream:     noble (24.04)  helper-version: 0
+# upstream-version: 1.3.6-5.3build3
+# blessed-with: AUDIT_BLESS=1
+# body-sha256:  aee4cc2eaa21fe9dc844aa9f85291110119048d909a5336bc5a865a370b4e977
+--- manifest ---
+1	1	debian/patches/slim-conf.patch
+2	0	debian/slim.install
+2	0	debian/source/include-binaries
+24	0	debian/trisquel-belenos/COPYRIGHT.background
+20	0	debian/trisquel-belenos/COPYRIGHT.panel
+bin	bin	debian/trisquel-belenos/background.png
+bin	bin	debian/trisquel-belenos/panel.png
+114	0	debian/trisquel-belenos/slim.theme

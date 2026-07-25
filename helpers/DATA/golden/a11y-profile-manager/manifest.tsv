@@ -1,0 +1,14 @@
+# trisquel golden manifest
+# package:      a11y-profile-manager
+# blessed-by:   ark@switnet.org
+# blessed-at:   2026-07-25T08:44:23+00:00
+# upstream:     noble (24.04)  helper-version: 5
+# upstream-version: 0.1.11-0ubuntu7
+# blessed-with: AUDIT_BLESS=1
+# body-sha256:  d48f6c431514d1bad76099c7b92aac9e97ab51b6040b87793a64ab8d2bd12460
+--- manifest ---
+2	2	a11y-profile-manager-indicator-autostart.desktop.in
+3	0	profiles/blindness/profile.gsettings
+1	1	profiles/blindness/profile.manifest.in
+3	0	profiles/high-contrast/profile.gsettings
+3	0	profiles/onscreen-keyboard/profile.gsettings

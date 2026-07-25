@@ -1,0 +1,16 @@
+# trisquel golden manifest
+# package:      pulseaudio
+# blessed-by:   ark@switnet.org
+# blessed-at:   2026-07-25T14:05:01+00:00
+# upstream:     noble (24.04)  helper-version: 1
+# upstream-version: 16.1+dfsg1-2ubuntu10.1
+# blessed-with: AUDIT_BLESS=1
+# body-sha256:  d036eaeeb5497c83e086fe243fda4886ce884b336e81d9801c7ce4b03fe64674
+--- manifest ---
+0	1	debian/control
+0	500	debian/patches/0700-modules-add-snappy-policy-module.patch
+0	31	debian/patches/0701-enable-snap-policy-module.patch
+0	278	debian/patches/0702-add-snappy-policy-module.patch
+0	3	debian/patches/series
+0	1	debian/pulseaudio.install
+0	1	debian/rules
