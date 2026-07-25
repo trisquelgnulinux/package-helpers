@@ -27,6 +27,20 @@ AUDIT_LIBDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # DATA/<pkg> (input). Still under DATA/, so the watchdog3 ignores it.
 AUDIT_GOLDEN="$(dirname "$AUDIT_LIBDIR")/golden"
 
+# Print the upstream version apt would fetch, WITHOUT downloading the tarball,
+# then makes an incremental freeze comparation against the baseline's # upstream-version.
+audit_probe(){
+  local srcarg dsc ver
+  if [ -n "${FIXED_VER:-}" ]; then srcarg="$PACKAGE=$FIXED_VER"; else srcarg="$PACKAGE"; fi
+  dsc=$(apt-get source --print-uris --only-source "$srcarg" -c ${LOCAL_APT}/etc/apt.conf 2>/dev/null \
+        | grep -oE "[^ '/]+_[^ ']+\.dsc" | head -1)
+  ver=$(echo "$dsc" | sed 's/^[^_]*_//; s/\.dsc$//')
+  # --print-uris gives URL-encoded names (+ -> %2b, ~ -> %7e); decode them.
+  ver=$(printf '%b' "${ver//%/\\x}")
+  echo "AUDIT_PROBE_VERSION=$ver"
+  exit 0
+}
+
 # Take the "before" snapshot: the tree the helper is about to transform,
 # with upstream patches not yet applied, and config's own edits in place.
 # Diffing this against audit_end isolates the helper's own effect.
@@ -57,6 +71,8 @@ audit_stamp(){
   echo "# blessed-by:   ${DEBEMAIL:-unknown}"
   echo "# blessed-at:   $(date -Iseconds)"
   echo "# upstream:     ${UPSTREAM:-?} (${UPSTREAMRELEASE:-?})  helper-version: ${VERSION:-?}"
+  # epoch stripped so it compares equal to the probe (.dsc filenames drop it)
+  echo "# upstream-version: $(echo "${UPSTREAMVERSION:-?}" | sed 's/^[0-9]*://')"
   echo "# blessed-with: AUDIT_BLESS=1"
   echo "# body-sha256:  $1"
 }
