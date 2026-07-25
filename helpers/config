@@ -254,6 +254,8 @@ rm -rf ${LOCAL_APT}
 echo -e "> Trisquel source package built! - $(date -R)\n"
 
 notify_found_distro_match_on_debian_rules
+
+[ -n "$HELPER_AUDIT" ] && audit_report
 }
 
 sedhelper2(){

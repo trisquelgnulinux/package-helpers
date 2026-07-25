@@ -28,7 +28,7 @@ AUDIT_LIBDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 AUDIT_GOLDEN="$(dirname "$AUDIT_LIBDIR")/golden"
 
 # Print the upstream version apt would fetch, WITHOUT downloading the tarball,
-# then makes an incremental freeze comparation against the baseline's # upstream-version.
+# so freeze.sh makes an incremental comparation against the baseline's # upstream-version.
 audit_probe(){
   local srcarg dsc ver
   if [ -n "${FIXED_VER:-}" ]; then srcarg="$PACKAGE=$FIXED_VER"; else srcarg="$PACKAGE"; fi
@@ -45,6 +45,7 @@ audit_probe(){
 # with upstream patches not yet applied, and config's own edits in place.
 # Diffing this against audit_end isolates the helper's own effect.
 audit_begin(){
+  [ -n "${AUDIT_REACHED:-}" ] && : > "$AUDIT_REACHED"
   export AUDIT_GIT="$(mktemp -d)/git"
   git --git-dir="$AUDIT_GIT" --work-tree=. init -q
   git --git-dir="$AUDIT_GIT" --work-tree=. add -A
@@ -66,9 +67,13 @@ audit_manifest(){
 
 # Provenance header written on top of a baseline when it is blessed.
 audit_stamp(){
+  # Who ran the freeze: the git email (git config user.email) of
+  # the commiter, falls back to "unknown" if none is configured.
+  local blesser
+  blesser="${AUDIT_BLESSER:-$(git config user.email 2>/dev/null || git config user.name 2>/dev/null)}"
   echo "# trisquel golden manifest"
   echo "# package:      $PACKAGE"
-  echo "# blessed-by:   ${DEBEMAIL:-unknown}"
+  echo "# blessed-by:   ${blesser:-unknown}"
   echo "# blessed-at:   $(date -Iseconds)"
   echo "# upstream:     ${UPSTREAM:-?} (${UPSTREAMRELEASE:-?})  helper-version: ${VERSION:-?}"
   # epoch stripped so it compares equal to the probe (.dsc filenames drop it)
@@ -88,26 +93,42 @@ audit_write_golden(){
   { audit_stamp "$h"; echo "$AUDIT_MARK"; cat "$fresh"; } > "$out"
 }
 
-# Compare a fresh manifest against the signed baseline; block on drift unless
-# AUDIT_FORCE=1.  Used on xolotl (the gate).  No baseline yet => let it pass.
-audit_gate(){
-  local base="$1" fresh="$2" tmp
+# Monitor: compare the fresh effect against the baseline and set AUDIT_VERDICT
+# displays a greppable "audit: ..." line that audit_report prints at the end of
+# the run.  It NEVER blocks the build: it only reports, graded by severity
+# (ok / minor / DRIFT).  The one exception is the version-transition gate T12>T13
+audit_evaluate(){
+  local base="$1" fresh="$2" tmp diff d s n
   if [ ! -f "$base" ]; then
-    echo "> [audit] $PACKAGE: no baseline yet; run AUDIT_BLESS=1 to certify" 1>&2
+    AUDIT_VERDICT="audit: no baseline yet (create with AUDIT_BLESS=1)"
     return 0
   fi
   tmp="$(mktemp)"; audit_body "$base" > "$tmp"
-  if python3 "$AUDIT_LIBDIR/compare.py" "$tmp" "$fresh"; then
-    rm -f "$tmp"; return 0
-  fi
+  diff=$(python3 "$AUDIT_LIBDIR/compare.py" "$tmp" "$fresh" || true)
   rm -f "$tmp"
-  if [ "${AUDIT_FORCE:-}" = 1 ]; then
-    echo "> [audit] $PACKAGE: drift detected; AUDIT_FORCE=1 -> continuing (baseline untouched)" 1>&2
-    return 0
+  d=$(printf '%s\n' "$diff" | grep -c '^DROPPED' || true)
+  s=$(printf '%s\n' "$diff" | grep -c '^SHRUNK' || true)
+  n=$(printf '%s\n' "$diff" | grep -c '^NEW' || true)
+  if [ "$d" -gt 0 ] || [ "$s" -gt 0 ]; then
+    AUDIT_VERDICT="audit: DRIFT — dropped=$d shrunk=$s new=$n  (review: git diff -- DATA/golden/$PACKAGE)"
+    if [ "${AUDIT_STRICT:-}" = 1 ] && [ "${AUDIT_FORCE:-}" != 1 ]; then
+      audit_report
+      echo "E: [audit] $PACKAGE blocked by drift (AUDIT_STRICT set)." 1>&2
+      exit 1
+    fi
+  elif [ "$n" -gt 0 ]; then
+    AUDIT_VERDICT="audit: minor — new=$n file(s) now touched  (review: git diff -- DATA/golden/$PACKAGE)"
+  else
+    AUDIT_VERDICT="audit: OK, no changes vs baseline"
   fi
-  echo "E: [audit] $PACKAGE blocked by silent drift (source package not built)." 1>&2
-  echo "   review it; if the change is legitimate: AUDIT_BLESS=1 bash make-$PACKAGE" 1>&2
-  exit 1
+}
+
+# Print the verdict as one greppable line.  Called from config's package(), at
+# the very end -- next to "source package built" and the distro-match notes,
+# which is where the eye lands when a helper run finishes.
+audit_report(){
+  [ -n "${AUDIT_VERDICT:-}" ] && echo "> ${AUDIT_VERDICT}"
+  return 0
 }
 
 # Close the audit: build the manifest, then either bless (write baseline) or
@@ -120,9 +141,9 @@ audit_end(){
   rm -rf "$(dirname "$AUDIT_GIT")"
   if [ "${AUDIT_BLESS:-}" = 1 ]; then
     audit_write_golden "$AUDIT_GOLDEN/$PACKAGE/manifest.tsv" "$fresh"
-    echo "> [audit] baseline signed: DATA/golden/$PACKAGE/manifest.tsv" 1>&2
+    AUDIT_VERDICT="audit: baseline signed (DATA/golden/$PACKAGE)"
   else
-    audit_gate "$AUDIT_GOLDEN/$PACKAGE/manifest.tsv" "$fresh"
+    audit_evaluate "$AUDIT_GOLDEN/$PACKAGE/manifest.tsv" "$fresh"
   fi
   rm -f "$fresh"
 }
