@@ -29,6 +29,8 @@ PACKAGE=$(echo $0 |/bin/sed s/make-//)
 export DATE=$(date +'%a, %d %b %Y %T %z')
 
 export DATA="$PWD/DATA/$PACKAGE"
+# Golden-master auditing (inert unless HELPER_AUDIT is set)
+[ -n "$HELPER_AUDIT" ] && . DATA/audit/audit-lib.sh
 if ! [ 1$COMPONENT = "1main" ]
 then
     COMPONENT=${COMPONENT:-universe}
@@ -234,7 +236,10 @@ export FULLVERSION=$(dpkg-parsechangelog --show-field Version)trisquel${VERSION}
 grep -lr 'Maintainer:' debian*/control* | \
 xargs sed -i "s_^Maintainer.*_Maintainer: $DEBFULLNAME <$DEBEMAIL>_g"
 
+[ -n "$HELPER_AUDIT" ] && audit_begin
+
 package(){
+[ -n "$HELPER_AUDIT" ] && audit_end
 
 # Make sure the series file is formated correctly after removals
 if [ -f debian/patches/series ]; then
