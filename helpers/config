@@ -29,8 +29,8 @@ PACKAGE=$(echo $0 |/bin/sed s/make-//)
 export DATE=$(date +'%a, %d %b %Y %T %z')
 
 export DATA="$PWD/DATA/$PACKAGE"
-# Golden-master auditing (inert unless HELPER_AUDIT is set)
-[ -n "$HELPER_AUDIT" ] && . DATA/audit/audit-lib.sh
+# Golden-master auditing (inert unless HELPER_AUDIT or AUDIT_PROBE is set)
+[ -n "${HELPER_AUDIT:-}${AUDIT_PROBE:-}" ] && . DATA/audit/audit-lib.sh
 if ! [ 1$COMPONENT = "1main" ]
 then
     COMPONENT=${COMPONENT:-universe}
@@ -196,6 +196,8 @@ if [[ "$PACKAGE" =~ ^linux(-hwe-[0-9]+\.[0-9]+)?$ && -n "$LP_VERSION" ]]; then
     done
 else
     apt-get update -c $LOCAL_APT/etc/apt.conf
+    # Incremental audit probe. Logic lives in DATA/audit/audit-lib.sh.
+    [ -n "${AUDIT_PROBE:-}" ] && audit_probe
     if [ -n "$FIXED_VER" ]; then
       apt-get source --only-source $PACKAGE=$FIXED_VER --download-only -c ${LOCAL_APT}/etc/apt.conf
     else
