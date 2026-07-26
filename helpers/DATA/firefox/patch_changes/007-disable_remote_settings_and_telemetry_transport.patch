@@ -1,0 +1,66 @@
+Disable Remote Settings and telemetry antifeatures in Abrowser.
+
+Interceptions sit at stable source chokepoints (function entry) and ignore
+their arguments.
+
+All disabled functions return the benign empty shape their callers expect
+so consumers degrade gracefully instead of throwing.
+
+The Attachments.sys.mjs (base Downloader) cuts were previously applied by sed
+in make-firefox (lines 40-42); they are folded in here as a patch.
+
+  services/settings/RemoteSettingsClient.sys.mjs         - attachment download (subclass)
+  services/settings/Utils.sys.mjs                        - remote settings sync
+  services/settings/Attachments.sys.mjs                  - attachment download (base)
+  toolkit/components/telemetry/app/TelemetrySend.sys.mjs - ping transport
+
+diff --git a/services/settings/RemoteSettingsClient.sys.mjs b/services/settings/RemoteSettingsClient.sys.mjs
+--- a/services/settings/RemoteSettingsClient.sys.mjs
++++ b/services/settings/RemoteSettingsClient.sys.mjs
+@@ -217,2 +217,7 @@
+   async download(record, options) {
++    // Abrowser: attachment download disabled (privacy). Return the empty shape
++    // callers expect ({ buffer }) so ML / translations / search consumers and
++    // ASRouter degrade gracefully instead of throwing on null.
++    console.warn("Function 'download' disabled in Abrowser due to privacy concerns.");
++    return { buffer: new ArrayBuffer(0), record, _source: "disabled" };
+     await lazy.UptakeTelemetry.report(
+
+diff --git a/services/settings/Utils.sys.mjs b/services/settings/Utils.sys.mjs
+--- a/services/settings/Utils.sys.mjs
++++ b/services/settings/Utils.sys.mjs
+@@ -431,2 +431,7 @@
+   async fetchLatestChanges(serverUrl, options = {}) {
++    // Abrowser: remote settings sync disabled. Return the empty "no data" shape
++    // (not null) so callers destructure cleanly and hit the typed
++    // UnknownCollectionError path instead of throwing TypeError.
++    console.warn("Function 'fetchLatestChanges' disabled in Abrowser due to privacy concerns.");
++    return { changes: [], timestamp: null, serverTimeMillis: Date.now(), backoffSeconds: null, ageSeconds: 0 };
+     const { expectedTimestamp, lastEtag = "", filters = {} } = options;
+
+diff --git a/services/settings/Attachments.sys.mjs b/services/settings/Attachments.sys.mjs
+--- a/services/settings/Attachments.sys.mjs
++++ b/services/settings/Attachments.sys.mjs
+@@ -172,2 +172,6 @@
+   async download(record, options) {
++    // Abrowser: base attachment download disabled (privacy). Return the empty
++    // shape callers expect ({ buffer }) so ASRouter et al. do not throw.
++    console.warn("Downloader.download disabled in Abrowser due to privacy concerns.");
++    return { buffer: new ArrayBuffer(0), record, _source: "disabled" };
+     return this.#fetchAttachment(record, options);
+@@ -519,2 +523,6 @@
+   async downloadAsBytes(record, options = {}) {
++    // Abrowser: base attachment fetch disabled (privacy). Callers expect an
++    // ArrayBuffer; return an empty one instead of null.
++    console.warn("Downloader.downloadAsBytes disabled in Abrowser due to privacy concerns.");
++    return new ArrayBuffer(0);
+     const {
+
+diff --git a/toolkit/components/telemetry/app/TelemetrySend.sys.mjs b/toolkit/components/telemetry/app/TelemetrySend.sys.mjs
+--- a/toolkit/components/telemetry/app/TelemetrySend.sys.mjs
++++ b/toolkit/components/telemetry/app/TelemetrySend.sys.mjs
+@@ -1403,2 +1403,4 @@
+   _doPing(ping, id, isPersisted) {
++    // Abrowser: telemetry transport chokepoint - no ping reaches the network.
++    return Promise.resolve();
+     let startTime = ChromeUtils.now();
