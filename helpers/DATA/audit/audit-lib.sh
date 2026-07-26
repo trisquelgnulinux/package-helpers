@@ -26,6 +26,8 @@ AUDIT_LIBDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # Baselines live in their own subtree (output), separate from each package's
 # DATA/<pkg> (input). Still under DATA/, so the watchdog3 ignores it.
 AUDIT_GOLDEN="$(dirname "$AUDIT_LIBDIR")/golden"
+# Set variable to track drift changes.
+AUDIT_DRIFT_FOUND=0
 
 # Print the upstream version apt would fetch, WITHOUT downloading the tarball,
 # so freeze.sh makes an incremental comparation against the baseline's # upstream-version.
@@ -137,7 +139,8 @@ audit_apply(){
       echo "E: [audit] $PACKAGE — drift vs baseline; build stopped." 1>&2
       echo "   review:  git diff -- DATA/golden/$PACKAGE" 1>&2
       echo "   accept:  AUDIT_BLESS=1 bash make-$PACKAGE   (signs + builds), then commit the golden." 1>&2
-      exit 1
+      echo "WARNING: Packing will continue, but process will abort afterwards."
+      AUDIT_DRIFT_FOUND=1
     fi
   else
     AUDIT_VERDICT="audit: changed — new=$n  (review: git diff -- DATA/golden/$PACKAGE)"
@@ -149,6 +152,10 @@ audit_apply(){
 # which is where the eye lands when a helper run finishes.
 audit_report(){
   [ -n "${AUDIT_VERDICT:-}" ] && echo "> ${AUDIT_VERDICT}"
+  if [ "$AUDIT_DRIFT_FOUND" = "1" ]; then
+    echo "ERROR: Aborting execution due to audit drift detected earlier."
+    exit 1
+  fi
   return 0
 }
 
