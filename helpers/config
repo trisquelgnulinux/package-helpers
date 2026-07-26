@@ -29,7 +29,9 @@ PACKAGE=$(echo $0 |/bin/sed s/make-//)
 export DATE=$(date +'%a, %d %b %Y %T %z')
 
 export DATA="$PWD/DATA/$PACKAGE"
-# Golden-master auditing (inert unless HELPER_AUDIT or AUDIT_PROBE is set)
+# Golden-master auditing is ON by default.
+# Disable a single build with `HELPER_AUDIT=0 bash make-<pkg>` for a quick throwaway run.
+: "${HELPER_AUDIT=1}"
 [ -n "${HELPER_AUDIT:-}${AUDIT_PROBE:-}" ] && . DATA/audit/audit-lib.sh
 if ! [ 1$COMPONENT = "1main" ]
 then
