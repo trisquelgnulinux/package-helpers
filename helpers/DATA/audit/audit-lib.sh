@@ -71,7 +71,8 @@ audit_stamp(){
   # the commiter, falls back to "unknown" if none is configured.
   local blesser
   blesser="${AUDIT_BLESSER:-$(git config user.email 2>/dev/null || git config user.name 2>/dev/null)}"
-  echo "# trisquel golden manifest"
+  echo "# trisquel golden manifest — auto-generated and signed by the audit."
+  echo "# Do not edit by hand: it is rewritten on every build and re-signed."
   echo "# package:      $PACKAGE"
   echo "# blessed-by:   ${blesser:-unknown}"
   echo "# blessed-at:   $(date -Iseconds)"
@@ -93,33 +94,53 @@ audit_write_golden(){
   { audit_stamp "$h"; echo "$AUDIT_MARK"; cat "$fresh"; } > "$out"
 }
 
-# Monitor: compare the fresh effect against the baseline and set AUDIT_VERDICT
-# displays a greppable "audit: ..." line that audit_report prints at the end of
-# the run.  It NEVER blocks the build: it only reports, graded by severity
-# (ok / minor / DRIFT).  The one exception is the version-transition gate T12>T13
-audit_evaluate(){
-  local base="$1" fresh="$2" tmp diff d s n
-  if [ ! -f "$base" ]; then
-    AUDIT_VERDICT="audit: no baseline yet (create with AUDIT_BLESS=1)"
+# Apply the audit: compare the fresh effect against the COMMITTED baseline
+# (git HEAD, not the on-disk file — so writing the golden below doesn't erase
+# the drift signal on the next build), (re)write the signed golden into the
+# working tree ONLY when the effect changed (so `git diff -- DATA/golden/<pkg>`
+# shows exactly what changed and OK builds stay clean), set the greppable
+# AUDIT_VERDICT, and STOP the build on DRIFT unless it was blessed/forced.
+#
+#   AUDIT_BLESS=1  -> sign and proceed (no stop) even on drift
+#   AUDIT_STRICT=0 -> monitor: report only, never stops (Jenkins/CI)
+#   AUDIT_FORCE=1  -> let a single build through without blessing
+# Default (no vars): strict — a drift stops the build.
+audit_apply(){
+  local fresh="$1" gdir golden craw cbody diff d s n
+  gdir="$AUDIT_GOLDEN/$PACKAGE"; golden="$gdir/manifest.tsv"
+  craw="$(mktemp)"
+  # existence is git show's exit code -- an empty body is a valid baseline
+  # (some helpers change nothing), so we must not treat "empty" as "missing".
+  if ! git -C "$gdir" show "HEAD:./manifest.tsv" > "$craw" 2>/dev/null; then
+    rm -f "$craw"                      # no committed baseline yet -> establish it
+    audit_write_golden "$golden" "$fresh"
+    AUDIT_VERDICT="audit: baseline written (DATA/golden/$PACKAGE)"
     return 0
   fi
-  tmp="$(mktemp)"; audit_body "$base" > "$tmp"
-  diff=$(python3 "$AUDIT_LIBDIR/compare.py" "$tmp" "$fresh" || true)
-  rm -f "$tmp"
+  cbody="$(mktemp)"; audit_body "$craw" > "$cbody"; rm -f "$craw"
+  if cmp -s "$cbody" "$fresh"; then    # unchanged -> leave the golden as committed
+    rm -f "$cbody"
+    AUDIT_VERDICT="audit: OK, no changes vs baseline"
+    return 0
+  fi
+
+  audit_write_golden "$golden" "$fresh"          # effect changed -> rewrite, signed
+  diff=$(python3 "$AUDIT_LIBDIR/compare.py" "$cbody" "$fresh" || true)
+  rm -f "$cbody"
   d=$(printf '%s\n' "$diff" | grep -c '^DROPPED' || true)
   s=$(printf '%s\n' "$diff" | grep -c '^SHRUNK' || true)
   n=$(printf '%s\n' "$diff" | grep -c '^NEW' || true)
   if [ "$d" -gt 0 ] || [ "$s" -gt 0 ]; then
     AUDIT_VERDICT="audit: DRIFT — dropped=$d shrunk=$s new=$n  (review: git diff -- DATA/golden/$PACKAGE)"
-    if [ "${AUDIT_STRICT:-}" = 1 ] && [ "${AUDIT_FORCE:-}" != 1 ]; then
+    if [ "${AUDIT_BLESS:-}" != 1 ] && [ "${AUDIT_STRICT:-1}" != 0 ] && [ "${AUDIT_FORCE:-}" != 1 ]; then
       audit_report
-      echo "E: [audit] $PACKAGE blocked by drift (AUDIT_STRICT set)." 1>&2
+      echo "E: [audit] $PACKAGE — drift vs baseline; build stopped." 1>&2
+      echo "   review:  git diff -- DATA/golden/$PACKAGE" 1>&2
+      echo "   accept:  AUDIT_BLESS=1 bash make-$PACKAGE   (signs + builds), then commit the golden." 1>&2
       exit 1
     fi
-  elif [ "$n" -gt 0 ]; then
-    AUDIT_VERDICT="audit: minor — new=$n file(s) now touched  (review: git diff -- DATA/golden/$PACKAGE)"
   else
-    AUDIT_VERDICT="audit: OK, no changes vs baseline"
+    AUDIT_VERDICT="audit: changed — new=$n  (review: git diff -- DATA/golden/$PACKAGE)"
   fi
 }
 
@@ -139,11 +160,6 @@ audit_end(){
   local fresh; fresh="$(mktemp)"
   audit_manifest > "$fresh"
   rm -rf "$(dirname "$AUDIT_GIT")"
-  if [ "${AUDIT_BLESS:-}" = 1 ]; then
-    audit_write_golden "$AUDIT_GOLDEN/$PACKAGE/manifest.tsv" "$fresh"
-    AUDIT_VERDICT="audit: baseline signed (DATA/golden/$PACKAGE)"
-  else
-    audit_evaluate "$AUDIT_GOLDEN/$PACKAGE/manifest.tsv" "$fresh"
-  fi
+  audit_apply "$fresh"
   rm -f "$fresh"
 }
