@@ -1,0 +1,21 @@
+# trisquel golden manifest
+# package:      qt6-webengine
+# blessed-by:   ark@switnet.org
+# blessed-at:   2026-07-25T14:07:28+00:00
+# upstream:     noble (24.04)  helper-version: 5
+# upstream-version: 6.4.2-final+dfsg-12ubuntu9
+# blessed-with: AUDIT_BLESS=1
+# body-sha256:  7ae9cafdfd1618962a62c7074424d3357bb3e4457644546910a71bfb0c768c08
+--- manifest ---
+3	0	cmake/Functions.cmake
+2	2	debian/rules
+0	9	src/3rdparty/chromium/third_party/arcore-android-sdk/BUILD.gn
+0	5	src/3rdparty/chromium/third_party/arcore-android-sdk/DIR_METADATA
+0	158	src/3rdparty/chromium/third_party/arcore-android-sdk/LICENSE
+0	1	src/3rdparty/chromium/third_party/arcore-android-sdk/OWNERS
+0	49	src/3rdparty/chromium/third_party/arcore-android-sdk/README.chromium
+0	10	src/3rdparty/chromium/third_party/arcore-android-sdk/test-apks/arcore/apk_version_history.txt
+0	1	src/3rdparty/chromium/third_party/arcore-android-sdk/test-apks/arcore/arcore_current.apk.sha1
+0	26	src/3rdparty/chromium/third_party/arcore-android-sdk/test-apks/update.py
+bin	bin	src/3rdparty/chromium/third_party/blink/manual_tests/WebKitSite.webarchive
+0	104	src/3rdparty/chromium/third_party/unrar/BUILD.gn

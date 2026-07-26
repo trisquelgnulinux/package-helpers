@@ -1,0 +1,33 @@
+# trisquel golden manifest
+# package:      indicator-datetime
+# blessed-by:   ark@switnet.org
+# blessed-at:   2026-07-25T09:46:02+00:00
+# upstream:     noble (24.04)  helper-version: 2
+# upstream-version: 15.10+21.04.20210304-0ubuntu6
+# blessed-with: AUDIT_BLESS=1
+# body-sha256:  fdd4e912a5ed3137642cdab60a01901de85c76f61a223d55162a47e9553c9102
+--- manifest ---
+20	0	data/CMakeLists.txt
+9	0	data/indicator-datetime.desktop.in
+0	1	debian/indicator-datetime.maintscript
+0	10	tests/CMakeLists.txt
+0	92	tests/test-eds-ics-all-day-events.cpp
+0	19	tests/test-eds-ics-all-day-events.ics.in
+0	116	tests/test-eds-ics-missing-trigger.cpp
+0	45	tests/test-eds-ics-missing-trigger.ics.in
+0	79	tests/test-eds-ics-non-attending-alarms.cpp
+0	53	tests/test-eds-ics-non-attending-alarms.ics.in
+0	94	tests/test-eds-ics-nonrepeating-events.cpp
+0	27	tests/test-eds-ics-nonrepeating-events.ics.in
+0	101	tests/test-eds-ics-repeating-events-with-individual-change.cpp
+0	969	tests/test-eds-ics-repeating-events-with-individual-change.ics.in
+0	101	tests/test-eds-ics-repeating-events.cpp
+0	28	tests/test-eds-ics-repeating-events.ics.in
+0	102	tests/test-eds-ics-repeating-valarms.cpp
+0	47	tests/test-eds-ics-repeating-valarms.ics.in
+0	89	tests/test-eds-ics-tzids-2.cpp
+0	38	tests/test-eds-ics-tzids-2.ics.in
+0	88	tests/test-eds-ics-tzids-utc.cpp
+0	15	tests/test-eds-ics-tzids-utc.ics.in
+0	88	tests/test-eds-ics-tzids.cpp
+0	56	tests/test-eds-ics-tzids.ics.in

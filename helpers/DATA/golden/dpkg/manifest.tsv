@@ -1,0 +1,16 @@
+# trisquel golden manifest
+# package:      dpkg
+# blessed-by:   ark@switnet.org
+# blessed-at:   2026-07-25T09:04:56+00:00
+# upstream:     noble (24.04)  helper-version: 5
+# upstream-version: 1.22.6ubuntu6.6
+# blessed-with: AUDIT_BLESS=1
+# body-sha256:  1fb6398659f9a0b98650647a771f42057137718d0d2853a850ae882bc9ccabcf
+--- manifest ---
+1	0	debian/control
+264	0	scripts/Dpkg/Vendor/Trisquel.pm
+3	0	scripts/Makefile.am
+3	0	scripts/Makefile.in
+92	0	scripts/t/Dpkg_BuildFlags_Trisquel.t
+25	0	scripts/t/Dpkg_Changelog_Trisquel.t
+4	0	scripts/t/origins/trisquel

@@ -1,0 +1,11 @@
+# trisquel golden manifest
+# package:      aptitude
+# blessed-by:   ark@switnet.org
+# blessed-at:   2026-07-25T08:49:53+00:00
+# upstream:     noble (24.04)  helper-version: 3
+# upstream-version: 0.8.13-5ubuntu5
+# blessed-with: AUDIT_BLESS=1
+# body-sha256:  f1a6b70b8280574eb984df8057c954fd029234e580d80b91265203d527a356d8
+--- manifest ---
+5	5	debian/patches/04_changelog
+2	2	src/generic/apt/pkg_acqfile.cc

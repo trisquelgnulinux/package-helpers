@@ -1,0 +1,17 @@
+# trisquel golden manifest
+# package:      gnome-control-center
+# blessed-by:   ark@switnet.org
+# blessed-at:   2026-07-25T09:31:45+00:00
+# upstream:     noble (24.04)  helper-version: 2
+# upstream-version: 46.7-0ubuntu0.24.04.4
+# blessed-with: AUDIT_BLESS=1
+# body-sha256:  59112c2796572461912679f79061fa32054afed686196d7ba20a7a42ca3f1fd5
+--- manifest ---
+bin	bin	debian/TrisquelLogo.png
+0	2	debian/control
+0	1	debian/patches/series
+0	394	debian/patches/ubuntu/diagnostics-Add-Whoopsie-support.patch
+0	1	debian/rules
+2	2	debian/source/include-binaries
+bin	bin	debian/ubuntu-logo-dark.png
+bin	bin	debian/ubuntu-logo-icon.png

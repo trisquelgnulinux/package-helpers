@@ -1,0 +1,31 @@
+# trisquel golden manifest
+# package:      base-installer
+# blessed-by:   ark@switnet.org
+# blessed-at:   2026-07-25T08:51:42+00:00
+# upstream:     noble (24.04)  helper-version: 1
+# upstream-version: 1.226
+# blessed-with: AUDIT_BLESS=1
+# body-sha256:  807282210dcc3da3b8b5507c304e9738b72e71db1a2acc5fca844718b506db43
+--- manifest ---
+1	1	debian/bootstrap-base.postinst
+1	1	debian/control
+1	1	kernel/Makefile
+28	13	kernel/amd64.sh
+5	2	kernel/arm64.sh
+5	5	kernel/armhf.sh
+18	3	kernel/i386.sh
+5	2	kernel/ppc64el.sh
+7	4	kernel/riscv64.sh
+3	9	kernel/tests/amd64/cittagazze.test
+5	5	kernel/tests/arm64/foundation.test
+5	5	kernel/tests/arm64/mustang.test
+5	5	kernel/tests/arm64/qemu-virt.test
+0	19	kernel/tests/armhf/efikamx.test
+6	6	kernel/tests/armhf/highbank.test
+6	6	kernel/tests/armhf/midway-no-lpae.test
+8	8	kernel/tests/armhf/midway.test
+0	19	kernel/tests/armhf/vexpress.test
+5	18	kernel/tests/i386/cittagazze.test
+4	4	kernel/tests/ppc64el/postal.test
+4	4	kernel/tests/ppc64el/powernv.test
+9	3	library.sh

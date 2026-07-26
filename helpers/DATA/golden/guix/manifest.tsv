@@ -1,0 +1,20 @@
+# trisquel golden manifest
+# package:      guix
+# blessed-by:   ark@switnet.org
+# blessed-at:   2026-07-25T09:37:34+00:00
+# upstream:     noble (24.04)  helper-version: 2
+# upstream-version: 1.4.0-6build1
+# blessed-with: AUDIT_BLESS=1
+# body-sha256:  34b23e2e3cfd36fcd13cdca622543d3399b201cab63ed8e9868645ca471e02ab
+--- manifest ---
+8	0	Makefile.am
+10	0	configure.ac
+1	0	debian/control
+2	0	debian/rules
+39	0	doc/guix.texi
+12	0	etc/apparmor.d/guix
+88	0	etc/apparmor.d/guix-daemon
+5	0	etc/apparmor.d/tunables/guix.in
+32	0	etc/news.scm
+4	0	gnu/packages/package-management.scm
+49	10	nix/libstore/build.cc

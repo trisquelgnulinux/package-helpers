@@ -1,0 +1,16 @@
+# trisquel golden manifest
+# package:      plasma-discover
+# blessed-by:   ark@switnet.org
+# blessed-at:   2026-07-25T14:02:36+00:00
+# upstream:     noble (24.04)  helper-version: 2
+# upstream-version: 5.27.12-0ubuntu0.1
+# blessed-with: AUDIT_BLESS=1
+# body-sha256:  9349b0be154c51c91bf0a87a334e725de1227a30efd72b550a0bdfa5f6aeca02
+--- manifest ---
+0	1	debian/control
+0	6	debian/plasma-discover-backend-flatpak.install
+0	1	debian/plasma-discover-backend-fwupd.install
+0	8	debian/plasma-discover-backend-snap.install
+0	1	debian/plasma-discover.install
+2	0	debian/rules
+0	559	libdiscover/backends/PackageKitBackend/packagekit-backend-categories.xml

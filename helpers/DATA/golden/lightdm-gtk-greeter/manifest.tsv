@@ -1,0 +1,14 @@
+# trisquel golden manifest
+# package:      lightdm-gtk-greeter
+# blessed-by:   ark@switnet.org
+# blessed-at:   2026-07-25T10:00:19+00:00
+# upstream:     noble (24.04)  helper-version: 6
+# upstream-version: 2.0.9-0ubuntu3
+# blessed-with: AUDIT_BLESS=1
+# body-sha256:  c79c2c04fe24232353c09e3fd61e18aa48db3b5d3224f82f2fb60f65ff1b6c41
+--- manifest ---
+27	0	debian/01_trisquel.conf
+4	2	debian/control
+1	0	debian/lightdm-gtk-greeter.install
+1	1	debian/rules
+12	0	orca-lightdm-wrapper

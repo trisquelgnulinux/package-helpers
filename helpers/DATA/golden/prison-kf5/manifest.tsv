@@ -1,0 +1,14 @@
+# trisquel golden manifest
+# package:      prison-kf5
+# blessed-by:   ark@switnet.org
+# blessed-at:   2026-07-25T14:04:41+00:00
+# upstream:     noble (24.04)  helper-version: 0
+# upstream-version: 5.115.0-0ubuntu5
+# blessed-with: AUDIT_BLESS=1
+# body-sha256:  e8aae3142ac635840ed87c81d7998476b37eb7fc96b57c1a54fceaafd46626f6
+--- manifest ---
+1	1	debian/control
+2	0	debian/libkf5prison-dev.install
+1	0	debian/libkf5prison-doc.install
+1	0	debian/libkf5prison5.install
+1	0	debian/qml-module-org-kde-prison.install

@@ -1,0 +1,20 @@
+# trisquel golden manifest
+# package:      mate-panel
+# blessed-by:   ark@switnet.org
+# blessed-at:   2026-07-25T13:46:17+00:00
+# upstream:     noble (24.04)  helper-version: 14
+# upstream-version: 1.27.1-2build3
+# blessed-with: AUDIT_BLESS=1
+# body-sha256:  049af71ab12018ba55f29e7b28ebaccf008c6b6a13d3135e735b312658e22575
+--- manifest ---
+1	1	applets/wncklet/org.mate.panel.applet.window-list-previews.gschema.xml.in
+1	1	applets/wncklet/org.mate.panel.applet.workspace-switcher.gschema.xml.in
+153	1	applets/wncklet/workspace-switcher.c
+1	1	data/Makefile.am
+53	0	data/panel-default-layout.layout
+53	0	data/trisquel.layout
+0	77	data/ubuntu.layout
+13	0	debian/layout-reset
+9	0	debian/mate-panel-layout-update.desktop
+2	0	debian/mate-panel.install
+1	1	mate-panel/panel-menu-button.c

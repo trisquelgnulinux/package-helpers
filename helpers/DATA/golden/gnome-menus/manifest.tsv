@@ -1,0 +1,16 @@
+# trisquel golden manifest
+# package:      gnome-menus
+# blessed-by:   ark@switnet.org
+# blessed-at:   2026-07-25T09:32:21+00:00
+# upstream:     noble (24.04)  helper-version: 1
+# upstream-version: 3.36.0-1.1ubuntu3
+# blessed-with: AUDIT_BLESS=1
+# body-sha256:  c18fee48c0a20df07cec90e36e9b7c1ac9a98a9d2dc413451550332860997920
+--- manifest ---
+1	0	debian/gnome-menus.install
+0	116	debian/patches/08_settings-menus.patch
+0	23	debian/patches/09_app_install_entry.patch
+0	122	debian/patches/09_games-menu.patch
+0	44	debian/patches/11_science-menu.patch
+0	4	debian/patches/series
+264	0	layout/gnome-flashback-applications.menu

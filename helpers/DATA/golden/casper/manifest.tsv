@@ -1,0 +1,22 @@
+# trisquel golden manifest
+# package:      casper
+# blessed-by:   ark@switnet.org
+# blessed-at:   2026-07-25T08:55:47+00:00
+# upstream:     noble (24.04)  helper-version: 28
+# upstream-version: 1.498
+# blessed-with: AUDIT_BLESS=1
+# body-sha256:  40f8da859058f780cb7ad19e487caae6f86b298b1439fa8c0e6555818c9ba10a
+--- manifest ---
+6	0	bin/casper-a11y-enable
+3	25	bin/casper-stop
+40	9	casper-md5check/casper-md5check.c
+16	2	debian/casper.casper-md5check.service
+1	0	debian/casper.install
+13	0	extra/casper-apparmor-live
+6	6	scripts/casper
+1	1	scripts/casper-bottom/14locales
+0	31	scripts/casper-bottom/33enable_apport_crashes
+1	1	scripts/casper-bottom/34disable_kde_services
+61	0	scripts/casper-bottom/36apparmor_live
+3	3	scripts/casper-functions
+0	144	scripts/casper-premount/10driver_updates

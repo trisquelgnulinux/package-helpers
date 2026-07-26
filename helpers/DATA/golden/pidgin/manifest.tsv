@@ -1,0 +1,13 @@
+# trisquel golden manifest
+# package:      pidgin
+# blessed-by:   ark@switnet.org
+# blessed-at:   2026-07-25T14:01:48+00:00
+# upstream:     noble (24.04)  helper-version: 2
+# upstream-version: 2.14.13-1ubuntu2
+# blessed-with: AUDIT_BLESS=1
+# body-sha256:  f0efe15787094db60f17bc770f2589e78a6f06f8b554ac73a9fc83cee1352d41
+--- manifest ---
+0	12	debian/patches/04_let_crasher_for_apport.patch
+0	13	debian/patches/05_default_to_irc_ubuntu_com.patch
+0	2	debian/patches/series
+1	1	pidgin/gtksound.c

@@ -1,0 +1,20 @@
+# trisquel golden manifest
+# package:      tuba
+# blessed-by:   ark@switnet.org
+# blessed-at:   2026-07-25T14:44:52+00:00
+# upstream:     noble (24.04)  helper-version: 1
+# upstream-version: 0.9.2-1
+# blessed-with: AUDIT_BLESS=1
+# body-sha256:  5c762e8354a3bb43a6b5e34da43e2ee22801d182c25df4a0a51b9447d9fd8e5c
+--- manifest ---
+1	1	data/ui/views/base.ui
+1	1	debian/control
+1	1	debian/rules
+2	2	src/Dialogs/Composer/AttachmentsPage.vala
+1	33	src/Dialogs/Composer/EditorPage.vala
+1	1	src/Dialogs/Report.vala
+2	2	src/Views/Admin/Pages/Base.vala
+2	2	src/Views/MediaViewer.vala
+1	1	src/Views/Profile.vala
+2	2	src/Views/Timeline.vala
+6	17	src/Widgets/AudioPlayer/Visualizer.vala

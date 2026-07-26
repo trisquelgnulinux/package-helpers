@@ -1,0 +1,16 @@
+# trisquel golden manifest
+# package:      emacs-non-dfsg
+# blessed-by:   ark@switnet.org
+# blessed-at:   2026-07-25T09:07:03+00:00
+# upstream:     noble (24.04)  helper-version: 2
+# upstream-version: 29.2+1-1
+# blessed-with: AUDIT_BLESS=1
+# body-sha256:  4a00930881b8493ac7f14401ecfc8559f250d32bc99e26db986d914b64b9ba62
+--- manifest ---
+9	9	debian/.gitignore
+3	9	debian/control
+4	0	debian/emacs-common-gfdl.lintian-overrides.in
+0	4	debian/emacs-common-non-dfsg.lintian-overrides.in
+10	10	debian/rules
+0	0	debian/{emacs-common-non-dfsg.README.Debian.in => emacs-common-gfdl.README.Debian.in}
+0	0	debian/{emacs-common-non-dfsg.postinst.gen => emacs-common-gfdl.postinst.gen}
