@@ -1,11 +1,11 @@
 diff --git a/debian/control.in b/debian/control.in
-index 758352f8..26383a38 100644
+index 58f6f5ad..32ce7057 100644
 --- a/debian/control.in
 +++ b/debian/control.in
-@@ -43,8 +43,8 @@ Build-Depends: cdbs,
- 	libclang-22-dev | libclang-21-dev | libclang-20-dev | libclang-19-dev | libclang-18-dev,
- 	llvm-22-dev | llvm-21-dev | llvm-20-dev | llvm-19-dev | llvm-18-dev,
- 	lld-22 | lld-21 | lld-20 | lld-19 | lld-18,
+@@ -42,8 +42,8 @@ Build-Depends: cdbs,
+ 	libclang-22-dev | libclang-21-dev | libclang-20-dev | libclang-19-dev,
+ 	llvm-22-dev | llvm-21-dev | llvm-20-dev | llvm-19-dev,
+ 	lld-22 | lld-21 | lld-20 | lld-19,
 -	cargo-1.90,
 -	rustc-1.90,
 +	cargo-1.91 | cargo-1.90,
