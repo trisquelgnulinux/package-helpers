@@ -43,10 +43,11 @@ done
 set -- ${args[@]+"${args[@]}"}
 
 LOG="DATA/audit/freeze.log"; : > "$LOG"
-list=${*:-$(ls make-*)}
+# Array + glob instead of an unquoted string: robust if a name ever has spaces.
+if [ "$#" -gt 0 ]; then helpers=("$@"); else helpers=(make-*); fi
 ok=0; fail=0; uptodate=0; failed=""
 
-for h in $list; do
+for h in "${helpers[@]}"; do
   pkg=${h#make-}
   printf '%-34s ' "$h"
 

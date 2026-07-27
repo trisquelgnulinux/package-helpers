@@ -24,8 +24,7 @@
 set -u
 cd "$(dirname "$0")/../.."
 
-MARK='--- manifest ---'
-body(){ awk -v m="$MARK" 'seen{print} $0==m{seen=1}' "$1"; }
+. "$(dirname "$0")/audit-common.sh"   # AUDIT_MARK, audit_body
 
 fail=0
 found=0
@@ -33,12 +32,17 @@ for g in DATA/golden/*/manifest.tsv; do
   [ -e "$g" ] || continue
   found=$((found + 1))
   pkg=$(echo "$g" | cut -d/ -f3)
-  want=$(awk '/^# body-sha256:/{print $3}' "$g")
-  got=$(body "$g" | sha256sum | cut -d' ' -f1)
+  # $NF tolerates both the old '# body-sha256:' and new '# body-sha256-checksum:'.
+  want=$(awk '/^# body-sha256/{print $NF}' "$g")
+  got=$(audit_body "$g" | sha256sum | cut -d' ' -f1)
+  auth=$(sed -n 's/^# authorized:[[:space:]]*//p' "$g")
   if [ "$want" != "$got" ]; then
-    echo "TAMPER $pkg  ($g)  stamp!=body"; fail=1
+    echo "MISMATCH  $pkg  ($g)  header checksum != body"; fail=1
   elif [ ! -f "make-$pkg" ]; then
-    echo "ORPHAN $pkg  (golden without make-$pkg)"; fail=1
+    echo "ORPHAN    $pkg  (golden without make-$pkg)"; fail=1
+  elif [ "$auth" = no ]; then
+    # legacy goldens have no 'authorized' line -> grandfathered (auth empty).
+    echo "UNBLESSED $pkg  drift not blessed -> bash DATA/audit/bless.sh $pkg"; fail=1
   fi
 done
 
