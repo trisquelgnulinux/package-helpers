@@ -32,7 +32,8 @@ export DATA="$PWD/DATA/$PACKAGE"
 # Golden-master auditing is ON by default.
 # Disable a single build with `HELPER_AUDIT=0 bash make-<pkg>` for a quick throwaway run.
 : "${HELPER_AUDIT=1}"
-[ -n "${HELPER_AUDIT:-}${AUDIT_PROBE:-}" ] && . DATA/audit/audit-lib.sh
+# HELPER_AUDIT=0 must really disable it: [ -n "0" ] is true, so guard by value.
+{ [ "${HELPER_AUDIT:-0}" != 0 ] || [ -n "${AUDIT_PROBE:-}" ]; } && . DATA/audit/audit-lib.sh
 if ! [ 1$COMPONENT = "1main" ]
 then
     COMPONENT=${COMPONENT:-universe}
@@ -124,7 +125,7 @@ head -n 1 debian/changelog | grep -q $UPSTREAM-security && REPO=$CODENAME-securi
 
 #Setup local apt
 
-trap "rm -rf ${LOCAL_APT}" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
+trap "rm -rf ${LOCAL_APT} \${AUDIT_TMP:-}" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
 
 mkdir -p ${LOCAL_APT}/var/lib/apt/partial
 mkdir -p ${LOCAL_APT}/var/cache/apt/archives/partial
@@ -240,10 +241,10 @@ export FULLVERSION=$(dpkg-parsechangelog --show-field Version)trisquel${VERSION}
 grep -lr 'Maintainer:' debian*/control* | \
 xargs sed -i "s_^Maintainer.*_Maintainer: $DEBFULLNAME <$DEBEMAIL>_g"
 
-[ -n "$HELPER_AUDIT" ] && audit_begin
+[ "${HELPER_AUDIT:-0}" != 0 ] && audit_begin
 
 package(){
-[ -n "$HELPER_AUDIT" ] && audit_end
+[ "${HELPER_AUDIT:-0}" != 0 ] && audit_end
 
 # Make sure the series file is formated correctly after removals
 if [ -f debian/patches/series ]; then
@@ -263,7 +264,7 @@ echo -e "> Trisquel source package built! - $(date -R)\n"
 
 notify_found_distro_match_on_debian_rules
 
-[ -n "$HELPER_AUDIT" ] && audit_report
+[ "${HELPER_AUDIT:-0}" != 0 ] && audit_report
 }
 
 sedhelper2(){

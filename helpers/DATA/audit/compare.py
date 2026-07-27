@@ -27,6 +27,9 @@ import sys
 
 
 def load(path):
+    # Keep (added, removed) separately.  Collapsing to a+b hides an INVERSION:
+    # 10 added/0 removed -> 0 added/10 removed has the same magnitude 10 yet is
+    # a completely different effect (e.g. a helper that used to add now deletes).
     effect = {}
     with open(path) as fh:
         for line in fh:
@@ -39,7 +42,7 @@ def load(path):
             a, r, p = parts
             a = 0 if a in ("-", "bin") else int(a)
             r = 0 if r in ("-", "bin") else int(r)
-            effect[p] = a + r
+            effect[p] = (a, r)
     return effect
 
 
@@ -49,15 +52,26 @@ def main():
     shrink = float(sys.argv[3]) if len(sys.argv) > 3 else 0.5
     problems = 0
     for path in sorted(base):
+        ba, br = base[path]
+        bmag = ba + br
         if path not in new:
-            print(f"DROPPED  {path}  ({base[path]} -> 0)")
+            print(f"DROPPED  {path}  ({bmag} -> 0)")
             problems += 1
-        elif base[path] > 0 and new[path] <= base[path] * shrink:
-            print(f"SHRUNK   {path}  ({base[path]} -> {new[path]})")
+            continue
+        na, nr = new[path]
+        nmag = na + nr
+        if bmag > 0 and nmag <= bmag * shrink:
+            print(f"SHRUNK   {path}  ({bmag} -> {nmag})")
+            problems += 1
+        elif (ba > 0 and na == 0) or (br > 0 and nr == 0):
+            # One direction of the effect vanished while magnitude held (SHRUNK
+            # misses this): add-only -> remove-only, or the deletions stopped.
+            print(f"INVERTED {path}  (+{ba}/-{br} -> +{na}/-{nr})")
             problems += 1
     for path in sorted(new):
         if path not in base:
-            print(f"NEW      {path}  (0 -> {new[path]})")
+            na, nr = new[path]
+            print(f"NEW      {path}  (0 -> {na + nr})")
     sys.exit(1 if problems else 0)
 
 
