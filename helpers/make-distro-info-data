@@ -17,12 +17,11 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=7
+VERSION=8
 
 . ./config
 
 patch_p1 $DATA/add_trisquel_validate.patch
-patch_p1 $DATA/add_trisquel_tools_py.patch
 patch_p1 $DATA/README.Debian.patch
 
 cp $DATA/trisquel.csv  ./

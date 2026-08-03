@@ -1,8 +1,8 @@
---- a/validate-csv-data	2021-10-15 08:01:00.000000000 -0500
-+++ b/validate-csv-data	2022-04-06 12:27:29.004706669 -0500
-@@ -27,6 +27,13 @@
- 
- 
+--- a/validate-csv-data
++++ b/validate-csv-data
+@@ -39,6 +39,15 @@
+
+
  _COLUMNS = {
 +    "trisquel": (
 +        "version",
@@ -10,15 +10,17 @@
 +        "series",
 +        "created",
 +        "release",
-+        "eol"),
++        "eol",
++        "upstream",
++    ),
      "debian": (
          "version",
          "codename",
-@@ -58,6 +65,7 @@
-     ("eol-lts", "eol-elts"),
+@@ -92,6 +101,7 @@
+     ("eol-esm", "eol-legacy"),
  )
  _STRINGS = {
 +    "trisquel": ("version", "codename", "series"),
      "debian": ("codename", "series"),
-     "ubuntu": ("version", "codename", "series"),
- }
+     "devuan": ("codename", "series"),
+     "elxr": ("codename", "series"),
