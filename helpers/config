@@ -264,7 +264,7 @@ echo -e "> Trisquel source package built! - $(date -R)\n"
 
 notify_found_distro_match_on_debian_rules
 
-[ "${HELPER_AUDIT:-0}" != 0 ] && audit_report
+if [ "${HELPER_AUDIT:-0}" != 0 ]; then audit_report; fi
 }
 
 sedhelper2(){
