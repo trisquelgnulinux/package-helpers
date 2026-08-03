@@ -83,7 +83,7 @@ audit_stamp(){
   # Who blessed it: the git email (git config user.email) of the committer,
   # falls back to "unknown" if none is configured.
   local blesser authorized
-  blesser="${AUDIT_BLESSER:-$(git config user.email 2>/dev/null || git config user.name 2>/dev/null)}"
+  blesser="${AUDIT_BLESSER:-$(git config user.email 2>/dev/null || git config user.name 2>/dev/null || true)}"
   # 'yes' ONLY under AUDIT_BLESS=1 (or a later bless.sh).  A plain run that
   # rewrites a drifted golden stays 'no', so a casual `git add -A && commit`
   # cannot authorize drift without a conscious act.  verify.sh enforces this.
