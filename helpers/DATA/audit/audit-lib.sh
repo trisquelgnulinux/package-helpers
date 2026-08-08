@@ -29,6 +29,13 @@ AUDIT_GOLDEN="$(dirname "$AUDIT_LIBDIR")/golden"
 # Set variable to track drift changes.
 AUDIT_DRIFT_FOUND=0
 
+# Pin our own temp root at load time.  audit-lib.sh is sourced early (from
+# ./config) while $TMPDIR is still sane; some helpers (e.g. the kernel deblob
+# step) later reassign the global $TMPDIR to a throwaway dir and rm -rf it,
+# which would make our bare `mktemp` calls fail with "No such file or
+# directory".  Capture a good dir now and always target it explicitly.
+AUDIT_TMPROOT="${TMPDIR:-/tmp}"
+
 # Print the upstream version apt would fetch, WITHOUT downloading the tarball,
 # so freeze.sh makes an incremental comparison against the baseline's
 # upstream-version.  We read the FULL version from `apt-cache showsrc`, INCLUDING
@@ -56,7 +63,7 @@ audit_begin(){
   [ -n "${AUDIT_REACHED:-}" ] && : > "$AUDIT_REACHED"
   # AUDIT_TMP is cleaned by config's EXIT trap too, so the compressed blob
   # store (GBs for firefox) never leaks if the build aborts before audit_end.
-  export AUDIT_TMP="$(mktemp -d)"
+  export AUDIT_TMP="$(mktemp -d -p "$AUDIT_TMPROOT")"
   export AUDIT_GIT="$AUDIT_TMP/git"
   git --git-dir="$AUDIT_GIT" --work-tree=. init -q
   # -Af + empty excludesFile: count EVERYTHING the helper touches, even paths an
@@ -126,7 +133,7 @@ audit_write_golden(){
 audit_apply(){
   local fresh="$1" gdir golden craw cbody diff d s n
   gdir="$AUDIT_GOLDEN/$PACKAGE"; golden="$gdir/manifest.tsv"
-  craw="$(mktemp)"
+  craw="$(mktemp -p "$AUDIT_TMPROOT")"
   # existence is git show's exit code -- an empty body is a valid baseline
   # (some helpers change nothing), so we must not treat "empty" as "missing".
   if ! git -C "$gdir" show "HEAD:./manifest.tsv" > "$craw" 2>/dev/null; then
@@ -135,7 +142,7 @@ audit_apply(){
     AUDIT_VERDICT="audit: baseline written (DATA/golden/$PACKAGE)"
     return 0
   fi
-  cbody="$(mktemp)"; audit_body "$craw" > "$cbody"; rm -f "$craw"
+  cbody="$(mktemp -p "$AUDIT_TMPROOT")"; audit_body "$craw" > "$cbody"; rm -f "$craw"
   if cmp -s "$cbody" "$fresh"; then    # unchanged -> leave the golden as committed
     rm -f "$cbody"
     AUDIT_VERDICT="audit: OK, no changes vs baseline"
@@ -182,7 +189,7 @@ audit_report(){
 # patches, so the diff is the helper's effect only.
 audit_end(){
   [ -n "${AUDIT_GIT:-}" ] || return 0
-  local fresh; fresh="$(mktemp)"
+  local fresh; fresh="$(mktemp -p "$AUDIT_TMPROOT")"
   audit_manifest > "$fresh"
   rm -rf "$(dirname "$AUDIT_GIT")"
   audit_apply "$fresh"
