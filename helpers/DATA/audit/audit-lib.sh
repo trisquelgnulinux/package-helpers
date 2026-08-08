@@ -97,7 +97,7 @@ audit_stamp(){
   [ "${AUDIT_BLESS:-}" = 1 ] && authorized=yes || authorized=no
   # NOTE: this checksum ties header to body for COHERENCE (catch a stray hand
   # edit).  It is not a signature and is not meant to resist tampering.
-  echo "# trisquel golden manifest — auto-generated; checksum keeps header and body coherent."
+  echo "# trisquel golden manifest -- auto-generated; checksum keeps header and body coherent."
   echo "# Do not edit by hand: it is rewritten on every build and re-checksummed."
   echo "# package:      $PACKAGE"
   echo "# blessed-by:   ${blesser:-unknown}"
@@ -120,7 +120,7 @@ audit_write_golden(){
 }
 
 # Apply the audit: compare the fresh effect against the COMMITTED baseline
-# (git HEAD, not the on-disk file — so writing the golden below doesn't erase
+# (git HEAD, not the on-disk file -- so writing the golden below doesn't erase
 # the drift signal on the next build), (re)write the signed golden into the
 # working tree ONLY when the effect changed (so `git diff -- DATA/golden/<pkg>`
 # shows exactly what changed and OK builds stay clean), set the greppable
@@ -129,7 +129,7 @@ audit_write_golden(){
 #   AUDIT_BLESS=1  -> sign and proceed (no stop) even on drift
 #   AUDIT_STRICT=0 -> monitor: report only, never stops (Jenkins/CI)
 #   AUDIT_FORCE=1  -> let a single build through without blessing
-# Default (no vars): strict — a drift stops the build.
+# Default (no vars): strict -- a drift stops the build.
 audit_apply(){
   local fresh="$1" gdir golden craw cbody diff d s n
   gdir="$AUDIT_GOLDEN/$PACKAGE"; golden="$gdir/manifest.tsv"
@@ -157,18 +157,18 @@ audit_apply(){
       /^DROPPED/{d++} /^SHRUNK|^INVERTED/{s++} /^NEW/{n++}
       END{print d+0, s+0, n+0}')
   if [ "$d" -gt 0 ] || [ "$s" -gt 0 ]; then
-    AUDIT_VERDICT="audit: DRIFT — dropped=$d shrunk=$s new=$n  (review: git diff -- DATA/golden/$PACKAGE)"
+    AUDIT_VERDICT="audit: DRIFT -- dropped=$d shrunk=$s new=$n  (review: git diff -- DATA/golden/$PACKAGE)"
     if [ "${AUDIT_BLESS:-}" != 1 ] && [ "${AUDIT_STRICT:-1}" != 0 ] && [ "${AUDIT_FORCE:-}" != 1 ]; then
       # Do NOT call audit_report here: it is the single gate at the end of
       # package().  We only set the flag; the verdict prints there once.
-      echo "E: [audit] $PACKAGE — drift vs baseline; build stopped." 1>&2
+      echo "E: [audit] $PACKAGE -- drift vs baseline; build stopped." 1>&2
       echo "   review:  git diff -- DATA/golden/$PACKAGE" 1>&2
       echo "   accept:  AUDIT_BLESS=1 bash make-$PACKAGE   (signs + builds), then commit the golden." 1>&2
       echo "WARNING: Packing will continue, but process will abort afterwards."
       AUDIT_DRIFT_FOUND=1
     fi
   else
-    AUDIT_VERDICT="audit: changed — new=$n  (review: git diff -- DATA/golden/$PACKAGE)"
+    AUDIT_VERDICT="audit: changed -- new=$n  (review: git diff -- DATA/golden/$PACKAGE)"
   fi
 }
 
