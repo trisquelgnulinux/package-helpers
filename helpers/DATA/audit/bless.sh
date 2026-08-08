@@ -48,7 +48,7 @@ for a in "$@"; do
   h=$(sha256sum < "$bodyf" | cut -d' ' -f1)
   pk=$(field package "$g"); up=$(field upstream "$g"); uv=$(field upstream-version "$g")
   {
-    echo "# trisquel golden manifest — auto-generated; checksum keeps header and body coherent."
+    echo "# trisquel golden manifest -- auto-generated; checksum keeps header and body coherent."
     echo "# Do not edit by hand: it is rewritten on every build and re-checksummed."
     echo "# package:      ${pk:-$pkg}"
     echo "# blessed-by:   $blesser"
