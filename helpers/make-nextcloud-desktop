@@ -26,8 +26,11 @@ BACKPORT=true
 
 sed -i "s|Utility|Network|" mirall.desktop.in
 
-#Prevent ppc64el arch since qtwebengine is not build for ppc64el.
+# Prevent ppc64el arch since qtwebengine is not build for ppc64el.
 sed -i 's|Architecture: any|Architecture: amd64 arm64 armhf i386 mips64el mipsel|g' debian/control
+
+# Cap extra-cmake-modules to the 5.x series
+sed -i 's|extra-cmake-modules (>= 1.2.0~),|extra-cmake-modules (>= 1.2.0~), extra-cmake-modules (<< 6~),|' debian/control
 
 # l10n fixes
 ## es
