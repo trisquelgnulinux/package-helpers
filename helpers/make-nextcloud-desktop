@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2024  Luis Guzmán <ark@switnet.org>
+#    Copyright (C) 2026  Luis Guzmán <ark@switnet.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=4
+VERSION=5
 EXTERNAL='deb-src http://ppa.launchpad.net/nextcloud-devs/client/ubuntu $UPSTREAM main'
 REPOKEY="60EE47FBAD3DD469"
 BACKPORT=true
@@ -31,6 +31,35 @@ sed -i 's|Architecture: any|Architecture: amd64 arm64 armhf i386 mips64el mipsel
 
 # Cap extra-cmake-modules to the 5.x series
 sed -i 's|extra-cmake-modules (>= 1.2.0~),|extra-cmake-modules (>= 1.2.0~), extra-cmake-modules (<< 6~),|' debian/control
+
+# === TEMPORARY: upstream downgrade pin (REMOVE once the PPA moves past 34.0.1) =
+# Upstream retired 34.0.1 (unresolved bug) and the PPA rolled the client *back*
+# to 34.0.0. We already published 34.0.1-...trisquel${VERSION}, so a plain
+# 34.0.0-...trisquel${VERSION} would sort BELOW the archive and be rejected
+# ("version going backwards"). Debian's convention for this is the "+really"
+# trick: ship a version that sorts ABOVE what we already published, but records
+# the real (lower) 34.0.0 upstream after the "+really" marker.
+#
+# Self-releasing: the guard matches ONLY this exact 34.0.0. As soon as the PPA
+# publishes anything else (34.0.2, or 34.0.1 rebuilt with a newer timestamp),
+# the match fails, FULLVERSION keeps its normal value, and the pin is gone.
+# When that happens, just delete this whole block.
+DOWNGRADE_PPA_VERSION="34.0.0-20260812.172640.5d715aac1b-1.0~noble1"
+DOWNGRADE_PUBLISHED="34.0.1-20260805.074743.364596d2ca-1.0~noble1trisquel${VERSION}"
+if [ "$UPSTREAMVERSION" = "$DOWNGRADE_PPA_VERSION" ]; then
+    PINNED="${DOWNGRADE_PUBLISHED}+really${DOWNGRADE_PPA_VERSION}"
+    # Safety net: refuse to build if the pin would not sort above the archive.
+    if ! dpkg --compare-versions "$PINNED" gt "$DOWNGRADE_PUBLISHED"; then
+        echo "E: downgrade pin '$PINNED'" >&2
+        echo "E: does not sort above published '$DOWNGRADE_PUBLISHED'; aborting." >&2
+        exit 1
+    fi
+    export FULLVERSION="$PINNED"
+    echo "> Upstream downgrade to $DOWNGRADE_PPA_VERSION detected." >&2
+    echo ">   Pinning Trisquel version to preserve archive order:" >&2
+    echo ">   $FULLVERSION" >&2
+fi
+# === END TEMPORARY downgrade pin =============================================
 
 # l10n fixes
 ## es
