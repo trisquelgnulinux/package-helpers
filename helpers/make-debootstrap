@@ -1,6 +1,7 @@
 #!/bin/sh
 #
 #    Copyright (C) 2008-2022  Ruben Rodriguez <ruben@trisquel.info>
+#    Copyright (C) 2026  Luis Guzmán <ark@switnet.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,15 +18,21 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=7
+VERSION=8
 NETINST=true
 
 . ./config
 
-rm scripts/*
-cp -a $DATA/* scripts/
 
-changelog "Only include trisquel origins"
+# Verify each package with a checksum it actually has.
+# Stock debootstrap rejects those with mixed SHA hash downloads as corrupt.
+# Falls back to the per-package checksum. (Debian #1146491 & TPH#270)
+apply_patch_changes
+
+rm scripts/*
+cp -a $DATA/distro/* scripts/
+
+changelog "Verify per-package checksum (Debian #1146491 & TPH#270)
+Only include trisquel origins"
 
 package
-
