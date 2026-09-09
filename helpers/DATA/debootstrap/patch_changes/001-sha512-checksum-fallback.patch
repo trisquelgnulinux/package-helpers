@@ -1,0 +1,30 @@
+https://gitlab.trisquel.org/trisquel/package-helpers/-/issues/270
+
+--- a/functions
++++ b/functions
+@@ -305,6 +305,11 @@
+ 	# args: dest checksum size
+ 	local expchecksum="$2"
+ 	local expsize="$3"
++	# Verify with the hash the package actually carries: the index may list
++	# only SHA256 for some packages while the Release advertises SHA512.
++	# Pick the algorithm from the checksum length. See Debian bug #1146491.
++	local SHA_SIZE="$SHA_SIZE"
++	case "${#expchecksum}" in 64) SHA_SIZE=256 ;; 128) SHA_SIZE=512 ;; esac
+ 	if [ "$DEBOOTSTRAP_CHECKSUM_FIELD" = "MD5SUM" ]; then
+ 		if in_path md5sum; then
+ 			relchecksum=$(md5sum < "$1" | sed 's/ .*$//')
+@@ -1632,11 +1637,13 @@
+ 			}
+ 			undef $output;
+ 			undef $output_val;
++			undef $chk;
+ 		}
+ 		$ver = $v if ($f eq "version:");
+ 		$arc = $v if ($f eq "architecture:");
+ 		$fil = $v if ($f eq "filename:");
+ 		$chk = $v if ($f eq $chksumfield);
++		$chk = $v if ($f eq "sha256:" && !defined $chk);
+ 		$siz = $v if ($f eq "size:");
+ 		$val = $v if ($f eq $field);
+ 	} elsif (/^$/) {
