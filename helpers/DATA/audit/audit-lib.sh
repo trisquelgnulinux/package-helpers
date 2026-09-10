@@ -66,6 +66,11 @@ audit_begin(){
   export AUDIT_TMP="$(mktemp -d -p "$AUDIT_TMPROOT")"
   export AUDIT_GIT="$AUDIT_TMP/git"
   git --git-dir="$AUDIT_GIT" --work-tree=. init -q
+  # Large trees (glibc: >6700 loose objects) trip gc.auto and spawn a
+  # background gc/maintenance that races with audit_end's rm -rf, aborting
+  # the build under set -e. Keep this throwaway repo from doing any of that.
+  git --git-dir="$AUDIT_GIT" config gc.auto 0
+  git --git-dir="$AUDIT_GIT" config maintenance.auto false
   # -Af + empty excludesFile: count EVERYTHING the helper touches, even paths an
   # upstream .gitignore would hide -- otherwise such edits look like a no-op.
   git --git-dir="$AUDIT_GIT" --work-tree=. -c core.excludesFile=/dev/null add -Af
@@ -191,7 +196,9 @@ audit_end(){
   [ -n "${AUDIT_GIT:-}" ] || return 0
   local fresh; fresh="$(mktemp -p "$AUDIT_TMPROOT")"
   audit_manifest > "$fresh"
-  rm -rf "$(dirname "$AUDIT_GIT")"
+  # Belt-and-suspenders: never let cleanup abort the build (set -e); the
+  # EXIT trap in ./config rm -rf's AUDIT_TMP again anyway.
+  rm -rf "$(dirname "$AUDIT_GIT")" 2>/dev/null || true
   audit_apply "$fresh"
   rm -f "$fresh"
 }
