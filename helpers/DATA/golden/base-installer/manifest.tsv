@@ -1,11 +1,12 @@
-# trisquel golden manifest
+# trisquel golden manifest -- auto-generated; checksum keeps header and body coherent.
+# Do not edit by hand: it is rewritten on every build and re-checksummed.
 # package:      base-installer
 # blessed-by:   ark@switnet.org
-# blessed-at:   2026-07-25T08:51:42+00:00
-# upstream:     noble (24.04)  helper-version: 1
+# blessed-at:   2026-09-10T14:04:16-06:00
+# upstream:     noble (24.04)  helper-version: 2
 # upstream-version: 1.226
-# blessed-with: AUDIT_BLESS=1
-# body-sha256:  807282210dcc3da3b8b5507c304e9738b72e71db1a2acc5fca844718b506db43
+# authorized:  yes
+# body-sha256-checksum:  7d11013fb01078f5298099445239589427b7de005c76835eae7a22f4f6c389d6
 --- manifest ---
 1	1	debian/bootstrap-base.postinst
 1	1	debian/control
@@ -29,3 +30,4 @@
 4	4	kernel/tests/ppc64el/postal.test
 4	4	kernel/tests/ppc64el/powernv.test
 9	3	library.sh
+8	1	pkgdetails.c

@@ -1,0 +1,42 @@
+Description: pkgdetails: fall back to the SHA256 field when the requested checksum field (SHA512) is absent for a package.
+Same root cause as Debian bug #1146491.
+
+--- a/pkgdetails.c
++++ b/pkgdetails.c
+@@ -135,6 +135,7 @@
+     char cur_arch[MAX_LINE];
+     char cur_size[MAX_LINE];
+     char cur_checksum[MAX_LINE];
++    char cur_sha256[MAX_LINE];
+     char cur_filename[MAX_LINE];
+     char prev_pkg[MAX_LINE];
+     char *pkgs[MAX_PKGS];
+@@ -159,6 +160,9 @@
+ 	}
+         if (strncasecmp(buf, "Package:", 8) == 0) {
+             fieldcpy(cur_pkg, buf);
++            /* reset per-package: some packages lack the requested checksum
++               field (e.g. no SHA512); do not leak the previous value. */
++            cur_checksum[0] = cur_sha256[0] = '\0';
+             if (strcmp(cur_pkg, prev_pkg) != 0) {
+                 if (output)
+                     fputs(output, stdout);
+@@ -178,6 +182,9 @@
+         } else if (strncasecmp(buf, checksum_field, strlen(checksum_field)) == 0
+ 	           && buf[strlen(checksum_field)] == ':') {
+             fieldcpy(cur_checksum, buf);
++        } else if (strncasecmp(buf, "SHA256:", 7) == 0) {
++            /* fallback used when the requested field is absent */
++            fieldcpy(cur_sha256, buf);
+         } else if (strncasecmp(buf, "Filename:", 9) == 0) {
+             fieldcpy(cur_filename, buf);
+         } else if (!*buf) {
+@@ -187,7 +194,7 @@
+ 		any = 1;
+                 if (strcmp(cur_field, pkgs[i]) == 0) {
+                     free(output);
+-                    output = xasprintf("%s %s %s %s %s %s %s\n", cur_pkg, cur_ver, cur_arch, mirror, cur_filename, cur_checksum, cur_size);
++                    output = xasprintf("%s %s %s %s %s %s %s\n", cur_pkg, cur_ver, cur_arch, mirror, cur_filename, *cur_checksum ? cur_checksum : cur_sha256, cur_size);
+                     output_pkg = i;
+ 		    break;
+ 		}
