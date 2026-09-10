@@ -20,10 +20,13 @@
 
 #STAGE-4-UDEBS || #STAGE-1-DEBOOTSTRAP
 
-VERSION=1
+VERSION=2
 
 . ./config
 
-changelog "Rebuild as part of udeb repository for debian-installer."
+apply_patch_changes
+
+changelog "Add support for Linux uio.h RWF_NOAPPEND flag
+Rebuild as part of udeb repository for debian-installer."
 
 package
