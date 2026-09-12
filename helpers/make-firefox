@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=137
+VERSION=138
 EXTERNAL='deb-src http://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu $UPSTREAM main'
 REPOKEY=AEBDF4819BE21867
 
@@ -36,10 +36,6 @@ rm debian/control
 sed "s|Safe and easy web browser from Mozilla|Safe and easy web browser from Mozilla by Trisquel|" \
   -i debian/control.in
 
-# Disable remote settings antifeature.
-sed '/async download.*/a\ \ \ \ return null;' -i services/settings/Attachments.sys.mjs
-sed "/async download.*/a\ \ \ \ console.warn(\"Function 'fetchLatestChanges' disabled in Abrowser due privacy concerns.\");" \
-  -i services/settings/Attachments.sys.mjs
 # More info at $DATA/patch_changes/007_disable_remote_settings_antifeature.patch
 
 # Disable activity-stream antifeatures.
@@ -275,9 +271,14 @@ do
     /bin/sed -i 's|= Firefox |= |' $i
 done
 
-# Replace sidebar icons
-rm -rf browser/themes/shared/sidebar
-cp -R $DATA/ui_branding/sidebar browser/themes/shared/
+# Replace sidebar icons, preventing to remove UI valid icons.
+for icon in firefox foxy gmail slack
+do
+  rm  browser/themes/shared/sidebar/${icon}.svg
+done
+
+cp $DATA/ui_branding/sidebar/*.svg browser/themes/shared/sidebar
+
 # Replace brand illustrations
 grep -rl kit-concerned.svg | xargs -r sed -i 's|kit-concerned.svg|abrowser-offline.svg|g'
 grep -rl kit-happy.svg | xargs -r sed -i 's|kit-happy.svg|abrowser-online.svg|g'
@@ -315,6 +316,11 @@ done
 for graph  in history-empty.svg synced-tabs-empty.svg synced-tabs-error.svg
 do
   cp $DATA/ui_branding/debranding/content/$graph browser/components/firefoxview/content/$graph
+done
+## Abrowser profiles
+for aprofile  in kit-profiles-dark.svg kit-profiles-light.svg
+do
+  cp $DATA/ui_branding/debranding/assets2/$aprofile browser/components/profiles/content/assets/$aprofile
 done
 
 # Disable preprocessor
@@ -480,6 +486,9 @@ grep -lr addons-help toolkit/mozapps/extensions/ | xargs -r sed -i 's|addons-hel
 #sed -i '/domain ==/s|addons.mozilla.org|gnuzilla.gnu.org|' netwerk/protocol/http/nsHttpChannel.cpp
 sed -i "/browser.discovery.sites/s|addons.mozilla.org|gnuzilla.gnu.org|" $BAP_FirefoxJs
 sed -i "/lightweightThemes.getMoreURL/s|https://addons.mozilla.org/.*themes||" $BAP_FirefoxJs
+
+# Manually remove svg file
+rm browser/components/preferences/more-from-mozilla-qr-code-simple.svg
 
 # Fixes by patch on source, see DATA/firefox/patch_changes for more info.
 apply_patch_changes

@@ -1,11 +1,11 @@
 diff --git a/toolkit/mozapps/extensions/content/components/recommended-themes-footer.mjs b/toolkit/mozapps/extensions/content/components/recommended-themes-footer.mjs
+index 68314697..17971e2f 100644
 --- a/toolkit/mozapps/extensions/content/components/recommended-themes-footer.mjs
 +++ b/toolkit/mozapps/extensions/content/components/recommended-themes-footer.mjs
-@@ -10,18 +10,7 @@
- class RecommendedThemesFooter extends AboutAddonsHTMLElement {
+@@ -11,28 +11,6 @@ class RecommendedThemesFooter extends AboutAddonsHTMLElement {
    static get markup() {
      return `
--      <template>
+       <template>
 -        <p data-l10n-id="recommended-theme-1" class="theme-recommendation">
 -          <a data-l10n-name="link" target="_blank"></a>
 -        </p>
@@ -16,11 +16,21 @@ diff --git a/toolkit/mozapps/extensions/content/components/recommended-themes-fo
 -            data-l10n-id="find-more-themes"
 -          ></button>
 -        </div>
--      </template>
-+      <template></template>
+-        <addons-promo
+-          imagesrc="chrome://mozapps/skin/extensions/kit-themes.svg"
+-          imagealignment="end"
+-          data-l10n-id="find-more-themes-promo"
+-        >
+-          <moz-button
+-            slot="actions"
+-            action="open-amo"
+-            size="large"
+-            data-l10n-id="find-more-themes-promo-open-amo-button"
+-          ></moz-button>
+-        </addons-promo>
+       </template>
      `;
    }
- 
 @@ -29,13 +18,15 @@
      if (this.childElementCount == 0) {
        this.appendChild(RecommendedThemesFooter.fragment);

@@ -1,66 +1,170 @@
 Disable Remote Settings and telemetry antifeatures in Abrowser.
 
-Interceptions sit at stable source chokepoints (function entry) and ignore
-their arguments.
+Interceptions sit at stable source chokepoints and return the benign empty shape
+callers expect so consumers degrade gracefully instead of throwing.
 
-All disabled functions return the benign empty shape their callers expect
-so consumers degrade gracefully instead of throwing.
-
-The Attachments.sys.mjs (base Downloader) cuts were previously applied by sed
-in make-firefox (lines 40-42); they are folded in here as a patch.
-
-  services/settings/RemoteSettingsClient.sys.mjs         - attachment download (subclass)
-  services/settings/Utils.sys.mjs                        - remote settings sync
+  services/settings/Utils.sys.mjs                        - allow-list + sync + attachments base URL
+  services/settings/RemoteSettingsClient.sys.mjs         - sync no-op + attachment download (subclass)
   services/settings/Attachments.sys.mjs                  - attachment download (base)
+  services/settings/remote-settings.sys.mjs              - poller narrowed to allow-list
   toolkit/components/telemetry/app/TelemetrySend.sys.mjs - ping transport
-
-diff --git a/services/settings/RemoteSettingsClient.sys.mjs b/services/settings/RemoteSettingsClient.sys.mjs
---- a/services/settings/RemoteSettingsClient.sys.mjs
-+++ b/services/settings/RemoteSettingsClient.sys.mjs
-@@ -217,2 +217,7 @@
-   async download(record, options) {
-+    // Abrowser: attachment download disabled (privacy). Return the empty shape
-+    // callers expect ({ buffer }) so ML / translations / search consumers and
-+    // ASRouter degrade gracefully instead of throwing on null.
-+    console.warn("Function 'download' disabled in Abrowser due to privacy concerns.");
-+    return { buffer: new ArrayBuffer(0), record, _source: "disabled" };
-     await lazy.UptakeTelemetry.report(
 
 diff --git a/services/settings/Utils.sys.mjs b/services/settings/Utils.sys.mjs
 --- a/services/settings/Utils.sys.mjs
 +++ b/services/settings/Utils.sys.mjs
-@@ -431,2 +431,7 @@
+@@ -104,6 +104,31 @@
+ }
+ 
+ export var Utils = {
++  // Abrowser: Remote Settings sync/download is allowed ONLY for security
++  // (certificate revocation) and privacy/anti-tracking collections, which break
++  // or go stale without fresh data. Everything else (experiments, engagement,
++  // telemetry, frozen-functional data) is a silent no-op. See patch 007.
++  abrowserRSAllowed(bucket, collection) {
++    if (bucket === "security-state") {
++      return true;
++    }
++    return [
++      "tracking-protection-lists",
++      "query-stripping",
++      "fingerprinting-protection-overrides",
++      "third-party-cookie-blocking-exempt-urls",
++      "url-classifier-exceptions",
++      "anti-tracking-url-decoration",
++      "partitioning-exempt-urls",
++      "bounce-tracking-protection-exceptions",
++      "cookie-banner-rules-list",
++      "cookie-banner-exception-list",
++      "hijack-blocklists",
++      "webcompat-interventions",
++      "newtab-wallpapers-v2",
++    ].includes(collection);
++  },
++
+   get SERVER_URL() {
+     return lazy.allowServerURL
+       ? // eslint-disable-next-line mozilla/valid-lazy
+@@ -328,6 +355,10 @@
+    * console.log(attachmentsURL);
+    */
+   async baseAttachmentsURL(options = {}) {
++    // Abrowser: remote settings server disabled. Return empty so callers that
++    // build attachment URLs degrade gracefully instead of throwing.
++    console.warn("Function 'baseAttachmentsURL' disabled in Abrowser due to privacy concerns.");
++    return "";
+     if (Utils._baseAttachmentsURLPromise) {
+       // Wait for ongoing call to finish.
+       return Utils._baseAttachmentsURLPromise;
+@@ -487,6 +518,14 @@
+    * @param {object} filters
+    */
    async fetchLatestChanges(serverUrl, options = {}) {
-+    // Abrowser: remote settings sync disabled. Return the empty "no data" shape
-+    // (not null) so callers destructure cleanly and hit the typed
-+    // UnknownCollectionError path instead of throwing TypeError.
-+    console.warn("Function 'fetchLatestChanges' disabled in Abrowser due to privacy concerns.");
-+    return { changes: [], timestamp: null, serverTimeMillis: Date.now(), backoffSeconds: null, ageSeconds: 0 };
++    // Abrowser: the global poller (no per-collection filter) is allowed through
++    // and narrowed in pollChanges(); a per-collection request is allowed only for
++    // security/privacy collections. Denied ones return the empty "no data" shape
++    // (they are already short-circuited in RemoteSettingsClient.sync()).
++    const _abCol = options?.filters?.collection;
++    if (_abCol && !Utils.abrowserRSAllowed(options?.filters?.bucket, _abCol)) {
++      return { changes: [], timestamp: null, serverTimeMillis: Date.now(), backoffSeconds: null, ageSeconds: 0 };
++    }
      const { expectedTimestamp, lastEtag = "", filters = {} } = options;
+ 
+     let url = serverUrl + Utils.CHANGES_PATH;
+
+diff --git a/services/settings/RemoteSettingsClient.sys.mjs b/services/settings/RemoteSettingsClient.sys.mjs
+--- a/services/settings/RemoteSettingsClient.sys.mjs
++++ b/services/settings/RemoteSettingsClient.sys.mjs
+@@ -215,6 +215,11 @@
+    * @see Downloader.download
+    */
+   async download(record, options) {
++    // Abrowser: attachment download allowed only for security/privacy collections.
++    if (!lazy.Utils.abrowserRSAllowed(this.bucketName, this.collectionName)) {
++      console.warn("Function 'download' disabled in Abrowser due to privacy concerns.");
++      return { buffer: new ArrayBuffer(0), record, _source: "disabled" };
++    }
+     await lazy.UptakeTelemetry.report(
+       lazy.UptakeTelemetry.STATUS.DOWNLOAD_START,
+       {
+@@ -651,6 +656,12 @@
+    * @param {object} options See #maybeSync() options.
+    */
+   async sync(options) {
++    // Abrowser: silently skip sync for non-allowed collections (antifeatures,
++    // engagement, telemetry). Avoids the UnknownCollectionError console flood;
++    // the collection keeps whatever local/dump data it has.
++    if (!lazy.Utils.abrowserRSAllowed(this.bucketName, this.collectionName)) {
++      return;
++    }
+     if (lazy.Utils.shouldSkipRemoteActivity) {
+       lazy.console.debug(`${this.identifier} Skip remote sync.`);
+       return;
 
 diff --git a/services/settings/Attachments.sys.mjs b/services/settings/Attachments.sys.mjs
 --- a/services/settings/Attachments.sys.mjs
 +++ b/services/settings/Attachments.sys.mjs
-@@ -172,2 +172,6 @@
+@@ -170,6 +170,11 @@
+    *   `_source` `String`: identifies the source of the result. Used for testing.
+    */
    async download(record, options) {
-+    // Abrowser: base attachment download disabled (privacy). Return the empty
-+    // shape callers expect ({ buffer }) so ASRouter et al. do not throw.
-+    console.warn("Downloader.download disabled in Abrowser due to privacy concerns.");
-+    return { buffer: new ArrayBuffer(0), record, _source: "disabled" };
++    // Abrowser: base attachment download allowed only for security/privacy collections.
++    if (!lazy.Utils.abrowserRSAllowed(this.bucketName, this.collectionName)) {
++      console.warn("Downloader.download disabled in Abrowser due to privacy concerns.");
++      return { buffer: new ArrayBuffer(0), record, _source: "disabled" };
++    }
      return this.#fetchAttachment(record, options);
-@@ -519,2 +523,6 @@
+   }
+ 
+@@ -545,16 +550,18 @@
+    * @returns {ArrayBuffer} the file content.
+    */
    async downloadAsBytes(record, options = {}) {
-+    // Abrowser: base attachment fetch disabled (privacy). Callers expect an
-+    // ArrayBuffer; return an empty one instead of null.
-+    console.warn("Downloader.downloadAsBytes disabled in Abrowser due to privacy concerns.");
-+    return new ArrayBuffer(0);
++    // Abrowser: base attachment fetch allowed only for security/privacy collections.
++    if (!lazy.Utils.abrowserRSAllowed(this.bucketName, this.collectionName)) {
++      console.warn("Downloader.downloadAsBytes disabled in Abrowser due to privacy concerns.");
++      return new ArrayBuffer(0);
++    }
      const {
+       attachment: { location, hash, size },
+     } = record;
+ 
+-    let baseURL;
+-    try {
+-      baseURL = await lazy.Utils.baseAttachmentsURL();
+-    } catch (error) {
+-      throw new Downloader.ServerInfoError(error);
+-    }
++    // services.settings.server is blanked so baseAttachmentsURL() returns "";
++    // use the known production attachments CDN base for allowed collections.
++    const baseURL = "https://firefox-settings-attachments.cdn.mozilla.net/";
+ 
+     const remoteFileUrl = baseURL + location;
+ 
+
+diff --git a/services/settings/remote-settings.sys.mjs b/services/settings/remote-settings.sys.mjs
+--- a/services/settings/remote-settings.sys.mjs
++++ b/services/settings/remote-settings.sys.mjs
+@@ -532,6 +532,10 @@
+     for (const change of changes) {
+       const { bucket, collection, last_modified } = change;
+ 
++      // Abrowser: the poller only syncs allowed security/privacy collections.
++      if (!lazy.Utils.abrowserRSAllowed(bucket, collection)) {
++        continue;
++      }
+       const client = await _client(bucket, collection);
+       if (!client) {
+         // This collection has no associated client (eg. preview, other platform...)
 
 diff --git a/toolkit/components/telemetry/app/TelemetrySend.sys.mjs b/toolkit/components/telemetry/app/TelemetrySend.sys.mjs
 --- a/toolkit/components/telemetry/app/TelemetrySend.sys.mjs
 +++ b/toolkit/components/telemetry/app/TelemetrySend.sys.mjs
-@@ -1403,2 +1403,4 @@
+@@ -1386,6 +1386,8 @@
+   },
+ 
    _doPing(ping, id, isPersisted) {
 +    // Abrowser: telemetry transport chokepoint - no ping reaches the network.
 +    return Promise.resolve();
      let startTime = ChromeUtils.now();
+ 
+     if (!this.sendingEnabled(ping)) {

@@ -2,7 +2,7 @@ diff --git a/browser/themes/shared/jar.inc.mn b/browser/themes/shared/jar.inc.mn
 index 3a12a7a3..ac1245a9 100644
 --- a/browser/themes/shared/jar.inc.mn
 +++ b/browser/themes/shared/jar.inc.mn
-@@ -266,10 +266,11 @@
+@@ -292,10 +292,12 @@
    skin/classic/browser/search-indicator-badge-add.svg          (../shared/search/search-indicator-badge-add.svg)
    skin/classic/browser/searchbar.css                           (../shared/search/searchbar.css)
  
@@ -15,9 +15,10 @@ index 3a12a7a3..ac1245a9 100644
 +  skin/classic/browser/sidebar/wikipedia.svg                       (../shared/sidebar/wikipedia.svg)
 +  skin/classic/browser/sidebar/liberachat.svg                       (../shared/sidebar/liberachat.svg)
 +  skin/classic/browser/sidebar/abrowser.svg                         (../shared/sidebar/abrowser.svg)
- 
-   skin/classic/browser/tabbrowser/content-area.css             (../shared/tabbrowser/content-area.css)
-   skin/classic/browser/tabbrowser/crashed.svg                  (../shared/tabbrowser/crashed.svg)
++
+   skin/classic/browser/sidebar/kit-page-history.svg           (../shared/sidebar/kit-page-history.svg)
+   skin/classic/browser/sidebar/kit-tabs-devices.svg           (../shared/sidebar/kit-tabs-devices.svg)
+   skin/classic/browser/sidebar/kit-tabs-devices-error.svg     (../shared/sidebar/kit-tabs-devices-error.svg)
 diff --git a/browser/components/sidebar/sidebar-pins-promo.mjs b/browser/components/sidebar/sidebar-pins-promo.mjs
 index beac7ea4..538ae9aa 100644
 --- a/browser/components/sidebar/sidebar-pins-promo.mjs
