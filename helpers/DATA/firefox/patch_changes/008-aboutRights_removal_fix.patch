@@ -12,13 +12,13 @@ index c6498081..a8db34ad 100644
        </hbox>
        <description id="trademark" data-l10n-id="trademarkInfo"></description>
 diff --git a/browser/components/about/AboutRedirector.cpp b/browser/components/about/AboutRedirector.cpp
-index d1fe0148..ce5d1f42 100644
+index cb539e9f..eabb7886 100644
 --- a/browser/components/about/AboutRedirector.cpp
 +++ b/browser/components/about/AboutRedirector.cpp
-@@ -90,7 +90,7 @@ static const RedirEntry kRedirMap[] = {
-     {"profiling",
-      "chrome://devtools/content/performance-new/aboutprofiling/index.xhtml",
-      nsIAboutModule::ALLOW_SCRIPT | nsIAboutModule::IS_SECURE_CHROME_UI},
+@@ -98,7 +98,7 @@ static const RedirEntry kRedirMap[] = {
+     {"referrals", "https://www.firefox.com/invite/",
+      nsIAboutModule::URI_SAFE_FOR_UNTRUSTED_CONTENT |
+          nsIAboutModule::URI_MUST_LOAD_IN_CHILD},
 -    {"rights", "https://www.mozilla.org/about/legal/terms/firefox/",
 +    {"rights", "https://trisquel.info/legal",
       nsIAboutModule::URI_SAFE_FOR_UNTRUSTED_CONTENT |
