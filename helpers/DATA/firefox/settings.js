@@ -327,3 +327,6 @@ pref("doh-rollout.provider-steering.enabled", false);
 
 // Disable remote rollouts
 pref("nimbus.rollouts.enabled", false);
+
+// Disable preonboarding splash
+pref("browser.aboutwelcome.experimentsGate.enabled", false);

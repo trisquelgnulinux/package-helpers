@@ -2,7 +2,21 @@ diff --git a/browser/extensions/newtab/lib/Wallpapers/WallpaperFeed.sys.mjs b/br
 index 72df22b3..24f2f807 100644
 --- a/browser/extensions/newtab/lib/Wallpapers/WallpaperFeed.sys.mjs
 +++ b/browser/extensions/newtab/lib/Wallpapers/WallpaperFeed.sys.mjs
-@@ -156,7 +156,9 @@ export class WallpaperFeed {
+@@ -171,10 +171,9 @@
+       PREF_WALLPAPERS_CUSTOM_WALLPAPER_ENABLED
+     );
+ 
+-    let baseAttachmentURL = "";
+-    if (records.length) {
+-      baseAttachmentURL = await lazy.Utils.baseAttachmentsURL();
+-    }
++    // Abrowser: remote settings server is blanked so baseAttachmentsURL() returns "".
++    // Use the known prod attachments CDN base so the (non-local) CDN wallpapers resolve.
++    let baseAttachmentURL = "https://firefox-settings-attachments.cdn.mozilla.net/";
+ 
+     const wallpapers = [
+       ...records.map(record => {
+@@ -182,7 +181,9 @@
            ...record,
            ...(record.attachment
              ? {
