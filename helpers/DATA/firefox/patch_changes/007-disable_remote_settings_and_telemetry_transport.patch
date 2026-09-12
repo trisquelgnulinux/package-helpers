@@ -55,7 +55,7 @@ diff --git a/services/settings/Utils.sys.mjs b/services/settings/Utils.sys.mjs
      if (Utils._baseAttachmentsURLPromise) {
        // Wait for ongoing call to finish.
        return Utils._baseAttachmentsURLPromise;
-@@ -487,6 +518,14 @@
+@@ -487,6 +518,16 @@
     * @param {object} filters
     */
    async fetchLatestChanges(serverUrl, options = {}) {
@@ -67,6 +67,8 @@ diff --git a/services/settings/Utils.sys.mjs b/services/settings/Utils.sys.mjs
 +    if (_abCol && !Utils.abrowserRSAllowed(options?.filters?.bucket, _abCol)) {
 +      return { changes: [], timestamp: null, serverTimeMillis: Date.now(), backoffSeconds: null, ageSeconds: 0 };
 +    }
++    // Allow Remote Settings server for cert revocation + update anti-tracking collections
++    serverUrl = "https://firefox.settings.services.mozilla.com/v2";
      const { expectedTimestamp, lastEtag = "", filters = {} } = options;
  
      let url = serverUrl + Utils.CHANGES_PATH;
