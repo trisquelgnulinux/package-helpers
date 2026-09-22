@@ -1,0 +1,14 @@
+# TPH#259: util-linux stays at 2.39.x on Trisquel 12.
+# So the Breaks would make wtmpdb uninstallable. Drop it; the Replaces
+# alone lets wtmpdb take over /usr/bin/last without a file clash.
+--- a/debian/control
++++ b/debian/control
+@@ -28,8 +28,6 @@
+ Priority: standard
+ Replaces:
+  util-linux (<< 2.40.1-3),
+-Breaks:
+- util-linux (<< 2.40.1-3),
+ Recommends:
+  libpam-wtmpdb,
+  logrotate,

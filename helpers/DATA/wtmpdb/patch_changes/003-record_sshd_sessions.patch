@@ -1,0 +1,11 @@
+# TPH#259: Debian skips sshd because its openssh integrates wtmpdb natively.
+# Ubuntu 24.04 (Trisquel 12) openssh does NOT, so without this pam_wtmpdb would
+# never record SSH logins, so we don't skip it.
+--- a/debian/pam-configs/wtmpdb
++++ b/debian/pam-configs/wtmpdb
+@@ -4,4 +4,4 @@
+ Session-Type: Additional
+ Session-Interactive-Only: yes
+ Session:
+-	optional			pam_wtmpdb.so skip_if=sshd
++	optional			pam_wtmpdb.so
