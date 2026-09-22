@@ -1,0 +1,13 @@
+# TPH#261: nheko (and any Qt5 QMediaPlayer app) crashes on Intel i965 hardware.
+# Removing vaapisink makes Qt fall back to glimagesink/xvimagesink; the system-wide
+# VAAPI stack is left untouched, so other apps keep hardware acceleration.
+--- a/src/gsttools/qgstreamervideooverlay.cpp
++++ b/src/gsttools/qgstreamervideooverlay.cpp
+@@ -64,7 +64,6 @@
+ #if QT_CONFIG(gstreamer_gl)
+     { "xcb", "glimagesink" },
+ #endif
+-    { "xcb", "vaapisink" },
+     { "xcb", "xvimagesink" },
+     { "xcb", "ximagesink" }
+ };
