@@ -66,13 +66,15 @@
          }
        });
      }
+diff --git a/browser/components/customizableui/content/panelUI.inc.xhtml b/browser/components/customizableui/content/panelUI.inc.xhtml
+index 304404a0..97339b64 100644
 --- a/browser/components/customizableui/content/panelUI.inc.xhtml
 +++ b/browser/components/customizableui/content/panelUI.inc.xhtml
 @@ -100,7 +100,6 @@
  
            <vbox id="unified-extensions-empty-state" context="">
              <!-- Shown when no extensions are listed. -->
--            <html:img src="chrome://browser/skin/addons/extensions-panel-empty-illustration.svg" loading="lazy" />
-             <html:h2 class="subview-subheader" />
+-            <html:img />
+             <html:h2 />
              <description />
            </vbox>
