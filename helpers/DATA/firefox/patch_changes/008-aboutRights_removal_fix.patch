@@ -12,13 +12,13 @@ index c6498081..a8db34ad 100644
        </hbox>
        <description id="trademark" data-l10n-id="trademarkInfo"></description>
 diff --git a/browser/components/about/AboutRedirector.cpp b/browser/components/about/AboutRedirector.cpp
-index cb539e9f..eabb7886 100644
+index a6c6ed78..dc657aff 100644
 --- a/browser/components/about/AboutRedirector.cpp
 +++ b/browser/components/about/AboutRedirector.cpp
-@@ -98,7 +98,7 @@ static const RedirEntry kRedirMap[] = {
-     {"referrals", "https://www.firefox.com/invite/",
-      nsIAboutModule::URI_SAFE_FOR_UNTRUSTED_CONTENT |
+@@ -123,7 +123,7 @@ static const RedirEntry kRedirMap[] = {
           nsIAboutModule::URI_MUST_LOAD_IN_CHILD},
+     {"restartrequired", "chrome://browser/content/aboutRestartRequired.xhtml",
+      nsIAboutModule::ALLOW_SCRIPT | nsIAboutModule::HIDE_FROM_ABOUTABOUT},
 -    {"rights", "https://www.mozilla.org/about/legal/terms/firefox/",
 +    {"rights", "https://trisquel.info/legal",
       nsIAboutModule::URI_SAFE_FOR_UNTRUSTED_CONTENT |
