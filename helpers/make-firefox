@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=138
+VERSION=139
 EXTERNAL='deb-src http://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu $UPSTREAM main'
 REPOKEY=AEBDF4819BE21867
 
@@ -485,7 +485,7 @@ sed -i "s|$OLD_WEB_DEV_URL|$WEB_DEV_URL|" devtools/client/menus.js
 grep -lr addons-help toolkit/mozapps/extensions/ | xargs -r sed -i 's|addons-help|abrowser-help|'
 #sed -i '/domain ==/s|addons.mozilla.org|gnuzilla.gnu.org|' netwerk/protocol/http/nsHttpChannel.cpp
 sed -i "/browser.discovery.sites/s|addons.mozilla.org|gnuzilla.gnu.org|" $BAP_FirefoxJs
-sed -i "/lightweightThemes.getMoreURL/s|https://addons.mozilla.org/.*themes||" $BAP_FirefoxJs
+#sed -i "/lightweightThemes.getMoreURL/s|https://addons.mozilla.org/.*themes||" $BAP_FirefoxJs
 
 # Manually remove svg file
 rm browser/components/preferences/more-from-mozilla-qr-code-simple.svg
