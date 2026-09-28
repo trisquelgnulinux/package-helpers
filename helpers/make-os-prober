@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2022  Luis Guzmán <ark@switnet.org>
+#    Copyright (C) 2026  Luis Guzmán <ark@switnet.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -23,10 +23,17 @@
 # or fetch such packages from Debian in order to build the required udeb packages.
 ##
 
-VERSION=0
+VERSION=1
 NETINST=true
 . ./config
 
+# Restore missing os-probe scrips TPH#281
+cat >> debian/rules << 'EOF'
+ifeq ($(with_udeb),yes)
+	cp -a debian/os-prober-udeb/usr/lib debian/os-prober/usr/
+endif
+EOF
 
-changelog "Rebuild upstream to get udeb dependency for debian-installer."
+changelog "Fix missing os-probe scripts TPH#281
+Rebuild upstream to get udeb dependency for debian-installer."
 package
