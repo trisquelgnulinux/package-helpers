@@ -1917,7 +1917,7 @@ diff --git a/drivers/gpu/drm/i915/gt/uc/intel_uc_fw.c b/drivers/gpu/drm/i915/gt/
 index 944725e6..544fa201 100644
 --- a/drivers/gpu/drm/i915/gt/uc/intel_uc_fw.c
 +++ b/drivers/gpu/drm/i915/gt/uc/intel_uc_fw.c
-@@ -864,18 +864,7 @@ int intel_uc_fw_fetch(struct intel_uc_fw *uc_fw)
+@@ -864,18 +864,8 @@ int intel_uc_fw_fetch(struct intel_uc_fw *uc_fw)
  		/* Preserve the version that was really wanted */
  		memcpy(&uc_fw->file_wanted, &file_ideal, sizeof(uc_fw->file_wanted));
  
@@ -1934,6 +1934,7 @@ index 944725e6..544fa201 100644
 -		gt_info(gt, "Consider updating your linux-firmware pkg or downloading from %s\n",
 -			INTEL_UC_FIRMWARE_URL);
 +		UNEXPECTED(gt, "%s firmware is recommended, but not was found\n");
++			   intel_uc_fw_type_repr(uc_fw->type));
  	}
  
  	if (HAS_LMEM(i915)) {
