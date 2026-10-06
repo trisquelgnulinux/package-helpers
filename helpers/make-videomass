@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#    Copyright (C) 2021 Luis Guzman <ark@switnet.org>
+#    Copyright (C) 2026 Luis Guzman <ark@switnet.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=1
+VERSION=2
 EXTERNAL='deb-src http://ppa.launchpad.net/jeanslack/videomass/ubuntu $UPSTREAM main'
 REPOKEY=1829041B1114F671
 BUILD_UNTIL=12.0
@@ -25,6 +25,13 @@ BACKPORT=true
 
 . ./config
 
-changelog "Backported from official PPA for videomass"
+# Remove non-supported Ecne's python version: 3.12
+PY3_MINOR=12
+for minor in $(seq $((PY3_MINOR + 1)) 20); do
+  sed -i "/Programming Language :: Python :: 3\.$minor\"/d" pyproject.toml
+done
+
+changelog "Prevent mismatch on python dependencies
+Backported from official PPA for videomass"
 
 package
