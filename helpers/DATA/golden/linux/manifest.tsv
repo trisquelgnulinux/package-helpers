@@ -1,11 +1,12 @@
-# trisquel golden manifest
+# trisquel golden manifest -- auto-generated; checksum keeps header and body coherent.
+# Do not edit by hand: it is rewritten on every build and re-checksummed.
 # package:      linux
 # blessed-by:   ark@switnet.org
-# blessed-at:   2026-07-25T10:31:19+00:00
-# upstream:     noble (24.04)  helper-version: 37
-# upstream-version: 6.8.0-136.136
-# blessed-with: AUDIT_BLESS=1
-# body-sha256:  16e783aef4cf52e42031b3019f0794296e53342757fc6246f9614bae943c5fff
+# blessed-at:   2026-10-05T19:23:38-06:00
+# upstream:     noble (24.04)  helper-version: 38
+# upstream-version: 6.8.0-146.146
+# authorized:  yes
+# body-sha256-checksum:  67bc313744bb23441daba07651c0f9edcbe486ebba624e5242bfc8b33da3e50b
 --- manifest ---
 1	1	Documentation/ABI/testing/sysfs-driver-ge-achc
 43	5	Documentation/admin-guide/README.rst
@@ -488,6 +489,14 @@
 0	5	debian.master/dkms-versions
 0	2	debian.master/reconstruct
 3	0	debian.master/rules.d/0-common-vars.mk
+105	125	debian/control
+17	0	debian/rules
+8	4	debian/rules.d/0-common-vars.mk
+9	5	debian/rules.d/2-binary-arch.mk
+79	0	debian/rules.d/5-udebs.mk
+3	3	debian/scripts/control-create
+0	112	debian/scripts/dkms-build--nvidia-N
+0	24	debian/scripts/dkms-build-configure--zfs
 1	1	drivers/accel/habanalabs/common/firmware_if.c
 5	7	drivers/accel/habanalabs/gaudi/gaudi.c
 2	2	drivers/accel/habanalabs/gaudi2/gaudi2P.h
@@ -570,7 +579,7 @@
 5	6	drivers/gpu/drm/drm_edid_load.c
 2	5	drivers/gpu/drm/i915/display/intel_dmc.c
 3	4	drivers/gpu/drm/i915/display/intel_opregion.c
-5	18	drivers/gpu/drm/i915/gt/uc/intel_uc_fw.c
+6	18	drivers/gpu/drm/i915/gt/uc/intel_uc_fw.c
 3	3	drivers/gpu/drm/i915/gvt/firmware.c
 3	3	drivers/gpu/drm/imagination/pvr_device.c
 1	1	drivers/gpu/drm/imagination/pvr_drv.c
