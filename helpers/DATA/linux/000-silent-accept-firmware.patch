@@ -1933,7 +1933,7 @@ index 944725e6..544fa201 100644
 -			   uc_fw->file_selected.ver.patch);
 -		gt_info(gt, "Consider updating your linux-firmware pkg or downloading from %s\n",
 -			INTEL_UC_FIRMWARE_URL);
-+		UNEXPECTED(gt, "%s firmware is recommended, but not was found\n");
++		UNEXPECTED(gt, "%s firmware is recommended, but not was found\n",
 +			   intel_uc_fw_type_repr(uc_fw->type));
  	}
  
