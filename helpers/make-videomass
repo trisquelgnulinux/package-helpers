@@ -28,7 +28,7 @@ BACKPORT=true
 # Remove non-supported Ecne's python version: 3.12
 PY3_MINOR=12
 for minor in $(seq $((PY3_MINOR + 1)) 20); do
-  sed -i "/Programming Language :: Python :: 3\.$minor\"/d" pyproject.toml
+  /bin/sed -i "/Programming Language :: Python :: 3\.$minor\"/d" pyproject.toml
 done
 
 changelog "Prevent mismatch on python dependencies
