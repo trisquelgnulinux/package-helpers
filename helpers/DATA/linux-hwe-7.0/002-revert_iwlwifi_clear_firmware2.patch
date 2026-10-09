@@ -1,0 +1,35 @@
+iwlwifi: skip iwl_dealloc_ucode() on the firmware load failure path
+
+Without firmware, iwl_req_fw_callback() always ends on its failure path.
+Upstream frees drv->fw there since ab07506b0454; that path later needed
+fixes for a use-after-free (bea2662e7818) and a double-free (353d321f63f7).
+
+Replaces the reverts added in package-helpers bf3b68a1 (2022-05-14):
+  001  revert of 6518f83ffa51, obsolete since 3d913719df14
+  002  revert of ab07506b0454
+  003  revert of bea2662e7818, only needed for 002 to build
+
+'failure' is never true, so iwl_req_fw_callback() compiles to the same
+code as with 002+003. drv->fw is still freed by iwl_drv_stop().
+
+Without firmware nothing is allocated in drv->fw, so nothing leaks. With a
+firmware file that fails after partial parsing, what it allocated may
+leak, as with 002+003.
+
+https://git.kernel.org/torvalds/c/ab07506b0454
+https://git.kernel.org/torvalds/c/bea2662e7818
+https://git.kernel.org/torvalds/c/353d321f63f7
+https://git.kernel.org/torvalds/c/3d913719df14
+
+diff -u a/drivers/net/wireless/intel/iwlwifi/iwl-drv.c b/drivers/net/wireless/intel/iwlwifi/iwl-drv.c
+--- a/drivers/net/wireless/intel/iwlwifi/iwl-drv.c
++++ b/drivers/net/wireless/intel/iwlwifi/iwl-drv.c
+@@ -1593,7 +1593,7 @@
+ 	u32 api_ver;
+ 	int i;
+ 	bool usniffer_images = false;
+-	bool failure = true;
++	bool failure = false; /* Trisquel: no dealloc on the failure path */
+ 
+ 	iwl_get_ucode_api_versions(drv->trans, &api_min, &api_max);
+ 

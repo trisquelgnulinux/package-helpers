@@ -1,0 +1,57 @@
+kernel-wedge for the Trisquel udebs of this kernel
+==================================================
+
+Origin: Debian linux 7.0.13-1, debian/installer/kernel-wedge/ (Debian merged
+kernel-wedge into its linux package and maintains it there). It is shipped
+here so this kernel does not depend on the distro kernel-wedge package, which
+in ecne is the 2.96ubuntu3 versiom needed by the base 6.8 kernel.
+
+Used by debian/rules.d/5-udebs.mk (copy-modules, find-dups, find-unpackaged,
+check) and debian/scripts/trisquel-gen-udeb-control.sh (gen-control), with
+KW_CONFIG_DIR=$(DEBIAN)/d-i. Packages are selected by the Architecture: fields
+of d-i/package-list; the kernel-image udeb content (vmlinuz, System.map,
+modules.order, modules.builtin, dtbs) is added by 5-udebs.mk.
+
+Trisquel changes, keep them when updating from Debian:
+ - copy-modules: modules go to /lib/modules: Trixie's debian-installer, which
+   builds the netinst, reads /lib/modules (Debian >= 7.0 udebs moved to
+   /usr/lib/modules).
+ - copy-modules: no postinst running depmod, as in the udebs built so far.
+ - find-dups: skip udebs without modules (e.g. armhf ata-modules, libata is
+   built-in)
+
+--- a/copy-modules
++++ b/copy-modules
+@@ -20,7 +20,7 @@
+ use lib dirname(__FILE__);
+ use KernelWedge qw(read_package_lists for_each_package package_enabled);
+ 
+-my $prefix = '/usr';
++my $prefix = '';
+ my $kw_bin_dir = dirname(__FILE__);
+ 
+ my $version = "${ARGV[0]}-${ARGV[1]}";
+@@ -154,12 +154,6 @@
+ 		$cpio_pipe->print("$_\n") for keys %mods;
+ 		close($cpio_pipe);
+ 
+-		open(my $postinst_fh, '>', "debian/$i-$version-di.postinst");
+-		$postinst_fh->print(<<~EOF);
+-		#!/bin/sh -e
+-		depmod $installedname
+-		EOF
+-		close($postinst_fh);
+ 	}
+ }
+ close($deps_sort_pipe);
+--- a/find-dups
++++ b/find-dups
+@@ -10,7 +10,7 @@
+ 		else
+ 			moddir=lib/modules/$kernel
+ 		fi
+-		find $moddir -type f -printf "$dir %p\n"
++		[ ! -d $moddir ] || find $moddir -type f -printf "$dir %p\n"
+ 		cd ../..
+ 	done
+ ) | sort -k2 | perl -ne '

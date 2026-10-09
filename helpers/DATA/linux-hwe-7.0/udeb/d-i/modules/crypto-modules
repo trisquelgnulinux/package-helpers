@@ -1,0 +1,17 @@
+# 7.0: aes_generic is now the built-in aes
+blowfish_generic
+twofish_generic
+serpent_generic
+# 7.0: sha256_generic renamed to sha256
+sha256 ?
+arc4 ?
+cbc ?
+ccm
+ctr
+ecb
+xts
+michael_mic
+
+# For cryptsetup
+algif_skcipher
+essiv

@@ -1,0 +1,17 @@
+# Include wireless drivers by default
+drivers/net/wireless/**
+
+# Include staging wireless drivers
+drivers/staging/rtl8** ?
+
+# Exclude drivers packaged in nic-pcmcia-modules
+drivers/net/wireless/**_cs -
+
+# Exclude debug driver
+mac80211_hwsim -
+
+# lib80211 encryption algorithms
+# 7.0: lib80211_crypt_*, prism2_usb and vt6656_stage removed upstream
+
+# (pending) ath11k_pci soft-dep:
+qrtr_mhi ?
