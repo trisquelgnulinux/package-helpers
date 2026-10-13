@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=139
+VERSION=140
 EXTERNAL='deb-src http://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu $UPSTREAM main'
 REPOKEY=AEBDF4819BE21867
 
@@ -48,7 +48,9 @@ sed '/"telemetry"/,/value/s/value: true/value: false/' -i $ActivityStream
 #141#sed '/"section.highlights.includePocket"/,/value/s/value: true/value: false/' -i $ActivityStream
 sed '/"telemetry.structuredIngestion.endpoint"/,/value/s/value: .*/value: ""/' -i $ActivityStream
 # feeds.section.topstories.options removed at 144.0.2
-sed 's/preffedRegions.includes.geo. .. ..locales .. locales.includes.locale./false/' -i $ActivityStream
+#157#sed 's/preffedRegions.includes.geo. .. ..locales .. locales.includes.locale./false/' -i $ActivityStream
+# Region/locale stories defaults moved to STORIES_REGION_LOCALE_DEFAULT
+sed '/^const STORIES_REGION_LOCALE_DEFAULT = \[/,/^\];/c const STORIES_REGION_LOCALE_DEFAULT = [];' -i $ActivityStream
 #sed 's/Ubuntu, //' -i browser/components/newtab/css/activity-stream*.css
 #echo "#header-asrouter-container{display: none!important;}" >> browser/components/newtab/css/activity-stream-linux.css
 #Disable «Sponsored tiles on the New Tab page» - firefox 92+94
@@ -226,8 +228,8 @@ python3 $DATA/trisquel-search-icons/update_mozbuild.py
 ## Set json in search-config-icons.json
 jq --slurpfile newIcon1 "$DATA/trisquel-search-icons/b99ed276-trisquel.json" \
    --slurpfile newIcon2 "$DATA/trisquel-search-icons/b5fd21a8-trisquel-packages.json" \
-   '.data += [$newIcon1[0], $newIcon2[0]]' services/settings/dumps/main/search-config-icons.json > tmp-s-c-i.json && \
-   mv tmp-s-c-i.json services/settings/dumps/main/search-config-icons.json
+   '.data += [$newIcon1[0], $newIcon2[0]]' services/settings/dumps/main/search-config-icons.json > tmp-s-c-i.json
+mv tmp-s-c-i.json services/settings/dumps/main/search-config-icons.json
 
 echo "Customizing search engines..."
 # Reprocess search preconfiguration dump
@@ -484,7 +486,8 @@ find l10n/ -name aboutAddons.ftl | xargs -r sed -i '/.placeholder/s|addons.mozil
 sed -i "s|$OLD_WEB_DEV_URL|$WEB_DEV_URL|" devtools/client/menus.js
 grep -lr addons-help toolkit/mozapps/extensions/ | xargs -r sed -i 's|addons-help|abrowser-help|'
 #sed -i '/domain ==/s|addons.mozilla.org|gnuzilla.gnu.org|' netwerk/protocol/http/nsHttpChannel.cpp
-sed -i "/browser.discovery.sites/s|addons.mozilla.org|gnuzilla.gnu.org|" $BAP_FirefoxJs
+# browser.discovery.sites (Discovery.sys.mjs) removed at 157
+#157#sed -i "/browser.discovery.sites/s|addons.mozilla.org|gnuzilla.gnu.org|" $BAP_FirefoxJs
 #sed -i "/lightweightThemes.getMoreURL/s|https://addons.mozilla.org/.*themes||" $BAP_FirefoxJs
 
 # Manually remove svg file

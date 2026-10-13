@@ -46,14 +46,14 @@
                   data-l10n-id="fxa-menu-sign-in-promo-heading"/>
 --- a/browser/base/content/browser-addons.js
 +++ b/browser/base/content/browser-addons.js
-@@ -2495,17 +2495,8 @@
-           );
-           emptyStateBox.hidden = false;
+@@ -2513,17 +2513,8 @@
+             return;
+           }
  
 -          // Replace the "Manage Extensions" button with "Discover Extensions".
 -          // We add the "Discover Extensions" button, and "Manage Extensions"
 -          // button (#unified-extensions-manage-extensions) is hidden by CSS.
--          const discoverButton = this._createDiscoverButton(panelview);
+-          const discoverButton = this._createDiscoverButton();
 -
 -          const manageExtensionsButton = panelview.querySelector(
 -            "#unified-extensions-manage-extensions"
@@ -78,3 +78,37 @@ index 304404a0..97339b64 100644
              <html:h2 />
              <description />
            </vbox>
+--- a/toolkit/mozapps/extensions/content/components/recommended-footer.mjs
++++ b/toolkit/mozapps/extensions/content/components/recommended-footer.mjs
+@@ -18,7 +18,6 @@
+           ></button>
+         </div>
+         <addons-promo
+-          imagesrc="chrome://mozapps/skin/extensions/kit-addons.svg"
+           imagealignment="end"
+           data-l10n-id="find-more-addons-promo"
+         >
+--- a/toolkit/mozapps/extensions/content/components/addon-list.mjs
++++ b/toolkit/mozapps/extensions/content/components/addon-list.mjs
+@@ -246,8 +246,9 @@
+     // Empty extensions list promo shown when Nova is enabled.
+     let emptyExtensionsListPromo = document.createElement("addons-promo");
+     emptyExtensionsListPromo.id = "empty-addons-promo";
+-    emptyExtensionsListPromo.imageSrc =
+-      "chrome://mozapps/skin/extensions/kit-addons.svg";
++    // Abrowser: removebranding on the empty list promo.
++    // emptyExtensionsListPromo.imageSrc =
++    //   "chrome://mozapps/skin/extensions/kit-addons.svg";
+     emptyExtensionsListPromo.imageAlignment = "start";
+     emptyExtensionsListPromo.textCentered = true;
+     document.l10n.setAttributes(
+--- a/toolkit/mozapps/extensions/content/components/recommended-extensions-footer.mjs
++++ b/toolkit/mozapps/extensions/content/components/recommended-extensions-footer.mjs
+@@ -16,7 +16,6 @@
+           ></button>
+         </div>
+         <addons-promo
+-          imagesrc="chrome://mozapps/skin/extensions/kit-addons.svg"
+           imagealignment="end"
+           data-l10n-id="find-more-extensions-promo"
+         >
