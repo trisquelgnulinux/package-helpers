@@ -1,8 +1,8 @@
 diff --git a/browser/components/aboutwelcome/modules/AboutWelcomeDefaults.sys.mjs b/browser/components/aboutwelcome/modules/AboutWelcomeDefaults.sys.mjs
-index ba47adb6..c4b29ec4 100644
+index 853e0413..d6f2304d 100644
 --- a/browser/components/aboutwelcome/modules/AboutWelcomeDefaults.sys.mjs
 +++ b/browser/components/aboutwelcome/modules/AboutWelcomeDefaults.sys.mjs
-@@ -704,7 +704,7 @@ const MR_ABOUT_WELCOME_DEFAULT = {
+@@ -684,7 +684,7 @@ const MR_ABOUT_WELCOME_DEFAULT = {
            action: {
              type: "OPEN_URL",
              data: {
@@ -11,61 +11,61 @@ index ba47adb6..c4b29ec4 100644
                where: "tabshifted",
              },
              navigate: true,
-@@ -865,6 +865,49 @@ const MR_ABOUT_WELCOME_DEFAULT = {
+@@ -745,49 +745,6 @@ const MR_ABOUT_WELCOME_DEFAULT = {
        },
        targeting: "isFxASignedIn",
      },
-+    {
-+      id: "AW_ACCOUNT_LOGIN",
-+      content: {
-+        fullscreen: true,
-+        position: "split",
-+        split_narrow_bkg_position: "-228px",
-+        image_alt_text: {
-+          string_id: "mr2022-onboarding-gratitude-image-alt",
-+        },
-+        background:
-+          "url('chrome://activity-stream/content/data/content/assets/br-fxa-fox-mirror.svg') var(--mr-secondary-position) no-repeat light-dark(rgba(252, 245, 240, 1), rgba(33, 3, 64, 1))",
-+        progress_bar: true,
-+        logo: {},
-+        title: {
-+          string_id: "onboarding-sign-up-title",
-+        },
-+        subtitle: {
-+          string_id: "onboarding-sign-up-description",
-+        },
-+        secondary_button: {
-+          label: {
-+            string_id: "mr2-onboarding-start-browsing-button-label",
-+          },
-+          style: "secondary",
-+          action: {
-+            navigate: true,
-+          },
-+        },
-+        primary_button: {
-+          label: {
-+            string_id: "onboarding-sign-up-button",
-+          },
-+          action: {
-+            data: {
-+              entrypoint: "newuser-onboarding-desktop",
-+            },
-+            type: "FXA_SIGNIN_FLOW",
-+            navigate: true,
-+          },
-+        },
-+      },
-+      targeting: "!isFxASignedIn",
-+    },
+-    {
+-      id: "AW_ACCOUNT_LOGIN",
+-      content: {
+-        fullscreen: true,
+-        position: "split",
+-        split_narrow_bkg_position: "-228px",
+-        image_alt_text: {
+-          string_id: "mr2022-onboarding-gratitude-image-alt",
+-        },
+-        background:
+-          "url('chrome://activity-stream/content/data/content/assets/br-fxa-fox-mirror.svg') var(--mr-secondary-position) no-repeat light-dark(rgba(252, 245, 240, 1), rgba(33, 3, 64, 1))",
+-        progress_bar: true,
+-        logo: {},
+-        title: {
+-          string_id: "onboarding-refresh-sync-title",
+-        },
+-        subtitle: {
+-          string_id: "onboarding-refresh-sync-subtitle",
+-        },
+-        secondary_button: {
+-          label: {
+-            string_id: "mr2-onboarding-start-browsing-button-label",
+-          },
+-          style: "secondary",
+-          action: {
+-            navigate: true,
+-          },
+-        },
+-        primary_button: {
+-          label: {
+-            string_id: "onboarding-sign-up-button",
+-          },
+-          action: {
+-            data: {
+-              entrypoint: "newuser-onboarding-desktop",
+-            },
+-            type: "FXA_SIGNIN_FLOW",
+-            navigate: true,
+-          },
+-        },
+-      },
+-      targeting: "!isFxASignedIn",
+-    },
    ],
  };
  
 diff --git a/browser/components/asrouter/modules/OnboardingMessageProvider.sys.mjs b/browser/components/asrouter/modules/OnboardingMessageProvider.sys.mjs
-index abc6db68..0c86955f 100644
+index 1cfb95bb..970a507b 100644
 --- a/browser/components/asrouter/modules/OnboardingMessageProvider.sys.mjs
 +++ b/browser/components/asrouter/modules/OnboardingMessageProvider.sys.mjs
-@@ -1226,7 +1226,7 @@ const BASE_MESSAGES = () => [
+@@ -2528,7 +2528,7 @@ const BASE_MESSAGES = () => [
                          {
                            type: "OPEN_URL",
                            data: {

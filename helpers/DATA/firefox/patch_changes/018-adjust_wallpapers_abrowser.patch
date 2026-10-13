@@ -1,14 +1,20 @@
 diff --git a/browser/extensions/newtab/lib/Wallpapers/WallpaperFeed.sys.mjs b/browser/extensions/newtab/lib/Wallpapers/WallpaperFeed.sys.mjs
-index 72df22b3..24f2f807 100644
+index fc43deba..62839acd 100644
 --- a/browser/extensions/newtab/lib/Wallpapers/WallpaperFeed.sys.mjs
 +++ b/browser/extensions/newtab/lib/Wallpapers/WallpaperFeed.sys.mjs
-@@ -171,10 +171,9 @@
+@@ -428,16 +428,9 @@ export class WallpaperFeed {
        PREF_WALLPAPERS_CUSTOM_WALLPAPER_ENABLED
      );
  
 -    let baseAttachmentURL = "";
 -    if (records.length) {
--      baseAttachmentURL = await lazy.Utils.baseAttachmentsURL();
+-      try {
+-        baseAttachmentURL = await lazy.Utils.baseAttachmentsURL();
+-      } catch (error) {
+-        // Same as a failed record fetch: carry on so the categories and the
+-        // saved images below still reach the page.
+-        console.error("Error fetching the wallpaper attachments URL", error);
+-      }
 -    }
 +    // Abrowser: remote settings server is blanked so baseAttachmentsURL() returns "".
 +    // Use the known prod attachments CDN base so the (non-local) CDN wallpapers resolve.
@@ -16,7 +22,7 @@ index 72df22b3..24f2f807 100644
  
      const wallpapers = [
        ...records.map(record => {
-@@ -182,7 +181,9 @@
+@@ -445,7 +438,9 @@ export class WallpaperFeed {
            ...record,
            ...(record.attachment
              ? {
@@ -28,10 +34,10 @@ index 72df22b3..24f2f807 100644
              : {}),
            background_position: record.background_position || "center",
 diff --git a/services/settings/remote-settings.sys.mjs b/services/settings/remote-settings.sys.mjs
-index 2330fb01..2c4062d1 100644
+index 98c965be..f333a161 100644
 --- a/services/settings/remote-settings.sys.mjs
 +++ b/services/settings/remote-settings.sys.mjs
-@@ -301,7 +301,7 @@ function remoteSettingsFunction() {
+@@ -300,7 +300,7 @@ function remoteSettingsFunction() {
            bucketName: bucket,
            signerName,
          });
