@@ -22,17 +22,17 @@
          <p class="description" data-l10n-id="login-intro-description2">
 --- a/browser/base/content/appmenu-viewcache.inc.xhtml
 +++ b/browser/base/content/appmenu-viewcache.inc.xhtml
-@@ -41,9 +41,7 @@
-       </toolbaritem>
+@@ -59,9 +59,7 @@
        <hbox id="appMenu-fxa-sign-in-promo"
-             align="center">
+             align="center"
+             closemenu="none">
 -        <html:img class="fxa-menu-sign-in-promo-image"
 -                  alt=""
 -                  src="chrome://browser/content/kit-signed-out.svg"/>
 +        <!-- Abrowser: drop the foxy sign-in illustration; keep the promo text/button. -->
          <vbox class="fxa-menu-sign-in-promo-text" flex="1">
            <label class="fxa-menu-sign-in-promo-heading"
-                  data-l10n-id="appmenu-fxa-sign-in-promo-heading"/>
+                  data-l10n-id="appmenu-fxa-sign-in-promo-heading2"/>
 @@ -685,9 +683,7 @@
        <hbox id="PanelUI-fxa-menu-sign-in-promo"
              align="center"

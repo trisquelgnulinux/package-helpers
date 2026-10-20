@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=140
+VERSION=141
 EXTERNAL='deb-src http://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu $UPSTREAM main'
 REPOKEY=AEBDF4819BE21867
 
@@ -425,7 +425,7 @@ echo ".warning{display: none!important; } .addon[notification=warning]{backgroun
 sed -i 's|<a href="http://www.mozilla.org/">Mozilla Project</a>|<a href="http://www.trisquel.info/">Trisquel Project</a>|g' \
     browser/base/content/overrides/app-license.html
 sed -i "s|https://firefox-source-docs.mozilla.org/contributing/contribution_quickref.html|$GIT_TPH_REPO|" \
-    toolkit/content/license.html
+    toolkit/content/license.html.mako
 
 # We went too far...
 #sed -i 's/iceweasel, abrowser, icecat,/iceweasel, firefox, icecat,/g' debian/control.in

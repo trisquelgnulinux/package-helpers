@@ -1,8 +1,8 @@
 diff --git a/browser/app/profile/firefox.js b/browser/app/profile/firefox.js
-index 217ed280..d91cde94 100644
+index f92d24e1..cbb3ee44 100644
 --- a/browser/app/profile/firefox.js
 +++ b/browser/app/profile/firefox.js
-@@ -1806,16 +1806,16 @@ pref("browser.topsites.component.enabled", false);
+@@ -1941,11 +1941,11 @@ pref("browser.topsites.component.enabled", false);
  
  pref("browser.topsites.useRemoteSetting", true);
  // Fetch sponsored Top Sites from Mozilla Tiles Service (Contile)
@@ -11,28 +11,21 @@ index 217ed280..d91cde94 100644
 +pref("browser.topsites.contile.enabled", false);
 +pref("browser.topsites.contile.endpoint", "");
  
- // The base URL for the Quick Suggest anonymizing proxy. To make a request to
- // the proxy, include a campaign ID in the path.
--pref("browser.partnerlink.attributionURL", "https://topsites.services.mozilla.com/cid/");
--pref("browser.partnerlink.campaign.topsites", "amzn_2020_a1");
-+pref("browser.partnerlink.attributionURL", "");
-+pref("browser.partnerlink.campaign.topsites", "");
- 
  // Activates preloading of the new tab url.
 -pref("browser.newtab.preload", true);
 +pref("browser.newtab.preload", false);
  
- // Do not enable the preonboarding experience on Linux
- #ifdef XP_LINUX
-@@ -1857,24 +1857,24 @@ pref("browser.newtabpage.activity-stream.mobileDownloadModal.variant-b", false);
+ // For further detail on the TOU prefs below, see the `preonboarding` feature in
+ // FeatureManifest.yaml
+@@ -1986,24 +1986,24 @@ pref("browser.newtabpage.activity-stream.mobileDownloadModal.variant-b", false);
  pref("browser.newtabpage.activity-stream.mobileDownloadModal.variant-c", false);
  
  // Mozilla Ad Routing Service (MARS) unified ads service
 -pref("browser.newtabpage.activity-stream.unifiedAds.tiles.enabled", true);
-+pref("browser.newtabpage.activity-stream.unifiedAds.tiles.enabled", false);
 -pref("browser.newtabpage.activity-stream.unifiedAds.spocs.enabled", true);
-+pref("browser.newtabpage.activity-stream.unifiedAds.spocs.enabled", false);
 -pref("browser.newtabpage.activity-stream.unifiedAds.endpoint", "https://ads.mozilla.org/");
++pref("browser.newtabpage.activity-stream.unifiedAds.tiles.enabled", false);
++pref("browser.newtabpage.activity-stream.unifiedAds.spocs.enabled", false);
 +pref("browser.newtabpage.activity-stream.unifiedAds.endpoint", "");
  pref("browser.newtabpage.activity-stream.unifiedAds.adsFeed.enabled", false);
 -pref("browser.newtabpage.activity-stream.unifiedAds.ohttp.enabled", true);
@@ -56,4 +49,3 @@ index 217ed280..d91cde94 100644
  
  // List of locales that weather widget supports.
  pref("browser.newtabpage.activity-stream.discoverystream.locale-weather-config", "bg,cs,da,de,el,en-CA,en-GB,en-US,es-ES,et,fi,fr,hr,hu,is,it,lv,nb-NO,nl,pl,pt-PT,ro,sk,sl,sv-SE,tr");
-
