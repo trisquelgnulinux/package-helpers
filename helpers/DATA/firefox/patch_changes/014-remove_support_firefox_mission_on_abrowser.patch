@@ -1,137 +1,45 @@
-diff --git a/browser/components/preferences/home.inc.xhtml b/browser/components/preferences/home.inc.xhtml
-index c0094fe0..08856c78 100644
---- a/browser/components/preferences/home.inc.xhtml
-+++ b/browser/components/preferences/home.inc.xhtml
-@@ -101,15 +101,6 @@
-   <vbox id="trending-searches" />
-   <vbox id="topsites" />
-   <vbox id="topstories" />
--  <vbox id="support-firefox" />
--
--  <html:moz-box-item class="mission-message">
--    <html:span data-l10n-id="home-prefs-mission-message" />
--    <html:a is="moz-support-link"
--            support-page="sponsor-privacy"
--            data-l10n-id="home-prefs-mission-message-learn-more-link" />
--  </html:moz-box-item>
--
-   <vbox id="highlights" />
- </groupbox>
- </html:template>
 diff --git a/browser/extensions/newtab/lib/AboutPreferences.sys.mjs b/browser/extensions/newtab/lib/AboutPreferences.sys.mjs
-index eec8eb86..1aed35a8 100644
+index efc07596..82971037 100644
 --- a/browser/extensions/newtab/lib/AboutPreferences.sys.mjs
 +++ b/browser/extensions/newtab/lib/AboutPreferences.sys.mjs
-@@ -90,33 +90,6 @@ const PREFS_FOR_SETTINGS = () => {
-       ),
-       eventSource: "TOP_STORIES",
-     },
--    {
--      id: "support-firefox",
--      pref: {
--        feed: "showSponsoredCheckboxes",
--        titleString: "home-prefs-support-firefox-header",
--        nestedPrefs: [
--          {
--            name: "showSponsoredTopSites",
--            titleString: "home-prefs-shortcuts-by-option-sponsored",
--            eventSource: "SPONSORED_TOP_SITES",
--          },
--          {
--            name: "showSponsored",
--            titleString: "home-prefs-recommended-by-option-sponsored-stories",
--            eventSource: "POCKET_SPOCS",
--            shouldHidePref: !Services.prefs.getBoolPref(
--              "browser.newtabpage.activity-stream.feeds.system.topstories",
--              true
--            ),
--            shouldDisablePref: !Services.prefs.getBoolPref(
--              "browser.newtabpage.activity-stream.feeds.section.topstories",
--              true
--            ),
--          },
--        ],
--      },
--    },
-   ];
- };
- 
-@@ -344,41 +317,9 @@ export class AboutPreferences {
-       }
-     });
- 
--    // Special cases to like the nested prefs with another pref,
--    // so we can disable it real time.
--    if (id === "support-firefox") {
--      function setupSupportFirefoxSubCheck(triggerPref, subPref) {
--        const subCheckFullName = `browser.newtabpage.activity-stream.${triggerPref}`;
--        const subCheckPref = Preferences.get(subCheckFullName);
--
--        subCheckPref?.on("change", () => {
--          const showSponsoredFullName = `browser.newtabpage.activity-stream.${subPref}`;
--          const showSponsoredSubcheck = subChecks.find(
--            subcheck =>
--              subcheck.getAttribute("preference") === showSponsoredFullName
--          );
--          if (showSponsoredSubcheck) {
--            showSponsoredSubcheck.disabled = !Services.prefs.getBoolPref(
--              subCheckFullName,
--              true
--            );
--          }
--        });
--      }
--
--      setupSupportFirefoxSubCheck("feeds.section.topstories", "showSponsored");
--      setupSupportFirefoxSubCheck("feeds.topsites", "showSponsoredTopSites");
--    }
- 
-     pref.on("change", () => {
-       subChecks.forEach(subcheck => {
--        // Update child preferences for the "Support Firefox" checkbox group
--        // so that they're turned on and off at the same time.
--        if (id === "support-firefox") {
--          const subPref = Preferences.get(subcheck.getAttribute("preference"));
--          subPref.value = pref.value;
--        }
--
-         // Disable any nested checkboxes if the parent pref is not enabled.
-         subcheck.disabled = !pref._value;
-       });
-diff --git a/browser/locales/en-US/browser/preferences/preferences.ftl b/browser/locales/en-US/browser/preferences/preferences.ftl
-index 269eca10..4c35b53f 100644
---- a/browser/locales/en-US/browser/preferences/preferences.ftl
-+++ b/browser/locales/en-US/browser/preferences/preferences.ftl
-@@ -749,11 +749,7 @@ home-prefs-trending-search-header =
- home-prefs-trending-search-description = Popular and frequently searched topics
- 
- # "Support" here means to help sustain or contribute to something, especially through funding or sponsorship.
--home-prefs-support-firefox-header =
--    .label = Support { -brand-product-name }
--
--home-prefs-mission-message = Our sponsors support our mission to build a better web
--home-prefs-mission-message-learn-more-link = Find out how
-+## Removed by Abrowser customization process.
- 
- # Variables:
- #   $num (number) - Number of rows displayed
-diff --git a/browser/themes/shared/preferences/preferences.css b/browser/themes/shared/preferences/preferences.css
-index 701d29be..769791d7 100644
---- a/browser/themes/shared/preferences/preferences.css
-+++ b/browser/themes/shared/preferences/preferences.css
-@@ -1478,15 +1478,6 @@ setting-group[groupid="home"] {
-   margin: 0;
- }
- 
--/* Styles for the "sponsors support our mission" message and link on the Home tab */
--.mission-message {
--  margin-block-start: var(--space-large);
--
--  > a {
--    font-size: var(--font-size-small);
--  }
--}
--
- #dohProviderSelect {
-   --select-max-width: 235px;
- }
+@@ -589,39 +589,7 @@ export class AboutPreferences {
+             },
+           ],
+         },
+-        {
+-          id: "supportFirefox",
+-          subcategory: "support-firefox",
+-          l10nId: "home-prefs-support-firefox-header-srd",
+-          control: "moz-toggle",
+-          items: [
+-            {
+-              id: "sponsoredShortcuts",
+-              l10nId: "home-prefs-shortcuts-by-option-sponsored-srd",
+-            },
+-            {
+-              id: "sponsoredStories",
+-              l10nId: "home-prefs-recommended-by-option-sponsored-stories-srd",
+-            },
+-            {
+-              id: "supportFirefoxPromo",
+-              l10nId: "home-prefs-mission-message2",
+-              control: "moz-promo",
+-              options: [
+-                {
+-                  control: "a",
+-                  l10nId: "home-prefs-mission-message-learn-more-link-srd",
+-                  slot: "support-link",
+-                  controlAttrs: {
+-                    is: "moz-support-link",
+-                    "support-page": "sponsor-privacy",
+-                    "utm-content": "inproduct",
+-                  },
+-                },
+-              ],
+-            },
+-          ],
+-        },
++        // Abrowser: "Support Firefox" (sponsored content) section removed.
+         {
+           id: "recentActivity",
+           subcategory: "highlights",
