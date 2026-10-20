@@ -1,8 +1,8 @@
 diff --git a/browser/components/BrowserGlue.sys.mjs b/browser/components/BrowserGlue.sys.mjs
-index 8fa6f7a..a34ab8b 100644
+index 4e3f842..9214ee0 100644
 --- a/browser/components/BrowserGlue.sys.mjs
 +++ b/browser/components/BrowserGlue.sys.mjs
-@@ -1860,6 +1860,19 @@ BrowserGlue.prototype = {
+@@ -734,6 +734,19 @@ BrowserGlue.prototype = {
        }
      });
  
@@ -19,6 +19,6 @@ index 8fa6f7a..a34ab8b 100644
 +      Services.prefs.setStringPref("browser.contentblocking.category", "strict"); this._updateCBCategory;
 +    }
 +
-     this._maybeOfferProfileReset();
- 
      this._checkForOldBuildUpdates();
+ 
+     // Check if Sync is configured

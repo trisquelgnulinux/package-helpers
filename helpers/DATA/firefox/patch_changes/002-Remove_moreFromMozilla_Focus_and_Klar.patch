@@ -31,9 +31,9 @@ index cc42846d..52d35d49 100644
  
  pref("browser.contentblocking.report.hide_vpn_banner", false);
  pref("browser.contentblocking.report.vpn_sub_id", "sub_HrfCZF7VPHzZkA");
-diff -Nru a/browser/base/content/test/static/browser_all_files_referenced.js b/browser/base/content/test/static/browser_all_files_referenced.js
---- a/browser/base/content/test/static/browser_all_files_referenced.js	2022-05-22 09:35:55.336673325 +0000
-+++ b/browser/base/content/test/static/browser_all_files_referenced.js	2022-05-22 21:50:33.783348501 +0000
+diff -Nru a/browser/base/content/test/browser-static/browser_all_files_referenced.js b/browser/base/content/test/browser-static/browser_all_files_referenced.js
+--- a/browser/base/content/test/browser-static/browser_all_files_referenced.js	2022-05-22 09:35:55.336673325 +0000
++++ b/browser/base/content/test/browser-static/browser_all_files_referenced.js	2022-05-22 21:50:33.783348501 +0000
 @@ -188,12 +188,6 @@ var allowlist = [
    // extensions/pref/autoconfig/src/nsReadConfig.cpp
    { file: "resource://gre/defaults/autoconfig/prefcalls.js" },
