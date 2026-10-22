@@ -88,6 +88,21 @@ diff --git a/services/settings/RemoteSettingsClient.sys.mjs b/services/settings/
      await lazy.UptakeTelemetry.report(
        lazy.UptakeTelemetry.STATUS.DOWNLOAD_START,
        {
+@@ -389,7 +394,13 @@
+   }
+ 
+   httpClient() {
+-    const api = new lazy.KintoHttpClient(lazy.Utils.SERVER_URL, {
++    // Abrowser: Utils.SERVER_URL is rebranded to 127.0.0.1, so the records of the
++    // allowed security/privacy collections (CRLite, OneCRL, intermediates...)
++    // would never be fetched. Use the real server only for those collections.
++    const serverUrl = lazy.Utils.abrowserRSAllowed(this.bucketName, this.collectionName)
++      ? "https://firefox.settings.services.mozilla.com/v2"
++      : lazy.Utils.SERVER_URL;
++    const api = new lazy.KintoHttpClient(serverUrl, {
+       fetchFunc: lazy.Utils.fetch, // Use fetch() wrapper.
+     });
+     return api.bucket(this.bucketName).collection(this.collectionName);
 @@ -651,6 +656,12 @@
     * @param {object} options See #maybeSync() options.
     */
