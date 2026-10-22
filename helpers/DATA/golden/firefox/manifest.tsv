@@ -2,11 +2,11 @@
 # Do not edit by hand: it is rewritten on every build and re-checksummed.
 # package:      firefox
 # blessed-by:   ark@switnet.org
-# blessed-at:   2026-10-20T05:00:41-06:00
-# upstream:     noble (24.04)  helper-version: 141
-# upstream-version: 158.0+build2-0ubuntu0.24.04.1~mt1
+# blessed-at:   2026-10-22T21:59:18+00:00
+# upstream:     noble (24.04)  helper-version: 142
+# upstream-version: 158.0.1+build1-0ubuntu0.24.04.1~mt1
 # authorized:  yes
-# body-sha256-checksum:  ac107f2daf850d02b99bb14c204ba30ac8aabe30ea53dcf430825d2cfa95be65
+# body-sha256-checksum:  1fc658cec0f92a1af67354189bf24307dc5d6e1936976cc6e6dd35a3ea20db39
 --- manifest ---
 2	2	.agents/skills/nimbus-prefs/SKILL.md
 1	1	.agents/skills/profiler-analysis/references/macos-network-pr-bad-descriptor-error.md
@@ -687,7 +687,6 @@ bin	bin	browser/themes/osx/preferences/saveFile.png
 1	1	l10n/ak/browser/browser/aboutRobots.ftl
 2	2	l10n/ak/browser/browser/appmenu.ftl
 2	2	l10n/ak/browser/browser/browser.ftl
-1	1	l10n/ak/browser/browser/browserContext.ftl
 1	1	l10n/ak/browser/browser/migration.ftl
 3	3	l10n/ak/browser/browser/migrationWizard.ftl
 13	13	l10n/ak/browser/browser/preferences/preferences.ftl
@@ -767,7 +766,7 @@ bin	bin	browser/themes/osx/preferences/saveFile.png
 17	17	l10n/ar/browser/browser/newtab/onboarding.ftl
 7	7	l10n/ar/browser/browser/policies/policies-descriptions.ftl
 1	1	l10n/ar/browser/browser/preferences/moreFromMozilla.ftl
-19	19	l10n/ar/browser/browser/preferences/preferences.ftl
+20	20	l10n/ar/browser/browser/preferences/preferences.ftl
 12	12	l10n/ar/browser/browser/profile/default-bookmarks.ftl
 1	1	l10n/ar/browser/browser/profiles.ftl
 2	2	l10n/ar/browser/browser/protections.ftl
@@ -874,18 +873,20 @@ bin	bin	browser/themes/osx/preferences/saveFile.png
 1	1	l10n/az/browser/browser/aboutRobots.ftl
 6	6	l10n/az/browser/browser/accounts.ftl
 3	3	l10n/az/browser/browser/appmenu.ftl
+1	1	l10n/az/browser/browser/backupSettings.ftl
 1	1	l10n/az/browser/browser/browser.ftl
 1	1	l10n/az/browser/browser/browserSets.ftl
 2	2	l10n/az/browser/browser/contextual-manager.ftl
+1	1	l10n/az/browser/browser/firefoxView.ftl
 1	1	l10n/az/browser/browser/menubar.ftl
 1	1	l10n/az/browser/browser/migrationWizard.ftl
 2	2	l10n/az/browser/browser/newtab/asrouter.ftl
 3	3	l10n/az/browser/browser/newtab/newtab.ftl
-1	1	l10n/az/browser/browser/newtab/onboarding.ftl
+4	4	l10n/az/browser/browser/newtab/onboarding.ftl
 4	4	l10n/az/browser/browser/policies/policies-descriptions.ftl
 12	12	l10n/az/browser/browser/preferences/preferences.ftl
 1	1	l10n/az/browser/browser/profiles.ftl
-1	1	l10n/az/browser/browser/protections.ftl
+2	2	l10n/az/browser/browser/protections.ftl
 1	1	l10n/az/browser/browser/translations.ftl
 2	2	l10n/az/browser/chrome/browser/browser.properties
 7	7	l10n/az/browser/chrome/overrides/appstrings.properties
@@ -994,7 +995,7 @@ bin	bin	browser/themes/osx/preferences/saveFile.png
 10	10	l10n/bg/browser/browser/newtab/onboarding.ftl
 4	4	l10n/bg/browser/browser/policies/policies-descriptions.ftl
 1	1	l10n/bg/browser/browser/preferences/moreFromMozilla.ftl
-20	20	l10n/bg/browser/browser/preferences/preferences.ftl
+21	21	l10n/bg/browser/browser/preferences/preferences.ftl
 5	5	l10n/bg/browser/browser/profile/default-bookmarks.ftl
 2	2	l10n/bg/browser/browser/protections.ftl
 1	1	l10n/bg/browser/browser/siteProtections.ftl
@@ -1029,7 +1030,6 @@ bin	bin	browser/themes/osx/preferences/saveFile.png
 2	2	l10n/bn-BD/browser/browser/accounts.ftl
 3	3	l10n/bn-BD/browser/browser/appmenu.ftl
 2	2	l10n/bn-BD/browser/browser/browser.ftl
-1	1	l10n/bn-BD/browser/browser/browserContext.ftl
 1	1	l10n/bn-BD/browser/browser/browserSets.ftl
 1	1	l10n/bn-BD/browser/browser/menubar.ftl
 1	1	l10n/bn-BD/browser/browser/migration.ftl
@@ -1067,7 +1067,6 @@ bin	bin	browser/themes/osx/preferences/saveFile.png
 2	2	l10n/bn-IN/browser/browser/accounts.ftl
 3	3	l10n/bn-IN/browser/browser/appmenu.ftl
 2	2	l10n/bn-IN/browser/browser/browser.ftl
-1	1	l10n/bn-IN/browser/browser/browserContext.ftl
 1	1	l10n/bn-IN/browser/browser/browserSets.ftl
 1	1	l10n/bn-IN/browser/browser/menubar.ftl
 1	1	l10n/bn-IN/browser/browser/migration.ftl
@@ -1386,7 +1385,7 @@ bin	bin	browser/themes/osx/preferences/saveFile.png
 1	1	l10n/ca/browser/browser/menubar.ftl
 3	3	l10n/ca/browser/browser/migrationWizard.ftl
 8	8	l10n/ca/browser/browser/newtab/asrouter.ftl
-9	9	l10n/ca/browser/browser/newtab/newtab.ftl
+14	14	l10n/ca/browser/browser/newtab/newtab.ftl
 18	18	l10n/ca/browser/browser/newtab/onboarding.ftl
 8	8	l10n/ca/browser/browser/policies/policies-descriptions.ftl
 1	1	l10n/ca/browser/browser/preferences/browserIcon.ftl
@@ -1591,7 +1590,6 @@ bin	bin	browser/themes/osx/preferences/saveFile.png
 1	1	l10n/csb/browser/browser/aboutRobots.ftl
 2	2	l10n/csb/browser/browser/appmenu.ftl
 2	2	l10n/csb/browser/browser/browser.ftl
-1	1	l10n/csb/browser/browser/browserContext.ftl
 1	1	l10n/csb/browser/browser/menubar.ftl
 1	1	l10n/csb/browser/browser/migration.ftl
 3	3	l10n/csb/browser/browser/migrationWizard.ftl
@@ -1810,7 +1808,7 @@ bin	bin	browser/themes/osx/preferences/saveFile.png
 1	1	l10n/de/toolkit/toolkit/about/aboutSupport.ftl
 3	3	l10n/de/toolkit/toolkit/about/aboutTelemetry.ftl
 16	16	l10n/de/toolkit/toolkit/branding/brandings.ftl
-5	5	l10n/de/toolkit/toolkit/enterprise/enterprise.ftl
+3	3	l10n/de/toolkit/toolkit/enterprise/enterprise.ftl
 4	4	l10n/de/toolkit/toolkit/enterprise/felt.ftl
 7	7	l10n/de/toolkit/toolkit/firefoxlabs/features.ftl
 3	3	l10n/de/toolkit/toolkit/formautofill/formAutofill.ftl
@@ -2102,7 +2100,6 @@ bin	bin	browser/themes/osx/preferences/saveFile.png
 2	2	l10n/en-ZA/browser/browser/accounts.ftl
 3	3	l10n/en-ZA/browser/browser/appmenu.ftl
 2	2	l10n/en-ZA/browser/browser/browser.ftl
-1	1	l10n/en-ZA/browser/browser/browserContext.ftl
 1	1	l10n/en-ZA/browser/browser/menubar.ftl
 1	1	l10n/en-ZA/browser/browser/migration.ftl
 3	3	l10n/en-ZA/browser/browser/migrationWizard.ftl
@@ -2805,7 +2802,7 @@ bin	bin	browser/themes/osx/preferences/saveFile.png
 1	1	l10n/fr/toolkit/toolkit/about/aboutSupport.ftl
 3	3	l10n/fr/toolkit/toolkit/about/aboutTelemetry.ftl
 16	16	l10n/fr/toolkit/toolkit/branding/brandings.ftl
-5	5	l10n/fr/toolkit/toolkit/enterprise/enterprise.ftl
+3	3	l10n/fr/toolkit/toolkit/enterprise/enterprise.ftl
 4	4	l10n/fr/toolkit/toolkit/enterprise/felt.ftl
 1	1	l10n/fr/toolkit/toolkit/firefoxlabs/features.ftl
 3	3	l10n/fr/toolkit/toolkit/formautofill/formAutofill.ftl
@@ -2957,6 +2954,7 @@ bin	bin	browser/themes/osx/preferences/saveFile.png
 8	8	l10n/ga-IE/browser/branding/official/brand.ftl
 3	3	l10n/ga-IE/browser/branding/official/brand.properties
 2	2	l10n/ga-IE/browser/browser/aboutDialog.ftl
+1	1	l10n/ga-IE/browser/browser/aboutLogins.ftl
 1	1	l10n/ga-IE/browser/browser/aboutRobots.ftl
 2	2	l10n/ga-IE/browser/browser/accounts.ftl
 3	3	l10n/ga-IE/browser/browser/appmenu.ftl
@@ -2968,6 +2966,7 @@ bin	bin	browser/themes/osx/preferences/saveFile.png
 1	1	l10n/ga-IE/browser/browser/migrationWizard.ftl
 2	2	l10n/ga-IE/browser/browser/newtab/asrouter.ftl
 6	6	l10n/ga-IE/browser/browser/newtab/newtab.ftl
+2	2	l10n/ga-IE/browser/browser/newtab/onboarding.ftl
 1	1	l10n/ga-IE/browser/browser/policies/policies-descriptions.ftl
 7	7	l10n/ga-IE/browser/browser/preferences/preferences.ftl
 1	1	l10n/ga-IE/browser/browser/setDesktopBackground.ftl
@@ -3544,7 +3543,7 @@ bin	bin	browser/themes/osx/preferences/saveFile.png
 6	6	l10n/hy-AM/browser/browser/ipProtection.ftl
 1	1	l10n/hy-AM/browser/browser/menubar.ftl
 3	3	l10n/hy-AM/browser/browser/migrationWizard.ftl
-7	7	l10n/hy-AM/browser/browser/newtab/asrouter.ftl
+8	8	l10n/hy-AM/browser/browser/newtab/asrouter.ftl
 15	15	l10n/hy-AM/browser/browser/newtab/newtab.ftl
 17	17	l10n/hy-AM/browser/browser/newtab/onboarding.ftl
 6	6	l10n/hy-AM/browser/browser/policies/policies-descriptions.ftl
@@ -3887,7 +3886,7 @@ bin	bin	browser/themes/osx/preferences/saveFile.png
 1	1	l10n/it/toolkit/toolkit/about/aboutSupport.ftl
 3	3	l10n/it/toolkit/toolkit/about/aboutTelemetry.ftl
 16	16	l10n/it/toolkit/toolkit/branding/brandings.ftl
-5	5	l10n/it/toolkit/toolkit/enterprise/enterprise.ftl
+3	3	l10n/it/toolkit/toolkit/enterprise/enterprise.ftl
 4	4	l10n/it/toolkit/toolkit/enterprise/felt.ftl
 1	1	l10n/it/toolkit/toolkit/firefoxlabs/features.ftl
 3	3	l10n/it/toolkit/toolkit/formautofill/formAutofill.ftl
@@ -4373,7 +4372,6 @@ bin	bin	browser/themes/osx/preferences/saveFile.png
 1	1	l10n/kok/browser/browser/aboutRobots.ftl
 2	2	l10n/kok/browser/browser/appmenu.ftl
 2	2	l10n/kok/browser/browser/browser.ftl
-1	1	l10n/kok/browser/browser/browserContext.ftl
 1	1	l10n/kok/browser/browser/menubar.ftl
 2	2	l10n/kok/browser/browser/migrationWizard.ftl
 7	7	l10n/kok/browser/browser/newtab/asrouter.ftl
@@ -4402,7 +4400,6 @@ bin	bin	browser/themes/osx/preferences/saveFile.png
 1	1	l10n/ku/browser/browser/aboutRobots.ftl
 2	2	l10n/ku/browser/browser/appmenu.ftl
 2	2	l10n/ku/browser/browser/browser.ftl
-1	1	l10n/ku/browser/browser/browserContext.ftl
 1	1	l10n/ku/browser/browser/migration.ftl
 3	3	l10n/ku/browser/browser/migrationWizard.ftl
 13	13	l10n/ku/browser/browser/preferences/preferences.ftl
@@ -4778,7 +4775,6 @@ bin	bin	browser/themes/osx/preferences/saveFile.png
 1	1	l10n/mn/browser/browser/aboutRobots.ftl
 2	2	l10n/mn/browser/browser/appmenu.ftl
 2	2	l10n/mn/browser/browser/browser.ftl
-1	1	l10n/mn/browser/browser/browserContext.ftl
 2	2	l10n/mn/browser/browser/migrationWizard.ftl
 13	13	l10n/mn/browser/browser/preferences/preferences.ftl
 9	9	l10n/mn/browser/chrome/browser/browser.properties
@@ -5117,7 +5113,6 @@ bin	bin	browser/themes/osx/preferences/saveFile.png
 2	2	l10n/nn-NO/toolkit/toolkit/pdfviewer/viewer.ftl
 2	2	l10n/nr/browser/browser/appmenu.ftl
 2	2	l10n/nr/browser/browser/browser.ftl
-1	1	l10n/nr/browser/browser/browserContext.ftl
 1	1	l10n/nr/browser/browser/menubar.ftl
 2	2	l10n/nr/browser/browser/migrationWizard.ftl
 12	12	l10n/nr/browser/browser/preferences/preferences.ftl
@@ -5130,7 +5125,6 @@ bin	bin	browser/themes/osx/preferences/saveFile.png
 1	1	l10n/nso/browser/branding/official/brand.properties
 2	2	l10n/nso/browser/browser/appmenu.ftl
 2	2	l10n/nso/browser/browser/browser.ftl
-1	1	l10n/nso/browser/browser/browserContext.ftl
 1	1	l10n/nso/browser/browser/migration.ftl
 3	3	l10n/nso/browser/browser/migrationWizard.ftl
 13	13	l10n/nso/browser/browser/preferences/preferences.ftl
@@ -5316,7 +5310,6 @@ bin	bin	browser/themes/osx/preferences/saveFile.png
 2	2	l10n/pbb/browser/browser/accounts.ftl
 2	2	l10n/pbb/browser/browser/appmenu.ftl
 2	2	l10n/pbb/browser/browser/browser.ftl
-1	1	l10n/pbb/browser/browser/browserContext.ftl
 1	1	l10n/pbb/browser/browser/menubar.ftl
 12	12	l10n/pbb/browser/browser/preferences/preferences.ftl
 7	7	l10n/pbb/browser/chrome/browser/browser.properties
@@ -5742,7 +5735,6 @@ bin	bin	browser/themes/osx/preferences/saveFile.png
 7	7	l10n/rw/browser/branding/official/brand.ftl
 2	2	l10n/rw/browser/browser/appmenu.ftl
 2	2	l10n/rw/browser/browser/browser.ftl
-1	1	l10n/rw/browser/browser/browserContext.ftl
 12	12	l10n/rw/browser/browser/preferences/preferences.ftl
 9	9	l10n/rw/browser/chrome/browser/browser.properties
 2	2	l10n/rw/browser/chrome/browser/customizableui/customizableWidgets.properties
@@ -5760,7 +5752,6 @@ bin	bin	browser/themes/osx/preferences/saveFile.png
 1	1	l10n/sah/browser/browser/aboutRobots.ftl
 2	2	l10n/sah/browser/browser/appmenu.ftl
 2	2	l10n/sah/browser/browser/browser.ftl
-1	1	l10n/sah/browser/browser/browserContext.ftl
 1	1	l10n/sah/browser/browser/migration.ftl
 3	3	l10n/sah/browser/browser/migrationWizard.ftl
 13	13	l10n/sah/browser/browser/preferences/preferences.ftl
@@ -6055,41 +6046,49 @@ bin	bin	browser/themes/osx/preferences/saveFile.png
 2	2	l10n/sk/toolkit/toolkit/pdfviewer/viewer.ftl
 8	8	l10n/skr/browser/branding/official/brand.ftl
 3	3	l10n/skr/browser/branding/official/brand.properties
-4	4	l10n/skr/browser/browser/aboutDialog.ftl
+5	5	l10n/skr/browser/browser/aboutDialog.ftl
 2	2	l10n/skr/browser/browser/aboutLogins.ftl
+1	1	l10n/skr/browser/browser/aboutPrivateBrowsing.ftl
 1	1	l10n/skr/browser/browser/aboutRobots.ftl
 1	1	l10n/skr/browser/browser/aboutUnloads.ftl
 6	6	l10n/skr/browser/browser/accounts.ftl
 2	2	l10n/skr/browser/browser/addonNotifications.ftl
-1	1	l10n/skr/browser/browser/appExtensionFields.ftl
+2	2	l10n/skr/browser/browser/aiWindow.ftl
+3	3	l10n/skr/browser/browser/appExtensionFields.ftl
 3	3	l10n/skr/browser/browser/appmenu.ftl
-1	1	l10n/skr/browser/browser/backupSettings.ftl
-4	4	l10n/skr/browser/browser/browser.ftl
+4	4	l10n/skr/browser/browser/backupSettings.ftl
+11	11	l10n/skr/browser/browser/browser.ftl
+1	1	l10n/skr/browser/browser/browserContext.ftl
 1	1	l10n/skr/browser/browser/browserSets.ftl
-4	4	l10n/skr/browser/browser/contextual-manager.ftl
+9	9	l10n/skr/browser/browser/contextual-manager.ftl
 4	4	l10n/skr/browser/browser/featureCallout.ftl
-4	4	l10n/skr/browser/browser/firefoxView.ftl
+5	5	l10n/skr/browser/browser/firefoxView.ftl
 1	1	l10n/skr/browser/browser/fxviewTabList.ftl
+6	6	l10n/skr/browser/browser/ipProtection.ftl
 1	1	l10n/skr/browser/browser/menubar.ftl
 3	3	l10n/skr/browser/browser/migrationWizard.ftl
-3	3	l10n/skr/browser/browser/newtab/asrouter.ftl
-4	4	l10n/skr/browser/browser/newtab/newtab.ftl
-15	15	l10n/skr/browser/browser/newtab/onboarding.ftl
+8	8	l10n/skr/browser/browser/newtab/asrouter.ftl
+15	15	l10n/skr/browser/browser/newtab/newtab.ftl
+18	18	l10n/skr/browser/browser/newtab/onboarding.ftl
 8	8	l10n/skr/browser/browser/policies/policies-descriptions.ftl
+1	1	l10n/skr/browser/browser/preferences/browserIcon.ftl
+1	1	l10n/skr/browser/browser/preferences/formAutofill.ftl
 1	1	l10n/skr/browser/browser/preferences/moreFromMozilla.ftl
-10	10	l10n/skr/browser/browser/preferences/preferences.ftl
+21	21	l10n/skr/browser/browser/preferences/preferences.ftl
 11	11	l10n/skr/browser/browser/profile/default-bookmarks.ftl
+1	1	l10n/skr/browser/browser/profiles.ftl
 2	2	l10n/skr/browser/browser/protections.ftl
 1	1	l10n/skr/browser/browser/siteProtections.ftl
 1	1	l10n/skr/browser/browser/spotlight.ftl
 3	3	l10n/skr/browser/browser/translations.ftl
 10	10	l10n/skr/browser/chrome/browser/browser.properties
 1	1	l10n/skr/browser/chrome/browser/downloads/downloads.properties
-6	6	l10n/skr/browser/chrome/overrides/appstrings.properties
+8	8	l10n/skr/browser/chrome/overrides/appstrings.properties
 24	24	l10n/skr/devtools/client/aboutdebugging.ftl
 2	2	l10n/skr/devtools/client/application.ftl
 1	1	l10n/skr/devtools/client/compatibility.ftl
 1	1	l10n/skr/devtools/client/debugger.properties
+3	3	l10n/skr/devtools/client/jsonview.properties
 1	1	l10n/skr/devtools/client/toolbox.ftl
 3	3	l10n/skr/devtools/client/toolbox.properties
 2	2	l10n/skr/devtools/startup/key-shortcuts.ftl
@@ -6328,7 +6327,6 @@ bin	bin	browser/themes/osx/preferences/saveFile.png
 3	3	l10n/ss/browser/branding/official/brand.properties
 2	2	l10n/ss/browser/browser/appmenu.ftl
 2	2	l10n/ss/browser/browser/browser.ftl
-1	1	l10n/ss/browser/browser/browserContext.ftl
 2	2	l10n/ss/browser/browser/migrationWizard.ftl
 12	12	l10n/ss/browser/browser/preferences/preferences.ftl
 9	9	l10n/ss/browser/chrome/browser/browser.properties
@@ -6340,7 +6338,6 @@ bin	bin	browser/themes/osx/preferences/saveFile.png
 11	11	l10n/ss/toolkit/toolkit/branding/brandings.ftl
 2	2	l10n/st/browser/browser/appmenu.ftl
 2	2	l10n/st/browser/browser/browser.ftl
-1	1	l10n/st/browser/browser/browserContext.ftl
 1	1	l10n/st/browser/browser/menubar.ftl
 2	2	l10n/st/browser/browser/migrationWizard.ftl
 12	12	l10n/st/browser/browser/preferences/preferences.ftl
@@ -6472,7 +6469,6 @@ bin	bin	browser/themes/osx/preferences/saveFile.png
 1	1	l10n/ta-LK/browser/branding/official/brand.properties
 2	2	l10n/ta-LK/browser/browser/appmenu.ftl
 2	2	l10n/ta-LK/browser/browser/browser.ftl
-1	1	l10n/ta-LK/browser/browser/browserContext.ftl
 13	13	l10n/ta-LK/browser/browser/preferences/preferences.ftl
 9	9	l10n/ta-LK/browser/chrome/browser/browser.properties
 2	2	l10n/ta-LK/browser/chrome/browser/customizableui/customizableWidgets.properties
@@ -6720,7 +6716,6 @@ bin	bin	browser/themes/osx/preferences/saveFile.png
 2	2	l10n/tn/browser/browser/accounts.ftl
 2	2	l10n/tn/browser/browser/appmenu.ftl
 2	2	l10n/tn/browser/browser/browser.ftl
-1	1	l10n/tn/browser/browser/browserContext.ftl
 1	1	l10n/tn/browser/browser/menubar.ftl
 2	2	l10n/tn/browser/browser/migrationWizard.ftl
 12	12	l10n/tn/browser/browser/preferences/preferences.ftl
@@ -6838,7 +6833,6 @@ bin	bin	browser/themes/osx/preferences/saveFile.png
 1	1	l10n/trs/toolkit/toolkit/global/contextual-identity.ftl
 2	2	l10n/ts/browser/browser/appmenu.ftl
 2	2	l10n/ts/browser/browser/browser.ftl
-1	1	l10n/ts/browser/browser/browserContext.ftl
 1	1	l10n/ts/browser/browser/menubar.ftl
 2	2	l10n/ts/browser/browser/migrationWizard.ftl
 12	12	l10n/ts/browser/browser/preferences/preferences.ftl
@@ -6981,7 +6975,6 @@ bin	bin	browser/themes/osx/preferences/saveFile.png
 1	1	l10n/uz/toolkit/toolkit/global/contextual-identity.ftl
 2	2	l10n/ve/browser/browser/appmenu.ftl
 2	2	l10n/ve/browser/browser/browser.ftl
-1	1	l10n/ve/browser/browser/browserContext.ftl
 1	1	l10n/ve/browser/browser/menubar.ftl
 2	2	l10n/ve/browser/browser/migrationWizard.ftl
 12	12	l10n/ve/browser/browser/preferences/preferences.ftl
@@ -7246,7 +7239,6 @@ bin	bin	browser/themes/osx/preferences/saveFile.png
 1	1	l10n/zu/browser/branding/official/brand.properties
 2	2	l10n/zu/browser/browser/appmenu.ftl
 2	2	l10n/zu/browser/browser/browser.ftl
-1	1	l10n/zu/browser/browser/browserContext.ftl
 1	1	l10n/zu/browser/browser/migration.ftl
 3	3	l10n/zu/browser/browser/migrationWizard.ftl
 13	13	l10n/zu/browser/browser/preferences/preferences.ftl
@@ -7671,7 +7663,7 @@ bin	bin	python/mozperftest/mozperftest/system/example.zip
 2	2	services/fxaccounts/tests/mochitest/test_invalidEmailCase.html
 1	1	services/fxaccounts/tests/xpcshell/test_accounts_config.js
 13	6	services/settings/Attachments.sys.mjs
-12	1	services/settings/RemoteSettingsClient.sys.mjs
+19	2	services/settings/RemoteSettingsClient.sys.mjs
 40	1	services/settings/Utils.sys.mjs
 1	1	services/settings/docs/index.md
 25	25	services/settings/dumps/blocklists/addons.json
@@ -7684,9 +7676,9 @@ bin	bin	services/settings/dumps/main/search-config-icons/b5fd21a8-e369-477f-a3f2
 bin	bin	services/settings/dumps/main/search-config-icons/b99ed276-9557-4492-8bbb-d59826381893
 17	0	services/settings/dumps/main/search-config-icons/b99ed276-9557-4492-8bbb-d59826381893.meta.json
 2	2	services/settings/dumps/main/search-config-overrides-v2.json
-1075	5707	services/settings/dumps/main/search-config-v2.json
+1075	5723	services/settings/dumps/main/search-config-v2.json
 3	213	services/settings/dumps/main/search-default-override-allowlist.json
-3	1449	services/settings/dumps/main/search-telemetry-v2.json
+3	1470	services/settings/dumps/main/search-telemetry-v2.json
 41	237	services/settings/dumps/main/top-sites.json
 3	33	services/settings/dumps/main/url-classifier-skip-urls.json
 160	0	services/settings/dumps/monitor/changes
