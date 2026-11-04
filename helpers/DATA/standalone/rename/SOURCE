@@ -1,0 +1,53 @@
+# Standalone rename (file-rename) for build hosts without the rename package.
+#
+# Temporary workaround: the make-linux* helpers fail with "rename: command
+# not found", and so would the other helpers that call rename. If rename is
+# missing, helpers/config appends ./bin to PATH, so bin/rename from here is
+# found. The system rename is always preferred when it is installed.
+#
+# PATH is used here instead of a shell function, as done for dch and quilt,
+# because several helpers call rename through xargs, which runs programs
+# from PATH and does not see shell functions. bin/ holds only the wrapper,
+# and it is appended to PATH, so it cannot shadow any system command.
+#
+# Contents:
+#   usr/        verbatim, unmodified files from Trisquel's rename package,
+#               keeping the package paths. Do not edit anything under usr/.
+#               Included: file-rename and its File::Rename modules. Not
+#               included: the prename symlink, the man pages and the docs.
+#   SHA256SUMS  checksums of the files under usr/, same paths as in the .deb.
+#   SOURCE      this file: where the files come from.
+#   bin/rename  wrapper: refuses to run if usr/ does not match SHA256SUMS,
+#               then runs usr/bin/file-rename with usr/share/perl5 first in
+#               @INC.
+#   verify.sh   audit script: checksums, signed archive chain, and
+#               byte-for-byte output and tree against the system rename.
+#
+# Requirements: perl 5.32 or newer, already needed by dpkg-dev (jammy has
+# 5.34). Without it the build fails, as intended.
+#
+# Removal: revert the commit that added this directory, or just delete
+# helpers/DATA/standalone/rename. With the directory gone the hook in
+# helpers/config does nothing, and a builder without rename fails as before.
+#
+# Refresh: download the new .deb from the archive below, extract it with
+# dpkg-deb -x, copy the same files, regenerate SHA256SUMS, update the fields
+# below, then run ./verify.sh.
+#
+# License: File-Rename is Artistic or GPL-1+ (same terms as Perl), see the
+# end of usr/share/perl5/File/Rename.pm and usr/share/doc/rename/copyright
+# in the .deb.
+# Dates are UTC.
+
+Package: rename
+Version: 2.02-1
+Architecture: all
+Archive: https://archive.trisquel.org/trisquel
+Suites: ecne-updates ecne
+Component: main
+Filename: pool/main/r/rename/rename_2.02-1_all.deb
+Size: 20328
+SHA256: b16e94226499c72d5208eb5df1e0b11fe0fcffa81e31f81bda80fe89b9abe5ae
+Signed-By: 60364C9869F92450421F0C22B138CA450C05112F
+Retrieved: 2026-11-04
+Verified: 2026-11-04, verify.sh: 9 passed, 0 failed, 0 skipped

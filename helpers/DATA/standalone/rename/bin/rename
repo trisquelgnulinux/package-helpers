@@ -1,0 +1,37 @@
+#!/bin/sh
+#
+#    Copyright (C) 2026 Luis Guzman <ark@switnet.org>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+# Run the file-rename bundled from Trisquel's rename package (see SOURCE).
+# Needs only perl, which dpkg-dev already requires; file-rename asks for
+# perl 5.32 or newer (jammy has 5.34). Without it this fails, which is the
+# intended behaviour.
+
+here=$(dirname "$(dirname "$(readlink -f "$0")")")
+
+# Refuse to run if any bundled file differs from the official package, or if
+# anything unlisted sits under usr/: it is first in @INC and would shadow the
+# system Perl modules.
+listed=$(awk '{print $2}' "$here/SHA256SUMS" | sort)
+present=$(cd "$here" && find usr -type f -o -type l | sort)
+if [ "$listed" != "$present" ] ||
+   ! (cd "$here" && sha256sum --check --quiet --strict SHA256SUMS); then
+    echo "rename (standalone): $here does not match SHA256SUMS, refusing to run" >&2
+    exit 1
+fi
+
+exec perl -I"$here/usr/share/perl5" "$here/usr/bin/file-rename" "$@"
