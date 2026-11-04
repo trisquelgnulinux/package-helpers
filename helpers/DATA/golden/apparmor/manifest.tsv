@@ -1,17 +1,19 @@
-# trisquel golden manifest
+# trisquel golden manifest -- auto-generated; checksum keeps header and body coherent.
+# Do not edit by hand: it is rewritten on every build and re-checksummed.
 # package:      apparmor
 # blessed-by:   ark@switnet.org
-# blessed-at:   2026-07-25T08:47:56+00:00
+# blessed-at:   2026-11-04T05:53:18-06:00
 # upstream:     noble (24.04)  helper-version: 4
-# upstream-version: 4.0.1really4.0.1-0ubuntu0.24.04.7
-# blessed-with: AUDIT_BLESS=1
-# body-sha256:  c0b9da269d3837c4917171861b585aa69e9fc774be11a868b003b2b17ac05d05
+# upstream-version: 4.0.1really4.0.1-0ubuntu0.24.04.9
+# authorized:  yes
+# body-sha256-checksum:  b43db497d8580c6286573c491ba303323d2d4e26f1c86e6afdabaf4c3cab4377
 --- manifest ---
+2	0	debian/apparmor-profiles.install
 3	0	debian/apparmor.install
 12	0	profiles/apparmor.d/abrowser
 12	0	profiles/apparmor.d/icecat
 12	0	profiles/apparmor.d/icedove
-10	2	profiles/apparmor.d/transmission
+9	1	profiles/apparmor.d/transmission
 470	0	profiles/apparmor/profiles/extras/abrowser
 14	14	profiles/apparmor/profiles/extras/firefox
 38	0	profiles/apparmor/profiles/extras/firefox.sh
