@@ -81,6 +81,17 @@ rpl(){
 $RPL "$@"
 }
 
+# Trisquel's devscripts package, see DATA/standalone/devscripts/SOURCE.
+# The system dch is always preferred. Deleting that directory makes this inert.
+DCH_STANDALONE="$PWD/DATA/standalone/devscripts/dch"
+if ! command -v dch >/dev/null 2>&1 && [ -x "$DCH_STANDALONE" ]; then
+    export DCH_STANDALONE
+    echo "WARNING: dch not found, using $DCH_STANDALONE" >&2
+    dch(){
+    "$DCH_STANDALONE" "$@"
+    }
+fi
+
 pkgversion(){
     dpkg-parsechangelog --show-field Version
 }
