@@ -207,11 +207,13 @@ else
       apt-get source --only-source $PACKAGE --download-only -c ${LOCAL_APT}/etc/apt.conf
     fi
     # Verify it first
+    # Prefer gpg2 (GnuPG 2.x on old releases where gpg is 1.x), else gpg (already 2.x)
+    GPG=$(command -v gpg2 || command -v gpg)
     if grep -q "BEGIN PGP SIGNATURE" *.dsc; then
-      KEY=$(gpg2 --keyid-format 0xlong --verify  *.dsc  2>&1 | grep -oE '[0-9A-F]{16,40}' | tail -1 || true)
+      KEY=$($GPG --keyid-format 0xlong --verify  *.dsc  2>&1 | grep -oE '[0-9A-F]{16,40}' | tail -1 || true)
       [ -z "$KEY" ] && KEY=$(gpgv --keyring ${LOCAL_APT}/etc/apt/trusted.gpg.d/keyring *.dsc 2>&1 | egrep ".SA key" | sed 's/.*.SA key //' || true)
       fetchkey $KEY
-      gpg2 --verify --keyring ${LOCAL_APT}/etc/apt/trusted.gpg.d/keyring.gpg *.dsc
+      $GPG --verify --keyring ${LOCAL_APT}/etc/apt/trusted.gpg.d/keyring.gpg *.dsc
       [ -n $SCHROOT_COMMAND ] && gpgconf --kill gpg-agent
     else
       echo WARNING! The dsc file is not gpg signed!
