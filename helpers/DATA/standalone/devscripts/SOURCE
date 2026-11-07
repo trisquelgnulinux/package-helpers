@@ -1,0 +1,42 @@
+# Standalone dch (debchange) for build hosts without devscripts.
+#
+# Temporary workaround: 
+# helpers/config fails with "dch: command not found". If dch is missing,
+# helpers/config uses ./dch from here instead. The system dch is always
+# preferred when it is installed.
+#
+# Contents:
+#   usr/        verbatim, unmodified files from Trisquel's devscripts package,
+#               keeping the package paths. Do not edit anything under usr/.
+#   SHA256SUMS  checksums of the files under usr/, same paths as in the .deb.
+#   SOURCE      this file: where the files come from.
+#   dch         wrapper: refuses to run if usr/ does not match SHA256SUMS.
+#   verify.sh   audit script: checksums, signed archive chain, and
+#               byte-for-byte output against the system dch.
+#
+# Requirements: perl and libdpkg-perl, already needed by dpkg-source and
+# dpkg-parsechangelog. Without them the build fails, as intended.
+#
+# Removal: revert the commit that added this directory, or just delete
+# helpers/DATA/standalone/devscripts. With the directory gone the hook in
+# helpers/config does nothing, and a builder without dch fails as before.
+#
+# Refresh: download the new .deb from the archive below, extract it with
+# dpkg-deb -x, copy the same three files, regenerate SHA256SUMS, update the
+# fields below, then run ./verify.sh.
+#
+# License: devscripts is GPL-2+, see the header of each file under usr/.
+# Dates are UTC.
+
+Package: devscripts
+Version: 2.23.7ubuntu0.2trisquel3
+Architecture: all
+Archive: https://archive.trisquel.org/trisquel
+Suites: ecne-updates ecne
+Component: main
+Filename: pool/main/d/devscripts/devscripts_2.23.7ubuntu0.2trisquel3_all.deb
+Size: 1048308
+SHA256: 323cb28e6f2b58807db7a34324629a5300d54c05281036b247276301a870217b
+Signed-By: 60364C9869F92450421F0C22B138CA450C05112F
+Retrieved: 2026-11-04
+Verified: 2026-11-04, verify.sh: 12 passed, 0 failed, 0 skipped
