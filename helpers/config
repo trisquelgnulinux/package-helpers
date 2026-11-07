@@ -85,6 +85,18 @@ if ! command -v dch >/dev/null 2>&1 && [ -x "$DCH_STANDALONE" ]; then
     }
 fi
 
+# quilt fallback: if quilt is missing, use the copy from Trisquel's quilt
+# package, see DATA/standalone/quilt/SOURCE.
+# The system quilt is always preferred. Deleting that directory makes this inert.
+QUILT_STANDALONE="$PWD/DATA/standalone/quilt/quilt"
+if ! command -v quilt >/dev/null 2>&1 && [ -x "$QUILT_STANDALONE" ]; then
+    export QUILT_STANDALONE
+    echo "WARNING: quilt not found, using $QUILT_STANDALONE" >&2
+    quilt(){
+    "$QUILT_STANDALONE" "$@"
+    }
+fi
+
 pkgversion(){
     dpkg-parsechangelog --show-field Version
 }

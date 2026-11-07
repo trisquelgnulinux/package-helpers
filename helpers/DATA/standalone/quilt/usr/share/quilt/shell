@@ -1,0 +1,67 @@
+#! /bin/bash
+
+#  This script is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License version 2 as
+#  published by the Free Software Foundation.
+#
+#  See the COPYING and AUTHORS files for more details.
+
+# Read in library functions
+if [ "$(type -t patch_file_name)" != function ]
+then
+        if ! [ -r $QUILT_DIR/scripts/patchfns ]
+        then
+                echo "Cannot read library $QUILT_DIR/scripts/patchfns" >&2
+                exit 1
+        fi
+        . $QUILT_DIR/scripts/patchfns
+fi
+
+if [ "$1" = "-h" ]; then
+    printf $"Usage: quilt shell [command]\n"
+    printf $"
+Launch a shell in a duplicate environment. After exiting the shell, any
+modifications made in this environment are applied to the topmost patch.
+
+If a command is specified, it is executed instead of launching the shell.
+"
+    exit 0
+fi
+
+tmpdir=$(mktemp -d /tmp/quilt-XXXXXX)
+
+cp -a . $tmpdir
+
+(
+    cd $tmpdir/"$SUBDIR"
+    if [ $# -gt 0 ]; then
+        exec "$@"
+    else
+        $SHELL
+    fi
+)
+
+# Find new directories
+( cd $tmpdir; find . -type d ! -path ./"$QUILT_PC"/\* ! -path ./"$QUILT_PATCHES"/\* ) | while read dir; do
+    if [ ! -d "$dir" ]; then
+        mkdir -p "$dir"
+    fi
+done
+
+# New and modified files
+( cd $tmpdir; find . -type f ! -path ./"$QUILT_PC"/\* ! -path ./"$QUILT_PATCHES"/\* ) | while read file; do
+    if [ ! -f "$file" ] || ! diff -q "$file" $tmpdir/"$file" > /dev/null 2>&1; then
+        quilt_command add "$file"
+        cp -a $tmpdir/"$file" "$file"
+    fi
+done
+
+# Removed files
+( find . -type f ! -path ./"$QUILT_PC"/\* ! -path ./"$QUILT_PATCHES"/\* ) | while read file; do
+    if [ ! -f $tmpdir/"$file" ]; then
+        quilt_command add "$file"
+        rm -f "$file"
+    fi
+done
+
+rm -rf $tmpdir

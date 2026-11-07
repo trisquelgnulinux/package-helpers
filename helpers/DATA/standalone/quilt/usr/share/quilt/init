@@ -1,0 +1,45 @@
+#! /bin/bash
+
+#  This script is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License version 2 as
+#  published by the Free Software Foundation.
+#
+#  See the COPYING and AUTHORS files for more details.
+
+# Read in library functions
+if [ "$(type -t patch_file_name)" != function ]
+then
+	if ! [ -r $QUILT_DIR/scripts/patchfns ]
+	then
+		echo "Cannot read library $QUILT_DIR/scripts/patchfns" >&2
+		exit 1
+	fi
+	. $QUILT_DIR/scripts/patchfns
+fi
+
+usage()
+{
+	printf $"Usage: quilt init\n"
+	if [ x$1 = x-h ]
+	then
+		printf $"
+Initializes the quilt meta-data in the current sub-directory. This
+command is optional as any quilt command creates these meta-data on
+need, but it can still be interesting to specify easily the directory
+that should be used as root directory before working from a
+sub-directory."
+		exit 0
+	else
+		exit 1
+	fi
+}
+
+if [ $? -ne 0 ]
+then
+	usage
+fi
+
+create_db
+
+printf $"The quilt meta-data is now initialized.\n"
+

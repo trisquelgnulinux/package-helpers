@@ -1,0 +1,55 @@
+#!/bin/sh
+#
+#    Copyright (C) 2026 Luis Guzman <ark@switnet.org>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+# Run the quilt bundled from Trisquel's quilt package (see SOURCE).
+# Needs bash, patch, diff, perl and coreutils, which dpkg-dev already
+# requires. Without them this fails, which is the intended behaviour.
+
+here=$(dirname "$(readlink -f "$0")")
+
+# quilt sources its scripts through unquoted $QUILT_DIR paths.
+case $here in
+    *[[:space:]]*)
+        echo "quilt (standalone): path with spaces is not supported: $here" >&2
+        exit 1 ;;
+esac
+
+# Refuse to run if any bundled file differs from the official package, or if
+# anything unlisted sits under etc/ or usr/: quilt runs every executable file
+# in QUILT_DIR as a command.
+listed=$(awk '{print $2}' "$here/SHA256SUMS" | sort)
+present=$(cd "$here" && find etc usr -type f -o -type l | sort)
+if [ "$listed" != "$present" ] ||
+   ! (cd "$here" && sha256sum --check --quiet --strict SHA256SUMS); then
+    echo "quilt (standalone): $here does not match SHA256SUMS, refusing to run" >&2
+    exit 1
+fi
+
+# QUILT_DIR: quilt reads its commands and scripts from here instead of
+# /usr/share/quilt. Always set it, so a stale value cannot point elsewhere.
+QUILT_DIR="$here/usr/share/quilt"
+export QUILT_DIR
+
+# QUILTRC: quilt reads $QUILTRC, else ~/.quiltrc, else /etc/quilt.quiltrc.
+# Keep the first two, and use the bundled copy of the third.
+if [ -z "${QUILTRC:-}" ] && [ ! -e "$HOME/.quiltrc" ]; then
+    QUILTRC="$here/etc/quilt.quiltrc"
+    export QUILTRC
+fi
+
+exec bash "$here/usr/bin/quilt" "$@"

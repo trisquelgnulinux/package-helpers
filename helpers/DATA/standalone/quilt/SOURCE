@@ -1,0 +1,53 @@
+# Standalone quilt for build hosts without the quilt package.
+#
+# Temporary workaround: without quilt, package() in helpers/config fails
+# with "quilt: command not found". If quilt is missing, helpers/config uses
+# ./quilt from here instead. The system quilt is always preferred when it is
+# installed.
+#
+# Contents:
+#   etc/, usr/  verbatim, unmodified files from Trisquel's quilt package,
+#               keeping the package paths. Do not edit anything under them.
+#               Included: the quilt command, every quilt subcommand and
+#               script, and /etc/quilt.quiltrc. Not included: compat/
+#               (symlinks to the host awk, bash and sendmail), the make
+#               and debhelper snippets, and the other tools of the package
+#               (deb3, dh_quilt_*, dpatch2quilt, guards).
+#   SHA256SUMS  checksums of the files under etc/ and usr/, same paths as in
+#               the .deb.
+#   SOURCE      this file: where the files come from.
+#   quilt       wrapper: refuses to run if etc/ or usr/ do not match
+#               SHA256SUMS, then runs usr/bin/quilt with QUILT_DIR set to
+#               usr/share/quilt and, unless QUILTRC or ~/.quiltrc is set,
+#               QUILTRC set to etc/quilt.quiltrc.
+#   verify.sh   audit script: checksums, signed archive chain, and
+#               byte-for-byte output and tree against the system quilt.
+#
+# Requirements: bash, patch, diff, perl and coreutils, already needed by
+# dpkg-dev. Without them the build fails, as intended. The path of this
+# directory must not contain spaces.
+#
+# Removal: revert the commit that added this directory, or just delete
+# helpers/DATA/standalone/quilt. With the directory gone the hook in
+# helpers/config does nothing, and a builder without quilt fails as before.
+#
+# Refresh: download the new .deb from the archive below, extract it with
+# dpkg-deb -x, copy the same files, regenerate SHA256SUMS, update the fields
+# below, then run ./verify.sh.
+#
+# License: quilt is GPL-2, see the header of each file under usr/ and
+# usr/share/doc/quilt/copyright in the .deb.
+# Dates are UTC.
+
+Package: quilt
+Version: 0.67+really0.67-4
+Architecture: all
+Archive: https://archive.trisquel.org/trisquel
+Suites: ecne-updates ecne
+Component: main
+Filename: pool/main/q/quilt/quilt_0.67+really0.67-4_all.deb
+Size: 435792
+SHA256: 9ee7c37710b782ecd762ea667b2220f06dc706ced73a4c6ad2240ad6e49f9db2
+Signed-By: 60364C9869F92450421F0C22B138CA450C05112F
+Retrieved: 2026-11-04
+Verified: 2026-11-04, verify.sh: 9 passed, 0 failed, 0 skipped
