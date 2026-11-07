@@ -97,6 +97,16 @@ if ! command -v quilt >/dev/null 2>&1 && [ -x "$QUILT_STANDALONE" ]; then
     }
 fi
 
+# rename fallback: if rename is missing, use the copy from Trisquel's rename
+# package, see DATA/standalone/rename/SOURCE. Its bin/ is appended to PATH
+# instead of a function, because helpers also call rename through xargs.
+# The system rename is always preferred. Deleting that directory makes this inert.
+RENAME_STANDALONE="$PWD/DATA/standalone/rename/bin"
+if ! command -v rename >/dev/null 2>&1 && [ -x "$RENAME_STANDALONE/rename" ]; then
+    echo "WARNING: rename not found, using $RENAME_STANDALONE/rename" >&2
+    PATH="$PATH:$RENAME_STANDALONE"
+fi
+
 pkgversion(){
     dpkg-parsechangelog --show-field Version
 }
