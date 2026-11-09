@@ -17,7 +17,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=5
+VERSION=6
 EXTERNAL='deb-src http://deb.debian.org/debian sid main'
 REPOKEY=6ED0E7B82643E131
 BACKPORTS=true
@@ -35,6 +35,18 @@ sed -i "/Currently supported/s|are:|are at:|" debian/control
 ! grep -q "Priority:" debian/control && sed -i '/Section:/a Priority: optional' debian/control
 
 apply_patch_changes
+
+# yt-dlp >= 2026.10.26 requires Python 3.11, aramo ships 3.10: shim the few 3.11 APIs it uses.
+sed -i '/^if sys.version_info < (3, 11):$/,/noqa: F541$/c\
+if sys.version_info < (3, 11):  # Trisquel: Python 3.10 compat shims\
+    import datetime, re\
+    datetime.UTC = datetime.timezone.utc\
+    re.NOFLAG = 0\
+    sys.exception = lambda: sys.exc_info()[1]' yt_dlp/__init__.py
+sed -i "s/\.to_bytes(\([0-9]\+\))/.to_bytes(\1, 'big')/g" yt_dlp/aes.py yt_dlp/extractor/abematv.py
+
+sed -i '/python3-pytest (>= 9.0~) <!nocheck>,/d' debian/control
+sed -i 's/^\tmake offlinetest PYTHON=python3$/\t: # Test suite needs pytest >= 9 and Python >= 3.11/' debian/rules
 
 changelog "Track latest release and remove explicit site listing, redirecting to website author."
 
