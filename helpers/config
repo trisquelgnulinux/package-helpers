@@ -178,8 +178,16 @@ fetchkey(){
 
 cp DATA/keyring.gpg ${LOCAL_APT}/etc/apt/trusted.gpg.d/keyring.gpg
 
-# Also import the repository key optionally listed in the helper
-[ "1$REPOKEY" != "1" ] && fetchkey $REPOKEY
+if [ "$PACKAGE" = tor ]; then
+    # Tor publishes its archive key only on its own site
+    echo Fetching key $REPOKEY from deb.torproject.org
+    gpg -q --no-default-keyring \
+        --keyring gnupg-ring:${LOCAL_APT}/etc/apt/trusted.gpg.d/keyring.gpg \
+        --fetch-keys https://deb.torproject.org/torproject.org/$REPOKEY.asc
+elif [ "1$REPOKEY" != "1" ]; then
+    # Also import the repository key optionally listed in the helper
+    fetchkey $REPOKEY
+fi
 
 cat << EOF > ${LOCAL_APT}/etc/apt/sources.list
 deb-src $MIRROR $UPSTREAM main universe
