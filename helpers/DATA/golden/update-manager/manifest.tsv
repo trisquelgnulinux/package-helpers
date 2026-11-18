@@ -1,16 +1,17 @@
-# trisquel golden manifest
+# trisquel golden manifest -- auto-generated; checksum keeps header and body coherent.
+# Do not edit by hand: it is rewritten on every build and re-checksummed.
 # package:      update-manager
 # blessed-by:   ark@switnet.org
-# blessed-at:   2026-07-25T15:02:28+00:00
-# upstream:     noble (24.04)  helper-version: 24
-# upstream-version: 24.04.12
-# blessed-with: AUDIT_BLESS=1
-# body-sha256:  e05b72ef1d468b8d20e91028addd5db50f89d7248c9d407c8cfaab974911ff39
+# blessed-at:   2026-11-18T06:46:14-06:00
+# upstream:     noble (24.04)  helper-version: 25
+# upstream-version: 1:24.04.12
+# authorized:  yes
+# body-sha256-checksum:  2931b673a4c9e01b51bf061429a68f76303f79d215f85d28bbc3ecf3bd84d7db
 --- manifest ---
 1	1	HweSupportStatus/consts.py
 0	118	UpdateManager/Core/LivePatchSocket.py
 2	2	UpdateManager/Core/MetaRelease.py
-2	53	UpdateManager/Core/MyCache.py
+14	13	UpdateManager/Core/MyCache.py
 7	8	UpdateManager/Core/UpdateList.py
 8	6	UpdateManager/Core/utils.py
 27	79	UpdateManager/Dialogs.py

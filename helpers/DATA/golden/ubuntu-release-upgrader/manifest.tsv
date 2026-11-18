@@ -1,11 +1,12 @@
-# trisquel golden manifest
+# trisquel golden manifest -- auto-generated; checksum keeps header and body coherent.
+# Do not edit by hand: it is rewritten on every build and re-checksummed.
 # package:      ubuntu-release-upgrader
 # blessed-by:   ark@switnet.org
-# blessed-at:   2026-07-25T14:50:29+00:00
+# blessed-at:   2026-11-18T06:46:14-06:00
 # upstream:     noble (24.04)  helper-version: 25
-# upstream-version: 24.04.28
-# blessed-with: AUDIT_BLESS=1
-# body-sha256:  0d0aea48cbd5e5c5aa5d58c178a86eccf134b1a7f48e5ced7d9e97484ee8ee90
+# upstream-version: 1:24.04.29
+# authorized:  yes
+# body-sha256-checksum:  194fd3bbcde00a4348c6caaf787760e191981e71d4feb12f0718b5a61ea32c1d
 --- manifest ---
 1	1	COPYING
 4	4	DistUpgrade/Changelog
@@ -71,7 +72,7 @@
 1	1	data/gtkbuilder/DistUpgrade.ui
 2	2	data/gtkbuilder/UpgradePromptDialog.ui
 2	2	data/meta-release
-18	672	data/mirrors.cfg
+18	652	data/mirrors.cfg
 10	16	data/removal_denylist.cfg
 0	0	data/{demoted.cfg.jammy => demoted.cfg.aramo}
 2	2	debian/91-release-upgrade
