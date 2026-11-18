@@ -67,7 +67,7 @@ EOF
 
 rm $(find . -name Ubuntu.info)
 cat << EOF   > DistUpgrade/Trisquel.info
-ChangelogURI: https://packages.trisquel.org/changelogs/pool/%s/%s/%s/%s_%s/%s
+ChangelogURI: $CHANGELOGS_URL/pool/%s/%s/%s/%s_%s/%s
 
 Suite: $CODENAME
 RepositoryType: deb
@@ -240,7 +240,7 @@ wget https://gitlab.trisquel.org/trisquel/$Mirrors_masterlist_git -o /dev/null -
 python3 $DATA/../python-apt/parse-mirror-masterlist.py $Mirrors_masterlist|grep https|sort > data/mirrors.cfg
 rm $Mirrors_masterlist
 
-replace changelogs.ubuntu.com packages.trisquel.org .
+replace changelogs.ubuntu.com $CHANGELOGS_HOST .
 
 rpl ubuntu-archive-keyring.gpg trisquel-archive-keyring.gpg . -R
 rpl 11\.04 5\.0 DistUpgrade/*.ui

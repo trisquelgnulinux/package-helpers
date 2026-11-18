@@ -18,11 +18,11 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=3
+VERSION=4
 
 . ./config
 
-sed -i  's/changelogs\.ubuntu\.com/packages\.trisquel\.org/g' debian/patches/04_changelog
+sed -i "s|http://changelogs\.ubuntu\.com/changelogs|$CHANGELOGS_URL|g" debian/patches/04_changelog
 sed -i 's/Ubuntu/Trisquel/g' debian/patches/04_changelog
 
 # Note: i386 rebuild requires no change on helper or other helpers as binaries can be

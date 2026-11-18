@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=24
+VERSION=25
 DEPENDS=at-spi2-core
 
 . ./config
@@ -66,7 +66,7 @@ replace ubuntu-desktop trisquel .
 sed '/%s base/ s/name.*/name = "Trisquel base"/' -i ./UpdateManager/Core/UpdateList.py
 sed -i '/from gettext import gettext as _/d' ./UpdateManager/Core/UpdateList.py
 
-sed 's_https://changelogs.ubuntu.com/changelogs/pool/_https://packages.trisquel.org/changelogs/pool/_' -i UpdateManager/Core/MyCache.py
+sed "s|https://changelogs.ubuntu.com/changelogs/pool/|$CHANGELOGS_URL/pool/|" -i UpdateManager/Core/MyCache.py
 
 #Make sure apt_pkg is enabled for prevent-autoconnection.patch to work.
 [ -z "$(grep 'import apt_pkg' UpdateManager/UpdateManager.py)" ] && \
@@ -95,6 +95,8 @@ done
 # Add global pycodestyle patch
 echo "> Apply 99_pycodestyle_pass.patch"
 patch_p1 $DATA/extra/99_pycodestyle_pass.patch
+
+apply_patch_changes
 
 changelog "Compiled for Trisquel"
 

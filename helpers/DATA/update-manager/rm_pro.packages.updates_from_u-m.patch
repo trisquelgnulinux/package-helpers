@@ -99,15 +99,14 @@ index 3b9eaa58..d44040d5 100644
              )
          except SystemError as e:
              header = _("Could not calculate the upgrade")
-diff --git a/UpdateManager/Core/MyCache.py b/UpdateManager/Core/MyCache.py_
-index 3e61b840..dfbacbb1 100644
+diff --git a/UpdateManager/Core/MyCache.py b/UpdateManager/Core/MyCache.py
+index 50406443..0a96149d 100644
 --- a/UpdateManager/Core/MyCache.py
 +++ b/UpdateManager/Core/MyCache.py
-@@ -468,54 +468,3 @@ class MyCache(DistUpgrade.DistUpgradeCache.MyCache):
-                         "Please check your Internet connection."
+@@ -472,14 +472,6 @@ class MyCache(DistUpgrade.DistUpgradeCache.MyCache):
                      )
          self.all_changes[name] += error_message
--
+ 
 -    # If the machine is not attached to Ubuntu Pro, Update Manager advertises
 -    # the upgrades that would be available if it were attached.
 -    # As that is unbeknownst to Apt, we need this map to show the correct
@@ -116,45 +115,6 @@ index 3e61b840..dfbacbb1 100644
 -        for (name, version, _a, _a) in pro_pkgs:
 -            self.pro_versions[name] = version
 -
--    def get_changelog(self, name):
--        "get the changelog file from the changelog location"
--        origins = self[name].candidate.origins
--        version = self.pro_versions.get(name, self[name].candidate.version)
--        self.all_changes[name] = _(
--            "Changes for %s versions:\n"
--            "Installed version: %s\n"
--            "Available version: %s\n\n"
--        ) % (
--            name,
--            getattr(self[name].installed, "version", None),
--            version,
--        )
--        if self.CHANGELOG_ORIGIN not in [o.origin for o in origins]:
--            self._fetch_changelog_for_third_party_package(name, origins)
--            return
--        # fixup epoch handling version
--        srcpkg = self[name].candidate.source_name
--        srcver_epoch = self[name].candidate.source_version.replace(":", "%3A")
--        try:
--            changelog = self._get_changelog_or_news(name, "changelog")
--            if len(changelog) == 0:
--                changelog = _(
--                    "The changelog does not contain any relevant changes.\n\n"
--                    "Please use http://launchpad.net/ubuntu/+source/"
--                    "%s/%s/+changelog\n"
--                    "until the changes become available or try again later."
--                ) % (srcpkg, srcver_epoch)
--        except HTTPError:
--            changelog = _(
--                "The list of changes is not available yet.\n\n"
--                "Please use http://launchpad.net/ubuntu/+source/"
--                "%s/%s/+changelog\n"
--                "until the changes become available or try again later."
--            ) % (srcpkg, srcver_epoch)
--        except (IOError, BadStatusLine, socket.error) as e:
--            print("caught exception: ", e)
--            changelog = _(
--                "Failed to download the list of changes. \n"
--                "Please check your Internet connection."
--            )
--        self.all_changes[name] += changelog
+     def get_changelog(self, name):
+         "get the changelog file from the changelog location"
+         origins = self[name].candidate.origins

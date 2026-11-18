@@ -1,0 +1,26 @@
+diff --git a/UpdateManager/Core/MyCache.py b/UpdateManager/Core/MyCache.py
+index 0a96149d..61e7a264 100644
+--- a/UpdateManager/Core/MyCache.py
++++ b/UpdateManager/Core/MyCache.py
+@@ -245,9 +245,18 @@ class MyCache(DistUpgrade.DistUpgradeCache.MyCache):
+         srcver_epoch = pkg.candidate.source_version
+         srcver = self._strip_epoch(srcver_epoch)
+ 
+-        split_section = section.split("/")
+-        if len(split_section) > 1:
+-            src_section = split_section[0]
++        # use the origin component, the Section may name another one
++        components = [
++            origin.component
++            for origin in pkg.candidate.origins
++            if origin.origin == self.CHANGELOG_ORIGIN and origin.component
++        ]
++        if components:
++            src_section = components[0]
++        else:
++            split_section = section.split("/")
++            if len(split_section) > 1:
++                src_section = split_section[0]
+ 
+         # lib is handled special
+         prefix = srcpkg[0]

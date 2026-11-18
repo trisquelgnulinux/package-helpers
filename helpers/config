@@ -54,6 +54,9 @@ export UPSTREAMRELEASE=24.04
 export DEBLOB=1
 MIRROR=http://archive.ubuntu.com/ubuntu
 LOCALMIRROR=http://archive.trisquel.org/trisquel
+# Changelogs site (apt, aptitude, python-apt, update-manager, upgrader)
+export CHANGELOGS_HOST=packages.trisquel.org
+export CHANGELOGS_URL=https://$CHANGELOGS_HOST/changelogs
 GIT_TPH_REPO=https://gitlab.trisquel.org/trisquel/package-helpers
 LOCAL_APT=`mktemp -d` 
 if [[ "$PACKAGE" =~ ^linux(-hwe-[0-9]+\.[0-9]+)?$ && -n "$LP_VERSION" ]]; then

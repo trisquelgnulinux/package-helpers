@@ -1,0 +1,30 @@
+diff --git a/apt/package.py b/apt/package.py
+index 50ed6d15..7b01dddb 100644
+--- a/apt/package.py
++++ b/apt/package.py
+@@ -1232,6 +1232,12 @@ class Package:
+                     "/%(src_section)s/%(prefix)s/%(src_pkg)s"
+                     "/%(src_pkg)s_%(src_ver)s/changelog"
+                 )
++            elif self.candidate.origins[0].origin == "Trisquel":
++                uri = (
++                    "@CHANGELOGS_URL@/pool"
++                    "/%(src_section)s/%(prefix)s/%(src_pkg)s"
++                    "/%(src_pkg)s_%(src_ver)s/changelog"
++                )
+             else:
+                 res = _("The list of changes is not available")
+                 if isinstance(res, str):
+@@ -1277,6 +1283,12 @@ class Package:
+             src_section = section_split[0]
+         del section_split
+ 
++        # Trisquel: use the origin component, the Section may name another one
++        cand_origin = self.candidate.origins[0]
++        if cand_origin.origin == "Trisquel" and cand_origin.component:
++            src_section = cand_origin.component
++        del cand_origin
++
+         # lib is handled special
+         prefix = src_pkg[0]
+         if src_pkg.startswith("lib"):
