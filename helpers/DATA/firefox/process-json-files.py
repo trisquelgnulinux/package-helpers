@@ -24,6 +24,7 @@ import json
 import sys
 import time
 import copy
+import uuid
 import argparse
 import pathlib
 import logging
@@ -200,6 +201,25 @@ class SearchConfigV2(RemoteSettings):
     OUTPUT_PATH = JSON_PATHS[0]
 
     _DUCKDUCKGO_SEARCH_ENGINE_IDENTIFIER = 'ddg'
+    # Regular DuckDuckGo, kept next to the HTML default; aliases get "classic"
+    # appended (the schema allows only lowercase letters).
+    _DUCKDUCKGO_CLASSIC_IDENTIFIER = 'ddg-classic'
+    _DUCKDUCKGO_CLASSIC_NAME = 'DuckDuckGo'
+
+    @classmethod
+    def process_raw(cls, unwrapped_jsons, parsed_schema):
+        for collection in unwrapped_jsons:
+            for record in collection.content:
+                if record.get('identifier') == cls._DUCKDUCKGO_SEARCH_ENGINE_IDENTIFIER:
+                    classic = copy.deepcopy(record)
+                    classic['identifier'] = cls._DUCKDUCKGO_CLASSIC_IDENTIFIER
+                    classic['id'] = str(uuid.uuid5(uuid.NAMESPACE_URL, 'abrowser/ddg-classic'))
+                    classic['base']['name'] = cls._DUCKDUCKGO_CLASSIC_NAME
+                    classic['base']['aliases'] = [
+                        alias + 'classic' for alias in record['base'].get('aliases', [])]
+                    collection.content.append(classic)
+                    break
+        return super().process_raw(unwrapped_jsons, parsed_schema)
 
     @classmethod
     def should_drop_record(cls, record):
@@ -207,7 +227,8 @@ class SearchConfigV2(RemoteSettings):
             return False
 
         identifier = record['identifier']
-        excluded_identifiers = ['ecosia', 'qwant', 'trisquel', 'trisquel-packages']
+        excluded_identifiers = ['ecosia', 'qwant', 'trisquel', 'trisquel-packages',
+                                cls._DUCKDUCKGO_CLASSIC_IDENTIFIER]
 
         return (
             identifier != cls._DUCKDUCKGO_SEARCH_ENGINE_IDENTIFIER and
@@ -243,7 +264,8 @@ class SearchConfigV2(RemoteSettings):
         allRegions_prefixes = ['ecosia', 'qwant', 'trisquel']
 
         if any(engine['identifier'].startswith(prefix) for prefix in allRegions_prefixes) or \
-           engine['identifier'] == cls._DUCKDUCKGO_SEARCH_ENGINE_IDENTIFIER:
+           engine['identifier'] in (cls._DUCKDUCKGO_SEARCH_ENGINE_IDENTIFIER,
+                                    cls._DUCKDUCKGO_CLASSIC_IDENTIFIER):
             engine['variants'] = [{'environment': {'allRegionsAndLocales': True}}]
 
         return engine
@@ -336,7 +358,8 @@ class TopSites(RemoteSettings):
 # all other RemoteSettings subclasses
 processors = (
     SearchConfigV2,
-    SearchConfigOverridesV2,
+    # search-config-overrides-v2 was removed upstream at 160.0
+    #SearchConfigOverridesV2,
     SearchDefaultOverrideAllowlist,
     SearchTelemetryV2,
     UrlClassifierSkipUrls,

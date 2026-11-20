@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=142
+VERSION=143
 EXTERNAL='deb-src http://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu $UPSTREAM main'
 REPOKEY=AEBDF4819BE21867
 
@@ -46,7 +46,8 @@ sed '/^const DEFAULT_SITES/,/^])\;/c const DEFAULT_SITES = new Map\([[""]]\);' -
 sed '/"showSponsored"/,/value/s/value: true/value: false/' -i $ActivityStream
 sed '/"telemetry"/,/value/s/value: true/value: false/' -i $ActivityStream
 #141#sed '/"section.highlights.includePocket"/,/value/s/value: true/value: false/' -i $ActivityStream
-sed '/"telemetry.structuredIngestion.endpoint"/,/value/s/value: .*/value: ""/' -i $ActivityStream
+# telemetry.structuredIngestion.endpoint removed at 159.0.1
+#159#sed '/"telemetry.structuredIngestion.endpoint"/,/value/s/value: .*/value: ""/' -i $ActivityStream
 # feeds.section.topstories.options removed at 144.0.2
 #157#sed 's/preffedRegions.includes.geo. .. ..locales .. locales.includes.locale./false/' -i $ActivityStream
 # Region/locale stories defaults moved to STORIES_REGION_LOCALE_DEFAULT
@@ -230,6 +231,11 @@ jq --slurpfile newIcon1 "$DATA/trisquel-search-icons/b99ed276-trisquel.json" \
    --slurpfile newIcon2 "$DATA/trisquel-search-icons/b5fd21a8-trisquel-packages.json" \
    '.data += [$newIcon1[0], $newIcon2[0]]' services/settings/dumps/main/search-config-icons.json > tmp-s-c-i.json
 mv tmp-s-c-i.json services/settings/dumps/main/search-config-icons.json
+# Share the DuckDuckGo icon with ddg-classic (see process-json-files.py).
+jq '(.data[] | select(.engineIdentifiers == ["ddg"]) | .engineIdentifiers) += ["ddg-classic"]' \
+   services/settings/dumps/main/search-config-icons.json > tmp-s-c-i.json
+grep -q '"ddg-classic"' tmp-s-c-i.json || { echo "ERROR: ddg icon record not found"; exit 1; }
+mv tmp-s-c-i.json services/settings/dumps/main/search-config-icons.json
 
 echo "Customizing search engines..."
 # Reprocess search preconfiguration dump
@@ -319,6 +325,14 @@ for graph  in history-empty.svg synced-tabs-empty.svg synced-tabs-error.svg
 do
   cp $DATA/ui_branding/debranding/content/$graph browser/components/firefoxview/content/$graph
 done
+# Nova (default since 160) uses new kit-* illustrations in sidebar and View.
+SIDEBAR_IMG=browser/themes/shared/sidebar
+cp $DATA/ui_branding/debranding/content/synced-tabs-empty.svg $SIDEBAR_IMG/kit-tabs-devices.svg
+cp $DATA/ui_branding/debranding/content/synced-tabs-empty.svg $SIDEBAR_IMG/kit-qr-tabs-devices-empty.svg
+cp $DATA/ui_branding/debranding/content/synced-tabs-error.svg $SIDEBAR_IMG/kit-tabs-devices-error.svg
+cp $DATA/ui_branding/debranding/content/history-empty.svg $SIDEBAR_IMG/kit-page-history.svg
+cp $DATA/debug_brand/debuglogo.svg $SIDEBAR_IMG/kit-history-import.svg
+cp $DATA/debug_brand/debuglogo.svg toolkit/components/satchel/megalist/content/icons/cpm-fox-illustration.svg
 ## Abrowser profiles
 for aprofile  in kit-profiles-dark.svg kit-profiles-light.svg
 do
