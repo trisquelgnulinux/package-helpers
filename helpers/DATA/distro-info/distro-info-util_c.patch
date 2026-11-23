@@ -1,6 +1,6 @@
---- source/distro-info-util.c	2021-11-04 15:27:37.000000000 -0600
-+++ source/distro-info-util.c_fix	2022-04-06 10:00:23.394992023 -0500
-@@ -423,10 +423,6 @@
+--- source/distro-info-util.c
++++ source/distro-info-util.c_fix
+@@ -461,10 +461,6 @@
          free(list->distro->milestones[MILESTONE_EOL_LTS]);
          free(list->distro->milestones[MILESTONE_EOL_ELTS]);
  #endif
@@ -11,7 +11,7 @@
          free(list->distro);
          free(list);
          list = next;
-@@ -581,7 +577,7 @@
+@@ -619,7 +615,7 @@
             "  -t  --testing          current testing version\n"
  #endif
             "  -s  --stable           latest stable version\n"
@@ -20,17 +20,19 @@
             "      --lts              latest long term support (LTS) version\n"
  #endif
  #ifdef DEBIAN
-@@ -592,9 +588,6 @@
+@@ -630,11 +626,6 @@
             "  -l  --lts              list of all LTS supported versions\n"
             "  -e  --elts             list of all Extended LTS supported versions\n"
  #endif
 -#ifdef UBUNTU
 -           "      --supported-esm    list of all Ubuntu Advantage supported stable versions\n"
+-           "      --supported-legacy list of all stable versions supported by Ubuntu Pro\n"
+-           "                         with Legacy add-on\n"
 -#endif
             "      --unsupported      list of all unsupported stable versions\n"
             "  -c  --codename         print the codename (default)\n"
             "  -f  --fullname         print the full name\n"
-@@ -612,7 +605,7 @@
+@@ -652,7 +643,7 @@
  #ifdef DEBIAN
              "--elts, "
  #endif
@@ -39,7 +41,7 @@
              "--latest, "
  #endif
              "--lts, "
-@@ -620,9 +613,6 @@
+@@ -660,9 +651,6 @@
              "--oldstable, "
  #endif
              "--stable, --supported, "
@@ -49,7 +51,7 @@
              "--series, "
  #ifdef DEBIAN
              "--testing, "
-@@ -651,7 +641,7 @@
+@@ -691,7 +679,7 @@
  #ifdef DEBIAN
      char *alias_codename = NULL;
  #endif
@@ -58,17 +60,18 @@
      bool filter_latest = false;
  #endif
  
-@@ -664,9 +654,6 @@
+@@ -704,10 +692,6 @@
          {"devel",         no_argument,       NULL, 'd' },
          {"stable",        no_argument,       NULL, 's' },
          {"supported",     no_argument,       NULL, 'S' },
 -#ifdef UBUNTU
--        {"supported-esm", no_argument,       NULL, 'e' },
+-        {"supported-esm",    no_argument,    NULL, 'e' },
+-        {"supported-legacy", no_argument,    NULL, 'x' },
 -#endif
          {"unsupported",   no_argument,       NULL, 'U' },
          {"codename",      no_argument,       NULL, 'c' },
          {"fullname",      no_argument,       NULL, 'f' },
-@@ -678,14 +665,14 @@
+@@ -719,14 +703,14 @@
          {"oldstable",     no_argument,       NULL, 'o' },
          {"testing",       no_argument,       NULL, 't' },
  #endif
@@ -85,7 +88,7 @@
      const char *short_options = "hadscrfly::";
  #endif
  #ifdef DEBIAN
-@@ -731,7 +718,7 @@
+@@ -772,7 +756,7 @@
              case 'd':
                  selected_filters++;
                  filter_cb = filter_devel;
@@ -94,7 +97,7 @@
                  select_cb = select_latest_created;
  #endif
  #ifdef DEBIAN
-@@ -782,7 +769,7 @@
+@@ -823,7 +807,7 @@
                  free(date);
                  return EXIT_SUCCESS;
  
@@ -103,7 +106,7 @@
              case 'l':
                  selected_filters++;
                  filter_latest = true;
-@@ -836,15 +823,6 @@
+@@ -877,21 +861,6 @@
                  select_cb = NULL;
                  break;
  
@@ -115,11 +118,17 @@
 -                select_cb = NULL;
 -                break;
 -
+-            case 'x':
+-                // Only long option --supported-legacy is used
+-                selected_filters++;
+-                filter_cb = filter_legacy_supported;
+-                select_cb = NULL;
+-                break;
 -#endif
  #ifdef DEBIAN
              case 't':
                  selected_filters++;
-@@ -976,7 +954,7 @@
+@@ -1018,7 +987,7 @@
              selected = select_series(distro_list, series_name);
          } else {
              selected = get_distro(distro_list, date, filter_cb, select_cb);

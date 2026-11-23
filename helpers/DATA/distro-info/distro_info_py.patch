@@ -1,5 +1,5 @@
 diff --git a/python/distro_info.py b/python/distro_info.py
-index c87fbff6..0a624745 100644
+index 30af1ed..5b43e7e 100644
 --- a/python/distro_info.py
 +++ b/python/distro_info.py
 @@ -1,3 +1,4 @@
@@ -16,7 +16,7 @@ index c87fbff6..0a624745 100644
  
  import csv
  import datetime
-@@ -100,7 +101,7 @@
+@@ -100,7 +101,7 @@ def _get_date(row: dict[str, str], column: str) -> typing.Optional[datetime.date
  
  class DistroInfo:
      """Base class for distribution information.
@@ -24,8 +24,8 @@ index c87fbff6..0a624745 100644
 +    Use DebianDistroInfo or TrisquelDistroInfo instead of using this directly.
      """
  
-     def __init__(self, distro):
-@@ -340,16 +340,16 @@ class DebianDistroInfo(DistroInfo):
+     def __init__(self, distro: str) -> None:
+@@ -342,16 +343,16 @@ class DebianDistroInfo(DistroInfo):
          ]
  
  
@@ -46,7 +46,7 @@ index c87fbff6..0a624745 100644
          given date."""
          if date is None:
              date = self._date
-@@ -372,7 +372,7 @@ class UbuntuDistroInfo(DistroInfo):
+@@ -374,7 +375,7 @@ class UbuntuDistroInfo(DistroInfo):
      def supported(
          self, date: typing.Optional[datetime.date] = None, result: str = "codename"
      ) -> list[typing.Union[DistroRelease, str]]:
@@ -55,7 +55,7 @@ index c87fbff6..0a624745 100644
          date."""
          if date is None:
              date = self._date
-@@ -382,17 +382,3 @@ class UbuntuDistroInfo(DistroInfo):
+@@ -384,31 +385,3 @@ class UbuntuDistroInfo(DistroInfo):
              if (x.eol and date <= x.eol) or (x.eol_server is not None and date <= x.eol_server)
          ]
          return distros
@@ -71,5 +71,19 @@ index c87fbff6..0a624745 100644
 -            self._format(result, x)
 -            for x in self._avail(date)
 -            if x.eol_esm is not None and date <= x.eol_esm
+-        ]
+-        return distros
+-
+-    def supported_legacy(
+-        self, date: typing.Optional[datetime.date] = None, result: str = "codename"
+-    ) -> list[typing.Union[DistroRelease, str]]:
+-        """Get list of all Ubuntu distributions supported by Ubuntu Pro
+-        with Legacy add-on based on the given date."""
+-        if date is None:
+-            date = self._date
+-        distros = [
+-            self._format(result, x)
+-            for x in self._avail(date)
+-            if x.eol_legacy is not None and date <= x.eol_legacy
 -        ]
 -        return distros

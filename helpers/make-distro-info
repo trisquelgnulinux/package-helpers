@@ -27,7 +27,8 @@ mv ubuntu-distro-info.c trisquel-distro-info.c
 sed -i 's|ubuntu|trisquel|g' trisquel-distro-info.c
 sed -i 's|Ubuntu|Trisquel GNU/Linux|g' trisquel-distro-info.c
 sed -i 's|UBUNTU|TRISQUEL|g' trisquel-distro-info.c
-sed -i 's|,eol-server,eol-esm||' trisquel-distro-info.c
+# trisquel.csv has no eol-server, eol-esm or eol-legacy columns.
+sed -i '/CSV_HEADER/s|,eol-server[^"]*||' trisquel-distro-info.c
 sed -i 's|Ubuntu|Trisquel GNU/Linux|' shell/ubuntu-distro-info.in
 
 # distro-info-util.c

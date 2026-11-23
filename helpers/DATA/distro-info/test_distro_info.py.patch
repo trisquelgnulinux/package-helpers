@@ -1,5 +1,5 @@
 diff --git a/python/distro_info_test/test_distro_info.py b/python/distro_info_test/test_distro_info.py
-index b9e1cc13..94474bf5 100644
+index 9c3b284..94474bf 100644
 --- a/python/distro_info_test/test_distro_info.py
 +++ b/python/distro_info_test/test_distro_info.py
 @@ -1,5 +1,6 @@
@@ -18,7 +18,7 @@ index b9e1cc13..94474bf5 100644
  
  
  class DebianDistroInfoTestCase(unittest.TestCase):  # pylint: disable=too-many-public-methods
-@@ -122,91 +123,89 @@ class DebianDistroInfoTestCase(unittest.TestCase):  # pylint: disable=too-many-p
+@@ -122,105 +123,89 @@ class DebianDistroInfoTestCase(unittest.TestCase):  # pylint: disable=too-many-p
          self.assertEqual(self._distro_info.stable(self._date, result="release"), "5.0")
  
  
@@ -90,6 +90,20 @@ index b9e1cc13..94474bf5 100644
 +        supported = ["robur", "awen", "taranis", "slaine", "dagda"]
          self.assertEqual(self._distro_info.supported(self._date), supported)
  
+-    def test_supported_esm(self) -> None:
+-        """Test: List all supported ESM Ubuntu distribution."""
+-        supported_esm = ["trusty", "xenial", "bionic", "focal", "jammy"]
+-        self.assertEqual(
+-            self._distro_info.supported_esm(datetime.date(2022, 12, 22)), supported_esm
+-        )
+-
+-    def test_supported_legacy(self) -> None:
+-        """Test: List all supported legacy Ubuntu distribution."""
+-        supported_legacy = ["trusty", "xenial", "bionic", "focal", "jammy", "noble"]
+-        self.assertEqual(
+-            self._distro_info.supported_legacy(datetime.date(2025, 9, 4)), supported_legacy
+-        )
+-
      def test_unsupported(self) -> None:
 -        """Test: List all unsupported Ubuntu distributions."""
 -        unsupported = ["warty", "hoary", "breezy", "edgy", "feisty", "gutsy", "intrepid", "jaunty"]
