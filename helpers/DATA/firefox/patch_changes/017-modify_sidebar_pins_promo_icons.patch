@@ -1,8 +1,8 @@
 diff --git a/browser/themes/shared/jar.inc.mn b/browser/themes/shared/jar.inc.mn
-index 3a12a7a3..ac1245a9 100644
+index 2ee4fc2..d374db7 100644
 --- a/browser/themes/shared/jar.inc.mn
 +++ b/browser/themes/shared/jar.inc.mn
-@@ -293,10 +293,12 @@
+@@ -300,10 +300,12 @@
    skin/classic/browser/search-indicator-badge-add.svg          (../shared/search/search-indicator-badge-add.svg)
    skin/classic/browser/searchbar.css                           (../shared/search/searchbar.css)
  
@@ -20,25 +20,41 @@ index 3a12a7a3..ac1245a9 100644
    skin/classic/browser/sidebar/kit-page-history.svg           (../shared/sidebar/kit-page-history.svg)
    skin/classic/browser/sidebar/kit-tabs-devices.svg           (../shared/sidebar/kit-tabs-devices.svg)
 diff --git a/browser/components/sidebar/sidebar-pins-promo.mjs b/browser/components/sidebar/sidebar-pins-promo.mjs
-index beac7ea4..538ae9aa 100644
+index bf700bd..46a905b 100644
 --- a/browser/components/sidebar/sidebar-pins-promo.mjs
 +++ b/browser/components/sidebar/sidebar-pins-promo.mjs
-@@ -56,10 +56,10 @@ export default class SidebarPinsPromo extends MozLitElement {
-     this.launcherObserver = new MutationObserver(() => this.requestUpdate());
+@@ -64,21 +64,20 @@ export default class SidebarPinsPromo extends MozLitElement {
    }
    #icons = [
--    { name: "firefox", src: "chrome://browser/skin/sidebar/firefox.svg" },
--    { name: "slack", src: "chrome://browser/skin/sidebar/slack.svg" },
--    { name: "foxy", src: "chrome://browser/skin/sidebar/foxy.svg" },
--    { name: "gmail", src: "chrome://browser/skin/sidebar/gmail.svg" },
-+    { name: "trisquel", src: "chrome://browser/skin/sidebar/trisquel.svg" },
-+    { name: "liberachat", src: "chrome://browser/skin/sidebar/liberachat.svg" },
-+    { name: "fsf", src: "chrome://browser/skin/sidebar/fsf.svg" },
-+    { name: "wikipedia", src: "chrome://browser/skin/sidebar/wikipedia.svg" },
+     {
+-      name: "firefox",
+-      src: "chrome://browser/skin/sidebar/firefox.svg",
++      name: "trisquel",
++      src: "chrome://browser/skin/sidebar/trisquel.svg",
+     },
+     {
+-      name: "slack",
+-      src: "chrome://browser/skin/sidebar/slack.svg",
++      name: "liberachat",
++      src: "chrome://browser/skin/sidebar/liberachat.svg",
+     },
+     {
+-      name: "foxy",
+-      src: "chrome://browser/skin/sidebar/foxy.svg",
+-      novaSrc: "chrome://browser/skin/sidebar/kit-pinned-tabs-promo.svg",
++      name: "fsf",
++      src: "chrome://browser/skin/sidebar/fsf.svg",
+     },
+     {
+-      name: "gmail",
+-      src: "chrome://browser/skin/sidebar/gmail.svg",
++      name: "wikipedia",
++      src: "chrome://browser/skin/sidebar/wikipedia.svg",
+     },
    ];
  
-   connectedCallback() {
 diff --git a/browser/components/preferences/preferences.xhtml b/browser/components/preferences/preferences.xhtml
+index 4a99dce..2520c5d 100644
 --- a/browser/components/preferences/preferences.xhtml
 +++ b/browser/components/preferences/preferences.xhtml
 @@ -191,7 +191,7 @@
@@ -51,9 +67,10 @@ diff --git a/browser/components/preferences/preferences.xhtml b/browser/componen
        </html:moz-page-nav-button>
        <html:moz-page-nav-button id="category-more-from-mozilla"
 diff --git a/browser/components/preferences/preferences.js b/browser/components/preferences/preferences.js
+index df1663c..13e48ca 100644
 --- a/browser/components/preferences/preferences.js
 +++ b/browser/components/preferences/preferences.js
-@@ -225,7 +225,7 @@
+@@ -256,7 +256,7 @@ var gCurrentHistoryEntryId = null;
  const CONFIG_PANES = Object.freeze({
    about: {
      l10nId: "about-firefox-header",
@@ -63,9 +80,10 @@ diff --git a/browser/components/preferences/preferences.js b/browser/components/
      module: "chrome://browser/content/preferences/config/about-firefox.mjs",
      visible: () => srdSectionPrefs.all,
 diff --git a/browser/components/preferences/config/languages.mjs b/browser/components/preferences/config/languages.mjs
+index 3e873df..fdba8a0 100644
 --- a/browser/components/preferences/config/languages.mjs
 +++ b/browser/components/preferences/config/languages.mjs
-@@ -849,7 +849,7 @@
+@@ -867,7 +867,7 @@ SettingGroupManager.registerGroups({
      inProgress: true,
      l10nId: "browser-language-heading",
      headingLevel: 2,

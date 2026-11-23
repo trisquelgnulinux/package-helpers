@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=143
+VERSION=144
 EXTERNAL='deb-src http://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu $UPSTREAM main'
 REPOKEY=AEBDF4819BE21867
 
@@ -332,6 +332,7 @@ cp $DATA/ui_branding/debranding/content/synced-tabs-empty.svg $SIDEBAR_IMG/kit-q
 cp $DATA/ui_branding/debranding/content/synced-tabs-error.svg $SIDEBAR_IMG/kit-tabs-devices-error.svg
 cp $DATA/ui_branding/debranding/content/history-empty.svg $SIDEBAR_IMG/kit-page-history.svg
 cp $DATA/debug_brand/debuglogo.svg $SIDEBAR_IMG/kit-history-import.svg
+cp $DATA/debug_brand/debuglogo.svg $SIDEBAR_IMG/kit-pinned-tabs-promo.svg
 cp $DATA/debug_brand/debuglogo.svg toolkit/components/satchel/megalist/content/icons/cpm-fox-illustration.svg
 ## Abrowser profiles
 for aprofile  in kit-profiles-dark.svg kit-profiles-light.svg
@@ -436,7 +437,7 @@ echo ".warning{display: none!important; } .addon[notification=warning]{backgroun
 
 #EO about: mods.
 
-sed -i 's|<a href="http://www.mozilla.org/">Mozilla Project</a>|<a href="http://www.trisquel.info/">Trisquel Project</a>|g' \
+sed -i 's|<a href="https://www.mozilla.org/">Mozilla</a>|<a href="https://trisquel.info/">Trisquel Project</a>|g' \
     browser/base/content/overrides/app-license.html
 sed -i "s|https://firefox-source-docs.mozilla.org/contributing/contribution_quickref.html|$GIT_TPH_REPO|" \
     toolkit/content/license.html.mako
@@ -489,6 +490,8 @@ find devtools/client/themes/images/ -name aboutdebugging-fenix*.svg | xargs -n1 
 find devtools/client/themes/images/ -name aboutdebugging-firefox-logo.svg | xargs -n1 cp $DATA/debug_brand/debuglogo_gray.svg
 
 find browser/branding/ -name about-logo.svg | xargs -n1 cp $DATA/debug_brand/debuglogo.svg
+# Monochrome icon for gnome-shell, installed by debian/build/rules.mk.
+cp $DATA/branding/symbolic.svg debian/symbolic.svg
 
 find browser/branding/ -name about-logo-private.png | xargs -n1 cp $DATA/debug_brand/about-logo-private.png
 find browser/branding/ -name about-logo-private@2x.png | xargs -n1 cp $DATA/debug_brand/about-logo-private@2x.png

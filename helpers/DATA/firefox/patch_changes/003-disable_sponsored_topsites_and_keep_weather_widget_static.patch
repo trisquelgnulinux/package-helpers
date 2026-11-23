@@ -1,8 +1,8 @@
 diff --git a/browser/app/profile/firefox.js b/browser/app/profile/firefox.js
-index f92d24e1..cbb3ee44 100644
+index fb9b04e..1b23ec6 100644
 --- a/browser/app/profile/firefox.js
 +++ b/browser/app/profile/firefox.js
-@@ -1941,11 +1941,11 @@ pref("browser.topsites.component.enabled", false);
+@@ -1962,11 +1962,11 @@ pref("browser.topsites.component.enabled", false);
  
  pref("browser.topsites.useRemoteSetting", true);
  // Fetch sponsored Top Sites from Mozilla Tiles Service (Contile)
@@ -17,7 +17,7 @@ index f92d24e1..cbb3ee44 100644
  
  // For further detail on the TOU prefs below, see the `preonboarding` feature in
  // FeatureManifest.yaml
-@@ -1986,24 +1986,24 @@ pref("browser.newtabpage.activity-stream.mobileDownloadModal.variant-b", false);
+@@ -2007,24 +2007,24 @@ pref("browser.newtabpage.activity-stream.mobileDownloadModal.variant-b", false);
  pref("browser.newtabpage.activity-stream.mobileDownloadModal.variant-c", false);
  
  // Mozilla Ad Routing Service (MARS) unified ads service
@@ -44,8 +44,8 @@ index f92d24e1..cbb3ee44 100644
 +pref("browser.newtabpage.activity-stream.weather.locationSearchEnabled", false);
  
  // List of regions that get weather by default.
--pref("browser.newtabpage.activity-stream.discoverystream.region-weather-config", "AT,BE,BG,CA,CH,CY,CZ,DE,DK,EE,ES,FI,FR,GB,GR,HR,HU,IE,IS,IT,LI,LT,LV,MT,NL,NO,PL,PT,RO,SE,SG,SI,SK,US");
+-pref("browser.newtabpage.activity-stream.discoverystream.region-weather-config", "AT,BE,BG,CA,CH,CY,CZ,DE,DK,EE,ES,FI,FR,GB,GL,GR,HK,HR,HU,IE,IQ,IS,IT,LI,LT,LV,MT,NL,NO,PL,PT,RO,RU,SE,SI,SK,US");
 +pref("browser.newtabpage.activity-stream.discoverystream.region-weather-config", "");
  
  // List of locales that weather widget supports.
- pref("browser.newtabpage.activity-stream.discoverystream.locale-weather-config", "bg,cs,da,de,el,en-CA,en-GB,en-US,es-ES,et,fi,fr,hr,hu,is,it,lv,nb-NO,nl,pl,pt-PT,ro,sk,sl,sv-SE,tr");
+ pref("browser.newtabpage.activity-stream.discoverystream.locale-weather-config", "ar,bg,cs,da,de,el,en-CA,en-GB,en-US,es-ES,et,fi,fr,hr,hu,is,it,lv,nb-NO,nl,pl,pt-PT,ro,ru,sk,sl,sv-SE,tr,zh-CN,zh-TW");
