@@ -1,8 +1,8 @@
 diff --git a/browser/extensions/newtab/lib/AboutPreferences.sys.mjs b/browser/extensions/newtab/lib/AboutPreferences.sys.mjs
-index efc07596..82971037 100644
+index 8ef7c28..c74104f 100644
 --- a/browser/extensions/newtab/lib/AboutPreferences.sys.mjs
 +++ b/browser/extensions/newtab/lib/AboutPreferences.sys.mjs
-@@ -589,39 +589,7 @@ export class AboutPreferences {
+@@ -638,39 +638,7 @@ export class AboutPreferences {
              },
            ],
          },
@@ -40,6 +40,6 @@ index efc07596..82971037 100644
 -          ],
 -        },
 +        // Abrowser: "Support Firefox" (sponsored content) section removed.
-         {
-           id: "recentActivity",
-           subcategory: "highlights",
+       ],
+     };
+   }

@@ -68,7 +68,7 @@ pref ("extensions.getAddons.search.url", "https://trisquel.info");
 // Help URL
 pref ("app.support.baseURL", "https://trisquel.info/wiki/");
 pref ("app.support.inputURL", "https://trisquel.info/contact");
-pref ("app.feedback.baseURL", "https://trisquel.info/contact");
+pref ("app.feedback.baseURL", "https://gitlab.trisquel.org/trisquel/package-helpers/-/issues");
 pref ("browser.uitour.url", "https://trisquel.info/en/wiki/abrowser-help");
 pref ("plugins.update.url", "https://trisquel.info/en/wiki/abrowser-help");
 pref ("browser.customizemode.tip0.learnMoreUrl", "https://trisquel.info/en/wiki/abrowser-help");
@@ -153,6 +153,8 @@ pref("toolkit.telemetry.firstShutdownPing.enabled", false);
 pref("toolkit.telemetry.bhrPing.enabled", false);
 pref("browser.ping-centre.telemetry", false);
 pref("dom.security.unexpected_system_load_telemetry_enabled", false);
+// The FxA client info ping does not follow the global telemetry switch.
+pref("identity.fxaccounts.telemetry.clientInfoPing.enabled", false);
 pref("network.connectivity-service.enabled", false);
 
 // Canvas fingerprint protection
@@ -299,6 +301,8 @@ pref("widget.gtk.libadwaita-colors.enabled", false);
 
 // High level search data collection
 pref("browser.search.serpEventTelemetry.enabled",false);
+// Local categorization of search result pages, only used for telemetry.
+pref("browser.search.serpEventTelemetryCategorization.enabled", false);
 
 // Disable Privacy-Preserving Attribution submition
 pref("dom.private-attribution.submission.enabled", false);
