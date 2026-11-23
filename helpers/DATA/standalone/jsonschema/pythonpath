@@ -1,0 +1,42 @@
+#!/bin/sh
+#
+#    Copyright (C) 2026 Luis Guzman <ark@switnet.org>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+# Print the PYTHONPATH entries for the Python modules bundled from Trisquel's
+# packages (see SOURCE), joined with ':'. Only the modules that python3 cannot
+# import are listed, so the system modules are always preferred.
+
+here=$(dirname "$(readlink -f "$0")")
+
+# Refuse if any bundled file differs from the official packages, or if
+# anything unlisted sits under python3-*/: it would be importable.
+listed=$(awk '{print $2}' "$here/SHA256SUMS" | sort)
+present=$(cd "$here" && find python3-* -type f -o -type l | sort)
+if [ "$listed" != "$present" ] ||
+   ! (cd "$here" && sha256sum --check --quiet --strict SHA256SUMS); then
+    echo "jsonschema (standalone): $here does not match SHA256SUMS, refusing to use it" >&2
+    exit 1
+fi
+
+# module:package, in dependency order. A module without __file__ is only an
+# empty directory on sys.path (a namespace package), so it does not count.
+path=""
+for m in jsonschema:python3-jsonschema attr:python3-attr pyrsistent:python3-pyrsistent; do
+    python3 -c "import sys, ${m%%:*}; sys.exit(${m%%:*}.__file__ is None)" >/dev/null 2>&1 && continue
+    path="${path:+$path:}$here/${m#*:}/usr/lib/python3/dist-packages"
+done
+echo "$path"

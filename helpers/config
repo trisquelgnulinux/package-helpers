@@ -117,6 +117,17 @@ if ! command -v rename >/dev/null 2>&1 && [ -x "$RENAME_STANDALONE/rename" ]; th
     PATH="$PATH:$RENAME_STANDALONE"
 fi
 
+# jsonschema fallback: if python3 cannot import jsonschema, use the copies from
+# Trisquel's python3-jsonschema, python3-attr and python3-pyrsistent packages,
+# see DATA/standalone/jsonschema/SOURCE.
+# Deleting that directory makes this inert.
+JSONSCHEMA_STANDALONE="$PWD/DATA/standalone/jsonschema"
+if ! python3 -c 'from jsonschema import validate' >/dev/null 2>&1 && [ -x "$JSONSCHEMA_STANDALONE/pythonpath" ]; then
+    echo "WARNING: python3 jsonschema not found, using $JSONSCHEMA_STANDALONE" >&2
+    JSONSCHEMA_PATH=$("$JSONSCHEMA_STANDALONE/pythonpath")
+    export PYTHONPATH="${PYTHONPATH:+$PYTHONPATH:}$JSONSCHEMA_PATH"
+fi
+
 pkgversion(){
     dpkg-parsechangelog --show-field Version
 }
