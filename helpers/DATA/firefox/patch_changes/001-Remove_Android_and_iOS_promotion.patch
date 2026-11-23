@@ -1,8 +1,8 @@
 diff --git a/browser/components/preferences/sync.inc.xhtml b/browser/components/preferences/sync.inc.xhtml
-index 492491a3..0c8c462a 100644
+index c379e1a..de642e7 100644
 --- a/browser/components/preferences/sync.inc.xhtml
 +++ b/browser/components/preferences/sync.inc.xhtml
-@@ -35,24 +35,6 @@
+@@ -36,24 +36,6 @@
          </hbox>
        </vbox>
      </hbox>
@@ -28,11 +28,11 @@ index 492491a3..0c8c462a 100644
  
    <vbox id="hasFxaAccount">
 diff --git a/browser/locales/en-US/browser/preferences/preferences.ftl b/browser/locales/en-US/browser/preferences/preferences.ftl
-index 1b29e8d..6f7566c 100644
+index c89736e..fdc3c24 100644
 --- a/browser/locales/en-US/browser/preferences/preferences.ftl
 +++ b/browser/locales/en-US/browser/preferences/preferences.ftl
-@@ -838,17 +838,7 @@ sync-signedout-account-signin3 =
-     .label = Sign in to sync…
+@@ -1298,17 +1298,7 @@ sync-signedout-account-short =
+     .label = Sign in
      .accesskey = i
  
 -# This message contains two links and two icon images.
@@ -48,13 +48,13 @@ index 1b29e8d..6f7566c 100644
 -## Firefox account - Signed in
 +## Sync Account - Signed in
  
- sync-profile-picture =
+ sync-profile-picture-with-alt =
      .tooltiptext = Change profile picture
 diff --git a/browser/components/protections/content/vpn-card.mjs b/browser/components/protections/content/vpn-card.mjs
-index d9fe35c0..1b166048 100644
+index 80f4d5b..b2e2ef6 100644
 --- a/browser/components/protections/content/vpn-card.mjs
 +++ b/browser/components/protections/content/vpn-card.mjs
-@@ -24,22 +24,6 @@ export default class VPNCard {
+@@ -22,22 +22,6 @@ export default class VPNCard {
      vpnLink.addEventListener("click", () => {
        this.doc.sendTelemetryEvent("clickVpnCardLink");
      });
@@ -78,10 +78,10 @@ index d9fe35c0..1b166048 100644
      const vpnBanner = this.doc.querySelector(".vpn-banner");
      const exitIcon = vpnBanner.querySelector(".exit-icon");
 diff --git a/browser/components/protections/content/protections.html b/browser/components/protections/content/protections.html
-index 1374c30f..51796498 100644
+index 65ebb49..8c33bdb 100644
 --- a/browser/components/protections/content/protections.html
 +++ b/browser/components/protections/content/protections.html
-@@ -291,44 +291,6 @@
+@@ -292,44 +292,6 @@
              <div id="graph-total-summary"></div>
            </div>
          </div>

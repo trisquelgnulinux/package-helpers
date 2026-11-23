@@ -1,8 +1,8 @@
 diff --git a/browser/base/content/aboutDialog.xhtml b/browser/base/content/aboutDialog.xhtml
-index c6498081..a8db34ad 100644
+index 6effd77..5665b73 100644
 --- a/browser/base/content/aboutDialog.xhtml
 +++ b/browser/base/content/aboutDialog.xhtml
-@@ -138,7 +138,7 @@
+@@ -144,7 +144,7 @@
      <vbox id="bottomBox">
        <hbox pack="center">
          <label is="text-link" class="bottom-link" useoriginprincipal="true" href="about:license" data-l10n-id="bottomLinks-license"/>
@@ -12,11 +12,11 @@ index c6498081..a8db34ad 100644
        </hbox>
        <description id="trademark" data-l10n-id="trademarkInfo"></description>
 diff --git a/browser/components/about/AboutRedirector.cpp b/browser/components/about/AboutRedirector.cpp
-index a6c6ed78..dc657aff 100644
+index 2f6517d..0ebfecf 100644
 --- a/browser/components/about/AboutRedirector.cpp
 +++ b/browser/components/about/AboutRedirector.cpp
-@@ -123,7 +123,7 @@ static const RedirEntry kRedirMap[] = {
-          nsIAboutModule::URI_MUST_LOAD_IN_CHILD},
+@@ -124,7 +124,7 @@ static const RedirEntry kRedirMap[] = {
+          nsIAboutModule::HIDE_FROM_ABOUTABOUT},
      {"restartrequired", "chrome://browser/content/aboutRestartRequired.xhtml",
       nsIAboutModule::ALLOW_SCRIPT | nsIAboutModule::HIDE_FROM_ABOUTABOUT},
 -    {"rights", "https://www.mozilla.org/about/legal/terms/firefox/",
