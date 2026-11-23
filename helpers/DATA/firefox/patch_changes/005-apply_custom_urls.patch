@@ -75,3 +75,63 @@ index a9e8501a..02328371 100644
 #     </hbox>
 #   </vbox>
 # </groupbox>
+diff --git a/browser/components/preferences/preferences.xhtml b/browser/components/preferences/preferences.xhtml
+--- a/browser/components/preferences/preferences.xhtml
++++ b/browser/components/preferences/preferences.xhtml
+@@ -219,7 +219,7 @@
+       </html:moz-page-nav-button>
+       <html:moz-page-nav-button id="helpButton"
+         slot="secondary-nav"
+-        support-page="preferences"
++        href="https://trisquel.info/forum/"
+         iconsrc="chrome://global/skin/icons/help.svg"
+         data-l10n-id="help-button-label2">
+       </html:moz-page-nav-button>
+diff --git a/browser/base/content/utilityOverlay.js b/browser/base/content/utilityOverlay.js
+--- a/browser/base/content/utilityOverlay.js
++++ b/browser/base/content/utilityOverlay.js
+@@ -595,6 +595,10 @@
+ }
+ 
+ function getHelpLinkURL(aHelpTopic) {
++  // General help (Help menu, F1) goes to the Trisquel forum.
++  if (aHelpTopic == "firefox-help") {
++    return "https://trisquel.info/forum/";
++  }
+   var url = Services.urlFormatter.formatURLPref("app.support.baseURL");
+   return url + aHelpTopic;
+ }
+diff --git a/browser/components/preferences/config/about-firefox.mjs b/browser/components/preferences/config/about-firefox.mjs
+--- a/browser/components/preferences/config/about-firefox.mjs
++++ b/browser/components/preferences/config/about-firefox.mjs
+@@ -574,14 +574,16 @@
+             id: "supportGetHelp",
+             l10nId: "support-get-help",
+             control: "moz-box-link",
+-            supportPage: "preferences",
++            controlAttrs: {
++              href: "https://trisquel.info/forum/",
++            },
+           },
+           {
+             id: "supportShareIdeas",
+             l10nId: "support-share-ideas",
+             control: "moz-box-link",
+             controlAttrs: {
+-              href: "https://connect.mozilla.org/",
++              href: "https://gitlab.trisquel.org/trisquel/package-helpers/-/issues",
+             },
+           },
+         ],
+diff --git a/browser/components/preferences/searchResults.inc.xhtml b/browser/components/preferences/searchResults.inc.xhtml
+--- a/browser/components/preferences/searchResults.inc.xhtml
++++ b/browser/components/preferences/searchResults.inc.xhtml
+@@ -25,7 +25,7 @@
+       <html:span data-l10n-name="query" id="sorry-message-query"/>
+     </label>
+     <label id="need-help" data-l10n-id="search-results-help-link">
+-      <html:a is="moz-support-link" class="text-link" data-l10n-name="url" support-page="preferences"/>
++      <html:a class="text-link" data-l10n-name="url" target="_blank" href="https://trisquel.info/forum/"/>
+     </label>
+   </vbox>
+ </groupbox>

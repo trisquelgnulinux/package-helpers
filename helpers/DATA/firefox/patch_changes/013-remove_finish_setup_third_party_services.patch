@@ -2,15 +2,15 @@ diff --git a/browser/components/aboutwelcome/modules/AboutWelcomeDefaults.sys.mj
 index 853e0413..d6f2304d 100644
 --- a/browser/components/aboutwelcome/modules/AboutWelcomeDefaults.sys.mjs
 +++ b/browser/components/aboutwelcome/modules/AboutWelcomeDefaults.sys.mjs
-@@ -684,7 +684,7 @@ const MR_ABOUT_WELCOME_DEFAULT = {
-           action: {
-             type: "OPEN_URL",
-             data: {
--              args: "https://addons.mozilla.org/en-US/firefox/collections/4757633/b4d5649fb087446aa05add5f0258c3/?page=1&collection_sort=-popularity",
-+              args: "https://gnuzilla.gnu.org/",
-               where: "tabshifted",
-             },
-             navigate: true,
+@@ -691,7 +691,7 @@ const MR_ABOUT_WELCOME_DEFAULT = {
+                 {
+                   type: "OPEN_URL",
+                   data: {
+-                    args: "https://addons.mozilla.org/en-US/firefox/collections/4757633/b4d5649fb087446aa05add5f0258c3/?page=1&collection_sort=-popularity",
++                    args: "https://gnuzilla.gnu.org/",
+                     where: "tabshifted",
+                   },
+                   navigate: true,
 @@ -745,49 +745,6 @@ const MR_ABOUT_WELCOME_DEFAULT = {
        },
        targeting: "isFxASignedIn",

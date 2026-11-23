@@ -22,12 +22,16 @@ index cc42846d..52d35d49 100644
  // Whether to show unavailable AI controls regardless of region/locale
  // restrictions. This is intended for localizers to be able to see the strings.
  pref("browser.preferences.aiControls.showUnavailable", false);
-@@ -2685,7 +2685,7 @@ pref("browser.vpn_promo.enabled", false);
+@@ -2685,10 +2685,10 @@ pref("browser.vpn_promo.enabled", false);
  pref("browser.contentblocking.report.vpn_regions", "as,at,au,bd,be,bg,br,ca,ch,cl,co,cy,cz,de,dk,ee,eg,es,fi,fr,gb,gg,gr,hr,hu,id,ie,im,in,io,it,je,ke,kr,lt,lu,lv,ma,mp,mt,mx,my,ng,nl,no,nz,pl,pr,pt,ro,sa,se,sg,si,sk,sn,th,tr,tw,ua,ug,uk,um,us,vg,vi,vn,za");
  
  // Default to enabling pin promos to be shown where allowed.
 -pref("browser.promo.pin.enabled", true);
 +pref("browser.promo.pin.enabled", false);
+ 
+ // Default to enabling Relay promos to be shown where allowed.
+-pref("browser.promo.relay.enabled", true);
++pref("browser.promo.relay.enabled", false);
  
  pref("browser.contentblocking.report.hide_vpn_banner", false);
  pref("browser.contentblocking.report.vpn_sub_id", "sub_HrfCZF7VPHzZkA");
@@ -47,96 +51,6 @@ diff -Nru a/browser/base/content/test/browser-static/browser_all_files_reference
    { file: "resource://gre/greprefs.js" },
  
    // toolkit/mozapps/extensions/AddonContentPolicy.cpp
-diff --git a/browser/components/asrouter/modules/PanelTestProvider.sys.mjs b/browser/components/newtab/lib/PanelTestProvider.sys.mjs
-index b5ff592..22cdf39 100644
---- a/browser/components/asrouter/modules/PanelTestProvider.sys.mjs	2022-10-16 05:35:50.835203327 -0500
-+++ b/browser/components/asrouter/modules/PanelTestProvider.sys.mjs	2022-10-16 06:24:48.095827505 -0500
-@@ -367,85 +374,6 @@ const MESSAGES = () => [
-     frequency: { lifetime: 3 },
-     trigger: { id: "defaultBrowserCheck" },
-   },
--  {
--    id: "PB_FOCUS_PROMO",
--    groups: ["panel-test-provider"],
--    template: "spotlight",
--    content: {
--      template: "multistage",
--      backdrop: "transparent",
--      screens: [
--        {
--          id: "PBM_FIREFOX_FOCUS",
--          order: 0,
--          content: {
--            logo: {
--              imageURL: "chrome://browser/content/assets/focus-logo.svg",
--              height: "48px",
--            },
--            title: {
--              string_id: "spotlight-focus-promo-title",
--            },
--            subtitle: {
--              string_id: "spotlight-focus-promo-subtitle",
--            },
--            dismiss_button: {
--              action: {
--                dismiss: true,
--              },
--            },
--            ios: {
--              action: {
--                data: {
--                  args: "https://app.adjust.com/167k4ih?campaign=firefox-desktop&adgroup=pb&creative=focus-omc172&redirect=https%3A%2F%2Fapps.apple.com%2Fus%2Fapp%2Ffirefox-focus-privacy-browser%2Fid1055677337",
--                  where: "tabshifted",
--                },
--                type: "OPEN_URL",
--                navigate: true,
--              },
--            },
--            android: {
--              action: {
--                data: {
--                  args: "https://app.adjust.com/167k4ih?campaign=firefox-desktop&adgroup=pb&creative=focus-omc172&redirect=https%3A%2F%2Fplay.google.com%2Fstore%2Fapps%2Fdetails%3Fid%3Dorg.mozilla.focus",
--                  where: "tabshifted",
--                },
--                type: "OPEN_URL",
--                navigate: true,
--              },
--            },
--            email_link: {
--              action: {
--                data: {
--                  args: "https://mozilla.org",
--                  where: "tabshifted",
--                },
--                type: "OPEN_URL",
--                navigate: true,
--              },
--            },
--            tiles: {
--              type: "mobile_downloads",
--              data: {
--                QR_code: {
--                  image_url:
--                    "chrome://browser/content/assets/focus-qr-code.svg",
--                  alt_text: {
--                    string_id: "spotlight-focus-promo-qr-code",
--                  },
--                },
--                email: {
--                  link_text: "Email yourself a link",
--                },
--                marketplace_buttons: ["ios", "android"],
--              },
--            },
--          },
--        },
--      ],
--    },
--    trigger: { id: "defaultBrowserCheck" },
--  },
-   {
-     id: "PB_NEWTAB_VPN_PROMO",
-     template: "pb_newtab",
 diff --git a/browser/components/preferences/jar.mn b/browser/components/preferences/jar.mn
 index de83282c..3dec49ff 100644
 --- a/browser/components/preferences/jar.mn
