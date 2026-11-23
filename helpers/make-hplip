@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-VERSION=4
+VERSION=5
 
 # note, we need version 3.20.6 or higher, the binary plugin requirement
 # was reworked on that version.
@@ -31,6 +31,9 @@ QUILT=skip
 rm debian/patches/*-Install-check-plugin.py-as-a-script.patch
 sed -i '/Install-check-plugin.py-as-a-script.patch/d' debian/patches/series
 sed '/plugin/d' -i debian/hplip-gui.manpages debian/hplip.manpages debian/hplip-gui.install debian/hplip.install
+
+# Makefile.am context in the CVE patch expects the patch removed above.
+sed -i 's/ uiscan.py check-plugin.py$/ uiscan.py/' debian/patches/CVE-2026-91XXX.patch
 
 export QUILT_PATCHES=debian/patches
 quilt push -a
