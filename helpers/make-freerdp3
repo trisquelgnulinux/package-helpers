@@ -1,0 +1,29 @@
+#!/bin/sh
+#
+#    Copyright (C) 2026 Luis Guzman <ark@switnet.org>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program
+#
+
+VERSION=1
+BUILD_UNTIL=12.0
+. ./config
+
+# Enable GFX H.264 (AVC420/AVC444) through FFmpeg, required by H.264-only
+# RDP servers such as KDE krdp.
+apply_patch_changes
+
+changelog "Enable FFmpeg video decoding to support GFX H.264 (AVC420/AVC444), required to connect to KDE KRdp."
+
+package

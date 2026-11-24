@@ -1,0 +1,29 @@
+From: Luis Guzman <ark@switnet.org>
+Date: Mon, 2 Nov 2026 14:50:00 -0600
+Subject: freerdp3: enable FFmpeg video decoding for GFX H.264
+
+Ubuntu builds freerdp3 with -DWITH_FFMPEG=OFF because ffmpeg is not in
+main, which also leaves GFX H.264 (AVC420/AVC444) disabled.
+Clients using it, such as remmina, then fail against H.264 based rdp
+servers, such as KDE krdp: authentication succeeds and the session drops
+after the first frame.
+
+---
+ debian/rules | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/debian/rules b/debian/rules
+--- a/debian/rules
++++ b/debian/rules
+@@ -82,7 +82,11 @@
+         -DWITH_URIPARSER=OFF \
+         $(empty)
+ else
++    # Explicit FFmpeg video decoding enables GFX H.264 (AVC420/AVC444),
++    # required by H.264-only servers such as KDE KRdp.
+     DEB_CMAKE_EXTRA_FLAGS += \
++        -DWITH_FFMPEG=ON \
++        -DWITH_VIDEO_FFMPEG=ON \
+         -DWITH_GSM=ON \
+         -DWITH_SWSCALE=ON \
+         -DWITH_DSP_FFMPEG=ON \
