@@ -1,75 +1,53 @@
-hid ?
-hid-a4tech ?
-hid-apple ?
-hid-appleir ?
-hid-aureal ?
-hid-belkin ?
-hid-bright ?
-hid-cherry ?
-hid-chicony ?
-hid-corsair ?
-hid-cp2112 ?
-hid-cypress ?
-hid-dell ?
-hid-elecom ?
-hid-elo ?
-hid-ezkey ?
-hid-generic ?
-hid-gfrm ?
-hid-gt683r ?
-hid-gyration ?
-hid-holtek-kbd ?
-hid-holtek-mouse ?
-hid-hyperv ?
-hid-kensington ?
-hid-keytouch ?
-hid-kye ?
-hid-lcpower ?
-hid-lenovo ?
-hid-logitech ?
-hid-logitech-dj ?
-hid-logitech-hidpp ?
-hid-magicmouse ?
-hid-microsoft ?
-hid-monterey ?
-hid-multitouch ?
-hid-ntrig ?
-hid-ortek ?
-hid-penmount ?
-hid-petalynx ?
-hid-picolcd ?
-hid-pl ?
-hid-plantronics ?
-hid-primax ?
-hid-rmi ?
-hid-roccat ?
-hid-roccat-arvo ?
-hid-roccat-common ?
-hid-roccat-isku ?
-hid-roccat-kone ?
-hid-roccat-koneplus ?
-hid-roccat-konepure ?
-hid-roccat-kovaplus ?
-hid-roccat-lua ?
-hid-roccat-pyra ?
-hid-roccat-ryos ?
-hid-roccat-savu ?
-hid-samsung ?
-hid-sony ?
-hid-speedlink ?
-hid-sunplus ?
-hid-thingm ?
-hid-tivo ?
-hid-topseed ?
-hid-twinhan ?
-hid-uclogic ?
-hid-waltop ?
-hid-wiimote ?
-hid-xinmo ?
-hid-zydacron ?
-uhid ?
-usbhid ?
+evdev
+
+# Include HID drivers by default
 drivers/hid/**
+
+# Include keyboards
 drivers/input/keyboard/** ?
+
+# Exclude i2c-hid which depends on drm(!)
+i2c-hid -
+i2c-hid-acpi -
+i2c-hid-of -
+i2c-hid-of-elan -
+i2c-hid-of-goodix -
+
+# Exclude drivers for anything but keyboard and mouse/trackball/touchpad
 drivers/hid/hid-*ff -
+hid-dr -
+hid-elecom -
+hid-gyration -
+hid-icade -
+hid-lcpower -
+hid-ntrig -
+hid-petalynx -
+hid-picolcd -
+hid-pl -
+hid-prodikeys -
+hid-ps3remote -
+hid-quanta -
 drivers/hid/hid-roccat-ko* -
+hid-roccat-pyra -
+hid-saitek -
+hid-sensor-hub -
+hid-sony -
+hid-tivo -
+hid-twinhan -
+hid-uclogic -
+hid-wacom -
+hid-waltop -
+hid-wiimote -
+hid-zydacron -
+wacom -
+
+# Miscellaneous input drivers
+synaptics_usb ?
+wistron_btns ?
+gpio_keys ?
+soc_button_array ?
+hyperv-keyboard ?
+virtio_console ?
+virtio_input ?
+olpc_apsp ?
+psmouse ?

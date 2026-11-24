@@ -49,11 +49,12 @@ diff -ru a/drivers/gpu/drm/radeon/cik.c b/drivers/gpu/drm/radeon/cik.c
  			}
  		}
  	}
-@@ -8668,7 +8665,6 @@
+@@ -8672,8 +8672,6 @@ int cik_init(struct radeon_device *rdev)
  	 */
  	if (!rdev->mc_fw && !(rdev->flags & RADEON_IS_IGP)) {
  		DRM_ERROR("radeon: MC ucode required for NI+.\n");
--		return -EINVAL;
+-		r = -EINVAL;
+-		goto out;
  	}
  
  	return 0;
@@ -69,36 +70,36 @@ diff -ru a/drivers/gpu/drm/radeon/cypress_dpm.c b/drivers/gpu/drm/radeon/cypress
  
  	ret = cypress_get_table_locations(rdev);
 diff -ru a/drivers/gpu/drm/radeon/evergreen.c b/drivers/gpu/drm/radeon/evergreen.c
---- a/drivers/gpu/drm/radeon/evergreen.c	2021-10-31 16:53:10.000000000 -0400
-+++ b/drivers/gpu/drm/radeon/evergreen.c	2023-02-13 15:47:50.457384749 -0500
-@@ -5018,7 +5018,6 @@
+--- a/drivers/gpu/drm/radeon/evergreen.c
++++ b/drivers/gpu/drm/radeon/evergreen.c
+@@ -5026,7 +5026,6 @@
  		r = ni_mc_load_microcode(rdev);
  		if (r) {
- 			DRM_ERROR("Failed to load MC firmware!\n");
+ 			drm_err(ddev, "Failed to load MC firmware!\n");
 -			return r;
  		}
  	}
  
-@@ -5235,7 +5234,6 @@
+@@ -5245,7 +5244,6 @@
  			r = ni_init_microcode(rdev);
  			if (r) {
- 				DRM_ERROR("Failed to load firmware!\n");
+ 				drm_err(ddev, "Failed to load firmware!\n");
 -				return r;
  			}
  		}
  	} else {
-@@ -5243,7 +5241,6 @@
+@@ -5253,7 +5251,6 @@
  			r = r600_init_microcode(rdev);
  			if (r) {
- 				DRM_ERROR("Failed to load firmware!\n");
+ 				drm_err(ddev, "Failed to load firmware!\n");
 -				return r;
  			}
  		}
  	}
-@@ -5289,7 +5286,6 @@
+@@ -5299,7 +5296,6 @@
  	if (ASIC_IS_DCE5(rdev)) {
  		if (!rdev->mc_fw && !(rdev->flags & RADEON_IS_IGP)) {
- 			DRM_ERROR("radeon: MC ucode required for NI+.\n");
+ 			drm_err(ddev, "radeon: MC ucode required for NI+.\n");
 -			return -EINVAL;
  		}
  	}

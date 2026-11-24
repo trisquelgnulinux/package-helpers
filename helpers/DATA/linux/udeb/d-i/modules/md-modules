@@ -1,16 +1,15 @@
-dm-crypt ?
-dm-mirror ?
-dm-raid ?
-dm-snapshot ?
-dm-zero ?
-faulty ?
-linear ?
-multipath ?
-raid0 ?
-raid1 ?
-raid10 ?
-raid456 ?
+md-mod
+dm-mod
+raid0
+raid1
+raid456
+raid10
+dm-mirror
+dm-raid
+dm-snapshot
+dm-thin-pool
+bcache
 
-# Extras
-dm-raid45 ?
-dm-loop ?
+# RAID-related libraries, also used by btrfs
+raid6_pq
+xor
